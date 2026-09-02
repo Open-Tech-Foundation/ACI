@@ -1,0 +1,26 @@
+# Tasks for `tsr`.
+#
+# Every task runs from this directory, and that is not incidental: esdev and
+# esrun jail the filesystem to the directory they are started in, and the demo
+# imports the engine from ../../src. Run `esdev test` inside demo/ and that
+# import escapes the sandbox and fails. Rooting every task here keeps the jail
+# wide enough to contain both packages — which is also why there is no
+# [workspace] block, since per-package tasks would re-introduce the problem.
+
+[tasks.test]
+run = "esdev test"
+
+[tasks.dev]
+run = "esdev start --config=demo/esdev.json"
+
+[tasks.cli]
+run = "esrun --allow-imports bin/aci.js --demo --trace"
+
+[tasks.build]
+run = "esdev build --lib src --out=dist"
+
+[tasks.site]
+run = "esdev build --config=demo/esdev.json --minify"
+
+[tasks.ci]
+deps = ["test", "build", "site"]
