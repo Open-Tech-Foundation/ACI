@@ -1,9 +1,7 @@
-/** Layer 0. No training and no vocabulary: the model ships knowing nothing. */
+/** Kinds, relations, rules — and a brain that derives from them. */
 
-export { createACI } from "./aci.js";
-export { audit, meaningOf, reachable } from "./audit.js";
-export { atomsOf, receive } from "./receive.js";
-export { createBrain, understand, think, solve } from "./brain.js";
-export { Learned, ConflictError, UNKNOWN } from "./memory/learned.js";
-export { Experience } from "./memory/experience.js";
-export { learnedFrom } from "./memory/lesson.js";
+export { Knowledge } from "./knowledge.js";
+export { Language } from "./language.js";
+export { createBrain } from "./brain.js";
+export { understand } from "./understand.js";
+export { resolve } from "./resolve.js";

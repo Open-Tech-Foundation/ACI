@@ -1,5 +1,3 @@
-/* The stylesheet index.html links. esdev inlines the @import at build time. */
-
 @import "./theme.css";
 
 *,
@@ -23,7 +21,8 @@ p,
 dl,
 dd,
 ol,
-ul {
+ul,
+pre {
   margin: 0;
 }
 
@@ -47,16 +46,11 @@ button {
   white-space: nowrap;
 }
 
-/* A custom element is `display: inline` until told otherwise, so every one of
- * these would sit between a flex or grid container and the box meant to fill
- * it — which is why the bench would not take the viewport's height. `contents`
- * removes the wrapper from layout so its children become the container's own
- * items; aci-composer keeps a box because its two roots are one group. */
+/* Custom elements are inline until told otherwise, which would leave these
+ * sitting between a grid container and the box meant to fill it. */
 aci-app,
-aci-here,
-aci-transcript,
-aci-walk,
-aci-taught {
+aci-answer,
+aci-known {
   display: contents;
 }
 
@@ -85,24 +79,24 @@ aci-composer {
 }
 
 .tagline {
-  max-width: 62ch;
+  max-width: 64ch;
   color: var(--muted);
   font-size: var(--t-sm);
 }
 
-.here {
+.counts {
   display: flex;
   gap: calc(var(--step) * 1.5);
 }
 
-.here dt {
+.counts dt {
   color: var(--muted);
   font-size: var(--t-xs);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
-.here dd {
+.counts dd {
   font-family: var(--mono);
   font-size: var(--t-md);
 }
@@ -111,18 +105,17 @@ aci-composer {
 
 .bench {
   display: grid;
-  grid-template-columns: minmax(18rem, 24rem) minmax(0, 1fr) minmax(16rem, 22rem);
+  grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
   gap: 1px;
   background: var(--rule);
-  height: calc(100dvh - 5.5rem);
+  min-height: calc(100dvh - 5.5rem);
 }
 
 .console,
-.walk,
-.taught {
-  overflow-y: auto;
+.known {
   padding: calc(var(--step) * 1.25);
   background: var(--paper);
+  overflow-y: auto;
 }
 
 .console {
@@ -131,16 +124,9 @@ aci-composer {
   gap: var(--step);
 }
 
-@media (max-width: 60rem) {
+@media (max-width: 56rem) {
   .bench {
     grid-template-columns: 1fr;
-    height: auto;
-  }
-
-  .console,
-  .walk,
-  .taught {
-    overflow-y: visible;
   }
 }
 
@@ -163,7 +149,6 @@ aci-composer {
 }
 
 .composer input:focus-visible,
-.turn-body:focus-visible,
 .examples button:focus-visible {
   outline: 2px solid var(--blue);
   outline-offset: 1px;
@@ -181,23 +166,17 @@ aci-composer {
 
 .examples {
   display: flex;
-  flex-direction: column;
-  gap: 1px;
-  background: var(--rule);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius);
+  flex-wrap: wrap;
+  gap: 0.375rem;
 }
 
 .examples button {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--step);
-  width: 100%;
-  padding: 0.375rem 0.625rem;
-  border: 0;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
   background: var(--panel);
-  text-align: left;
+  font-family: var(--mono);
+  font-size: var(--t-xs);
   cursor: pointer;
 }
 
@@ -205,232 +184,138 @@ aci-composer {
   background: var(--sunk);
 }
 
-.examples .atoms {
-  font-family: var(--mono);
-  font-size: var(--t-sm);
-}
+/* --------------------------------------------------------------- answer */
 
-.examples .why {
-  color: var(--muted);
-  font-size: var(--t-xs);
-}
-
-.examples .reset .atoms {
-  color: var(--muted);
-}
-
-/* ------------------------------------------------------------ transcript */
-
-.transcript {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  background: var(--rule);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius);
-}
-
-.turn-body {
-  display: grid;
-  gap: 0.125rem;
-  width: 100%;
-  padding: 0.5rem 0.625rem;
-  border: 0;
-  border-left: 2px solid transparent;
-  background: var(--panel);
-  text-align: left;
-  cursor: pointer;
-}
-
-.turn.is-selected .turn-body {
-  border-left-color: var(--blue);
-  background: var(--sunk);
-}
-
-.sent {
-  font-family: var(--mono);
-  font-size: var(--t-sm);
-}
-
-.expressed {
-  font-size: var(--t-md);
-}
-
-.expressed.is-silent {
-  color: var(--muted);
-  font-style: italic;
-}
-
-.readout {
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  font-size: var(--t-xs);
-}
-
-.arrow {
-  color: var(--muted);
-}
-
-/* ----------------------------------------------------------------- atoms */
-
-.atom {
-  font-family: var(--mono);
-  font-size: var(--t-xs);
-  padding: 0.0625rem 0.3125rem;
-  border-radius: var(--radius);
-  border: 1px solid currentColor;
-}
-
-.atom.state {
-  color: var(--kind-state);
-}
-
-.atom.signal {
-  color: var(--kind-signal);
-}
-
-.atom.express {
-  color: var(--kind-express);
-}
-
-/* ------------------------------------------------------------------ walk */
-
-.walk h2,
-.taught h2 {
+.answer h2 {
   font-size: var(--t-md);
   font-weight: 600;
+  font-family: var(--mono);
 }
 
-.walk .blurb,
-.taught .blurb {
-  max-width: 58ch;
-  margin-bottom: var(--step);
-  color: var(--muted);
-  font-size: var(--t-sm);
-}
-
-.empty {
-  color: var(--muted);
-  font-size: var(--t-sm);
-}
-
-.chain {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  max-width: 40rem;
-}
-
-.link {
-  display: grid;
-  grid-template-columns: 5.5rem 1fr auto;
-  align-items: baseline;
-  gap: var(--step);
-  padding: 0.375rem 0.625rem;
-  border-left: 3px solid var(--kind-state);
-  background: var(--panel);
-  border-radius: 0 var(--radius) var(--radius) 0;
-}
-
-.link .kind {
+.answer h3,
+.known h2 {
+  margin: var(--step) 0 0.375rem;
   color: var(--muted);
   font-size: var(--t-xs);
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
-.link .value {
-  display: flex;
-  align-items: baseline;
-  gap: 0.375rem;
-  font-family: var(--mono);
+.known h2 {
+  margin-top: 0;
 }
 
-.link .from {
+.empty,
+.none,
+.blurb {
   color: var(--muted);
   font-size: var(--t-sm);
-  text-decoration: line-through;
 }
 
-.link .note {
-  color: var(--muted);
+.tokens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.token {
+  display: flex;
+  flex-direction: column;
+  padding: 0.1875rem 0.4375rem;
+  border-left: 2px solid var(--rule);
+  background: var(--panel);
+  font-family: var(--mono);
   font-size: var(--t-xs);
 }
 
-/* The walk alternates, so the signal rows are indented to read as the thing
- * that happened *between* two states rather than as another state. */
-.link.kind-signal,
-.link.kind-unknown {
-  margin-left: 1.25rem;
+.token .as {
+  color: var(--muted);
+  font-size: 0.6875rem;
 }
 
-.link.kind-signal {
+.token.as-kind {
+  border-left-color: var(--kind-state);
+}
+
+.token.as-ask {
+  border-left-color: var(--kind-express);
+}
+
+.token.as-compare,
+.token.as-relation {
   border-left-color: var(--kind-signal);
 }
 
-.link.kind-unknown {
+.token.as-unknown {
   border-left-color: var(--kind-unknown);
 }
 
-.link.kind-unknown .label {
+.token.as-unknown .word {
   color: var(--kind-unknown);
 }
 
-.link.kind-express {
-  margin-top: 0.25rem;
-  border-left-color: var(--kind-express);
-  background: var(--sunk);
+.gap {
+  padding: 0.625rem;
+  border-left: 2px solid var(--kind-express);
+  background: var(--panel);
+  font-family: var(--mono);
+  font-size: var(--t-xs);
+  overflow-x: auto;
 }
 
-.link.kind-express .label {
+.said {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.said li {
+  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--kind-express);
+  border-radius: var(--radius);
+  color: var(--kind-express);
+  font-family: var(--mono);
   font-size: var(--t-md);
 }
 
-.link.is-untaught {
-  border-left-style: dashed;
-}
+/* ---------------------------------------------------------------- facts */
 
-/* ---------------------------------------------------------------- taught */
-
-.taught h3 {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  margin: var(--step) 0 0.375rem;
-  font-size: var(--t-xs);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-}
-
-.taught .count {
-  font-family: var(--mono);
-  letter-spacing: 0;
-}
-
-.rows {
+.facts {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.125rem;
 }
 
-.rows li {
+.facts li {
   display: flex;
-  align-items: center;
-  gap: 0.375rem;
   flex-wrap: wrap;
-}
-
-.footnote {
-  display: flex;
-  align-items: center;
   gap: 0.375rem;
-  flex-wrap: wrap;
-  margin-top: var(--step);
-  padding-top: var(--step);
-  border-top: 1px solid var(--rule);
-  color: var(--muted);
+  padding: 0.125rem 0;
+  font-family: var(--mono);
   font-size: var(--t-xs);
+}
+
+.facts .from {
+  color: var(--kind-state);
+}
+
+.facts .rel {
+  color: var(--muted);
+}
+
+.facts .to {
+  color: var(--kind-signal);
+}
+
+/* Worked out rather than taught. */
+.facts li.is-derived {
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.facts li.is-derived .rel::after {
+  content: "·";
+  margin-left: 0.375rem;
+  color: var(--kind-express);
 }

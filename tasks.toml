@@ -14,10 +14,7 @@ run = "esdev test"
 run = "esdev start --config=demo/esdev.json"
 
 [tasks.cli]
-run = "esrun --allow-imports bin/aci.js --demo --trace"
-
-[tasks.audit]
-run = "esrun --allow-imports bin/audit.js"
+run = "esrun --allow-imports bin/ask.js"
 
 [tasks.build]
 run = "esdev build --lib src --out=dist"

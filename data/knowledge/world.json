@@ -1,0 +1,28 @@
+{
+  "facts": [
+    ["apple", "is-a", "fruit"],
+    ["fruit", "is-a", "thing"],
+    ["fruit", "is-a", "hand-sized"],
+
+    ["cat", "is-a", "animal"],
+    ["sparrow", "is-a", "bird"],
+    ["bird", "is-a", "animal"],
+    ["animal", "is-a", "living"],
+    ["animal", "is-a", "carry-sized"],
+
+    ["hand-sized", "less-weight", "carry-sized"],
+    ["carry-sized", "less-weight", "heavy"],
+
+    ["self", "name", "ACI"]
+  ],
+  "rules": [
+    {
+      "if": [["?a", "is-a", "?b"], ["?b", "is-a", "?c"]],
+      "then": ["?a", "is-a", "?c"]
+    },
+    {
+      "if": [["?a", "less-weight", "?b"], ["?b", "less-weight", "?c"]],
+      "then": ["?a", "less-weight", "?c"]
+    }
+  ]
+}
