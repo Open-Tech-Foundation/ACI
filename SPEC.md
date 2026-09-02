@@ -155,6 +155,43 @@ too, as a rule over the request: definition, then purpose, then an example. If
 nothing was taught about algebra, it says so. It does not write paragraphs it
 never learned.
 
+### 2.0.25 Language is not a brain function
+
+The brain holds only kinds, relations and rules. It holds no words, in any
+language.
+
+```
+language knowledge  → forms, derivation (dis-, un-, -able)  → kinds
+world knowledge     → kinds and how they relate
+brain               → kinds in, kind out
+```
+
+Enumeration is the thing to avoid. Not: teach `cold`, `hot`, `freezing`,
+`stuffy`. Instead teach **comfort**, and let the language derive `discomfort`,
+`uncomfortable`, `comforting` from it. Derivation is exact — a prefix either
+applies or it does not — so nothing is guessed.
+
+Swap English for Tamil and nothing in the brain changes. It is the *language*
+that knows `discomfort` reverses `comfort`.
+
+**The answer is a kind, not prose.** Headache resolves to `ginger-tea` or
+`see-doctor`. Turning that into a sentence belongs to the language on the way
+out. No long text is generated, ever — exact answers and faithful request
+following are what this model is for.
+
+### 2.0.26 Good and bad
+
+The model must not answer `rat-poison` to a headache. It has no sense that an
+answer could be harmful, and being taught only true relations is not enough —
+a remedy can be true and still wrong.
+
+So harm is knowledge like any other, and a standing constraint over
+composition: **an answer that harms is refused, whatever else fits.** Not a
+preference, not a weighting — a filter, so it stays deterministic.
+
+Not designed. What is settled is that it belongs in the base lesson, and that
+refusing is the safe direction: saying nothing is always allowed.
+
 ### 2.0.3 The base lesson
 
 Some knowledge every ACI needs before anything else: social values, human
@@ -746,6 +783,10 @@ the numbers.
 
 ## Revision history
 
+- **2026-09-02** — Language separated from the brain (§2.0.25): the brain holds
+  no words, language knowledge derives kinds from forms, and the answer is a
+  kind rather than prose. Good and bad raised as a constraint over composition
+  (§2.0.26).
 - **2026-09-02** — Purpose recorded (§1.1): deterministic systems, where being
   exactly right beats being able to answer anything. Kinds relate to kinds as
   triples with an exit criterion for resolution (§2.0.1). Composition defined
