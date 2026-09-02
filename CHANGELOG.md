@@ -6,18 +6,24 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- `brain(signal)`, which asks **what is this?** of a word and of every char in
+  it, then asks the same question of each answer until nothing answers back.
+- `existence` as the one primitive: the single thing nothing else explains, so
+  every chain either reaches it or stops short.
+- Four endings, none of which is a failure — `bottom` reached `existence`,
+  `untaught` got an answer nobody explained, `unknown` was never seen, and
+  `circular` explains itself. The brain always reports how far it got.
+- `data/world.json`, everything the brain knows, including the alphabet.
+- `bin/ask.js`, a terminal client — `tsr cli -- hi`.
+- A site where a word is typed and every chain is drawn.
+
 ### Removed
 
-- Everything. The engine (`src/`), the terminal client (`bin/`), the taught
-  data (`data/`), the demo's code, and `SPEC.md` were deleted so the model can
-  be rebuilt from nothing.
-- The specification went with the code because it described the same design.
-  Understanding was a flat word-to-kind dictionary with no recognition steps,
-  and solving was a JavaScript branch per question shape, so neither survived
-  the requirement that the system understand any input and derive its own
-  answers.
-
-Only the toolchain remains: `package.json`, `tsconfig.json`, `tasks.toml` and
-the demo's configuration.
+- The previous engine (`src/`), client (`bin/`), data (`data/`), demo code and
+  `SPEC.md`. Understanding was a flat word-to-kind dictionary with no
+  recognition steps, and solving was a JavaScript branch per question shape, so
+  neither survived and both were deleted rather than adapted.
 
 [Unreleased]: https://github.com/Thanga-Ganapathy/ACI/commits/main
