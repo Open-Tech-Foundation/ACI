@@ -175,6 +175,12 @@ vocabulary at all — it does not know what `touch` is, or that words exist. The
 words in this document are illustrations for the reader; nothing has been
 trained yet.
 
+**No lesson lives in code.** Everything the model is taught is data, under
+`data/`, loaded at run time (§4.1). Nothing under `src/` contains a word, a
+state name or a lesson. The only two named strings in the engine are the
+reserved signal `unknown` (§2.1) and the `signal` field of the input shape
+(§3.2), and both are protocol rather than knowledge.
+
 A session is one brain, and its state carries from call to call. That is not an
 implementation detail — it is the whole reason two identical inputs can come
 out differently.
@@ -263,6 +269,24 @@ The brain has three memories, and they are not interchangeable.
 | **Context** | the state it is in right now | ephemeral, this session | in process |
 
 **Learned** is the only memory `brain()` reads to decide anything.
+
+### 4.1 Where a lesson lives
+
+A lesson is data, in `data/lessons/`, in the shape of the primitives:
+
+```json
+{
+  "start": "idle",
+  "effects":     [{ "state": "…", "signal": "…", "next": "…" }],
+  "expressions": [{ "state": "…", "signal": "…" }]
+}
+```
+
+`src/memory/lesson.js` loads one and refuses anything malformed — an unknown
+key, a missing field, contradictory rows — rather than ignoring it. The file is
+the editable source; sqlite is the runtime store.
+
+Layer 1's languages (§6) will live here the same way, as data.
 
 **Context** is the current state, carried from turn to turn. It is the whole of
 "what is happening now"; there is no second context object.
@@ -436,7 +460,9 @@ a real vocabulary before we choose a cure for it.
 | `src/memory/learned.js` | signals, states, effects, expressions |
 | `src/memory/experience.js` | the log, in process |
 | `src/memory/store.js` | both persistent memories in runtime sqlite |
-| `fixtures/illustration.js` | placeholder words for tests and the CLI — **not** the model's knowledge |
+| `src/memory/lesson.js` | loads a lesson from data into learned memory |
+| `data/lessons/` | what it is taught, as data. No lesson lives in code |
+| `fixtures/illustration.js` | wiring that loads the placeholder lesson for tests and the CLI |
 | `spec/` | behaviour tests, written against the front door alone |
 | `demo/` | a page that draws the walk and lists everything taught |
 
@@ -529,6 +555,8 @@ the numbers.
 
 ## Revision history
 
+- **2026-09-02** — Lessons became data (§4.1): nothing under `src/` contains a
+  word or a state name any more.
 - **2026-09-02** — The engine ships with no training and no vocabulary;
   `createACI` requires `teach`. Placeholder words moved out of `src/`.
 - **2026-09-02** — Reception (§3.2): the front door takes what an integrator

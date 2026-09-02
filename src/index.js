@@ -6,3 +6,4 @@ export { atomsOf, receive } from "./receive.js";
 export { createBrain, understand, think, solve } from "./brain.js";
 export { Learned, ConflictError, UNKNOWN } from "./memory/learned.js";
 export { Experience } from "./memory/experience.js";
+export { learnedFrom } from "./memory/lesson.js";

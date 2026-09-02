@@ -27,6 +27,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   it, written and never read back), and the current state as live context.
 - `runtime:db` sqlite behind both persistent memories, kept in
   `src/memory/store.js` so the rest of the engine runs under `--deny-all`.
+- Lessons are data, in `data/lessons/`, loaded by `src/memory/lesson.js`, which
+  refuses a malformed one rather than ignoring it. Nothing under `src/` contains
+  a word or a state name.
 - The engine ships with no vocabulary and no default training: `createACI`
   requires `teach`, and placeholder words used by the tests and the CLI live in
   `fixtures/`, outside `src/`.

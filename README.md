@@ -42,7 +42,7 @@ Two rules keep it total, so the brain can never fail and never guess:
 ## Using it
 
 The model ships knowing nothing — no words, no default training — so `teach` is
-required. You then send what actually arrived: `signal` names the channel, any
+required. Lessons are data under `data/lessons/`, never code. You then send what actually arrived: `signal` names the channel, any
 other field is detail about it.
 
 ```js
@@ -107,7 +107,8 @@ sqlite, needs anything.
 | `src/receive.js` | what an integrator sent, spelled out as signals |
 | `src/audit.js` | measuring a brain's training (`SPEC.md` §11) |
 | `src/memory/` | learned, experience, and the sqlite store |
-| `fixtures/` | placeholder words for tests and the CLI, not the model's knowledge |
+| `data/` | everything it is taught, as data. No lesson lives in code |
+| `fixtures/` | wiring that loads the placeholder lesson for tests and the CLI |
 | `spec/` | behaviour tests, which know only the front door |
 | `demo/` | a page that draws the walk and lists everything taught |
 
