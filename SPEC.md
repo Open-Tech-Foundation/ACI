@@ -41,6 +41,44 @@ thing that exists yet.
 
 **Status: Settled, and built.**
 
+### 2.0 Where the primitives stand
+
+Being worked out, and this section is ahead of the code.
+
+| Primitive | What it is |
+|---|---|
+| **signal** | how anything reaches the brain. Carries data; means nothing by itself |
+| **kind** | what a thing is. `hello` is a greeting |
+| **state** | where the brain is when something arrives |
+
+**Expression is not a fourth.** Expressing is the brain pointing at a kind on
+the way out, instead of receiving one on the way in. `greeting` is the same
+thing in both directions.
+
+**Recognition and understanding are different jobs.** Recognition is about
+form — this data is text, this is an image, this is a touch. There are
+categories of recogniser and many in each. Understanding happens after, on
+what recognition produced.
+
+**`understand()` names the kind; `think()` decides what it is worth.** `hello`
+is a greeting wherever the brain is, so no context is needed to name it. What a
+greeting means *here* — from a stranger, from the boss, for the fifth time —
+is think's job.
+
+**Everything travelling between the mechanisms is structured**, so the
+consumer never infers what it received. The boundaries needing a shape:
+
+```
+in → recogniser → understand → think → resolve → out
+```
+
+The runtime is simply whoever calls the brain — a test, the CLI, a kitchen
+bot. It is not a component.
+
+**Signals are open, and that costs nothing.** The brain ships with no list of
+them. A kitchen bot's `temperature` and a chat service's `message` are alike
+to it until it is taught otherwise.
+
 ### 2.1 Signal
 
 A **signal** is an atom that arrives at the brain from outside it. The brain
@@ -601,6 +639,10 @@ the numbers.
 
 ## Revision history
 
+- **2026-09-02** — Primitives being re-derived (§2.0): signal, kind, state.
+  Expression folded into kind. Recognition separated from understanding.
+  `read` rejected as a primitive — too specific, and reading is to be taught.
+  Everything crossing a boundary must be structured.
 - **2026-09-02** — The brain does not act (§3.0): it responds, and the runtime
   acts on the response, so the brain stays a pure function and nothing outlives
   a turn inside it. Channels are declared by the integrator, not shipped with
