@@ -27,6 +27,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   it, written and never read back), and the current state as live context.
 - `runtime:db` sqlite behind both persistent memories, kept in
   `src/memory/store.js` so the rest of the engine runs under `--deny-all`.
+- The engine ships with no vocabulary and no default training: `createACI`
+  requires `teach`, and placeholder words used by the tests and the CLI live in
+  `fixtures/`, outside `src/`.
 - `createACI()`, a front door that takes what an integrator actually sends —
   `{ signal: "touch", place: "shoulder" }`, `{ signal: "text", message: "…" }` —
   and answers `{ express }`. Internal atom names never cross it.

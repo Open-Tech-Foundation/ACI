@@ -3,35 +3,35 @@ import { assertEquals, assertThrows, test } from "runtime:test";
 import { createBrain, solve, think, understand } from "./brain.js";
 import { Learned, UNKNOWN } from "./memory/learned.js";
 import { Experience } from "./memory/experience.js";
-import { trainExample } from "./train/example.js";
+import { illustration } from "../fixtures/illustration.js";
 
-const brain = () => createBrain({ learned: trainExample() });
+const brain = () => createBrain({ learned: illustration() });
 
 test("understand resolves a known atom to itself", () => {
-  assertEquals(understand(trainExample(), "touch"), "touch");
+  assertEquals(understand(illustration(), "touch"), "touch");
 });
 
 test("understand resolves anything untaught to the reserved signal", () => {
-  assertEquals(understand(trainExample(), "plughxyz"), UNKNOWN);
+  assertEquals(understand(illustration(), "plughxyz"), UNKNOWN);
 });
 
 test("think moves the brain along a taught effect", () => {
-  assertEquals(think(trainExample(), "idle", "touch"), "comfort");
+  assertEquals(think(illustration(), "idle", "touch"), "comfort");
 });
 
 test("think leaves the state alone when nothing was taught", () => {
   // Totality (SPEC §2.3): a signal with no taught effect on you does not move
   // you. Nothing is inferred and no nearest match is reached for.
-  assertEquals(think(trainExample(), "comfort", "hey"), "comfort");
+  assertEquals(think(illustration(), "comfort", "hey"), "comfort");
 });
 
 test("solve reads out the expression for the state", () => {
-  assertEquals(solve(trainExample(), "comfort"), "feel");
+  assertEquals(solve(illustration(), "comfort"), "feel");
 });
 
 test("solve is silent for a state with no taught expression", () => {
   // Totality (SPEC §2.4): silence is a legitimate output, not a failure.
-  assertEquals(solve(trainExample(), "idle"), null);
+  assertEquals(solve(illustration(), "idle"), null);
 });
 
 test("the original loop runs: { sense: touch } -> { express: feel }", () => {
@@ -104,7 +104,7 @@ test("an empty turn moves nothing and expresses the state it is already in", () 
 
 test("every transition reaches experience, including the ones that moved nothing", () => {
   const experience = new Experience();
-  const b = createBrain({ learned: trainExample(), experience });
+  const b = createBrain({ learned: illustration(), experience });
   b.sense(["hey", "shove", "stop"]);
 
   assertEquals(
@@ -122,10 +122,10 @@ test("every transition reaches experience, including the ones that moved nothing
 test("experience is never read back into a decision", () => {
   // SPEC §7. Two brains sharing one log must still answer identically.
   const experience = new Experience();
-  const first = createBrain({ learned: trainExample(), experience });
+  const first = createBrain({ learned: illustration(), experience });
   first.sense(["hey", "stop", "that"]);
 
-  const second = createBrain({ learned: trainExample(), experience });
+  const second = createBrain({ learned: illustration(), experience });
   assertEquals(second.sense(["hey"]).express, "hello");
 });
 

@@ -1,10 +1,11 @@
 import { assertEquals, test } from "runtime:test";
 
-import { createBrain, trainExample } from "../../src/index.js";
+import { createBrain } from "../../src/index.js";
+import { illustration } from "../../fixtures/illustration.js";
 import { walkFor } from "./walk.js";
 
 const turn = (atoms) => {
-  const learned = trainExample();
+  const learned = illustration();
   const brain = createBrain({ learned });
   const from = brain.state;
   return walkFor(brain.sense(atoms), from, learned);

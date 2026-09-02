@@ -1,17 +1,9 @@
-/**
- * What a brain's training actually amounts to — SPEC.md §11.
- *
- *   tsr audit
- *
- * None of these numbers is a score. Each one makes a specific kind of mistake
- * visible: training nothing can reach, states the brain can fall into and never
- * speak from again, and how much of what it says depends on what came before.
- */
+/** `tsr audit` — what a brain's training amounts to. SPEC.md §11. */
 
 import { audit } from "../src/audit.js";
-import { trainExample } from "../src/train/example.js";
+import { illustration } from "../fixtures/illustration.js";
 
-const report = audit(trainExample());
+const report = audit(illustration());
 
 console.log(`
   Taught          ${String(report.effects)} effects, ${String(report.expressions)} expressions

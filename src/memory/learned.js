@@ -1,28 +1,12 @@
-/**
- * Learned memory — SPEC.md §2, §4.
- *
- * The only memory `brain()` reads to decide anything. It holds four kinds of
- * thing and nothing else: signals, states, effects and expressions. There are
- * no numbers in here — no weight, score, valence, intensity or priority — and
- * there is nowhere to put one.
- */
+/** Signals, states, effects, expressions. No numbers. SPEC.md §2, §4. */
 
-/**
- * The one reserved signal. Anything arriving that has not been taught becomes
- * this. It is not an error case; it is trained like any other signal.
- */
+/** Anything arriving that was not taught becomes this. */
 export const UNKNOWN = "unknown";
 
-/** Effects are keyed by a pair, and a NUL cannot occur in an atom's name. */
 const SEP = "\u0000";
 const pair = (state, signal) => `${state}${SEP}${signal}`;
 
-/**
- * Raised when training contradicts itself. Two different effects for the same
- * `(state, signal)` would make the brain's next move a choice, and the model
- * does not make choices — so this is a fault in the training, not a tie to be
- * broken at run time.
- */
+/** Contradictory training. The brain's next move must never be a choice. */
 export class ConflictError extends Error {
   constructor(what, key, taught, given) {
     super(`${what} for ${key} is already taught as "${taught}"; refusing "${given}"`);
@@ -39,12 +23,7 @@ export class Learned {
     this.start = null;
   }
 
-  /**
-   * Atoms are declared by being mentioned. An atom has no properties to set, so
-   * there is nothing a separate declaration step could carry — it would only be
-   * ceremony. `signals` and `states` exist so that what was taught can be
-   * listed back.
-   */
+  /** Atoms are declared by being mentioned; they carry nothing to declare. */
   signal(name) {
     this.signals.add(name);
     return name;
@@ -55,7 +34,7 @@ export class Learned {
     return name;
   }
 
-  /** Declares the state the brain is in before anything has happened to it. */
+  /** Where the brain is before anything has happened to it. */
   begins(state) {
     if (this.start !== null && this.start !== state) {
       throw new ConflictError("start state", "the brain", this.start, state);
@@ -64,7 +43,7 @@ export class Learned {
     return this;
   }
 
-  /** `(state, signal) -> state`. The only kind of fact that can be taught. */
+  /** `(state, signal) -> state`. The only kind of fact there is. */
   effect(state, signal, next) {
     this.state(state);
     this.signal(signal);
@@ -78,7 +57,7 @@ export class Learned {
     return this;
   }
 
-  /** `state -> signal`. A read-out, not a decision. */
+  /** `state -> signal`. */
   expresses(state, signal) {
     this.state(state);
     this.signal(signal);
@@ -94,7 +73,7 @@ export class Learned {
     return this.signals.has(name);
   }
 
-  /** `null` means nothing was taught, which is not the same as a taught move. */
+  /** `null` means nothing was taught — not the same as a taught self-loop. */
   effectOf(state, signal) {
     const next = this.effects.get(pair(state, signal));
     return next === undefined ? null : next;
@@ -105,7 +84,7 @@ export class Learned {
     return signal === undefined ? null : signal;
   }
 
-  /** Everything taught, in a shape that can be written to a table. */
+  /** Everything taught, in a shape a table can hold. */
   toRows() {
     return {
       start: this.start,

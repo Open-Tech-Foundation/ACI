@@ -1,24 +1,16 @@
 /**
- * Layer 0 at a terminal.
- *
- * The only capability this needs is `--allow-imports`, to load its own
- * modules. Understanding, thinking and expressing touch no file, socket or
- * environment variable, and the command line is where that claim is checked.
- * (Persisting to sqlite does need more, which is why it lives in
- * src/memory/store.js and is not imported here.)
- *
- *   tsr cli                       walk the specification's examples
- *   esrun --allow-imports bin/aci.js hey stop that
+ * Layer 0 at a terminal. Needs only `--allow-imports`; thinking touches
+ * nothing else.
  */
 
 import { args } from "runtime:process";
 
-import { Experience, createBrain, trainExample } from "../src/index.js";
+import { Experience, createBrain } from "../src/index.js";
+import { illustration } from "../fixtures/illustration.js";
 
 const flags = new Set(args.filter((arg) => arg.startsWith("--")));
 const atoms = args.filter((arg) => !arg.startsWith("--"));
 
-/** Each of these is its own example, so each gets a brain at its start state. */
 const DEMO = [
   ["touch"],
   ["hey"],
@@ -27,12 +19,11 @@ const DEMO = [
   ["stop"],
 ];
 
-/** This one is a session: the state carries, so `stop` means something by the
- * time it arrives — which it did not in the example above. */
+/** A session: the state carries, so `stop` means something by the time it arrives. */
 const SESSION = [["hey"], ["stop"], ["that"]];
 
 const experience = new Experience();
-const learned = trainExample();
+const learned = illustration();
 const brain = createBrain({ learned, experience });
 
 if (flags.has("--help")) {
@@ -67,8 +58,7 @@ function walk(sent) {
   if (flags.has("--steps") || flags.has("--demo")) {
     for (const step of steps) {
       const seen = step.atom === step.signal ? step.signal : `${step.atom} → ${step.signal}`;
-      // Asked of learned memory, not guessed from whether the state changed:
-      // a taught effect is allowed to leave you exactly where you were.
+      // Asked of learned memory: a taught effect may leave you where you were.
       const untaught = learned.effectOf(step.from, step.signal) === null
         ? " (nothing taught — no move)"
         : "";

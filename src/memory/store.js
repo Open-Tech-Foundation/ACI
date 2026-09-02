@@ -1,21 +1,15 @@
 /**
- * The sqlite store — SPEC.md §4.
+ * Both persistent memories in sqlite. SPEC.md §4.
  *
- * Learned and experience are the persistent memories, and this is where they
- * live. It is the only module in the engine that imports a host capability, so
- * `brain.js`, `learned.js` and `experience.js` all still run under `--deny-all`
- * and can be tested without granting anything.
- *
- * The tables are the primitives, one table each. There is no column anywhere
- * for a weight, score or rank, and adding one would be a change to SPEC.md
- * before it was a change to this file.
+ * The only module here that needs a capability, which is why the rest of the
+ * engine runs under `--deny-all`. One table per primitive; no rank columns.
  */
 
 import { connect, sql, sqlite } from "runtime:db";
 
 import { Learned } from "./learned.js";
 
-/** `sqlite::memory:` for a scratch brain, or `sqlite:<path>` for one that lasts. */
+/** `sqlite::memory:`, or `sqlite:<path>` to last. */
 export async function open(url = "sqlite::memory:") {
   const db = await connect(url, { driver: sqlite });
   await migrate(db);
@@ -39,7 +33,7 @@ export async function migrate(db) {
   return db;
 }
 
-/** Writes everything that has been taught. Replaces; it does not merge. */
+/** Replaces what was there; does not merge. */
 export async function saveLearned(db, learned) {
   const rows = learned.toRows();
   await db.query(sql`delete from signal`);
@@ -82,14 +76,8 @@ export async function loadLearned(db) {
 }
 
 /**
- * An experience log backed by the same database.
- *
- * `append` does not block: a turn's answer must not depend on whether the disk
- * was quick, and nothing ever reads this back to decide anything. But the
- * writes are chained rather than merely launched, for two reasons — they land
- * in the order they happened, which is the only thing a log owes anybody, and
- * `settled()` gives a reader a point at which everything so far is really
- * there. `all()` waits on it, so a read can never outrun a write.
+ * `append` does not block — an answer must not wait on the disk — but the
+ * writes are chained so they land in order, and reads wait on them.
  */
 export function experienceIn(db, onError = () => {}) {
   let pending = Promise.resolve();
@@ -105,7 +93,6 @@ export function experienceIn(db, onError = () => {}) {
         )
         .catch(onError);
     },
-    /** Resolves once every append made so far has landed. */
     async settled() {
       await pending;
     },

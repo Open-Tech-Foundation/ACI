@@ -170,6 +170,11 @@ aci({ signal: "touch", place: "shoulder" }, { signal: "text", message: "hey" });
 `{ express }` is what it has to say — `null` for silence, which is a real
 answer and not a failure.
 
+**Training is required and there is no default.** The model ships with no
+vocabulary at all — it does not know what `touch` is, or that words exist. The
+words in this document are illustrations for the reader; nothing has been
+trained yet.
+
 A session is one brain, and its state carries from call to call. That is not an
 implementation detail — it is the whole reason two identical inputs can come
 out differently.
@@ -431,7 +436,7 @@ a real vocabulary before we choose a cure for it.
 | `src/memory/learned.js` | signals, states, effects, expressions |
 | `src/memory/experience.js` | the log, in process |
 | `src/memory/store.js` | both persistent memories in runtime sqlite |
-| `src/train/example.js` | §3.4 and §3.5 as training, and nothing more |
+| `fixtures/illustration.js` | placeholder words for tests and the CLI — **not** the model's knowledge |
 | `spec/` | behaviour tests, written against the front door alone |
 | `demo/` | a page that draws the walk and lists everything taught |
 
@@ -524,6 +529,8 @@ the numbers.
 
 ## Revision history
 
+- **2026-09-02** — The engine ships with no training and no vocabulary;
+  `createACI` requires `teach`. Placeholder words moved out of `src/`.
 - **2026-09-02** — Reception (§3.2): the front door takes what an integrator
   actually sends, and only what arrived becomes a signal. Layer 1 designed
   (§6): forms map to signals, a phrase is a walk and not a lookup, and

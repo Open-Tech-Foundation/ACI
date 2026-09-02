@@ -9,9 +9,10 @@
  * it to think. Learned memory and experience are both in process here.
  */
 
-import { createBrain, Experience, trainExample } from "../../src/index.js";
+import { createBrain, Experience } from "../../src/index.js";
+import { illustration } from "../../fixtures/illustration.js";
 
-export const learned = trainExample();
+export const learned = illustration();
 export const experience = new Experience();
 export const brain = createBrain({ learned, experience });
 

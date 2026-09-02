@@ -1,12 +1,12 @@
 import { assertEquals, test } from "runtime:test";
 
 import { createBrain } from "../brain.js";
-import { trainExample } from "../train/example.js";
+import { illustration } from "../../fixtures/illustration.js";
 import { experienceIn, loadLearned, open, saveLearned } from "./store.js";
 
 test("training survives a round trip through sqlite unchanged", async () => {
   const db = await open();
-  const taught = trainExample();
+  const taught = illustration();
   await saveLearned(db, taught);
 
   const loaded = await loadLearned(db);
@@ -15,9 +15,9 @@ test("training survives a round trip through sqlite unchanged", async () => {
 
 test("a brain loaded from sqlite answers exactly as the taught one does", async () => {
   const db = await open();
-  await saveLearned(db, trainExample());
+  await saveLearned(db, illustration());
   const loaded = createBrain({ learned: await loadLearned(db) });
-  const taught = createBrain({ learned: trainExample() });
+  const taught = createBrain({ learned: illustration() });
 
   for (const turn of [["hey"], ["stop", "that"], ["plughxyz"], ["touch"]]) {
     assertEquals(loaded.sense(turn).express, taught.sense(turn).express);
@@ -26,9 +26,9 @@ test("a brain loaded from sqlite answers exactly as the taught one does", async 
 
 test("saving replaces what was there rather than merging with it", async () => {
   const db = await open();
-  await saveLearned(db, trainExample());
+  await saveLearned(db, illustration());
 
-  const narrowed = trainExample();
+  const narrowed = illustration();
   narrowed.effects.delete([...narrowed.effects.keys()][0]);
   await saveLearned(db, narrowed);
 
@@ -40,7 +40,7 @@ test("experience written to sqlite reads back in the order it happened", async (
   const experience = experienceIn(db, (error) => {
     throw error;
   });
-  const brain = createBrain({ learned: trainExample(), experience });
+  const brain = createBrain({ learned: illustration(), experience });
   brain.sense(["hey", "stop", "that"]);
 
   const steps = await experience.all();
