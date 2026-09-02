@@ -1,11 +1,21 @@
+/*
+  A core sample. Each chain is a bore going straight down through layers of
+  explanation, and it either strikes bedrock or the drill stops short.
+  Depth is the information, so depth is what the layout shows.
+*/
+
 :root {
-  --bg: #0e0f12;
-  --panel: #16181d;
-  --line: #262a32;
-  --ink: #e6e8ec;
-  --dim: #7f8794;
-  --live: #7fd6a0;
-  --dead: #d98b7a;
+  --void: #131722;
+  --deep: #0e1119;
+  --ink: #dfe4ef;
+  --faint: #6f7a92;
+  --line: #29314492;
+  --bedrock: #e8b563;
+  --broken: #c47b81;
+
+  --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  --sans: ui-sans-serif, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
+
   color-scheme: dark;
 }
 
@@ -13,61 +23,132 @@
 
 body {
   margin: 0;
-  padding: 3rem 1.5rem 5rem;
-  background: var(--bg);
+  background: var(--void);
   color: var(--ink);
-  font: 15px/1.6 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
 }
 
-x-ask { display: block; max-width: 62rem; margin: 0 auto; }
+x-ask {
+  display: block;
+  min-height: 100vh;
+  padding: clamp(2rem, 7vh, 5rem) clamp(1.25rem, 5vw, 4rem) 5rem;
+}
 
-h1 { margin: 0; font-size: 1.4rem; font-weight: 600; letter-spacing: -0.01em; }
+/* ── the question is the headline ─────────────────────────────── */
 
-header p { margin: 0.4rem 0 1.5rem; color: var(--dim); }
+.ask {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0 0.5em;
+  font-family: var(--serif);
+  font-size: clamp(2rem, 6.5vw, 3.75rem);
+  line-height: 1.15;
+}
 
-input {
-  width: 100%;
-  padding: 0.9rem 1rem;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--panel);
+.ask span { color: var(--faint); }
+
+.ask input {
+  flex: 1 1 8ch;
+  min-width: 8ch;
+  padding: 0 0 0.1em;
+  border: 0;
+  border-bottom: 3px solid var(--bedrock);
+  border-radius: 0;
+  background: none;
   color: var(--ink);
   font: inherit;
+  caret-color: var(--bedrock);
+}
+
+.ask input::placeholder { color: #3a4358; }
+.ask input:focus { outline: none; background: #ffffff08; }
+.ask input:focus-visible { outline: 2px solid var(--bedrock); outline-offset: 4px; }
+
+.hint {
+  margin: 1.25rem 0 0;
+  max-width: 46ch;
+  color: var(--faint);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* ── the bores ────────────────────────────────────────────────── */
+
+.field {
+  display: flex;
+  align-items: start;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  margin-top: clamp(2.5rem, 8vh, 4.5rem);
+  padding-bottom: 1rem;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.bore {
+  flex: 0 0 auto;
+  text-align: center;
+  font-family: var(--serif);
+}
+
+.head {
+  padding-bottom: 0.15em;
+  border-bottom: 1px solid var(--line);
+  font-size: 1.45rem;
+  letter-spacing: -0.01em;
+}
+
+.strata { margin: 0; padding: 0; list-style: none; }
+
+.strata li {
+  font-size: 1rem;
+  /* the deeper the layer, the closer it gets to bedrock's colour */
+  color: color-mix(in oklab, var(--ink), var(--bedrock) calc(var(--i, 0) * 14%));
+}
+
+/* the drop line between one layer and the next */
+.strata li::before {
+  content: "";
+  display: block;
+  width: 1px;
+  height: 1.55rem;
+  margin: 0 auto;
+  background: var(--line);
+}
+
+.strata li.floor {
+  padding-bottom: 0.4rem;
+  border-bottom: 3px solid var(--bedrock);
+  color: var(--bedrock);
+}
+
+/* a bore that never struck anything: the line trails off and stops */
+.trail {
+  width: 1px;
+  height: 2.4rem;
+  margin: 0 auto;
+  background: linear-gradient(var(--broken), transparent);
+}
+
+.stopped {
+  margin: 0.5rem 0 0;
+  max-width: 18ch;
+  color: var(--broken);
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.stopped em { font-style: normal; color: var(--ink); }
+
+.idle {
+  margin-top: clamp(2.5rem, 8vh, 4.5rem);
+  color: var(--faint);
+  font-family: var(--serif);
   font-size: 1.1rem;
 }
 
-input:focus { outline: none; border-color: var(--dim); }
-
-main { margin-top: 2rem; display: grid; gap: 1rem; }
-
-section {
-  padding: 1.1rem 1.25rem;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--panel);
+@media (prefers-reduced-motion: no-preference) {
+  .ask input { transition: background-color 120ms ease; }
 }
-
-h2 { margin: 0 0 0.8rem; font-size: 0.95rem; font-weight: 600; color: var(--dim); }
-
-h2::before { content: "of "; color: var(--line); }
-
-ol {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.35rem 0;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-li { padding: 0.15rem 0; }
-
-li + li::before { content: "→"; margin: 0 0.6rem; color: var(--line); }
-
-.end { color: var(--dead); }
-.end.bottom { color: var(--live); }
-
-.why { margin: 0.7rem 0 0; font-size: 0.85rem; color: var(--dim); }
-
-.idle { color: var(--dim); }

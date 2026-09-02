@@ -1,4 +1,4 @@
-/** Type a word. See what it is, all the way down. */
+/** Type a word. See how far down each part of it goes. */
 
 import { define, html, update } from "@opentf/micro-ui";
 import world from "../../data/world.json" with { type: "json" };
@@ -6,46 +6,42 @@ import { createBrain } from "../../src/brain.js";
 
 const brain = createBrain(world);
 
-const ENDS = {
-  bottom: "nothing is under this",
-  untaught: "not taught yet",
-  unknown: "never seen this",
-  circular: "it explains itself",
-};
+function why({ of, chain, ends }) {
+  const last = chain.at(-1) ?? of;
+  if (ends === "untaught") return html`nothing explains <em>${last}</em> yet`;
+  if (ends === "circular") return html`<em>${last}</em> explains itself`;
+  return html`never seen <em>${of}</em>`;
+}
 
-/** Declared, not assigned to a const — the render runs during `define`. */
-function chains(found) {
-  return found.map(
-    (one) => html`
-      <section>
-        <h2>${one.of}</h2>
-        <ol>
-          ${one.chain.map((step) => html`<li>${step}</li>`)}
-          <li class=${"end " + one.ends}>${one.ends === "bottom" ? "null" : "?"}</li>
-        </ol>
-        <p class="why">${ENDS[one.ends]}</p>
-      </section>
-    `,
-  );
+function bore(one) {
+  const layers = one.chain.slice(1);
+  const struck = one.ends === "bottom";
+
+  return html`
+    <article class="bore">
+      <div class="head">${one.of}</div>
+      <ol class="strata">
+        ${layers.map((step, i) => html`
+          <li style=${`--i:${i + 1}`} class=${struck && i === layers.length - 1 ? "floor" : ""}>${step}</li>
+        `)}
+      </ol>
+      ${struck ? "" : html`<div class="trail"></div><p class="stopped">${why(one)}</p>`}
+    </article>
+  `;
 }
 
 define("x-ask", (el) => {
   let word = "hi";
-
-  const onInput = (event) => {
-    word = event.target.value.trim().toLowerCase();
-    update(el);
-  };
+  const onInput = (e) => { word = e.target.value.trim().toLowerCase(); update(el); };
 
   return () => html`
-    <header>
-      <h1>what is this?</h1>
-      <p>Every answer is asked the same question again, until nothing answers.</p>
+    <h1 class="ask">
+      <span>what is</span>
       <input value=${word} oninput=${onInput} placeholder="hi" autofocus spellcheck="false" />
-    </header>
-
-    <main>
-      ${word === "" ? html`<p class="idle">type something</p>` : chains(brain(word).chains)}
-    </main>
+    </h1>
+    <p class="hint">Every answer is asked the same question again. A bore ends at bedrock — the one thing nothing explains — or stops where the knowledge runs out.</p>
+    ${word === ""
+      ? html`<p class="idle">Ask about any word.</p>`
+      : html`<div class="field">${brain(word).chains.map(bore)}</div>`}
   `;
 });
