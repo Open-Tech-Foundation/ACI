@@ -27,7 +27,7 @@
     "y": "character",
     "z": "character",
     "character": "symbol",
-    "symbol": "thing",
+    "symbol": "sign",
     "word": "symbol",
     "hi": "word",
     "shape": "form",
@@ -44,6 +44,7 @@
     "property": "existence",
     "relation": "existence",
     "action": "existence",
-    "existence": null
+    "existence": null,
+    "sign": "relation"
   }
 }
