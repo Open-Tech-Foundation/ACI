@@ -24,6 +24,17 @@ export function trainExample(learned = new Learned()) {
   learned.effect("alarmed", "that", "alarmed");
   learned.expresses("alarmed", "back-off");
 
+  // The `text` channel is something it recognises and is not moved by: it
+  // knows a message arrived, and knowing that is not the same as being changed
+  // by it. Without these it would treat its own input framing as a surprise.
+  //
+  // Note the shape of the cost — one row per state, for every channel that
+  // means nothing in itself. Channels are few, so this stays small, but it is
+  // the same shape as the problem in SPEC.md §8.
+  for (const state of ["idle", "comfort", "greeted", "alarmed", "puzzled"]) {
+    learned.effect(state, "text", state);
+  }
+
   // `unknown` is trained like any other signal, per state.
   learned.effect("idle", UNKNOWN, "puzzled");
   learned.effect("greeted", UNKNOWN, "puzzled");

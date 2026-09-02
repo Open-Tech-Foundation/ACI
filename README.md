@@ -21,7 +21,8 @@ languages, emotions — is built out of them.
 | **Expression** | `state -> signal`. A read-out, not a decision |
 
 `brain()` is a definite process over them — `understand()`, then `think()`,
-then `solve()`, always in that order.
+then `solve()`, always in that order. It does not know what a word is; words
+arrive as signals like everything else.
 
 A turn may carry several signals, applied one at a time. Meaning is where the
 walk ends, not what any one signal is:
@@ -40,13 +41,25 @@ Two rules keep it total, so the brain can never fail and never guess:
 
 ## Using it
 
+You send what actually arrived. `signal` names the channel; any other field is
+detail about it. Internal names never appear.
+
 ```js
 import { createACI } from "aci";
 
 const aci = createACI();
-aci("touch");           // "feel"
-aci(["hey", "stop"]);   // "back-off"
+
+aci({ signal: "touch", place: "shoulder" });
+// { express: "feel" }
+
+aci({ signal: "text", message: "hey stop that" });
+// { express: "back-off" }
+
+aci({ signal: "touch" }, { signal: "text", message: "hey" });
+// one turn, both inputs, in the order given
 ```
+
+`express` is `null` for silence, which is a real answer and not a failure.
 
 A session is one brain, and its state carries from call to call — which is why
 two identical inputs can come out differently.
@@ -72,6 +85,7 @@ root.
 |---|---|
 | `tsr test` | the whole suite |
 | `tsr cli` | walk the specification's examples in a terminal |
+| `tsr audit` | what a brain's training amounts to — reachability, holes, context |
 | `tsr dev` | the demo site, with reload |
 | `tsr build` | the library into `dist/` |
 | `tsr site` | the demo site into `demo/dist/` |
@@ -89,6 +103,8 @@ sqlite, needs anything.
 | `SPEC.md` | the design. Read this first |
 | `src/aci.js` | the front door: send it something, it answers |
 | `src/brain.js` | understand, think, solve |
+| `src/receive.js` | what an integrator sent, spelled out as signals |
+| `src/audit.js` | measuring a brain's training (`SPEC.md` §11) |
 | `src/memory/` | learned, experience, and the sqlite store |
 | `src/train/example.js` | the specification's examples, as training |
 | `spec/` | behaviour tests, which know only the front door |

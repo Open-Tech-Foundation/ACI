@@ -20,7 +20,7 @@ import { createACI } from "../src/aci.js";
 
 /**
  * @param name  what the model should do, in plain words
- * @param body  receives `aci`, a fresh session callable as `aci(input)`, and
+ * @param body  receives `aci`, a fresh session callable as `aci(...inputs)`, and
  *              `another()`, which opens a second session with the same
  *              training — for saying that one session cannot reach into another
  * @param teach optional: train these sessions instead of using the default
@@ -32,19 +32,18 @@ export function scenario(name, body, { teach } = {}) {
 function session(teach) {
   const model = createACI(teach ? { teach } : {});
 
-  return (input) => {
-    // A turn is one signal or a sequence of them. It is deliberately not a
-    // sentence: splitting text into signals is Layer 1's job and Layer 1 does
-    // not exist yet, so a spec test that wants a sequence writes an array.
-    const sent = Array.isArray(input) ? input.join(" ") : String(input);
-    const said = model(input);
+  return (...inputs) => {
+    // Exactly what an integrator would send: what arrived, on which channel,
+    // with whatever detail their hardware had. No internal names appear here.
+    const sent = JSON.stringify(inputs.length === 1 ? inputs[0] : inputs);
+    const { express } = model(...inputs);
 
     return {
       answers(expected) {
-        assertEquals(said, expected, `"${sent}" should answer "${expected}"`);
+        assertEquals(express, expected, `${sent} should answer "${expected}"`);
       },
       saysNothing() {
-        assertEquals(said, null, `"${sent}" should say nothing, said "${said}"`);
+        assertEquals(express, null, `${sent} should say nothing, said "${express}"`);
       },
     };
   };

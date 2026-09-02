@@ -27,12 +27,21 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   it, written and never read back), and the current state as live context.
 - `runtime:db` sqlite behind both persistent memories, kept in
   `src/memory/store.js` so the rest of the engine runs under `--deny-all`.
-- `createACI()`, a front door that takes a turn and answers, and `spec/`:
-  behaviour tests written against that alone, so the internals can be rebuilt
-  without editing them.
+- `createACI()`, a front door that takes what an integrator actually sends —
+  `{ signal: "touch", place: "shoulder" }`, `{ signal: "text", message: "…" }` —
+  and answers `{ express }`. Internal atom names never cross it.
+- Reception: the channel, then the detail values in sorted order of their field
+  names. Field names are not signals, because only what actually arrived should
+  become one.
+- `spec/`: behaviour tests written against the front door alone, so the
+  internals can be rebuilt without editing them.
+- `tsr audit`, which walks a brain's training exhaustively and reports what it
+  amounts to: unreachable training, silent and stuck states, how many different
+  things it can say, and which signals carry context. No sampling and no scores
+  — every number is a fact about what was taught.
 - `bin/aci.js`, a terminal client that walks the specification's examples.
 - A Micro-UI demo that draws the walk and lists everything the brain was taught.
-- 59 tests, of which 14 are behaviour tests that know nothing about the
+- 86 tests, of which 23 are behaviour tests that know nothing about the
   internals.
 
 ### Removed

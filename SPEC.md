@@ -146,13 +146,29 @@ There is no fourth step and no path around these three.
 
 ### 3.1 The front door
 
-Everything above is how the model works. What it *does* is one thing:
+Everything above is how the model works. What it *does* is one thing: you send
+it what arrived, and it answers.
+
+Nobody integrating this model should have to know its internal atom names. They
+send what their hardware or their interface actually observed, in a fixed
+shape — `signal` names the channel it arrived on, and any other field is detail
+about it:
 
 ```
 const aci = createACI();
-aci("touch")            // -> "feel"
-aci(["hey", "stop"])    // -> "back-off"
+
+aci({ signal: "touch", place: "shoulder" });
+// -> { express: "feel" }
+
+aci({ signal: "text", message: "hey stop that" });
+// -> { express: "back-off" }
+
+aci({ signal: "touch", place: "shoulder" }, { signal: "text", message: "hey" });
+// one turn, both inputs, in the order given
 ```
+
+`{ express }` is what it has to say — `null` for silence, which is a real
+answer and not a failure.
 
 A session is one brain, and its state carries from call to call. That is not an
 implementation detail — it is the whole reason two identical inputs can come
@@ -163,7 +179,37 @@ against it and nothing else, so Layer 0 can be rebuilt underneath them without
 touching a line. If a refactor requires editing one of those tests, the
 behaviour changed, and that belongs in this document first.
 
-### 3.2 A turn is a sequence
+### 3.2 Reception
+
+**Status: Settled, and built.**
+
+Reception is the one place that turns what an integrator sent into signals. It
+spells each input out as atoms, in a fixed order: **the channel, then the detail
+values, taken in sorted order of their field names** so that two integrators who
+write the same fields in a different order get the same answer.
+
+```
+{ signal: "touch", place: "shoulder" }        ->  touch  shoulder
+{ signal: "text", message: "hey stop that" }  ->  text  hey  stop  that
+```
+
+Field *names* are not spelled out, and that is the whole rule: **only what
+actually arrived becomes a signal.** `shoulder` arrived. `place` did not — it is
+how the integrator labelled the field, and manufacturing a signal out of it
+would hand the brain something nobody sent.
+
+A value carrying several words becomes several atoms, and nothing else happens
+to it: no lowercasing, no punctuation stripping, no spelling correction, no
+synonyms. All of that is Layer 1 (§6). Until Layer 1 exists, `Hey` and `hey` are
+two different atoms and the brain says so.
+
+A consequence worth stating: a channel that carries no meaning of its own — like
+`text` — still arrives as an atom, so a brain must be taught that it recognises
+it and is not moved by it. That costs one row per state, per such channel.
+Channels are few, so it stays small, but it is the same shape as the problem in
+§8.
+
+### 3.3 A turn is a sequence
 
 A turn may carry more than one signal. Signals are applied **one at a time, in
 the order they arrived**, each moving the brain from wherever the previous one
@@ -173,7 +219,7 @@ This is where meaning comes from. Meaning is not attached to a signal; meaning
 is *where the sequence leaves you*. The same first signal followed by different
 later signals ends somewhere else, and therefore expresses something else.
 
-### 3.3 Worked example — the original loop
+### 3.4 Worked example — the original loop
 
 ```
 input   { sense: "touch" }
@@ -183,7 +229,7 @@ input   { sense: "touch" }
 output  { express: "feel" }
 ```
 
-### 3.4 Worked example — why tone changes meaning
+### 3.5 Worked example — why tone changes meaning
 
 Given the same opening signal `hey`:
 
@@ -245,17 +291,75 @@ extending the engine.
 
 ## 6. Language
 
-**Status: Deferred to Layer 1.**
+**Status: Proposed. This is Layer 1, and it is next.**
 
-Text, words, phrases, spelling variants and languages do not exist in Layer 0.
+Words, spellings, synonyms and languages do not exist in Layer 0 and never
+will. Layer 1 is a **translator at the edges**, and the brain is not told it
+exists.
 
-Layer 1 will be a translator with one job: turn incoming text into a **sequence
-of signals** that Layer 0 already understands, and turn an expressed signal back
-into text. Layer 0 will not know that this happened.
+### 6.1 The shape of it
 
-Nothing about Layer 1 is agreed yet. In particular, whether an unrecognised
-word resolves by spelling similarity — or resolves to `unknown` and stops — is
-**Open**, and the answer must not introduce scoring into Layer 0.
+Two taught tables, one per direction:
+
+```
+form   -> signal     "hi", "hello", "hey", "Hey", "Hi!"  ->  hey
+signal -> form       hello  ->  "Hello"
+```
+
+That is the same shape as everything in Layer 0: a lookup that is total by
+having an `unknown`, with no scoring anywhere. Spelling variants and synonyms
+are the *same mechanism* — many forms, one signal — so `hi` and `hello` needing
+one entry each is not a special case of anything.
+
+Anything with no entry becomes `unknown`, exactly as now. **No spelling
+similarity, no phonetic matching, no nearest-neighbour.** If we want `helo` to
+mean `hey`, somebody teaches it. That is the price of §1, and it is the right
+price: a model that reaches for the nearest thing is guessing, and the previous
+engine's worst failures were all of that kind.
+
+### 6.2 A phrase is not a signal
+
+`how are you` does **not** become one signal. It becomes three — `how`, `are`,
+`you` — and the walk through them is what carries the meaning.
+
+This matters. The engine that stood here before matched the longest known
+phrase, and that is exactly how `how are you not going` came to be answered as
+a question about wellbeing: the phrase was ripped out of its context and the
+rest discarded. Under Layer 0 there is nothing to rip out. The words arrive in
+order, each moving the brain from wherever the last one left it, and a sentence
+that goes somewhere unexpected simply lands somewhere else.
+
+So **the state space is where grammar lives**, and it is grammar the model was
+taught rather than grammar somebody coded.
+
+### 6.3 Tone
+
+Punctuation is a signal like any other. `hey` and `!` are two atoms, and the
+walk `hey -> !` ends somewhere other than `hey` alone. §3.5's example — the same
+greeting reading as friendly or as annoyed — needs no notion of tone in the
+model at all.
+
+### 6.4 What this buys — languages are interchangeable
+
+The brain is language-independent, because it never sees a word. A language is
+nothing but a pair of edge tables. Two languages whose words map onto the same
+signals will make the same brain behave identically, and **translation falls
+out for free**: read in through one table, write out through another, with no
+part of the model in between knowing that anything was translated.
+
+This is the strongest argument for the architecture, and it should be tested as
+soon as Layer 1 exists: teach a second language over the same brain, and assert
+that both give the same answer to the same meaning.
+
+### 6.5 Open within Layer 1
+
+- **Choosing the language.** Detecting it from the input is a scoring problem
+  and is therefore out. The session names its language, or a form maps to
+  `(language, signal)` and a form claimed by two languages with different
+  signals is a conflict refused at teaching time. Not decided.
+- **Case and punctuation.** Whether `Hey`, `hey` and `hey!` are one form or
+  three is a teaching decision, not an algorithm. Leaning towards: they are
+  separate forms, and a language may teach them onto the same signal.
 
 ---
 
@@ -274,10 +378,17 @@ explicitly, with its own section in this document.
 
 ## 8. Open questions
 
-1. **Effect compression.** Every effect is currently taught per `(state,
-   signal)` pair, so teaching "this signal upsets me no matter where I am"
-   means one row per state. A default or wildcard would fix this, but it is a
-   new concept and would weaken the "nothing is inferred" rule. Not answered.
+1. **Effect compression — the sharpest one.** Every effect is taught per
+   `(state, signal)` pair, so "this signal means the same wherever I am" costs
+   one row per state. This is no longer theoretical: it showed up the moment
+   reception became real, because a channel like `text` that means nothing in
+   itself has to be taught as inert in every state (§3.2). Left alone, teaching
+   cost grows as *states × signals*, and Layer 1 multiplies both.
+
+   A default or wildcard effect would fix it, and would weaken "nothing is
+   inferred" — a default is a claim about pairs nobody taught. **This is the
+   next concept the model will need, and it is a decision to take deliberately
+   rather than let leak in.** `tsr audit` reports the numbers that say when.
 2. **One state or several.** The brain holds exactly one state. A real mind
    holds more than one thing at once. Left at one until a concrete need shows
    up.
@@ -285,18 +396,29 @@ explicitly, with its own section in this document.
    `actions`, `data` — is not part of Layer 0, which emits a single expressed
    signal. Where that structure is assembled is not decided.
 4. **Layer 1 word resolution.** See §6.
+5. **A detail's role.** `{ place: "shoulder" }` and `{ avoiding: "shoulder" }`
+   reach the brain identically, because reception spells out values and not
+   field names (§3.2). A role is structure, and Layer 0 has no structure, only
+   atoms in order. Whether roles ever need to reach the brain is not decided.
 
 ---
 
 ## 9. Layers
 
-| Layer | What it adds | Status |
-|---|---|---|
-| 0 | signal, state, effect, expression; `brain()`; three memories | Built |
-| 1 | text in and out; the mapping from words to signals | Next |
-| 2 | languages as groupings over Layer 1 | Not started |
-| 3 | structured output (`response`, `type`, `actions`, `data`) | Not started |
-| 4 | experience feeding back into learning | Deferred |
+Each layer is built only on the one below it, and nothing in a lower layer
+knows the layers above it exist.
+
+| Layer | What it adds | What it buys | Status |
+|---|---|---|---|
+| 0 | signal, state, effect, expression; `brain()`; reception; three memories | a brain that answers deterministically, and can never guess | **Built** |
+| 1 | forms ↔ signals: words, spellings, synonyms, punctuation | it can be spoken to, and a sentence is a walk rather than a lookup (§6) | **Next** |
+| 2 | languages as named pairs of Layer 1 tables | the same brain in any language, and translation for free (§6.4) | after 1 |
+| 3 | structured output — `response`, `type`, `actions`, `data` | an integrator can act on an answer, not just read it | after 1 |
+| 4 | effect compression, whatever we decide it is (§8.1) | training that grows with what is taught, not with the square of it | when §8.1 forces it |
+| 5 | experience feeding back into learning | it changes from what happened to it | deferred by decision (§7) |
+
+Layer 4 is placed after 3 on purpose: the cost problem should be measured under
+a real vocabulary before we choose a cure for it.
 
 ---
 
@@ -309,7 +431,7 @@ explicitly, with its own section in this document.
 | `src/memory/learned.js` | signals, states, effects, expressions |
 | `src/memory/experience.js` | the log, in process |
 | `src/memory/store.js` | both persistent memories in runtime sqlite |
-| `src/train/example.js` | §3.3 and §3.4 as training, and nothing more |
+| `src/train/example.js` | §3.4 and §3.5 as training, and nothing more |
 | `spec/` | behaviour tests, written against the front door alone |
 | `demo/` | a page that draws the walk and lists everything taught |
 
@@ -330,8 +452,84 @@ rather than adapted.
 
 ---
 
+## 11. Evaluating it
+
+**Status: Proposed. Partly built — `tsr audit`.**
+
+A prediction system is evaluated by how often it is right. That question does
+not apply here: this model is right by construction, because it only ever says
+what somebody taught it to say. So the useful questions are different ones.
+
+### 11.1 What counts as intelligence here
+
+Generalisation in a prediction system means answering something close to what it
+saw. There is no "close to" in this model, so generalisation has to mean
+something else, and it does:
+
+> **Intelligence, for ACI, is reaching states nobody walked it to.**
+
+Training teaches individual effects. A walk composes them. When a sequence of
+signals nobody ever taught as a sequence arrives at a state that answers
+sensibly, the model has done something it was not told to do — without guessing,
+and without ceasing to be deterministic. That is the whole bet, and it is
+measurable.
+
+### 11.2 The ladder
+
+Each rung is a thing the model can do that the one below it cannot.
+
+| | It can… | Test |
+|---|---|---|
+| 0 | answer at all | `spec/` today |
+| 1 | be spoken to in words | Layer 1 |
+| 2 | answer the *same* words differently, because of what came before | an **ambiguous signal** exists (§11.3) |
+| 3 | answer a combination nobody taught as a combination | a walk of *n* signals reaching a sensible state with no *n*-signal training |
+| 4 | say the same thing in another language | Layer 2, §6.4 |
+| 5 | change from what has happened to it | Layer 5, deferred |
+
+We are on rung 0 and the example training does not yet reach rung 2 — which
+`tsr audit` says out loud.
+
+### 11.3 The instruments
+
+`tsr audit` walks the training exhaustively — no sampling, no test set — and
+reports:
+
+| Measure | What a bad number means |
+|---|---|
+| **reachable / unreachable** | training nothing can ever arrive at. Dead rows |
+| **silent** | reachable states that say nothing. Fine on purpose, a hole by accident |
+| **stuck** | reachable states that say nothing and lead nowhere. The brain falls in and never speaks again. Should be zero |
+| **answers** | how many different things it can ever say. Its whole expressive range |
+| **ambiguous** | signals that can turn the answer into more than one thing. **This is rung 2.** Zero means the model is still a lookup table |
+| **conditional** | signals that act somewhere and not elsewhere. Weak context |
+| **inert** | signals that never change the answer anywhere. Usually framing, sometimes a mistake |
+
+Two more that are not built yet, and should be:
+
+- **Teaching cost.** Rows taught per behaviour gained. If it climbs, §8.1 is
+  overdue. This is the number that says when the model needs its next primitive.
+- **Discrimination.** A list of input pairs that *should* answer differently and
+  pairs that *should* answer the same, asserted. Unlike everything above it
+  needs human judgement about what ought to happen, which is exactly why it is
+  worth writing down.
+
+### 11.4 What we will not measure
+
+No accuracy, no F1, no benchmark suite, no held-out set. Those measure how well
+a system guesses. If ACI ever needs them, something has gone wrong upstream of
+the numbers.
+
+---
+
 ## Revision history
 
+- **2026-09-02** — Reception (§3.2): the front door takes what an integrator
+  actually sends, and only what arrived becomes a signal. Layer 1 designed
+  (§6): forms map to signals, a phrase is a walk and not a lookup, and
+  languages become interchangeable edge tables. Evaluation defined (§11), with
+  `tsr audit` built. Effect compression promoted to the sharpest open question
+  now that reception has made it concrete.
 - **2026-09-02** — Layer 0 built. Added the front door (§3.1) and the split
   between behaviour and unit tests, the conflict rule for contradictory
   training, the taught-self-loop clarification, and what experience records.
