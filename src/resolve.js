@@ -18,6 +18,15 @@ export function resolve(knowledge, gap) {
   return { answer: [], because: [] };
 }
 
+/** How each side reached the scale, then the scale itself. */
+function steps(left, a, right, b, order) {
+  const walk = [];
+  if (a !== left) walk.push([left, "is-a", a]);
+  if (b !== right) walk.push([right, "is-a", b]);
+  walk.push(order);
+  return walk;
+}
+
 /**
  * Walk both sides up until they meet on the same scale, then read the order
  * off. Nothing is measured and no number is involved.
@@ -29,10 +38,16 @@ function which(knowledge, { relation, want, between: [left, right] }) {
   for (const a of ups) {
     for (const b of downs) {
       if (knowledge.holds([a, relation, b])) {
-        return { answer: [want === "more" ? right : left], because: [[a, relation, b]] };
+        return {
+          answer: [want === "more" ? right : left],
+          because: steps(left, a, right, b, [a, relation, b]),
+        };
       }
       if (knowledge.holds([b, relation, a])) {
-        return { answer: [want === "more" ? left : right], because: [[b, relation, a]] };
+        return {
+          answer: [want === "more" ? left : right],
+          because: steps(left, a, right, b, [b, relation, a]),
+        };
       }
     }
   }

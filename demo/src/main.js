@@ -1,4 +1,4 @@
-/** Type a question; watch it compile, derive and answer. */
+/** Ask it something, see the answer and where it came from. */
 
 import { define, html, onReady, store, update } from "@opentf/micro-ui";
 
@@ -29,8 +29,8 @@ define("aci-app", () => () => html`
   <header class="masthead">
     <h1>ACI</h1>
     <p class="tagline">
-      A question is a gap. It is compiled into one, filled from what the brain
-      holds, and answered with a kind — never a sentence it made up.
+      Ask it something. It answers only from what it holds, or says it does not
+      know — and it will tell you which facts the answer came from.
     </p>
     <dl class="counts">
       <div><dt>Taught</dt><dd>${String(knowledge.given.length)}</dd></div>
@@ -73,53 +73,46 @@ define("aci-answer", (el) => {
 
   return () => {
     const asked = store.get("asked");
-    if (asked === null) {
-      return html`<section class="answer">
-        <p class="empty">Ask something, and every step from your words to the answer appears here.</p>
-      </section>`;
+    if (asked === null) return html`<section class="answer"></section>`;
+
+    if (asked.answer.length === 0) {
+      return html`
+        <section class="answer">
+          <p class="said none">I don't know.</p>
+          <p class="why">
+            ${asked.gap === null
+              ? "I could not work out what is being asked."
+              : "Nothing I hold fills that."}
+            ${asked.unknown.length > 0
+              ? html` I have never met ${asked.unknown.join(", ")}.`
+              : ""}
+          </p>
+        </section>
+      `;
     }
 
     return html`
       <section class="answer">
-        <h2>${asked.text}</h2>
-
-        <h3>Words</h3>
-        <ul class="tokens">
-          ${asked.read.map((token) => html`
-            <li class="token as-${token.as}">
-              <span class="word">${token.word}</span>
-              <span class="as">${token.kind ?? token.relation ?? token.ask ?? token.as}</span>
-            </li>
-          `)}
-        </ul>
-
-        <h3>The gap</h3>
-        ${asked.gap === null
-          ? html`<p class="none">It could not be compiled into a gap, so there is nothing to fill.</p>`
-          : html`<pre class="gap">${JSON.stringify(asked.gap, null, 2)}</pre>`}
-
-        <h3>Answer</h3>
-        ${asked.answer.length === 0
-          ? html`<p class="none">Nothing. It will not invent one.</p>`
-          : html`<ul class="said">${asked.answer.map((one) => html`<li>${one}</li>`)}</ul>`}
-
+        <p class="said">${asked.answer.join(", ")}</p>
         ${asked.because.length > 0
           ? html`
-            <h3>Because</h3>
-            <ul class="facts">
+            <ol class="why">
               ${asked.because.map((fact) => html`
-                <li>
-                  <span class="from">${fact[0]}</span>
-                  <span class="rel">${fact[1]}</span>
-                  <span class="to">${fact[2]}</span>
-                </li>
+                <li>${readable(fact)}</li>
               `)}
-            </ul>`
+            </ol>`
           : ""}
       </section>
     `;
   };
 });
+
+/** A fact, readably. Arrows rather than invented grammar. */
+function readable([from, relation, to]) {
+  if (relation === "is-a") return `${from} \u2192 ${to}`;
+  if (relation === "less-weight") return `${from} weighs less than ${to}`;
+  return `${from} ${relation.replace(/-/g, " ")} ${to}`;
+}
 
 define("aci-known", () => () => {
   const rows = ledger();

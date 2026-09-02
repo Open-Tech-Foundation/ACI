@@ -26,7 +26,11 @@ test("comparison walks both sides up to a shared scale", () => {
 
 test("the comparison is over kinds, never over numbers", () => {
   const { because } = brain().ask("which is heavier, apple or cat?");
-  assertEquals(because, [["hand-sized", "less-weight", "carry-sized"]]);
+  assertEquals(because, [
+    ["apple", "is-a", "hand-sized"],
+    ["cat", "is-a", "carry-sized"],
+    ["hand-sized", "less-weight", "carry-sized"],
+  ]);
 });
 
 test("a gap with a relation is filled from the facts", () => {
