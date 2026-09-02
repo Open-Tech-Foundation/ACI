@@ -1,13 +1,16 @@
 import { test, assertEquals } from "runtime:test";
 import { createBrain } from "./brain.js";
 
+const IS = 0;
+const to = (id) => [{ rel: IS, to: id }];
 const world = [
-  { id: 1, name: "existence", is: null },
-  { id: 2, name: "form", is: 1 },
-  { id: 3, name: "char", is: 2 },
-  { id: 4, name: "h", is: 3 },
-  { id: 5, name: "loop", is: 5 },
-  { id: 6, name: "g", is: 99 },
+  { id: IS, name: "is", links: [] },
+  { id: 1, name: "existence", links: [] },
+  { id: 2, name: "form", links: to(1) },
+  { id: 3, name: "char", links: to(2) },
+  { id: 4, name: "h", links: to(3) },
+  { id: 5, name: "loop", links: to(5) },
+  { id: 6, name: "g", links: to(99) },
 ];
 
 const brain = createBrain(world);
