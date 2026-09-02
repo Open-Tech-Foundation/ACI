@@ -132,17 +132,61 @@ same order, with no branching between them.
 
 | Step | The question it answers | Reads | Writes |
 |---|---|---|---|
-| `understand()` | *What is this?* | learned memory | — |
-| `think()` | *What does it do to me?* | learned memory, current state | current state |
-| `solve()` | *What do I do, being in this state?* | learned memory, current state | the expression |
+| `understand()` | *Something happened — what kind?* | learned memory | — |
+| `think()` | *What was it, given where I am?* | learned memory, current state | current state |
+| `resolve()` | *What do I express?* | learned memory, current state | the expression sequence |
 
-- **`understand(incoming)`** resolves the incoming atom to a known signal, or
-  to the reserved signal `unknown`. It makes no decision and changes nothing.
-- **`think(state, signal)`** applies the effect and moves the brain to its next
-  state. This is the only step that changes the brain.
-- **`solve(state)`** reads out the expression for the state it is now in.
+- **`understand()`** recognises *that* something happened, and of what kind. It
+  knows it was touched; it does not yet know by a person or by a thing. It
+  decides nothing and changes nothing.
+- **`think()`** works out *what* happened, from where the brain already is —
+  the same touch from a stranger and from a boss are not the same event. This
+  is the only step that moves the brain.
+- **`resolve()`** is the final engine. It expresses a **sequence**, not a
+  single thing:
+
+  ```
+  [ { signal: "felt" }, { msg: "hello" } ]
+  ```
+
+  Everything the answer has to combine is combined here.
 
 There is no fourth step and no path around these three.
+
+### 3.0 The brain does not act
+
+The brain only ever responds. It runs nothing, waits for nothing, schedules
+nothing and watches nothing. The runtime around it acts on what it said, the
+way a coding agent's harness acts on a tool call.
+
+```
+runtime → signal → brain → response → runtime acts → (later) signal → brain
+```
+
+Asked to stop an oven after ten minutes, the brain answers with a request to
+set a timer. The runtime sets it. Ten minutes later the runtime sends a signal
+back in. The brain was never waiting — it answered twice.
+
+So the brain stays a pure function: `(state, signal) → (state, response)`.
+That is what keeps it deterministic, and it is why tools can be anything at all
+without changing the model.
+
+**Channels are not part of the brain.** It does not ship with senses. A kitchen
+bot declares `temperature`, a chat service declares `text`; the brain assumes no
+body and no particular way of being reached.
+
+**Skills** are things the brain can *use* to answer rather than things that
+arrive. Asked the time, it does not sense the time — it asks for it. Not yet
+designed.
+
+**A task is not a primitive.** A request to do something arrives as a signal
+like anything else; the brain understands it *as* a task, and resolves it into
+what the runtime should do — set a timer, watch for a signal, raise an alarm.
+
+**Built incrementally.** A signal does not have to be understood fully to be
+useful: `touch` answering `signal(feel)` and nothing more is a complete step.
+Meta, qualities and composition arrive when the model is restricted without
+them, never in advance.
 
 ### 3.1 The front door
 
@@ -456,7 +500,7 @@ a real vocabulary before we choose a cure for it.
 | Path | What it is |
 |---|---|
 | `src/aci.js` | the front door (§3.1) — the only thing `spec/` is allowed to know |
-| `src/brain.js` | `understand`, `think`, `solve` and a session |
+| `src/brain.js` | `understand`, `think`, `resolve` and a session |
 | `src/memory/learned.js` | signals, states, effects, expressions |
 | `src/memory/experience.js` | the log, in process |
 | `src/memory/store.js` | both persistent memories in runtime sqlite |
@@ -557,6 +601,16 @@ the numbers.
 
 ## Revision history
 
+- **2026-09-02** — The brain does not act (§3.0): it responds, and the runtime
+  acts on the response, so the brain stays a pure function and nothing outlives
+  a turn inside it. Channels are declared by the integrator, not shipped with
+  the model. Skills named as a separate idea. A task is a signal understood as
+  one, not a new primitive.
+- **2026-09-02** — `solve()` is `resolve()`, and it expresses a sequence rather
+  than one signal. The three steps restated: understand recognises the kind,
+  think resolves what it was from context, resolve composes the answer. Signals
+  stay a small closed set; meta and qualities are extensions taken only under
+  pressure.
 - **2026-09-02** — Lessons became data (§4.1): nothing under `src/` contains a
   word or a state name any more.
 - **2026-09-02** — The engine ships with no training and no vocabulary;
