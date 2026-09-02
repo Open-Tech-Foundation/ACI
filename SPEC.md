@@ -473,7 +473,9 @@ persistence lives apart from thinking.
 Two kinds of test, deliberately:
 
 - **`spec/`** knows only that you send the model something and it answers. These
-  must survive any rewrite of the internals.
+  must survive any rewrite of the internals. They run on a placeholder lesson
+  today, so they assert the shape of the contract rather than knowledge, and
+  will be rewritten when real training begins.
 - **the `*.test.js` beside each module** knows everything, and is expected to be
   thrown away with the code it describes.
 

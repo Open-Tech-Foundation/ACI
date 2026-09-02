@@ -1,6 +1,10 @@
 /**
  * Behaviour tests know one thing: you send the model something and it answers.
  * They must survive any rewrite of the internals.
+ *
+ * They currently run on a placeholder lesson, so what they assert is the shape
+ * of the contract, not knowledge. Real training has not started; when it does,
+ * these get rewritten, and until then a failure here is not worth defending.
  */
 
 import { assertEquals, test } from "runtime:test";
