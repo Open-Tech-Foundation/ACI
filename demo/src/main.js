@@ -13,6 +13,22 @@ const ENDS = {
   circular: "it explains itself",
 };
 
+/** Declared, not assigned to a const — the render runs during `define`. */
+function chains(found) {
+  return found.map(
+    (one) => html`
+      <section>
+        <h2>${one.of}</h2>
+        <ol>
+          ${one.chain.map((step) => html`<li>${step}</li>`)}
+          <li class=${"end " + one.ends}>${one.ends === "bottom" ? "null" : "?"}</li>
+        </ol>
+        <p class="why">${ENDS[one.ends]}</p>
+      </section>
+    `,
+  );
+}
+
 define("x-ask", (el) => {
   let word = "hi";
 
@@ -33,14 +49,3 @@ define("x-ask", (el) => {
     </main>
   `;
 });
-
-const chains = (found) => found.map((one) => html`
-  <section>
-    <h2>${one.of}</h2>
-    <ol>
-      ${one.chain.map((step) => html`<li>${step}</li>`)}
-      <li class=${"end " + one.ends}>${one.ends === "bottom" ? "null" : "?"}</li>
-    </ol>
-    <p class="why">${ENDS[one.ends]}</p>
-  </section>
-`);
