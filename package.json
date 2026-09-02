@@ -1,0 +1,23 @@
+{
+  "name": "aci",
+  "version": "0.1.0",
+  "description": "A rule-based reasoning engine: understand, think, solve — over a graph of words, relationships and rules.",
+  "type": "module",
+  "license": "MIT",
+  "files": ["dist"],
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "esdev test",
+    "build": "esdev build --lib src --out=dist",
+    "cli": "esrun --allow-imports bin/aci.js",
+    "demo": "esrun --allow-imports bin/aci.js --demo --trace",
+    "dev": "esdev start --config=demo/esdev.json",
+    "build:site": "esdev build --config=demo/esdev.json --minify"
+  },
+  "devDependencies": {
+    "@opentf/esrun-types": "latest"
+  }
+}

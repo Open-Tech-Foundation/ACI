@@ -1,0 +1,22 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    devDependencies:
+      '@opentf/esrun-types':
+        specifier: latest
+        version: 0.3.0
+
+packages:
+
+  '@opentf/esrun-types@0.3.0':
+    resolution: {integrity: sha512-uz4vkaTq2p6Eej8cVMCxHl3BjOqeXtohy53cyk3Zxmy562U3JPQJxVT0mMMlW7HPDY30GVyiwDH0mpBYmfXuTg==}
+
+snapshots:
+
+  '@opentf/esrun-types@0.3.0': {}
