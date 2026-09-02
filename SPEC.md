@@ -30,6 +30,30 @@ weights. Nothing in the model may produce an answer that was not put there by
 training. If the model cannot answer, that is a fact about its training, not a
 failure to be smoothed over by a guess.
 
+### 1.1 What it is for
+
+ACI is for **deterministic systems** — where being exactly right matters more
+than being able to answer anything.
+
+It will not beat a language model at open-ended questions, and should not try.
+What it has instead:
+
+- **It cannot hallucinate.** Not rarely — structurally. It says only what it
+  was taught.
+- **Every answer is traceable** to the rows that produced it.
+- **It does not drift.** Same input, same answer, next year, with no
+  retraining.
+- **It is cheap.** Table lookups. It runs on the device itself.
+
+Which fits: device assistants, triage and intake, industrial and safety
+control, regulated advice, teaching and assessment. The common thread is a
+closed domain, "I don't know" being an acceptable answer, and somebody having
+to answer for what the system said.
+
+What makes it more than a rule engine is abstraction and context — one rule
+taught over `object` covering salt, pepper and the kettle, and the same word
+meaning different things depending on what came before.
+
 ---
 
 ## 2. Layer 0 — the primitives
@@ -74,6 +98,73 @@ in → recogniser → understand → think → resolve → out
 
 The runtime is simply whoever calls the brain — a test, the CLI, a kitchen
 bot. It is not a component.
+
+### 2.0.1 Kinds relate to kinds
+
+A `kind` alone is flat. What makes a world rather than a list is that kinds
+relate to each other:
+
+```json
+{
+  "kinds": ["device", "laptop", "battery", "failure", "remedy"],
+  "relations": [
+    ["laptop",  "is-a",       "device"],
+    ["battery", "part-of",    "laptop"],
+    ["dead",    "is-a",       "failure"],
+    ["charge",  "remedy-for", "dead"]
+  ]
+}
+```
+
+A relation is a triple — kind, relation, kind — and the relation names are
+themselves a closed set that grows only under pressure.
+
+**Resolution walks these, and stops at an exit criterion:** resolve until you
+reach something the asking step can use, then stop. Not the topmost kind, not
+the most general — the first that satisfies what was asked.
+
+```
+battery → part-of → laptop → is-a → device    ✓ the rule needed a thing
+dead    → is-a → failure                      ✓ the rule needed a problem
+charge  → remedy-for → dead                   ✓ the answer
+```
+
+Nobody taught anything about salt except that it is a seasoning; a rule taught
+over `object` already covers the pepper and the kettle. That is the abstraction
+paying for itself.
+
+### 2.0.2 Composition
+
+Composition is how taught pieces make an answer nobody taught whole. The
+response is **assembled from slots**, not looked up:
+
+```
+understand → { who: other person, lang: english, kind: suffering, about: head }
+respond    → { to: third person, register: concern, content: remedy for head }
+```
+
+`resolve()` is where this happens and is the last authority, but it **decides
+nothing** — understand named the kinds, think settled what they are worth, and
+resolution walked to its exit before it ran. If two ways of filling a slot ever
+fit, that is a contradiction in the training and is refused, as conflicting
+effects already are.
+
+Where the answer is longer than slots — *"explain me algebra"* — composition
+becomes selecting and ordering what is known about a kind. The order is taught
+too, as a rule over the request: definition, then purpose, then an example. If
+nothing was taught about algebra, it says so. It does not write paragraphs it
+never learned.
+
+### 2.0.3 The base lesson
+
+Some knowledge every ACI needs before anything else: social values, human
+behaviour, and enough of the world to connect `head` to a person. It ships as
+**data, not code** — the first lesson in `data/`, which an integrator inherits
+and builds on. A kitchen bot should not have to re-teach what concern is.
+
+It is bounded by the same rule as everything else: teach a kind or a relation
+when the model is stuck without it, never in advance. Otherwise it becomes an
+encyclopedia with no end.
 
 **Signal is a closed set of three.** What separates them is whether anything
 authored it, and whether it is meant to be interpreted.
@@ -655,6 +746,11 @@ the numbers.
 
 ## Revision history
 
+- **2026-09-02** — Purpose recorded (§1.1): deterministic systems, where being
+  exactly right beats being able to answer anything. Kinds relate to kinds as
+  triples with an exit criterion for resolution (§2.0.1). Composition defined
+  as assembling an answer from slots (§2.0.2). The base lesson — social values,
+  human behaviour, world knowledge — ships as data (§2.0.3).
 - **2026-09-02** — Signal settled as a closed set of three — message, sense,
   command — separated by whether anything authored it and whether it is meant
   to be interpreted. Type is the form of the data, and is a different axis.
