@@ -1,17 +1,25 @@
-/** Type a word, see what it is, all the way down. */
-
 import { args } from "runtime:process";
-import world from "../data/world.json" with { type: "json" };
-import { createBrain } from "../src/brain.js";
+import { brain } from "../src/index.js";
 
-const brain = createBrain(world);
-const { signal, chains } = brain(args[0] ?? "hi");
+const input = args[0] ?? "hi";
+const r = await brain(input);
 
-console.log(`\n  ${signal}\n`);
-
-for (const { of, chain, ends } of chains) {
-  const line = chain.join(" -> ");
-  const tail = ends === "bottom" ? " -> null" : ` -> ? (${ends})`;
-  console.log(`  ${of.padEnd(6)} ${line}${tail}`);
+function flatten(n, d = 0, prefix = "", connector = "", isLast = true) {
+  const label = n.name === n.kind ? n.name : `${n.kind} (${n.name})`;
+  let extra = "";
+  if (n.state?.thought) extra = `  -> ${n.state.thought.pos}: ${n.state.thought.meaning} [${n.state.thought.language}]`;
+  else if (n.state?.language) extra = `  [${n.state.language}]`;
+  let s = "  ".repeat(d) + connector + label + extra + "\n";
+  const cp = prefix + (connector === "" ? "" : isLast ? "   " : "│  ");
+  (n.branch || []).forEach((c, i) => {
+    s += flatten(c, d + 1, cp, i === n.branch.length - 1 ? "└─ " : "├─ ", i === n.branch.length - 1);
+  });
+  return s;
 }
-console.log();
+
+const out = await Promise.all(
+  r.roots.map(async (n) => flatten(n)),
+);
+
+console.log(`input: ${JSON.stringify(input)}\n`);
+console.log(out.join(""));

@@ -1,46 +1,155 @@
-/** Type a word. See what it is, and what that is, down to existence. */
-
 import { define, html, update } from "@opentf/micro-ui";
-import world from "../../data/world.json" with { type: "json" };
-import { createBrain } from "../../src/brain.js";
-
-const brain = createBrain(world);
-
-function why({ of, chain, ends }) {
-  const last = chain.at(-1) ?? of;
-  if (ends === "untaught") return html`nothing explains <em>${last}</em> yet`;
-  if (ends === "circular") return html`<em>${last}</em> explains itself`;
-  return html`never seen <em>${of}</em>`;
-}
-
-function column(one) {
-  const layers = one.chain.slice(1);
-  const done = one.ends === "bottom";
-
-  return html`
-    <article class="chain">
-      <div class="head">${one.of}</div>
-      <ol class="steps">
-        ${layers.map((step, i) => html`
-          <li style=${`--i:${i + 1}`} class=${done && i === layers.length - 1 ? "last" : ""}>${step}</li>
-        `)}
-      </ol>
-      ${done ? "" : html`<div class="stop"></div><p class="note">${why(one)}</p>`}
-    </article>
-  `;
-}
 
 define("x-ask", (el) => {
-  let word = "hi";
-  const onInput = (e) => { word = e.target.value.trim().toLowerCase(); update(el); };
+  let input = "";
+  let result = null;
+  let active = "understand";
 
-  return () => html`
-    <h1 class="ask">
-      <span>what is</span>
-      <input value=${word} oninput=${onInput} placeholder="hi" autofocus spellcheck="false" />
-    </h1>
-    ${word === ""
-      ? html`<p class="idle">Ask about any word.</p>`
-      : html`<div class="field">${brain(word).chains.map(column)}</div>`}
+  async function run() {
+    const res = await fetch("/brain", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ q: input }),
+    });
+    result = await res.json();
+    active = "understand";
+    update(el);
+  }
+
+  const phases = [
+    { key: "understand", label: "1 · Understand" },
+    { key: "think", label: "2 · Think" },
+    { key: "solve", label: "3 · Solve" },
+    { key: "express", label: "4 · Express" },
+  ];
+
+  return () => {
+    const activeTree = result
+      ? active === "express"
+        ? result.roots
+        : result.phases && result.phases[active]
+      : null;
+
+    return html`
+    <div class="app">
+      <h1>ACI</h1>
+      <div class="input-row">
+        <input
+          type="text"
+          placeholder="try 'a'"
+          value=${input}
+          oninput=${(e) => { input = e.target.value; }}
+          onkeydown=${(e) => { if (e.key === "Enter") run(); }}
+        />
+        <button onclick=${run}>Think</button>
+      </div>
+      ${result &&
+        html`
+          <div class="tabs">
+            ${phases.map((p) => html`
+              <button
+                class=${active === p.key ? "tab tab-active" : "tab"}
+                onclick=${() => { active = p.key; update(el); }}
+              >
+                ${p.label}
+              </button>
+            `)}
+          </div>
+          <div class="stage">
+            <div class="stage-label">${phases.find((p) => p.key === active).label}</div>
+            ${active === "express"
+              ? html`<div class="output">${expressOutput(result.roots)}</div>`
+              : html`<pre class="tree">${render(activeTree)}</pre>`}
+          </div>
+        `}
+    </div>
   `;
+  };
 });
+
+function render(nodes) {
+  return (nodes || []).map((n) => renderNode(n)).join("");
+}
+
+function renderNode(node, prefix = "", connector = "", isLast = true) {
+  const label =
+    node.name && node.name !== node.kind ? `${node.kind} (${node.name})` : node.kind;
+  let out = prefix + connector + label + "\n";
+  const state = node.state;
+  const childPrefix = prefix + (connector === "" ? "" : isLast ? "   " : "│  ");
+  if (state && Object.keys(state).length) {
+    out += formatState(state, childPrefix + "   ");
+  }
+  (node.branch || []).forEach((child, i) => {
+    out += renderNode(
+      child,
+      childPrefix,
+      i === node.branch.length - 1 ? "└─ " : "├─ ",
+      i === node.branch.length - 1,
+    );
+  });
+  return out;
+}
+
+function formatState(state, indent) {
+  const lines = [];
+  if (typeof state.identity === "string") {
+    lines.push(`value: ${state.identity}`);
+  }
+  if (typeof state.exists === "boolean") {
+    lines.push(`exists: ${state.exists}`);
+  }
+  if (typeof state.charCount === "number") {
+    lines.push(`chars: ${state.charCount}`);
+  }
+  if (state.phonetics && state.phonetics.length) {
+    lines.push(
+      "phonetics: " +
+        state.phonetics.map((p) => `${p.char}${p.isVowel ? "(v)" : "(c)"}`).join(" "),
+    );
+  }
+  const match = state.matches && state.matches[0];
+  if (match) {
+    const lang = match.lang || "?";
+    const word = match.word
+      ? `${match.word.text} = ${match.word.meaning}`
+      : "word unknown";
+    lines.push(`lang: ${lang}`);
+    lines.push(`word: ${word}`);
+    if (match.roles && match.roles.length) {
+      lines.push(`roles: ${match.roles.join(", ")}`);
+    }
+  }
+  if (state.thought) {
+    const t = state.thought;
+    lines.push(`meaning: ${t.meaning ?? "—"}`);
+    lines.push(`pos: ${t.pos ?? "—"}`);
+  }
+  if (typeof state.language === "string") {
+    lines.push(`language: ${state.language}`);
+  }
+  if (Array.isArray(state.parts)) {
+    lines.push(`parts: ${state.parts.join(" + ")}`);
+  }
+  if (typeof state.text === "string") {
+    lines.push(`phrase: ${state.text}`);
+  }
+  return lines.length
+    ? lines
+        .filter((l) => l)
+        .map((l) => indent + "· " + l + "\n")
+        .join("")
+    : "";
+}
+
+function expressOutput(roots) {
+  const replies = [];
+  const collect = (node) => {
+    if (node.kind === "express" && node.name && node.name !== "...") {
+      replies.push(node.name);
+    }
+    (node.branch || []).forEach(collect);
+  };
+  (roots || []).forEach(collect);
+  return replies.length ? replies.join("\n") : "—";
+}

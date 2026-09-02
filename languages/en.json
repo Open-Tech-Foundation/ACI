@@ -1,0 +1,46 @@
+{
+  "name": "english",
+  "alphabet": "abcdefghijklmnopqrstuvwxyz",
+  "symbols": {
+    "letter": {
+      "characters": "abcdefghijklmnopqrstuvwxyz"
+    },
+    "punctuation": {
+      "characters": ". , ! ? ; : ' \" - ( ) [ ]"
+    }
+  },
+  "words": {
+    "hi":    { "pos": "interjection", "meaning": "greeting" },
+    "hello": { "pos": "interjection", "meaning": "greeting" },
+    "a":     { "pos": "article",      "meaning": "indefinite article" },
+    "the":   { "pos": "article",      "meaning": "definite article" },
+    "is":    { "pos": "verb",         "meaning": "to be" },
+    "are":   { "pos": "verb",         "meaning": "to be (plural)" },
+    "one":   { "pos": "numeral",      "meaning": "1" },
+    "two":   { "pos": "numeral",      "meaning": "2" },
+    "three": { "pos": "numeral",      "meaning": "3" },
+    "cat":   { "pos": "noun",         "meaning": "feline animal" },
+    "dog":   { "pos": "noun",         "meaning": "canine animal" },
+    "apple": { "pos": "noun",         "meaning": "fruit" },
+    "bird":  { "pos": "noun",         "meaning": "flying animal" },
+    "tree":  { "pos": "noun",         "meaning": "plant" }
+  },
+  "grammar": {
+    "sentence": {
+      "rules": [
+        "interjection",
+        "interjection sentence",
+        "subject predicate"
+      ]
+    },
+    "subject": {
+      "rules": ["noun", "article noun", "numeral noun"]
+    },
+    "predicate": {
+      "rules": ["verb verbComplement"]
+    },
+    "verbComplement": {
+      "rules": ["noun", "numeral", "article noun"]
+    }
+  }
+}

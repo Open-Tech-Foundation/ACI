@@ -3,6 +3,19 @@
     "web": {
       "entry": "index.html",
       "outdir": "dist"
+    },
+    "server": {
+      "entry": "server.js"
+    }
+  },
+  "start": {
+    "run": "server"
+  },
+  "permissions": {
+    "allow": {
+      "read": [".", "../languages"],
+      "listen": ["4199"],
+      "env": ["PORT"]
     }
   }
 }
