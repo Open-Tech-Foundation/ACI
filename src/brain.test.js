@@ -1,9 +1,7 @@
 import { test, assertEquals } from "runtime:test";
 import { createBrain } from "./brain.js";
 
-const world = {
-  is: { h: "char", char: "form", form: "existence", existence: null, loop: "loop", g: "gap" },
-};
+const world = { h: "char", char: "form", form: "existence", existence: null, loop: "loop", g: "gap" };
 
 const brain = createBrain(world);
 const of = (word, name) => brain(word).chains.find((one) => one.of === name);
