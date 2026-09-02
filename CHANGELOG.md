@@ -8,6 +8,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- `SPEC.md`, the evolving specification. Defines Layer 0 below emotion —
+  signal, state, effect and expression — settles emotion as a use of state
+  rather than a primitive, defers language to Layer 1 and self-learning to
+  Layer 4, and records the open questions.
 - `brain()` as `understand()` → `think()` → `solve()`, each exported and testable
   on its own. Only `think()` may read conversation state.
 - `Memory`: a typed, directed property graph of languages, words, concepts,
