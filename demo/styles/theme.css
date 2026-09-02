@@ -1,0 +1,69 @@
+/* Design tokens.
+ *
+ * The kind-* colours are not decoration: each one names a type of node in the
+ * engine's graph, so the colour of a step in the signal path tells you what
+ * kind of thing the engine was reasoning about. Change one here and it changes
+ * everywhere that kind appears. */
+
+:root {
+  color-scheme: light dark;
+
+  /* Ground: a cool drafting bone, so the coloured steps sit on something
+   * neutral rather than competing with a warm paper. */
+  --paper: #eceee8;
+  --panel: #f6f7f3;
+  --sunk: #e3e6de;
+  --ink: #14161a;
+  --muted: #666b73;
+  --rule: #d3d7cd;
+  --blue: #23417d;
+  --blue-ink: #ffffff;
+
+  --kind-word: #2f6b52;
+  --kind-language: #5c6270;
+  --kind-concept: #23417d;
+  --kind-emotion: #8a3a5e;
+  --kind-template: #7d5f18;
+  --kind-response: #14161a;
+  --kind-rule: #64478a;
+  --kind-action: #8a4a1f;
+  --kind-strategy: #5c6270;
+  --kind-unknown: #a2382a;
+
+  --sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+  --t-xs: 0.75rem;
+  --t-sm: 0.8125rem;
+  --t-base: 0.9375rem;
+  --t-md: 1.0625rem;
+  --t-lg: 1.375rem;
+  --t-xl: clamp(2rem, 1.4rem + 2.2vw, 2.75rem);
+
+  --step: 0.75rem;
+  --radius: 3px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #14161a;
+    --panel: #1b1e23;
+    --sunk: #0f1114;
+    --ink: #e8eae6;
+    --muted: #969ba3;
+    --rule: #2c3138;
+    --blue: #8ba6dd;
+    --blue-ink: #14161a;
+
+    --kind-word: #6cc59b;
+    --kind-language: #9aa2b0;
+    --kind-concept: #8ba6dd;
+    --kind-emotion: #dd8fb1;
+    --kind-template: #d6b45c;
+    --kind-response: #e8eae6;
+    --kind-rule: #b596dd;
+    --kind-action: #dd9a63;
+    --kind-unknown: #e08072;
+    --kind-strategy: #9aa2b0;
+  }
+}

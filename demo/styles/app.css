@@ -1,0 +1,467 @@
+/* The stylesheet index.html links. esdev inlines the @import at build time. */
+
+@import "./theme.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: var(--t-base) / 1.55 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+p,
+dl,
+dd,
+ol,
+ul,
+pre {
+  margin: 0;
+}
+
+ol,
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+/* A custom element is `display: inline` until told otherwise, so every one of
+ * these sat between a flex or grid container and the box meant to fill it —
+ * which is why the bench would not take the viewport's height. `contents`
+ * removes the wrapper from layout so its children become the container's own
+ * items; aci-composer keeps a box because its two roots are a group. */
+aci-app,
+aci-counts,
+aci-transcript,
+aci-signal {
+  display: contents;
+}
+
+aci-composer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------- masthead */
+
+.masthead {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: 0 1.5rem;
+  padding: 1.125rem 1.5rem;
+  border-bottom: 1px solid var(--rule);
+  background: var(--panel);
+}
+
+.masthead h1 {
+  font-size: var(--t-lg);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.tagline {
+  max-width: 46ch;
+  color: var(--muted);
+  font-size: var(--t-sm);
+}
+
+.counts {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.counts div {
+  display: flex;
+  gap: 0.375rem;
+  align-items: baseline;
+}
+
+.counts dt {
+  color: var(--muted);
+  font-size: var(--t-xs);
+}
+
+.counts dd {
+  font-family: var(--mono);
+  font-size: var(--t-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------- bench */
+
+.bench {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.console {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  gap: 1.25rem;
+}
+
+/* Long-form content stays readable however wide the window gets. */
+aci-composer,
+.transcript {
+  width: 100%;
+  max-width: 54rem;
+}
+
+/* ---------------------------------------------------------- composer */
+
+.composer {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.composer input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.6875rem 0.875rem;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: inherit;
+  font: var(--t-md) var(--mono);
+}
+
+.composer input::placeholder {
+  color: var(--muted);
+}
+
+.composer input:focus-visible,
+.examples button:focus-visible,
+.turn-body:focus-visible,
+.teach :focus-visible,
+.envelope summary:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+.send {
+  padding: 0 1.25rem;
+  border: 1px solid var(--blue);
+  border-radius: var(--radius);
+  background: var(--blue);
+  color: var(--blue-ink);
+  font: 500 var(--t-base) var(--sans);
+  cursor: pointer;
+}
+
+.examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.examples button {
+  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  font: var(--t-sm) var(--mono);
+  cursor: pointer;
+}
+
+.examples button:hover {
+  border-color: var(--blue);
+  color: var(--blue);
+}
+
+/* -------------------------------------------------------- transcript */
+
+.transcript {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-right: 0.25rem;
+}
+
+.turn {
+  border: 1px solid var(--rule);
+  border-left-width: 3px;
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+.turn.is-selected {
+  border-left-color: var(--blue);
+}
+
+.turn-body {
+  display: grid;
+  gap: 0.3125rem;
+  width: 100%;
+  padding: 0.75rem 0.875rem;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.said {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--t-sm);
+}
+
+.replied {
+  font-size: var(--t-md);
+  line-height: 1.4;
+}
+
+.readout {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  font-size: var(--t-xs);
+}
+
+.type {
+  font-family: var(--mono);
+  color: var(--kind-concept);
+}
+
+.type.kind-unknown {
+  color: var(--kind-unknown);
+}
+
+.confidence {
+  color: var(--muted);
+}
+
+.teach {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.625rem 0.875rem;
+  border-top: 1px dashed var(--rule);
+  font-size: var(--t-sm);
+}
+
+.teach label {
+  color: var(--muted);
+}
+
+.teach select {
+  padding: 0.25rem 0.375rem;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--paper);
+  color: inherit;
+  font: var(--t-sm) var(--mono);
+}
+
+.teach button {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--blue);
+  border-radius: var(--radius);
+  background: none;
+  color: var(--blue);
+  font: 500 var(--t-sm) var(--sans);
+  cursor: pointer;
+}
+
+/* ------------------------------------------------------- signal path */
+
+.signal {
+  padding: 1.5rem;
+  border-top: 1px solid var(--rule);
+  background: var(--sunk);
+}
+
+.empty {
+  max-width: 30ch;
+  color: var(--muted);
+}
+
+.stage + .stage {
+  margin-top: 1.5rem;
+}
+
+.stage h2 {
+  font-size: var(--t-base);
+  font-weight: 600;
+}
+
+.blurb {
+  margin-bottom: 0.625rem;
+  color: var(--muted);
+  font-size: var(--t-xs);
+}
+
+.chain {
+  position: relative;
+  padding-left: 1.125rem;
+}
+
+.chain::before {
+  content: "";
+  position: absolute;
+  left: 0.1875rem;
+  top: 0.75rem;
+  bottom: 0.75rem;
+  width: 1px;
+  background: var(--rule);
+}
+
+.link {
+  --kind: var(--muted);
+  position: relative;
+  display: grid;
+  grid-template-columns: 5.25rem minmax(0, 1fr) auto;
+  gap: 0.625rem;
+  align-items: baseline;
+  padding: 0.28125rem 0;
+}
+
+.link::before {
+  content: "";
+  position: absolute;
+  left: -1.125rem;
+  top: 0.5625rem;
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border-radius: 1px;
+  background: var(--kind);
+}
+
+.link .kind {
+  color: var(--kind);
+  font-size: var(--t-xs);
+}
+
+.link .value {
+  font-family: var(--mono);
+  font-size: var(--t-sm);
+  overflow-wrap: anywhere;
+}
+
+.link .from::after {
+  content: " → ";
+  color: var(--muted);
+}
+
+.link .from {
+  color: var(--muted);
+}
+
+.link .note {
+  grid-column: 2 / -1;
+  color: var(--muted);
+  font-size: var(--t-xs);
+}
+
+.link .score {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--t-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.kind-word { --kind: var(--kind-word); }
+.kind-language { --kind: var(--kind-language); }
+.kind-concept { --kind: var(--kind-concept); }
+.kind-emotion { --kind: var(--kind-emotion); }
+.kind-template { --kind: var(--kind-template); }
+.kind-response { --kind: var(--kind-response); }
+.kind-rule { --kind: var(--kind-rule); }
+.kind-action { --kind: var(--kind-action); }
+.kind-strategy { --kind: var(--kind-strategy); }
+.kind-unknown { --kind: var(--kind-unknown); }
+
+.link.kind-response .value {
+  font-family: var(--sans);
+  font-size: var(--t-md);
+}
+
+/* ---------------------------------------------------------- envelope */
+
+.envelope {
+  margin-top: 1.75rem;
+  border-top: 1px solid var(--rule);
+  padding-top: 0.875rem;
+}
+
+.envelope summary {
+  color: var(--muted);
+  font-size: var(--t-xs);
+  cursor: pointer;
+}
+
+.envelope pre {
+  overflow-x: auto;
+  margin-top: 0.625rem;
+  padding: 0.75rem;
+  border-radius: var(--radius);
+  background: var(--panel);
+  font-family: var(--mono);
+  font-size: var(--t-xs);
+  line-height: 1.5;
+}
+
+/* -------------------------------------------------------------- wide */
+
+@media (max-width: 60rem) {
+  .masthead {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+}
+
+/* Above this width the page becomes a fixed instrument: the two columns scroll
+ * independently and the page itself does not scroll at all. */
+@media (min-width: 60.0625rem) {
+  body {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  .bench {
+    flex: 1;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 27rem);
+    min-height: 0;
+  }
+
+  .console {
+    min-height: 0;
+  }
+
+  .transcript {
+    overflow-y: auto;
+    min-height: 0;
+  }
+
+  .signal {
+    overflow-y: auto;
+    min-height: 0;
+    border-top: 0;
+    border-left: 1px solid var(--rule);
+  }
+}

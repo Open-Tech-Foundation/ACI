@@ -1,0 +1,17 @@
+{
+  "name": "aci-demo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "esdev start",
+    "build": "esdev build --minify",
+    "build:debug": "esdev build",
+    "test": "esdev test"
+  },
+  "devDependencies": {
+    "@opentf/esrun-types": "latest"
+  },
+  "dependencies": {
+    "@opentf/micro-ui": "^0.11.0"
+  }
+}
