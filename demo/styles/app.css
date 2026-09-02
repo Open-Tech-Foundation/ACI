@@ -1,8 +1,4 @@
-/*
-  A core sample. Each chain is a bore going straight down through layers of
-  explanation, and it either strikes bedrock or the drill stops short.
-  Depth is the information, so depth is what the layout shows.
-*/
+/* Each chain runs downward, so how far a word gets is what you see first. */
 
 :root {
   --void: #131722;
@@ -10,8 +6,8 @@
   --ink: #dfe4ef;
   --faint: #6f7a92;
   --line: #29314492;
-  --bedrock: #e8b563;
-  --broken: #c47b81;
+  --bottom: #e8b563;
+  --stop: #c47b81;
 
   --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
   --sans: ui-sans-serif, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -54,17 +50,17 @@ x-ask {
   min-width: 8ch;
   padding: 0 0 0.1em;
   border: 0;
-  border-bottom: 3px solid var(--bedrock);
+  border-bottom: 3px solid var(--bottom);
   border-radius: 0;
   background: none;
   color: var(--ink);
   font: inherit;
-  caret-color: var(--bedrock);
+  caret-color: var(--bottom);
 }
 
 .ask input::placeholder { color: #3a4358; }
 .ask input:focus { outline: none; background: #ffffff08; }
-.ask input:focus-visible { outline: 2px solid var(--bedrock); outline-offset: 4px; }
+.ask input:focus-visible { outline: 2px solid var(--bottom); outline-offset: 4px; }
 
 .hint {
   margin: 1.25rem 0 0;
@@ -74,7 +70,7 @@ x-ask {
   line-height: 1.6;
 }
 
-/* ── the bores ────────────────────────────────────────────────── */
+/* ── the chains ────────────────────────────────────────────────── */
 
 .field {
   display: flex;
@@ -86,7 +82,7 @@ x-ask {
   scrollbar-width: thin;
 }
 
-.bore {
+.chain {
   flex: 0 0 auto;
   text-align: center;
   font-family: var(--serif);
@@ -99,16 +95,16 @@ x-ask {
   letter-spacing: -0.01em;
 }
 
-.strata { margin: 0; padding: 0; list-style: none; }
+.steps { margin: 0; padding: 0; list-style: none; }
 
-.strata li {
+.steps li {
   font-size: 1rem;
-  /* the deeper the layer, the closer it gets to bedrock's colour */
-  color: color-mix(in oklab, var(--ink), var(--bedrock) calc(var(--i, 0) * 14%));
+  /* each step down moves closer to the last one's colour */
+  color: color-mix(in oklab, var(--ink), var(--bottom) calc(var(--i, 0) * 14%));
 }
 
-/* the drop line between one layer and the next */
-.strata li::before {
+/* the line from one step to the next */
+.steps li::before {
   content: "";
   display: block;
   width: 1px;
@@ -117,30 +113,30 @@ x-ask {
   background: var(--line);
 }
 
-.strata li.floor {
+.steps li.last {
   padding-bottom: 0.4rem;
-  border-bottom: 3px solid var(--bedrock);
-  color: var(--bedrock);
+  border-bottom: 3px solid var(--bottom);
+  color: var(--bottom);
 }
 
-/* a bore that never struck anything: the line trails off and stops */
-.trail {
+/* a chain that ran out: the line fades instead of closing */
+.stop {
   width: 1px;
   height: 2.4rem;
   margin: 0 auto;
-  background: linear-gradient(var(--broken), transparent);
+  background: linear-gradient(var(--stop), transparent);
 }
 
-.stopped {
+.note {
   margin: 0.5rem 0 0;
   max-width: 18ch;
-  color: var(--broken);
+  color: var(--stop);
   font-family: var(--sans);
   font-size: 0.8rem;
   line-height: 1.5;
 }
 
-.stopped em { font-style: normal; color: var(--ink); }
+.note em { font-style: normal; color: var(--ink); }
 
 .idle {
   margin-top: clamp(2.5rem, 8vh, 4.5rem);

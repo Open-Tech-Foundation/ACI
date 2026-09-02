@@ -1,4 +1,4 @@
-/** Type a word. See how far down each part of it goes. */
+/** Type a word. See what it is, and what that is, down to existence. */
 
 import { define, html, update } from "@opentf/micro-ui";
 import world from "../../data/world.json" with { type: "json" };
@@ -13,19 +13,19 @@ function why({ of, chain, ends }) {
   return html`never seen <em>${of}</em>`;
 }
 
-function bore(one) {
+function column(one) {
   const layers = one.chain.slice(1);
-  const struck = one.ends === "bottom";
+  const done = one.ends === "bottom";
 
   return html`
-    <article class="bore">
+    <article class="chain">
       <div class="head">${one.of}</div>
-      <ol class="strata">
+      <ol class="steps">
         ${layers.map((step, i) => html`
-          <li style=${`--i:${i + 1}`} class=${struck && i === layers.length - 1 ? "floor" : ""}>${step}</li>
+          <li style=${`--i:${i + 1}`} class=${done && i === layers.length - 1 ? "last" : ""}>${step}</li>
         `)}
       </ol>
-      ${struck ? "" : html`<div class="trail"></div><p class="stopped">${why(one)}</p>`}
+      ${done ? "" : html`<div class="stop"></div><p class="note">${why(one)}</p>`}
     </article>
   `;
 }
@@ -39,9 +39,8 @@ define("x-ask", (el) => {
       <span>what is</span>
       <input value=${word} oninput=${onInput} placeholder="hi" autofocus spellcheck="false" />
     </h1>
-    <p class="hint">Every answer is asked the same question again. A bore ends at bedrock — the one thing nothing explains — or stops where the knowledge runs out.</p>
     ${word === ""
       ? html`<p class="idle">Ask about any word.</p>`
-      : html`<div class="field">${brain(word).chains.map(bore)}</div>`}
+      : html`<div class="field">${brain(word).chains.map(column)}</div>`}
   `;
 });
