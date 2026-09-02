@@ -1,27 +1,46 @@
 /**
- * The page: a composer, a transcript, and the signal path that explains it.
+ * The page: send a turn, watch the walk, read what was taught.
  *
- * State lives in Micro-UI's store rather than in the components, so the panel
- * on the right and the transcript on the left cannot disagree about which turn
- * is being inspected.
+ * There is nothing to explain about words or meaning here, because the engine
+ * has neither. What you can see is the whole of Layer 0: which state the brain
+ * is in, what each signal did to it, and what it read out at the end.
+ *
+ * State lives in Micro-UI's store rather than in the components, so the panels
+ * cannot disagree about which turn is being inspected.
  */
 
 import { define, html, onReady, store, update } from "@opentf/micro-ui";
-import { STAGES, chainFor, percent } from "./chain.js";
-import { ask, concepts, stats, teach } from "./engine.js";
 
-const EXAMPLES = ["how are you", "thankss", "what is your name", "hellooo", "goodbye"];
+import { atomsOf, brain, experience, learned, taught } from "./engine.js";
+import { walkFor } from "./walk.js";
+
+const EXAMPLES = [
+  ["touch", "the loop from the spec"],
+  ["hey", "one signal"],
+  ["hey stop that", "the same signal, walked further"],
+  ["plughxyz", "nothing it was taught"],
+  ["stop", "meaningless from here"],
+];
 
 store.set("turns", []);
 store.set("selected", -1);
+store.set("state", brain.state);
 
-/** Runs a turn and selects it. */
-function run(text) {
-  const input = text.trim();
-  if (input === "") return;
-  const turns = [...store.get("turns"), ask(input)];
+/** Runs one turn and selects it. */
+function run(line) {
+  const atoms = atomsOf(line);
+  const from = brain.state;
+  const turn = brain.sense(atoms);
+  const turns = [...store.get("turns"), { atoms, from, turn }];
   store.set("turns", turns);
   store.set("selected", turns.length - 1);
+  store.set("state", brain.state);
+}
+
+function reset() {
+  brain.reset();
+  store.set("state", brain.state);
+  run("");
 }
 
 function selected() {
@@ -39,30 +58,30 @@ function watch(el, ...keys) {
 define("aci-app", () => () => html`
   <header class="masthead">
     <h1>ACI</h1>
-    <p class="tagline">Every answer built from words, relationships and rules, with the reasoning on show.</p>
-    <aci-counts></aci-counts>
+    <p class="tagline">
+      Layer 0: a signal arrives, it moves the brain from one state to another,
+      and the brain reads out the state it is in. Nothing here knows what a word is.
+    </p>
+    <aci-here></aci-here>
   </header>
   <div class="bench">
     <section class="console">
       <aci-composer></aci-composer>
       <aci-transcript></aci-transcript>
     </section>
-    <aci-signal></aci-signal>
+    <aci-walk></aci-walk>
+    <aci-taught></aci-taught>
   </div>
 `);
 
-define("aci-counts", (el) => {
-  onReady(() => watch(el, "turns"));
-  return () => {
-    const { nodes, edges, aliases } = stats();
-    return html`
-      <dl class="counts">
-        <div><dt>Nodes</dt><dd>${String(nodes)}</dd></div>
-        <div><dt>Edges</dt><dd>${String(edges)}</dd></div>
-        <div><dt>Spellings</dt><dd>${String(aliases)}</dd></div>
-      </dl>
-    `;
-  };
+define("aci-here", (el) => {
+  onReady(() => watch(el, "state", "turns"));
+  return () => html`
+    <dl class="here">
+      <div><dt>State</dt><dd class="atom state">${store.get("state")}</dd></div>
+      <div><dt>Transitions</dt><dd>${String(experience.size)}</dd></div>
+    </dl>
+  `;
 });
 
 // -------------------------------------------------------------- composer
@@ -78,14 +97,31 @@ define("aci-composer", (el) => {
 
   return () => html`
     <form class="composer" onsubmit=${submit}>
-      <label class="visually-hidden" for="say">Your message</label>
-      <input id="say" name="say" type="text" autocomplete="off" placeholder="Say something" />
-      <button type="submit" class="send">Ask</button>
+      <label class="visually-hidden" for="atoms">Signals for this turn</label>
+      <input
+        id="atoms"
+        name="atoms"
+        type="text"
+        autocomplete="off"
+        placeholder="Signals, separated by spaces"
+      />
+      <button type="submit" class="send">Send</button>
     </form>
     <ul class="examples">
-      ${EXAMPLES.map((example) => html`
-        <li><button type="button" onclick=${() => run(example)}>${example}</button></li>
+      ${EXAMPLES.map(([line, why]) => html`
+        <li>
+          <button type="button" onclick=${() => run(line)}>
+            <span class="atoms">${line}</span>
+            <span class="why">${why}</span>
+          </button>
+        </li>
       `)}
+      <li>
+        <button type="button" class="reset" onclick=${reset}>
+          <span class="atoms">reset</span>
+          <span class="why">back to the state training declares</span>
+        </button>
+      </li>
     </ul>
   `;
 });
@@ -95,41 +131,25 @@ define("aci-composer", (el) => {
 define("aci-transcript", (el) => {
   onReady(() => watch(el, "turns", "selected"));
 
-  function learn(event, turn) {
-    event.preventDefault();
-    const concept = event.target.querySelector("select").value;
-    const answer = teach(turn.input, concept);
-    const turns = [...store.get("turns"), answer];
-    store.set("turns", turns);
-    store.set("selected", turns.length - 1);
-  }
-
   return () => {
     const turns = store.get("turns");
     const chosen = store.get("selected");
 
     return html`
       <ol class="transcript">
-        ${turns.map((turn, index) => html`
+        ${turns.map(({ atoms, from, turn }, index) => html`
           <li class="turn ${index === chosen ? "is-selected" : ""}">
             <button type="button" class="turn-body" onclick=${() => store.set("selected", index)}>
-              <span class="said">${turn.input}</span>
-              <span class="replied">${turn.response}</span>
+              <span class="sent">${atoms.length === 0 ? "—" : atoms.join(" ")}</span>
+              <span class="expressed ${turn.express === null ? "is-silent" : ""}">
+                ${turn.express ?? "silence"}
+              </span>
               <span class="readout">
-                <span class="type kind-${turn.type}">${turn.type}</span>
-                <span class="confidence">${percent(turn.meta.confidence)} understood</span>
+                <span class="atom state">${from}</span>
+                <span class="arrow">→</span>
+                <span class="atom state">${turn.steps.at(-1)?.to ?? from}</span>
               </span>
             </button>
-            ${turn.type === "unknown" && turn.input !== ""
-              ? html`
-                <form class="teach" onsubmit=${(event) => learn(event, turn)}>
-                  <label for="as-${String(index)}">Teach it: “${turn.input}” means</label>
-                  <select id="as-${String(index)}" name="concept">
-                    ${concepts().map((name) => html`<option value=${name}>${name}</option>`)}
-                  </select>
-                  <button type="submit">Teach</button>
-                </form>`
-              : ""}
           </li>
         `)}
       </ol>
@@ -137,48 +157,85 @@ define("aci-transcript", (el) => {
   };
 });
 
-// ----------------------------------------------------------- signal path
+// ------------------------------------------------------------------ walk
 
-define("aci-signal", (el) => {
+define("aci-walk", (el) => {
   onReady(() => watch(el, "turns", "selected"));
 
   return () => {
-    const turn = selected();
-    if (!turn) {
-      return html`<aside class="signal"><p class="empty">Ask something, and every step from your words to the answer appears here.</p></aside>`;
+    const chosen = selected();
+    if (!chosen) {
+      return html`<aside class="walk">
+        <p class="empty">Send some signals, and the walk they take appears here.</p>
+      </aside>`;
     }
 
-    const rows = chainFor(turn);
+    const rows = walkFor(chosen.turn, chosen.from, learned);
     return html`
-      <aside class="signal">
-        ${STAGES.map((stage) => html`
-          <section class="stage">
-            <h2>${stage.title}</h2>
-            <p class="blurb">${stage.blurb}</p>
-            <ol class="chain">
-              ${rows.filter((row) => row.stage === stage.id).map((row) => html`
-                <li class="link kind-${row.kind}">
-                  <span class="kind">${row.kind}</span>
-                  <span class="value">
-                    ${row.from ? html`<span class="from">${row.from}</span>` : ""}
-                    <span class="label">${row.label}</span>
-                  </span>
-                  ${typeof row.score === "number" ? html`<span class="score">${row.score.toFixed(2)}</span>` : ""}
-                  ${row.note ? html`<span class="note">${row.note}</span>` : ""}
-                </li>
-              `)}
-            </ol>
-          </section>
-        `)}
-        <details class="envelope">
-          <summary>The envelope this produced</summary>
-          <pre><code>${JSON.stringify({ ...turn, trace: undefined }, null, 2)}</code></pre>
-        </details>
+      <aside class="walk">
+        <h2>The walk</h2>
+        <p class="blurb">
+          Each signal is applied to wherever the last one left the brain. The
+          answer is read out once, from the state at the end.
+        </p>
+        <ol class="chain">
+          ${rows.map((row) => html`
+            <li class="link kind-${row.kind} ${row.taught === false ? "is-untaught" : ""}">
+              <span class="kind">${row.kind}</span>
+              <span class="value">
+                ${row.atom ? html`<span class="from">${row.atom}</span>` : ""}
+                <span class="label">${row.label}</span>
+              </span>
+              ${row.taught === false ? html`<span class="note">nothing taught — no move</span>` : ""}
+              ${row.silent ? html`<span class="note">no expression taught</span>` : ""}
+            </li>
+          `)}
+        </ol>
       </aside>
     `;
   };
 });
 
-// The page opens on a worked example, so the first thing anyone sees is the
-// engine's reasoning rather than an empty box asking them to imagine it.
-run("Hi");
+// ---------------------------------------------------------------- taught
+
+define("aci-taught", () => () => {
+  const { start, effects, expressions, silent } = taught();
+  return html`
+    <aside class="taught">
+      <h2>Everything it was taught</h2>
+      <p class="blurb">
+        The whole of the brain's knowledge. It cannot answer with anything that
+        is not on this list, and it will not guess at anything that is missing.
+      </p>
+      <h3>Effects <span class="count">${String(effects.length)}</span></h3>
+      <ol class="rows">
+        ${effects.map((row) => html`
+          <li>
+            <span class="atom state">${row.state}</span>
+            <span class="atom signal">${row.signal}</span>
+            <span class="arrow">→</span>
+            <span class="atom state">${row.next}</span>
+          </li>
+        `)}
+      </ol>
+      <h3>Expressions <span class="count">${String(expressions.length)}</span></h3>
+      <ol class="rows">
+        ${expressions.map((row) => html`
+          <li>
+            <span class="atom state">${row.state}</span>
+            <span class="arrow">→</span>
+            <span class="atom express">${row.signal}</span>
+          </li>
+        `)}
+      </ol>
+      <p class="footnote">
+        Starts in <span class="atom state">${start}</span>.
+        Silent states: ${silent.length === 0 ? "none" : silent.join(", ")}.
+      </p>
+    </aside>
+  `;
+});
+
+// The page opens on the specification's own example, so the first thing anyone
+// sees is a walk rather than an empty box asking them to imagine one.
+run("touch");

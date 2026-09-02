@@ -12,29 +12,34 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   signal, state, effect and expression — settles emotion as a use of state
   rather than a primitive, defers language to Layer 1 and self-learning to
   Layer 4, and records the open questions.
-- `brain()` as `understand()` → `think()` → `solve()`, each exported and testable
-  on its own. Only `think()` may read conversation state.
-- `Memory`: a typed, directed property graph of languages, words, concepts,
-  emotions and response templates, with a closed set of edge types. Imports
-  nothing from the host, so it runs under `--deny-all`.
-- Vocabulary index combining Jaro-Winkler, Levenshtein and Soundex, with a
-  trigram inverted index for candidate retrieval, so typos resolve to the word
-  that was meant.
-- Longest-first phrase matching, so `how are you` is understood as one unit.
-- Rule engine with declarative conditions (`$in`, `$has`, `$gte`, `$empty`,
-  `$exists`, `$not`, …), priorities and short-circuiting; rules carry a
-  `because` that reaches the trace.
-- A single response envelope returned by every path through the engine.
-- `Trace`: a step-by-step record of how an answer was reached.
-- Runtime learning through `learn.word()`, `learn.respond()`, `learn.relate()`
-  and `learn.rule()` — no retraining step.
-- Seed knowledge for English: 10 concepts, 7 emotions, 32 words and phrases with
-  spelling variants, and a response for every concept.
-- JSON persistence in `memory/persist.js`, kept apart from the core so only it
-  carries the filesystem capability.
-- `bin/aci.js`, a terminal client that runs on `--allow-imports` alone.
-- A demo site built with Micro-UI that renders the full traversal from words to
-  answer, and can teach the engine a new word without a reload.
-- 80 tests across the engine and the demo's view model.
+- Layer 0: `brain()` as `understand()` → `think()` → `solve()`, over four
+  atoms. A signal is an identity and nothing more, the brain is in exactly one
+  state, an effect is `(state, signal) -> state`, and an expression reads the
+  state out. No words, no text, no numbers.
+- Totality without fallbacks: a pair with no taught effect leaves the state
+  alone, and a state with no taught expression is silent. Nothing is ever
+  inferred or approximated in place of what was not taught.
+- Contradictory training is refused when it is taught, so the brain's next move
+  can never be a choice.
+- A turn is a sequence of signals applied one at a time, which is where meaning
+  comes from: the same opening signal walked further ends somewhere else.
+- Three memories: learned (what it was taught), experience (what happened to
+  it, written and never read back), and the current state as live context.
+- `runtime:db` sqlite behind both persistent memories, kept in
+  `src/memory/store.js` so the rest of the engine runs under `--deny-all`.
+- `createACI()`, a front door that takes a turn and answers, and `spec/`:
+  behaviour tests written against that alone, so the internals can be rebuilt
+  without editing them.
+- `bin/aci.js`, a terminal client that walks the specification's examples.
+- A Micro-UI demo that draws the walk and lists everything the brain was taught.
+- 59 tests, of which 14 are behaviour tests that know nothing about the
+  internals.
+
+### Removed
+
+- The language-first engine that predated `SPEC.md` — words, concepts, fuzzy
+  matching, rule priorities, response templates and a confidence score. It
+  started at text and treated emotion as a label hanging off a concept, so it
+  was replaced rather than adapted.
 
 [Unreleased]: https://github.com/Thanga-Ganapathy/ACI/commits/main

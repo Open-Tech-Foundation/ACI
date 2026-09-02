@@ -1,14 +1,14 @@
 /* Design tokens.
  *
- * The kind-* colours are not decoration: each one names a type of node in the
- * engine's graph, so the colour of a step in the signal path tells you what
- * kind of thing the engine was reasoning about. Change one here and it changes
- * everywhere that kind appears. */
+ * The kind-* colours are not decoration: there are four kinds of atom in Layer
+ * 0, and each has a colour, so the colour of a row in the walk tells you what
+ * kind of thing you are looking at. `unknown` is the reserved signal and is
+ * coloured apart from the ones the brain was taught. */
 
 :root {
   color-scheme: light dark;
 
-  /* Ground: a cool drafting bone, so the coloured steps sit on something
+  /* Ground: a cool drafting bone, so the coloured atoms sit on something
    * neutral rather than competing with a warm paper. */
   --paper: #eceee8;
   --panel: #f6f7f3;
@@ -19,15 +19,9 @@
   --blue: #23417d;
   --blue-ink: #ffffff;
 
-  --kind-word: #2f6b52;
-  --kind-language: #5c6270;
-  --kind-concept: #23417d;
-  --kind-emotion: #8a3a5e;
-  --kind-template: #7d5f18;
-  --kind-response: #14161a;
-  --kind-rule: #64478a;
-  --kind-action: #8a4a1f;
-  --kind-strategy: #5c6270;
+  --kind-state: #23417d;
+  --kind-signal: #2f6b52;
+  --kind-express: #7d5f18;
   --kind-unknown: #a2382a;
 
   --sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -55,15 +49,9 @@
     --blue: #8ba6dd;
     --blue-ink: #14161a;
 
-    --kind-word: #6cc59b;
-    --kind-language: #9aa2b0;
-    --kind-concept: #8ba6dd;
-    --kind-emotion: #dd8fb1;
-    --kind-template: #d6b45c;
-    --kind-response: #e8eae6;
-    --kind-rule: #b596dd;
-    --kind-action: #dd9a63;
+    --kind-state: #8ba6dd;
+    --kind-signal: #6cc59b;
+    --kind-express: #d6b45c;
     --kind-unknown: #e08072;
-    --kind-strategy: #9aa2b0;
   }
 }

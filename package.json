@@ -1,10 +1,12 @@
 {
   "name": "aci",
   "version": "0.1.0",
-  "description": "A rule-based reasoning engine: understand, think, solve — over a graph of words, relationships and rules.",
+  "description": "A deterministic response model: signals move a brain between states, and it expresses the state it is in.",
   "type": "module",
   "license": "MIT",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": "./dist/index.js",
     "./package.json": "./package.json"
@@ -13,7 +15,7 @@
     "test": "esdev test",
     "build": "esdev build --lib src --out=dist",
     "cli": "esrun --allow-imports bin/aci.js",
-    "demo": "esrun --allow-imports bin/aci.js --demo --trace",
+    "demo": "esrun --allow-imports bin/aci.js --demo",
     "dev": "esdev start --config=demo/esdev.json",
     "build:site": "esdev build --config=demo/esdev.json --minify"
   },

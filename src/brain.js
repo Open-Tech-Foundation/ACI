@@ -1,217 +1,100 @@
 /**
- * brain(): understand -> think -> solve.
+ * brain() — SPEC.md §3.
  *
- * The three stages are separate exports, not private steps, because each is
- * independently inspectable and independently testable. understand() is pure
- * given a Memory; think() is the only stage that may read conversation state;
- * solve() is the only stage that commits to words. Keeping that discipline is
- * what stops the engine from becoming a single opaque function again.
+ * A definite process. Three steps, always the same three, always in this
+ * order, with no branching between them and no path around them.
+ *
+ *   understand()  what is this?          reads learned memory
+ *   think()       what does it do to me? moves the brain
+ *   solve()       what do I do now?      reads out the state
+ *
+ * Nothing here knows what a word, a language, an image or an emotion is.
+ * Those are all built above this file, out of the same four atoms.
  */
 
-import { createEnvelope } from "./envelope.js";
-import { createMemory } from "./memory/seed.js";
-import { RuleEngine } from "./rules/engine.js";
-import { coreRules } from "./rules/core-rules.js";
-import { tokenize } from "./text/normalize.js";
-import { Trace } from "./trace.js";
+import { UNKNOWN } from "./memory/learned.js";
 
 /**
- * Stage 1 — surface text to meaning.
- *
- * Scans left to right taking the longest known phrase at each position, so
- * "how are you" resolves as one unit rather than three unrelated words. Tokens
- * nothing matches are not errors: they are recorded as unknown and become the
- * evidence that lowers confidence.
+ * What is this? Resolves an arriving atom to a signal the brain knows, or to
+ * the reserved `unknown`. Decides nothing and changes nothing.
  */
-export function understand(input, memory, trace = new Trace(false)) {
-  const tokens = tokenize(input);
-  const matched = [];
-  const unknown = [];
-
-  let cursor = 0;
-  while (cursor < tokens.length) {
-    const found = memory.lookupPhrase(tokens, cursor);
-    if (!found) {
-      unknown.push(tokens[cursor]);
-      trace.push("understand", "unknown", `"${tokens[cursor].surface}" is not in the vocabulary`);
-      cursor += 1;
-      continue;
-    }
-
-    const word = memory.get(found.match.key);
-    const surface = tokens.slice(cursor, cursor + found.span).map((t) => t.surface).join(" ");
-    matched.push({ surface, normalized: found.text, word, score: found.match.score, method: found.match.method });
-    trace.push(
-      "understand",
-      "match",
-      `"${surface}" -> ${word.label} (${found.match.method}, ${found.match.score.toFixed(2)})`,
-    );
-    cursor += found.span;
-  }
-
-  // Language: whichever the matched words agree on, weighted by match quality.
-  const languages = new Map();
-  for (const entry of matched) {
-    const code = entry.word.props.language;
-    languages.set(code, (languages.get(code) ?? 0) + entry.score);
-  }
-  const language = [...languages.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
-
-  // Concepts: a word's concepts, each weighted by how well the word matched.
-  const scores = new Map();
-  for (const entry of matched) {
-    for (const { node, weight } of memory.conceptsOf(entry.word.id)) {
-      const name = node.props.name;
-      scores.set(name, (scores.get(name) ?? 0) + entry.score * weight);
-    }
-  }
-  const concepts = [...scores.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .map(([name, score]) => ({ name, score: round(score) }));
-
-  const emotionNode = concepts.length > 0 ? memory.emotionOf(concepts[0].name) : null;
-  const emotion = emotionNode ? { name: emotionNode.props.name, valence: emotionNode.props.valence } : null;
-
-  // Confidence answers "how much of what they said do I actually recognise",
-  // which is coverage and match quality together — either alone overstates it.
-  const coverage = tokens.length === 0 ? 0 : matched.reduce((n, m) => n + m.normalized.split(" ").length, 0) / tokens.length;
-  const quality = matched.length === 0 ? 0 : matched.reduce((n, m) => n + m.score, 0) / matched.length;
-  const confidence = round(coverage * quality);
-
-  trace.push("understand", "resolve", concepts.length > 0
-    ? `language=${language} concept=${concepts[0].name} emotion=${emotion?.name ?? "none"} confidence=${confidence}`
-    : `nothing recognised (${tokens.length} token(s))`);
-
-  return { input, tokens, matched, unknown, language, concepts, emotion, confidence };
+export function understand(learned, incoming) {
+  return learned.knowsSignal(incoming) ? incoming : UNKNOWN;
 }
 
 /**
- * Stage 2 — meaning to a plan.
+ * What does it do to me? The only step that moves the brain.
  *
- * The graph has already said what the input means; think() decides what to do
- * about it, which is the only stage allowed to consider the conversation so far.
+ * Totality: with no taught effect for this exact pair, the state does not
+ * change. A signal that means nothing to you does not move you — nothing is
+ * inferred, approximated or invented in its place.
  */
-export function think(understanding, { memory, engine, context, trace = new Trace(false) }) {
-  const primary = understanding.concepts[0] ?? null;
-  const plan = {
-    strategy: primary ? "respond" : "fallback",
-    concept: primary?.name ?? "unknown",
-    type: null,
-    response: null,
-    actions: [],
-    data: {},
-    confidence: understanding.confidence,
-  };
-
-  trace.push("think", "plan", `strategy=${plan.strategy} concept=${plan.concept}`);
-  plan.rules = engine.run("think", { understanding, plan, patch: plan, context, memory }, trace);
-  return plan;
+export function think(learned, state, signal) {
+  const next = learned.effectOf(state, signal);
+  return next === null ? state : next;
 }
 
 /**
- * Stage 3 — a plan to an envelope.
+ * What do I do, being in this state? A read-out, not a decision.
  *
- * Words come from the graph's templates unless a rule has already committed to
- * one. Template actions and data merge under the plan's, so policy can always
- * add to what the concept says by default but a rule stays authoritative.
+ * Totality: a state with no taught expression emits nothing. `null` is
+ * silence, and silence is a legitimate output.
  */
-export function solve(plan, { memory, engine, context, understanding, trace = new Trace(false) }) {
-  const [template] = memory.templatesOf(plan.concept);
-  if (template) trace.push("solve", "template", `${plan.concept} -> "${template.props.text}"`);
-  else trace.push("solve", "template", `no template for "${plan.concept}", using the built-in fallback`);
+export function solve(learned, state) {
+  return learned.expressionOf(state);
+}
 
-  const response = plan.response ?? template?.props.text ?? "I don't have a response for that yet.";
-  if (plan.response) trace.push("solve", "override", `a rule set the response directly: "${plan.response}"`);
-
-  const output = {
-    response,
-    type: plan.type ?? template?.props.type ?? plan.concept,
-    actions: [...(template?.props.actions ?? []), ...plan.actions],
-    data: { ...(template?.props.data ?? {}), ...plan.data },
-  };
-  engine.run("solve", { plan, understanding, context, memory, output, patch: output }, trace);
-  return createEnvelope({
-    input: understanding.input,
-    response: output.response,
-    type: output.type,
-    actions: output.actions,
-    data: {
-      language: understanding.language,
-      concepts: understanding.concepts.map((c) => c.name),
-      emotion: understanding.emotion?.name ?? null,
-      unknown: understanding.unknown.map((t) => t.surface),
-      ...output.data,
-    },
-    meta: {
-      confidence: understanding.confidence,
-      strategy: plan.strategy,
-      rules: plan.rules ?? [],
-      matched: understanding.matched.map((m) => ({
-        surface: m.surface,
-        word: m.word.label,
-        score: round(m.score),
-        method: m.method,
-      })),
-    },
-    trace: trace.toJSON(),
-  });
+/** Accepts `{ sense }`, a bare atom, or a sequence of atoms. */
+function incoming(input) {
+  const raw = input !== null && typeof input === "object" && !Array.isArray(input)
+    ? input.sense
+    : input;
+  if (raw === undefined || raw === null) return [];
+  return Array.isArray(raw) ? raw : [raw];
 }
 
 /**
- * Builds a brain: memory, rules and the conversation it is having.
+ * A brain in a session.
  *
- * Conversation state lives on the instance rather than being threaded through
- * every call, because "have we met before in this conversation" is exactly the
- * kind of thing think() needs and callers should not have to carry.
+ * The current state is the whole of the live context (SPEC.md §4): it is
+ * carried from turn to turn, and it is the only thing that makes two identical
+ * inputs come out differently. Experience is written on every transition and
+ * never read back (SPEC.md §7).
  */
-export function createBrain({ memory = createMemory(), rules = coreRules, trace = true } = {}) {
-  const engine = new RuleEngine(rules);
-  const context = { turns: 0, history: [], seen: Object.create(null) };
+export function createBrain({ learned, experience = null } = {}) {
+  if (!learned) throw new Error("a brain needs its learned memory");
+  if (learned.start === null) throw new Error("training must declare a start state");
 
-  /** The whole pipeline, and the only method most callers need. */
-  function brain(input, { trace: traceThis = trace } = {}) {
-    const recorder = new Trace(traceThis);
-    const understanding = understand(input, memory, recorder);
-    const plan = think(understanding, { memory, engine, context, trace: recorder });
-    const envelope = solve(plan, { memory, engine, context, understanding, trace: recorder });
-
-    // Recorded after the stages ran, so a rule asking "have they greeted me
-    // before" is asking about earlier turns and never about this one.
-    context.turns += 1;
-    context.seen[plan.concept] = (context.seen[plan.concept] ?? 0) + 1;
-    context.history.push({ input, response: envelope.response, type: envelope.type });
-
-    return envelope;
-  }
+  let state = learned.start;
 
   return {
-    brain,
-    memory,
-    engine,
-    context,
-    understand: (input, recorder = new Trace(trace)) => understand(input, memory, recorder),
-    think: (understanding, recorder = new Trace(trace)) =>
-      think(understanding, { memory, engine, context, trace: recorder }),
-    solve: (plan, understanding, recorder = new Trace(trace)) =>
-      solve(plan, { memory, engine, context, understanding, trace: recorder }),
-
-    /** Teaches the brain at runtime — a word, a response, or a rule. */
-    learn: {
-      word: (surface, options) => memory.word(surface, options),
-      respond: (concept, text, options) => memory.respond(concept, text, options),
-      relate: (from, type, to, options) => memory.addEdge(from, type, to, options),
-      rule: (rule) => engine.add(rule),
+    get state() {
+      return state;
     },
 
-    /** Forgets the conversation, keeping everything that was learned. */
+    /**
+     * One turn. A turn may carry several signals; they are applied one at a
+     * time, in arrival order, each moving the brain from wherever the last one
+     * left it. The expression is read out once, at the end of the sequence —
+     * which is why meaning is where the walk ends, not what any one signal is.
+     */
+    sense(input) {
+      const steps = [];
+      for (const atom of incoming(input)) {
+        const from = state;
+        const signal = understand(learned, atom);
+        state = think(learned, from, signal);
+        const step = { from, atom, signal, to: state };
+        steps.push(step);
+        experience?.append(step);
+      }
+      return { express: solve(learned, state), steps };
+    },
+
+    /** Returns the brain to the state training says it starts in. */
     reset() {
-      context.turns = 0;
-      context.history.length = 0;
-      for (const key of Object.keys(context.seen)) delete context.seen[key];
+      state = learned.start;
+      return state;
     },
   };
-}
-
-function round(value) {
-  return Math.round(value * 1000) / 1000;
 }

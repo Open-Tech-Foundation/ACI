@@ -1,80 +1,80 @@
 /**
- * The engine at a terminal.
+ * Layer 0 at a terminal.
  *
- * Notably the only capability this needs is `--allow-imports`, to load its own
- * modules. Understanding, reasoning and answering touch no file, socket or
+ * The only capability this needs is `--allow-imports`, to load its own
+ * modules. Understanding, thinking and expressing touch no file, socket or
  * environment variable, and the command line is where that claim is checked.
+ * (Persisting to sqlite does need more, which is why it lives in
+ * src/memory/store.js and is not imported here.)
+ *
+ *   tsr cli                       walk the specification's examples
+ *   esrun --allow-imports bin/aci.js hey stop that
  */
 
 import { args } from "runtime:process";
-import { createBrain } from "../src/index.js";
+
+import { Experience, createBrain, trainExample } from "../src/index.js";
 
 const flags = new Set(args.filter((arg) => arg.startsWith("--")));
-const words = args.filter((arg) => !arg.startsWith("--"));
+const atoms = args.filter((arg) => !arg.startsWith("--"));
 
+/** Each of these is its own example, so each gets a brain at its start state. */
 const DEMO = [
-  "Hi",
-  "how are you",
-  "what is your name",
-  "thankss",
-  "Hi",
-  "can you help",
-  "qwertyuiop plughxyz",
-  "goodbye",
+  ["touch"],
+  ["hey"],
+  ["hey", "stop", "that"],
+  ["plughxyz"],
+  ["stop"],
 ];
 
-if (flags.has("--help") || (words.length === 0 && !flags.has("--demo"))) {
-  console.log(`aci — a rule-based reasoning engine
+/** This one is a session: the state carries, so `stop` means something by the
+ * time it arrives — which it did not in the example above. */
+const SESSION = [["hey"], ["stop"], ["that"]];
 
-USAGE:
-    esrun --allow-imports bin/aci.js [options] <message...>
-    esrun --allow-imports bin/aci.js --demo
+const experience = new Experience();
+const learned = trainExample();
+const brain = createBrain({ learned, experience });
 
-OPTIONS:
-    --demo      Run a scripted conversation
-    --json      Print the raw envelope instead of the formatted view
-    --trace     Show the reasoning steps
-    --help      Show this help`);
+if (flags.has("--help")) {
+  console.log(`aci — Layer 0: signal, state, effect, expression
+
+  esrun --allow-imports bin/aci.js [signals...]
+  esrun --allow-imports bin/aci.js --demo
+
+  --demo   walk the examples from SPEC.md
+  --steps  show every transition, not just the read-out
+  --reset  return to the start state between turns`);
+} else if (flags.has("--demo") || atoms.length === 0) {
+  console.log("\nEach on a brain at its start state:");
+  for (const turn of DEMO) {
+    brain.reset();
+    walk(turn);
+  }
+  console.log("\nOne session, where the state carries from turn to turn:");
+  brain.reset();
+  for (const turn of SESSION) walk(turn);
+  console.log(`\n${String(experience.size)} transitions recorded.`);
 } else {
-  const { brain } = createBrain();
-  const inputs = flags.has("--demo") ? DEMO : [words.join(" ")];
-
-  for (const input of inputs) {
-    const envelope = brain(input);
-    if (flags.has("--json")) console.log(JSON.stringify(envelope, null, 2));
-    else report(input, envelope);
-  }
+  walk(atoms);
 }
 
-function report(input, { response, type, actions, data, meta, trace }) {
-  const emotion = data.emotion ? `${data.emotion} (${signed(data.valence)})` : "—";
-  const actionNames = actions.length > 0 ? actions.map((a) => a.name).join(", ") : "—";
+function walk(sent) {
+  if (flags.has("--reset")) brain.reset();
+  const from = brain.state;
+  const { express, steps } = brain.sense(sent);
 
-  console.log(`\n\x1b[2m›\x1b[0m ${input}`);
-  console.log(`  \x1b[1m${response}\x1b[0m\n`);
-  console.log(field("type", type));
-  console.log(field("confidence", meta.confidence.toFixed(2)));
-  console.log(field("language", data.language ?? "—"));
-  console.log(field("emotion", emotion));
-  console.log(field("actions", actionNames));
-  console.log(field("rules", meta.rules.length > 0 ? meta.rules.join(", ") : "—"));
-  if (data.unknown.length > 0) console.log(field("unknown", data.unknown.join(", ")));
-
-  if (flags.has("--trace") && trace.length > 0) {
-    console.log("\n  \x1b[2mtrace\x1b[0m");
-    for (const { stage, step, detail } of trace) {
-      console.log(`    \x1b[2m${`${stage}/${step}`.padEnd(18)}\x1b[0m ${detail}`);
+  console.log(`\n  ${sent.join(" ")}`);
+  if (flags.has("--steps") || flags.has("--demo")) {
+    for (const step of steps) {
+      const seen = step.atom === step.signal ? step.signal : `${step.atom} → ${step.signal}`;
+      // Asked of learned memory, not guessed from whether the state changed:
+      // a taught effect is allowed to leave you exactly where you were.
+      const untaught = learned.effectOf(step.from, step.signal) === null
+        ? " (nothing taught — no move)"
+        : "";
+      console.log(`    ${step.from} ── ${seen} ──▸ ${step.to}${untaught}`);
     }
+    if (steps.length === 0) console.log(`    ${from} (no signals)`);
   }
-}
-
-// Declarations, not const arrows: report() is hoisted and runs before the
-// bottom of this module is evaluated, which would leave these in the dead zone.
-function field(label, value) {
-  return `  \x1b[2m${label.padEnd(12)}\x1b[0m ${value}`;
-}
-
-function signed(value) {
-  if (typeof value !== "number") return "?";
-  return value >= 0 ? `+${value.toFixed(2)}` : value.toFixed(2);
+  console.log(`  → ${express ?? "silence"}`);
 }

@@ -1,149 +1,142 @@
-import { assert, assertEquals, test } from "runtime:test";
-import { createBrain } from "./brain.js";
-import { isEnvelope } from "./envelope.js";
+import { assertEquals, assertThrows, test } from "runtime:test";
 
-test("the worked example: Hi -> Hello!", () => {
-  const { brain } = createBrain();
-  const out = brain("Hi");
+import { createBrain, solve, think, understand } from "./brain.js";
+import { Learned, UNKNOWN } from "./memory/learned.js";
+import { Experience } from "./memory/experience.js";
+import { trainExample } from "./train/example.js";
 
-  assertEquals(out.response, "Hello!");
-  assertEquals(out.type, "greeting");
-  assertEquals(out.data.language, "en");
-  assertEquals(out.data.emotion, "friendly");
-  assertEquals(out.data.valence, 0.6);
-  assertEquals(out.meta.confidence, 1);
+const brain = () => createBrain({ learned: trainExample() });
+
+test("understand resolves a known atom to itself", () => {
+  assertEquals(understand(trainExample(), "touch"), "touch");
 });
 
-test("every path produces the same envelope shape", () => {
-  const { brain } = createBrain();
-  for (const input of ["Hi", "qwertyuiop", "", "thanks a lot"]) {
-    assert(isEnvelope(brain(input)), `not an envelope for ${JSON.stringify(input)}`);
+test("understand resolves anything untaught to the reserved signal", () => {
+  assertEquals(understand(trainExample(), "plughxyz"), UNKNOWN);
+});
+
+test("think moves the brain along a taught effect", () => {
+  assertEquals(think(trainExample(), "idle", "touch"), "comfort");
+});
+
+test("think leaves the state alone when nothing was taught", () => {
+  // Totality (SPEC §2.3): a signal with no taught effect on you does not move
+  // you. Nothing is inferred and no nearest match is reached for.
+  assertEquals(think(trainExample(), "comfort", "hey"), "comfort");
+});
+
+test("solve reads out the expression for the state", () => {
+  assertEquals(solve(trainExample(), "comfort"), "feel");
+});
+
+test("solve is silent for a state with no taught expression", () => {
+  // Totality (SPEC §2.4): silence is a legitimate output, not a failure.
+  assertEquals(solve(trainExample(), "idle"), null);
+});
+
+test("the original loop runs: { sense: touch } -> { express: feel }", () => {
+  assertEquals(brain().sense({ sense: "touch" }).express, "feel");
+});
+
+test("a bare atom and a one-item sequence are the same turn", () => {
+  assertEquals(brain().sense("touch").express, brain().sense(["touch"]).express);
+});
+
+test("meaning is where the walk ends, not what the first signal is", () => {
+  // SPEC §3.3. Nothing about `hey` changed between these two turns.
+  assertEquals(brain().sense(["hey"]).express, "hello");
+  assertEquals(brain().sense(["hey", "stop", "that"]).express, "back-off");
+});
+
+test("signals in a turn are applied one at a time, in arrival order", () => {
+  const { steps } = brain().sense(["hey", "stop"]);
+  assertEquals(
+    steps.map((s) => [s.from, s.signal, s.to]),
+    [
+      ["idle", "hey", "greeted"],
+      ["greeted", "stop", "alarmed"],
+    ],
+  );
+});
+
+test("an untaught atom walks as the unknown signal", () => {
+  const { steps, express } = brain().sense(["plughxyz"]);
+  assertEquals(steps[0].atom, "plughxyz");
+  assertEquals(steps[0].signal, UNKNOWN);
+  assertEquals(express, "what");
+});
+
+test("the state carries between turns, and is the whole of the context", () => {
+  const b = brain();
+  assertEquals(b.sense(["hey"]).express, "hello");
+  assertEquals(b.state, "greeted");
+  // `stop` from idle is untaught; it only means something once greeted.
+  assertEquals(b.sense(["stop"]).express, "back-off");
+
+  const fresh = brain();
+  assertEquals(fresh.sense(["stop"]).express, null);
+});
+
+test("the same input from the same state always gives the same output", () => {
+  const runs = [];
+  for (let i = 0; i < 5; i += 1) {
+    const b = brain();
+    runs.push([b.sense(["hey"]).express, b.sense(["stop", "that"]).express, b.state]);
   }
+  for (const run of runs) assertEquals(run, runs[0]);
+  assertEquals(runs[0], ["hello", "back-off", "alarmed"]);
 });
 
-test("a typo still lands on the right concept", () => {
-  const { brain } = createBrain();
-  assertEquals(brain("hellooo").type, "greeting");
-  assertEquals(brain("thankss").type, "gratitude");
+test("reset returns the brain to the state training declared", () => {
+  const b = brain();
+  b.sense(["hey", "stop"]);
+  assertEquals(b.reset(), "idle");
+  assertEquals(b.sense(["hey"]).express, "hello");
 });
 
-test("a phrase is understood as one unit", () => {
-  const { brain } = createBrain();
-  assertEquals(brain("how are you").type, "wellbeing_query");
-  assertEquals(brain("what is your name").type, "identity");
+test("an empty turn moves nothing and expresses the state it is already in", () => {
+  const b = brain();
+  b.sense(["touch"]);
+  const turn = b.sense({ sense: [] });
+  assertEquals(turn.steps, []);
+  assertEquals(turn.express, "feel");
 });
 
-test("unknown input is answered, not dropped", () => {
-  const { brain } = createBrain();
-  const out = brain("qwertyuiop plugh");
+test("every transition reaches experience, including the ones that moved nothing", () => {
+  const experience = new Experience();
+  const b = createBrain({ learned: trainExample(), experience });
+  b.sense(["hey", "shove", "stop"]);
 
-  assertEquals(out.type, "unknown");
-  assertEquals(out.meta.confidence, 0);
-  assertEquals(out.data.unknown.join(" "), "qwertyuiop plugh");
-  assert(out.actions.some((a) => a.name === "learn_prompt"));
+  assertEquals(
+    experience.all().map((s) => [s.seq, s.from, s.signal, s.to]),
+    [
+      [1, "idle", "hey", "greeted"],
+      // `shove` is untaught, so it becomes `unknown`, which greeted does teach.
+      [2, "greeted", UNKNOWN, "puzzled"],
+      // `stop` means nothing from puzzled, so nothing moves — still recorded.
+      [3, "puzzled", "stop", "puzzled"],
+    ],
+  );
 });
 
-test("think() consults the conversation, not just the sentence", () => {
-  const { brain } = createBrain();
-  assertEquals(brain("Hi").response, "Hello!");
-  assertEquals(brain("Hi").response, "Hello again!");
-  assert(brain("Hi").data.repeat);
+test("experience is never read back into a decision", () => {
+  // SPEC §7. Two brains sharing one log must still answer identically.
+  const experience = new Experience();
+  const first = createBrain({ learned: trainExample(), experience });
+  first.sense(["hey", "stop", "that"]);
+
+  const second = createBrain({ learned: trainExample(), experience });
+  assertEquals(second.sense(["hey"]).express, "hello");
 });
 
-test("reset forgets the conversation but keeps what was learned", () => {
-  const aci = createBrain();
-  aci.brain("Hi");
-  aci.reset();
-  assertEquals(aci.brain("Hi").response, "Hello!");
+test("a turn returns nothing but its expression and its walk", () => {
+  // A guard against a confidence score, a rank or a strategy reappearing.
+  assertEquals(Object.keys(brain().sense(["hey"])).sort(), ["express", "steps"]);
+  const [step] = brain().sense(["hey"]).steps;
+  assertEquals(Object.keys(step).sort(), ["atom", "from", "signal", "to"]);
 });
 
-test("half-understood input asks to be clarified", () => {
-  const { brain } = createBrain();
-  const out = brain("hello qwertyuiop plughxyz");
-
-  assert(out.meta.confidence < 0.5);
-  assert(out.data.uncertain);
-  assert(out.actions.some((a) => a.name === "clarify"));
-});
-
-test("a farewell carries its action and closes the exchange", () => {
-  const { brain } = createBrain();
-  const out = brain("goodbye");
-  assert(out.actions.some((a) => a.name === "end_session"));
-  assert(out.data.closing);
-});
-
-test("the trace explains the answer step by step", () => {
-  const { brain } = createBrain();
-  const { trace } = brain("Hi");
-
-  assert(trace.length > 0);
-  assert(trace.some((e) => e.stage === "understand" && e.step === "match"));
-  assert(trace.some((e) => e.stage === "think"));
-  assert(trace.some((e) => e.stage === "solve"));
-});
-
-test("tracing can be turned off", () => {
-  const { brain } = createBrain({ trace: false });
-  assertEquals(brain("Hi").trace.length, 0);
-});
-
-test("the three stages can be driven separately", () => {
-  const aci = createBrain();
-  const understanding = aci.understand("Hi");
-  assertEquals(understanding.concepts[0].name, "greeting");
-
-  const plan = aci.think(understanding);
-  assertEquals(plan.concept, "greeting");
-
-  assertEquals(aci.solve(plan, understanding).response, "Hello!");
-});
-
-test("a word taught at runtime is understood immediately", () => {
-  const aci = createBrain();
-  assertEquals(aci.brain("howdy").type, "unknown");
-
-  aci.learn.word("howdy", { concept: "greeting" });
-  assertEquals(aci.brain("howdy").type, "greeting");
-});
-
-test("a rule taught at runtime changes the answer", () => {
-  const aci = createBrain();
-  aci.learn.rule({
-    id: "shout",
-    stage: "solve",
-    priority: 200,
-    then: (c) => {
-      c.output.response = c.output.response.toUpperCase();
-    },
-  });
-  assertEquals(aci.brain("Hi").response, "HELLO!");
-});
-
-test("a new concept can be taught end to end", () => {
-  const aci = createBrain();
-  aci.memory.concept("weather_query");
-  aci.memory.evokes("weather_query", "curious");
-  aci.learn.word("what is the weather", { concept: "weather_query", aliases: ["hows the weather"] });
-  aci.learn.respond("weather_query", "I have no weather data yet.", { actions: [{ name: "fetch_weather" }] });
-
-  const out = aci.brain("hows the weather");
-  assertEquals(out.type, "weather_query");
-  assertEquals(out.response, "I have no weather data yet.");
-  assert(out.actions.some((a) => a.name === "fetch_weather"));
-});
-
-test("empty input is handled without inventing meaning", () => {
-  const { brain } = createBrain();
-  const out = brain("");
-  assertEquals(out.type, "unknown");
-  assertEquals(out.meta.confidence, 0);
-});
-
-test("meta records what matched and which rules fired", () => {
-  const { brain } = createBrain();
-  const { meta } = brain("Hi");
-  assertEquals(meta.matched[0].word, "hi");
-  assertEquals(meta.matched[0].method, "exact");
-  assert(Array.isArray(meta.rules));
+test("a brain cannot exist without training that says where it starts", () => {
+  assertThrows(() => createBrain({ learned: new Learned() }));
+  assertThrows(() => createBrain({}));
 });

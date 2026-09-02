@@ -1,41 +1,32 @@
 /**
- * The one brain the page talks to.
+ * One brain for the page.
  *
- * Imported straight from the engine's source rather than its built package, so
- * the demo always exercises the code in this repo — if a change breaks the
- * engine, this page breaks with it, which is the point of shipping a demo
- * alongside a library.
+ * The demo imports the engine directly from ../../src — there is no build step
+ * between them, so what the page runs is what the tests run.
+ *
+ * Note what is *not* imported: src/memory/store.js. Persistence needs
+ * `runtime:db`, which does not exist in a browser, and the brain does not need
+ * it to think. Learned memory and experience are both in process here.
  */
 
-import { createBrain } from "../../src/index.js";
-import { NodeType } from "../../src/memory/schema.js";
+import { createBrain, Experience, trainExample } from "../../src/index.js";
 
-export const aci = createBrain();
+export const learned = trainExample();
+export const experience = new Experience();
+export const brain = createBrain({ learned, experience });
 
-/** Runs one turn. */
-export function ask(input) {
-  return aci.brain(input);
+/** Splits a typed line into atoms. Whitespace is a separator, nothing more. */
+export function atomsOf(line) {
+  return line.trim().split(/\s+/).filter(Boolean);
 }
 
-/** Every concept the engine knows, for the teach control's menu. */
-export function concepts() {
-  return [...aci.memory.nodes.values()]
-    .filter((node) => node.type === NodeType.CONCEPT && node.props.name !== "unknown")
-    .map((node) => node.props.name)
-    .sort();
-}
-
-/**
- * Teaches a word and re-answers the turn that prompted it.
- *
- * There is no retraining step and nothing to reload: the word becomes a node,
- * the concept link becomes an edge, and the next lookup finds it.
- */
-export function teach(surface, concept) {
-  aci.memory.word(surface, { language: "en", concept });
-  return ask(surface);
-}
-
-export function stats() {
-  return aci.memory.stats();
+/** What has been taught, for the panel that lists it. */
+export function taught() {
+  const rows = learned.toRows();
+  return {
+    start: rows.start,
+    effects: rows.effects,
+    expressions: rows.expressions,
+    silent: rows.states.filter((state) => learned.expressionOf(state) === null),
+  };
 }
