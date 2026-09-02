@@ -75,9 +75,25 @@ in → recogniser → understand → think → resolve → out
 The runtime is simply whoever calls the brain — a test, the CLI, a kitchen
 bot. It is not a component.
 
-**Signals are open, and that costs nothing.** The brain ships with no list of
-them. A kitchen bot's `temperature` and a chat service's `message` are alike
-to it until it is taught otherwise.
+**Signal is a closed set of three.** What separates them is whether anything
+authored it, and whether it is meant to be interpreted.
+
+| Signal | Author? | To be understood? | |
+|---|---|---|---|
+| **message** | yes | yes | somebody is communicating content |
+| **sense** | no | yes | the world impinging — touched, temperature rising |
+| **command** | yes | no | a directive to the brain itself. Reset, sleep, stop |
+
+**Type is the form of the data, not the signal.** `text`, `number`, `image`,
+`audio` are all types a message can carry; a temperature and a heartbeat are
+not signals of their own.
+
+```
+{ signal: "message", type: "text", data: "pls add me timer task" }
+```
+
+Only `text` is needed now. `number` when a lesson has to count or compare, the
+rest only when something is stuck without them.
 
 ### 2.1 Signal
 
@@ -639,6 +655,9 @@ the numbers.
 
 ## Revision history
 
+- **2026-09-02** — Signal settled as a closed set of three — message, sense,
+  command — separated by whether anything authored it and whether it is meant
+  to be interpreted. Type is the form of the data, and is a different axis.
 - **2026-09-02** — Primitives being re-derived (§2.0): signal, kind, state.
   Expression folded into kind. Recognition separated from understanding.
   `read` rejected as a primitive — too specific, and reading is to be taught.
