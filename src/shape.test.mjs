@@ -65,13 +65,13 @@ test("a word with no meaning is refused", () => {
   assert(msg.includes("meaning"), msg);
 });
 
-test("a word marking a side of the conversation may not also name a term", () => {
-  const msg = refuses("a deictic word naming a term", {
+test("a word that points may not also name a term", () => {
+  const msg = refuses("a pointer naming a term", {
     languages: [
       {
         name: "l",
         symbols: { letter: { characters: "ab" } },
-        words: { a: { pos: "one", meaning: "me", marks: "speaker", concept: 10 } },
+        words: { a: { pos: "one", meaning: "me", marks: "from", concept: 10 } },
       },
     ],
   });

@@ -194,7 +194,7 @@ function langNameOrNull(matches) {
 // ---------------------------------------------------------------------------
 // think — reason over the understood meaning using the language's data.
 // ---------------------------------------------------------------------------
-function think(roots, langs, world) {
+function think(roots, langs, at) {
   return roots.map((n) => {
     if (!n.state.exists) return withBranch(n);
     const langNode = findBranch(n, 'language');
@@ -207,7 +207,7 @@ function think(roots, langs, world) {
       wordKnown: Boolean(first.word),
       pos: first.word ? first.word.pos : null,
       meaning: first.word ? first.word.meaning : null,
-      concept: first.word ? sideOf(first.word, world) ?? first.word.concept : null,
+      concept: first.word ? pointedAt(first.word, at) ?? first.word.concept : null,
       marks: first.word ? first.word.marks : null,
       negates: first.word ? first.word.negates : false,
       role: first.word ? first.word.role : null,
@@ -216,15 +216,14 @@ function think(roots, langs, world) {
   });
 }
 
-// A signal has two sides — the one speaking and the one spoken to — and a word
-// may point at either. That there are two sides is the brain's; which word
-// points at which is the language's (`marks`), and which term each side is, is
-// the world's (its anchors). The brain only turns the one round: heard, the
-// speaker is the other and the listener is the brain itself.
-function sideOf(word, world) {
-  const a = world && world.anchors ? world.anchors : {};
-  if (word.marks === 'speaker') return a.other ?? null;
-  if (word.marks === 'listener') return a.self ?? null;
+// A pointer means something different every time it is said, so no world can
+// hold what it points at. That a word may point is the brain's; which words do
+// it is the language's (`marks`); what they land on is the circumstance of this
+// one signal — where it came from and where it went. Told neither, the brain
+// does not guess, and the word names nothing.
+function pointedAt(word, at) {
+  if (word.marks === 'from') return (at && at.from) ?? null;
+  if (word.marks === 'to') return (at && at.to) ?? null;
   return null;
 }
 
@@ -932,7 +931,12 @@ function expression(roots, langs, mood, world) {
           ? 'answer'
           : 'unknown'
       : bound
-        ? 'understood'
+        ? // Asked something it could not even form a question out of, the brain
+          // has understood nothing: a signal whose pointer landed nowhere is
+          // not a claim it holds.
+          mood === 'ask'
+          ? 'unknown'
+          : 'understood'
         : parts.length === 1
           ? parts[0].name
           : 'unknown';
@@ -1091,12 +1095,23 @@ function grammarOf(root, langs) {
 // never resolve the server-only runtime:fs module. A server wrapper feeds the
 // loaded data in via brainFrom(input, langs, world). See demo/server.js.
 // ---------------------------------------------------------------------------
-export function brainFrom(input, knowledge) {
+export function brainFrom(input, knowledge, circumstance) {
   const langs = (knowledge && knowledge.languages) || [];
   const world = (knowledge && knowledge.world) || null;
 
+  // Where the signal came from is the runtime's to say — a person, a device, a
+  // service, or nothing said at all. Where it went is this brain, unless the
+  // runtime says otherwise: having received it is not an assumption.
+  const at = {
+    from: circumstance && circumstance.from != null ? circumstance.from : null,
+    to:
+      circumstance && circumstance.to != null
+        ? circumstance.to
+        : (world && world.anchors ? world.anchors.self : null) ?? null,
+  };
+
   const roots = understand(input, langs);
-  const thoughtRoots = think(roots, langs, world);
+  const thoughtRoots = think(roots, langs, at);
   const solvedRoots = solve(thoughtRoots, world, langs);
   const mood = moodOf(input, langs);
   const structuredRoots = structurePhrase(solvedRoots, langs);

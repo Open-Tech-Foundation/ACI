@@ -84,8 +84,11 @@ export function openBrain(url) {
     }
   }
 
-  async function brain(input) {
-    const result = brainFrom(input, await loaded());
+  // The circumstance of the signal — where it came from, where it went — is the
+  // runtime's to supply, and it is optional: told nothing, the brain does not
+  // guess who it is talking to.
+  async function brain(input, circumstance) {
+    const result = brainFrom(input, await loaded(), circumstance);
     if (result.learned) {
       try {
         await inTurn(() => write(store, result.learned));

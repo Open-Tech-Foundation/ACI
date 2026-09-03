@@ -12,7 +12,6 @@
     "mind": 230,
     "self": 296,
     "bad": 239,
-    "other": 559,
     "name": 138,
     "know": 285,
     "zero": 124,
@@ -3155,11 +3154,15 @@
       "links": [
         {
           "rel": 294,
-          "to": 2
+          "to": 560
         },
         {
           "rel": 295,
           "to": 230
+        },
+        {
+          "rel": 295,
+          "to": 561
         }
       ]
     },
@@ -5931,15 +5934,24 @@
       "value": 100
     },
     {
-      "id": 559,
-      "name": "other",
+      "id": 560,
+      "name": "machine",
       "links": [
         {
           "rel": 294,
-          "to": 29
+          "to": 8
         }
-      ],
-      "individual": true
+      ]
+    },
+    {
+      "id": 561,
+      "name": "memory",
+      "links": [
+        {
+          "rel": 294,
+          "to": 101
+        }
+      ]
     }
   ]
 }

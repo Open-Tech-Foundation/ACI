@@ -92,6 +92,8 @@
     "pen":        { "pos": "noun", "meaning": "pen",            "concept": 43 },
     "phone":      { "pos": "noun", "meaning": "phone",          "concept": 44 },
     "computer":   { "pos": "noun", "meaning": "computer",       "concept": 45 },
+    "machine":    { "pos": "noun", "meaning": "machine",        "concept": 560 },
+    "memory":     { "pos": "noun", "meaning": "memory",         "concept": 561 },
     "book":       { "pos": "noun", "meaning": "book",           "concept": 18 },
     "moon":       { "pos": "noun", "meaning": "moon",           "concept": 289 },
     "star":       { "pos": "noun", "meaning": "star",           "concept": 290 },
@@ -102,7 +104,6 @@
     "container":  { "pos": "noun", "meaning": "container",      "concept": 19 },
     "basket":     { "pos": "noun", "meaning": "basket",         "concept": 307 },
 
-    "ACI":       { "pos": "noun", "meaning": "self",           "concept": 296 },
     "has":       { "pos": "verb", "meaning": "has",            "concept": 295 },
     "know":      { "pos": "verb", "meaning": "know",           "concept": 285 },
     "plus":      { "pos": "verb", "meaning": "plus",           "concept": 303 },
@@ -562,12 +563,12 @@
     "what":      { "pos": "interrogative", "meaning": "what", "marks": "unknown" },
     "how":       { "pos": "interrogative", "meaning": "how",  "marks": "unknown" },
     "many":      { "pos": "quantifier",    "meaning": "many",  "concept": 243 },
-    "you":       { "pos": "pronoun",       "meaning": "self",  "marks": "listener" },
-    "your":      { "pos": "pronoun",       "meaning": "self",  "marks": "listener" },
-    "ur":        { "pos": "pronoun",       "meaning": "self",  "marks": "listener" },
-    "i":         { "pos": "pronoun",       "meaning": "other", "marks": "speaker" },
-    "me":        { "pos": "pronoun",       "meaning": "other", "marks": "speaker" },
-    "my":        { "pos": "pronoun",       "meaning": "other", "marks": "speaker" }
+    "you":       { "pos": "pronoun",       "meaning": "to",    "marks": "to" },
+    "your":      { "pos": "pronoun",       "meaning": "to",    "marks": "to" },
+    "ur":        { "pos": "pronoun",       "meaning": "to",    "marks": "to" },
+    "i":         { "pos": "pronoun",       "meaning": "from",  "marks": "from" },
+    "me":        { "pos": "pronoun",       "meaning": "from",  "marks": "from" },
+    "my":        { "pos": "pronoun",       "meaning": "from",  "marks": "from" }
   },
   "marking": "after",
   "derivations": [

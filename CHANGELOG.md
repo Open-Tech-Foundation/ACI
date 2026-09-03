@@ -13,15 +13,17 @@ All notable changes to this project are documented in this file.
   carry out and the term it would answer with, and a refusal is the last word
   whatever else would fit. No walk toward `good`: a brain going looking for it
   would be weighing, and `anchors.good` is read nowhere.
-- **The other person.** A signal has two sides, and until now only one of them
-  existed: `you` resolved to the brain and the one speaking had no term at all.
-  `other` is that term — an individual, and a person, where the brain is a self
-  and no kind of person. A word may now carry `marks: "speaker"` or
-  `marks: "listener"`, and names no term of its own: the language says which word
-  points at which side, the world's anchors say which term each side is, and the
-  brain turns the one round neither can — heard, the speaker is the other and the
-  listener is the brain itself. So `i am a friend` is learned of whoever is
-  speaking, and `i am ACI?` is *No.*
+- **Pointing.** `i`, `me`, `my`, `you`, `your` hold nothing of their own: a word
+  carrying `marks: "from"` or `marks: "to"` names no term, and lands on the
+  circumstance of the signal it arrived in — `brainFrom(input, knowledge,
+  { from, to })`, supplied by the runtime. Every language has such words and no
+  world can define them, so nothing about who is talking is held anywhere: a
+  person, a device, a service, all the same to the brain. Told nothing, it does
+  not guess — the pointer lands nowhere and the question goes unanswered.
+- **Identity, as three links and no code.** `self is machine`, `self has mind`,
+  `self has memory`, with `machine` and `memory` as terms. So *are you an
+  organism?* is **No.** by exclusion and *are you a machine?* is **Yes.** by
+  walking, and neither is a reply held anywhere.
 - `i`, `me`, `my` and `am` in English. The letter `i` gives up the word to the
   pronoun, as the letter `a` already gave it up to the article.
 
@@ -35,8 +37,18 @@ All notable changes to this project are documented in this file.
   haunted by one that was. `forgetLearned` drops what was taught and leaves what
   was seeded.
 
+### Removed
+
+- **The brain's name.** `ACI` was a word in `languages/en.json` naming the self
+  term, which made every instance of the engine answer to one name shipped in
+  the box. A name belongs to an instance, not to English, and arrives with the
+  rest of its identity — until it does, the brain says it does not know its own
+  name rather than inventing one.
+
 ### Fixed
 
+- A question the brain could not even form was answered *I know.* — the bound
+  fallback did not look at whether it had been asked something.
 - An action in a signal was carried out even where the signal was *about* it, so
   a claim naming one was swallowed and recorded as a happening. The joint is
   never one of the things joined: a relation named between two things is a claim.
