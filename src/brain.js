@@ -530,7 +530,7 @@ function grammarOf(root, langs) {
 // Where that data comes from — disk (runtime:fs, server), HTTP, or a bundled
 // JSON — is a separate concern kept outside this module so browser builds
 // never resolve the server-only runtime:fs module. A server wrapper feeds the
-// loaded languages in via brainFrom(input, langs). See bin/ask.js.
+// loaded data in via brainFrom(input, langs, world). See demo/server.js.
 // ---------------------------------------------------------------------------
 export function brainFrom(input, langs, world) {
   const roots = understand(input, langs);

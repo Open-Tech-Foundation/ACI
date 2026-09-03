@@ -126,6 +126,11 @@ All notable changes to this project are documented in this file.
 
 ### Removed
 
+- `bin/ask.js` and the `cli` task. It was a dev harness, never a product — no
+  `bin` field, not in `files` — and it carried a second tree renderer that had
+  already drifted from the demo's. The demo site is now the only way to run the
+  brain by hand.
+
 - `deriveReply`, which held every reply as a string inside the engine.
 
 - `compose`, which duplicated what `structure` does and was the cause of the lost

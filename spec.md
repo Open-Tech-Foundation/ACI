@@ -330,7 +330,8 @@ no language at all, so it is always unsaid.
   it is asked about (the `is` relation by default) and terminates on cycles.
 - `src/index.js` — server-only bootstrap: `brain(input)` loads the `languages/`
   dir and `data/world.json` via `runtime:fs` (probing relative candidates to work
-  both raw and bundled) and calls `brainFrom(input, langs, world)`.
+  both raw and bundled) and calls `brainFrom(input, langs, world)`. `demo/server.js`
+  is its only caller.
 
 ## Public API
 
@@ -347,6 +348,10 @@ await brain("hi")                     // loads languages internally
 ```
 
 ## Demo
+
+The demo site is the **only** way to run the brain by hand. There is no CLI: a
+second surface meant a second tree renderer, and the two drifted. One surface,
+two views.
 
 - `demo/server.js` — ES-Runtime HTTP server. `POST /brain` `{ "q": "... " }`
   returns the full brain result; serves the static site.
