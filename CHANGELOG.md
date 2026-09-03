@@ -6,6 +6,24 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **`src/store.js` — the world kept in SQLite**, seeded once from
+  `data/world.json` and read back in the same shape every other source uses, so it
+  is validated on the way out like any of them. The schema is a second wall, not a
+  replacement: `unique (name)` on a term, foreign keys on both ends of every link,
+  and a unique link tuple.
+- **Memory survives a restart.** Persistence is opt-in by naming a path in
+  `ACI_STORE`; a run not told to remember uses an in-memory store and is never
+  haunted by one that was. `forgetLearned` drops what was taught and leaves what
+  was seeded.
+
+### Fixed
+
+- A link with no moment could be written twice: SQLite holds two nulls to be
+  different, so the unique index did not catch it. The column is never null now.
+- Every test owns entities no other test touches, and the brain-level tests no
+  longer call a global `forget()` — under concurrent runs one test could wipe
+  another's facts mid-way.
+
 - The world roughly doubles: **554 terms, 542 words, 95% sayable.** Reptiles and
   amphibians, twenty-five mammals, birds, fish, insects; vegetables and more fruit;
   furniture, vehicles, buildings, tools, landforms, weather, seasons; nineteen

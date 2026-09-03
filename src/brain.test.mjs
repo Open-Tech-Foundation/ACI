@@ -546,7 +546,7 @@ test("two terms and a relation is still a claim, not a question", async () => {
 
 test("a question the world cannot fill is a gap, not an empty answer", async () => {
   forget();
-  const r = await brain("a cat has what?");
+  const r = await brain("a peacock has what?");
   const answer = kind(r.roots[0], "answer");
   assert(answer !== null, "the question the brain asked itself is on the tree");
   assertEquals(answer.state.found, [], "and it found nothing");
@@ -578,8 +578,8 @@ test("exclusion is read off the kinds, however far apart they sit", async () => 
 });
 
 test("only a claim about kind can be excluded", async () => {
-  // A cat and a mind are different kinds, but having one is not being one.
-  const r = await brain("a cat has a mind?");
+  // A peacock and a mind are different kinds, but having one is not being one.
+  const r = await brain("a peacock has a mind?");
   assertEquals(kind(r.roots[0], "truth").name, "unknown", "not denied by exclusion");
 });
 

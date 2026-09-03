@@ -331,6 +331,39 @@ world.heldOver(basket#308, has, apple)
 world.held(...)  → 4
 ```
 
+## Where the world is kept
+
+`src/store.js` keeps the world in SQLite. **The brain never comes here.** It is
+handed a world and asks that world questions — `isA`, `linked`, `held`, `excludes`
+and eleven others — and never reads a term directly, so where the answers come
+from is not its business. The store is one implementation of that port.
+
+Nothing is trusted for being in a table: the store reads the world back in the
+same `{ anchors, relations, terms }` shape every other source uses, and it goes
+through `checkWorld` / `checkWhole` like any of them. The schema is a **second**
+wall, not a replacement — `unique (name)` on a term, foreign keys on both ends of
+every link, and a unique link tuple.
+
+```
+data/aci.db        the world, seeded once from the json below
+data/world.json    the world as authored — the seed, and the export format
+```
+
+Persistence is **opt-in**, by naming a path in `ACI_STORE`. A run that was not
+told to remember uses an in-memory store, so it is never haunted by one that was.
+
+```
+$ ACI_STORE=data/aci.db  …
+> a cart has nine needle             I know.
+> take four needles from the cart    five
+                              — a new process, told nothing —
+> the cart has how many needles?     five
+```
+
+`runtime:db` is asynchronous, so every statement is drained and closed before the
+next, and all store access is serialised: a cursor left open blocks the next
+write, and two answers at once would otherwise interleave.
+
 ## Memory
 
 Two kinds, and they behave differently:

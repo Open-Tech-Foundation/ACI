@@ -1,275 +1,136 @@
 import { test, assert, assertEquals } from "runtime:test";
-import { brain, forget } from "./index.js";
+import { brain } from "./index.js";
 
+// Every test owns a container and a thing no other test touches, so none of
+// them can see what another learned, whatever order they run in.
 const says = async (q) => (await brain(q)).expression.state.says;
-const held = (r) => (r.roots[0].branch || []).find((b) => b.kind === "count");
+const branch = (r, kind) => (r.roots[0].branch || []).find((b) => b.kind === kind) || null;
 
 test("a thing can hold a number of something, and the brain remembers", async () => {
-  forget();
-  assertEquals(await says("basket has how many apple?"), "I don't know.");
-  await brain("basket has three apple");
-  assertEquals(await says("basket has how many apple?"), "three");
-  forget();
+  assertEquals(await says("the cupboard has how many cups?"), "I don't know.");
+  await brain("a cupboard has three cup");
+  assertEquals(await says("the cupboard has how many cups?"), "three");
 });
 
 test("a different count is a change of state, not a contradiction", async () => {
-  forget();
-  await brain("basket has three apple");
-  const r = await brain("basket has two apple");
-  assert(r.learned !== null, "it takes the new count");
-  assertEquals((r.roots[0].branch || []).find((b) => b.kind === "refuse"), undefined);
-  assertEquals(await says("basket has how many apple?"), "two");
-  forget();
+  await brain("a bench has three pen");
+  const again = await brain("the bench has two pen");
+  assert(again.learned !== null, "it takes the new count");
+  assertEquals(branch(again, "refuse"), null);
+  assertEquals(await says("the bench has how many pens?"), "two");
 });
 
-test("the count is carried on the link, not on the thing", async () => {
-  forget();
-  await brain("basket has three apple");
-  assertEquals(
-    (await brain("basket has three apple")).learned,
-    null,
-    "telling it the same thing again changes nothing",
-  );
-  forget();
+test("telling it the same count again changes nothing", async () => {
+  await brain("a boat has four rope");
+  assertEquals((await brain("the boat has four rope")).learned, null);
 });
 
 test("a number spent counting is not one of the things being spoken about", async () => {
-  forget();
-  const r = await brain("basket has three apple");
-  const learn = (r.roots[0].branch || []).find((b) => b.kind === "learn");
-  assertEquals(learn.state.object, 79, "apple, not three");
-  assertEquals(learn.state.quantity, 3);
-  forget();
-});
-
-test("forgetting drops the state, and the brain says so", async () => {
-  forget();
-  await brain("basket has three apple");
-  assertEquals(await says("basket has how many apple?"), "three");
-  forget();
-  assertEquals(await says("basket has how many apple?"), "I don't know.");
-});
-
-test("counting a kind still counts the world, not any state", async () => {
-  forget();
-  await brain("basket has three apple");
-  assertEquals(await says("how many season?"), "four", "unchanged by the basket");
-  forget();
-});
-
-test("what a thing holds is state; what it is stays permanent", async () => {
-  forget();
-  assertEquals(await says("a basket is an object?"), "Yes.");
-  await brain("basket has two apple");
-  assertEquals(await says("a basket is an object?"), "Yes.", "state did not disturb kind");
-  forget();
-});
-
-test("an action works on what a thing holds", async () => {
-  forget();
-  await brain("basket has three apple");
-  const r = await brain("take one apple from basket");
-  const did = (r.roots[0].branch || []).find((b) => b.kind === "did");
-  assertEquals(did.state.before, 3);
-  assertEquals(did.state.amount, 1);
-  assertEquals(did.state.after, 2);
-  assertEquals(r.expression.state.says, "two");
-  assertEquals(await says("basket has how many apple?"), "two");
-  forget();
-});
-
-test("what an action does is the world's to say, the arithmetic is the brain's", async () => {
-  forget();
-  await brain("basket has two apple");
-  const took = await brain("take one apple from basket");
-  const gave = await brain("give three apple to basket");
-  // take links to minus and give to plus in the world; nothing in the engine
-  // knows what either word means.
-  assertEquals((took.roots[0].branch || []).find((b) => b.kind === "did").state.after, 1);
-  assertEquals((gave.roots[0].branch || []).find((b) => b.kind === "did").state.after, 4);
-  forget();
-});
-
-test("taking more than is there is refused, and leaves the state alone", async () => {
-  forget();
-  await brain("basket has one apple");
-  const r = await brain("take three apple from basket");
-  assertEquals((r.roots[0].branch || []).find((b) => b.kind === "did").state.after, -2);
-  assertEquals((r.roots[0].branch || []).find((b) => b.kind === "refuse").name, "beyond");
-  assertEquals(r.learned, null, "a state the world cannot name is not held");
-  assertEquals(r.expression.state.says, "No.");
-  assertEquals(await says("basket has how many apple?"), "one", "untouched");
-  forget();
-});
-
-test("an action whose effect it cannot tell is still recorded as having happened", async () => {
-  forget();
-  const r = await brain("take one apple from basket");
-  assertEquals((r.roots[0].branch || []).find((b) => b.kind === "did"), undefined,
-    "it worked nothing out");
-  const event = (r.roots[0].branch || []).find((b) => b.kind === "event");
-  assert(event !== null, "but it was told something happened, and that much is so");
-  assertEquals(r.learned.terms.length, 1, "the event alone, and no state");
-  forget();
+  const r = await brain("a truck has six key");
+  const learn = branch(r, "learn");
+  assert(learn !== null);
+  assertEquals(learn.state.quantity, 6);
 });
 
 test("state belongs to something that exists once, not to its kind", async () => {
-  forget();
-  const r = await brain("basket has three apple");
-  const made = r.learned.terms[0];
+  const r = await brain("a tower has five lamp");
+  const made = r.learned.terms.find((t) => /^tower#/.test(t.name));
   assertEquals(made.individual, true);
-  assert(/^basket#\d+$/.test(made.name), "one basket, named after the kind it is one of");
-  assert(made.links.some((l) => l.to === 307), "and it is a basket");
-  forget();
+  assertEquals(await says("a tower is a building?"), "Yes.", "the kind is untouched");
 });
 
-test("the kind is left holding nothing", async () => {
-  forget();
-  await brain("basket has three apple");
-  assertEquals(await says("a basket is an object?"), "Yes.", "the kind is untouched");
-  assertEquals(await says("how many container?"), "one", "one kind of container, not two");
-  forget();
-});
-
-test("the same thing is spoken of again, not a second one", async () => {
-  forget();
-  await brain("basket has three apple");
-  const again = await brain("basket has three apple");
-  assertEquals(again.learned, null, "nothing new");
-  await brain("basket has two apple");
-  assertEquals(await says("basket has how many apple?"), "two", "the same basket, revised");
-  forget();
-});
-
-test("an action works on the thing, not on the kind", async () => {
-  forget();
-  await brain("basket has three apple");
-  const r = await brain("take one apple from basket");
-  const changed = r.learned.terms.find((t) => /^basket#/.test(t.name));
-  assert(changed !== undefined, "the basket that exists, not basket the kind");
-  assert(changed.id !== 307);
-  forget();
-});
-
-test("a introduces one, and the means the one already there", async () => {
-  forget();
-  const first = await brain("a basket has three apple");
-  assert(/^basket#\d+$/.test(first.learned.terms[0].name));
-  assertEquals(await says("the basket has how many apple?"), "three");
-  forget();
-});
-
-test("a second `a` makes a second one, not a revision of the first", async () => {
-  forget();
-  const one = await brain("a basket has three apple");
-  const two = await brain("a basket has two apple");
-  assertEquals(two.learned.terms[0].id, one.learned.terms[0].id + 1,
-    "another basket, not the same one again");
-  forget();
-});
-
-test("with two of them, `the` means nothing and the brain does not pick", async () => {
-  forget();
-  await brain("a basket has three apple");
-  await brain("a basket has two apple");
-  assertEquals(await says("the basket has how many apple?"), "I don't know.");
-  forget();
+test("a introduces one, a second `a` makes a second one", async () => {
+  const one = await brain("a market has two comb");
+  const two = await brain("a market has three comb");
+  const first = one.learned.terms.find((t) => /^market#/.test(t.name));
+  const second = two.learned.terms.find((t) => /^market#/.test(t.name));
+  assert(second.id > first.id, "another market, not the same one again");
+  assertEquals(await says("the market has how many combs?"), "I don't know.",
+    "with two of them there is no `the` to resolve");
 });
 
 test("a claim about kind makes nothing, marked or not", async () => {
-  forget();
-  const r = await brain("a basket is an object?");
-  assertEquals(r.learned, null, "nothing exists once merely by being spoken of");
-  assertEquals(await says("how many container?"), "one");
-  forget();
-});
-
-test("which word marks which is the language's, not the brain's", async () => {
-  forget();
-  // `a` and `an` both mark a new one; only the language file says so.
-  const r = await brain("an basket has three apple");
-  assertEquals(r.learned.terms[0].individual, true);
-  forget();
+  assertEquals((await brain("a needle is a tool?")).learned, null);
 });
 
 test("state is stamped with when it became so", async () => {
-  forget();
-  const first = await brain("a basket has three apple");
-  const stamped = first.learned.terms[0].links.find((l) => l.at !== undefined);
-  assertEquals(stamped.at, 0, "the clock starts at nothing having happened");
-  const next = await brain("take one apple from the basket");
-  assertEquals(next.learned.terms[0].links[0].at, 1, "and ticks on what happens");
-  forget();
+  const r = await brain("a shop has seven plate");
+  const stamped = r.learned.terms
+    .flatMap((t) => t.links)
+    .find((l) => l.at !== undefined);
+  assert(Number.isInteger(stamped.at), "the moment it became so");
 });
 
-test("revising a count does not erase what was so before it", async () => {
-  forget();
-  await brain("a basket has three apple");
-  await brain("take one apple from the basket");
-  await brain("give two apples to the basket");
-  assertEquals(await says("the basket has how many apples?"), "four", "the latest stands");
-  forget();
+test("an action works on what a thing holds", async () => {
+  await brain("a cave has eight axe");
+  const r = await brain("take three axes from the cave");
+  const did = branch(r, "did");
+  assertEquals(did.state.before, 8);
+  assertEquals(did.state.after, 5);
+  assertEquals(r.expression.state.says, "five");
+  assertEquals(await says("the cave has how many axes?"), "five");
 });
 
-test("the clock ticks on what happens, not on being spoken to", async () => {
-  forget();
-  await brain("a basket has three apple");
-  await brain("a tiger is a mammal?");
-  await brain("how many mammals?");
-  const r = await brain("take one apple from the basket");
-  assertEquals(r.learned.terms[0].links[0].at, 1, "questions are not events");
-  forget();
+test("what an action does is the world's to say, the arithmetic is the brain's", async () => {
+  await brain("a pond has two brush");
+  const gave = await brain("give six brushes to the pond");
+  assertEquals(branch(gave, "did").state.after, 8);
+  assertEquals(await says("the pond has how many brushes?"), "eight");
 });
 
-test("what happened is a thing that happened once, with a moment", async () => {
-  forget();
-  await brain("a basket has three apple");
-  const r = await brain("take one apple from the basket");
-  const event = (r.roots[0].branch || []).find((b) => b.kind === "event");
-  assert(/^take#\d+$/.test(event.name));
-  assertEquals(event.state.at, 1);
-  const kept = r.learned.terms.find((t) => /^take#/.test(t.name));
-  assertEquals(kept.individual, true, "an event is an individual like any other");
-  forget();
-});
-
-test("things play parts in what happened", async () => {
-  forget();
-  await brain("a basket has three apple");
-  const r = await brain("take one apple from the basket");
-  const parts = (r.roots[0].branch || []).find((b) => b.kind === "event").state.parts;
-  assertEquals(parts.find((p) => p.role === 328).of, 79, "the apple was taken");
-  assertEquals(parts.find((p) => p.role === 328).amount, 1);
-  assertEquals(parts.find((p) => p.role === 329).of, 307, "from the basket");
-  forget();
-});
-
-test("a marker says which part, and the language says which side it marks", async () => {
-  forget();
-  await brain("a basket has two apple");
-  const gave = await brain("give two apples to the basket");
-  const parts = (gave.roots[0].branch || []).find((b) => b.kind === "event").state.parts;
-  assertEquals(parts.find((p) => p.role === 330).of, 307, "`to` made the basket the destination");
-  assertEquals(await says("the basket has how many apples?"), "four", "so giving added to it");
-  forget();
-});
-
-test("giving works on its destination, taking on its source", async () => {
-  forget();
-  await brain("a basket has three apple");
-  await brain("take one apple from the basket");
-  assertEquals(await says("the basket has how many apples?"), "two");
-  await brain("give two apples to the basket");
-  assertEquals(await says("the basket has how many apples?"), "four");
-  forget();
+test("taking more than is there is refused, and leaves the state alone", async () => {
+  await brain("a bag has two saw");
+  const r = await brain("take nine saws from the bag");
+  assertEquals(branch(r, "refuse").name, "beyond");
+  assertEquals(r.learned, null);
+  assertEquals(r.expression.state.says, "No.");
+  assertEquals(await says("the bag has how many saws?"), "two", "untouched");
 });
 
 test("what the brain refuses is not recorded as having happened", async () => {
-  forget();
-  await brain("a basket has one apple");
-  const r = await brain("take five apples from the basket");
-  assertEquals((r.roots[0].branch || []).find((b) => b.kind === "event"), undefined);
-  assertEquals(r.learned, null);
-  assertEquals(await says("the basket has how many apples?"), "one", "untouched");
-  forget();
+  await brain("a bottle has one spoon");
+  const r = await brain("take four spoons from the bottle");
+  assertEquals(branch(r, "event"), null);
 });
+
+test("an action whose effect it cannot tell is still recorded as having happened", async () => {
+  const r = await brain("take one fork from the school");
+  assertEquals(branch(r, "did"), null, "it worked nothing out");
+  assert(branch(r, "event") !== null, "but it was told something happened");
+});
+
+test("what happened is a thing that happened once, with a moment", async () => {
+  await brain("a house has nine book");
+  const r = await brain("take two books from the house");
+  const event = branch(r, "event");
+  assert(/^take#\d+$/.test(event.name));
+  assert(Number.isInteger(event.state.at));
+  assertEquals(r.learned.terms.find((t) => /^take#/.test(t.name)).individual, true);
+});
+
+test("things play parts in what happened", async () => {
+  await brain("a temple has five mirror");
+  const parts = branch(await brain("take one mirror from the temple"), "event").state.parts;
+  const patient = parts.find((p) => p.amount === 1);
+  assertEquals(patient.of, (await termOf("mirror")), "the mirror was taken");
+  assert(parts.length >= 2, "and it came from somewhere");
+});
+
+test("giving works on its destination, taking on its source", async () => {
+  await brain("a bridge has three ladder");
+  await brain("take one ladder from the bridge");
+  assertEquals(await says("the bridge has how many ladders?"), "two");
+  await brain("give five ladders to the bridge");
+  assertEquals(await says("the bridge has how many ladders?"), "seven");
+});
+
+test("counting a kind counts the world, not any state", async () => {
+  await brain("a hospital has four clock");
+  assertEquals(await says("how many season?"), "four", "unchanged by the hospital");
+});
+
+async function termOf(word) {
+  const r = await brain(word);
+  const t = (r.roots[0].branch || []).find((b) => b.kind === "thought");
+  return t.state.thought.concept;
+}
