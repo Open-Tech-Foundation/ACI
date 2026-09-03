@@ -546,6 +546,16 @@ function judge(roots, world, mood, langs, sent) {
           withBranch(root, [...root.branch, node('refuse', 'unheld', [], { subject, object })]),
         ];
       }
+      // Criticism of the one holding this conversation is not taken at its
+      // word: told it is bad, the brain looks for something it is on record
+      // as ever having done at all. Finding nothing, there is no fault of its
+      // own to own, and it says so rather than accepting one it cannot find;
+      // finding something, the claim stands the same as any other told of it.
+      if (object === a.bad && subject === a.self && world.members(subject, a.agent).length === 0) {
+        return [
+          withBranch(root, [...root.branch, node('refuse', 'unwarranted', [], { subject, object })]),
+        ];
+      }
       return [
         withBranch(root, [
           ...root.branch,

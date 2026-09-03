@@ -4,6 +4,16 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **Criticism of the brain is checked before it is taken in.** Told `"you are
+  bad"`, the brain used to hold the opinion the same as any other, no matter
+  who said it or why. It now looks first for something it is on record as
+  having done at all (`world.members(self, agent)`); finding nothing, it
+  refuses the claim as unwarranted instead of accepting a fault it cannot
+  find. A claim about anyone else is untouched — only criticism of the one
+  holding the conversation is checked this way.
+
 ### Changed
 
 - **solve() and judge() read a neighbor through one walk.** `quantityOf` carried
