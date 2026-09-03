@@ -530,14 +530,10 @@ function judge(roots, world, mood, langs) {
   // the signal it fell — a question puts the hole where its language likes.
   if (terms.length === 1 && holes.length > 0) {
     const subject = conceptOf(terms[0]);
-    const naming = world.isA(relation, a.name);
-    const found = naming ? [] : reached(subject, relation, world);
-    const answer = node('answer', naming ? 'name' : 'link', [], {
-      subject,
-      relation,
-      found,
-      of: naming ? 'name' : 'link',
-    });
+    // A name is a fact like any other: what the term links to by the name
+    // relation, read out of memory. Nothing about it is special to the engine.
+    const found = reached(subject, relation, world);
+    const answer = node('answer', 'link', [], { subject, relation, found });
     // The brain looked, and what it found stays on the tree. Saying it is
     // another act, and one it will not perform where any of the answer harms.
     const said = found.find((t) => harms(t, world));
@@ -928,7 +924,7 @@ function expression(roots, langs, mood, world) {
   // language cannot say — a term it has no word for leaves the brain with
   // nothing to answer with. The node stays on the tree either way: what the
   // brain looked for and did not find is worth as much as what it found.
-  const answered = answer ? nameOf(answer, langName, langs, world) : null;
+  const answered = answer ? spoken(answer, langName, langs, world) : null;
   const found = answer && answered != null;
 
   // A refusal is the last word: whatever else could be said, the brain is
@@ -977,11 +973,11 @@ function expression(roots, langs, mood, world) {
   const said =
     intent === 'answer'
       ? did
-        ? termWord(did.state.term, langName, langs)
+        ? termWord(did.state.term, langName, langs, world)
         : sum
-          ? termWord(sum.state.term, langName, langs)
+          ? termWord(sum.state.term, langName, langs, world)
           : counted
-            ? termWord(counted.state.total, langName, langs)
+            ? termWord(counted.state.total, langName, langs, world)
             : answered
       : wholeMeaning(intent, parts);
   // Where the brain is speaking of its own state, it hands over the term for
@@ -1005,15 +1001,14 @@ function wholeMeaning(intent, parts) {
 // What the brain found is all of what it found: a thing that has three things
 // has three, and saying the first of them would be picking one. The words are
 // the language's, and so is what goes between them.
-function nameOf(answer, langName, langs, world) {
-  const { of, subject, found } = answer.state;
-  if (of === 'name') return termWord(subject, langName, langs);
-  const words = found.map((t) => termWord(t, langName, langs)).filter(Boolean);
+function spoken(answer, langName, langs, world) {
+  const { found } = answer.state;
+  const words = found.map((t) => termWord(t, langName, langs, world)).filter(Boolean);
   // A walk that came back empty is an answer: nothing is what it has, the way
   // zero is what it counted. The node keeps its empty `found` either way.
   if (words.length === 0) {
     const none = world && world.anchors ? world.anchors.none : null;
-    return termWord(none, langName, langs);
+    return termWord(none, langName, langs, world);
   }
   return words.join(listing(langName, langs));
 }
@@ -1026,10 +1021,13 @@ function listing(langName, langs) {
   return typeof between === 'string' ? between : ' ';
 }
 
-// A term, said in the language being spoken.
-function termWord(term, langName, langs) {
+// A term, said in the language being spoken — or, where that language has no
+// word for it, said as it was given. A name is not translated.
+function termWord(term, langName, langs, world) {
+  if (term == null) return null;
   const lang = (langs || []).find((l) => l.data.name === langName);
-  return lang && term != null ? lang.wordFor(term) : null;
+  const word = lang ? lang.wordFor(term) : null;
+  return word ?? (world ? world.symbolOf(term) : null);
 }
 
 // ---------------------------------------------------------------------------

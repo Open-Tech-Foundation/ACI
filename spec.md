@@ -382,18 +382,25 @@ memory is not its own: every computer has one, and this is a computer. So
 `"you is an organism?"` is *No.* by exclusion, `"you is a machine?"` is *Yes.*
 by walking two links, and neither answer is held anywhere as a reply.
 
-Its **name** is not among them. A name is a word, and no language shipped here
-names the `self` term — a name belongs to an instance, not to English. One file
-gives it one:
+Its **name** is not among them, because a name is not the same kind of fact. It
+belongs to this one instance, so the runtime loads it **into memory**, in the
+shape everything else takes:
 
 ```jsonc
-// languages/instance.json
-{ "name": "english", "words": { "aci": { "pos": "noun", "meaning": "self", "concept": 296 } } }
+// knowledge/identity.json
+{ "terms": [
+  { "id": 562, "name": "the name", "symbol": "ACI", "links": [{ "rel": 294, "to": 138 }] },
+  { "id": 296, "name": "self",     "links": [{ "rel": 138, "to": 562 }] }
+] }
 ```
 
-and `"what is your name?"` answers `aci`, `"aci has what?"` answers
-`mind, memory`. Without such a file the brain says it does not know its own
-name rather than inventing one.
+`"what is your name?"` is then an ordinary question over the `name` relation —
+nothing in the engine treats it specially — and it answers `ACI`. Loaded
+nothing, the brain answers `none` rather than inventing a name.
+
+A **`symbol`** on a term is the characters it is said as where no language has a
+word for it. A name is the same in every language, so it is held with the thing
+rather than in any of them, and `name` stays a label the engine never reads.
 
 ## Time
 
@@ -714,21 +721,20 @@ Adds a `count` node with `{ of, members, total }`.
 **One term and something unresolved → a question.** The term the brain was given
 is the one being asked about, **wherever in the signal the hole fell** — a
 language puts its question words where it likes, and the brain does not need to
-know where. Adds an `answer` node with `{ subject, relation, found, of }`:
+know where. Adds an `answer` node with `{ subject, relation, found }` — what the term links
+to by that relation, **all of it**, and what it links to *by being what it is*:
+the walk climbs the `is` chain and gathers every rung, so a computer's memory is
+this brain's memory without anyone writing the link twice. A thing that has
+three things has three; saying the first would be picking one, and the brain
+does not pick. What stands between them said one after another is the language's
+(`speech.list`). A walk that comes back empty answers with `anchors.none` —
+nothing is what it has, the way zero is what a count of nothing counts — while
+the node keeps its empty `found`.
 
-- `of: "link"` — what the term links to by that relation, **all of it**, and
-  what it links to *by being what it is*: the walk climbs the `is` chain and
-  gathers every rung, so a computer's memory is this brain's memory without
-  anyone writing the link twice. A thing that has three things has three; saying
-  the first would be picking one, and the brain does not pick. What stands
-  between them said one after another is the language's (`speech.list`). A walk
-  that comes back empty answers with `anchors.none` — nothing is what it has,
-  the way zero is what a count of nothing counts — while the node keeps its
-  empty `found`
-- `of: "name"` — the relation reaches `anchors.name`, so the answer is what *this
-  language* calls the term. A name is not a fact the brain holds anywhere: it is
-  the word naming that term in the language being spoken, and where the language
-  has no word there is no name to give.
+A **name** is not a case of its own: `"what is your name?"` walks the `name`
+relation like any other, and answers with what memory holds. A term the language
+has no word for is said by its `symbol`, and where it has neither there is
+nothing to say.
 
 A question the world cannot fill leaves `found` empty, and so is one the language
 cannot say — a term it has no word for leaves the brain with nothing to answer
@@ -737,7 +743,7 @@ did not find is worth as much as what it found — and the signal is expressed a
 `unknown` rather than answered emptily.
 
 ```
-what is your name?     ...       self  --name--> (no word names it yet)
+what is your name?     ACI       self  --name--> a term said as "ACI"
 what is a cat?         animal    cat   --is-->   animal
 a cat is what?         animal    same answer, hole at the other end
 you has what?          mind, memory        self  --has--> both of them

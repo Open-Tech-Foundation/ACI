@@ -123,6 +123,7 @@ function merge(world, sources) {
       if (!held) {
         const kept = { id: t.id, name: t.name, links: [...t.links] };
         if (t.value !== undefined) kept.value = t.value;
+        if (t.symbol !== undefined) kept.symbol = t.symbol;
         if (t.individual) kept.individual = true;
         if (t.disjoint) kept.disjoint = true;
         terms.set(t.id, kept);
@@ -141,6 +142,14 @@ function merge(world, sources) {
           );
         }
         held.value = t.value;
+      }
+      if (t.symbol !== undefined) {
+        if (held.symbol !== undefined && held.symbol !== t.symbol) {
+          throw new Error(
+            `${where}: term ${t.id} is said as "${t.symbol}" here and "${held.symbol}" already`,
+          );
+        }
+        held.symbol = t.symbol;
       }
       for (const l of t.links) {
         // A link is the same one only if it was set at the same time. A later

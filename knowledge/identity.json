@@ -1,0 +1,6 @@
+{
+  "terms": [
+    { "id": 562, "name": "the name", "symbol": "ACI", "links": [{ "rel": 294, "to": 138 }] },
+    { "id": 296, "name": "self", "links": [{ "rel": 138, "to": 562 }] }
+  ]
+}

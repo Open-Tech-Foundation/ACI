@@ -506,14 +506,13 @@ test("asked its name, the brain asks about its self term", async () => {
   const answer = kind(r.roots[0], "answer");
   assertEquals(answer.state.subject, 296, "it asked about the self");
   assertEquals(answer.state.relation, 138, "by the name relation");
-  assertEquals(answer.state.of, "name");
 });
 
-test("a name is not a fact the brain holds, it is what a language calls it", async () => {
-  // No language ships a word for the self term, so this instance has no name to
-  // give until one is loaded with its identity. It does not invent one.
-  assertEquals((await brain("what is ur name?")).expression.name, "unknown");
-  assertEquals((await brain("what is you name?")).expression.name, "unknown");
+test("a name is a fact in memory, said as it was given", async () => {
+  // The runtime loaded what this instance is; no language has a word for it,
+  // and none needs to — a name is not translated.
+  assertEquals((await brain("what is ur name?")).expression.state.says, "ACI");
+  assertEquals((await brain("what is you name?")).expression.state.says, "ACI");
 });
 
 test("the same signal points elsewhere when it came from elsewhere", async () => {
@@ -546,7 +545,7 @@ test("identity is what the world says it is, not anything the engine holds", asy
 test("a question solves for the hole rather than checking a claim", async () => {
   const r = await brain("an apple is what?");
   const answer = kind(r.roots[0], "answer");
-  assertEquals(answer.state, { subject: 79, relation: 294, found: [73], of: "link" });
+  assertEquals(answer.state, { subject: 79, relation: 294, found: [73] });
   assertEquals(r.expression.state.says, "fruit");
 });
 

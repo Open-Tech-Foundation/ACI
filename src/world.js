@@ -104,6 +104,13 @@ export function fromWorldData(data) {
       const t = terms.get(id);
       return t && Number.isInteger(t.value) ? t.value : null;
     },
+    // The symbols a thing is said as where no language has a word for it. A name
+    // is not translated: it is the same in every language, so it is held here
+    // rather than in any of them.
+    symbolOf: (id) => {
+      const t = terms.get(id);
+      return t && typeof t.symbol === 'string' ? t.symbol : null;
+    },
     termFor: (value) => {
       if (!Number.isInteger(value)) return null;
       for (const t of terms.values()) if (t.value === value) return t.id;

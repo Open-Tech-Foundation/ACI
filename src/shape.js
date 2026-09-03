@@ -40,10 +40,16 @@ export function checkWorld(data, where = 'world') {
   for (const t of data.terms) {
     const at = `${where} term ${JSON.stringify(t && t.id)}`;
     if (!t || typeof t !== 'object') fail(where, 'every term must be an object');
-    onlyKeys(t, ['id', 'name', 'links', 'value', 'individual', 'disjoint'], at);
+    onlyKeys(t, ['id', 'name', 'links', 'value', 'individual', 'disjoint', 'symbol'], at);
     if (!isId(t.id)) fail(at, 'id must be a non-negative integer');
     if (typeof t.name !== 'string' || t.name === '') fail(at, 'name must be a non-empty string');
     if (byId.has(t.id)) fail(at, 'duplicate id');
+    // The symbols a thing is said as, where no language translates it: a name
+    // is the same in every language, so it is held with the thing, not with the
+    // words. `name` remains a label the engine never reads.
+    if (t.symbol !== undefined && (typeof t.symbol !== 'string' || t.symbol === '')) {
+      fail(at, 'symbol, where present, must be a non-empty string');
+    }
     // Two terms with one name are one thing written twice, and the brain would
     // reason over each of them as though the other were not there.
     if (byName.has(t.name)) {

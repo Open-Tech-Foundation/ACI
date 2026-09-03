@@ -187,7 +187,7 @@ const english = {
 
 const named = {
   anchors: { thing: 1, relation: 2, name: 92, self: 99 },
-  relations: { is: IS },
+  relations: { is: IS, name: 92 },
   terms: [
     { id: 1, name: "thing", links: [] },
     { id: 2, name: "relation", links: [] },
@@ -207,13 +207,24 @@ test("two files naming one language are one language", () => {
   assertEquals(k.languages[0].lookupWord("what").meaning, "what");
 });
 
-test("an instance is given its name without owning the language", () => {
+test("an instance is given its name in memory, not in a language", () => {
+  // This world has no term for nothing, so it has nothing to answer with.
   const bare = fromSources({ world: named, languages: [english] });
   assertEquals(brainFrom("what is your name?", bare).expression.name, "unknown");
 
+  // The runtime loads what this one instance is into memory, in the shape
+  // everything else takes. No language is touched: a name is not translated.
   const told = fromSources({
     world: named,
-    languages: [english, { name: "test", words: { zed: { pos: "noun", meaning: "zed", concept: 99 } } }],
+    knowledge: [
+      {
+        terms: [
+          { id: 100, name: "the name", symbol: "zed", links: [{ rel: IS, to: 1 }] },
+          { id: 99, name: "self", links: [{ rel: 92, to: 100 }] },
+        ],
+      },
+    ],
+    languages: [english],
   });
   assertEquals(brainFrom("what is your name?", told).expression.state.says, "zed");
 });

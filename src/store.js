@@ -17,6 +17,7 @@ const SCHEMA = [
         id integer primary key,
         name text not null unique,
         value integer,
+        symbol text,
         individual integer not null default 0,
         disjoint integer not null default 0,
         learned integer not null default 0
@@ -72,8 +73,8 @@ export async function isEmpty(db) {
 export async function seed(db, world) {
   const learned = 0;
   for (const t of world.terms) {
-    await db.query(sql`insert into term (id, name, value, individual, disjoint, learned)
-                       values (${t.id}, ${t.name}, ${t.value ?? null},
+    await db.query(sql`insert into term (id, name, value, symbol, individual, disjoint, learned)
+                       values (${t.id}, ${t.name}, ${t.value ?? null}, ${t.symbol ?? null},
                                ${t.individual ? 1 : 0}, ${t.disjoint ? 1 : 0}, ${learned})`);
   }
   for (const t of world.terms) {
@@ -91,7 +92,7 @@ export async function seed(db, world) {
 export async function readWorld(db) {
   const terms = await rows(
     db,
-    sql`select id, name, value, individual, disjoint from term order by id`,
+    sql`select id, name, value, symbol, individual, disjoint from term order by id`,
   );
   const links = await rows(
     db,
@@ -104,6 +105,7 @@ export async function readWorld(db) {
   const out = terms.map((t) => {
     const term = { id: t.id, name: t.name, links: [] };
     if (t.value !== null) term.value = t.value;
+    if (t.symbol !== null) term.symbol = t.symbol;
     if (t.individual) term.individual = true;
     if (t.disjoint) term.disjoint = true;
     byId.set(t.id, term);
@@ -130,8 +132,8 @@ export async function write(db, learned) {
   for (const t of learned.terms || []) {
     const seen = await rows(db, sql`select id from term where id = ${t.id}`);
     if (seen.length === 0) {
-      await db.query(sql`insert into term (id, name, value, individual, disjoint, learned)
-                         values (${t.id}, ${t.name}, ${t.value ?? null},
+      await db.query(sql`insert into term (id, name, value, symbol, individual, disjoint, learned)
+                         values (${t.id}, ${t.name}, ${t.value ?? null}, ${t.symbol ?? null},
                                  ${t.individual ? 1 : 0}, ${t.disjoint ? 1 : 0}, 1)`);
     }
     for (const l of t.links || []) await putLink(db, t.id, l, 1);

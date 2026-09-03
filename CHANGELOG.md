@@ -13,6 +13,10 @@ All notable changes to this project are documented in this file.
   carry out and the term it would answer with, and a refusal is the last word
   whatever else would fit. No walk toward `good`: a brain going looking for it
   would be weighing, and `anchors.good` is read nowhere.
+- **A term may carry the `symbol` it is said as**, for what no language
+  translates. A name is the same in every language, so it is held with the thing
+  rather than in any of them — and `name` stays a label the engine never reads.
+  `name` is now a declared relation, so memory may hold what a thing is called.
 - **A language is extendable the way the world is.** Files sharing a `name` are
   one language, and a later one may add words, symbols, frames, derivations and
   grammar rules to what an earlier declared — a rule already there is added to,
@@ -54,11 +58,13 @@ All notable changes to this project are documented in this file.
 
 ### Removed
 
-- **The brain's name.** `ACI` was a word in `languages/en.json` naming the self
-  term, which made every instance of the engine answer to one name shipped in
-  the box. A name belongs to an instance, not to English: one file under
-  `languages/` naming term 296 gives this instance one, and without it the brain
-  says it does not know its own name rather than inventing one.
+- **The brain's name, as a word.** `ACI` was a word in `languages/en.json`
+  naming the self term, so every instance of the engine answered to one name
+  shipped in the box, and a name question was a case of its own in the engine.
+  A name is a fact about one instance: the runtime loads it **into memory** in
+  the shape everything else takes (`knowledge/identity.json`), `"what is your
+  name?"` is an ordinary walk over the `name` relation, and an instance loaded
+  nothing answers `none` rather than inventing a name.
 
 ### Fixed
 
