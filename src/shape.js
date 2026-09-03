@@ -150,8 +150,13 @@ export function checkLanguage(data, where = 'language') {
     if (typeof info.pos !== 'string' || info.pos === '') fail(w, 'pos must be a non-empty string');
     if (typeof info.meaning !== 'string') fail(w, 'meaning must be a string');
     if (info.concept !== undefined && !isId(info.concept)) fail(w, 'concept must be a term id');
-    if (info.marks !== undefined && info.marks !== 'new' && info.marks !== 'known') {
-      fail(w, 'marks must be "new" or "known" — a thing is either one, or the one meant');
+    if (
+      info.marks !== undefined &&
+      info.marks !== 'new' &&
+      info.marks !== 'known' &&
+      info.marks !== 'unknown'
+    ) {
+      fail(w, 'marks must be "new", "known" or "unknown"');
     }
   }
 

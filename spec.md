@@ -458,6 +458,20 @@ Which relation is being spoken of: `is` is the weakest claim a signal can make,
 so **any other relation named takes it**. `"what is your name"` names both `is`
 and `name`; `name` wins.
 
+**Which term names the relation.** A term may *be* a relation and still be what
+a claim is **about** — `"gravity is a force"` once named three of them. So a
+relation counts as the claim only when there is something on each side for it to
+hold between; where the signal has a hole that requirement is dropped, since a
+question may put its hole anywhere. The weakest relation, `is`, is the signal's
+joint and is never one of the things joined.
+
+**A claim may be about anything that exists**, not only about a thing: gravity is
+a force, red is a colour, and neither is a thing.
+
+**A hole** is a word the language *marks* as standing for what the signal does
+not say (`marks: "unknown"`), not merely a word with no term behind it — every
+article and preposition is one of those.
+
 **Two terms → a claim.** The nearest term either side of the relation. Adds a
 `truth` node with `{ subject, relation, object }`, and it has **three** values:
 

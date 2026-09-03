@@ -277,9 +277,8 @@ function markOf(roots, at, world) {
   const mine = conceptOf(roots[at]);
   if (!world || mine == null || !world.isA(mine, (world.anchors || {}).thing)) return null;
   for (const beside of [roots[at - 1], roots[at + 1]]) {
-    const t = beside && findBranch(beside, 'thought');
-    const marks = t && t.state.thought ? t.state.thought.marks : null;
-    if (marks) return marks;
+    const marks = markOn(beside);
+    if (marks === 'new' || marks === 'known') return marks;
   }
   return null;
 }
@@ -332,14 +331,22 @@ function judge(roots, world, mood) {
   collect(root);
 
   const a = world.anchors || {};
-  const holes = said.filter((n) => conceptOf(n) == null && n.state.exists);
+  // A hole is a word standing for what the signal does not say — not merely a
+  // word with no term behind it, which every article and preposition is. The
+  // language marks which of its words do that.
+  const holes = said.filter((n) => markOn(n) === 'unknown');
   // A number spent saying how many of something there are is not itself one of
   // the things being spoken about.
   const spent = new Set(
     said.map((n) => quantityTerm(n)).filter((c) => c != null),
   );
-  const isThing = (n) =>
-    reaches(n, a.thing, world) &&
+  // A claim may be about anything that exists, not only about a thing: gravity
+  // is a force, and neither of them is a thing.
+  const claims = (n) =>
+    conceptOf(n) != null &&
+    // The weakest relation is the signal's joint, never one of the things being
+    // joined: "what is your name" is about a name, not about `is`.
+    conceptOf(n) !== world.baseRelation &&
     !reaches(n, a.quantity, world) &&
     !spent.has(conceptOf(n));
 
@@ -347,13 +354,13 @@ function judge(roots, world, mood) {
   // The brain counts by walking, and says so plainly when the world runs out.
   // An action the world says causes an operation, worked on what a thing holds.
   // What taking does is the world's to say; the arithmetic is the brain's.
-  const done = act(said, isThing, world);
+  const done = act(said, claims, world);
   if (done) return [withBranch(root, [...root.branch, ...done])];
 
   const quantity = said.find((n) => reaches(n, a.quantity, world));
   if (quantity && holes.length > 0) {
-    const things = said.filter(isThing);
-    const rel = namedRelation(said, world);
+    const rel = namedRelation(said, world, claims, holes.length > 0);
+    const things = said.filter((n, i) => i !== rel && claims(n));
 
     // Asked how many of something a thing holds, the brain reads its state.
     if (rel >= 0 && things.length >= 2) {
@@ -396,19 +403,19 @@ function judge(roots, world, mood) {
     }
   }
 
-  const at = namedRelation(said, world);
+  const at = namedRelation(said, world, claims, holes.length > 0);
   if (at < 0) return roots;
 
   const relation = conceptOf(said[at]);
 
   const worked = calculate(said, at, relation, world);
   if (worked) return [withBranch(root, [...root.branch, worked])];
-  const terms = said.filter((n, i) => i !== at && isThing(n));
+  const terms = said.filter((n, i) => i !== at && claims(n));
 
   // Two terms and a relation is a claim, and the brain checks it.
   if (terms.length >= 2) {
-    const left = nearest(said, at, -1, isThing);
-    const right = nearest(said, at, 1, isThing);
+    const left = nearest(said, at, -1, claims);
+    const right = nearest(said, at, 1, claims);
     const subject = conceptOf(left);
     const object = conceptOf(right);
     if (subject == null || object == null) return roots;
@@ -546,7 +553,7 @@ function act(said, isThing, world) {
 
   const what = said.find((n) => quantityTerm(n) != null);
   if (!what) return null;
-  const source = said.find((n) => isThing(n) && n !== what);
+  const source = said.find((n) => isThing(n) && n !== what && n !== acting);
   if (!source) return null;
 
   const amount = world.valueOf(quantityTerm(what));
@@ -585,13 +592,22 @@ function act(said, isThing, world) {
   ];
 }
 
-// Which thing in the signal names the relation being spoken of. `is` is the
-// weakest claim a signal can make, so any other relation named takes it.
-function namedRelation(said, world) {
+// Which thing in the signal names the relation being spoken of.
+//
+// A term may be a relation and still be what a claim is *about* — "gravity is a
+// force" names three relations and only one of them is the claim. So a relation
+// only counts as the claim when there is something on each side of it for it to
+// hold between. Where the signal has a hole, that requirement is dropped: a
+// question may put its hole anywhere, including before everything else.
+//
+// `is` is the weakest claim a signal can make, so any other relation named takes
+// it.
+function namedRelation(said, world, claims, asking) {
   const a = world.anchors || {};
   let fallback = -1;
   for (let i = 0; i < said.length; i += 1) {
     if (!reaches(said[i], a.relation, world)) continue;
+    if (!asking && !(nearest(said, i, -1, claims) && nearest(said, i, 1, claims))) continue;
     if (conceptOf(said[i]) !== world.baseRelation) return i;
     if (fallback < 0) fallback = i;
   }
@@ -599,7 +615,7 @@ function namedRelation(said, world) {
 }
 
 function conceptOf(n) {
-  const thought = findBranch(n, 'thought');
+  const thought = n ? findBranch(n, 'thought') : null;
   return thought && thought.state.thought ? thought.state.thought.concept : null;
 }
 
@@ -614,6 +630,12 @@ function nearest(said, from, step, wanted) {
     if (wanted(said[i])) return said[i];
   }
   return null;
+}
+
+// What a word says about the thing beside it, or about itself.
+function markOn(n) {
+  const t = n ? findBranch(n, 'thought') : null;
+  return t && t.state.thought ? t.state.thought.marks : null;
 }
 
 // Whether this thing was marked as a new one or the one already meant.

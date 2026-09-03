@@ -6,6 +6,26 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- The world reaches into the physical: `force` with `gravity` under it, `push` and
+  `pull` as work, `up`/`down`/`left`/`right`/`front`/`back` and `near`/`far` as
+  positions, plus `earth`, `ground`, `sky`, `mass` and `speed`. Gravity causes
+  falling and weight; pushing and pulling cause motion; falling goes down and
+  rising goes up. Twelve pairs of opposites now exclude each other.
+- Words for every plainly-named term the world already held: **312 words, and 92%
+  of terms sayable, from 17%.** Colours, sizes, temperatures, feelings, periods,
+  motions, body parts and qualities were all stocked shelves nothing could name.
+- `marks: "unknown"` on `what` and `how`, so a hole is a word the language marks
+  as one rather than any word with no term behind it.
+
+### Fixed
+
+- A claim may be about anything that exists, not only about a thing. `"gravity is
+  a force?"` answered nothing at all, because the brain would only make claims
+  between things.
+- A term that *is* a relation could be mistaken for the relation a claim is made
+  by. A relation now counts as the claim only where there is something on each
+  side of it, and the copula is never one of the things joined.
+
 - **Time.** Every state link carries `at`, and `world.now()` is the brain's clock:
   one past the latest moment anything was stamped with. It ticks on what happens,
   not on any outside time, so the same signals in the same order give the same

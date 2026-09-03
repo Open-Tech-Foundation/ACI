@@ -705,3 +705,36 @@ test("no plural is written down anywhere", async () => {
   const r = await brain("how many mammals?");
   assertEquals(r.expression.state.says, "seven", "the same count as the singular");
 });
+
+test("a claim may be about anything that exists, not only a thing", async () => {
+  assertEquals((await brain("gravity is a force?")).expression.state.says, "Yes.");
+  assertEquals((await brain("up is a position?")).expression.state.says, "Yes.");
+  assertEquals((await brain("red is a colour?")).expression.state.says, "Yes.");
+  assertEquals((await brain("fear is a feeling?")).expression.state.says, "Yes.");
+});
+
+test("opposites exclude each other", async () => {
+  assertEquals((await brain("up is a down?")).expression.state.says, "No.");
+  assertEquals((await brain("near is a far?")).expression.state.says, "No.");
+});
+
+test("the copula joins a claim, it is never one of the things joined", async () => {
+  // "what is your name" names both `is` and `name`; only `name` is the claim,
+  // and `is` is not the thing being asked about either.
+  assertEquals((await brain("what is your name?")).expression.state.says, "ACI");
+  assertEquals((await brain("what is gravity?")).expression.state.says, "force");
+});
+
+test("a hole is a word the language marks as one, not any word without a term", async () => {
+  // `a` has no term behind it and is not a hole; `what` is.
+  const claim = await brain("gravity is a force?");
+  assert(kind(claim.roots[0], "truth") !== null, "an article did not make it a question");
+  const asked = await brain("what is gravity?");
+  assert(kind(asked.roots[0], "answer") !== null);
+});
+
+test("the world can be counted by any of its shelves", async () => {
+  assertEquals((await brain("how many colour?")).expression.state.says, "six");
+  assertEquals((await brain("how many feeling?")).expression.state.says, "seven");
+  assertEquals((await brain("how many force?")).expression.state.says, "one");
+});
