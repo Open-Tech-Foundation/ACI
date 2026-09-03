@@ -270,8 +270,16 @@ It adds a `truth` node (`true` / `false`) with `{ subject, relation, object }`.
 
 This is what connects the *word* `is` to the world's own `is` relation: `en.json`
 gives `is` the concept `294`, and term 294 is the relation the world's links are
-made of. So `"a cat is a cat"` is **true**, `"the apple is a tree"` is **false** —
-decided by walking the world, not by any rule in the engine.
+made of. Nothing in the engine decides the answer; the walk does.
+
+```
+a cat is an animal      Yes.   83 →294→ 24    cat → animal
+a tree is an animal     No.    33 →294→ 24    tree → plant → organism
+an apple is a thing     Yes.   79 →294→ 2     apple → fruit → food → substance
+                                              → physical-thing → thing
+a person is a human     Yes.   29 →294→ 26
+a human is a person     No.    26 →294→ 29    the relation runs one way
+```
 
 ### 6. express — choose an intent, and let the language voice it
 

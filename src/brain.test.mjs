@@ -372,3 +372,31 @@ test("a signal that names no relation makes no claim", async () => {
   const r = await brain("hi hi");
   assertEquals(kind(r.roots[0], "truth"), null);
 });
+
+test("a claim about an ancestor holds", async () => {
+  assertEquals((await brain("a dog is an organism")).expression.state.says, "Yes.");
+  assertEquals((await brain("a bird is an animal")).expression.state.says, "Yes.");
+  assertEquals((await brain("an apple is a food")).expression.state.says, "Yes.");
+});
+
+test("a claim the chain does not bear out is denied", async () => {
+  assertEquals((await brain("a tree is an animal")).expression.state.says, "No.");
+  assertEquals((await brain("an apple is an organism")).expression.state.says, "No.");
+});
+
+test("the is relation runs one way only", async () => {
+  assertEquals((await brain("a person is a human")).expression.state.says, "Yes.");
+  assertEquals((await brain("a human is a person")).expression.state.says, "No.");
+});
+
+test("a claim resolves across the whole chain, however long", async () => {
+  const r = await brain("an apple is a thing");
+  assertEquals(kind(r.roots[0], "truth").name, "true");
+  assertEquals(kind(r.roots[0], "truth").state, { subject: 79, relation: 294, object: 2 });
+});
+
+test("a numeral can stand as the subject of a claim", async () => {
+  const r = await brain("three is a number");
+  assertEquals(kind(r.roots[0], "truth").state, { subject: 116, relation: 294, object: 100 });
+  assertEquals(r.expression.state.says, "Yes.");
+});

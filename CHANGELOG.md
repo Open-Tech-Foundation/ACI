@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- Twelve ancestor words in `languages/en.json` — animal, plant, organism, human,
+  person, food, fruit, substance, object, thing, number, action — each naming a
+  world term that already existed but had no word pointing at it. Claims stop
+  being tautologies: `"a cat is an animal"` is true, `"a tree is an animal"` is
+  false, `"an apple is a thing"` resolves across six links.
+- The article `an`, without which none of those claims can be said.
+- `numeral` as a subject rule, so `"three is a number"` parses.
+
 - `expressions` in `languages/*.json` — how a language voices each of the brain's
   acts, with `{meaning}` filled from what was understood. `lang.express(intent,
   vars)` renders one; an intent the language has no entry for is left unsaid.

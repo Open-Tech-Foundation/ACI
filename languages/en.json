@@ -15,6 +15,7 @@
     "hi":    { "pos": "interjection", "meaning": "greeting",  "concept": 277 },
     "hello": { "pos": "interjection", "meaning": "greeting",  "concept": 277 },
     "a":     { "pos": "article",      "meaning": "indefinite article" },
+    "an":    { "pos": "article",      "meaning": "indefinite article" },
     "the":   { "pos": "article",      "meaning": "definite article" },
     "is":    { "pos": "verb",         "meaning": "to be",          "concept": 294 },
     "are":   { "pos": "verb",         "meaning": "to be (plural)", "concept": 294 },
@@ -25,7 +26,20 @@
     "dog":   { "pos": "noun",         "meaning": "canine animal",  "concept": 82 },
     "apple": { "pos": "noun",         "meaning": "fruit",          "concept": 79 },
     "bird":  { "pos": "noun",         "meaning": "flying animal",  "concept": 85 },
-    "tree":  { "pos": "noun",         "meaning": "plant",          "concept": 33 }
+    "tree":  { "pos": "noun",         "meaning": "plant",          "concept": 33 },
+
+    "animal":    { "pos": "noun", "meaning": "animal",         "concept": 24 },
+    "plant":     { "pos": "noun", "meaning": "plant",          "concept": 25 },
+    "organism":  { "pos": "noun", "meaning": "organism",       "concept": 10 },
+    "human":     { "pos": "noun", "meaning": "human",          "concept": 26 },
+    "person":    { "pos": "noun", "meaning": "person",         "concept": 29 },
+    "food":      { "pos": "noun", "meaning": "food",           "concept": 23 },
+    "fruit":     { "pos": "noun", "meaning": "fruit",          "concept": 73 },
+    "substance": { "pos": "noun", "meaning": "substance",      "concept": 9 },
+    "object":    { "pos": "noun", "meaning": "object",         "concept": 8 },
+    "thing":     { "pos": "noun", "meaning": "thing",          "concept": 2 },
+    "number":    { "pos": "noun", "meaning": "number",         "concept": 100 },
+    "action":    { "pos": "noun", "meaning": "action",         "concept": 5 }
   },
   "expressions": {
     "greet":      "Hello!",
@@ -48,7 +62,7 @@
         ]
       },
       "subject": {
-        "rules": ["noun", "article noun", "numeral noun"]
+        "rules": ["noun", "article noun", "numeral", "numeral noun"]
       },
       "predicate": {
         "rules": ["verb verbComplement"]
