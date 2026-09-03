@@ -27,7 +27,11 @@
     "agent": 327,
     "target": 328,
     "source": 329,
-    "destination": 330
+    "destination": 330,
+    "past": 565,
+    "now": 223,
+    "future": 566,
+    "when": 567
   },
   "relations": {
     "is": 294,
@@ -38,7 +42,8 @@
     "agent": 327,
     "target": 328,
     "source": 329,
-    "destination": 330
+    "destination": 330,
+    "when": 567
   },
   "terms": [
     {
@@ -2402,6 +2407,10 @@
         {
           "rel": 294,
           "to": 213
+        },
+        {
+          "rel": 249,
+          "to": 566
         }
       ]
     },
@@ -5972,6 +5981,40 @@
         {
           "rel": 294,
           "to": 239
+        }
+      ]
+    },
+    {
+      "id": 565,
+      "name": "past",
+      "links": [
+        {
+          "rel": 294,
+          "to": 213
+        },
+        {
+          "rel": 249,
+          "to": 223
+        }
+      ]
+    },
+    {
+      "id": 566,
+      "name": "future",
+      "links": [
+        {
+          "rel": 294,
+          "to": 213
+        }
+      ]
+    },
+    {
+      "id": 567,
+      "name": "when",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
         }
       ]
     }

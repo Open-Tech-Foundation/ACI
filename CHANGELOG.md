@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Time: past ← now → future.** Three positions and nothing between them to
+  weigh. A word may carry `when: "past"` or `when: "future"` — `was`, `were`,
+  `will` do in English — and what is recorded stands where the signal put it, by
+  a `when` relation. Saying neither leaves it where it was said: now is the
+  absence of a claim about when, not a third thing to record, and it is separate
+  from `at`, the moment the brain heard it. The arrow between the three is the
+  world's, written with the `order` relation it already had.
 - **Empathy**, an act of its own. Understanding what someone feels and seeing it
   from where they stand — both halves of which the record already holds, so the
   act is the last step: what was said stands at the bad pole, and was said of

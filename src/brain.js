@@ -149,6 +149,7 @@ function recognizeLanguage(roots, langs) {
               marks: word.marks ?? null,
               negates: word.negates ?? false,
               role: word.role ?? null,
+              when: word.when ?? null,
             }
           : null,
         roles: classifyRoles(identity, lang),
@@ -211,6 +212,7 @@ function think(roots, langs, at) {
       marks: first.word ? first.word.marks : null,
       negates: first.word ? first.word.negates : false,
       role: first.word ? first.word.role : null,
+      when: first.word ? first.word.when : null,
     };
     return withBranch(n, [...n.branch, node('thought', 'understood', [], { thought })]);
   });
@@ -487,7 +489,12 @@ function judge(roots, world, mood, langs, sent) {
           withBranch(root, [...root.branch, node('refuse', 'unheld', [], { subject, object })]),
         ];
       }
-      return [withBranch(root, [...root.branch, held(holder, subject, object, negated, world)])];
+      return [
+        withBranch(root, [
+          ...root.branch,
+          held(holder, subject, object, negated, whenIn(said, world), world),
+        ]),
+      ];
     }
 
     // A thing holds what its kinds hold: the claim stands if any rung it stands
@@ -671,13 +678,14 @@ function valenced(term, world) {
 // What one sender says of one thing: an individual of what was said, with the
 // parts they played in it and the moment it was said. An occurrence like any
 // other — nothing new was needed to hold it.
-function held(holder, about, said, negated, world) {
+function held(holder, about, said, negated, when, world) {
   const a = world.anchors || {};
   const id = world.nextId();
   return node('event', `${world.term(said).name}#${id}`, [], {
     id,
     action: said,
     at: world.now(),
+    when,
     not: negated,
     parts: [
       { role: a.agent, of: holder, amount: null },
@@ -711,6 +719,7 @@ function act(said, claims, world, side, sides) {
     id: happened,
     action,
     at,
+    when: whenIn(said, world),
     parts,
   });
 
@@ -850,6 +859,19 @@ function nearest(said, from, step, wanted) {
 function roleOn(n) {
   const t = n ? findBranch(n, 'thought') : null;
   return t && t.state.thought ? t.state.thought.role : null;
+}
+
+// Which side of now the signal put what it says on. That there are sides is the
+// brain's — past, now, future, and nothing between them to weigh; which word
+// says so is the language's, and which term each side is, is the world's.
+function whenIn(said, world) {
+  const a = world.anchors || {};
+  for (const n of said) {
+    const thought = n ? findBranch(n, 'thought') : null;
+    const when = thought && thought.state.thought ? thought.state.thought.when : null;
+    if (when && a[when] != null) return a[when];
+  }
+  return null;
 }
 
 // Whether this word denies what the signal says. That a claim can be denied is
@@ -1266,14 +1288,15 @@ function learnedFrom(roots, world) {
 
   const terms = [];
   if (event) {
-    const { id, action, at, parts, not } = event.state;
+    const { id, action, at, parts, not, when } = event.state;
     const of = { rel: world.baseRelation, to: action, at };
     if (not) of.not = true;
+    const stood = when == null ? [] : [{ rel: world.anchors.when, to: when, at }];
     terms.push({
       id,
       name: event.name,
       individual: true,
-      links: [of, ...parts.map((p) => ({ rel: p.role, to: p.of, at }))],
+      links: [of, ...stood, ...parts.map((p) => ({ rel: p.role, to: p.of, at }))],
     });
   }
   if (!learn) return { terms };

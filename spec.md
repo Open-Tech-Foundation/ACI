@@ -404,6 +404,34 @@ rather than in any of them, and `name` stays a label the engine never reads.
 
 ## Time
 
+```
+past  ←——  now  ——→  future
+```
+
+Three positions and nothing between them to weigh. **That there are sides** is
+the brain's; **which word puts a signal on one** is the language's — a word may
+carry `when: "past"` or `when: "future"`, and `was` / `were` / `will` do in
+English; **which term each side is** is the world's, through its anchors. The
+arrow itself is the world's too, written with the `order` relation it already
+had: `past order now`, `now order future`.
+
+What is recorded stands where the signal put it, by the `when` relation:
+
+```
+> i was hurt    { from: 441 }
+
+hurt#568  at 0
+  is      → hurt
+  when    → past
+  agent   → 441
+  target  → 441
+```
+
+Saying neither leaves it where it was said, and nothing is written: **now is the
+absence of a claim about when**, not a third thing to record. This is separate
+from `at`, which is the moment the brain heard it — a signal about the past is
+still heard now.
+
 The brain has a clock, and it is innate: `world.now()` is one past the latest
 moment anything was stamped with. **It ticks on what happens, not on any outside
 time**, so the same signals in the same order always give the same moments — a
