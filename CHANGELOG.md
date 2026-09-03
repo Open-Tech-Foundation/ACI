@@ -119,6 +119,12 @@ All notable changes to this project are documented in this file.
   `+` to a word — and a signal is recognized when every symbol falls in some set
   the language declares. English gained digits, signs, a word per figure and one
   for `+` and `-`; `"9 + 4"` answers *thirteen*.
+- **Arithmetic stopped at one operation and at what the world had a term for.**
+  `"1+1+5"` did not parse at all; `"100-1"` and `"1-5"` answered *I don't know*.
+  A signal may work more than once now, from the left, and a result the world
+  never named is **written** rather than named: a language that counts in
+  figures can write any number, its symbols counting from zero in the order it
+  declared them. The `sum` still stands `beyond`, and no term is invented.
 - **`"1+1"` was one word the brain had never been given.** A symbol set may say
   its symbols stand alone (`"alone": true`), and those are words wherever they
   fall — so `1+1` comes apart into three and `cat` does not come apart at all.

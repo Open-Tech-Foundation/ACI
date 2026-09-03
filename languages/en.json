@@ -8,7 +8,8 @@
       "characters": "aeiou"
     },
     "digit": {
-      "characters": "0123456789"
+      "characters": "0123456789",
+      "figures": true
     },
     "sign": {
       "characters": "+ - = < >",
@@ -147,8 +148,8 @@
     "have":      { "pos": "verb", "meaning": "have",           "concept": 295 },
     "know":      { "pos": "verb", "meaning": "know",           "concept": 285 },
     "plus":      { "pos": "verb", "meaning": "plus",           "concept": 303 },
-    "+":         { "pos": "verb", "meaning": "plus",           "concept": 303 },
-    "-":         { "pos": "verb", "meaning": "minus",          "concept": 304 },
+    "+":         { "pos": "verb", "meaning": "plus",           "concept": 303, "names": false },
+    "-":         { "pos": "verb", "meaning": "minus",          "concept": 304, "names": false },
     "minus":     { "pos": "verb", "meaning": "minus",          "concept": 304 },
     "more":      { "pos": "verb", "meaning": "more than",      "concept": 305 },
     "less":      { "pos": "verb", "meaning": "less than",      "concept": 306 },
@@ -670,6 +671,7 @@
         "rules": [
           "noun",
           "numeral",
+          "numeral predicate",
           "article noun",
           "numeral noun",
           "interrogative",

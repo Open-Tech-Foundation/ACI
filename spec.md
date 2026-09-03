@@ -195,10 +195,21 @@ numbers.
 is answered in figures; the brain chooses nothing, it uses the form it was
 given, and the language is what holds both.
 
+A signal may work **more than once**: `1 + 1 + 5` names two operations, and the
+brain works them from the left, which is the only order it has.
+
+A result the world has no term for is **written, never named**. Nothing says a
+world must name every number, and a language that counts in figures can write
+any of them — its symbols count from zero in the order it declared them, so how
+many there are is the base. The `sum` still stands `beyond` what the world
+names; no term is invented for it.
+
 ```
 1+1                  2
-1 + 1                2
+1 + 1 + 5            7
 one plus one         two
+100 - 1              99        the world names no ninety-nine
+1 - 5                -4        nor anything below nothing
 what is 1 + 5        6
 what is 1            number
 ```

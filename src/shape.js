@@ -172,7 +172,11 @@ export function checkLanguage(data, where = 'language') {
       if (!info || typeof info.characters !== 'string' || info.characters === '') {
         fail(`${at} symbols.${type}`, 'characters must be a non-empty string');
       }
-      onlyKeys(info, ['characters', 'alone'], `${at} symbols.${type}`);
+      onlyKeys(info, ['characters', 'alone', 'figures'], `${at} symbols.${type}`);
+      // The set a number is written in, in the order its symbols count from.
+      if (info.figures !== undefined && info.figures !== true) {
+        fail(`${at} symbols.${type}`, 'figures, where present, must be true');
+      }
       // Symbols that stand as words of their own, so `1+1` comes apart where
       // `cat` does not.
       if (info.alone !== undefined && info.alone !== true) {

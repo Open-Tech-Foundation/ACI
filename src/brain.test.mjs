@@ -684,11 +684,11 @@ test("nothing to count is zero, not silence", async () => {
   assertEquals(r.expression.state.says, "zero");
 });
 
-test("counting stops where the world has no word for the number", async () => {
+test("counting past what the world names invents no term, and still answers", async () => {
   // Twenty-five mammals, and no single word in English for twenty-five.
   const r = await brain("how many mammal?");
-  assertEquals(kind(r.roots[0], "count").name, "beyond");
-  assertEquals(r.expression.name, "unsure", "it does not invent a number it has no term for");
+  assertEquals(kind(r.roots[0], "count").name, "beyond", "no term was invented for it");
+  assertEquals(r.expression.state.says, "25", "and the language can still write it");
 });
 
 test("the count is the terms the world holds, not a fact stored anywhere", async () => {
@@ -714,12 +714,15 @@ test("the sum is computed, not looked up", async () => {
   assertEquals(sum.state.term, 118, "and then the term that names it");
 });
 
-test("a result the world has no term for is not invented", async () => {
+test("a result the world has no term for is written, never named", async () => {
   // Twenty-three is a number the brain can reach and English cannot say in one
-  // word, and below zero it has no term at all.
-  assertEquals(kind((await brain("twenty plus three?")).roots[0], "sum").state.value, 23);
-  assertEquals((await brain("twenty plus three?")).expression.name, "unsure");
-  assertEquals((await brain("seven minus nine?")).expression.state.says, "I don't know.");
+  // word; below zero the world has no term at all. Neither is invented — the
+  // sum stands beyond what the world names, and the language writes it out.
+  const sum = await brain("twenty plus three?");
+  assertEquals(kind(sum.roots[0], "sum").name, "beyond");
+  assertEquals(kind(sum.roots[0], "sum").state.value, 23);
+  assertEquals(sum.expression.state.says, "23");
+  assertEquals((await brain("seven minus nine?")).expression.state.says, "-2");
 });
 
 test("the brain compares two numbers", async () => {

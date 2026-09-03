@@ -11,6 +11,8 @@ function buildLanguage(data) {
   const asking = charSet(symbols.question);
   const own = Object.values(symbols).map(charSet);
   const alone = Object.values(symbols).filter((set) => set && set.alone).map(charSet);
+  const counted = Object.values(symbols).find((set) => set && set.figures);
+  const counting = counted ? charsOf(counted.characters) : [];
 
   // Every character this language's words are made of.
   const inWords = new Set();
@@ -49,6 +51,10 @@ function buildLanguage(data) {
     isOwnSymbol: (ch) => own.some((set) => set.has(ch)),
     // A symbol that stands as a word of its own, wherever it falls.
     isLoneSymbol: (ch) => alone.some((set) => set.has(ch)),
+    // Any number written out in the symbols this language counts in, in the
+    // order it declared them. A term is not needed for it: a world that never
+    // named ninety-nine can still be told the answer is 99.
+    figuresFor: (value) => figures(counting, value),
     // Another way this language writes a term, where it has one that is not
     // what the term is called.
     otherWordFor: (concept) => (concept == null ? null : written.get(concept) ?? null),
@@ -125,6 +131,20 @@ function lookUp(words, derivations, w) {
 }
 
 // A symbol set holds both cases: the data lists one, the brain may meet either.
+// A whole number in a language's own figures. The symbols count from zero in
+// the order the language wrote them, so how many there are is the base.
+function figures(counting, value) {
+  if (counting.length < 2 || !Number.isInteger(value) || value < 0) return null;
+  const base = counting.length;
+  let left = value;
+  let out = '';
+  do {
+    out = counting[left % base] + out;
+    left = Math.floor(left / base);
+  } while (left > 0);
+  return out;
+}
+
 function charSet(symbolInfo) {
   const chars = symbolInfo ? charsOf(symbolInfo.characters) : [];
   return new Set(chars.flatMap((c) => [c.toLowerCase(), c.toUpperCase()]));

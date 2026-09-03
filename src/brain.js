@@ -641,9 +641,36 @@ function calculate(said, at, relation, world) {
     });
   }
 
-  const value = op === 'plus' ? left + right : left - right;
+  // A signal may work more than once — `1 + 1 + 5` names two operations, not
+  // one. The brain reads the numbers and the operations off the order they
+  // came in and works them in that order, which is the only order it has.
+  const run = working(said, world);
+  const value = run == null ? (op === 'plus' ? left + right : left - right) : run;
   const term = world.termFor(value);
   return node('sum', term == null ? 'beyond' : 'worked', [], { left, right, value, term });
+}
+
+// Every number and every operation in the signal, in the order perceived, then
+// worked from the left. Nothing decides which comes first but where it fell.
+function working(said, world) {
+  const a = world.anchors || {};
+  const steps = [];
+  for (const n of said) {
+    const c = conceptOf(n);
+    if (c == null) continue;
+    const value = world.valueOf(c);
+    if (value != null) steps.push({ value });
+    else if (c === a.plus || c === a.minus) steps.push({ op: c });
+  }
+  if (steps.length < 3 || steps[0].op !== undefined) return null;
+  let total = steps[0].value;
+  for (let i = 1; i + 1 < steps.length; i += 2) {
+    const { op } = steps[i];
+    const next = steps[i + 1];
+    if (op === undefined || next == null || next.value === undefined) return null;
+    total = op === a.plus ? total + next.value : total - next.value;
+  }
+  return total;
 }
 
 function valueBeside(said, from, step, world) {
@@ -1055,11 +1082,11 @@ function expression(roots, langs, mood, world, sent) {
         ? 'answer'
         : 'deny'
       : sum
-        ? sum.state.term != null
+        ? sum.state.term != null || sayable(sum.state.value, langName, langs)
           ? 'answer'
           : 'unsure'
       : counted
-        ? counted.state.total != null
+        ? counted.state.total != null || sayable(counted.state.members, langName, langs)
           ? 'answer'
           : 'unsure'
       : answer
@@ -1089,9 +1116,9 @@ function expression(roots, langs, mood, world, sent) {
       ? did
         ? termWord(did.state.term, langName, langs, world, written)
         : sum
-          ? termWord(sum.state.term, langName, langs, world, written)
+          ? numberSaid(sum.state.term, sum.state.value, langName, langs, world, written)
           : counted
-            ? termWord(counted.state.total, langName, langs, world, written)
+            ? numberSaid(counted.state.total, counted.state.members, langName, langs, world, written)
             : answered
       : wholeMeaning(intent, parts);
   // Where the brain is speaking of its own state, it hands over the term for
@@ -1121,6 +1148,12 @@ function feelingIn(felt, world, sent) {
   if (world.isA(felt.state.action, a.bad)) return 'empathy';
   if (world.isA(felt.state.action, a.good)) return 'glad';
   return null;
+}
+
+// Whether this language can write the number at all.
+function sayable(value, langName, langs) {
+  const lang = (langs || []).find((l) => l.data.name === langName);
+  return Boolean(lang && lang.figuresFor(value < 0 ? -value : value) != null);
 }
 
 // Whether the signal wrote its terms in words the language says do not name
@@ -1189,9 +1222,28 @@ function claimSaid(truth, langName, langs, world) {
   const lang = (langs || []).find((l) => l.data.name === langName);
   if (!lang || !truth) return null;
   const { subject, relation, object } = truth.state;
+  // A number is not one of a kind, and does not go in a frame built for one.
+  const a = world && world.anchors ? world.anchors : {};
+  if (world && (world.isA(subject, a.number) || world.isA(object, a.number))) return '';
   const words = [subject, relation, object].map((t) => termWord(t, langName, langs, world));
   if (words.some((w) => w == null)) return '';
   return lang.express('claim', { subject: words[0], relation: words[1], object: words[2] }) ?? '';
+}
+
+// A number the brain worked out. The world may have no term for it — nothing
+// says a world must name every number — and the language may still be able to
+// write it, since its figures count from zero in the order it declared them.
+function numberSaid(term, value, langName, langs, world, written) {
+  const named = termWord(term, langName, langs, world, written);
+  if (named != null) return named;
+  const lang = (langs || []).find((l) => l.data.name === langName);
+  if (!lang) return null;
+  if (value >= 0) return lang.figuresFor(value);
+  // Below nothing is still a number. The brain takes the sign from the term
+  // for taking away, since that is what this language writes it with.
+  const figures = lang.figuresFor(-value);
+  const sign = termWord(world ? (world.anchors || {}).minus : null, langName, langs, world, true);
+  return figures == null || sign == null ? null : `${sign}${figures}`;
 }
 
 // A term, said in the language being spoken — or, where that language has no
