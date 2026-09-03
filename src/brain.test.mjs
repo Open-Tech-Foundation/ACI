@@ -354,8 +354,8 @@ test("the brain checks a claim against the world and denies it", async () => {
   assertEquals(r.expression.state.says, "No.");
 });
 
-test("a claim the world bears out is affirmed", async () => {
-  const r = await brain("a cat is a cat");
+test("a claim the world bears out is affirmed when asked", async () => {
+  const r = await brain("a cat is a cat?");
   assertEquals(kind(r.roots[0], "truth").name, "true");
   assertEquals(r.expression.name, "affirm");
   assertEquals(r.expression.state.says, "Yes.");
@@ -374,9 +374,9 @@ test("a signal that names no relation makes no claim", async () => {
 });
 
 test("a claim about an ancestor holds", async () => {
-  assertEquals((await brain("a dog is an organism")).expression.state.says, "Yes.");
-  assertEquals((await brain("a bird is an animal")).expression.state.says, "Yes.");
-  assertEquals((await brain("an apple is a food")).expression.state.says, "Yes.");
+  assertEquals((await brain("a dog is an organism?")).expression.state.says, "Yes.");
+  assertEquals((await brain("a bird is an animal?")).expression.state.says, "Yes.");
+  assertEquals((await brain("an apple is a food?")).expression.state.says, "Yes.");
 });
 
 test("a claim the chain does not bear out is denied", async () => {
@@ -385,8 +385,8 @@ test("a claim the chain does not bear out is denied", async () => {
 });
 
 test("the is relation runs one way only", async () => {
-  assertEquals((await brain("a person is a human")).expression.state.says, "Yes.");
-  assertEquals((await brain("a human is a person")).expression.state.says, "No.");
+  assertEquals((await brain("a person is a human?")).expression.state.says, "Yes.");
+  assertEquals((await brain("a human is a person?")).expression.state.says, "No.");
 });
 
 test("a claim resolves across the whole chain, however long", async () => {
@@ -396,7 +396,7 @@ test("a claim resolves across the whole chain, however long", async () => {
 });
 
 test("a numeral can stand as the subject of a claim", async () => {
-  const r = await brain("three is a number");
+  const r = await brain("three is a number?");
   assertEquals(kind(r.roots[0], "truth").state, { subject: 116, relation: 294, object: 100 });
   assertEquals(r.expression.state.says, "Yes.");
 });
@@ -423,7 +423,7 @@ test("being alive and having a mind are separate axes", async () => {
 });
 
 test("a claim can be made over the has relation, not only is", async () => {
-  const r = await brain("aci has a mind");
+  const r = await brain("aci has a mind?");
   const truth = kind(r.roots[0], "truth");
   assertEquals(truth.name, "true");
   assertEquals(truth.state, { subject: 296, relation: 295, object: 230 });
@@ -431,6 +431,31 @@ test("a claim can be made over the has relation, not only is", async () => {
 });
 
 test("the self is a thing, and not an animal", async () => {
-  assertEquals((await brain("aci is a thing")).expression.state.says, "Yes.");
-  assertEquals((await brain("aci is an animal")).expression.state.says, "No.");
+  assertEquals((await brain("aci is a thing?")).expression.state.says, "Yes.");
+  assertEquals((await brain("aci is an animal?")).expression.state.says, "No.");
+});
+
+
+test("a question is told from a statement by the language's own mark", async () => {
+  assertEquals((await brain("a cat is an animal?")).expression.state.mood, "ask");
+  assertEquals((await brain("a cat is an animal")).expression.state.mood, "tell");
+});
+
+test("asked, the brain answers the claim", async () => {
+  assertEquals((await brain("a cat is an animal?")).expression.name, "affirm");
+  assertEquals((await brain("a cat is a plant?")).expression.name, "deny");
+});
+
+test("told, the brain answers only where it disagrees", async () => {
+  const held = await brain("a cat is an animal");
+  assertEquals(held.expression.name, "understood", "it already holds this");
+  assertEquals(held.expression.state.says, "I understand.");
+
+  const wrong = await brain("a cat is a plant");
+  assertEquals(wrong.expression.name, "deny", "it does not hold this");
+});
+
+test("a signal with no claim is unaffected by the mark", async () => {
+  assertEquals((await brain("hi")).expression.name, "greet");
+  assertEquals((await brain("hi?")).expression.name, "greet");
 });

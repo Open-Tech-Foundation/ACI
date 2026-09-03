@@ -9,6 +9,9 @@
     },
     "punctuation": {
       "characters": ". , ! ? ; : ' \" - ( ) [ ]"
+    },
+    "question": {
+      "characters": "?"
     }
   },
   "words": {

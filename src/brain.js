@@ -387,9 +387,18 @@ function languageOf(n) {
   return ts ? ts.language : null;
 }
 
+// Asking or telling. That a signal can do either is the brain's; which mark
+// asks is the language's, and the brain reads it off the loaded symbol sets.
+function moodOf(input, langs) {
+  const raw = toString(input).trim();
+  if (raw === '') return 'tell';
+  const last = Array.from(raw).pop();
+  return (langs || []).some((l) => l.isQuestionSymbol(last)) ? 'ask' : 'tell';
+}
+
 // The brain's one act toward the whole signal, with what it said about each
 // thing kept underneath.
-function expression(roots, langs) {
+function expression(roots, langs, mood) {
   const parts = [];
   const collect = (n) => {
     const said = findBranch(n, 'express');
@@ -403,10 +412,14 @@ function expression(roots, langs) {
     roots.length === 1 && roots[0].kind !== 'thing' && roots[0].kind !== 'void';
   const truth = bound ? findBranch(roots[0], 'truth') : null;
 
+  // Asked, the brain answers the claim. Told, it answers only if it disagrees;
+  // a claim it already holds is simply understood.
   const intent = truth
-    ? truth.name === 'true'
-      ? 'affirm'
-      : 'deny'
+    ? truth.name === 'false'
+      ? 'deny'
+      : mood === 'ask'
+        ? 'affirm'
+        : 'understood'
     : bound
       ? 'understood'
       : parts.length === 1
@@ -415,7 +428,7 @@ function expression(roots, langs) {
 
   const langName = parts.map((p) => p.state.language).find(Boolean) || null;
   const whole = speak(intent, wholeMeaning(intent, parts), langName, langs);
-  return withBranch(whole, parts, { ...whole.state, bound });
+  return withBranch(whole, parts, { ...whole.state, bound, mood });
 }
 
 // A one-thing signal expresses that thing, so it needs that thing's meaning.
@@ -551,7 +564,7 @@ export function brainFrom(input, knowledge) {
   return {
     input,
     roots: expressedRoots,
-    expression: expression(expressedRoots, langs),
+    expression: expression(expressedRoots, langs, moodOf(input, langs)),
     phases: {
       understand: roots,
       think: thoughtRoots,

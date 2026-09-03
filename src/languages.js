@@ -8,6 +8,7 @@ function buildLanguage(data) {
   const symbols = data.symbols || {};
   const letters = charSet(symbols.letter);
   const vowels = charSet(symbols.vowel);
+  const asking = charSet(symbols.question);
 
   const words = new Map();
   // The word a term is named by, so the brain can say a term it only holds as an
@@ -23,6 +24,7 @@ function buildLanguage(data) {
     express: (intent, vars) => voice(data.expressions, intent, vars),
     isLetterSymbol: (ch) => letters.has(ch),
     isVowelSymbol: (ch) => vowels.has(ch),
+    isQuestionSymbol: (ch) => asking.has(ch),
     lookupWord: (w) => words.get(String(w).toLowerCase()) || null,
     wordFor: (concept) => (concept == null ? null : named.get(concept) ?? null),
     grammar: data.grammar || {},
