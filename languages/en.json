@@ -80,6 +80,8 @@
     "tool":       { "pos": "noun", "meaning": "tool",           "concept": 13 },
     "vehicle":    { "pos": "noun", "meaning": "vehicle",        "concept": 14 },
     "building":   { "pos": "noun", "meaning": "building",       "concept": 15 },
+    "container":  { "pos": "noun", "meaning": "container",      "concept": 19 },
+    "basket":     { "pos": "noun", "meaning": "basket",         "concept": 307 },
 
     "ACI":       { "pos": "noun", "meaning": "self",           "concept": 296 },
     "has":       { "pos": "verb", "meaning": "has",            "concept": 295 },
@@ -131,7 +133,14 @@
         "rules": ["verb verbComplement"]
       },
       "verbComplement": {
-        "rules": ["noun", "numeral", "article noun", "interrogative"]
+        "rules": [
+          "noun",
+          "numeral",
+          "article noun",
+          "numeral noun",
+          "interrogative",
+          "interrogative quantifier noun"
+        ]
       }
     }
   }

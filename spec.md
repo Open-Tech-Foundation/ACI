@@ -249,6 +249,25 @@ understand → think → solve → structure → judge → express
 
 ## Memory
 
+Two kinds, and they behave differently:
+
+| | what it is | when told otherwise |
+|---|---|---|
+| **kind** — *a cat is a mammal* | permanent | refused as a contradiction |
+| **state** — *the basket has three apples* | true now | **revised**; the world moved on |
+
+State is a `quantity` on a link. Telling the brain a different count is not
+disagreeing with it, so the merge replaces rather than refusing, and asking
+`"basket has how many apple?"` reads what is so now.
+
+```
+> basket has how many apple?   I don't know.
+> basket has three apple       I know.        ← kept
+> basket has how many apple?   three
+> basket has two apple         I know.        ← kept
+> basket has how many apple?   two
+```
+
 The brain does not remember. It hands back what it accepted, and `src/index.js`
 — the runtime — decides whether to keep it, re-assembling knowledge through the
 same `fromSources` door as every other source. A memory that will not pass the

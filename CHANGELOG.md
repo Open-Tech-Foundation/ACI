@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **State, and memory of it.** A link may carry a `quantity`: what a thing holds
+  now, as against what it is. Telling the brain a different count revises it
+  instead of being refused as a contradiction, and `"basket has how many apple?"`
+  reads what is so now. `world.held(subject, rel, object)` is the lookup.
+- A number spent saying how many of something there are is no longer treated as
+  one of the things being spoken about, so `"basket has three apple"` makes its
+  claim about the apple rather than about the three.
+- `basket` (307) under container, and words for `basket` and `container`.
+
 - **Arithmetic, as a brain primitive.** Adding, subtracting and comparing are
   computed by the engine, not walked over links: they would not change in another
   language or another world, so by the spec's own two questions they belong in

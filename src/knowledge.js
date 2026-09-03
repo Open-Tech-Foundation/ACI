@@ -57,8 +57,19 @@ function merge(world, sources) {
         held.value = t.value;
       }
       for (const l of t.links) {
-        if (held.links.some((h) => h.rel === l.rel && h.to === l.to)) continue;
-        held.links.push({ rel: l.rel, to: l.to });
+        const same = held.links.find((h) => h.rel === l.rel && h.to === l.to);
+        if (same) {
+          // How many is state, not a claim about what a thing is: a later
+          // source revises it rather than contradicting what came before.
+          if (l.quantity !== undefined && same.quantity !== l.quantity) {
+            same.quantity = l.quantity;
+            origin.set(t.id, where);
+          }
+          continue;
+        }
+        const kept = { rel: l.rel, to: l.to };
+        if (l.quantity !== undefined) kept.quantity = l.quantity;
+        held.links.push(kept);
         origin.set(t.id, where);
       }
     }

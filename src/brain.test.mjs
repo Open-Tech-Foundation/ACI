@@ -462,7 +462,12 @@ test("told what it already holds, the brain simply understands", async () => {
 test("told something new, the brain learns it and hands it back", async () => {
   forget();
   const r = await brain("a cat has a mind");
-  assertEquals(kind(r.roots[0], "learn").state, { subject: 83, relation: 295, object: 230 });
+  assertEquals(kind(r.roots[0], "learn").state, {
+    subject: 83,
+    relation: 295,
+    object: 230,
+    quantity: null,
+  });
   assertEquals(r.expression.name, "understood");
   assertEquals(r.learned, {
     terms: [{ id: 83, name: "cat", links: [{ rel: 295, to: 230 }] }],

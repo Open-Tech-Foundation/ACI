@@ -314,16 +314,45 @@ function judge(roots, world, mood) {
 
   const a = world.anchors || {};
   const holes = said.filter((n) => conceptOf(n) == null && n.state.exists);
+  // A number spent saying how many of something there are is not itself one of
+  // the things being spoken about.
+  const spent = new Set(
+    said.map((n) => quantityTerm(n)).filter((c) => c != null),
+  );
+  const isThing = (n) =>
+    reaches(n, a.thing, world) &&
+    !reaches(n, a.quantity, world) &&
+    !spent.has(conceptOf(n));
 
   // A quantity word, a thing, and something unresolved asks how many there are.
   // The brain counts by walking, and says so plainly when the world runs out.
   const quantity = said.find((n) => reaches(n, a.quantity, world));
   if (quantity && holes.length > 0) {
-    const of = said.find(
-      (n) => reaches(n, a.thing, world) && !reaches(n, a.quantity, world),
-    );
-    if (of) {
-      const kind = conceptOf(of);
+    const things = said.filter(isThing);
+    const rel = namedRelation(said, world);
+
+    // Asked how many of something a thing holds, the brain reads its state.
+    if (rel >= 0 && things.length >= 2) {
+      const subject = conceptOf(things[0]);
+      const object = conceptOf(things[things.length - 1]);
+      const howMany = world.held(subject, conceptOf(said[rel]), object);
+      const total = howMany == null ? null : world.termFor(howMany);
+      return [
+        withBranch(root, [
+          ...root.branch,
+          node('count', total == null ? 'beyond' : 'counted', [], {
+            of: object,
+            held: subject,
+            members: howMany,
+            total,
+          }),
+        ]),
+      ];
+    }
+
+    // Asked how many of a kind there are, it counts what it knows.
+    if (things.length === 1) {
+      const kind = conceptOf(things[0]);
       const members = world.members(kind, world.baseRelation);
       const total = world.termFor(members.length);
       return [
@@ -346,13 +375,16 @@ function judge(roots, world, mood) {
 
   const worked = calculate(said, at, relation, world);
   if (worked) return [withBranch(root, [...root.branch, worked])];
-  const terms = said.filter((n, i) => i !== at && reaches(n, a.thing, world));
+  const terms = said.filter((n, i) => i !== at && isThing(n));
 
   // Two terms and a relation is a claim, and the brain checks it.
   if (terms.length >= 2) {
-    const subject = conceptOf(nearest(said, at, -1, a.thing, world));
-    const object = conceptOf(nearest(said, at, 1, a.thing, world));
+    const left = nearest(said, at, -1, isThing);
+    const right = nearest(said, at, 1, isThing);
+    const subject = conceptOf(left);
+    const object = conceptOf(right);
     if (subject == null || object == null) return roots;
+    const howMany = world.valueOf(quantityTerm(right));
     // A claim either holds, is contradicted, or is simply not known. Failing to
     // find a path is not proof of the opposite — only two terms that exclude
     // each other are, and only where the claim is about kind.
@@ -368,16 +400,20 @@ function judge(roots, world, mood) {
     // Told a claim it does not hold, the brain learns it — unless the claim is
     // contradicted, or taking it would close a loop. A relation already running
     // from the object to the subject cannot also run back.
-    if (!holds && mood === 'tell') {
+    // How many is state: telling the brain a different count is not disagreeing
+    // with it, it is saying the world has moved on.
+    const revises = howMany != null && world.held(subject, relation, object) !== howMany;
+
+    if (mood === 'tell' && (!holds || revises)) {
       const loops = subject !== object && world.isA(object, subject, relation);
       added.push(
-        truth === 'false' || loops
+        !revises && (truth === 'false' || loops)
           ? node('refuse', truth === 'false' ? 'contradiction' : 'loop', [], {
               subject,
               relation,
               object,
             })
-          : node('learn', 'link', [], { subject, relation, object }),
+          : node('learn', 'link', [], { subject, relation, object, quantity: howMany }),
       );
     }
     return [withBranch(root, [...root.branch, ...added])];
@@ -468,12 +504,18 @@ function reaches(n, anchor, world) {
   return c != null && world.isA(c, anchor);
 }
 
-// The nearest thing to one side that names a term of the wanted kind.
-function nearest(said, from, step, anchor, world) {
+// The nearest thing to one side that answers to a test.
+function nearest(said, from, step, wanted) {
   for (let i = from + step; i >= 0 && i < said.length; i += step) {
-    if (reaches(said[i], anchor, world)) return said[i];
+    if (wanted(said[i])) return said[i];
   }
   return null;
+}
+
+// The number term saying how many of this thing there are, if any.
+function quantityTerm(n) {
+  const q = n && findBranch(n, 'quantity');
+  return q ? q.state.concept : null;
 }
 
 // ---------------------------------------------------------------------------
@@ -793,12 +835,12 @@ function learnedFrom(roots, world) {
   if (!world || roots.length !== 1) return null;
   const learn = findBranch(roots[0], 'learn');
   if (!learn) return null;
-  const { subject, relation, object } = learn.state;
+  const { subject, relation, object, quantity } = learn.state;
   const term = world.term(subject);
   if (!term) return null;
-  return {
-    terms: [{ id: subject, name: term.name, links: [{ rel: relation, to: object }] }],
-  };
+  const link = { rel: relation, to: object };
+  if (quantity != null) link.quantity = quantity;
+  return { terms: [{ id: subject, name: term.name, links: [link] }] };
 }
 
 // ---- tree helpers ---------------------------------------------------------

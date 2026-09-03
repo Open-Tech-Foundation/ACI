@@ -85,6 +85,14 @@ export function fromWorldData(data) {
       for (const t of terms.values()) if (t.value === value) return t.id;
       return null;
     },
+    // How many of `object` a term holds by one relation, where the world has
+    // been told. This is state — what is so now — not what a thing is.
+    held: (id, rel, object) => {
+      const t = terms.get(id);
+      if (!t || rel == null) return null;
+      const l = (t.links || []).find((x) => x.rel === rel && x.to === object);
+      return l && Number.isInteger(l.quantity) ? l.quantity : null;
+    },
     // What a term links to directly by one relation — its answer, where isA is
     // its question.
     linked: (id, rel) => {
