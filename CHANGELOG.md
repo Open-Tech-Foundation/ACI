@@ -6,6 +6,20 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Counting — the brain's first operation.** It could walk links and check
+  claims; it could not do anything. `world.count(n)` steps along the `order`
+  relation once per thing from `anchors.zero` and returns the term it lands on,
+  so counting is a walk rather than arithmetic and stays in the same machinery as
+  everything else. `world.members(id, rel)` gives what links to a term, the other
+  way from `linked`.
+- `order` links across zero..ten — the sixth of the nine declared relations to be
+  used, and it had been sitting unused since the world was written.
+- "how many X?" answers with the number term walked to: seven mammals, five
+  fruit, one bird, zero elephants. Where the chain runs out the brain says it does
+  not know rather than inventing a number it has no term for.
+- Words for four through ten and zero, without which the count could be made but
+  not said.
+
 - A number standing beside a thing now says how many of it there are: `solve`
   hangs a `quantity` node off the thing. Before this, `"two dog"` was two
   unrelated things and the count was dropped — `"two dog is an animal?"` made its

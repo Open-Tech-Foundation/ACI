@@ -627,3 +627,29 @@ test("only a thing carries a count, never a relation", async () => {
   r.roots.forEach(walk);
   assertEquals(kind(leaves.find((n) => n.state.identity === "is"), "quantity"), null);
 });
+
+test("the brain counts by walking, and says the number it lands on", async () => {
+  assertEquals((await brain("how many mammal?")).expression.state.says, "seven");
+  assertEquals((await brain("how many fruit?")).expression.state.says, "five");
+  assertEquals((await brain("how many bird?")).expression.state.says, "one");
+});
+
+test("nothing to count is zero, not silence", async () => {
+  const r = await brain("how many elephant?");
+  assertEquals(kind(r.roots[0], "count").state.members, 0);
+  assertEquals(r.expression.state.says, "zero");
+});
+
+test("counting stops where the world's numbers stop", async () => {
+  // Eleven numbers are known and the order chain reaches ten.
+  const r = await brain("how many number?");
+  assertEquals(kind(r.roots[0], "count").name, "beyond");
+  assertEquals(r.expression.name, "unsure", "it does not invent a number it has no term for");
+});
+
+test("the count is the terms the world holds, not a fact stored anywhere", async () => {
+  const r = await brain("how many tool?");
+  const counted = kind(r.roots[0], "count");
+  assertEquals(counted.state.members, 5);
+  assertEquals(counted.state.total, 118, "the term for five");
+});

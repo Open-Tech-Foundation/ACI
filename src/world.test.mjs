@@ -107,3 +107,39 @@ test("a world that declares no different relation excludes nothing", () => {
   });
   assertEquals(w.excludes(1, 2), false);
 });
+
+test("counting walks the order chain from zero", () => {
+  const ORDER = 7;
+  const w = fromWorldData({
+    anchors: { zero: 100 },
+    relations: { is: IS, order: ORDER },
+    terms: [
+      { id: 100, name: "zero", links: [{ rel: ORDER, to: 101 }] },
+      { id: 101, name: "one", links: [{ rel: ORDER, to: 102 }] },
+      { id: 102, name: "two", links: [] },
+    ],
+  });
+  assertEquals(w.count(0), 100);
+  assertEquals(w.count(2), 102);
+  assertEquals(w.count(3), null, "the chain stops, and so does the brain");
+});
+
+test("a world with no order relation cannot count", () => {
+  const w = fromWorldData({ anchors: { zero: 1 }, relations: { is: IS },
+    terms: [{ id: 1, name: "zero", links: [] }] });
+  assertEquals(w.count(1), null);
+});
+
+test("members are what link to a term, the other way from linked", () => {
+  const w = fromWorldData({
+    relations: { is: IS },
+    terms: [
+      { id: 1, name: "kind", links: [] },
+      { id: 2, name: "a", links: [{ rel: IS, to: 1 }] },
+      { id: 3, name: "b", links: [{ rel: IS, to: 1 }] },
+      { id: 4, name: "far", links: [{ rel: IS, to: 2 }] },
+    ],
+  });
+  assertEquals(w.members(1, IS), [2, 3], "direct members only");
+  assertEquals(w.linked(2, IS), [1]);
+});

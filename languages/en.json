@@ -25,6 +25,14 @@
     "one":   { "pos": "numeral",      "meaning": "1",              "concept": 114 },
     "two":   { "pos": "numeral",      "meaning": "2",              "concept": 115 },
     "three": { "pos": "numeral",      "meaning": "3",              "concept": 116 },
+    "four":  { "pos": "numeral",      "meaning": "4",              "concept": 117 },
+    "five":  { "pos": "numeral",      "meaning": "5",              "concept": 118 },
+    "six":   { "pos": "numeral",      "meaning": "6",              "concept": 119 },
+    "seven": { "pos": "numeral",      "meaning": "7",              "concept": 120 },
+    "eight": { "pos": "numeral",      "meaning": "8",              "concept": 121 },
+    "nine":  { "pos": "numeral",      "meaning": "9",              "concept": 122 },
+    "ten":   { "pos": "numeral",      "meaning": "10",             "concept": 123 },
+    "zero":  { "pos": "numeral",      "meaning": "0",              "concept": 124 },
     "cat":   { "pos": "noun",         "meaning": "feline animal",  "concept": 83 },
     "dog":   { "pos": "noun",         "meaning": "canine animal",  "concept": 82 },
     "apple": { "pos": "noun",         "meaning": "fruit",          "concept": 79 },
@@ -79,6 +87,8 @@
     "name":      { "pos": "noun", "meaning": "name",           "concept": 138 },
 
     "what":      { "pos": "interrogative", "meaning": "what" },
+    "how":       { "pos": "interrogative", "meaning": "how" },
+    "many":      { "pos": "quantifier",    "meaning": "many",  "concept": 243 },
     "your":      { "pos": "pronoun",       "meaning": "self",  "concept": 296 },
     "ur":        { "pos": "pronoun",       "meaning": "self",  "concept": 296 },
     "you":       { "pos": "pronoun",       "meaning": "self",  "concept": 296 }
@@ -106,7 +116,8 @@
           "interjection",
           "interjection sentence",
           "subject predicate",
-          "interrogative verb subject"
+          "interrogative verb subject",
+          "interrogative quantifier subject"
         ]
       },
       "subject": {

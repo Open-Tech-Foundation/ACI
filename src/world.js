@@ -12,6 +12,7 @@ export function fromWorldData(data) {
 
   const isRel = (data.relations && data.relations.is) ?? null;
   const differentRel = (data.relations && data.relations.different) ?? null;
+  const orderRel = (data.relations && data.relations.order) ?? null;
   const anchors = data.anchors || {};
 
   // Walk one relation from a term, collecting every id it reaches. A term may
@@ -62,6 +63,30 @@ export function fromWorldData(data) {
         }
       }
       return false;
+    },
+    // Everything that links to a term directly by one relation: the members of a
+    // kind, where `linked` gives what a term is a member of.
+    members: (id, rel) => {
+      if (id == null || rel == null) return [];
+      const out = [];
+      for (const t of terms.values()) {
+        if ((t.links || []).some((l) => l.rel === rel && l.to === id)) out.push(t.id);
+      }
+      return out;
+    },
+    // Counting: step along `order` once per thing, starting from nothing. The
+    // brain does not compute a number — it walks to one, the same way it walks
+    // to a kind, and stops where the world stops.
+    count: (howMany) => {
+      if (orderRel == null || anchors.zero == null || howMany < 0) return null;
+      let at = anchors.zero;
+      for (let i = 0; i < howMany; i += 1) {
+        const t = terms.get(at);
+        const next = t && (t.links || []).find((l) => l.rel === orderRel);
+        if (!next) return null;
+        at = next.to;
+      }
+      return at;
     },
     // What a term links to directly by one relation — its answer, where isA is
     // its question.

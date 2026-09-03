@@ -313,12 +313,37 @@ function judge(roots, world, mood) {
   collect(root);
 
   const a = world.anchors || {};
+  const holes = said.filter((n) => conceptOf(n) == null && n.state.exists);
+
+  // A quantity word, a thing, and something unresolved asks how many there are.
+  // The brain counts by walking, and says so plainly when the world runs out.
+  const quantity = said.find((n) => reaches(n, a.quantity, world));
+  if (quantity && holes.length > 0) {
+    const of = said.find(
+      (n) => reaches(n, a.thing, world) && !reaches(n, a.quantity, world),
+    );
+    if (of) {
+      const kind = conceptOf(of);
+      const members = world.members(kind, world.baseRelation);
+      const total = world.count(members.length);
+      return [
+        withBranch(root, [
+          ...root.branch,
+          node('count', total == null ? 'beyond' : 'counted', [], {
+            of: kind,
+            members: members.length,
+            total,
+          }),
+        ]),
+      ];
+    }
+  }
+
   const at = namedRelation(said, world);
   if (at < 0) return roots;
 
   const relation = conceptOf(said[at]);
   const terms = said.filter((n, i) => i !== at && reaches(n, a.thing, world));
-  const holes = said.filter((n) => conceptOf(n) == null && n.state.exists);
 
   // Two terms and a relation is a claim, and the brain checks it.
   if (terms.length >= 2) {
@@ -497,6 +522,7 @@ function expression(roots, langs, mood, world) {
   const truth = bound ? findBranch(roots[0], 'truth') : null;
   const answer = bound ? findBranch(roots[0], 'answer') : null;
   const learned = bound ? findBranch(roots[0], 'learn') : null;
+  const counted = bound ? findBranch(roots[0], 'count') : null;
   const refused = bound ? findBranch(roots[0], 'refuse') : null;
   // A question the world cannot fill is a gap, not an answer. The node stays on
   // the tree either way — what the brain looked for and did not find is worth
@@ -520,10 +546,14 @@ function expression(roots, langs, mood, world) {
             : mood === 'ask'
               ? 'affirm'
               : 'understood'
-    : answer
-      ? found
+    : counted
+      ? counted.state.total != null
         ? 'answer'
-        : 'unknown'
+        : 'unsure'
+      : answer
+        ? found
+          ? 'answer'
+          : 'unknown'
       : bound
         ? 'understood'
         : parts.length === 1
@@ -533,7 +563,9 @@ function expression(roots, langs, mood, world) {
   const langName = parts.map((p) => p.state.language).find(Boolean) || null;
   const said =
     intent === 'answer'
-      ? nameOf(answer, langName, langs)
+      ? counted
+        ? termWord(counted.state.total, langName, langs)
+        : nameOf(answer, langName, langs)
       : wholeMeaning(intent, parts);
   // Where the brain is speaking of its own state, it hands over the term for
   // that state and lets the language find the words. It holds none of them.
@@ -554,11 +586,14 @@ function wholeMeaning(intent, parts) {
 // what this language calls the term itself, so the brain's own name is the word
 // that names its self term — not a fact it holds anywhere.
 function nameOf(answer, langName, langs) {
-  const lang = (langs || []).find((l) => l.data.name === langName);
-  if (!lang) return null;
   const { of, subject, found } = answer.state;
-  const term = of === 'name' ? subject : found[0];
-  return term == null ? null : lang.wordFor(term);
+  return termWord(of === 'name' ? subject : found[0], langName, langs);
+}
+
+// A term, said in the language being spoken.
+function termWord(term, langName, langs) {
+  const lang = (langs || []).find((l) => l.data.name === langName);
+  return lang && term != null ? lang.wordFor(term) : null;
 }
 
 // ---------------------------------------------------------------------------

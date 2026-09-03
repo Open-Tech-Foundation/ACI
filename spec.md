@@ -385,6 +385,15 @@ physical thing, two is a kind of abstract thing, and those stand `different`.
 > **Still not guarded:** the harm filter (§ harm). A claim can be consistent with
 > the world and still be one the brain should not take.
 
+**A quantity word, a thing, and something unresolved → how many.** The brain
+**counts**, which is its first operation: `world.count(n)` steps along the
+`order` relation once per thing, starting from `anchors.zero`, and returns the
+term it lands on. It does not compute a number — it walks to one, the same way it
+walks to a kind, and stops where the world's chain stops. Adds a `count` node
+with `{ of, members, total }`; where the chain runs out the node is `beyond` and
+the brain says it does not know rather than inventing a number it has no term
+for.
+
 **One term and something unresolved → a question.** The term the brain was given
 is the one being asked about, **wherever in the signal the hole fell** — a
 language puts its question words where it likes, and the brain does not need to
