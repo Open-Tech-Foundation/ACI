@@ -338,67 +338,78 @@ function structurePhrase(roots, langs) {
   if (tagged.some((t) => !t.pos)) return roots;
 
   const grammar = grammarOf(roots[0], langs);
-  if (!grammar || Object.keys(grammar).length === 0) return roots;
+  const start = grammar && grammar.start;
+  const rules = grammar && grammar.rules;
+  if (!start || !rules || !rules[start]) return roots;
 
   const memo = new Map();
-  const starts = Object.keys(grammar);
-  for (const start of starts) {
-    const res = parseFrom(grammar, start, tagged, 0, memo);
-    if (res && res.next === tagged.length) {
-      const kids = (res.tree.children || [res.tree]).map(leafOrPhrase);
-      return [
-        node('sentence', 'sentence', kids, {
-          text: tagged.map((t) => t.root.state.identity).join(' '),
-        }),
-      ];
-    }
+  for (const parse of parsesFrom(rules, start, tagged, 0, memo)) {
+    if (parse.next !== tagged.length) continue;
+    const kids = (parse.tree.children || []).map(leafOrPhrase).filter(Boolean);
+    return [
+      node(start, start, kids, {
+        text: tagged.map((t) => t.root.state.identity).join(' '),
+      }),
+    ];
   }
   return roots;
 }
 
-// Generic leftmost parse. Returns { next, tree } or null.
-function parseFrom(grammar, symbol, tagged, index, memo) {
+// Every way `symbol` can match starting at `index`, memoized. Returning all
+// parses rather than the first is what lets an enclosing rule reject a short
+// match and take a longer one — `sentence -> interjection | interjection
+// sentence` needs exactly that.
+//
+// Seeding the memo before recursing makes a left-recursive rule yield nothing
+// instead of overflowing the stack: a grammar is data, and bad data must not
+// take the brain down.
+function parsesFrom(rules, symbol, tagged, index, memo) {
   const key = symbol + ':' + index;
   if (memo.has(key)) return memo.get(key);
-  let result = null;
+  memo.set(key, []);
 
-  const rules = grammar[symbol] ? grammar[symbol].rules : null;
-  if (!rules) {
+  const rule = rules[symbol];
+  let results;
+  if (!rule || !rule.rules) {
     // terminal: matches one token's part-of-speech
-    if (index < tagged.length && tagged[index].pos === symbol) {
-      result = { next: index + 1, tree: { symbol, likelyRoot: tagged[index].root } };
-    }
+    results =
+      index < tagged.length && tagged[index].pos === symbol
+        ? [{ next: index + 1, tree: { symbol, root: tagged[index].root } }]
+        : [];
   } else {
-    for (const rule of rules) {
-      const seq = rule.split(/\s+/).filter(Boolean);
-      const r = parseSequence(grammar, seq, tagged, index, memo);
-      if (r) { result = { next: r.next, tree: { symbol, children: r.tree.children } }; break; }
+    results = [];
+    for (const alternative of rule.rules) {
+      const seq = alternative.split(/\s+/).filter(Boolean);
+      for (const r of parseSequence(rules, seq, tagged, index, memo)) {
+        results.push({ next: r.next, tree: { symbol, children: r.children } });
+      }
     }
   }
-  memo.set(key, result);
-  return result;
+
+  memo.set(key, results);
+  return results;
 }
 
-function parseSequence(grammar, seq, tagged, index, memo) {
-  let i = index;
-  const children = [];
-  for (const sym of seq) {
-    const r = parseFrom(grammar, sym, tagged, i, memo);
-    if (!r) return null;
-    children.push(r.tree);
-    i = r.next;
+// Every way the sequence `seq` can match starting at `index`.
+function parseSequence(rules, seq, tagged, index, memo) {
+  let states = [{ next: index, children: [] }];
+  for (const symbol of seq) {
+    const grown = [];
+    for (const state of states) {
+      for (const r of parsesFrom(rules, symbol, tagged, state.next, memo)) {
+        grown.push({ next: r.next, children: [...state.children, r.tree] });
+      }
+    }
+    if (grown.length === 0) return [];
+    states = grown;
   }
-  return { next: i, tree: { symbol: 'seq', children } };
+  return states;
 }
 
 // Convert a parse-node into a brain node (leaf = solved root; phrase = node).
 function leafOrPhrase(c) {
-  if (c.likelyRoot) return c.likelyRoot;
-  if (Array.isArray(c.children)) {
-    const kids = (c.children || []).map(leafOrPhrase).filter(Boolean);
-    return c.symbol && c.symbol !== 'seq' ? node(c.symbol, c.symbol, kids) : kids[0] || null;
-  }
-  return null;
+  if (c.root) return c.root;
+  return node(c.symbol, c.symbol, (c.children || []).map(leafOrPhrase).filter(Boolean));
 }
 
 function posOf(n) {

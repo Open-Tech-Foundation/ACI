@@ -42,10 +42,13 @@ data; the brain derives those).
     "two":   { "pos": "numeral",      "meaning": "2" }
   },
   "grammar": {                       // context-free grammar (all in data)
-    "sentence":       { "rules": ["interjection", "interjection sentence", "subject predicate"] },
-    "subject":        { "rules": ["noun", "article noun", "numeral noun"] },
-    "predicate":      { "rules": ["verb verbComplement"] },
-    "verbComplement": { "rules": ["noun", "numeral", "article noun"] }
+    "start": "sentence",             // the only symbol a whole signal may parse as
+    "rules": {
+      "sentence":       { "rules": ["interjection", "interjection sentence", "subject predicate"] },
+      "subject":        { "rules": ["noun", "article noun", "numeral noun"] },
+      "predicate":      { "rules": ["verb verbComplement"] },
+      "verbComplement": { "rules": ["noun", "numeral", "article noun"] }
+    }
   }
 }
 ```
@@ -80,10 +83,13 @@ brain reasons identically over both.
 The grammar is a context-free grammar. Each entry is a non-terminal with a list
 of `rules`; a rule is a whitespace-separated sequence of symbols.
 
-- A symbol is a **non-terminal** if it is a key in `grammar`.
+- A symbol is a **non-terminal** if it is a key in `grammar.rules`.
 - A symbol is a **terminal** if it is not a key — it must match a token's `pos`.
-- The parser tries every non-terminal as a start; the first parse that consumes
-  all tokens wins.
+- Parsing starts at `grammar.start` only. The first parse that consumes **all**
+  tokens wins; a fragment that parses as some other non-terminal is not a parse.
+- The parser enumerates *every* way a symbol can match at a position, so an
+  enclosing rule can reject a short match and take a longer one.
+- A left-recursive rule yields no parse rather than overflowing the stack.
 
 ## The node
 
@@ -171,12 +177,15 @@ structure — never read from data:
 `structurePhrase(roots, langs)`: when there are ≥2 recognized words, tag each
 with its `pos`, then run a **generic CFG parser** against the grammar from data.
 
-- `parseFrom` / `parseSequence` — leftmost recursive-descent with memoization.
+- `parsesFrom` / `parseSequence` — recursive descent returning **all** parses of
+  a symbol at a position, memoized. Seeding the memo before recursing makes a
+  left-recursive rule terminate with no parse instead of crashing.
 - Terminals match token POS; non-terminals expand by their data rules.
-- Start symbols = every grammar key (tried in order); first full-token parse wins.
-- On success, returns a **single `sentence` root** whose branch is the phrase
-  tree (`subject`, `predicate`, `verbComplement`, ...), whose leaves are the
-  already-solved per-word roots.
+- The only start symbol is `grammar.start`; the first parse consuming all tokens
+  wins.
+- On success, returns a **single root named after the start symbol**, whose
+  branch is the phrase tree (`subject`, `predicate`, `verbComplement`, ...) and
+  whose leaves are the already-solved per-word roots.
 
 Example, input `"a cat is two"`:
 
@@ -186,7 +195,16 @@ sentence
 └── predicate    → thing:is (verb) + verbComplement → thing:two (numeral)
 ```
 
-Unparseable / single-word input is returned unchanged (per-word roots).
+Input `"hi hi"` recurses through `interjection sentence`:
+
+```
+sentence
+├── thing:hi (interjection)
+└── sentence → thing:hi (interjection)
+```
+
+Unparseable input — including a fragment like `"a cat"`, which is a `subject` but
+no `sentence` — is returned unchanged as per-word roots. So is single-word input.
 
 ## Loading — `src/index.js` and `src/languages.js`
 

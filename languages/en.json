@@ -26,21 +26,24 @@
     "tree":  { "pos": "noun",         "meaning": "plant",          "concept": 33 }
   },
   "grammar": {
-    "sentence": {
-      "rules": [
-        "interjection",
-        "interjection sentence",
-        "subject predicate"
-      ]
-    },
-    "subject": {
-      "rules": ["noun", "article noun", "numeral noun"]
-    },
-    "predicate": {
-      "rules": ["verb verbComplement"]
-    },
-    "verbComplement": {
-      "rules": ["noun", "numeral", "article noun"]
+    "start": "sentence",
+    "rules": {
+      "sentence": {
+        "rules": [
+          "interjection",
+          "interjection sentence",
+          "subject predicate"
+        ]
+      },
+      "subject": {
+        "rules": ["noun", "article noun", "numeral noun"]
+      },
+      "predicate": {
+        "rules": ["verb verbComplement"]
+      },
+      "verbComplement": {
+        "rules": ["noun", "numeral", "article noun"]
+      }
     }
   }
 }

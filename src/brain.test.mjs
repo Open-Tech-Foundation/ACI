@@ -247,3 +247,34 @@ test("an unknown word gets no entity", async () => {
   const r = await brain("xyz");
   assertEquals(kind(r.roots[0], "entity"), null);
 });
+
+test("a recursive rule parses — the parser backtracks past a short match", async () => {
+  const r = await brain("hi hi");
+  assertEquals(r.roots.length, 1, "sentence -> interjection sentence");
+  assertEquals(r.roots[0].kind, "sentence");
+  const inner = r.roots[0].branch.find((b) => b.kind === "sentence");
+  assert(inner !== null, "the tail is itself a sentence");
+});
+
+test("an interjection followed by a full sentence parses", async () => {
+  const r = await brain("hi a cat is two");
+  assertEquals(r.roots.length, 1);
+  const inner = r.roots[0].branch.find((b) => b.kind === "sentence");
+  assert(inner !== null);
+  assertEquals(
+    inner.branch.map((b) => b.kind),
+    ["subject", "predicate"],
+  );
+});
+
+test("a fragment is not passed off as a sentence", async () => {
+  const r = await brain("a cat");
+  assertEquals(r.roots.length, 2, "no sentence rule accepts a bare subject");
+  assertEquals(r.roots[0].kind, "thing");
+});
+
+test("the root is named after the grammar's start symbol", async () => {
+  const r = await brain("a cat is two");
+  assertEquals(r.roots[0].kind, "sentence");
+  assertEquals(r.roots[0].name, "sentence");
+});

@@ -15,6 +15,8 @@ All notable changes to this project are documented in this file.
 - `anchors` in the world data name which term realizes each of the brain's
   innate categories (`living`, `person`). The brain owns the category and the
   reasoning; the world owns the membership.
+- `grammar.start` in `languages/*.json` names the one symbol a whole signal may
+  parse as; the rules moved under `grammar.rules`.
 - `concept` on a word in `languages/*.json` — the term that word names. It is
   the only bridge from a symbol to the world.
 
@@ -24,6 +26,18 @@ All notable changes to this project are documented in this file.
   greeting is now an `action` node rather than a living person.
 - `solve` derives thing / property / relation / action from the world's four top
   anchors, and only a thing is living or nonliving.
+
+### Fixed
+
+- The CFG parser now enumerates every parse of a symbol at a position instead of
+  committing to the first alternative, so `sentence -> interjection sentence`
+  works: `"hi hi"` and `"hi a cat is two"` parse where they previously fell back
+  to loose word roots.
+- A left-recursive rule in a language file yields no parse instead of overflowing
+  the stack and taking the request down.
+- Parsing starts only at `grammar.start`, so a fragment like `"a cat"` — a valid
+  `subject` but no sentence — is no longer returned labelled as a sentence. The
+  structured root is named after the start symbol that matched.
 
 ### Removed
 
