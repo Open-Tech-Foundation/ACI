@@ -141,7 +141,12 @@ function recognizeLanguage(roots, langs) {
       matching.push({
         lang: lang.data.name,
         word: word
-          ? { text: identity, pos: word.pos, meaning: word.meaning }
+          ? {
+              text: identity,
+              pos: word.pos,
+              meaning: word.meaning,
+              concept: word.concept ?? null,
+            }
           : null,
         roles: classifyRoles(identity, lang),
       });
@@ -199,6 +204,7 @@ function think(roots, langs) {
       wordKnown: Boolean(first.word),
       pos: first.word ? first.word.pos : null,
       meaning: first.word ? first.word.meaning : null,
+      concept: first.word ? first.word.concept : null,
     };
     return withBranch(n, [...n.branch, node('thought', 'understood', [], { thought })]);
   });
@@ -206,11 +212,14 @@ function think(roots, langs) {
 
 // ---------------------------------------------------------------------------
 // solve — reason about the understood meaning. The brain infers what kind of
-// thing it is (entity) and how it feels (emotion) from the meaning itself,
-// not from data fields. Social acts come from living entities; numerals are
-// nonliving.
+// thing it is (entity) and how it feels (emotion).
+//
+// When the word names a term in the world, the entity is derived by walking
+// the world's `is` chain to the brain's own anchors — the brain owns the
+// categories, the world owns the membership. Words with no term fall back to
+// the part-of-speech reasoning.
 // ---------------------------------------------------------------------------
-function solve(roots) {
+function solve(roots, world) {
   return roots.map((n) => {
     if (!n.state.exists) {
       return withBranch(n, [...n.branch, node('response', 'nothing', [])]);
@@ -229,7 +238,10 @@ function solve(roots) {
     // Innate reasoning: interjections are social — they come from living
     // entities (persons). The brain knows this from the part-of-speech
     // category, not from the semantic meaning.
-    if (pos === 'interjection') {
+    const fromWorld = entityFrom(thoughtState ? thoughtState.concept : null, world);
+    if (fromWorld) {
+      result.branch.push(fromWorld);
+    } else if (pos === 'interjection') {
       result.branch.push(
         node('entity', 'living', [node('entity', 'person', [], { kind: 'person' })], { kind: 'person' }),
       );
@@ -240,6 +252,21 @@ function solve(roots) {
 
     return result;
   });
+}
+
+// The world says what a term is; the brain reads only its own categories out
+// of it. Reaching the `living` anchor makes it living, the `person` anchor
+// refines that; anything else that exists is nonliving.
+function entityFrom(concept, world) {
+  if (concept == null || !world) return null;
+  const { living, person } = world.anchors;
+  if (world.isA(concept, living)) {
+    const kids = world.isA(concept, person)
+      ? [node('entity', 'person', [], { kind: 'person' })]
+      : [];
+    return node('entity', 'living', kids, { concept });
+  }
+  return node('entity', 'nonliving', [], { concept });
 }
 
 // ---------------------------------------------------------------------------
@@ -404,10 +431,10 @@ function grammarOf(root, langs) {
 // never resolve the server-only runtime:fs module. A server wrapper feeds the
 // loaded languages in via brainFrom(input, langs). See bin/ask.js.
 // ---------------------------------------------------------------------------
-export function brainFrom(input, langs) {
+export function brainFrom(input, langs, world) {
   const roots = understand(input, langs);
   const thoughtRoots = think(roots, langs);
-  const solvedRoots = solve(thoughtRoots);
+  const solvedRoots = solve(thoughtRoots, world);
   const composedRoots = compose(solvedRoots);
   const expressedRoots = express(composedRoots);
   const structuredRoots = structurePhrase(expressedRoots, langs);

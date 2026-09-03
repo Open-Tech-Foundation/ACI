@@ -208,3 +208,43 @@ test("single words are not structured", async () => {
   assertEquals(r.roots.length, 1);
   assertEquals(r.roots[0].kind, "thing");
 });
+
+test("a noun's entity is derived from the world, not its part of speech", async () => {
+  const r = await brain("cat");
+  const entity = kind(r.roots[0], "entity");
+  assert(entity !== null, "a known noun gets an entity from the world");
+  assertEquals(entity.name, "living");
+  assertEquals(entity.state.concept, 83);
+});
+
+test("a plant is living too — the is chain decides, not the word", async () => {
+  const r = await brain("tree");
+  assertEquals(kind(r.roots[0], "entity").name, "living");
+});
+
+test("a fruit is nonliving even though it is a noun", async () => {
+  const r = await brain("apple");
+  assertEquals(kind(r.roots[0], "entity").name, "nonliving");
+});
+
+test("a numeral's entity comes from the world term, not the pos case", async () => {
+  const r = await brain("two");
+  const entity = kind(r.roots[0], "entity");
+  assertEquals(entity.name, "nonliving");
+  assertEquals(entity.state.concept, 115);
+});
+
+test("the thought carries the world term the word names", async () => {
+  const r = await brain("dog");
+  assertEquals(kind(r.roots[0], "thought").state.thought.concept, 82);
+});
+
+test("a word with no world term names none", async () => {
+  const r = await brain("hi");
+  assertEquals(kind(r.roots[0], "thought").state.thought.concept, null);
+});
+
+test("an unknown word gets no entity", async () => {
+  const r = await brain("xyz");
+  assertEquals(kind(r.roots[0], "entity"), null);
+});

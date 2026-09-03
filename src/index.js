@@ -6,11 +6,14 @@
 // that imports the engine never resolves the server-only module.
 //
 // brain(input) — takes ONLY the input. Language files are loaded internally
-// from the languages/ directory; the caller passes nothing.
+// from the languages/ directory and the world model from data/world.json; the
+// caller passes nothing.
 import { brainFrom } from './brain.js';
 import { loadLanguageDirectory } from './languages.js';
+import { loadWorldFile } from './world.js';
 
 let cachePromise = null;
+let worldPromise = null;
 
 function loadedLanguages() {
   if (!cachePromise) {
@@ -28,6 +31,30 @@ function loadedLanguages() {
   return cachePromise;
 }
 
+function loadedWorld() {
+  if (!worldPromise) {
+    // Same probing as the languages dir: the module's own location differs
+    // between a raw esrun run and an esdev bundle.
+    worldPromise = loadFirstWorld([
+      new URL('../data/world.json', import.meta.url).pathname,
+      new URL('../../data/world.json', import.meta.url).pathname,
+      new URL('./data/world.json', import.meta.url).pathname,
+    ]).catch(() => null);
+  }
+  return worldPromise;
+}
+
+async function loadFirstWorld(candidates) {
+  for (const path of candidates) {
+    try {
+      return await loadWorldFile(path);
+    } catch {
+      // try the next candidate
+    }
+  }
+  return null;
+}
+
 async function loadFirstExisting(candidates) {
   for (const dir of candidates) {
     try {
@@ -41,6 +68,6 @@ async function loadFirstExisting(candidates) {
 }
 
 export async function brain(input) {
-  const langs = await loadedLanguages();
-  return brainFrom(input, langs);
+  const [langs, world] = await Promise.all([loadedLanguages(), loadedWorld()]);
+  return brainFrom(input, langs, world);
 }

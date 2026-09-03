@@ -16,14 +16,14 @@
     "the":   { "pos": "article",      "meaning": "definite article" },
     "is":    { "pos": "verb",         "meaning": "to be" },
     "are":   { "pos": "verb",         "meaning": "to be (plural)" },
-    "one":   { "pos": "numeral",      "meaning": "1" },
-    "two":   { "pos": "numeral",      "meaning": "2" },
-    "three": { "pos": "numeral",      "meaning": "3" },
-    "cat":   { "pos": "noun",         "meaning": "feline animal" },
-    "dog":   { "pos": "noun",         "meaning": "canine animal" },
-    "apple": { "pos": "noun",         "meaning": "fruit" },
-    "bird":  { "pos": "noun",         "meaning": "flying animal" },
-    "tree":  { "pos": "noun",         "meaning": "plant" }
+    "one":   { "pos": "numeral",      "meaning": "1",              "concept": 114 },
+    "two":   { "pos": "numeral",      "meaning": "2",              "concept": 115 },
+    "three": { "pos": "numeral",      "meaning": "3",              "concept": 116 },
+    "cat":   { "pos": "noun",         "meaning": "feline animal",  "concept": 83 },
+    "dog":   { "pos": "noun",         "meaning": "canine animal",  "concept": 82 },
+    "apple": { "pos": "noun",         "meaning": "fruit",          "concept": 79 },
+    "bird":  { "pos": "noun",         "meaning": "flying animal",  "concept": 85 },
+    "tree":  { "pos": "noun",         "meaning": "plant",          "concept": 33 }
   },
   "grammar": {
     "sentence": {

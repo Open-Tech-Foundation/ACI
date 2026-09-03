@@ -11,9 +11,13 @@ The split is strict and enforced:
 - **`src/brain.js`** — the pure engine. It owns only *innate concepts*
   (entity living/nonliving/person, emotion, social acts from parts of speech).
   It contains **zero** hardcoded vocabulary, words, replies, or grammar rules.
-- **`languages/*.json`** — external data. Supplies words (POS + meaning) and a
-  context-free grammar. The brain *applies* whatever it is given; it never knows
-  a language's name or rules itself.
+- **`languages/*.json`** — external data. Supplies words (POS, meaning, and the
+  world term the word names) and a context-free grammar. The brain *applies*
+  whatever it is given; it never knows a language's name or rules itself.
+- **`data/world.json`** — external knowledge: what exists and how it relates.
+  It holds **no language** — a term is an id and its links. The brain owns the
+  categories (`living`, `person`); the world says which term realizes each, via
+  `anchors`.
 
 Anything the brain cannot infer structurally must come from data; anything data
 provides must only *instantiate* the brain's innate concepts — never hand the
@@ -45,8 +49,27 @@ data; the brain derives those).
 }
 ```
 
-Each word carries only `pos` (part of speech) and `meaning`. There is **no**
-`type`, `emotion`, or `reply` — the brain derives those.
+Each word carries `pos` (part of speech), `meaning`, and optionally `concept` —
+the id of the world term it names. There is **no** `type`, `emotion`, or
+`reply` — the brain derives those.
+
+## Data format — `data/world.json`
+
+```jsonc
+{
+  "anchors":   { "living": 10, "person": 29 },  // brain categories -> term ids
+  "relations": { "is": 294 },                   // the relation is itself a term
+  "terms": [
+    { "id": 10, "name": "organism", "links": [{ "rel": 294, "to": 6 }] },
+    { "id": 83, "name": "cat",      "links": [{ "rel": 294, "to": 24 }] }
+  ]
+}
+```
+
+`name` is a debug label; **nothing in the engine reads it**. Ids are atoms,
+compared only for equality — that is what keeps the world language-neutral.
+Two language files may point at the same term (`cat` / `chat` -> `83`) and the
+brain reasons identically over both.
 
 ### Grammar semantics
 
@@ -70,7 +93,7 @@ Every stage reads nodes and adds branch nodes / state. `node(kind, name, branch,
 
 ## Pipeline — five phases
 
-`brainFrom(input, langs)` runs sequentially; each phase consumes the previous
+`brainFrom(input, langs, world)` runs sequentially; each phase consumes the previous
 output and is exposed separately in `result.phases`.
 
 ```
@@ -113,11 +136,22 @@ language match. Single factual recollection; no entity reasoning here.
 ### 3. solve — infer entity and emotion (innate reasoning)
 
 Builds the `response` node from the meaning, then reasons about what kind of
-thing it is from the **part of speech** (never from data fields):
+thing it is.
+
+When the word names a world term, the entity is **derived from the world**:
+walk the `is` chain and see which anchor it reaches.
+
+- reaches `anchors.living` → `entity(living)`, refined by `anchors.person`
+- otherwise → `entity(nonliving)`
+
+So `cat` (→ animal → organism) and `tree` (→ plant → organism) are living, while
+`apple` (→ fruit → food → substance) is not — from the chain, not the part of
+speech.
+
+Words with no term fall back to part-of-speech reasoning:
 
 - `pos === 'interjection'` → `entity(living)` → `entity(person)` + `emotion(kind)`
-  (an interjection is a social act from a living person).
-- `pos === 'numeral'` → `entity(nonliving)`.
+- `pos === 'numeral'` → `entity(nonliving)`
 
 ### 4. express — derive the reply
 
@@ -157,16 +191,22 @@ Unparseable / single-word input is returned unchanged (per-word roots).
 - `src/brain.js` is **pure** — no `runtime:fs`.
 - `src/languages.js` — `buildLanguage(data)` compiles a data file into a lookup
   object (`isLetterSymbol`, `lookupWord`, `grammar`, `roles`).
+- `src/world.js` — `fromWorldData(data)` compiles the world into
+  `{ anchors, term(id), isA(id, ancestorId) }`. `isA` walks the `is` chain and
+  terminates on cycles.
 - `src/index.js` — server-only bootstrap: `brain(input)` loads the `languages/`
-  dir via `runtime:fs` (probing `../languages/`, `../../languages/`, `./languages/`
-  to work both raw and bundled) and calls `brainFrom(input, langs)`.
+  dir and `data/world.json` via `runtime:fs` (probing relative candidates to work
+  both raw and bundled) and calls `brainFrom(input, langs, world)`.
 
 ## Public API
 
 ```js
 import { brainFrom, node } from './brain.js';
-brainFrom(input, langs)  // pure; returns { input, roots, phases }
+brainFrom(input, langs, world)  // pure; returns { input, roots, phases }
 node(kind, name, branch, state)
+
+import { fromWorldData } from './world.js';
+fromWorldData(data)      // { anchors, term(id), isA(id, ancestorId) }
 
 import { brain } from './index.js';   // server-only convenience
 await brain("hi")                     // loads languages internally
