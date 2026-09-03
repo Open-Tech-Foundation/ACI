@@ -9,14 +9,27 @@ function buildLanguage(data) {
   const letters = charSet(symbols.letter);
   const vowels = charSet(symbols.vowel);
   const asking = charSet(symbols.question);
+  const own = Object.values(symbols).map(charSet);
+
+  // Every character this language's words are made of.
+  const inWords = new Set();
+  for (const word of Object.keys(data.words || {})) {
+    for (const ch of word) {
+      inWords.add(ch.toLowerCase());
+      inWords.add(ch.toUpperCase());
+    }
+  }
 
   const words = new Map();
-  // The word a term is named by, so the brain can say a term it only holds as an
-  // id — its own name among them. First word wins, in file order.
+  // The word a term is named by, so the brain can say a term it only holds as
+  // an id — its own name among them. First word wins, except one that says it
+  // is another way to write the term rather than what the term is called:
+  // `6` and `six` name one number and only one of them is its name.
   const named = new Map();
   for (const [word, info] of Object.entries(data.words || {})) {
     words.set(word.toLowerCase(), info);
-    if (info.concept != null && !named.has(info.concept)) named.set(info.concept, word);
+    if (info.concept == null || info.names === false) continue;
+    if (!named.has(info.concept)) named.set(info.concept, word);
   }
 
   return {
@@ -25,6 +38,12 @@ function buildLanguage(data) {
     isLetterSymbol: (ch) => letters.has(ch),
     isVowelSymbol: (ch) => vowels.has(ch),
     isQuestionSymbol: (ch) => asking.has(ch),
+    // A mark is whatever this language's own words are not made of. Nothing
+    // needs to declare them: `?` ends no English word, and `+` would end one
+    // the moment a language gave it to a word.
+    isWordSymbol: (ch) => inWords.has(ch),
+    // Any symbol this language says it is written in.
+    isOwnSymbol: (ch) => own.some((set) => set.has(ch)),
     lookupWord: (w) => lookUp(words, data.derivations, w),
     wordFor: (concept) => (concept == null ? null : named.get(concept) ?? null),
     grammar: data.grammar || {},

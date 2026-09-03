@@ -20,7 +20,7 @@ function node(kind, name, branch = [], state = {}) {
 // then language recognition against loaded language data.
 // ---------------------------------------------------------------------------
 function understand(input, langs) {
-  let roots = existence(input);
+  let roots = existence(input, langs);
 
   roots = thing(roots);
   roots = quality(roots, langs);
@@ -32,13 +32,13 @@ function understand(input, langs) {
   return roots;
 }
 
-function existence(signal) {
+function existence(signal, langs) {
   const raw = toString(signal);
   // Nothing, or nothing but space, is nothing at all.
   if (raw.trim() === '') return [node('void', 'void', [], { exists: false })];
   // A multi-word signal is perceived as one thing per word, so each token
   // climbs the whole ladder on its own. Single-word input stays a single root.
-  let tokens = tokenize(raw);
+  let tokens = tokenize(raw, langs);
   // A signal made only of marks still exists — it just holds no word.
   if (tokens.length === 0) tokens = [raw.trim()];
   return tokens.map((t) =>
@@ -135,7 +135,13 @@ function recognizeLanguage(roots, langs) {
     // Which loaded languages recognize every letter of this signal?
     const matching = [];
     for (const lang of langs) {
-      const allRecognized = letters.length > 0 && letters.every((ch) => lang.isLetterSymbol(ch));
+      // Every symbol falls within something this language declares — its
+      // letters, its digits, whatever else it says it is written in. The brain
+      // does not hold that words are made of letters.
+      const allRecognized =
+        letters.length > 0 &&
+        letters.every((ch) => lang.isOwnSymbol(ch)) &&
+        letters.some((ch) => lang.isWordSymbol(ch));
       if (!allRecognized) continue;
       const word = lang.lookupWord(identity);
       matching.push({
@@ -624,7 +630,13 @@ function calculate(said, at, relation, world) {
 
   if (op === 'more' || op === 'less') {
     const holds = op === 'more' ? left > right : left < right;
-    return node('truth', holds ? 'true' : 'false', [], { subject: left, relation, object: right });
+    // The terms compared, not the numbers they name: a truth node joins terms
+    // wherever it comes from, and what is said back is said in words.
+    return node('truth', holds ? 'true' : 'false', [], {
+      subject: world.termFor(left),
+      relation,
+      object: world.termFor(right),
+    });
   }
 
   const value = op === 'plus' ? left + right : left - right;
@@ -1398,15 +1410,23 @@ function toString(v) {
   return String(v);
 }
 
-// Split a signal into words on whitespace, stripping surrounding punctuation
-// from each token. The brain itself has no language knowledge here — it only
-// finds the segmentation boundaries; meaning comes later from the language data.
-function tokenize(signal) {
-  return String(signal)
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((t) => t.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, ''))
-    .filter(Boolean);
+// Split a signal into words on whitespace, taking the marks off each end. A
+// mark is a character no word of the language is made of — nothing has to
+// declare them, and a language that gives `+` to a word stops treating it as
+// one. Told no language, the brain takes nothing off: it has no grounds to.
+function tokenize(signal, langs) {
+  const marks = (langs || []).map((l) => (ch) => !l.isWordSymbol(ch));
+  const bare = (t) => {
+    let from = 0;
+    let to = t.length;
+    // Every language must call it a mark: one language's punctuation may be
+    // another's letter.
+    const marked = (ch) => marks.length > 0 && marks.every((is) => is(ch));
+    while (from < to && marked(t[from])) from += 1;
+    while (to > from && marked(t[to - 1])) to -= 1;
+    return t.slice(from, to);
+  };
+  return String(signal).split(/\s+/).filter(Boolean).map(bare).filter(Boolean);
 }
 
 function quote(s) {

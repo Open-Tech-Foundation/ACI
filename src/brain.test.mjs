@@ -731,8 +731,11 @@ test("the brain compares two numbers", async () => {
 test("comparison is decided by value, never by a link in the world", async () => {
   const r = await brain("three more one?");
   const truth = kind(r.roots[0], "truth");
-  assertEquals(truth.state.subject, 3, "the value, not the term id");
-  assertEquals(truth.state.object, 1);
+  // Decided by the values, and nothing in the world was walked. A truth node
+  // joins terms wherever it came from, so terms are what it keeps.
+  assertEquals(truth.state.subject, 116);
+  assertEquals(truth.state.object, 114);
+  assertEquals(r.expression.name, "affirm");
 });
 
 test("a plural is understood as the word it comes from", async () => {

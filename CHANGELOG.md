@@ -113,6 +113,19 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Numbers written in figures were not read at all.** `"1 + 5"` was symbols the
+  brain had no language for. A mark is now a character no word of the language
+  is made of — so `?` comes off a token and `+` does not, once a language gives
+  `+` to a word — and a signal is recognized when every symbol falls in some set
+  the language declares. English gained digits, signs, a word per figure and one
+  for `+` and `-`; `"9 + 4"` answers *thirteen*.
+- **A word may say it does not name its term** (`"names": false`). Without it
+  `6` became what the number is *called*, since JavaScript orders keys that look
+  like numbers before every other key — first-word-wins could not be relied on.
+- **A comparison kept the numbers it compared where every other claim keeps
+  terms**, so saying one back said the terms those values happened to be.
+- `"what is one plus five"` did not parse: a question may now be asked of a whole
+  sentence, not only of a subject.
 - **A fragment was answered as though it were a sentence.** `"what is your"`
   answered *computer*: a possessive stood as a subject on its own, so the
   grammar took an unfinished sentence for a finished one. `your`, `ur` and `my`

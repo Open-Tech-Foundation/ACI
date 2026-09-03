@@ -79,6 +79,7 @@ Refused, not tolerated:
 - an unknown field, anywhere
 - terms with no relation declared to walk them
 - a word with no `pos` or no `meaning`; a language with no `symbols.letter`
+- a word saying `names` anything but `false`
 - a word that points and also names a term of its own
 - a grammar naming a start symbol that has no rule
 
@@ -170,6 +171,28 @@ runtime — never the brain — does the reading.
 Each word carries `pos` (part of speech), `meaning`, and optionally `concept` —
 the id of the world term it names. There is **no** `type`, `emotion`, or
 `reply` — the brain derives those.
+
+### Symbols, marks and figures
+
+**A mark is a character no word of this language is made of.** Nothing declares
+them: `?` ends no English word, so it comes off a token; `+` stops being a mark
+the moment a language gives it to a word. A signal is recognized when every
+symbol falls in some set the language declares — its letters, its digits, its
+signs — and at least one is a symbol its words are made of, so a signal of
+nothing but marks is recognized as no language at all. The brain does not hold
+that words are made of letters.
+
+**A word may say it does not name its term**: `"names": false`. `6` and `six`
+are one number and only one of them is what it is called, so figures are read
+and never said back. First word wins otherwise — but not by file order, which
+JavaScript does not keep for keys that look like numbers.
+
+```
+9 + 4                thirteen
+nine plus four       thirteen
+what is 1 + 5        six
+what is 1            number
+```
 
 ### Derivations
 

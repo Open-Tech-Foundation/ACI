@@ -182,7 +182,7 @@ export function checkLanguage(data, where = 'language') {
   for (const [word, info] of Object.entries(data.words || {})) {
     const w = `${at} word "${word}"`;
     if (!info || typeof info !== 'object') fail(w, 'must be an object');
-    onlyKeys(info, ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when'], w);
+    onlyKeys(info, ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names'], w);
     if (typeof info.pos !== 'string' || info.pos === '') fail(w, 'pos must be a non-empty string');
     if (typeof info.meaning !== 'string') fail(w, 'meaning must be a string');
     if (info.concept !== undefined && !isId(info.concept)) fail(w, 'concept must be a term id');
@@ -193,6 +193,10 @@ export function checkLanguage(data, where = 'language') {
     // world anchors; the brain names none of them.
     if (info.when !== undefined && (typeof info.when !== 'string' || info.when === '')) {
       fail(w, 'when, where present, must name a moment');
+    }
+    // Another way to write a term is not what the term is called.
+    if (info.names !== undefined && info.names !== false) {
+      fail(w, 'names, where present, must be false');
     }
     if (info.negates !== undefined && info.negates !== true) {
       fail(w, 'negates, where present, must be true');
