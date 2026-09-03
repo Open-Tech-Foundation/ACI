@@ -320,23 +320,59 @@ function nearestTerm(said, from, step, anchor, world) {
 }
 
 // ---------------------------------------------------------------------------
-// express — the brain's last phase, and it runs on the structured signal. Every
-// thing the brain perceived gets its own reply, and the signal as a whole gets
-// one. The reply is reasoned from what was understood, never read from data.
+// express — the brain's last phase, and it runs on the structured signal. The
+// brain decides only what it means to express — an intent, one of its own
+// innate acts. How that intent is voiced belongs to the language it recognized,
+// and lives in that language's data. No reply is written into the engine.
 // ---------------------------------------------------------------------------
-function express(roots) {
+function express(roots, langs) {
   return roots.map((n) =>
     walk(n, (b) =>
       b.kind === 'thing' || b.kind === 'void'
-        ? withBranch(b, [...b.branch, node('express', deriveReply(b), [])])
+        ? withBranch(b, [...b.branch, speak(intentOf(b), meaningOf(b), languageOf(b), langs)])
         : withBranch(b),
     ),
   );
 }
 
-// The brain's one reply to the whole signal. Its branch keeps what it said about
-// each thing, so the parts survive under the whole.
-function expression(roots) {
+// What the brain means to express about a thing, from what it understood it to
+// be. These are the brain's acts, not any language's words.
+function intentOf(n) {
+  if (!n.state.exists) return 'nothing';
+  const ts = thoughtOf(n);
+  if (!ts || ts.meaning == null) return 'unknown';
+  if (ts.pos === 'interjection') return 'greet';
+  if (ts.pos === 'numeral') return 'count';
+  if (ts.pos === 'verb') return 'confirm';
+  return 'recognise';
+}
+
+// Voicing an intent in the language the signal was recognized as. A language
+// that has nothing to say for an intent leaves it unsaid.
+function speak(intent, meaning, langName, langs) {
+  const lang = (langs || []).find((l) => l.data.name === langName);
+  const says = lang ? lang.express(intent, { meaning }) : null;
+  return node('express', intent, [], { says, meaning, language: langName || null });
+}
+
+function thoughtOf(n) {
+  const thought = findBranch(n, 'thought');
+  return thought ? thought.state.thought : null;
+}
+
+function meaningOf(n) {
+  const ts = thoughtOf(n);
+  return ts ? ts.meaning : null;
+}
+
+function languageOf(n) {
+  const ts = thoughtOf(n);
+  return ts ? ts.language : null;
+}
+
+// The brain's one act toward the whole signal, with what it said about each
+// thing kept underneath.
+function expression(roots, langs) {
   const parts = [];
   const collect = (n) => {
     const said = findBranch(n, 'express');
@@ -349,39 +385,25 @@ function expression(roots) {
   const bound =
     roots.length === 1 && roots[0].kind !== 'thing' && roots[0].kind !== 'void';
   const truth = bound ? findBranch(roots[0], 'truth') : null;
-  const reply = truth
+
+  const intent = truth
     ? truth.name === 'true'
-      ? 'Yes.'
-      : 'No.'
+      ? 'affirm'
+      : 'deny'
     : bound
-      ? 'I understand.'
+      ? 'understood'
       : parts.length === 1
         ? parts[0].name
-        : '...';
-  return node('express', reply, parts, { bound });
+        : 'unknown';
+
+  const langName = parts.map((p) => p.state.language).find(Boolean) || null;
+  const whole = speak(intent, wholeMeaning(intent, parts), langName, langs);
+  return withBranch(whole, parts, { ...whole.state, bound });
 }
 
-// Deriving a reply from understanding: a reply fitted to what the thing is.
-function deriveReply(n) {
-  if (!n.state.exists) return 'nothing';
-  const thought = findBranch(n, 'thought');
-  const ts = thought ? thought.state.thought : null;
-  const pos = ts ? ts.pos : null;
-  const meaning = ts ? ts.meaning : null;
-
-  if (pos === 'interjection') {
-    return 'Hello!';
-  }
-  if (pos === 'numeral') {
-    return `It is ${meaning}.`;
-  }
-  if (pos === 'verb') {
-    return `Yes, it ${meaning}.`;
-  }
-  if (meaning) {
-    return `I recognise "${meaning}".`;
-  }
-  return '...';
+// A one-thing signal expresses that thing, so it needs that thing's meaning.
+function wholeMeaning(intent, parts) {
+  return parts.length === 1 && parts[0].name === intent ? parts[0].state.meaning : null;
 }
 
 // ---------------------------------------------------------------------------
@@ -505,11 +527,11 @@ export function brainFrom(input, langs, world) {
   const solvedRoots = solve(thoughtRoots, world);
   const structuredRoots = structurePhrase(solvedRoots, langs);
   const judgedRoots = judge(structuredRoots, world);
-  const expressedRoots = express(judgedRoots);
+  const expressedRoots = express(judgedRoots, langs);
   return {
     input,
     roots: expressedRoots,
-    expression: expression(expressedRoots),
+    expression: expression(expressedRoots, langs),
     phases: {
       understand: roots,
       think: thoughtRoots,

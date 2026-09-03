@@ -46,3 +46,26 @@ test("spaces in a symbol list are separators, not symbols", () => {
   assertEquals(l.isLetterSymbol(" "), false);
   assertEquals(l.roles.get("punctuation").has(" "), false);
 });
+
+test("a language voices an intent from its own data", () => {
+  const l = fromData({
+    ...data,
+    expressions: { greet: "Hello!", count: "It is {meaning}." },
+  });
+  assertEquals(l.express("greet"), "Hello!");
+  assertEquals(l.express("count", { meaning: "2" }), "It is 2.");
+});
+
+test("an intent the language has no words for is left unsaid", () => {
+  const l = fromData({ ...data, expressions: { greet: "Hello!" } });
+  assertEquals(l.express("deny"), null);
+});
+
+test("a language with no expressions says nothing at all", () => {
+  assertEquals(fromData(data).express("greet"), null);
+});
+
+test("a slot with nothing to fill it is dropped", () => {
+  const l = fromData({ ...data, expressions: { count: "It is {meaning}." } });
+  assertEquals(l.express("count"), "It is .");
+});

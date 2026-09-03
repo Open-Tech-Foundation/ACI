@@ -4,14 +4,47 @@ A deterministic "human brain in computer form". The brain perceives a signal,
 reasons about it, and produces a reply — with **no hardcoded language knowledge
 in the core**. All language knowledge arrives as external data files.
 
-## Core principle: pure brain, data-driven
+## Core principle: the brain stays primitive
+
+**The brain hardcodes nothing. It only infers.**
+
+This is the rule the whole design answers to, and it is not negotiable. The
+engine may hold *primitives* — the categories anything can fall into, and the
+acts the brain can perform. It may hold **no particulars**: not a word, not a
+meaning, not a rule of grammar, not a reply, not a fact about the world. Every
+particular arrives as data, and the brain reaches its output by walking that
+data, never by looking an answer up in itself.
+
+Two questions settle whether something belongs in the engine:
+
+1. **Would it change if the signal came in another language?** Then it is
+   language data, not brain. Words, grammar, and *replies* all fail this test.
+2. **Would it change if the world were different?** Then it is world data, not
+   brain. What a cat is, what is alive, what follows from what — all fail it.
+
+What survives both is primitive, and only that may be written in code.
+
+| the brain owns | the data owns |
+|---|---|
+| the four ways to exist: thing / property / relation / action | which term is which |
+| the refinements of a thing: living / nonliving / person | that a cat is an animal |
+| how to walk a relation, and how to parse a rule | the relations, and the rules |
+| the acts it can express: greet, count, confirm, recognise, understood, affirm, deny, unknown | the words each act is voiced in |
+
+A concrete case, because this is the one that keeps being got wrong: the brain
+**never holds a reply**. It decides only *what it means to express* — an intent
+such as `affirm`. The language it recognized supplies the words for that intent,
+from `expressions` in its own data file. A language that offers nothing for an
+intent leaves it unsaid, and the brain is silent rather than falling back on
+words of its own. `"Yes."` lives in `languages/en.json`; there is no string like
+it anywhere in `src/`.
 
 The split is strict and enforced:
 
 - **`src/brain.js`** — the pure engine. It owns only *innate concepts*: the four
-  ways anything can exist (thing / property / relation / action) and the
-  refinements of a thing (living / nonliving / person). It contains **zero**
-  hardcoded vocabulary, words, or grammar rules.
+  ways anything can exist (thing / property / relation / action), the refinements
+  of a thing (living / nonliving / person), and the acts it can express. It
+  contains **zero** hardcoded vocabulary, words, grammar rules, or replies.
 - **`languages/*.json`** — external data. Supplies words (POS, meaning, and the
   world term the word names) and a context-free grammar. The brain *applies*
   whatever it is given; it never knows a language's name or rules itself.
@@ -21,9 +54,11 @@ The split is strict and enforced:
   `anchors`.
 
 Anything the brain cannot infer structurally must come from data; anything data
-provides must only *instantiate* the brain's innate concepts — never hand the
-brain its answers (e.g. a word's entity type or reply string is **not** in the
-data; the brain derives those).
+provides must only *instantiate* the brain's primitives — never hand the brain a
+conclusion. A word's data says what it *is* (`pos`, `meaning`, `concept`); it
+never says what the brain should decide about it. The brain derives `living` by
+walking the world, and `deny` by checking a claim — neither is a field anyone can
+set.
 
 ## Data format — `languages/*.json`
 
@@ -36,10 +71,20 @@ data; the brain derives those).
     "punctuation": { "characters": ". , ! ? ; : ' \" - ( ) [ ]" }
   },
   "words": {
-    "hi":    { "pos": "interjection", "meaning": "greeting" },
-    "cat":   { "pos": "noun",         "meaning": "feline animal" },
-    "is":    { "pos": "verb",         "meaning": "to be" },
-    "two":   { "pos": "numeral",      "meaning": "2" }
+    "hi":    { "pos": "interjection", "meaning": "greeting",     "concept": 277 },
+    "cat":   { "pos": "noun",         "meaning": "feline animal","concept": 83 },
+    "is":    { "pos": "verb",         "meaning": "to be",        "concept": 294 },
+    "two":   { "pos": "numeral",      "meaning": "2",            "concept": 115 }
+  },
+  "expressions": {                   // how this language voices each brain act
+    "greet":      "Hello!",
+    "count":      "It is {meaning}.",
+    "confirm":    "Yes, it {meaning}.",
+    "recognise":  "I recognise \"{meaning}\".",
+    "understood": "I understand.",
+    "affirm":     "Yes.",
+    "deny":       "No.",
+    "unknown":    "..."
   },
   "grammar": {                       // context-free grammar (all in data)
     "start": "sentence",             // the only symbol a whole signal may parse as
@@ -56,6 +101,13 @@ data; the brain derives those).
 Each word carries `pos` (part of speech), `meaning`, and optionally `concept` —
 the id of the world term it names. There is **no** `type`, `emotion`, or
 `reply` — the brain derives those.
+
+### Expressions
+
+`expressions` maps each of the brain's intents to the words this language voices
+it in. `{meaning}` is filled from what the brain understood. The brain picks the
+intent; the language picks the words. An intent with no entry here is simply not
+said — the engine has no words to fall back on.
 
 ## Data format — `data/world.json`
 
@@ -218,29 +270,50 @@ gives `is` the concept `294`, and term 294 is the relation the world's links are
 made of. So `"a cat is a cat"` is **true**, `"the apple is a tree"` is **false** —
 decided by walking the world, not by any rule in the engine.
 
-### 6. express — derive the reply
+### 6. express — choose an intent, and let the language voice it
 
-Runs on the judged, structured signal. Every `thing` gets its own reply from
-`deriveReply(n)`, reasoned from what it is — never read from data:
+Runs on the judged, structured signal. The brain decides **what it means to
+express**; it never decides the words.
 
-- interjection → `"Hello!"`
-- numeral → `` `It is ${meaning}.` ``
-- verb → `` `Yes, it ${meaning}.` ``
-- otherwise → `` `I recognise "${meaning}".` '' or `'...'`
+`intentOf(n)` picks one of the brain's own acts from what the thing was
+understood to be:
 
-`expression(roots)` then derives the **one** reply to the whole signal, keeping the
-per-thing replies in its branch:
+| the thing | intent |
+|---|---|
+| nothing was there | `nothing` |
+| an interjection | `greet` |
+| a numeral | `count` |
+| a verb | `confirm` |
+| anything else with a meaning | `recognise` |
+| no meaning | `unknown` |
 
-- the signal made a claim → `"Yes."` / `"No."`
-- the signal was bound into a whole → `"I understand."`
-- a single thing → that thing's own reply
-- nothing bound them → `'...'`, with every part still under it
+`expression(roots, langs)` then picks the one act toward the whole signal:
+
+| the signal | intent |
+|---|---|
+| made a claim the world bears out | `affirm` |
+| made a claim the world denies | `deny` |
+| was bound into a whole | `understood` |
+| was a single thing | that thing's intent |
+| was never bound | `unknown` |
+
+`speak(intent, meaning, language, langs)` then asks **that language** for the
+words, and builds the node:
+
+```js
+node('express', intent, [], { says, meaning, language })
+```
+
+The node's **name is the act**; `state.says` is what that language made of it.
+A language with no entry for the intent leaves `says` as `null`, and the brain
+says nothing — it has no words of its own to fall back on. Void input recognizes
+no language at all, so it is always unsaid.
 
 ## Loading — `src/index.js` and `src/languages.js`
 
 - `src/brain.js` is **pure** — no `runtime:fs`.
 - `src/languages.js` — `fromData(data)` compiles a data file into a lookup object
-  (`isLetterSymbol`, `isVowelSymbol`, `lookupWord`, `grammar`, `roles`).
+  (`express`, `isLetterSymbol`, `isVowelSymbol`, `lookupWord`, `grammar`, `roles`).
   `loadLanguageDirectory(dir)` reads `*.json` **in name order**, so the brain sees
   the same languages in the same order on every machine.
 - `src/world.js` — `fromWorldData(data)` compiles the world into

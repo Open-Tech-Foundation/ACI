@@ -8,6 +8,7 @@ function flatten(n, d = 0, prefix = "", connector = "", isLast = true) {
   const label = n.name === n.kind ? n.name : `${n.kind} (${n.name})`;
   let extra = "";
   if (n.state?.thought) extra = `  -> ${n.state.thought.pos}: ${n.state.thought.meaning} [${n.state.thought.language}]`;
+  else if (n.kind === "express") extra = `  -> ${n.state.says ?? "(unsaid)"}`;
   else if (n.state?.language) extra = `  [${n.state.language}]`;
   let s = "  ".repeat(d) + connector + label + extra + "\n";
   const cp = prefix + (connector === "" ? "" : isLast ? "   " : "│  ");
@@ -23,3 +24,4 @@ const out = await Promise.all(
 
 console.log(`input: ${JSON.stringify(input)}\n`);
 console.log(out.join(""));
+console.log(`says: ${r.expression.state.says ?? "(unsaid)"}  [${r.expression.name}]`);

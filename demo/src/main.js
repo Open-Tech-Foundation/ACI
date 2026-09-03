@@ -62,7 +62,7 @@ define("x-ask", (el) => {
             <div class="stage-label">${(tabs().find((p) => p.key === active) || {}).label}</div>
             ${active === "express"
               ? html`
-                  <div class="output">${result.expression.name}</div>
+                  <div class="output">${result.expression.state.says ?? "—"}</div>
                   <pre class="tree">${expressOutput(result.expression.branch)}</pre>
                 `
               : html`<pre class="tree">${render(activeTree)}</pre>`}
@@ -141,6 +141,9 @@ function formatState(state, indent) {
   if (typeof state.language === "string") {
     lines.push(`language: ${state.language}`);
   }
+  if ("says" in state) {
+    lines.push(`says: ${state.says ?? "— (this language has no words for it)"}`);
+  }
   if (Array.isArray(state.parts)) {
     lines.push(`parts: ${state.parts.join(" + ")}`);
   }
@@ -157,6 +160,8 @@ function formatState(state, indent) {
 
 // What the brain said about each thing, under what it said about the whole.
 function expressOutput(parts) {
-  const replies = (parts || []).map((p) => p.name).filter((n) => n && n !== "...");
+  const replies = (parts || [])
+    .map((p) => p.state.says)
+    .filter((n) => n && n !== "...");
   return replies.length ? replies.join("\n") : "—";
 }

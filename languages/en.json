@@ -27,6 +27,16 @@
     "bird":  { "pos": "noun",         "meaning": "flying animal",  "concept": 85 },
     "tree":  { "pos": "noun",         "meaning": "plant",          "concept": 33 }
   },
+  "expressions": {
+    "greet":      "Hello!",
+    "count":      "It is {meaning}.",
+    "confirm":    "Yes, it {meaning}.",
+    "recognise":  "I recognise \"{meaning}\".",
+    "understood": "I understand.",
+    "affirm":     "Yes.",
+    "deny":       "No.",
+    "unknown":    "..."
+  },
   "grammar": {
     "start": "sentence",
     "rules": {

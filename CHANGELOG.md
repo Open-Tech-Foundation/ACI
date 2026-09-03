@@ -6,6 +6,10 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- `expressions` in `languages/*.json` — how a language voices each of the brain's
+  acts, with `{meaning}` filled from what was understood. `lang.express(intent,
+  vars)` renders one; an intent the language has no entry for is left unsaid.
+
 - `judge` phase: a signal naming a relation between two terms makes a claim, and
   the brain checks it against the world. It adds a `truth` node
   (`{ subject, relation, object }`), reading the claim off the order of the things
@@ -31,6 +35,13 @@ All notable changes to this project are documented in this file.
   the only bridge from a symbol to the world.
 
 ### Changed
+
+- **The brain holds no replies.** `express` now decides only an *intent* — one of
+  `nothing`, `greet`, `count`, `confirm`, `recognise`, `understood`, `affirm`,
+  `deny`, `unknown` — and the language the signal was recognized as supplies the
+  words. An `express` node is named after the act; `state.says` is what that
+  language made of it, and is `null` when the language offers nothing. No reply
+  text remains anywhere in `src/`.
 
 - `express` runs **last**, on the structured and judged signal, so the brain
   replies to the whole rather than to each word of it. Pipeline is now
@@ -102,6 +113,8 @@ All notable changes to this project are documented in this file.
   structured root is named after the start symbol that matched.
 
 ### Removed
+
+- `deriveReply`, which held every reply as a string inside the engine.
 
 - `compose`, which duplicated what `structure` does and was the cause of the lost
   first reply.

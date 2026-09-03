@@ -16,12 +16,24 @@ function buildLanguage(data) {
 
   return {
     data,
+    express: (intent, vars) => voice(data.expressions, intent, vars),
     isLetterSymbol: (ch) => letters.has(ch),
     isVowelSymbol: (ch) => vowels.has(ch),
     lookupWord: (w) => words.get(String(w).toLowerCase()) || null,
     grammar: data.grammar || {},
     roles: symbolRoles(symbols),
   };
+}
+
+// How this language voices one of the brain's intents. The brain never holds a
+// reply of its own; a language that says nothing for an intent leaves it unsaid.
+function voice(expressions, intent, vars) {
+  const form = expressions ? expressions[intent] : null;
+  if (typeof form !== 'string') return null;
+  return form.replace(/\{(\w+)\}/g, (_, key) => {
+    const v = vars ? vars[key] : null;
+    return v == null ? '' : String(v);
+  });
 }
 
 // A symbol set holds both cases: the data lists one, the brain may meet either.
