@@ -29,7 +29,7 @@ What survives both is primitive, and only that may be written in code.
 | the four ways to exist: thing / property / relation / action | which term is which |
 | the refinements of a thing: living / nonliving / person | that a cat is an animal |
 | how to walk a relation, and how to parse a rule | the relations, and the rules |
-| the acts it can express: greet, count, confirm, recognise, learn, understood, affirm, deny, empathy, glad, unknown | the words each act is voiced in |
+| the acts it can express: greet, count, confirm, recognise, learn, understood, affirm, deny, empathy, glad, unheard, unsure, unknown | the words each act is voiced in |
 | that a word may point, and that what it points at is the signal's own circumstance | which words point, and where each one points |
 | that what harms is refused, and the walk that decides it | which terms are bad, and what causes them |
 | that it answers a communication, counts a number, confirms a relation | which term is a communication, a number, a relation |
@@ -897,13 +897,24 @@ thing is `recognise` — the brain has nothing to reason over.
 | asked a claim the world bears out | `affirm` |
 | made a claim the world denies | `deny` |
 | left something held or something happened | `learn` |
+| asked something it could not fill | `unsure` |
+| held a word this language has no entry for | `unheard` |
 | was a single thing | that thing's intent |
 | was bound and nothing came of it | `unknown` |
-| was never bound | `unknown` |
 
-There is **no default act**. Nothing falls through to *I know* for want of
-anywhere else to go: taking something in (`learn`) is not the same as having
-held it (`understood`), and a signal the brain did nothing with says so.
+There is **no default act, and no silence**. Nothing falls through to *I know*
+for want of anywhere else to go: taking something in (`learn`) is not the same
+as having held it (`understood`). And nothing falls through to *…* either — a
+question it cannot fill says it does not know, and a signal it could not get
+through says **which word stopped it**:
+
+```
+> a hyena is a hunter      I don't know "hunter".
+> a hyena is a mammal      I know.
+```
+
+That word is not a term and has no meaning to give. What the brain has of it is
+what it was sent, and it hands those symbols to the language to voice.
 
 `speak(intent, meaning, language, langs)` then asks **that language** for the
 words, and builds the node:

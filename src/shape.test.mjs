@@ -210,7 +210,7 @@ test("two files naming one language are one language", () => {
 test("an instance is given its name in memory, not in a language", () => {
   // This world has no term for nothing, so it has nothing to answer with.
   const bare = fromSources({ world: named, languages: [english] });
-  assertEquals(brainFrom("what is your name?", bare).expression.name, "unknown");
+  assertEquals(brainFrom("what is your name?", bare).expression.name, "unsure");
 
   // The runtime loads what this one instance is into memory, in the shape
   // everything else takes. No language is touched: a name is not translated.

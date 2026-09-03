@@ -527,7 +527,7 @@ test("the same signal points elsewhere when it came from elsewhere", async () =>
 test("told nothing about where a signal came from, the brain does not guess", async () => {
   const r = await brain("i am a machine?");
   assertEquals(kind(r.roots[0], "truth"), null, "there was nothing to make a claim about");
-  assertEquals(r.expression.state.says, "...");
+  assertEquals(r.expression.state.says, "I don't understand.");
 });
 
 test("the signal arrived here, so what it points to is the self", async () => {

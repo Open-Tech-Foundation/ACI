@@ -970,6 +970,10 @@ function moodOf(input, langs) {
   return (langs || []).some((l) => l.isQuestionSymbol(last)) ? 'ask' : 'tell';
 }
 
+// The acts that are about what the brain does or does not know, and so are
+// handed the term for knowing. It holds no word for it.
+const KNOWING = ['understood', 'unsure', 'empathy', 'learn', 'unheard'];
+
 // The brain's one act toward the whole signal, with what it said about each
 // thing kept underneath.
 function expression(roots, langs, mood, world, sent) {
@@ -995,6 +999,9 @@ function expression(roots, langs, mood, world, sent) {
   // the world's — which is what the record already is. So the act is only the
   // last step: it was said of whoever said it, and it stands at the bad pole.
   const felt = bound ? findBranch(roots[0], 'event') : null;
+  // A word this language has no entry for. The brain cannot place it, but it
+  // can say which one stopped it — the symbols came in with the signal.
+  const unheard = unheardIn(roots);
   const feeling = feelingIn(felt, world, sent);
   const langName = parts.map((p) => p.state.language).find(Boolean) || null;
   // A question the world cannot fill is a gap, not an answer, and so is one the
@@ -1037,20 +1044,25 @@ function expression(roots, langs, mood, world, sent) {
       : answer
         ? found
           ? 'answer'
-          : 'unknown'
+          : 'unsure'
       : bound
         ? // Something happened, or something was said and held: the brain took
-          // it in, which is not the same as having known it. Bound into a whole
-          // and nothing came of it, there is no act but to say so.
+          // it in, which is not the same as having known it.
           felt
           ? 'learn'
           : 'unknown'
-        : parts.length === 1
-          ? parts[0].name
-          : 'unknown';
+        : // A word it does not have is why it got no further, and saying so is
+          // worth more than saying nothing.
+          unheard != null
+          ? 'unheard'
+          : parts.length === 1
+            ? parts[0].name
+            : 'unknown';
 
   const said =
-    feeling
+    intent === 'unheard'
+      ? unheard
+      : feeling
       ? termWord(felt.state.action, langName, langs, world)
       : intent === 'answer'
       ? did
@@ -1064,7 +1076,7 @@ function expression(roots, langs, mood, world, sent) {
   // Where the brain is speaking of its own state, it hands over the term for
   // that state and lets the language find the words. It holds none of them.
   const terms =
-    intent === 'understood' || intent === 'unsure' || intent === 'empathy' || intent === 'learn'
+    KNOWING.includes(intent)
       ? { relation: world && world.anchors ? world.anchors.know : null }
       : null;
   const whole = speak(intent, said, langName, langs, terms);
@@ -1082,6 +1094,20 @@ function feelingIn(felt, world, sent) {
   if (!part || part.of !== from) return null;
   if (world.isA(felt.state.action, a.bad)) return 'empathy';
   if (world.isA(felt.state.action, a.good)) return 'glad';
+  return null;
+}
+
+// The first thing in the signal that a language recognized the letters of but
+// had no word for. It is not a term and never will be until someone gives it
+// one; what the brain has of it is what it was sent.
+function unheardIn(roots) {
+  for (const n of roots) {
+    if (!n.state || !n.state.exists) continue;
+    const thought = findBranch(n, 'thought');
+    if (thought && thought.state.thought && !thought.state.thought.wordKnown) {
+      return String(n.state.identity);
+    }
+  }
   return null;
 }
 

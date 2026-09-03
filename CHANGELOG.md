@@ -13,6 +13,12 @@ All notable changes to this project are documented in this file.
   absence of a claim about when, not a third thing to record, and it is separate
   from `at`, the moment the brain heard it. The arrow between the three is the
   world's, written with the `order` relation it already had.
+- **Nothing is answered with silence.** `"..."` was what a signal got whenever
+  the brain could not place it — including one held up by a single word it had
+  never been given. It says which word now (`I don't know "hunter".`), handing
+  the language the symbols it was sent, since that word is no term and has no
+  meaning to give. A question it cannot fill says it does not know, and a signal
+  it could not get through says it did not understand.
 - **An act for each pole, and no default act at all.** *I know* was where
   everything fell that had nowhere else to go — a claim learned, an opinion
   held, a signal nothing came of. Taking something in is now `learn`
