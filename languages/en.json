@@ -333,6 +333,8 @@
     "nice":         { "pos": "noun", "meaning": "nice",            "concept": 563 },
     "hurt":         { "pos": "noun", "meaning": "hurt",            "concept": 564 },
     "bad":          { "pos": "noun", "meaning": "bad",             "concept": 239 },
+    "happy":        { "pos": "adjective", "meaning": "happy",      "concept": 238 },
+    "sad":          { "pos": "adjective", "meaning": "sad",        "concept": 239 },
     "true":         { "pos": "noun", "meaning": "true",            "concept": 240 },
     "false":        { "pos": "noun", "meaning": "false",           "concept": 241 },
     "beautiful":    { "pos": "noun", "meaning": "beautiful",       "concept": 242 },
@@ -679,6 +681,7 @@
       "verbComplement": {
         "rules": [
           "noun",
+          "adjective",
           "numeral",
           "numeral predicate",
           "function subject",

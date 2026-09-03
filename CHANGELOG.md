@@ -15,6 +15,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A part of speech for what a thing is like.** No word could ever name a
+  property, only a kind or a possession — `property` was a category `worldNode`
+  already knew how to answer, waiting on a word that could reach it. `adjective`
+  joins `verbComplement`, and `happy`/`sad` name the `good`/`bad` poles that were
+  already there: `"cat is happy"` and `"you are sad"` now reach the same
+  claim-checking and empathy paths a noun predicate always could.
+
 - **Time: past ← now → future.** Three positions and nothing between them to
   weigh. A word may carry `when: "past"` or `when: "future"` — `was`, `were`,
   `will` do in English — and what is recorded stands where the signal put it, by
