@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **What is said of a thing is held as the sender's.** `good` and `bad` are
+  qualities and a quality may be a kind of one (`nice is good`); a claim whose
+  object stands at a pole that way is not the world's to hold. It is kept as an
+  individual — of what was said, by whoever sent it, about what they said it of,
+  at a moment — so one sender's verdict never becomes everyone's fact, and
+  `"a shelf is nice?"` is still *I don't know*. What was said is kept, never what
+  follows from it: a denial rides on the record as `not`. An opinion arriving
+  with no `from` has nobody whose it is, and is refused.
 - **The harm filter.** The brain owns the walk and the veto, the world owns what
   is bad: a term harms when it *is* bad or causes something that harms, and
   nothing in `src/` names a single harm — the filter is inert until a world, or

@@ -7,9 +7,10 @@ import { openBrain } from "./index.js";
 // kind of bad, one of them causing something bad, and a thing to do them to.
 const IS = 90;
 const CAUSE = 5;
+const HAS = 8;
 const worldData = {
   anchors: { thing: 1, relation: 2, action: 3, bad: 4, cause: CAUSE, agent: 6, target: 7 },
-  relations: { is: IS, cause: CAUSE },
+  relations: { is: IS, cause: CAUSE, has: HAS },
   terms: [
   { id: 1, name: "thing", links: [] },
   { id: 2, name: "relation", links: [] },
@@ -17,9 +18,10 @@ const worldData = {
   { id: 4, name: "bad", links: [{ rel: IS, to: 1 }] },
   { id: 5, name: "cause", links: [{ rel: IS, to: 2 }] },
   { id: 6, name: "agent", links: [{ rel: IS, to: 2 }] },
-  { id: 7, name: "patient", links: [{ rel: IS, to: 2 }] },
+  { id: 7, name: "target", links: [{ rel: IS, to: 2 }] },
+  { id: HAS, name: "has", links: [{ rel: IS, to: 2 }] },
   { id: 90, name: "is", links: [{ rel: IS, to: 2 }] },
-  { id: 10, name: "wheel", links: [{ rel: IS, to: 1 }] },
+  { id: 10, name: "wheel", links: [{ rel: IS, to: 1 }, { rel: HAS, to: 23 }] },
   { id: 20, name: "wash", links: [{ rel: IS, to: 3 }] },
   { id: 21, name: "burn", links: [{ rel: IS, to: 3 }, { rel: IS, to: 4 }] },
   { id: 22, name: "crush", links: [{ rel: IS, to: 3 }, { rel: CAUSE, to: 23 }] },
@@ -33,15 +35,17 @@ const langData = {
   words: {
   wheel: { pos: "noun", meaning: "wheel", concept: 10 },
   wash: { pos: "verb", meaning: "wash", concept: 20 },
+  what: { pos: "interrogative", meaning: "what", marks: "unknown" },
+  has: { pos: "verb", meaning: "has", concept: HAS },
   burn: { pos: "verb", meaning: "burn", concept: 21 },
   crush: { pos: "verb", meaning: "crush", concept: 22 },
   },
-  expressions: { deny: "No.", understood: "I know.", unknown: "..." },
+  expressions: { deny: "No.", understood: "I know.", unknown: "...", answer: "{meaning}" },
   parts: { before: "agent", after: "target" },
   grammar: {
   start: "sentence",
   rules: {
-      sentence: { rules: ["verb subject"] },
+      sentence: { rules: ["verb subject", "interrogative verb subject"] },
       subject: { rules: ["noun"] },
   },
   },
@@ -80,23 +84,19 @@ test("a world that calls nothing bad has nothing to refuse", () => {
   assert((r.roots[0].branch || []).some((b) => b.kind === "event"), "it happened");
 });
 
-// The same filter over the world the brain actually runs on, and over knowledge
-// it was taught rather than seeded with.
-const { brain } = openBrain("sqlite::memory:");
-
-test("an answer that harms is refused, whatever else fits", async () => {
-  assertEquals((await brain("a doctor has anger")).expression.state.says, "I know.");
-  assertEquals((await brain("a doctor has what?")).expression.state.says, "anger");
-  assertEquals((await brain("anger is bad")).expression.state.says, "I know.");
-  const r = await brain("a doctor has what?");
-  assertEquals((r.roots[0].branch || []).find((b) => b.kind === "refuse").name, "harm");
+test("an answer that harms is refused, whatever else fits", () => {
+  const r = answered("what has wheel");
+  assertEquals(branchOf(r, "refuse").name, "harm");
   assertEquals(r.expression.state.says, "No.");
   // What it looked for is still on the tree; saying it is what it will not do.
-  assertEquals((r.roots[0].branch || []).find((b) => b.kind === "answer").state.found, [233]);
+  assertEquals(branchOf(r, "answer").state.found, [23]);
 });
 
+// The same filter over the world the brain actually runs on.
+const { brain } = openBrain("sqlite::memory:");
+
 test("a claim about an action is a claim, not the action happening", async () => {
-  const r = await brain("catch is bad");
+  const r = await brain("catch is work");
   assert((r.roots[0].branch || []).some((b) => b.kind === "truth"), "it was judged");
   assert(!(r.roots[0].branch || []).some((b) => b.kind === "event"), "nothing happened");
 });

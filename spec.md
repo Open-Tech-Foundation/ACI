@@ -648,6 +648,37 @@ physical thing, two is a kind of abstract thing, and those stand `different`.
 A claim can be consistent with the world and still be one the brain should not
 answer with. That is the harm filter's job, and it runs last — see **§ Harm**.
 
+### What is said of a thing
+
+`good` and `bad` are qualities, and a quality may be a **kind** of one — `nice
+is good`. A claim whose object stands at a pole that way is **not the world's to
+hold**: it is what one sender says of one thing.
+
+```
+> the shelf is nice        { from: 508 }     I know.
+
+nice#564  at 3
+  is      → nice
+  agent   → 508          whoever sent it
+  target  → shelf        what they said it of
+
+> a shelf is nice?                           I don't know.
+```
+
+The world is not made to agree. One sender's verdict never becomes everyone's
+fact, and the brain keeps **what was said**, not what follows from it — the
+denial in `"the ladder is not nice"` rides on the record as `not`, and nothing
+is turned into its opposite.
+
+With **nobody to hold it** there is nobody whose it is, so an opinion arriving
+with no `from` is refused rather than taken.
+
+None of this is a new shape: it is an individual with parts and a moment, the
+same as anything else that happened. And it is not a *feeling* — a feeling is a
+term of its own, and a claim about one (`"up is a fear"`) is a claim about kind
+like any other. The world's own valence is authored; only what is said of a
+thing is held.
+
 **A relation the brain can perform → it performs it.** Arithmetic is **innate**.
 Put it to the two questions: *would it change in another language?* No. *Would it
 change if the world were different?* No. So it belongs in the engine, and the

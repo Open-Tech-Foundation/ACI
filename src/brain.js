@@ -356,7 +356,7 @@ function worldNode(concept, world) {
 // the things it perceived, never off a grammar symbol: phrase names come from
 // data and mean nothing to the brain.
 // ---------------------------------------------------------------------------
-function judge(roots, world, mood, langs) {
+function judge(roots, world, mood, langs, sent) {
   if (!world || roots.length !== 1) return roots;
   const root = roots[0];
   if (root.kind === 'thing' || root.kind === 'void') return roots;
@@ -474,6 +474,22 @@ function judge(roots, world, mood, langs) {
     // What the world says about the relation as stated, and then what the
     // signal claimed — which is the opposite of it where the signal denies.
     const negated = said.some(negatesOn);
+
+    // A claim whose object stands at a pole — good or bad — is not the world's
+    // to hold: it is what one sender says of one thing. It is kept as an
+    // individual, of what was said, by whoever sent it, about what they said it
+    // of, so that no one's verdict becomes everyone's fact. With nobody to hold
+    // it there is nobody whose it is, and the brain does not take it.
+    if (mood === 'tell' && valenced(object, world)) {
+      const holder = sent ? sent.from : null;
+      if (holder == null) {
+        return [
+          withBranch(root, [...root.branch, node('refuse', 'unheld', [], { subject, object })]),
+        ];
+      }
+      return [withBranch(root, [...root.branch, held(holder, subject, object, negated, world)])];
+    }
+
     // A thing holds what its kinds hold: the claim stands if any rung it stands
     // on reaches the object by the relation named.
     const holds =
@@ -643,6 +659,31 @@ function harms(term, world, seen = new Set()) {
   if (world.isA(term, bad)) return true;
   const cause = world.anchors.cause;
   return world.linked(term, cause).some((c) => harms(c, world, seen));
+}
+
+// Whether a term stands at a pole. Which terms do is the world's to say, and a
+// world that puts nothing at either pole holds no opinions.
+function valenced(term, world) {
+  const a = world.anchors || {};
+  return world.isA(term, a.good) || world.isA(term, a.bad);
+}
+
+// What one sender says of one thing: an individual of what was said, with the
+// parts they played in it and the moment it was said. An occurrence like any
+// other — nothing new was needed to hold it.
+function held(holder, about, said, negated, world) {
+  const a = world.anchors || {};
+  const id = world.nextId();
+  return node('event', `${world.term(said).name}#${id}`, [], {
+    id,
+    action: said,
+    at: world.now(),
+    not: negated,
+    parts: [
+      { role: a.agent, of: holder, amount: null },
+      { role: a.target, of: about, amount: null },
+    ],
+  });
 }
 
 // Carrying out an action on what a thing holds. The world links an action to
@@ -1174,7 +1215,7 @@ export function brainFrom(input, knowledge, circumstance) {
   const solvedRoots = solve(thoughtRoots, world, langs);
   const mood = moodOf(input, langs);
   const structuredRoots = structurePhrase(solvedRoots, langs);
-  const judgedRoots = judge(structuredRoots, world, mood, langs);
+  const judgedRoots = judge(structuredRoots, world, mood, langs, at);
   const expressedRoots = express(judgedRoots, langs, world);
   return {
     input,
@@ -1202,15 +1243,14 @@ function learnedFrom(roots, world) {
 
   const terms = [];
   if (event) {
-    const { id, action, at, parts } = event.state;
+    const { id, action, at, parts, not } = event.state;
+    const of = { rel: world.baseRelation, to: action, at };
+    if (not) of.not = true;
     terms.push({
       id,
       name: event.name,
       individual: true,
-      links: [
-        { rel: world.baseRelation, to: action, at },
-        ...parts.map((p) => ({ rel: p.role, to: p.of, at })),
-      ],
+      links: [of, ...parts.map((p) => ({ rel: p.role, to: p.of, at }))],
     });
   }
   if (!learn) return { terms };

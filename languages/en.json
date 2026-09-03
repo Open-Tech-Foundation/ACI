@@ -281,6 +281,7 @@
     "pain":         { "pos": "noun", "meaning": "pain",            "concept": 236 },
     "comfort":      { "pos": "noun", "meaning": "comfort",         "concept": 237 },
     "good":         { "pos": "noun", "meaning": "good",            "concept": 238 },
+    "nice":         { "pos": "noun", "meaning": "nice",            "concept": 563 },
     "bad":          { "pos": "noun", "meaning": "bad",             "concept": 239 },
     "true":         { "pos": "noun", "meaning": "true",            "concept": 240 },
     "false":        { "pos": "noun", "meaning": "false",           "concept": 241 },
