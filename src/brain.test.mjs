@@ -583,3 +583,47 @@ test("a contradicted claim is refused rather than learned", async () => {
   assertEquals(r.expression.state.says, "No.");
   forget();
 });
+
+test("a number beside a thing says how many of it there are", async () => {
+  const r = await brain("two dog");
+  const dog = r.roots[1];
+  assertEquals(dog.state.identity, "dog");
+  assertEquals(kind(dog, "quantity").state.concept, 115, "the term for two");
+});
+
+test("the number is read off the order, from either side", async () => {
+  const before = await brain("three cat");
+  assertEquals(kind(before.roots[1], "quantity").state.concept, 116);
+});
+
+test("a number is not a count of itself", async () => {
+  const r = await brain("one two three");
+  for (const n of r.roots) assertEquals(kind(n, "quantity"), null);
+});
+
+test("a thing standing alone is not quantified", async () => {
+  assertEquals(kind((await brain("elephant")).roots[0], "quantity"), null);
+});
+
+test("the count survives into the structured signal", async () => {
+  const r = await brain("two dog is an animal?");
+  const leaves = [];
+  const walk = (n) => {
+    if (n.kind === "thing") leaves.push(n);
+    (n.branch || []).forEach(walk);
+  };
+  r.roots.forEach(walk);
+  const dog = leaves.find((n) => n.state.identity === "dog");
+  assertEquals(kind(dog, "quantity").state.concept, 115, "no longer dropped");
+});
+
+test("only a thing carries a count, never a relation", async () => {
+  const r = await brain("two dog is an animal?");
+  const leaves = [];
+  const walk = (n) => {
+    if (n.kind === "thing") leaves.push(n);
+    (n.branch || []).forEach(walk);
+  };
+  r.roots.forEach(walk);
+  assertEquals(kind(leaves.find((n) => n.state.identity === "is"), "quantity"), null);
+});

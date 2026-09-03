@@ -217,7 +217,7 @@ function think(roots, langs) {
 // gets no category — the brain does not guess from the part of speech.
 // ---------------------------------------------------------------------------
 function solve(roots, world) {
-  return roots.map((n) => {
+  return roots.map((n, at) => {
     if (!n.state.exists) {
       return withBranch(n, [...n.branch, node('response', 'nothing', [])]);
     }
@@ -238,8 +238,31 @@ function solve(roots, world) {
     const known = worldNode(thoughtState ? thoughtState.concept : null, world);
     if (known) result.branch.push(known);
 
+    const count = quantityOf(roots, at, world);
+    if (count != null) {
+      result.branch.push(node('quantity', 'quantity', [], { concept: count }));
+    }
+
     return result;
   });
+}
+
+// A number standing beside a thing says how many of it there are. The brain
+// reads this off the order of the things it perceived — a language may put the
+// number on either side, and it does not need to know which.
+function quantityOf(roots, at, world) {
+  if (!world) return null;
+  const a = world.anchors || {};
+  const mine = conceptOf(roots[at]);
+  // A number is not a count of itself.
+  if (mine == null || world.isA(mine, a.number) || !world.isA(mine, a.thing)) return null;
+
+  for (const beside of [roots[at - 1], roots[at + 1]]) {
+    if (!beside || !beside.state.exists) continue;
+    const c = conceptOf(beside);
+    if (c != null && world.isA(c, a.number)) return c;
+  }
+  return null;
 }
 
 // The world says what a term is; the brain reads only its own categories out of

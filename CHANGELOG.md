@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- A number standing beside a thing now says how many of it there are: `solve`
+  hangs a `quantity` node off the thing. Before this, `"two dog"` was two
+  unrelated things and the count was dropped — `"two dog is an animal?"` made its
+  claim about `dog` alone, with term 115 appearing nowhere. Read off the order,
+  from either side, and a number is never a count of itself.
+
 - `mammal`, and `tiger`, `elephant`, `hyena` under it; `pear` and `orange` under
   fruit. `cat`, `dog`, `cow` and `human` re-parented onto `mammal`, and `sparrow`
   onto `bird`, so the chains say what they mean.

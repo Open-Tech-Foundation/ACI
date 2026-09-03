@@ -305,6 +305,11 @@ is an **action** rather than any kind of thing.
 A word that names no term gets no category. The brain does **not** guess from the
 part of speech.
 
+Where a **number** stands beside a thing, it says how many of that thing there
+are, and `solve` hangs a `quantity` node off it. The brain reads this off the
+order of the things it perceived — a language may put the number on either side,
+and the brain does not need to know which. A number is never a count of itself.
+
 ### 4. structure — grammar-driven phrase building (pure CFG parse)
 
 `structurePhrase(roots, langs)`: when there are ≥2 recognized words, tag each
