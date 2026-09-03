@@ -6,14 +6,21 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Arithmetic, as a brain primitive.** Adding, subtracting and comparing are
+  computed by the engine, not walked over links: they would not change in another
+  language or another world, so by the spec's own two questions they belong in
+  the brain. The world's whole part is a `value` on a number term saying which
+  number it names — `world.valueOf` and `world.termFor` are the bridge.
+- `plus`, `minus`, `more` and `less` as relations a signal can name, with anchors.
+  `"two plus three?"` answers *five*; `"one less three?"` answers *Yes.*
+- A result the world has no term for is not invented: `"nine plus four?"`
+  computes 13 and then says it does not know what to call it.
+
 - **Counting — the brain's first operation.** It could walk links and check
-  claims; it could not do anything. `world.count(n)` steps along the `order`
-  relation once per thing from `anchors.zero` and returns the term it lands on,
-  so counting is a walk rather than arithmetic and stays in the same machinery as
-  everything else. `world.members(id, rel)` gives what links to a term, the other
-  way from `linked`.
-- `order` links across zero..ten — the sixth of the nine declared relations to be
-  used, and it had been sitting unused since the world was written.
+  claims; it could not do anything. It now counts the terms that link to a kind
+  and names the count with `world.termFor`. `world.members(id, rel)` gives what
+  links to a term, the other way from `linked`.
+- `order` links across zero..ten, recording the sequence of the numbers.
 - "how many X?" answers with the number term walked to: seven mammals, five
   fruit, one bird, zero elephants. Where the chain runs out the brain says it does
   not know rather than inventing a number it has no term for.

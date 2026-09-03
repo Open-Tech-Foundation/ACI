@@ -108,26 +108,25 @@ test("a world that declares no different relation excludes nothing", () => {
   assertEquals(w.excludes(1, 2), false);
 });
 
-test("counting walks the order chain from zero", () => {
-  const ORDER = 7;
+test("a term says which number it names, and the number says which term", () => {
   const w = fromWorldData({
-    anchors: { zero: 100 },
-    relations: { is: IS, order: ORDER },
+    relations: { is: IS },
     terms: [
-      { id: 100, name: "zero", links: [{ rel: ORDER, to: 101 }] },
-      { id: 101, name: "one", links: [{ rel: ORDER, to: 102 }] },
-      { id: 102, name: "two", links: [] },
+      { id: 100, name: "zero", links: [], value: 0 },
+      { id: 101, name: "one", links: [], value: 1 },
+      { id: 102, name: "plain", links: [] },
     ],
   });
-  assertEquals(w.count(0), 100);
-  assertEquals(w.count(2), 102);
-  assertEquals(w.count(3), null, "the chain stops, and so does the brain");
+  assertEquals(w.valueOf(101), 1);
+  assertEquals(w.valueOf(102), null, "a term that names no number");
+  assertEquals(w.termFor(0), 100);
+  assertEquals(w.termFor(9), null, "the world has no word for it, and says so");
 });
 
-test("a world with no order relation cannot count", () => {
-  const w = fromWorldData({ anchors: { zero: 1 }, relations: { is: IS },
-    terms: [{ id: 1, name: "zero", links: [] }] });
-  assertEquals(w.count(1), null);
+test("the world holds no arithmetic, only which symbol is which number", () => {
+  const w = fromWorldData({ relations: { is: IS }, terms: [{ id: 1, name: "a", links: [] }] });
+  assertEquals(w.valueOf(1), null);
+  assertEquals(w.termFor(1), null);
 });
 
 test("members are what link to a term, the other way from linked", () => {

@@ -37,7 +37,9 @@ function merge(world, sources) {
     for (const t of data.terms) {
       const held = terms.get(t.id);
       if (!held) {
-        terms.set(t.id, { id: t.id, name: t.name, links: [...t.links] });
+        const kept = { id: t.id, name: t.name, links: [...t.links] };
+        if (t.value !== undefined) kept.value = t.value;
+        terms.set(t.id, kept);
         origin.set(t.id, where);
         continue;
       }
@@ -45,6 +47,14 @@ function merge(world, sources) {
         throw new Error(
           `${where}: term ${t.id} is "${t.name}" here and "${held.name}" already`,
         );
+      }
+      if (t.value !== undefined) {
+        if (held.value !== undefined && held.value !== t.value) {
+          throw new Error(
+            `${where}: term ${t.id} names ${t.value} here and ${held.value} already`,
+          );
+        }
+        held.value = t.value;
       }
       for (const l of t.links) {
         if (held.links.some((h) => h.rel === l.rel && h.to === l.to)) continue;

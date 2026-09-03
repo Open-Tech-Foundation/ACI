@@ -653,3 +653,38 @@ test("the count is the terms the world holds, not a fact stored anywhere", async
   assertEquals(counted.state.members, 5);
   assertEquals(counted.state.total, 118, "the term for five");
 });
+
+test("the brain adds and subtracts, and the world only names the numbers", async () => {
+  assertEquals((await brain("two plus three?")).expression.state.says, "five");
+  assertEquals((await brain("five minus three?")).expression.state.says, "two");
+  assertEquals((await brain("nine plus one?")).expression.state.says, "ten");
+  assertEquals((await brain("seven minus seven?")).expression.state.says, "zero");
+});
+
+test("the sum is computed, not looked up", async () => {
+  const r = await brain("two plus three?");
+  const sum = kind(r.roots[0], "sum");
+  assertEquals(sum.state.left, 2);
+  assertEquals(sum.state.right, 3);
+  assertEquals(sum.state.value, 5, "a number, not a term");
+  assertEquals(sum.state.term, 118, "and then the term that names it");
+});
+
+test("a result the world has no term for is not invented", async () => {
+  assertEquals(kind((await brain("nine plus four?")).roots[0], "sum").state.value, 13);
+  assertEquals((await brain("nine plus four?")).expression.name, "unsure");
+  assertEquals((await brain("two minus five?")).expression.state.says, "I don't know.");
+});
+
+test("the brain compares two numbers", async () => {
+  assertEquals((await brain("one less three?")).expression.state.says, "Yes.");
+  assertEquals((await brain("three more one?")).expression.state.says, "Yes.");
+  assertEquals((await brain("one more three?")).expression.state.says, "No.");
+});
+
+test("comparison is decided by value, never by a link in the world", async () => {
+  const r = await brain("three more one?");
+  const truth = kind(r.roots[0], "truth");
+  assertEquals(truth.state.subject, 3, "the value, not the term id");
+  assertEquals(truth.state.object, 1);
+});

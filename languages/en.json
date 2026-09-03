@@ -84,6 +84,10 @@
     "ACI":       { "pos": "noun", "meaning": "self",           "concept": 296 },
     "has":       { "pos": "verb", "meaning": "has",            "concept": 295 },
     "know":      { "pos": "verb", "meaning": "know",           "concept": 285 },
+    "plus":      { "pos": "verb", "meaning": "plus",           "concept": 303 },
+    "minus":     { "pos": "verb", "meaning": "minus",          "concept": 304 },
+    "more":      { "pos": "verb", "meaning": "more than",      "concept": 305 },
+    "less":      { "pos": "verb", "meaning": "less than",      "concept": 306 },
     "name":      { "pos": "noun", "meaning": "name",           "concept": 138 },
 
     "what":      { "pos": "interrogative", "meaning": "what" },

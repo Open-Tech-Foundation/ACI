@@ -325,7 +325,7 @@ function judge(roots, world, mood) {
     if (of) {
       const kind = conceptOf(of);
       const members = world.members(kind, world.baseRelation);
-      const total = world.count(members.length);
+      const total = world.termFor(members.length);
       return [
         withBranch(root, [
           ...root.branch,
@@ -343,6 +343,9 @@ function judge(roots, world, mood) {
   if (at < 0) return roots;
 
   const relation = conceptOf(said[at]);
+
+  const worked = calculate(said, at, relation, world);
+  if (worked) return [withBranch(root, [...root.branch, worked])];
   const terms = said.filter((n, i) => i !== at && reaches(n, a.thing, world));
 
   // Two terms and a relation is a claim, and the brain checks it.
@@ -401,6 +404,45 @@ function judge(roots, world, mood) {
   }
 
   return roots;
+}
+
+// Arithmetic is innate. The world says only which term names which number; what
+// follows from two numbers is the brain's own, and would be the same in any
+// language and any world. So this computes — it does not look anything up.
+function calculate(said, at, relation, world) {
+  const a = world.anchors || {};
+  const op =
+    relation === a.plus
+      ? 'plus'
+      : relation === a.minus
+        ? 'minus'
+        : relation === a.more
+          ? 'more'
+          : relation === a.less
+            ? 'less'
+            : null;
+  if (!op) return null;
+
+  const left = valueBeside(said, at, -1, world);
+  const right = valueBeside(said, at, 1, world);
+  if (left == null || right == null) return null;
+
+  if (op === 'more' || op === 'less') {
+    const holds = op === 'more' ? left > right : left < right;
+    return node('truth', holds ? 'true' : 'false', [], { subject: left, relation, object: right });
+  }
+
+  const value = op === 'plus' ? left + right : left - right;
+  const term = world.termFor(value);
+  return node('sum', term == null ? 'beyond' : 'worked', [], { left, right, value, term });
+}
+
+function valueBeside(said, from, step, world) {
+  for (let i = from + step; i >= 0 && i < said.length; i += step) {
+    const v = world.valueOf(conceptOf(said[i]));
+    if (v != null) return v;
+  }
+  return null;
 }
 
 // Which thing in the signal names the relation being spoken of. `is` is the
@@ -523,6 +565,7 @@ function expression(roots, langs, mood, world) {
   const answer = bound ? findBranch(roots[0], 'answer') : null;
   const learned = bound ? findBranch(roots[0], 'learn') : null;
   const counted = bound ? findBranch(roots[0], 'count') : null;
+  const sum = bound ? findBranch(roots[0], 'sum') : null;
   const refused = bound ? findBranch(roots[0], 'refuse') : null;
   // A question the world cannot fill is a gap, not an answer. The node stays on
   // the tree either way — what the brain looked for and did not find is worth
@@ -546,10 +589,14 @@ function expression(roots, langs, mood, world) {
             : mood === 'ask'
               ? 'affirm'
               : 'understood'
-    : counted
-      ? counted.state.total != null
+    : sum
+      ? sum.state.term != null
         ? 'answer'
         : 'unsure'
+      : counted
+        ? counted.state.total != null
+          ? 'answer'
+          : 'unsure'
       : answer
         ? found
           ? 'answer'
@@ -563,9 +610,11 @@ function expression(roots, langs, mood, world) {
   const langName = parts.map((p) => p.state.language).find(Boolean) || null;
   const said =
     intent === 'answer'
-      ? counted
-        ? termWord(counted.state.total, langName, langs)
-        : nameOf(answer, langName, langs)
+      ? sum
+        ? termWord(sum.state.term, langName, langs)
+        : counted
+          ? termWord(counted.state.total, langName, langs)
+          : nameOf(answer, langName, langs)
       : wholeMeaning(intent, parts);
   // Where the brain is speaking of its own state, it hands over the term for
   // that state and lets the language find the words. It holds none of them.

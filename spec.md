@@ -385,14 +385,24 @@ physical thing, two is a kind of abstract thing, and those stand `different`.
 > **Still not guarded:** the harm filter (§ harm). A claim can be consistent with
 > the world and still be one the brain should not take.
 
+**A relation the brain can perform → it performs it.** Arithmetic is **innate**.
+Put it to the two questions: *would it change in another language?* No. *Would it
+change if the world were different?* No. So it belongs in the engine, and the
+world's whole part in it is saying **which term names which number** — a `value`
+on the term. What follows from two numbers is the brain's own.
+
+| the signal names | the brain does | node |
+|---|---|---|
+| `anchors.plus` / `anchors.minus` | adds or subtracts, then finds the term for the result | `sum` |
+| `anchors.more` / `anchors.less` | compares the values | `truth` |
+
+A result the world has no term for is **not invented**: the `sum` node is
+`beyond` and the brain says it does not know. `"nine plus four?"` computes 13 and
+then has nothing to call it.
+
 **A quantity word, a thing, and something unresolved → how many.** The brain
-**counts**, which is its first operation: `world.count(n)` steps along the
-`order` relation once per thing, starting from `anchors.zero`, and returns the
-term it lands on. It does not compute a number — it walks to one, the same way it
-walks to a kind, and stops where the world's chain stops. Adds a `count` node
-with `{ of, members, total }`; where the chain runs out the node is `beyond` and
-the brain says it does not know rather than inventing a number it has no term
-for.
+counts the terms that link to the kind and names the count with `world.termFor`.
+Adds a `count` node with `{ of, members, total }`.
 
 **One term and something unresolved → a question.** The term the brain was given
 is the one being asked about, **wherever in the signal the hole fell** — a
