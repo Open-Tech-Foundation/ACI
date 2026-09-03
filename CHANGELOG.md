@@ -51,6 +51,11 @@ All notable changes to this project are documented in this file.
 - `demo/server.js`: a malformed `/brain` body returns 400 instead of rejecting
   inside the handler, and a static path that climbs out of the served directory,
   however encoded, is refused.
+- `demo/server.js` served the whole `demo/` folder — sources, `node_modules` and
+  all — when started outside esdev, because the source `index.html` sits next to
+  the module. Only a built site is served now; `demo/` is told apart by the esdev
+  config it holds, and with no build the server says so and answers `/brain`
+  alone.
 - `demo/src/main.js`: a failed request shows an error instead of leaving the page
   silently unchanged.
 - `package.json` `cli` and `demo` scripts pointed at `bin/aci.js`, which does not

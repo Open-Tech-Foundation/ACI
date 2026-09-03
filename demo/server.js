@@ -8,7 +8,10 @@
 //   POST /brain {q}    -> runs brain(q) and returns its JSON result
 //
 // Uses the ES-Runtime built-in HTTP server (runtime:http) and file system
-// (runtime:fs). Start with:  esrun --allow-net --allow-read demo/server.js
+// (runtime:fs). In development run it through esdev, which builds the site and
+// this server together and serves them from demo/dist:
+//
+//   tsr dev        (esdev start --config=demo/esdev.json)
 import { serve } from "runtime:http";
 import { file } from "runtime:fs";
 import { env } from "runtime:process";
@@ -20,20 +23,27 @@ const MODULE_DIR = new URL(".", import.meta.url).pathname;
 
 // The built site lives beside the server bundle: with esdev start the server
 // target and the web target share demo/dist, so index.html sits next to
-// server.js. When run raw via esrun, it is under ./dist instead. Pick whichever
-// holds index.html, resolved without cwd (which needs the Env capability).
+// server.js. Run raw via esrun and the module sits in demo/ instead, where
+// index.html is the *source* template — serving that directory would hand out
+// the whole demo folder, sources and node_modules with it. So only a built
+// site counts, and demo/ is told apart by the esdev config it holds.
+// Resolved without cwd, which needs the Env capability.
 async function resolveSiteDir() {
-  const candidates = [`${MODULE_DIR}index.html`, `${MODULE_DIR}dist/index.html`];
-  for (const p of candidates) {
-    const f = file(p);
-    if (await f.exists()) return p.replace(/index\.html$/, "");
+  for (const dir of [`${MODULE_DIR}dist/`, MODULE_DIR]) {
+    if (await isBuiltSite(dir)) return dir;
   }
-  return `${MODULE_DIR}dist/`;
+  return null;
 }
 
-let DIST = await resolveSiteDir();
+async function isBuiltSite(dir) {
+  if (!(await file(`${dir}index.html`).exists())) return false;
+  return !(await file(`${dir}esdev.json`).exists());
+}
+
+const DIST = await resolveSiteDir();
 
 async function serveStatic(url) {
+  if (DIST === null) return null;
   const rel = url.pathname === "/" ? "/index.html" : safePath(url.pathname);
   if (rel === null) return null;
   const path = `${DIST}${rel}`;
@@ -101,3 +111,6 @@ const server = serve({ port: PORT }, async (request) => {
 
 const { hostname, port } = await server.addr;
 console.log(`aci demo on http://${hostname}:${port}`);
+if (DIST === null) {
+  console.log("no built site found — run `tsr site`; /brain still answers");
+}
