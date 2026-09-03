@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- `derivations` in `languages/*.json`: a word not listed may be derived from one
+  that is, by taking an ending off and putting back what it replaced. Three rules
+  reach every plural noun in English and **no plural is written down anywhere**.
+  A listed word always wins, `of` keeps a rule to one part of speech so `as` does
+  not become the article `a`, and the word carries `derived: { from, ending }`.
+
 - `marks` on a word: `"new"` introduces one, `"known"` means the one already
   spoken of. That a signal can do either is the brain's; which word does it is the
   language's, and `a` / `an` / `the` now say so in `en.json`. Two `a basket`s make

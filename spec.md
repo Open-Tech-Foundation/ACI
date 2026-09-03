@@ -152,6 +152,29 @@ Each word carries `pos` (part of speech), `meaning`, and optionally `concept` �
 the id of the world term it names. There is **no** `type`, `emotion`, or
 `reply` — the brain derives those.
 
+### Derivations
+
+A word not listed may still be one this language **derives** from a word that is:
+take the ending off, put back what it replaced, look again.
+
+```jsonc
+"derivations": [
+  { "ending": "ies", "becomes": "y", "of": "noun" },
+  { "ending": "es",  "becomes": "",  "of": "noun" },
+  { "ending": "s",   "becomes": "",  "of": "noun" }
+]
+```
+
+This is the rule against enumeration applied to the lexicon: **no plural is
+written down anywhere.** Rules are grammar and there are three of them; the words
+they reach are every noun in the language.
+
+- a **listed** word always wins over a derived one
+- `of` keeps a rule to one part of speech, so `as` does not become the article `a`
+- derivation is exact — an ending either applies or it does not, and nothing is
+  guessed
+- the word carries `derived: { from, ending }`, so what happened is visible
+
 ### Speech and expressions
 
 `expressions` gives a **sentence frame** per intent — not a sentence. The brain

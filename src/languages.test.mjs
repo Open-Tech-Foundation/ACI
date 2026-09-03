@@ -90,3 +90,53 @@ test("the first word named for a term wins, in file order", () => {
   });
   assertEquals(l.wordFor(7), "first");
 });
+
+test("a word not listed may be one the language derives", () => {
+  const l = fromData({
+    ...data,
+    words: { dog: { pos: "noun", meaning: "dog" }, fly: { pos: "noun", meaning: "fly" } },
+    derivations: [
+      { ending: "ies", becomes: "y", of: "noun" },
+      { ending: "s", becomes: "", of: "noun" },
+    ],
+  });
+  assertEquals(l.lookupWord("dogs").meaning, "dog");
+  assertEquals(l.lookupWord("flies").meaning, "fly");
+  assertEquals(l.lookupWord("dogs").derived, { from: "dog", ending: "s" });
+  assertEquals(l.lookupWord("dog").derived, undefined, "a listed word is not derived");
+});
+
+test("a listed word always wins over a derived one", () => {
+  const l = fromData({
+    ...data,
+    words: {
+      a: { pos: "article", meaning: "one" },
+      as: { pos: "noun", meaning: "an as" },
+    },
+    derivations: [{ ending: "s", becomes: "", of: "noun" }],
+  });
+  assertEquals(l.lookupWord("as").meaning, "an as");
+});
+
+test("a rule reaches only the part of speech it names", () => {
+  const l = fromData({
+    ...data,
+    words: { a: { pos: "article", meaning: "one" } },
+    derivations: [{ ending: "s", becomes: "", of: "noun" }],
+  });
+  assertEquals(l.lookupWord("as"), null, "the article is not a noun, so `as` is nothing");
+});
+
+test("a language with no derivations derives nothing", () => {
+  const l = fromData({ ...data, words: { dog: { pos: "noun", meaning: "dog" } } });
+  assertEquals(l.lookupWord("dogs"), null);
+});
+
+test("nothing is derived from a word shorter than the ending", () => {
+  const l = fromData({
+    ...data,
+    words: { s: { pos: "noun", meaning: "s" } },
+    derivations: [{ ending: "s", becomes: "", of: "noun" }],
+  });
+  assertEquals(l.lookupWord("s").meaning, "s");
+});

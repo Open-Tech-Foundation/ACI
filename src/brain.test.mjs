@@ -694,3 +694,14 @@ test("comparison is decided by value, never by a link in the world", async () =>
   assertEquals(truth.state.subject, 3, "the value, not the term id");
   assertEquals(truth.state.object, 1);
 });
+
+test("a plural is understood as the word it comes from", async () => {
+  assertEquals((await brain("dogs are animals?")).expression.state.says, "Yes.");
+  assertEquals((await brain("tigers are mammals?")).expression.state.says, "Yes.");
+  assertEquals((await brain("apples are fruits?")).expression.state.says, "Yes.");
+});
+
+test("no plural is written down anywhere", async () => {
+  const r = await brain("how many mammals?");
+  assertEquals(r.expression.state.says, "seven", "the same count as the singular");
+});

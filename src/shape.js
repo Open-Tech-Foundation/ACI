@@ -119,7 +119,11 @@ export function checkWhole(data, origin = null, where = 'world') {
 // ---------------------------------------------------------------------------
 export function checkLanguage(data, where = 'language') {
   if (!data || typeof data !== 'object') fail(where, 'must be an object');
-  onlyKeys(data, ['name', 'symbols', 'words', 'speech', 'expressions', 'grammar'], where);
+  onlyKeys(
+    data,
+    ['name', 'symbols', 'words', 'derivations', 'speech', 'expressions', 'grammar'],
+    where,
+  );
 
   if (typeof data.name !== 'string' || data.name === '') {
     fail(where, 'name must be a non-empty string');
@@ -145,6 +149,22 @@ export function checkLanguage(data, where = 'language') {
     if (info.concept !== undefined && !isId(info.concept)) fail(w, 'concept must be a term id');
     if (info.marks !== undefined && info.marks !== 'new' && info.marks !== 'known') {
       fail(w, 'marks must be "new" or "known" — a thing is either one, or the one meant');
+    }
+  }
+
+  if (data.derivations !== undefined) {
+    if (!Array.isArray(data.derivations)) fail(at, 'derivations must be an array');
+    for (const rule of data.derivations) {
+      const r = `${at} derivation`;
+      if (!rule || typeof rule !== 'object') fail(r, 'must be an object');
+      onlyKeys(rule, ['ending', 'becomes', 'of'], r);
+      if (typeof rule.ending !== 'string' || rule.ending === '') {
+        fail(r, 'ending must be a non-empty string');
+      }
+      if (typeof rule.becomes !== 'string') fail(r, 'becomes must be a string');
+      if (rule.of !== undefined && (typeof rule.of !== 'string' || rule.of === '')) {
+        fail(r, 'of, where present, must name a part of speech');
+      }
     }
   }
 

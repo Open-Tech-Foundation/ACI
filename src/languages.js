@@ -25,7 +25,7 @@ function buildLanguage(data) {
     isLetterSymbol: (ch) => letters.has(ch),
     isVowelSymbol: (ch) => vowels.has(ch),
     isQuestionSymbol: (ch) => asking.has(ch),
-    lookupWord: (w) => words.get(String(w).toLowerCase()) || null,
+    lookupWord: (w) => lookUp(words, data.derivations, w),
     wordFor: (concept) => (concept == null ? null : named.get(concept) ?? null),
     grammar: data.grammar || {},
     roles: symbolRoles(symbols),
@@ -50,6 +50,25 @@ function voice(data, intent, vars, named) {
     if (typeof v === 'number') return named.get(v) ?? '';
     return v == null ? '' : String(v);
   });
+}
+
+// A word not listed may still be one this language derives from a word that is:
+// take the ending off, put back what it replaced, and look again. Rules are the
+// language's, and there are few of them; the words they reach are many and none
+// of them is written down. A listed word always wins over a derived one.
+function lookUp(words, derivations, w) {
+  const surface = String(w).toLowerCase();
+  const listed = words.get(surface);
+  if (listed) return listed;
+
+  for (const rule of derivations || []) {
+    if (!surface.endsWith(rule.ending) || surface.length <= rule.ending.length) continue;
+    const stem = surface.slice(0, -rule.ending.length) + rule.becomes;
+    const found = words.get(stem);
+    if (!found || (rule.of !== undefined && found.pos !== rule.of)) continue;
+    return { ...found, derived: { from: stem, ending: rule.ending } };
+  }
+  return null;
 }
 
 // A symbol set holds both cases: the data lists one, the brain may meet either.
