@@ -20,10 +20,11 @@ All notable changes to this project are documented in this file.
   world can define them, so nothing about who is talking is held anywhere: a
   person, a device, a service, all the same to the brain. Told nothing, it does
   not guess — the pointer lands nowhere and the question goes unanswered.
-- **Identity, as three links and no code.** `self is machine`, `self has mind`,
-  `self has memory`, with `machine` and `memory` as terms. So *are you an
-  organism?* is **No.** by exclusion and *are you a machine?* is **Yes.** by
-  walking, and neither is a reply held anywhere.
+- **Identity, as three links and no code.** `self is computer`, `self has mind`,
+  `self has memory`, with `machine` and `memory` as terms and `computer` moved
+  under `machine` — not every machine is a computer. So *are you an organism?* is
+  **No.** by exclusion and *are you a machine?* is **Yes.** by walking two links,
+  and neither is a reply held anywhere.
 - `i`, `me`, `my` and `am` in English. The letter `i` gives up the word to the
   pronoun, as the letter `a` already gave it up to the article.
 
@@ -47,6 +48,9 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- A question was answered with the first thing found and the rest dropped, so a
+  brain that has a mind **and** a memory said only *mind*. It says all of what it
+  found; what goes between them is the language's (`speech.list`).
 - A question the brain could not even form was answered *I know.* — the bound
   fallback did not look at whether it had been asked something.
 - An action in a signal was carried out even where the signal was *about* it, so

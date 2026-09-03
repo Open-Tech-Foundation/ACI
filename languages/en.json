@@ -577,7 +577,8 @@
     { "ending": "s",   "becomes": "",  "of": "noun" }
   ],
   "speech": {
-    "self": "I"
+    "self": "I",
+    "list": ", "
   },
   "expressions": {
     "greet":      "Hello!",

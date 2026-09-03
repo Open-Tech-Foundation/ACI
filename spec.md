@@ -360,13 +360,14 @@ What the brain is, is world data like anything else — three links, and not a
 line of code:
 
 ```
-self  is   machine
-self  has  mind
-self  has  memory
+self      is   computer        computer  is  machine
+self      has  mind
+self      has  memory
 ```
 
-So `"you is an organism?"` is *No.* by exclusion, `"you is a machine?"` is *Yes.*
-by walking, and neither answer is held anywhere as a reply.
+It is a computer before it is a machine — not every machine is one. So
+`"you is an organism?"` is *No.* by exclusion, `"you is a machine?"` is *Yes.*
+by walking two links, and neither answer is held anywhere as a reply.
 
 Its **name** is not among them. A name is a word, and no language ships one for
 the `self` term — an instance has no name until one is loaded with the rest of
@@ -690,7 +691,10 @@ is the one being asked about, **wherever in the signal the hole fell** — a
 language puts its question words where it likes, and the brain does not need to
 know where. Adds an `answer` node with `{ subject, relation, found, of }`:
 
-- `of: "link"` — `world.linked(subject, relation)`, what the term links to directly
+- `of: "link"` — `world.linked(subject, relation)`, what the term links to
+  directly, **all of it**. A thing that has three things has three; saying the
+  first would be picking one, and the brain does not pick. What stands between
+  them said one after another is the language's (`speech.list`)
 - `of: "name"` — the relation reaches `anchors.name`, so the answer is what *this
   language* calls the term. A name is not a fact the brain holds anywhere: it is
   the word naming that term in the language being spoken, and where the language
@@ -706,7 +710,7 @@ did not find is worth as much as what it found — and the signal is expressed a
 what is your name?     ...       self  --name--> (no word names it yet)
 what is a cat?         animal    cat   --is-->   animal
 a cat is what?         animal    same answer, hole at the other end
-you has what?          mind      self  --has-->  mind
+you has what?          mind, memory        self  --has--> both of them
 a cat is an animal?    Yes.      two terms, so a claim
 ```
 

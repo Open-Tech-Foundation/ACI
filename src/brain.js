@@ -534,9 +534,9 @@ function judge(roots, world, mood, langs) {
       of: naming ? 'name' : 'link',
     });
     // The brain looked, and what it found stays on the tree. Saying it is
-    // another act, and one it will not perform where the answer harms.
-    const said = found[0];
-    const guarded = harms(said, world) ? [node('refuse', 'harm', [], { said })] : [];
+    // another act, and one it will not perform where any of the answer harms.
+    const said = found.find((t) => harms(t, world));
+    const guarded = said != null ? [node('refuse', 'harm', [], { said })] : [];
     return [withBranch(root, [...root.branch, answer, ...guarded])];
   }
 
@@ -969,9 +969,22 @@ function wholeMeaning(intent, parts) {
 // The answer is a term; saying it is the language's job. A name question asks
 // what this language calls the term itself, so the brain's own name is the word
 // that names its self term — not a fact it holds anywhere.
+// What the brain found is all of what it found: a thing that has three things
+// has three, and saying the first of them would be picking one. The words are
+// the language's, and so is what goes between them.
 function nameOf(answer, langName, langs) {
   const { of, subject, found } = answer.state;
-  return termWord(of === 'name' ? subject : found[0], langName, langs);
+  if (of === 'name') return termWord(subject, langName, langs);
+  const words = found.map((t) => termWord(t, langName, langs)).filter(Boolean);
+  return words.length === 0 ? null : words.join(listing(langName, langs));
+}
+
+// A language says what stands between things said one after another; told
+// nothing, the brain leaves them the space its words already arrived in.
+function listing(langName, langs) {
+  const lang = (langs || []).find((l) => l.data.name === langName);
+  const between = lang && lang.data.speech ? lang.data.speech.list : null;
+  return typeof between === 'string' ? between : ' ';
 }
 
 // A term, said in the language being spoken.
