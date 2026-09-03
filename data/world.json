@@ -10,7 +10,8 @@
     "number": 100,
     "has": 295,
     "mind": 230,
-    "self": 296
+    "self": 296,
+    "name": 138
   },
   "relations": {
     "is": 294,

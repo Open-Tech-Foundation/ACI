@@ -6,6 +6,22 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- The brain answers questions. A signal naming a relation with one term and
+  something unresolved is a question, and `judge` solves for the hole instead of
+  checking a claim: `"what is a cat?"` and `"a cat is what?"` both answer
+  *animal*, because the term given is the one being asked about wherever the hole
+  falls. Adds an `answer` node and the `answer` intent.
+- `what`, `your` / `ur` / `you`, and `name` in `languages/en.json`, with grammar
+  rules for a fronted question and a pronoun subject.
+- `anchors.name`: a question over the name relation answers with **what this
+  language calls the term**. The brain's own name is not a fact it holds — it is
+  the word naming its `self` term, so `"what is your name?"` answers `ACI` in
+  English and would answer otherwise in another language file.
+- `world.linked(id, rel)` — what a term links to directly, where `isA` asks
+  whether it reaches something.
+- `world.baseRelation` — `is` is the weakest claim a signal can make, so any
+  other relation a signal names takes precedence over it.
+
 - `src/shape.js` — the one shape all knowledge must take. Every source, internal
   or external, is validated by the same rules before the brain sees it, and a
   source that does not fit is **refused, never trimmed to fit**: dangling links,

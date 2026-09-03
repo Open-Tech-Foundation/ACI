@@ -35,7 +35,17 @@ export function fromWorldData(data) {
   return {
     data,
     anchors,
+    // The relation the world's own links are made of, and the weakest claim a
+    // signal can make: any other relation a signal names is more specific.
+    baseRelation: isRel,
     term: (id) => terms.get(id) || null,
+    // What a term links to directly by one relation — its answer, where isA is
+    // its question.
+    linked: (id, rel) => {
+      const t = terms.get(id);
+      if (!t || rel == null) return [];
+      return (t.links || []).filter((l) => l.rel === rel).map((l) => l.to);
+    },
     // Does `id` reach `ancestorId` by following `rel` (the `is` relation by
     // default)? The relation is a term like any other, so a signal can name it.
     isA: (id, ancestorId, rel = isRel) =>

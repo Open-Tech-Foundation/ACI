@@ -303,7 +303,40 @@ sentence
 Unparseable input — including a fragment like `"a cat"`, which is a `subject` but
 no `sentence` — is returned unchanged as per-word roots. So is single-word input.
 
-### 5. judge — check the claim against the world
+### 5. judge — check a claim, or answer a question
+
+A signal that names a relation is either **asserting** something about two terms
+or **asking** about one. Either way the brain reads it off the order of the
+things it perceived — never off a grammar symbol, since phrase names come from
+data and mean nothing to the brain.
+
+Which relation is being spoken of: `is` is the weakest claim a signal can make,
+so **any other relation named takes it**. `"what is your name"` names both `is`
+and `name`; `name` wins.
+
+**Two terms → a claim.** The nearest term either side of the relation, checked
+with `world.isA(subject, object, relation)`. Adds a `truth` node (`true`/`false`)
+with `{ subject, relation, object }`.
+
+**One term and something unresolved → a question.** The term the brain was given
+is the one being asked about, **wherever in the signal the hole fell** — a
+language puts its question words where it likes, and the brain does not need to
+know where. Adds an `answer` node with `{ subject, relation, found, of }`:
+
+- `of: "link"` — `world.linked(subject, relation)`, what the term links to directly
+- `of: "name"` — the relation reaches `anchors.name`, so the answer is what *this
+  language* calls the term. The brain's own name is not a fact it holds anywhere:
+  it is the word naming its `self` term in the language being spoken.
+
+```
+what is your name?     ACI       self  --name--> (the word for it)
+what is a cat?         animal    cat   --is-->   animal
+a cat is what?         animal    same answer, hole at the other end
+aci has what?          mind      self  --has-->  mind
+a cat is an animal?    Yes.      two terms, so a claim
+```
+
+### 5a. judging a claim against the world
 
 A signal that names a **relation** between two terms makes a claim, and the brain
 checks it. `judge(roots, world)` reads the claim off the order of the things it
@@ -313,8 +346,6 @@ nothing to the brain:
 - find the first thing whose term reaches `anchors.relation`
 - take the nearest term reaching `anchors.thing` on each side of it
 - `world.isA(subject, object, relation)` decides
-
-It adds a `truth` node (`true` / `false`) with `{ subject, relation, object }`.
 
 This is what connects the *word* `is` to the world's own `is` relation: `en.json`
 gives `is` the concept `294`, and term 294 is the relation the world's links are

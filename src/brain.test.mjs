@@ -459,3 +459,49 @@ test("a signal with no claim is unaffected by the mark", async () => {
   assertEquals((await brain("hi")).expression.name, "greet");
   assertEquals((await brain("hi?")).expression.name, "greet");
 });
+
+test("the brain answers its own name with the word this language names it by", async () => {
+  const r = await brain("what is your name?");
+  const answer = kind(r.roots[0], "answer");
+  assertEquals(answer.state.subject, 296, "it asked about the self");
+  assertEquals(answer.state.relation, 138, "by the name relation");
+  assertEquals(answer.state.of, "name");
+  assertEquals(r.expression.name, "answer");
+  assertEquals(r.expression.state.says, "ACI");
+});
+
+test("a name is not a fact the brain holds, it is what a language calls it", async () => {
+  assertEquals((await brain("what is ur name?")).expression.state.says, "ACI");
+  assertEquals((await brain("what is you name?")).expression.state.says, "ACI");
+});
+
+test("a question solves for the hole rather than checking a claim", async () => {
+  const r = await brain("an apple is what?");
+  const answer = kind(r.roots[0], "answer");
+  assertEquals(answer.state, { subject: 79, relation: 294, found: [73], of: "link" });
+  assertEquals(r.expression.state.says, "fruit");
+});
+
+test("the term given is the one asked about, wherever the hole falls", async () => {
+  const before = await brain("what is a cat?");
+  const after = await brain("a cat is what?");
+  assertEquals(before.expression.state.says, "animal");
+  assertEquals(after.expression.state.says, "animal");
+});
+
+test("a question over a relation other than is", async () => {
+  const r = await brain("aci has what?");
+  assertEquals(kind(r.roots[0], "answer").state.relation, 295);
+  assertEquals(r.expression.state.says, "mind");
+});
+
+test("a more specific relation takes precedence over is", async () => {
+  // "what is your name" names both `is` and `name`; the name relation wins.
+  assertEquals(kind((await brain("what is your name?")).roots[0], "answer").state.relation, 138);
+});
+
+test("two terms and a relation is still a claim, not a question", async () => {
+  const r = await brain("a cat is an animal?");
+  assert(kind(r.roots[0], "truth") !== null);
+  assertEquals(kind(r.roots[0], "answer"), null);
+});

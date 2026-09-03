@@ -290,21 +290,61 @@ function judge(roots, world) {
   collect(root);
 
   const a = world.anchors || {};
-  const at = said.findIndex((n) => reaches(n, a.relation, world));
+  const at = namedRelation(said, world);
   if (at < 0) return roots;
 
-  const subject = nearestTerm(said, at, -1, a.thing, world);
-  const object = nearestTerm(said, at, 1, a.thing, world);
-  if (subject == null || object == null) return roots;
-
   const relation = conceptOf(said[at]);
-  const holds = world.isA(subject, object, relation);
-  return [
-    withBranch(root, [
-      ...root.branch,
-      node('truth', holds ? 'true' : 'false', [], { subject, relation, object }),
-    ]),
-  ];
+  const terms = said.filter((n, i) => i !== at && reaches(n, a.thing, world));
+  const holes = said.filter((n) => conceptOf(n) == null && n.state.exists);
+
+  // Two terms and a relation is a claim, and the brain checks it.
+  if (terms.length >= 2) {
+    const subject = conceptOf(nearest(said, at, -1, a.thing, world));
+    const object = conceptOf(nearest(said, at, 1, a.thing, world));
+    if (subject == null || object == null) return roots;
+    const holds = world.isA(subject, object, relation);
+    return [
+      withBranch(root, [
+        ...root.branch,
+        node('truth', holds ? 'true' : 'false', [], { subject, relation, object }),
+      ]),
+    ];
+  }
+
+  // One term, a relation, and something unresolved is a question, and the brain
+  // answers it. The term it was given is the one being asked about, wherever in
+  // the signal it fell — a question puts the hole where its language likes.
+  if (terms.length === 1 && holes.length > 0) {
+    const subject = conceptOf(terms[0]);
+    const naming = world.isA(relation, a.name);
+    const found = naming ? [] : world.linked(subject, relation);
+    return [
+      withBranch(root, [
+        ...root.branch,
+        node('answer', naming ? 'name' : 'link', [], {
+          subject,
+          relation,
+          found,
+          of: naming ? 'name' : 'link',
+        }),
+      ]),
+    ];
+  }
+
+  return roots;
+}
+
+// Which thing in the signal names the relation being spoken of. `is` is the
+// weakest claim a signal can make, so any other relation named takes it.
+function namedRelation(said, world) {
+  const a = world.anchors || {};
+  let fallback = -1;
+  for (let i = 0; i < said.length; i += 1) {
+    if (!reaches(said[i], a.relation, world)) continue;
+    if (conceptOf(said[i]) !== world.baseRelation) return i;
+    if (fallback < 0) fallback = i;
+  }
+  return fallback;
 }
 
 function conceptOf(n) {
@@ -318,9 +358,9 @@ function reaches(n, anchor, world) {
 }
 
 // The nearest thing to one side that names a term of the wanted kind.
-function nearestTerm(said, from, step, anchor, world) {
+function nearest(said, from, step, anchor, world) {
   for (let i = from + step; i >= 0 && i < said.length; i += step) {
-    if (reaches(said[i], anchor, world)) return conceptOf(said[i]);
+    if (reaches(said[i], anchor, world)) return said[i];
   }
   return null;
 }
@@ -411,6 +451,7 @@ function expression(roots, langs, mood) {
   const bound =
     roots.length === 1 && roots[0].kind !== 'thing' && roots[0].kind !== 'void';
   const truth = bound ? findBranch(roots[0], 'truth') : null;
+  const answer = bound ? findBranch(roots[0], 'answer') : null;
 
   // Asked, the brain answers the claim. Told, it answers only if it disagrees;
   // a claim it already holds is simply understood.
@@ -420,20 +461,37 @@ function expression(roots, langs, mood) {
       : mood === 'ask'
         ? 'affirm'
         : 'understood'
-    : bound
-      ? 'understood'
-      : parts.length === 1
-        ? parts[0].name
-        : 'unknown';
+    : answer
+      ? 'answer'
+      : bound
+        ? 'understood'
+        : parts.length === 1
+          ? parts[0].name
+          : 'unknown';
 
   const langName = parts.map((p) => p.state.language).find(Boolean) || null;
-  const whole = speak(intent, wholeMeaning(intent, parts), langName, langs);
+  const said =
+    intent === 'answer'
+      ? nameOf(answer, langName, langs)
+      : wholeMeaning(intent, parts);
+  const whole = speak(intent, said, langName, langs);
   return withBranch(whole, parts, { ...whole.state, bound, mood });
 }
 
 // A one-thing signal expresses that thing, so it needs that thing's meaning.
 function wholeMeaning(intent, parts) {
   return parts.length === 1 && parts[0].name === intent ? parts[0].state.meaning : null;
+}
+
+// The answer is a term; saying it is the language's job. A name question asks
+// what this language calls the term itself, so the brain's own name is the word
+// that names its self term — not a fact it holds anywhere.
+function nameOf(answer, langName, langs) {
+  const lang = (langs || []).find((l) => l.data.name === langName);
+  if (!lang) return null;
+  const { of, subject, found } = answer.state;
+  const term = of === 'name' ? subject : found[0];
+  return term == null ? null : lang.wordFor(term);
 }
 
 // ---------------------------------------------------------------------------

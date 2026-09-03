@@ -45,8 +45,14 @@
     "action":    { "pos": "noun", "meaning": "action",         "concept": 5 },
     "mind":      { "pos": "noun", "meaning": "mind",           "concept": 230 },
 
-    "aci":       { "pos": "noun", "meaning": "self",           "concept": 296 },
-    "has":       { "pos": "verb", "meaning": "has",            "concept": 295 }
+    "ACI":       { "pos": "noun", "meaning": "self",           "concept": 296 },
+    "has":       { "pos": "verb", "meaning": "has",            "concept": 295 },
+    "name":      { "pos": "noun", "meaning": "name",           "concept": 138 },
+
+    "what":      { "pos": "interrogative", "meaning": "what" },
+    "your":      { "pos": "pronoun",       "meaning": "self",  "concept": 296 },
+    "ur":        { "pos": "pronoun",       "meaning": "self",  "concept": 296 },
+    "you":       { "pos": "pronoun",       "meaning": "self",  "concept": 296 }
   },
   "expressions": {
     "greet":      "Hello!",
@@ -56,6 +62,7 @@
     "understood": "I understand.",
     "affirm":     "Yes.",
     "deny":       "No.",
+    "answer":     "{meaning}",
     "unknown":    "..."
   },
   "grammar": {
@@ -65,17 +72,18 @@
         "rules": [
           "interjection",
           "interjection sentence",
-          "subject predicate"
+          "subject predicate",
+          "interrogative verb subject"
         ]
       },
       "subject": {
-        "rules": ["noun", "article noun", "numeral", "numeral noun"]
+        "rules": ["noun", "article noun", "numeral", "numeral noun", "pronoun", "pronoun noun"]
       },
       "predicate": {
         "rules": ["verb verbComplement"]
       },
       "verbComplement": {
-        "rules": ["noun", "numeral", "article noun"]
+        "rules": ["noun", "numeral", "article noun", "interrogative"]
       }
     }
   }
