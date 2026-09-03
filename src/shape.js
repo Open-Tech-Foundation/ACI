@@ -172,7 +172,14 @@ export function checkLanguage(data, where = 'language') {
       if (!info || typeof info.characters !== 'string' || info.characters === '') {
         fail(`${at} symbols.${type}`, 'characters must be a non-empty string');
       }
-      onlyKeys(info, ['characters', 'alone', 'figures', 'pos'], `${at} symbols.${type}`);
+      onlyKeys(info, ['characters', 'alone', 'figures', 'pos', 'point', 'places'], `${at} symbols.${type}`);
+      // Where the part below one begins, and how far this language writes it.
+      if (info.point !== undefined && (typeof info.point !== 'string' || info.point.length !== 1)) {
+        fail(`${at} symbols.${type}`, 'point, where present, must be one character');
+      }
+      if (info.places !== undefined && (!Number.isInteger(info.places) || info.places < 1)) {
+        fail(`${at} symbols.${type}`, 'places, where present, must be a whole number of them');
+      }
       if (info.pos !== undefined && (typeof info.pos !== 'string' || info.pos === '')) {
         fail(`${at} symbols.${type}`, 'pos, where present, must be a part of speech');
       }

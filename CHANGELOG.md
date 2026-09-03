@@ -125,6 +125,17 @@ All notable changes to this project are documented in this file.
   whatever else it is — no word for it, no term for it — so the twenty-nine
   figure words are gone and `1+125` is `126`. A symbol set says what its figures
   stand as in a sentence (`"pos": "numeral"`).
+- **Every operation the brain can perform.** `power`, `remainder`, and — taking
+  a single number — `root`, `logarithm`, `natural-logarithm`, `sine`, `cosine`,
+  `tangent`, `magnitude`, beside the four it had. An operation may stand before
+  what it takes as well as between, so `add 1 with 8` is the same act as
+  `1 + 8`. A term the world puts before itself is worked from the right, which
+  is how `2^3^2` is two to the ninth.
+- **A part below one is a number.** The figure set says where that part begins
+  (`"point"`) and how many places the language writes (`"places"`). The brain
+  holds the value exactly and the language says how far it is written, so `7/2`
+  is `3.5` and `log 2` comes back to ten places. Division is no longer whole-only
+  — that was a fact about this world sitting in the engine.
 - **Groups and equality.** A word may open or close a group (`"groups"`), and
   what a group holds is worked before anything outside it: `(1+2)*3` is `9`. A
   group may hold one thing as well as many — `(1+8)*(8)` is `72`, and `(8)`

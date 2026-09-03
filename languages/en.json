@@ -10,10 +10,12 @@
     "digit": {
       "characters": "0123456789",
       "figures": true,
-      "pos": "numeral"
+      "pos": "numeral",
+      "point": ".",
+      "places": 10
     },
     "sign": {
-      "characters": "+ - = < > * / \u00d7 \u00f7",
+      "characters": "+ - = < > * / \u00d7 \u00f7 ^ %",
       "alone": true
     },
     "group": {
@@ -132,6 +134,22 @@
     "divide":    { "pos": "verb", "meaning": "divide",         "concept": 569 },
     "equals":    { "pos": "verb", "meaning": "equals",         "concept": 250 },
     "=":         { "pos": "verb", "meaning": "equals",         "concept": 250, "names": false },
+    "add":       { "pos": "function", "meaning": "plus",           "concept": 303 },
+    "subtract":  { "pos": "function", "meaning": "minus",          "concept": 304 },
+    "multiply":  { "pos": "function", "meaning": "times",          "concept": 568 },
+    "with":      { "pos": "preposition", "meaning": "with" },
+    "by":        { "pos": "preposition", "meaning": "by" },
+    "power":     { "pos": "verb", "meaning": "to the power of", "concept": 570 },
+    "^":         { "pos": "verb", "meaning": "to the power of", "concept": 570, "names": false },
+    "remainder": { "pos": "verb", "meaning": "remainder of",    "concept": 571 },
+    "%":         { "pos": "verb", "meaning": "remainder of",    "concept": 571, "names": false },
+    "root":      { "pos": "function", "meaning": "square root of", "concept": 572 },
+    "log":       { "pos": "function", "meaning": "logarithm of",   "concept": 573 },
+    "ln":        { "pos": "function", "meaning": "natural logarithm of", "concept": 574 },
+    "sin":       { "pos": "function", "meaning": "sine of",         "concept": 575 },
+    "cos":       { "pos": "function", "meaning": "cosine of",       "concept": 576 },
+    "tan":       { "pos": "function", "meaning": "tangent of",      "concept": 577 },
+    "abs":       { "pos": "function", "meaning": "size of",         "concept": 578 },
     "(":         { "pos": "open",  "meaning": "opens a group", "groups": "open" },
     ")":         { "pos": "close", "meaning": "closes a group", "groups": "close" },
     "/":         { "pos": "verb", "meaning": "divide",         "concept": 569, "names": false },
@@ -645,12 +663,15 @@
           "interrogative verb sentence",
           "open sentence close",
           "open subject close",
+          "function subject",
+          "function sentence",
+          "function subject preposition subject",
           "interrogative quantifier subject",
           "verb subject preposition subject"
         ]
       },
       "subject": {
-        "rules": ["noun", "article noun", "numeral", "numeral noun", "pronoun", "possessive noun", "open sentence close", "open subject close"]
+        "rules": ["noun", "article noun", "numeral", "numeral noun", "pronoun", "possessive noun", "open sentence close", "open subject close", "function subject"]
       },
       "predicate": {
         "rules": ["verb verbComplement", "verb negation verbComplement"]
@@ -660,6 +681,8 @@
           "noun",
           "numeral",
           "numeral predicate",
+          "function subject",
+          "function subject predicate",
           "open sentence close",
           "open sentence close predicate",
           "open subject close",

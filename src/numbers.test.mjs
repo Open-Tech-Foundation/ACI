@@ -42,11 +42,40 @@ test("what the world says nothing about is worked from the left", async () => {
   assertEquals(await says("100/10/2"), "5");
 });
 
-test("an operation it cannot complete is not a claim about the numbers", async () => {
-  // This world holds no halves, and nothing is divided by nothing.
-  assertEquals(await act("7/2"), "unsure");
+test("an operation with no answer at all is not a claim about the numbers", async () => {
+  // Nothing is divided by nothing, and nothing has a logarithm.
   assertEquals(await act("5/0"), "unsure");
+  assertEquals(await act("log 0"), "unsure");
+  assertEquals(await act("root (0-9)"), "unsure");
   assertEquals(await says("0/5"), "0");
+});
+
+test("a part below one is a number too", async () => {
+  assertEquals(await says("7/2"), "3.5");
+  assertEquals(await says("10/4"), "2.5");
+  assertEquals(await says("1.5+1.5"), "3");
+  assertEquals(await says("0.1+0.2"), "0.3");
+});
+
+test("every operation the brain can perform", async () => {
+  assertEquals(await says("2^10"), "1024");
+  assertEquals(await says("2^3^2"), "512", "a power meets a power from the right");
+  assertEquals(await says("10%3"), "1");
+  assertEquals(await says("root 9"), "3");
+  assertEquals(await says("root (9+7)"), "4");
+  assertEquals(await says("log 100"), "2");
+  assertEquals(await says("ln 1"), "0");
+  assertEquals(await says("sin 0"), "0");
+  assertEquals(await says("cos 0"), "1");
+  assertEquals(await says("tan 0"), "0");
+  assertEquals(await says("abs (0-9)"), "9");
+  assertEquals(await says("abs 0-9"), "-9", "and it takes the number, not the sum");
+  assertEquals(await says("1+root 9"), "4");
+});
+
+test("what cannot be written exactly is written to where the language stops", async () => {
+  assertEquals(await says("log 2"), "0.3010299956");
+  assertEquals(await says("root 2"), "1.4142135623");
 });
 
 test("a symbol that stands alone is a word wherever it falls", async () => {
@@ -129,4 +158,12 @@ test("two sides asked to be the same are each worked out first", async () => {
 test("everything at once", async () => {
   assertEquals(await says("1+2*3-4/2"), "5");
   assertEquals(await says("(1+2*3)-(4/2)"), "5");
+});
+
+test("an operation may stand before what it takes as well as between", async () => {
+  assertEquals(await says("add 1 with 8"), "9");
+  assertEquals(await says("add (1+8) with 8"), "17");
+  assertEquals(await says("multiply 3 with 4"), "12");
+  assertEquals(await says("subtract 3 with 1"), "2");
+  assertEquals(await says("add 1 to 8"), "9", "and the word between them may be any");
 });

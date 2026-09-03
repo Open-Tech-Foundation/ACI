@@ -471,9 +471,21 @@ function judge(roots, world, mood, langs, sent) {
 
   const at = joint;
   if (at < 0) {
-    // Nothing joins them, but a group may still hold a number and come to it.
-    const held = said.some((n) => groupOn(n)) ? working(said, world, true) : null;
-    if (held == null) return roots;
+    // Nothing joins two things, but an operation may still stand before one —
+    // a root takes a single number — and a group may hold one and come to it.
+    const alone = said.some((n) => groupOn(n) || operates(conceptOf(n), world));
+    if (!alone) return roots;
+    const held = working(said, world, true);
+    // Asked to work something out and unable to, it says so rather than
+    // falling silent — the same as any other sum it cannot reach.
+    if (held == null) {
+      return [
+        withBranch(root, [
+          ...root.branch,
+          node('sum', 'beyond', [], { left: null, right: null, value: null, term: null }),
+        ]),
+      ];
+    }
     return [
       withBranch(root, [
         ...root.branch,
@@ -704,9 +716,13 @@ function working(said, world, alone) {
   }
   // Nothing is worked out where nothing was asked to be: a number on its own
   // is a number, not a sum.
+  if (steps.length === 0) return null;
   const numbers = steps.filter((s) => s.value !== undefined).length;
   const asked = steps.some((s) => s.op !== undefined);
-  if (numbers === 0 || steps[0].op !== undefined) return null;
+  // An operation may stand before what it takes as well as between — `add 1
+  // with 8` is the same act as `1 + 8`. It is worked when its numbers are
+  // there, and where they never come there is no sum to reach.
+  if (numbers === 0) return null;
   // A number on its own is a number, not a sum — unless it is one side of
   // something asked to be the same, where what it comes to is itself.
   if (!asked) {
@@ -721,10 +737,11 @@ function working(said, world, alone) {
   const waiting = [];
   const fold = () => {
     const op = waiting.pop();
-    const right = done.pop();
-    const left = done.pop();
-    if (op == null || op.group || left === undefined || right === undefined) return false;
-    const worked = operates(op.op, world)(left, right);
+    if (op == null || op.group) return false;
+    const { takes, work } = operates(op.op, world);
+    const args = done.splice(done.length - takes, takes);
+    if (args.length !== takes || args.some((v) => v === undefined)) return false;
+    const worked = work(...args);
     if (worked == null) return false;
     done.push(worked);
     return true;
@@ -758,7 +775,13 @@ function binds(waiting, step, world) {
   // The one already waiting is worked first unless the one just read binds
   // tighter — so where the world puts neither before the other, they are
   // worked from the left.
-  const tighter = step.op !== waiting.op && world.isA(step.op, waiting.op, world.anchors.order);
+  // Two of the same meet: the world may put an operation before itself, which
+  // is how it says the one just read is worked first — `2 ^ 3 ^ 2` is 2 to the
+  // ninth, not eight squared.
+  const tighter =
+    step.op === waiting.op
+      ? world.linked(step.op, world.anchors.order).includes(step.op)
+      : world.isA(step.op, waiting.op, world.anchors.order);
   return !tighter;
 }
 
@@ -767,14 +790,39 @@ function groupOn(n) {
   return thought && thought.state.thought ? thought.state.thought.groups : null;
 }
 
-// What an operation does to two numbers. This is the brain's own and the whole
-// of it: the world says only which term names which operation.
+// What an operation does to the numbers it takes, and how many it takes. This
+// is the brain's own and the whole of it: the world says only which term names
+// which operation, and which of them is worked first.
+//
+// Nothing here is weighed or chosen. Each is one arithmetic act, exact for the
+// numbers it is given, and where there is no answer at all — nothing over
+// nothing, the root of less than nothing, the logarithm of nothing — it says
+// so rather than reaching for one.
+const OPERATIONS = [
+  ['plus', 2, (x, y) => x + y],
+  ['minus', 2, (x, y) => x - y],
+  ['times', 2, (x, y) => x * y],
+  ['divide', 2, (x, y) => (y === 0 ? null : x / y)],
+  ['power', 2, (x, y) => finite(x ** y)],
+  ['remainder', 2, (x, y) => (y === 0 ? null : x % y)],
+  ['root', 1, (x) => (x < 0 ? null : Math.sqrt(x))],
+  ['logarithm', 1, (x) => (x > 0 ? Math.log10(x) : null)],
+  ['natural-logarithm', 1, (x) => (x > 0 ? Math.log(x) : null)],
+  ['sine', 1, (x) => Math.sin(x)],
+  ['cosine', 1, (x) => Math.cos(x)],
+  ['tangent', 1, (x) => finite(Math.tan(x))],
+  ['magnitude', 1, (x) => Math.abs(x)],
+];
+
+function finite(value) {
+  return Number.isFinite(value) ? value : null;
+}
+
 function operates(term, world) {
   const a = world.anchors || {};
-  if (term === a.plus) return (x, y) => x + y;
-  if (term === a.minus) return (x, y) => x - y;
-  if (term === a.times) return (x, y) => x * y;
-  if (term === a.divide) return (x, y) => (y === 0 || x % y !== 0 ? null : x / y);
+  for (const [name, takes, work] of OPERATIONS) {
+    if (term != null && term === a[name]) return { takes, work };
+  }
   return null;
 }
 

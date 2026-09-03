@@ -35,7 +35,16 @@
     "times": 568,
     "divide": 569,
     "order": 249,
-    "same": 250
+    "same": 250,
+    "power": 570,
+    "remainder": 571,
+    "root": 572,
+    "logarithm": 573,
+    "natural-logarithm": 574,
+    "sine": 575,
+    "cosine": 576,
+    "tangent": 577,
+    "magnitude": 578
   },
   "relations": {
     "is": 294,
@@ -50,7 +59,16 @@
     "when": 567,
     "times": 568,
     "divide": 569,
-    "same": 250
+    "same": 250,
+    "power": 570,
+    "remainder": 571,
+    "root": 572,
+    "logarithm": 573,
+    "natural-logarithm": 574,
+    "sine": 575,
+    "cosine": 576,
+    "tangent": 577,
+    "magnitude": 578
   },
   "terms": [
     {
@@ -6058,6 +6076,176 @@
         {
           "rel": 249,
           "to": 304
+        }
+      ]
+    },
+    {
+      "id": 570,
+      "name": "power",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 249,
+          "to": 568
+        },
+        {
+          "rel": 249,
+          "to": 569
+        },
+        {
+          "rel": 249,
+          "to": 570
+        }
+      ]
+    },
+    {
+      "id": 571,
+      "name": "remainder",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 249,
+          "to": 303
+        },
+        {
+          "rel": 249,
+          "to": 304
+        },
+        {
+          "rel": 249,
+          "to": 303
+        }
+      ]
+    },
+    {
+      "id": 572,
+      "name": "root",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 249,
+          "to": 568
+        },
+        {
+          "rel": 249,
+          "to": 569
+        }
+      ]
+    },
+    {
+      "id": 573,
+      "name": "logarithm",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 249,
+          "to": 568
+        },
+        {
+          "rel": 249,
+          "to": 569
+        }
+      ]
+    },
+    {
+      "id": 574,
+      "name": "natural-logarithm",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 249,
+          "to": 568
+        },
+        {
+          "rel": 249,
+          "to": 569
+        }
+      ]
+    },
+    {
+      "id": 575,
+      "name": "sine",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 249,
+          "to": 568
+        },
+        {
+          "rel": 249,
+          "to": 569
+        }
+      ]
+    },
+    {
+      "id": 576,
+      "name": "cosine",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 249,
+          "to": 568
+        },
+        {
+          "rel": 249,
+          "to": 569
+        }
+      ]
+    },
+    {
+      "id": 577,
+      "name": "tangent",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 249,
+          "to": 568
+        },
+        {
+          "rel": 249,
+          "to": 569
+        }
+      ]
+    },
+    {
+      "id": 578,
+      "name": "magnitude",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 249,
+          "to": 568
+        },
+        {
+          "rel": 249,
+          "to": 569
         }
       ]
     }

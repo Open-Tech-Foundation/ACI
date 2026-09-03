@@ -196,7 +196,11 @@ is answered in figures; the brain chooses nothing, it uses the form it was
 given, and the language is what holds both.
 
 **A number is read, not looked up.** A run of the symbols a language counts in
-is a number whatever else it is — no word lists `125` and no term names it, and
+is a number whatever else it is — including a part below one, where the language
+declares where that part begins (`"point": "."`) and how many places it writes
+(`"places": 10`). **The brain holds the value exactly; the language says how far
+it is written**, so `log 2` comes back to ten places and nothing is rounded
+before it has to be — no word lists `125` and no term names it, and
 `1+125` is still `126`. The language says which symbols it counts in and what
 they stand as in a sentence; reading them is the brain's own, and so is what
 follows from two of them.
@@ -204,7 +208,9 @@ follows from two of them.
 A signal may work **more than once**: `1 + 2 × 3` names two operations. **Which
 is worked first is the world's**, said with the same `order` it puts numbers in
 — `times order plus` — and where it puts neither before the other they are
-worked from the left. A word may **open or close a group** (`"groups": "open"`),
+worked from the left. A term the world puts before **itself** (`power order
+power`) is worked from the right instead, which is how `2 ^ 3 ^ 2` is two to the
+ninth. A word may **open or close a group** (`"groups": "open"`),
 and what a group holds is worked before anything outside it.
 
 Two sides may be asked to be **the same**: each is worked out on its own and the
@@ -221,6 +227,11 @@ names; no term is invented for it.
 
 ```
 1+1                  2
+7 / 2                3.5
+2 ^ 3 ^ 2            512       a power meets a power from the right
+root 9               3
+log 2                0.3010299956
+add 1 with 8         9         the same act, said the other way round
 1 + 2 * 3            7         times binds first
 (1 + 2) * 3          9         and a group binds tighter still
 2 + 2 = 4?           Yes. ✅
@@ -229,7 +240,6 @@ names; no term is invented for it.
 one plus one         two
 100 - 1              99        the world names no ninety-nine
 1 - 5                -4        nor anything below nothing
-7 / 2                I don't know.
 what is 1 + 5        6
 what is 1            number
 ```
@@ -813,10 +823,20 @@ change if the world were different?* No. So it belongs in the engine, and the
 world's whole part in it is saying **which term names which number** — a `value`
 on the term. What follows from two numbers is the brain's own.
 
+The operations it can perform are its own, one arithmetic act each: `plus`,
+`minus`, `times`, `divide`, `power`, `remainder`, and — taking a single number —
+`root`, `logarithm`, `natural-logarithm`, `sine`, `cosine`, `tangent`,
+`magnitude`. The world says which term names which, and nothing else about them.
+An operation may stand **between** the numbers it takes or **before** them, so
+`add 1 with 8` is the same act as `1 + 8`. Where there is no answer at all —
+nothing over nothing, the root of less than nothing, the logarithm of nothing —
+it says so rather than reaching for one.
+
 | the signal names | the brain does | node |
 |---|---|---|
-| `anchors.plus` / `anchors.minus` | adds or subtracts, then finds the term for the result | `sum` |
+| an operation it can perform | works it, then finds the term for the result | `sum` |
 | `anchors.more` / `anchors.less` | compares the values | `truth` |
+| `anchors.same` | works out each side and compares what they came to | `truth` |
 
 A result the world has no term for is **not invented**: the `sum` node is
 `beyond` and the brain says it does not know. `"nine plus four?"` computes 13 and

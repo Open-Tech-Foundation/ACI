@@ -13,6 +13,9 @@ function buildLanguage(data) {
   const alone = Object.values(symbols).filter((set) => set && set.alone).map(charSet);
   const counted = Object.values(symbols).find((set) => set && set.figures);
   const counting = counted ? charsOf(counted.characters) : [];
+  // Where the part below one begins, and how many places this language writes.
+  const point = counted && counted.point ? counted.point : null;
+  const places = counted && counted.places ? counted.places : 0;
 
   // Every character this language's words are made of.
   const inWords = new Set();
@@ -56,10 +59,10 @@ function buildLanguage(data) {
     // Any number written out in the symbols this language counts in, in the
     // order it declared them. A term is not needed for it: a world that never
     // named ninety-nine can still be told the answer is 99.
-    figuresFor: (value) => figures(counting, value),
+    figuresFor: (value) => figures(counting, point, places, value),
     // And back: any run of them is a number, whether or not this language has
     // a word for it and whether or not the world ever named it.
-    valueOfFigures: (text) => valued(counting, text),
+    valueOfFigures: (text) => valued(counting, point, text),
     // What a number written that way stands as, when it is put in a sentence.
     figuresPos: counted ? counted.pos ?? null : null,
     // Another way this language writes a term, where it has one that is not
@@ -138,32 +141,59 @@ function lookUp(words, derivations, w) {
 }
 
 // A symbol set holds both cases: the data lists one, the brain may meet either.
-// A whole number in a language's own figures. The symbols count from zero in
-// the order the language wrote them, so how many there are is the base.
-function figures(counting, value) {
-  if (counting.length < 2 || !Number.isInteger(value) || value < 0) return null;
+// A number in a language's own figures. The symbols count from zero in the
+// order the language wrote them, so how many there are is the base. A part
+// below one is written after the point the language declares, to as many places
+// as it says it writes — the brain holds the value exactly either way.
+function figures(counting, point, places, value) {
+  if (counting.length < 2 || typeof value !== 'number' || !Number.isFinite(value) || value < 0) {
+    return null;
+  }
   const base = counting.length;
-  let left = value;
+  let whole = Math.floor(value);
   let out = '';
   do {
-    out = counting[left % base] + out;
-    left = Math.floor(left / base);
-  } while (left > 0);
-  return out;
+    out = counting[whole % base] + out;
+    whole = Math.floor(whole / base);
+  } while (whole > 0);
+
+  let over = value - Math.floor(value);
+  if (over === 0) return out;
+  if (!point || !(places > 0)) return null;
+  let after = '';
+  for (let i = 0; i < places && over > 0; i += 1) {
+    over *= base;
+    const digit = Math.floor(over);
+    after += counting[digit];
+    over -= digit;
+  }
+  // What is written stops where the language stops writing; the trailing
+  // nothings say no more than the point does.
+  after = after.replace(new RegExp(`${escaped(counting[0])}+$`), '');
+  return after === '' ? out : `${out}${point}${after}`;
+}
+
+function escaped(ch) {
+  return ch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 // A number read out of a language's own figures: every symbol counts for its
 // place in the set the language declared, and how many there are is the base.
-function valued(counting, text) {
-  const chars = Array.from(String(text));
-  if (counting.length < 2 || chars.length === 0) return null;
+function valued(counting, point, text) {
+  const whole = String(text);
+  if (counting.length < 2 || whole.length === 0) return null;
+  const at = point ? whole.indexOf(point) : -1;
+  if (at >= 0 && whole.indexOf(point, at + 1) >= 0) return null;
+  const digits = at < 0 ? whole : whole.slice(0, at) + whole.slice(at + 1);
+  const chars = Array.from(digits);
+  if (chars.length === 0) return null;
   let value = 0;
   for (const ch of chars) {
     const digit = counting.indexOf(ch);
     if (digit < 0) return null;
     value = value * counting.length + digit;
   }
-  return value;
+  return at < 0 ? value : value / counting.length ** (whole.length - at - 1);
 }
 
 function charSet(symbolInfo) {
