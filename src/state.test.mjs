@@ -102,11 +102,14 @@ test("taking more than is there is refused, and leaves the state alone", async (
   forget();
 });
 
-test("an action on a thing holding nothing known does nothing", async () => {
+test("an action whose effect it cannot tell is still recorded as having happened", async () => {
   forget();
   const r = await brain("take one apple from basket");
-  assertEquals((r.roots[0].branch || []).find((b) => b.kind === "did"), undefined);
-  assertEquals(r.learned, null);
+  assertEquals((r.roots[0].branch || []).find((b) => b.kind === "did"), undefined,
+    "it worked nothing out");
+  const event = (r.roots[0].branch || []).find((b) => b.kind === "event");
+  assert(event !== null, "but it was told something happened, and that much is so");
+  assertEquals(r.learned.terms.length, 1, "the event alone, and no state");
   forget();
 });
 
@@ -142,9 +145,9 @@ test("an action works on the thing, not on the kind", async () => {
   forget();
   await brain("basket has three apple");
   const r = await brain("take one apple from basket");
-  const made = r.learned.terms[0];
-  assert(made.id !== 307, "the basket that exists, not basket the kind");
-  assert(/^basket#/.test(made.name));
+  const changed = r.learned.terms.find((t) => /^basket#/.test(t.name));
+  assert(changed !== undefined, "the basket that exists, not basket the kind");
+  assert(changed.id !== 307);
   forget();
 });
 
@@ -215,5 +218,58 @@ test("the clock ticks on what happens, not on being spoken to", async () => {
   await brain("how many mammals?");
   const r = await brain("take one apple from the basket");
   assertEquals(r.learned.terms[0].links[0].at, 1, "questions are not events");
+  forget();
+});
+
+test("what happened is a thing that happened once, with a moment", async () => {
+  forget();
+  await brain("a basket has three apple");
+  const r = await brain("take one apple from the basket");
+  const event = (r.roots[0].branch || []).find((b) => b.kind === "event");
+  assert(/^take#\d+$/.test(event.name));
+  assertEquals(event.state.at, 1);
+  const kept = r.learned.terms.find((t) => /^take#/.test(t.name));
+  assertEquals(kept.individual, true, "an event is an individual like any other");
+  forget();
+});
+
+test("things play parts in what happened", async () => {
+  forget();
+  await brain("a basket has three apple");
+  const r = await brain("take one apple from the basket");
+  const parts = (r.roots[0].branch || []).find((b) => b.kind === "event").state.parts;
+  assertEquals(parts.find((p) => p.role === 328).of, 79, "the apple was taken");
+  assertEquals(parts.find((p) => p.role === 328).amount, 1);
+  assertEquals(parts.find((p) => p.role === 329).of, 307, "from the basket");
+  forget();
+});
+
+test("a marker says which part, and the language says which side it marks", async () => {
+  forget();
+  await brain("a basket has two apple");
+  const gave = await brain("give two apples to the basket");
+  const parts = (gave.roots[0].branch || []).find((b) => b.kind === "event").state.parts;
+  assertEquals(parts.find((p) => p.role === 330).of, 307, "`to` made the basket the destination");
+  assertEquals(await says("the basket has how many apples?"), "four", "so giving added to it");
+  forget();
+});
+
+test("giving works on its destination, taking on its source", async () => {
+  forget();
+  await brain("a basket has three apple");
+  await brain("take one apple from the basket");
+  assertEquals(await says("the basket has how many apples?"), "two");
+  await brain("give two apples to the basket");
+  assertEquals(await says("the basket has how many apples?"), "four");
+  forget();
+});
+
+test("what the brain refuses is not recorded as having happened", async () => {
+  forget();
+  await brain("a basket has one apple");
+  const r = await brain("take five apples from the basket");
+  assertEquals((r.roots[0].branch || []).find((b) => b.kind === "event"), undefined);
+  assertEquals(r.learned, null);
+  assertEquals(await says("the basket has how many apples?"), "one", "untouched");
   forget();
 });

@@ -92,8 +92,8 @@
     "less":      { "pos": "verb", "meaning": "less than",      "concept": 306 },
     "take":      { "pos": "verb", "meaning": "take",           "concept": 283 },
     "give":      { "pos": "verb", "meaning": "give",           "concept": 282 },
-    "from":      { "pos": "preposition", "meaning": "from" },
-    "to":        { "pos": "preposition", "meaning": "to" },
+    "from":      { "pos": "preposition", "meaning": "from", "role": "source" },
+    "to":        { "pos": "preposition", "meaning": "to",   "role": "destination" },
     "name":      { "pos": "noun", "meaning": "name",           "concept": 138 },
 
     "existence":    { "pos": "noun", "meaning": "existence",       "concept": 1 },
@@ -335,6 +335,7 @@
     "ur":        { "pos": "pronoun",       "meaning": "self",  "concept": 296 },
     "you":       { "pos": "pronoun",       "meaning": "self",  "concept": 296 }
   },
+  "marking": "after",
   "derivations": [
     { "ending": "ies", "becomes": "y", "of": "noun" },
     { "ending": "es",  "becomes": "",  "of": "noun" },

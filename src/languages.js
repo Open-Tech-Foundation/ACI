@@ -28,6 +28,9 @@ function buildLanguage(data) {
     lookupWord: (w) => lookUp(words, data.derivations, w),
     wordFor: (concept) => (concept == null ? null : named.get(concept) ?? null),
     grammar: data.grammar || {},
+    // Which side of a marking word the thing it marks falls on. English puts it
+    // after — `the basket`, `from the basket` — and another language need not.
+    marking: data.marking === 'before' ? 'before' : 'after',
     roles: symbolRoles(symbols),
   };
 }

@@ -127,7 +127,7 @@ export function checkLanguage(data, where = 'language') {
   if (!data || typeof data !== 'object') fail(where, 'must be an object');
   onlyKeys(
     data,
-    ['name', 'symbols', 'words', 'derivations', 'speech', 'expressions', 'grammar'],
+    ['name', 'symbols', 'words', 'derivations', 'marking', 'speech', 'expressions', 'grammar'],
     where,
   );
 
@@ -149,10 +149,13 @@ export function checkLanguage(data, where = 'language') {
   for (const [word, info] of Object.entries(data.words)) {
     const w = `${at} word "${word}"`;
     if (!info || typeof info !== 'object') fail(w, 'must be an object');
-    onlyKeys(info, ['pos', 'meaning', 'concept', 'marks', 'negates'], w);
+    onlyKeys(info, ['pos', 'meaning', 'concept', 'marks', 'negates', 'role'], w);
     if (typeof info.pos !== 'string' || info.pos === '') fail(w, 'pos must be a non-empty string');
     if (typeof info.meaning !== 'string') fail(w, 'meaning must be a string');
     if (info.concept !== undefined && !isId(info.concept)) fail(w, 'concept must be a term id');
+    if (info.role !== undefined && (typeof info.role !== 'string' || info.role === '')) {
+      fail(w, 'role, where present, must name the part a thing plays');
+    }
     if (info.negates !== undefined && info.negates !== true) {
       fail(w, 'negates, where present, must be true');
     }
@@ -164,6 +167,10 @@ export function checkLanguage(data, where = 'language') {
     ) {
       fail(w, 'marks must be "new", "known" or "unknown"');
     }
+  }
+
+  if (data.marking !== undefined && data.marking !== 'before' && data.marking !== 'after') {
+    fail(at, 'marking must be "before" or "after" — which side of a marker the thing it marks falls');
   }
 
   if (data.derivations !== undefined) {

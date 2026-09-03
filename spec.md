@@ -533,6 +533,31 @@ A result the world has no term for is **not invented**: the `sum` node is
 `beyond` and the brain says it does not know. `"nine plus four?"` computes 13 and
 then has nothing to call it.
 
+**An action → something that happened.** An action is not a claim between two
+terms; it has *parts*. What happened is recorded as an **individual** — of its
+kind, with the parts things played in it, and with a moment — so nothing new was
+needed to hold it. An event is an individual like any other.
+
+```
+take one apple from the basket
+  take#332  at 1
+    patient     → apple ×1
+    source      → basket
+```
+
+The parts are `agent`, `patient`, `source`, `destination` — relations like any
+other. Which thing plays which:
+
+- a word may **say so**: `from` makes a source, `to` a destination. That things
+  play parts is the brain's; which word assigns which part is the language's.
+- what no word says, the brain reads off the **order** things were perceived in:
+  before the action is who did it, after it is what was done.
+- a marker need not touch what it marks — `from the basket` puts an article
+  between — so the brain walks away from the thing over words that name nothing,
+  and stops at the next thing. A marker never reaches past one.
+- **which side** a marker governs is word order, so the language declares it:
+  `"marking": "after"`.
+
 **An action the world says causes an operation → the brain carries it out.**
 The world links an action term to an operation term by `cause` — `take` causes
 `minus`, `give` causes `plus`. Nothing in the engine knows what either word
@@ -540,8 +565,13 @@ means; it reads the link, works the arithmetic on what the thing holds, and keep
 the result. Adds a `did` node with `{ action, operation, holder, thing, before,
 amount, after }`.
 
+Which thing it works on comes from the parts: **taking draws from its source,
+giving adds to its destination.**
+
 A result the world cannot name is **not held**: taking more than is there is
-refused and the state is left alone.
+refused and the state is left alone. What the brain refuses is not recorded as
+having happened either. Where it simply cannot tell what followed, the event
+stands — it was told something occurred, and that much is so.
 
 ```
 > basket has three apple        I know.

@@ -148,6 +148,7 @@ function recognizeLanguage(roots, langs) {
               concept: word.concept ?? null,
               marks: word.marks ?? null,
               negates: word.negates ?? false,
+              role: word.role ?? null,
             }
           : null,
         roles: classifyRoles(identity, lang),
@@ -209,6 +210,7 @@ function think(roots, langs) {
       concept: first.word ? first.word.concept : null,
       marks: first.word ? first.word.marks : null,
       negates: first.word ? first.word.negates : false,
+      role: first.word ? first.word.role : null,
     };
     return withBranch(n, [...n.branch, node('thought', 'understood', [], { thought })]);
   });
@@ -220,7 +222,7 @@ function think(roots, langs) {
 // the categories, the world owns the membership. A word that names no term
 // gets no category — the brain does not guess from the part of speech.
 // ---------------------------------------------------------------------------
-function solve(roots, world) {
+function solve(roots, world, langs) {
   return roots.map((n, at) => {
     if (!n.state.exists) {
       return withBranch(n, [...n.branch, node('response', 'nothing', [])]);
@@ -249,7 +251,7 @@ function solve(roots, world) {
 
     // A word beside a thing may say whether one is being introduced or the one
     // already spoken of is meant. Which word does that is the language's.
-    const marked = markOf(roots, at, world);
+    const marked = markOf(roots, at, world, langs);
     if (marked) result.branch.push(node('mark', marked, []));
 
     return result;
@@ -275,14 +277,31 @@ function quantityOf(roots, at, world) {
 }
 
 // Read off the order, like a count: a marker beside a thing marks that thing.
-function markOf(roots, at, world) {
+function markOf(roots, at, world, langs) {
   const mine = conceptOf(roots[at]);
   if (!world || mine == null || !world.isA(mine, (world.anchors || {}).thing)) return null;
-  for (const beside of [roots[at - 1], roots[at + 1]]) {
-    const marks = markOn(beside);
-    if (marks === 'new' || marks === 'known') return marks;
+  const marker = markerFor(roots, at, markingSide(world, langs), markOn);
+  const marks = markOn(marker);
+  return marks === 'new' || marks === 'known' ? marks : null;
+}
+
+// The word marking a thing need not touch it — `from the basket` puts an
+// article between. Walk away from the thing over words that name nothing, and
+// stop at the next thing: a marker never reaches past one.
+function markerFor(said, at, side, carries) {
+  const step = side === 'before' ? 1 : -1;
+  for (let i = at + step; i >= 0 && i < said.length; i += step) {
+    if (conceptOf(said[i]) != null) return null;
+    if (carries(said[i])) return said[i];
   }
   return null;
+}
+
+// Every loaded language marks on the same side or the brain cannot tell; where
+// they disagree it takes the first, since the signal is in one of them.
+function markingSide(world, langs) {
+  const lang = (langs || [])[0];
+  return lang ? lang.marking : 'after';
 }
 
 // The world says what a term is; the brain reads only its own categories out of
@@ -320,7 +339,7 @@ function worldNode(concept, world) {
 // the things it perceived, never off a grammar symbol: phrase names come from
 // data and mean nothing to the brain.
 // ---------------------------------------------------------------------------
-function judge(roots, world, mood) {
+function judge(roots, world, mood, langs) {
   if (!world || roots.length !== 1) return roots;
   const root = roots[0];
   if (root.kind === 'thing' || root.kind === 'void') return roots;
@@ -356,7 +375,7 @@ function judge(roots, world, mood) {
   // The brain counts by walking, and says so plainly when the world runs out.
   // An action the world says causes an operation, worked on what a thing holds.
   // What taking does is the world's to say; the arithmetic is the brain's.
-  const done = act(said, claims, world);
+  const done = act(said, claims, world, markingSide(world, langs));
   if (done) return [withBranch(root, [...root.branch, ...done])];
 
   const quantity = said.find((n) => reaches(n, a.quantity, world));
@@ -562,35 +581,94 @@ function bearerOf(kind, world, mark) {
 
 // Carrying out an action on what a thing holds. The world links an action to
 // the operation it causes; the brain works the operation and keeps the result.
-function act(said, isThing, world) {
+function act(said, claims, world, side) {
   const a = world.anchors || {};
-  const acting = said.find((n) => reaches(n, a.action, world));
-  if (!acting) return null;
+  const acting = said.findIndex((n) => reaches(n, a.action, world));
+  if (acting < 0) return null;
 
-  const causes = world.linked(conceptOf(acting), a.cause);
+  const parts = rolesIn(said, acting, claims, world, side);
+  if (parts.length === 0) return null;
+
+  const action = conceptOf(said[acting]);
+  const at = world.now();
+  const happened = world.nextId();
+
+  // What happened is a thing that happened once: it is of its kind, it has the
+  // parts things played in it, and it has a moment. Nothing new was needed to
+  // hold it — an event is an individual like any other.
+  const event = node('event', `${world.term(action).name}#${happened}`, [], {
+    id: happened,
+    action,
+    at,
+    parts,
+  });
+
+  const worked = work(action, parts, at, world);
+  // What the brain refuses did not happen, and it does not go on the record as
+  // having happened. Where it simply cannot tell what followed, the event
+  // stands: it was told something occurred, and that much is so.
+  if (worked && worked.some((n) => n.kind === 'refuse')) return worked;
+  return worked ? [event, ...worked] : [event];
+}
+
+// Which thing played which part. A word may say so — `from` makes a source —
+// and that is the language's to decide. What it does not say, the brain reads
+// off the order things were perceived in: before the action is who did it,
+// after it is what was done.
+function rolesIn(said, acting, claims, world, side) {
+  const a = world.anchors || {};
+  const of = (i) => markerFor(said, i, side, roleOn);
+  const parts = [];
+  const taken = new Set();
+
+  said.forEach((n, i) => {
+    if (i === acting || !claims(n)) return;
+    const named = roleOn(of(i));
+    if (!named || a[named] == null) return;
+    parts.push({ role: a[named], of: conceptOf(n), amount: amountOf(n, world), at: i });
+    taken.add(i);
+  });
+
+  said.forEach((n, i) => {
+    if (i === acting || taken.has(i) || !claims(n)) return;
+    const role = i < acting ? a.agent : a.patient;
+    if (role != null) parts.push({ role, of: conceptOf(n), amount: amountOf(n, world), at: i });
+  });
+
+  return parts.sort((x, y) => x.at - y.at).map(({ role, of, amount }) => ({ role, of, amount }));
+}
+
+// How many of this thing the signal counted, as a number.
+function amountOf(n, world) {
+  return world.valueOf(quantityTerm(n));
+}
+
+// An action the world says causes an operation, worked on what a thing holds.
+// Which thing that is comes from the parts: taking draws from its source,
+// giving adds to its destination, and the amount is what the patient counted.
+function work(action, parts, at, world) {
+  const a = world.anchors || {};
+  const causes = world.linked(action, a.cause);
   const op = causes.find((c) => c === a.plus || c === a.minus);
   if (!op) return null;
 
-  const what = said.find((n) => quantityTerm(n) != null);
-  if (!what) return null;
-  const source = said.find((n) => isThing(n) && n !== what && n !== acting);
-  if (!source) return null;
+  const patient = parts.find((p) => p.role === a.patient);
+  const place = parts.find((p) => p.role === (op === a.plus ? a.destination : a.source));
+  if (!patient || !place) return null;
 
-  const amount = world.valueOf(quantityTerm(what));
-  const holder = conceptOf(source);
-  const thing = conceptOf(what);
-  const one = world.oneOf(holder);
-  const bearer = one == null ? holder : one;
-  const before = world.held(bearer, a.has, thing);
+  const amount = patient.amount;
+  const one = world.oneOf(place.of);
+  const bearer = one == null ? place.of : one;
+  const before = world.held(bearer, a.has, patient.of);
   if (amount == null || before == null) return null;
 
   const after = op === a.plus ? before + amount : before - amount;
   const term = world.termFor(after);
-  const done = node('did', world.term(conceptOf(acting)).name, [], {
-    action: conceptOf(acting),
+  const done = node('did', world.term(action).name, [], {
+    action,
     operation: op,
-    holder,
-    thing,
+    holder: bearer,
+    thing: patient.of,
     before,
     amount,
     after,
@@ -606,8 +684,9 @@ function act(said, isThing, world) {
     node('learn', 'link', [], {
       subject: bearer,
       relation: a.has,
-      object: thing,
+      object: patient.of,
       quantity: after,
+      not: false,
     }),
   ];
 }
@@ -650,6 +729,13 @@ function nearest(said, from, step, wanted) {
     if (wanted(said[i])) return said[i];
   }
   return null;
+}
+
+// The part a word says the thing beside it plays in what happened. Which word
+// assigns which part is the language's; that things play parts is the brain's.
+function roleOn(n) {
+  const t = n ? findBranch(n, 'thought') : null;
+  return t && t.state.thought ? t.state.thought.role : null;
 }
 
 // Whether this word denies what the signal says. That a claim can be denied is
@@ -974,10 +1060,10 @@ export function brainFrom(input, knowledge) {
 
   const roots = understand(input, langs);
   const thoughtRoots = think(roots, langs);
-  const solvedRoots = solve(thoughtRoots, world);
+  const solvedRoots = solve(thoughtRoots, world, langs);
   const mood = moodOf(input, langs);
   const structuredRoots = structurePhrase(solvedRoots, langs);
-  const judgedRoots = judge(structuredRoots, world, mood);
+  const judgedRoots = judge(structuredRoots, world, mood, langs);
   const expressedRoots = express(judgedRoots, langs, world);
   return {
     input,
@@ -999,8 +1085,24 @@ export function brainFrom(input, knowledge) {
 // not keep it — it hands it back, and the runtime decides whether to remember.
 function learnedFrom(roots, world) {
   if (!world || roots.length !== 1) return null;
+  const event = findBranch(roots[0], 'event');
   const learn = findBranch(roots[0], 'learn');
-  if (!learn) return null;
+  if (!event && !learn) return null;
+
+  const terms = [];
+  if (event) {
+    const { id, action, at, parts } = event.state;
+    terms.push({
+      id,
+      name: event.name,
+      individual: true,
+      links: [
+        { rel: world.baseRelation, to: action, at },
+        ...parts.map((p) => ({ rel: p.role, to: p.of, at })),
+      ],
+    });
+  }
+  if (!learn) return { terms };
   const { subject, relation, object, quantity, made, not } = learn.state;
   const link = { rel: relation, to: object };
   if (not) link.not = true;
@@ -1013,22 +1115,20 @@ function learnedFrom(roots, world) {
 
   if (made) {
     const kind = world.term(made.of);
-    if (!kind) return null;
-    return {
-      terms: [
-        {
-          id: made.id,
-          name: `${kind.name}#${made.id}`,
-          individual: true,
-          links: [{ rel: world.baseRelation, to: made.of }, link],
-        },
-      ],
-    };
+    if (!kind) return terms.length ? { terms } : null;
+    terms.push({
+      id: made.id,
+      name: `${kind.name}#${made.id}`,
+      individual: true,
+      links: [{ rel: world.baseRelation, to: made.of }, link],
+    });
+    return { terms };
   }
 
   const term = world.term(subject);
-  if (!term) return null;
-  return { terms: [{ id: subject, name: term.name, links: [link] }] };
+  if (!term) return terms.length ? { terms } : null;
+  terms.push({ id: subject, name: term.name, links: [link] });
+  return { terms };
 }
 
 // ---- tree helpers ---------------------------------------------------------

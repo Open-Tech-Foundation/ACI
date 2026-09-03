@@ -6,6 +6,22 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Roles, and events.** An action is no longer a claim between two terms: what
+  happened is recorded as an **individual** — of its kind, with the parts things
+  played in it, and with a moment. Nothing new was needed to hold it; an event is
+  an individual like any other, so `learned` may now hand back more than one term.
+- `agent`, `patient`, `source` and `destination` as relations, with anchors. A
+  word may assign a part (`from` a source, `to` a destination) and what no word
+  says is read off the order things were perceived in. A marker may reach over
+  words that name nothing but never past another thing.
+- `marking` on a language: which side of a marker the thing it marks falls on.
+
+### Fixed
+
+- `give` worked on whatever other thing happened to be in the signal rather than
+  on its destination. It was right by luck and is now right by construction.
+- What the brain refuses is no longer recorded as having happened.
+
 - **Negation.** A word may carry `negates: true` and a link may carry
   `not: true`. The brain could deny a claim it had checked; it could not *hold* a
   negative fact, so `not X` was unthinkable. Now a denial is knowledge: telling it

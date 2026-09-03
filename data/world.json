@@ -20,14 +20,22 @@
     "minus": 304,
     "more": 305,
     "less": 306,
-    "cause": 247
+    "cause": 247,
+    "agent": 327,
+    "patient": 328,
+    "source": 329,
+    "destination": 330
   },
   "relations": {
     "is": 294,
     "has": 295,
     "different": 251,
     "order": 249,
-    "cause": 247
+    "cause": 247,
+    "agent": 327,
+    "patient": 328,
+    "source": 329,
+    "destination": 330
   },
   "terms": [
     {
@@ -3507,6 +3515,46 @@
         {
           "rel": 294,
           "to": 253
+        }
+      ]
+    },
+    {
+      "id": 327,
+      "name": "agent",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        }
+      ]
+    },
+    {
+      "id": 328,
+      "name": "patient",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        }
+      ]
+    },
+    {
+      "id": 329,
+      "name": "source",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        }
+      ]
+    },
+    {
+      "id": 330,
+      "name": "destination",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
         }
       ]
     }
