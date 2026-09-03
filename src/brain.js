@@ -427,9 +427,9 @@ function intentOf(n, world) {
 
 // Voicing an intent in the language the signal was recognized as. A language
 // that has nothing to say for an intent leaves it unsaid.
-function speak(intent, meaning, langName, langs) {
+function speak(intent, meaning, langName, langs, terms) {
   const lang = (langs || []).find((l) => l.data.name === langName);
-  const says = lang ? lang.express(intent, { meaning }) : null;
+  const says = lang ? lang.express(intent, { meaning, ...terms }) : null;
   return node('express', intent, [], { says, meaning, language: langName || null });
 }
 
@@ -459,7 +459,7 @@ function moodOf(input, langs) {
 
 // The brain's one act toward the whole signal, with what it said about each
 // thing kept underneath.
-function expression(roots, langs, mood) {
+function expression(roots, langs, mood, world) {
   const parts = [];
   const collect = (n) => {
     const said = findBranch(n, 'express');
@@ -512,7 +512,13 @@ function expression(roots, langs, mood) {
     intent === 'answer'
       ? nameOf(answer, langName, langs)
       : wholeMeaning(intent, parts);
-  const whole = speak(intent, said, langName, langs);
+  // Where the brain is speaking of its own state, it hands over the term for
+  // that state and lets the language find the words. It holds none of them.
+  const terms =
+    intent === 'understood' || intent === 'unsure'
+      ? { relation: world && world.anchors ? world.anchors.know : null }
+      : null;
+  const whole = speak(intent, said, langName, langs, terms);
   return withBranch(whole, parts, { ...whole.state, bound, mood });
 }
 
@@ -661,7 +667,7 @@ export function brainFrom(input, knowledge) {
   return {
     input,
     roots: expressedRoots,
-    expression: expression(expressedRoots, langs, mood),
+    expression: expression(expressedRoots, langs, mood, world),
     learned: learnedFrom(judgedRoots, world),
     phases: {
       understand: roots,

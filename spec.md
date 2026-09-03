@@ -152,12 +152,31 @@ Each word carries `pos` (part of speech), `meaning`, and optionally `concept` �
 the id of the world term it names. There is **no** `type`, `emotion`, or
 `reply` — the brain derives those.
 
-### Expressions
+### Speech and expressions
 
-`expressions` maps each of the brain's intents to the words this language voices
-it in. `{meaning}` is filled from what the brain understood. The brain picks the
-intent; the language picks the words. An intent with no entry here is simply not
-said — the engine has no words to fall back on.
+`expressions` gives a **sentence frame** per intent — not a sentence. The brain
+hands over the *terms it means*; the frame is filled with the words this language
+has for them:
+
+- a slot naming a role in `speech` takes that language's own function word
+- a slot holding a **term id** takes `wordFor(term)` — this language's word for it
+- `{meaning}` is filled from what the brain understood
+
+```jsonc
+"speech":      { "self": "I" },
+"expressions": { "unsure": "{self} don't {relation}." }
+```
+
+So `"I don't know."` is written **nowhere**. It is the speaker word, the frame's
+own negation, and whatever this language calls term 285 (`know`). Rename that
+word and the reply follows; write another language file and the same brain state
+comes out `"yo no saber."` This is the rule against enumeration: frames are
+grammar and there are few of them, words are lexicon and there are many, and no
+whole sentence is ever stored.
+
+The brain picks the intent and the terms; the language picks every word. An
+intent with no entry is simply not said — the engine has no words to fall back
+on, not even for not knowing.
 
 ## Data format — `data/world.json`
 

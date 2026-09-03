@@ -69,3 +69,77 @@ test("the engine has no reply to fall back on", () => {
   assertEquals(r.expression.state.says, null);
   assert(!JSON.stringify(r).includes("It is 2."), "no other language's words leak in");
 });
+
+// The brain reports its own state by handing over the terms it means. Nothing
+// it says is written down anywhere in the engine — not even "I don't know".
+const stateWorld = {
+  anchors: { thing: 1, relation: 4, self: 7, know: 8 },
+  relations: { is: 9 },
+  terms: [
+    { id: 1, name: "thing", links: [] },
+    { id: 4, name: "relation", links: [] },
+    { id: 7, name: "self", links: [{ rel: 9, to: 1 }] },
+    { id: 8, name: "know", links: [{ rel: 9, to: 1 }] },
+    { id: 9, name: "is", links: [{ rel: 9, to: 4 }] },
+    { id: 10, name: "one", links: [{ rel: 9, to: 1 }] },
+    { id: 11, name: "other", links: [{ rel: 9, to: 1 }] },
+  ],
+};
+
+function stateLang(knowWord, speech, frames) {
+  return {
+    name: "test",
+    symbols: {
+      letter: { characters: "abcdefghijklmnopqrstuvwxyz" },
+      question: { characters: "?" },
+    },
+    words: {
+      one: { pos: "noun", meaning: "one", concept: 10 },
+      other: { pos: "noun", meaning: "other", concept: 11 },
+      is: { pos: "verb", meaning: "is", concept: 9 },
+      [knowWord]: { pos: "verb", meaning: "know", concept: 8 },
+    },
+    speech,
+    expressions: frames,
+    grammar: {
+      start: "sentence",
+      rules: {
+        sentence: { rules: ["subject predicate"] },
+        subject: { rules: ["noun"] },
+        predicate: { rules: ["verb verbComplement"] },
+        verbComplement: { rules: ["noun"] },
+      },
+    },
+  };
+}
+
+const unsureIn = (lang) =>
+  brainFrom("one is other?", fromSources({ world: stateWorld, languages: [lang] }))
+    .expression.state.says;
+
+test("what the brain says about its own state is built from the term it means", () => {
+  const said = unsureIn(
+    stateLang("know", { self: "I" }, { unsure: "{self} don't {relation}." }),
+  );
+  assertEquals(said, "I don't know.");
+});
+
+test("change the word for that term and the reply follows", () => {
+  const said = unsureIn(
+    stateLang("ken", { self: "I" }, { unsure: "{self} don't {relation}." }),
+  );
+  assertEquals(said, "I don't ken.", "nothing was written down, so it changed");
+});
+
+test("another language says it its own way, from the same brain state", () => {
+  const said = unsureIn(
+    stateLang("saber", { self: "yo" }, { unsure: "{self} no {relation}." }),
+  );
+  assertEquals(said, "yo no saber.");
+});
+
+test("a language with no word for the term leaves the slot empty, not filled in", () => {
+  const lang = stateLang("know", { self: "I" }, { unsure: "{self} don't {relation}." });
+  delete lang.words.know;
+  assertEquals(unsureIn(lang), "I don't .");
+});

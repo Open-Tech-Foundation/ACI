@@ -21,7 +21,7 @@ function buildLanguage(data) {
 
   return {
     data,
-    express: (intent, vars) => voice(data.expressions, intent, vars),
+    express: (intent, vars) => voice(data, intent, vars, named),
     isLetterSymbol: (ch) => letters.has(ch),
     isVowelSymbol: (ch) => vowels.has(ch),
     isQuestionSymbol: (ch) => asking.has(ch),
@@ -32,13 +32,22 @@ function buildLanguage(data) {
   };
 }
 
-// How this language voices one of the brain's intents. The brain never holds a
-// reply of its own; a language that says nothing for an intent leaves it unsaid.
-function voice(expressions, intent, vars) {
-  const form = expressions ? expressions[intent] : null;
+// How this language voices one of the brain's intents.
+//
+// The brain never holds a reply. It hands over the terms it means — a subject,
+// a relation, an object — and this fills a sentence frame with the words this
+// language has for them. A slot naming a role in `speech` takes that language's
+// own function word; a slot holding a term id takes the word for that term. So
+// "I don't know" is not written anywhere: it is the speaker word, the frame's
+// own negation, and whatever this language calls term 285.
+function voice(data, intent, vars, named) {
+  const form = data.expressions ? data.expressions[intent] : null;
   if (typeof form !== 'string') return null;
+  const speech = data.speech || {};
   return form.replace(/\{(\w+)\}/g, (_, key) => {
+    if (key in speech) return speech[key];
     const v = vars ? vars[key] : null;
+    if (typeof v === 'number') return named.get(v) ?? '';
     return v == null ? '' : String(v);
   });
 }

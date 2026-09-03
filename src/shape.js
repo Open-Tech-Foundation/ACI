@@ -110,7 +110,7 @@ export function checkWhole(data, origin = null, where = 'world') {
 // ---------------------------------------------------------------------------
 export function checkLanguage(data, where = 'language') {
   if (!data || typeof data !== 'object') fail(where, 'must be an object');
-  onlyKeys(data, ['name', 'symbols', 'words', 'expressions', 'grammar'], where);
+  onlyKeys(data, ['name', 'symbols', 'words', 'speech', 'expressions', 'grammar'], where);
 
   if (typeof data.name !== 'string' || data.name === '') {
     fail(where, 'name must be a non-empty string');
@@ -134,6 +134,13 @@ export function checkLanguage(data, where = 'language') {
     if (typeof info.pos !== 'string' || info.pos === '') fail(w, 'pos must be a non-empty string');
     if (typeof info.meaning !== 'string') fail(w, 'meaning must be a string');
     if (info.concept !== undefined && !isId(info.concept)) fail(w, 'concept must be a term id');
+  }
+
+  if (data.speech !== undefined) {
+    if (!data.speech || typeof data.speech !== 'object') fail(at, 'speech must be an object');
+    for (const [role, form] of Object.entries(data.speech)) {
+      if (typeof form !== 'string') fail(`${at} speech "${role}"`, 'must be a string');
+    }
   }
 
   if (data.expressions !== undefined) {

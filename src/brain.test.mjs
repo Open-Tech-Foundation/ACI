@@ -119,7 +119,7 @@ test("each word of a phrase is solved individually", async () => {
 test("a bound signal gets one expression for the whole", async () => {
   const r = await brain("hi hi");
   assertEquals(r.expression.name, "understood");
-  assertEquals(r.expression.state.says, "I understand.");
+  assertEquals(r.expression.state.says, "I know.");
   assertEquals(r.expression.state.bound, true);
 });
 
@@ -455,6 +455,7 @@ test("asked, the brain answers the claim", async () => {
 test("told what it already holds, the brain simply understands", async () => {
   const held = await brain("a cat is an animal");
   assertEquals(held.expression.name, "understood");
+  assertEquals(held.expression.state.says, "I know.", "composed, not written anywhere");
   assertEquals(held.learned, null, "nothing new to keep");
 });
 

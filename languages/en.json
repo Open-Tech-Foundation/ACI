@@ -75,6 +75,7 @@
 
     "ACI":       { "pos": "noun", "meaning": "self",           "concept": 296 },
     "has":       { "pos": "verb", "meaning": "has",            "concept": 295 },
+    "know":      { "pos": "verb", "meaning": "know",           "concept": 285 },
     "name":      { "pos": "noun", "meaning": "name",           "concept": 138 },
 
     "what":      { "pos": "interrogative", "meaning": "what" },
@@ -82,16 +83,19 @@
     "ur":        { "pos": "pronoun",       "meaning": "self",  "concept": 296 },
     "you":       { "pos": "pronoun",       "meaning": "self",  "concept": 296 }
   },
+  "speech": {
+    "self": "I"
+  },
   "expressions": {
     "greet":      "Hello!",
     "count":      "It is {meaning}.",
     "confirm":    "Yes, it {meaning}.",
     "recognise":  "I recognise \"{meaning}\".",
-    "understood": "I understand.",
+    "understood": "{self} {relation}.",
     "affirm":     "Yes.",
     "deny":       "No.",
     "answer":     "{meaning}",
-    "unsure":     "I don't know.",
+    "unsure":     "{self} don't {relation}.",
     "unknown":    "..."
   },
   "grammar": {

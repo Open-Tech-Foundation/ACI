@@ -109,6 +109,15 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
+- The brain no longer hands the language a finished sentence to store. It hands
+  over the **terms it means**, and `expressions` gives a frame filled with this
+  language's words for them: a slot naming a role in the new `speech` map takes a
+  function word, a slot holding a term id takes `wordFor(term)`. `"I don't know."`
+  is written nowhere — it is the speaker word, the frame's negation, and whatever
+  this language calls term 285. `anchors.know` names that term.
+- `"I understand."` became `"I know."`, composed the same way, and more accurate:
+  the brain is reporting that it already holds the claim.
+
 - `brainFrom(input, knowledge)` takes **one** argument for everything it knows,
   and will not grow another: a new source is a new file in `languages/`,
   `knowledge/` or `data/`, assembled by the runtime.
