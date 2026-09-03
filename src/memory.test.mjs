@@ -19,14 +19,28 @@ test("what was learned can then be asked about", async () => {
 
 test("learning changes what follows from the world, not only the fact itself", async () => {
   forget();
-  await brain("a bird is a person");
+  assertEquals((await brain("a moon is a tool?")).expression.state.says, "I don't know.");
+  await brain("a moon is a computer");
   assertEquals(
-    (await brain("a bird is a human?")).expression.state.says,
+    (await brain("a moon is a tool?")).expression.state.says,
     "Yes.",
-    "person -> human was already known; the new link reaches it",
+    "computer -> tool was already known; the taught link reaches through it",
   );
   forget();
 });
+
+test("what the world excludes cannot be taught", async () => {
+  forget();
+  const r = await brain("a sparrow is a tiger");
+  assertEquals(kind(r), "contradiction", "a bird is not a mammal");
+  assertEquals(r.learned, null);
+  forget();
+});
+
+function kind(r) {
+  const n = (r.roots[0].branch || []).find((b) => b.kind === "refuse");
+  return n ? n.name : null;
+}
 
 test("forgetting returns the brain to what it was born and taught", async () => {
   forget();

@@ -513,10 +513,10 @@ test("a question solves for the hole rather than checking a claim", async () => 
 });
 
 test("the term given is the one asked about, wherever the hole falls", async () => {
-  const before = await brain("what is a cat?");
-  const after = await brain("a cat is what?");
-  assertEquals(before.expression.state.says, "animal");
-  assertEquals(after.expression.state.says, "animal");
+  const before = await brain("what is a hyena?");
+  const after = await brain("a hyena is what?");
+  assertEquals(before.expression.state.says, "mammal");
+  assertEquals(after.expression.state.says, "mammal");
 });
 
 test("a question over a relation other than is", async () => {

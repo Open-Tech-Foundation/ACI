@@ -6,6 +6,16 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- `mammal`, and `tiger`, `elephant`, `hyena` under it; `pear` and `orange` under
+  fruit. `cat`, `dog`, `cow` and `human` re-parented onto `mammal`, and `sparrow`
+  onto `bird`, so the chains say what they mean.
+- Nineteen exclusion links among the new kinds, so a sparrow is not a mammal and
+  a pear is not an orange.
+- Words for twenty-seven terms, most of which the world already held and could
+  not say: cow, snake, sparrow, fish, insect, mango, banana, flower, grass,
+  knife, hammer, pen, phone, computer, book, moon, star, cloud, tool, vehicle,
+  building.
+
 - Disjointness. `truth` has three values instead of two: `true`, `false`, and
   `unknown`. Failing to find a path is no longer reported as denial — only terms
   that **exclude** each other make a claim false. `world.excludes(x, y)` walks
