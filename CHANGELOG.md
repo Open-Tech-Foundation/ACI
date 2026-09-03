@@ -36,6 +36,11 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
+- The demo has two tabs instead of one per phase: **Expression**, what the brain
+  said and the act it chose, for input/output testing; and **Tree**, the whole
+  accumulated tree of objects, for debugging. Phase tabs described today's
+  pipeline; these two describe the brain, and survive a new domain.
+
 - The brain chooses its expressive act by **walking the world**, not by the part
   of speech: a term reaching `anchors.communication` is greeted, `anchors.number`
   counted, `anchors.relation` confirmed. A word filed as a noun whose term is a

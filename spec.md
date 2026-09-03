@@ -350,10 +350,16 @@ await brain("hi")                     // loads languages internally
 
 - `demo/server.js` — ES-Runtime HTTP server. `POST /brain` `{ "q": "... " }`
   returns the full brain result; serves the static site.
-- `demo/src/main.js` — UI (`@opentf/micro-ui`): input box, phase tabs, and a
-  tree renderer. The **Express** tab shows only the final reply string
-  (`expressOutput`) instead of the JSON tree.
+- `demo/src/main.js` — UI (`@opentf/micro-ui`): an input box and **two** tabs.
 
-> Note: the UI currently exposes 4 tabs (Understand/Think/Solve/Express). The
-> 5th phase, **Structure**, exists in `result.phases.structure` but has no
-> dedicated tab yet.
+  - **Expression** — what the brain said (`result.expression.state.says`), the act
+    it chose and the language it spoke, and beneath them what it said about each
+    thing. This is the input/output view: type a signal, read the answer.
+  - **Tree** — `render(result.roots)`, the whole accumulated tree of objects with
+    every node's state. This is the debugging view: when an answer is wrong, the
+    step that got it wrong is visible here.
+
+  The tabs are deliberately not per-phase. The phases are a property of today's
+  pipeline; expression and state are properties of the brain, and hold for any
+  domain the brain later takes on. `result.phases` remains in the payload for
+  tests and programmatic use.

@@ -4,7 +4,7 @@ define("x-ask", (el) => {
   let input = "";
   let result = null;
   let error = null;
-  let active = "understand";
+  let active = "expression";
 
   async function run() {
     error = null;
@@ -16,29 +16,26 @@ define("x-ask", (el) => {
       });
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
       result = await res.json();
-      active = "understand";
+      active = "expression";
     } catch (e) {
       error = String(e.message || e);
     }
     update(el);
   }
 
-  const tabs = () =>
-    Object.keys(result.phases).map((key, i) => ({
-      key,
-      label: `${i + 1} · ${key[0].toUpperCase()}${key.slice(1)}`,
-    }));
+  // Two views: what the brain said, and the objects it built to say it.
+  const tabs = [
+    { key: "expression", label: "Expression" },
+    { key: "tree", label: "Tree" },
+  ];
 
-  return () => {
-    const activeTree = result && result.phases ? result.phases[active] : null;
-
-    return html`
+  return () => html`
     <div class="app">
       <h1>ACI</h1>
       <div class="input-row">
         <input
           type="text"
-          placeholder="try 'a'"
+          placeholder="try 'the bird is a dog'"
           value=${input}
           oninput=${(e) => { input = e.target.value; }}
           onkeydown=${(e) => { if (e.key === "Enter") run(); }}
@@ -49,28 +46,38 @@ define("x-ask", (el) => {
       ${result &&
         html`
           <div class="tabs">
-            ${tabs().map((p) => html`
+            ${tabs.map((t) => html`
               <button
-                class=${active === p.key ? "tab tab-active" : "tab"}
-                onclick=${() => { active = p.key; update(el); }}
+                class=${active === t.key ? "tab tab-active" : "tab"}
+                onclick=${() => { active = t.key; update(el); }}
               >
-                ${p.label}
+                ${t.label}
               </button>
             `)}
           </div>
           <div class="stage">
-            <div class="stage-label">${(tabs().find((p) => p.key === active) || {}).label}</div>
-            ${active === "express"
+            ${active === "expression"
               ? html`
-                  <div class="output">${result.expression.state.says ?? "—"}</div>
-                  <pre class="tree">${expressOutput(result.expression.branch)}</pre>
+                  <div class="stage-label">${result.input ? `"${result.input}"` : "no signal"}</div>
+                  <div class="output">${result.expression.state.says ?? "— unsaid"}</div>
+                  <div class="act">
+                    ${result.expression.name}
+                    ${result.expression.state.language
+                      ? ` · ${result.expression.state.language}`
+                      : " · no language"}
+                  </div>
+                  ${result.expression.branch.length > 1
+                    ? html`<pre class="parts">${expressOutput(result.expression.branch)}</pre>`
+                    : ""}
                 `
-              : html`<pre class="tree">${render(activeTree)}</pre>`}
+              : html`
+                  <div class="stage-label">${result.roots.length} root${result.roots.length === 1 ? "" : "s"}</div>
+                  <pre class="tree">${render(result.roots)}</pre>
+                `}
           </div>
         `}
     </div>
   `;
-  };
 });
 
 function render(nodes) {

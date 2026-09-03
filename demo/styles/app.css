@@ -115,3 +115,18 @@ h1 {
   border: 1px solid currentColor;
   font-size: 0.9rem;
 }
+
+.act {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: #666;
+  text-transform: uppercase;
+}
+.parts {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #2a2a2a;
+  font-size: 0.85rem;
+  color: #888;
+  white-space: pre-wrap;
+}
