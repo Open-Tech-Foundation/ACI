@@ -29,7 +29,7 @@ What survives both is primitive, and only that may be written in code.
 | the four ways to exist: thing / property / relation / action | which term is which |
 | the refinements of a thing: living / nonliving / person | that a cat is an animal |
 | how to walk a relation, and how to parse a rule | the relations, and the rules |
-| the acts it can express: greet, count, confirm, recognise, understood, affirm, deny, empathy, unknown | the words each act is voiced in |
+| the acts it can express: greet, count, confirm, recognise, learn, understood, affirm, deny, empathy, glad, unknown | the words each act is voiced in |
 | that a word may point, and that what it points at is the signal's own circumstance | which words point, and where each one points |
 | that what harms is refused, and the walk that decides it | which terms are bad, and what causes them |
 | that it answers a communication, counts a number, confirms a relation | which term is a communication, a number, a relation |
@@ -722,9 +722,9 @@ bad pole, and was said of whoever said it:
 
 ```
 > i am hurt        { from: 508 }     Sorry. 😔
-> the wheel is hurt                  I know.        said of something else
-> i am nice                          I know.        the other pole
-> i am not hurt                      I know.        they denied it
+> i am nice        { from: 508 }     Good. 🙂       the other pole, the other act
+> the wheel is hurt                  I understand.  said of something else
+> i am not hurt                      I understand.  they denied it
 ```
 
 Two walks decide it, and nothing is weighed: **one pole, one act**. The words
@@ -891,11 +891,19 @@ thing is `recognise` — the brain has nothing to reason over.
 |---|---|
 | was refused, for any reason | `deny` |
 | said something bad of whoever sent it | `empathy` |
-| made a claim the world bears out | `affirm` |
+| said something good of whoever sent it | `glad` |
+| told it something it did not hold | `learn` |
+| told it something it already held | `understood` |
+| asked a claim the world bears out | `affirm` |
 | made a claim the world denies | `deny` |
-| was bound into a whole | `understood` |
+| left something held or something happened | `learn` |
 | was a single thing | that thing's intent |
+| was bound and nothing came of it | `unknown` |
 | was never bound | `unknown` |
+
+There is **no default act**. Nothing falls through to *I know* for want of
+anywhere else to go: taking something in (`learn`) is not the same as having
+held it (`understood`), and a signal the brain did nothing with says so.
 
 `speak(intent, meaning, language, langs)` then asks **that language** for the
 words, and builds the node:

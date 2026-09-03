@@ -121,8 +121,10 @@ test("each word of a phrase is solved individually", async () => {
 
 test("a bound signal gets one expression for the whole", async () => {
   const r = await brain("hi hi");
-  assertEquals(r.expression.name, "understood");
-  assertEquals(r.expression.state.says, "I know.");
+  // A greeting is a communication, and a communication is an action: something
+  // happened, and the brain took it in rather than claiming to have known it.
+  assertEquals(r.expression.name, "learn");
+  assertEquals(r.expression.state.says, "I understand.");
   assertEquals(r.expression.state.bound, true);
 });
 
@@ -473,7 +475,7 @@ test("told something new, the brain learns it and hands it back", async () => {
     made: null,
     not: false,
   });
-  assertEquals(r.expression.name, "understood");
+  assertEquals(r.expression.name, "learn", "it took in what it did not hold");
   assertEquals(r.learned, {
     terms: [{ id: 83, name: "cat", links: [{ rel: 295, to: 230 }] }],
   });

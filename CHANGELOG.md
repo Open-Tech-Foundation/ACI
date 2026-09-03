@@ -13,6 +13,13 @@ All notable changes to this project are documented in this file.
   absence of a claim about when, not a third thing to record, and it is separate
   from `at`, the moment the brain heard it. The arrow between the three is the
   world's, written with the `order` relation it already had.
+- **An act for each pole, and no default act at all.** *I know* was where
+  everything fell that had nowhere else to go — a claim learned, an opinion
+  held, a signal nothing came of. Taking something in is now `learn`
+  (*I understand.*) and having already held it is `understood` (*I know.*); a
+  signal the brain did nothing with says so instead of claiming knowledge. Said
+  of whoever said it, the bad pole is `empathy` (*Sorry. 😔*) and the good one
+  `glad` (*Good. 🙂*).
 - **Empathy**, an act of its own. Understanding what someone feels and seeing it
   from where they stand — both halves of which the record already holds, so the
   act is the last step: what was said stands at the bad pole, and was said of

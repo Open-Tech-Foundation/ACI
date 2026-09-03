@@ -15,7 +15,7 @@ const linkOf = (r, rel) => r.learned.terms[0].links.find((l) => l.rel === rel);
 
 test("what someone says of a thing is held as theirs, with what they said it of", async () => {
   const r = await brain("the shelf is nice", sender);
-  assertEquals(r.expression.state.says, "I know.");
+  assertEquals(r.expression.state.says, "I understand.");
   assertEquals(linkOf(r, 294).to, NICE, "of what was said");
   assertEquals(linkOf(r, AGENT).to, 508, "by whoever sent it");
   assertEquals(linkOf(r, TARGET).to, 435, "about the shelf");
@@ -54,13 +54,15 @@ test("said of themselves, and standing at the bad pole, the brain empathizes", a
 });
 
 test("what they said of something else is understood, not empathized with", async () => {
-  assertEquals((await brain("the wheel is hurt", sender)).expression.name, "understood");
+  assertEquals((await brain("the wheel is hurt", sender)).expression.name, "learn");
 });
 
-test("what stands at the other pole is not empathy either", async () => {
-  assertEquals((await brain("i am nice", sender)).expression.name, "understood");
+test("what stands at the other pole is gladness, not empathy", async () => {
+  const r = await brain("i am nice", sender);
+  assertEquals(r.expression.name, "glad");
+  assertEquals(r.expression.state.says, "Good. \ud83d\ude42");
 });
 
 test("what they denied of themselves is not what they feel", async () => {
-  assertEquals((await brain("i am not hurt", sender)).expression.name, "understood");
+  assertEquals((await brain("i am not hurt", sender)).expression.name, "learn");
 });

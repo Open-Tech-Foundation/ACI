@@ -595,12 +595,14 @@
     "count":      "It is {meaning}.",
     "confirm":    "Yes, it {meaning}.",
     "recognise":  "I recognise \"{meaning}\".",
+    "learn":      "I understand.",
     "understood": "{self} {relation}.",
     "affirm":     "Yes.",
     "deny":       "No.",
     "answer":     "{meaning}",
     "unsure":     "{self} don't {relation}.",
     "empathy":    "Sorry. \ud83d\ude14",
+    "glad":       "Good. \ud83d\ude42",
     "unknown":    "..."
   },
   "grammar": {
