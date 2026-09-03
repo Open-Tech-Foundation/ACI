@@ -14,6 +14,8 @@ function fail(where, why) {
 
 // What a word may mark: which one is meant, or which side of the conversation.
 const MARKS = ['new', 'known', 'unknown', 'from', 'to'];
+const PERSONS = ['first', 'second', 'third'];
+const NUMBERS = ['singular', 'plural'];
 
 function isId(v) {
   return Number.isInteger(v) && v >= 0;
@@ -201,7 +203,11 @@ export function checkLanguage(data, where = 'language') {
   for (const [word, info] of Object.entries(data.words || {})) {
     const w = `${at} word "${word}"`;
     if (!info || typeof info !== 'object') fail(w, 'must be an object');
-    onlyKeys(info, ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups'], w);
+    onlyKeys(
+      info,
+      ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'person', 'number'],
+      w,
+    );
     if (typeof info.pos !== 'string' || info.pos === '') fail(w, 'pos must be a non-empty string');
     if (typeof info.meaning !== 'string') fail(w, 'meaning must be a string');
     if (info.concept !== undefined && !isId(info.concept)) fail(w, 'concept must be a term id');
@@ -212,6 +218,14 @@ export function checkLanguage(data, where = 'language') {
     // world anchors; the brain names none of them.
     if (info.when !== undefined && (typeof info.when !== 'string' || info.when === '')) {
       fail(w, 'when, where present, must name a moment');
+    }
+    // Who a word is said of, and how many. Closed sets, the same as `marks`:
+    // there are exactly three persons and exactly two numbers to be.
+    if (info.person !== undefined && !PERSONS.includes(info.person)) {
+      fail(w, `person must be one of ${PERSONS.map((p) => `"${p}"`).join(', ')}`);
+    }
+    if (info.number !== undefined && !NUMBERS.includes(info.number)) {
+      fail(w, `number must be one of ${NUMBERS.map((n) => `"${n}"`).join(', ')}`);
     }
     // Another way to write a term is not what the term is called.
     if (info.names !== undefined && info.names !== false) {

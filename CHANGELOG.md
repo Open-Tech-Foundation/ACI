@@ -13,6 +13,15 @@ All notable changes to this project are documented in this file.
   refuses the claim as unwarranted instead of accepting a fault it cannot
   find. A claim about anyone else is untouched — only criticism of the one
   holding the conversation is checked this way.
+- **`person` and `number`, as fields a word may carry.** The same closed-set
+  shape `when` already has: exactly three persons, exactly two numbers.
+  `shape.js` validates them and `en.json` tags what English says cleanly —
+  `am` (first, singular), `is` (third, singular), `i`/`me`/`my` (first,
+  singular), `you`/`your` (second) — and leaves `are` and `will` short of a
+  clean single value rather than assert one that's false half the time. The
+  fields are data now; nothing reads them yet — `recognizeLanguage()` in
+  `brain.js` still builds its own summary of a matched word and doesn't
+  forward `person`/`number` onto it.
 
 ### Changed
 
