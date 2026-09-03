@@ -6,6 +6,18 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- Memory. Told a claim it does not hold, the brain learns it and hands it back as
+  `result.learned`, world-shaped. The brain keeps nothing — `brainFrom` stays
+  pure — and `src/index.js` re-assembles knowledge through the same `fromSources`
+  door as every other source, so a memory that will not pass the shape check is
+  not kept. `forget()` returns the brain to what it was born and taught.
+- A claim that would close a loop is refused rather than learned, with a `refuse`
+  node saying so: a relation already running from the object to the subject
+  cannot also run back.
+- A question the world cannot fill keeps its `answer` node with `found: []` and
+  is expressed as `unknown`. What the brain looked for and did not find stays on
+  the tree.
+
 - The brain answers questions. A signal naming a relation with one term and
   something unresolved is a question, and `judge` solves for the hole instead of
   checking a claim: `"what is a cat?"` and `"a cat is what?"` both answer

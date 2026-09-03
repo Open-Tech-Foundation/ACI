@@ -21,6 +21,10 @@ const KNOWLEDGE = 'knowledge';
 const WORLD = 'data/world.json';
 
 let knowledgePromise = null;
+let sources = null;
+// What the brain has been taught since it started. The brain hands back what it
+// accepted and keeps none of it; remembering is the runtime's act, not its own.
+let memory = [];
 
 function loaded() {
   if (!knowledgePromise) knowledgePromise = assemble();
@@ -34,11 +38,27 @@ async function assemble() {
   const root = await projectRoot(file);
   if (!root) throw new Error(`cannot find ${WORLD} — the brain has no world`);
 
-  return fromSources({
+  sources = {
     world: await file(`${root}${WORLD}`).json(),
     knowledge: await readAll(root, KNOWLEDGE),
     languages: await readAll(root, LANGUAGES),
-  });
+  };
+  return fromSources(sources);
+}
+
+// Taking a fact in is a re-assembly, through the same door as every other
+// source: a memory that will not pass the shape check is not kept.
+function remember(learned) {
+  const next = { ...sources, knowledge: [...sources.knowledge, ...memory, learned] };
+  const knowledge = fromSources(next);
+  memory = [...memory, learned];
+  knowledgePromise = Promise.resolve(knowledge);
+  return knowledge;
+}
+
+export function forget() {
+  memory = [];
+  knowledgePromise = sources ? Promise.resolve(fromSources(sources)) : null;
 }
 
 async function projectRoot(file) {
@@ -74,5 +94,14 @@ async function readAll(root, dir) {
 }
 
 export async function brain(input) {
-  return brainFrom(input, await loaded());
+  const result = brainFrom(input, await loaded());
+  if (result.learned) {
+    try {
+      remember(result.learned);
+    } catch {
+      // A fact that will not pass the shape check is not kept, and the brain's
+      // answer stands as given.
+    }
+  }
+  return result;
 }

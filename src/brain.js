@@ -277,7 +277,7 @@ function worldNode(concept, world) {
 // the things it perceived, never off a grammar symbol: phrase names come from
 // data and mean nothing to the brain.
 // ---------------------------------------------------------------------------
-function judge(roots, world) {
+function judge(roots, world, mood) {
   if (!world || roots.length !== 1) return roots;
   const root = roots[0];
   if (root.kind === 'thing' || root.kind === 'void') return roots;
@@ -303,12 +303,21 @@ function judge(roots, world) {
     const object = conceptOf(nearest(said, at, 1, a.thing, world));
     if (subject == null || object == null) return roots;
     const holds = world.isA(subject, object, relation);
-    return [
-      withBranch(root, [
-        ...root.branch,
-        node('truth', holds ? 'true' : 'false', [], { subject, relation, object }),
-      ]),
-    ];
+    const added = [node('truth', holds ? 'true' : 'false', [], { subject, relation, object })];
+
+    // Told a claim it does not hold, the brain learns it — unless taking it
+    // would close a loop. A relation that already runs from the object to the
+    // subject cannot also run back, and a source saying so contradicts what is
+    // known. The brain refuses rather than holding both.
+    if (!holds && mood === 'tell') {
+      const loops = subject !== object && world.isA(object, subject, relation);
+      added.push(
+        loops
+          ? node('refuse', 'contradiction', [], { subject, relation, object })
+          : node('learn', 'link', [], { subject, relation, object }),
+      );
+    }
+    return [withBranch(root, [...root.branch, ...added])];
   }
 
   // One term, a relation, and something unresolved is a question, and the brain
@@ -452,17 +461,27 @@ function expression(roots, langs, mood) {
     roots.length === 1 && roots[0].kind !== 'thing' && roots[0].kind !== 'void';
   const truth = bound ? findBranch(roots[0], 'truth') : null;
   const answer = bound ? findBranch(roots[0], 'answer') : null;
+  const learned = bound ? findBranch(roots[0], 'learn') : null;
+  // A question the world cannot fill is a gap, not an answer. The node stays on
+  // the tree either way — what the brain looked for and did not find is worth
+  // as much as what it found.
+  const found =
+    answer && (answer.state.of === 'name' || answer.state.found.length > 0);
 
   // Asked, the brain answers the claim. Told, it answers only if it disagrees;
   // a claim it already holds is simply understood.
   const intent = truth
-    ? truth.name === 'false'
-      ? 'deny'
-      : mood === 'ask'
-        ? 'affirm'
-        : 'understood'
+    ? learned
+      ? 'understood'
+      : truth.name === 'false'
+        ? 'deny'
+        : mood === 'ask'
+          ? 'affirm'
+          : 'understood'
     : answer
-      ? 'answer'
+      ? found
+        ? 'answer'
+        : 'unknown'
       : bound
         ? 'understood'
         : parts.length === 1
@@ -616,13 +635,15 @@ export function brainFrom(input, knowledge) {
   const roots = understand(input, langs);
   const thoughtRoots = think(roots, langs);
   const solvedRoots = solve(thoughtRoots, world);
+  const mood = moodOf(input, langs);
   const structuredRoots = structurePhrase(solvedRoots, langs);
-  const judgedRoots = judge(structuredRoots, world);
+  const judgedRoots = judge(structuredRoots, world, mood);
   const expressedRoots = express(judgedRoots, langs, world);
   return {
     input,
     roots: expressedRoots,
-    expression: expression(expressedRoots, langs, moodOf(input, langs)),
+    expression: expression(expressedRoots, langs, mood),
+    learned: learnedFrom(judgedRoots, world),
     phases: {
       understand: roots,
       think: thoughtRoots,
@@ -631,6 +652,20 @@ export function brainFrom(input, knowledge) {
       judge: judgedRoots,
       express: expressedRoots,
     },
+  };
+}
+
+// What the brain accepted, in the one shape all knowledge takes. The brain does
+// not keep it — it hands it back, and the runtime decides whether to remember.
+function learnedFrom(roots, world) {
+  if (!world || roots.length !== 1) return null;
+  const learn = findBranch(roots[0], 'learn');
+  if (!learn) return null;
+  const { subject, relation, object } = learn.state;
+  const term = world.term(subject);
+  if (!term) return null;
+  return {
+    terms: [{ id: subject, name: term.name, links: [{ rel: relation, to: object }] }],
   };
 }
 

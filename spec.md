@@ -223,9 +223,26 @@ understand → think → solve → structure → judge → express
   roots: [node...],       // final output (structured signal, or per-word roots)
   expression: node,       // the one reply to the whole signal; its branch holds
                           // what was said about each thing
+  learned: { terms } | null,   // what it accepted, for the runtime to keep
   phases: { understand, think, solve, structure, judge, express }
 }
 ```
+
+## Memory
+
+The brain does not remember. It hands back what it accepted, and `src/index.js`
+— the runtime — decides whether to keep it, re-assembling knowledge through the
+same `fromSources` door as every other source. A memory that will not pass the
+shape check is not kept.
+
+```
+> a cat has what?      ...            it does not know
+> a cat has a mind     I understand.  ← learned
+> a cat has what?      mind
+> a cat has a mind?    Yes.
+```
+
+`forget()` returns the brain to what it was born and taught.
 
 ### 1. understand — perception + recognition
 
@@ -318,6 +335,20 @@ and `name`; `name` wins.
 with `world.isA(subject, object, relation)`. Adds a `truth` node (`true`/`false`)
 with `{ subject, relation, object }`.
 
+**Told a claim it does not hold → the brain learns it.** A `learn` node, handed
+back as `result.learned` in the one shape all knowledge takes. The brain keeps
+nothing: `brainFrom` stays pure, and remembering is the runtime's act.
+
+A claim that would **close a loop** is refused instead — a relation already
+running from the object to the subject cannot also run back, so a `refuse` node
+is added and nothing is learned.
+
+> **Not yet guarded.** Beyond loops, the brain cannot tell a claim it *disagrees*
+> with from one it merely *lacks*, so any other told claim is accepted. Teaching
+> it `"a cat is two"` makes a cat reach `number`, and everything derived from
+> that changes. Disjointness in the world, and the harm filter, are what close
+> this.
+
 **One term and something unresolved → a question.** The term the brain was given
 is the one being asked about, **wherever in the signal the hole fell** — a
 language puts its question words where it likes, and the brain does not need to
@@ -327,6 +358,10 @@ know where. Adds an `answer` node with `{ subject, relation, found, of }`:
 - `of: "name"` — the relation reaches `anchors.name`, so the answer is what *this
   language* calls the term. The brain's own name is not a fact it holds anywhere:
   it is the word naming its `self` term in the language being spoken.
+
+A question the world cannot fill leaves `found` empty. The node **stays on the
+tree** — what the brain looked for and did not find is worth as much as what it
+found — and the signal is expressed as `unknown` rather than answered emptily.
 
 ```
 what is your name?     ACI       self  --name--> (the word for it)

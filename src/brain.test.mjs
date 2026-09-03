@@ -1,5 +1,5 @@
 import { test, assert, assertEquals } from "runtime:test";
-import { brain } from "./index.js";
+import { brain, forget } from "./index.js";
 
 function kind(root, k) {
   return (root.branch || []).find((b) => b.kind === k) || null;
@@ -124,7 +124,7 @@ test("a bound signal gets one expression for the whole", async () => {
 });
 
 test("the whole expression keeps what was said about each thing", async () => {
-  const r = await brain("a cat is two");
+  const r = await brain("a cat is two?");
   assertEquals(
     r.expression.branch.map((b) => b.state.says),
     [
@@ -196,7 +196,7 @@ test("a signal in no language is left unsaid", async () => {
 });
 
 test("a subject-predicate sentence is parsed into a structure tree", async () => {
-  const r = await brain("a cat is two");
+  const r = await brain("a cat is two?");
   assertEquals(r.roots.length, 1, "a parseable sentence becomes one structured root");
   assertEquals(r.roots[0].kind, "sentence");
   const names = (r.roots[0].branch || []).map((b) => b.kind);
@@ -205,7 +205,7 @@ test("a subject-predicate sentence is parsed into a structure tree", async () =>
 });
 
 test("parsed structure keeps each word's solved meaning", async () => {
-  const r = await brain("a cat is two");
+  const r = await brain("a cat is two?");
   const exprNames = [];
   const walk = (n) => {
     if (n.kind === "express") exprNames.push(n.name);
@@ -277,7 +277,7 @@ test("a recursive rule parses — the parser backtracks past a short match", asy
 });
 
 test("an interjection followed by a full sentence parses", async () => {
-  const r = await brain("hi a cat is two");
+  const r = await brain("hi a cat is two?");
   assertEquals(r.roots.length, 1);
   const inner = r.roots[0].branch.find((b) => b.kind === "sentence");
   assert(inner !== null);
@@ -294,7 +294,7 @@ test("a fragment is not passed off as a sentence", async () => {
 });
 
 test("the root is named after the grammar's start symbol", async () => {
-  const r = await brain("a cat is two");
+  const r = await brain("a cat is two?");
   assertEquals(r.roots[0].kind, "sentence");
   assertEquals(r.roots[0].name, "sentence");
 });
@@ -345,7 +345,7 @@ test("which symbols are vowels comes from the data", async () => {
 });
 
 test("the brain checks a claim against the world and denies it", async () => {
-  const r = await brain("the apple is a tree");
+  const r = await brain("the apple is a tree?");
   const truth = kind(r.roots[0], "truth");
   assert(truth !== null, "a signal naming a relation makes a claim");
   assertEquals(truth.name, "false");
@@ -380,8 +380,8 @@ test("a claim about an ancestor holds", async () => {
 });
 
 test("a claim the chain does not bear out is denied", async () => {
-  assertEquals((await brain("a tree is an animal")).expression.state.says, "No.");
-  assertEquals((await brain("an apple is an organism")).expression.state.says, "No.");
+  assertEquals((await brain("a tree is an animal?")).expression.state.says, "No.");
+  assertEquals((await brain("an apple is an organism?")).expression.state.says, "No.");
 });
 
 test("the is relation runs one way only", async () => {
@@ -390,7 +390,7 @@ test("the is relation runs one way only", async () => {
 });
 
 test("a claim resolves across the whole chain, however long", async () => {
-  const r = await brain("an apple is a thing");
+  const r = await brain("an apple is a thing?");
   assertEquals(kind(r.roots[0], "truth").name, "true");
   assertEquals(kind(r.roots[0], "truth").state, { subject: 79, relation: 294, object: 2 });
 });
@@ -446,13 +446,37 @@ test("asked, the brain answers the claim", async () => {
   assertEquals((await brain("a cat is a plant?")).expression.name, "deny");
 });
 
-test("told, the brain answers only where it disagrees", async () => {
+test("told what it already holds, the brain simply understands", async () => {
   const held = await brain("a cat is an animal");
-  assertEquals(held.expression.name, "understood", "it already holds this");
-  assertEquals(held.expression.state.says, "I understand.");
+  assertEquals(held.expression.name, "understood");
+  assertEquals(held.learned, null, "nothing new to keep");
+});
 
-  const wrong = await brain("a cat is a plant");
-  assertEquals(wrong.expression.name, "deny", "it does not hold this");
+test("told something new, the brain learns it and hands it back", async () => {
+  forget();
+  const r = await brain("a cat has a mind");
+  assertEquals(kind(r.roots[0], "learn").state, { subject: 83, relation: 295, object: 230 });
+  assertEquals(r.expression.name, "understood");
+  assertEquals(r.learned, {
+    terms: [{ id: 83, name: "cat", links: [{ rel: 295, to: 230 }] }],
+  });
+  forget();
+});
+
+test("a claim that would close a loop is refused, not learned", async () => {
+  forget();
+  // The world holds person -> human, so human -> person cannot also hold.
+  const r = await brain("a human is a person");
+  assertEquals(kind(r.roots[0], "refuse").name, "contradiction");
+  assertEquals(kind(r.roots[0], "learn"), null);
+  assertEquals(r.expression.name, "deny");
+  assertEquals(r.learned, null);
+});
+
+test("a question is never learned from", async () => {
+  const r = await brain("a cat has a mind?");
+  assertEquals(kind(r.roots[0], "learn"), null);
+  assertEquals(r.learned, null);
 });
 
 test("a signal with no claim is unaffected by the mark", async () => {
@@ -504,4 +528,14 @@ test("two terms and a relation is still a claim, not a question", async () => {
   const r = await brain("a cat is an animal?");
   assert(kind(r.roots[0], "truth") !== null);
   assertEquals(kind(r.roots[0], "answer"), null);
+});
+
+test("a question the world cannot fill is a gap, not an empty answer", async () => {
+  forget();
+  const r = await brain("a cat has what?");
+  const answer = kind(r.roots[0], "answer");
+  assert(answer !== null, "the question the brain asked itself is on the tree");
+  assertEquals(answer.state.found, [], "and it found nothing");
+  assertEquals(r.expression.name, "unknown", "so it does not answer");
+  forget();
 });
