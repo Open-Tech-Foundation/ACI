@@ -386,7 +386,9 @@ test("a claim the chain does not bear out is denied", async () => {
 
 test("the is relation runs one way only", async () => {
   assertEquals((await brain("a person is a human?")).expression.state.says, "Yes.");
-  assertEquals((await brain("a human is a person?")).expression.state.says, "No.");
+  // Not denied — nothing says a human cannot be a person, only that the world
+  // does not hold it. Failing to find a path is not proof of the opposite.
+  assertEquals((await brain("a human is a person?")).expression.state.says, "I don't know.");
 });
 
 test("a claim resolves across the whole chain, however long", async () => {
@@ -432,7 +434,11 @@ test("a claim can be made over the has relation, not only is", async () => {
 
 test("the self is a thing, and not an animal", async () => {
   assertEquals((await brain("aci is a thing?")).expression.state.says, "Yes.");
-  assertEquals((await brain("aci is an animal?")).expression.state.says, "No.");
+  assertEquals(
+    (await brain("aci is an animal?")).expression.state.says,
+    "I don't know.",
+    "nothing yet says the self excludes an organism",
+  );
 });
 
 
@@ -467,7 +473,7 @@ test("a claim that would close a loop is refused, not learned", async () => {
   forget();
   // The world holds person -> human, so human -> person cannot also hold.
   const r = await brain("a human is a person");
-  assertEquals(kind(r.roots[0], "refuse").name, "contradiction");
+  assertEquals(kind(r.roots[0], "refuse").name, "loop");
   assertEquals(kind(r.roots[0], "learn"), null);
   assertEquals(r.expression.name, "deny");
   assertEquals(r.learned, null);
@@ -537,5 +543,42 @@ test("a question the world cannot fill is a gap, not an empty answer", async () 
   assert(answer !== null, "the question the brain asked itself is on the tree");
   assertEquals(answer.state.found, [], "and it found nothing");
   assertEquals(r.expression.name, "unknown", "so it does not answer");
+  forget();
+});
+
+test("failing to find a path is not proof of the opposite", async () => {
+  const r = await brain("a cat is a dog?");
+  assertEquals(kind(r.roots[0], "truth").name, "unknown");
+  assertEquals(r.expression.name, "unsure");
+  assertEquals(r.expression.state.says, "I don't know.");
+});
+
+test("terms that exclude each other make a claim false, not unknown", async () => {
+  for (const q of ["a cat is a number?", "two is an animal?", "an apple is an organism?"]) {
+    const r = await brain(q);
+    assertEquals(kind(r.roots[0], "truth").name, "false", q);
+    assertEquals(r.expression.state.says, "No.", q);
+  }
+});
+
+test("exclusion is read off the kinds, however far apart they sit", async () => {
+  // cat -> animal -> organism -> physical-thing, two -> number -> abstract-thing,
+  // and physical-thing stands `different` to abstract-thing.
+  assertEquals(kind((await brain("a cat is two?")).roots[0], "truth").name, "false");
+});
+
+test("only a claim about kind can be excluded", async () => {
+  // A cat and a mind are different kinds, but having one is not being one.
+  const r = await brain("a cat has a mind?");
+  assertEquals(kind(r.roots[0], "truth").name, "unknown", "not denied by exclusion");
+});
+
+test("a contradicted claim is refused rather than learned", async () => {
+  forget();
+  const r = await brain("a cat is two");
+  assertEquals(kind(r.roots[0], "refuse").name, "contradiction");
+  assertEquals(kind(r.roots[0], "learn"), null);
+  assertEquals(r.learned, null);
+  assertEquals(r.expression.state.says, "No.");
   forget();
 });

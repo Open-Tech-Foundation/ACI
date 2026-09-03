@@ -302,18 +302,30 @@ function judge(roots, world, mood) {
     const subject = conceptOf(nearest(said, at, -1, a.thing, world));
     const object = conceptOf(nearest(said, at, 1, a.thing, world));
     if (subject == null || object == null) return roots;
+    // A claim either holds, is contradicted, or is simply not known. Failing to
+    // find a path is not proof of the opposite — only two terms that exclude
+    // each other are, and only where the claim is about kind.
     const holds = world.isA(subject, object, relation);
-    const added = [node('truth', holds ? 'true' : 'false', [], { subject, relation, object })];
+    const kindClaim = relation === world.baseRelation;
+    const truth = holds
+      ? 'true'
+      : kindClaim && world.excludes(subject, object)
+        ? 'false'
+        : 'unknown';
+    const added = [node('truth', truth, [], { subject, relation, object })];
 
-    // Told a claim it does not hold, the brain learns it — unless taking it
-    // would close a loop. A relation that already runs from the object to the
-    // subject cannot also run back, and a source saying so contradicts what is
-    // known. The brain refuses rather than holding both.
+    // Told a claim it does not hold, the brain learns it — unless the claim is
+    // contradicted, or taking it would close a loop. A relation already running
+    // from the object to the subject cannot also run back.
     if (!holds && mood === 'tell') {
       const loops = subject !== object && world.isA(object, subject, relation);
       added.push(
-        loops
-          ? node('refuse', 'contradiction', [], { subject, relation, object })
+        truth === 'false' || loops
+          ? node('refuse', truth === 'false' ? 'contradiction' : 'loop', [], {
+              subject,
+              relation,
+              object,
+            })
           : node('learn', 'link', [], { subject, relation, object }),
       );
     }
@@ -462,6 +474,7 @@ function expression(roots, langs, mood) {
   const truth = bound ? findBranch(roots[0], 'truth') : null;
   const answer = bound ? findBranch(roots[0], 'answer') : null;
   const learned = bound ? findBranch(roots[0], 'learn') : null;
+  const refused = bound ? findBranch(roots[0], 'refuse') : null;
   // A question the world cannot fill is a gap, not an answer. The node stays on
   // the tree either way — what the brain looked for and did not find is worth
   // as much as what it found.
@@ -470,14 +483,20 @@ function expression(roots, langs, mood) {
 
   // Asked, the brain answers the claim. Told, it answers only if it disagrees;
   // a claim it already holds is simply understood.
+  // A refusal is a denial whatever the world could settle: the brain is turning
+  // the teaching down, not reporting on it.
   const intent = truth
-    ? learned
-      ? 'understood'
-      : truth.name === 'false'
-        ? 'deny'
-        : mood === 'ask'
-          ? 'affirm'
-          : 'understood'
+    ? refused
+      ? 'deny'
+      : learned
+        ? 'understood'
+        : truth.name === 'false'
+          ? 'deny'
+          : truth.name === 'unknown'
+            ? 'unsure'
+            : mood === 'ask'
+              ? 'affirm'
+              : 'understood'
     : answer
       ? found
         ? 'answer'

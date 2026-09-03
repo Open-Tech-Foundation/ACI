@@ -331,9 +331,20 @@ Which relation is being spoken of: `is` is the weakest claim a signal can make,
 so **any other relation named takes it**. `"what is your name"` names both `is`
 and `name`; `name` wins.
 
-**Two terms → a claim.** The nearest term either side of the relation, checked
-with `world.isA(subject, object, relation)`. Adds a `truth` node (`true`/`false`)
-with `{ subject, relation, object }`.
+**Two terms → a claim.** The nearest term either side of the relation. Adds a
+`truth` node with `{ subject, relation, object }`, and it has **three** values:
+
+| | when |
+|---|---|
+| `true` | `world.isA(subject, object, relation)` |
+| `false` | the terms **exclude** each other, and the claim is about kind |
+| `unknown` | neither — the world neither holds it nor forbids it |
+
+Failing to find a path is **not** proof of the opposite. Only exclusion is.
+`world.excludes(x, y)` is true when anything `x` is a kind of stands `different`
+to anything `y` is a kind of — the `different` relation, declared in the world
+like any other. Exclusion settles claims about **kind** only: a cat and a mind
+are different kinds, but *having* one is not *being* one.
 
 **Told a claim it does not hold → the brain learns it.** A `learn` node, handed
 back as `result.learned` in the one shape all knowledge takes. The brain keeps
@@ -343,11 +354,12 @@ A claim that would **close a loop** is refused instead — a relation already
 running from the object to the subject cannot also run back, so a `refuse` node
 is added and nothing is learned.
 
-> **Not yet guarded.** Beyond loops, the brain cannot tell a claim it *disagrees*
-> with from one it merely *lacks*, so any other told claim is accepted. Teaching
-> it `"a cat is two"` makes a cat reach `number`, and everything derived from
-> that changes. Disjointness in the world, and the harm filter, are what close
-> this.
+A **contradicted** claim is refused the same way, with `refuse: contradiction`.
+So teaching the brain `"a cat is two"` no longer corrupts it: a cat is a kind of
+physical thing, two is a kind of abstract thing, and those stand `different`.
+
+> **Still not guarded:** the harm filter (§ harm). A claim can be consistent with
+> the world and still be one the brain should not take.
 
 **One term and something unresolved → a question.** The term the brain was given
 is the one being asked about, **wherever in the signal the hole fell** — a
@@ -452,7 +464,7 @@ no language at all, so it is always unsaid.
   `loadLanguageDirectory(dir)` reads `*.json` **in name order**, so the brain sees
   the same languages in the same order on every machine.
 - `src/world.js` — `fromWorldData(data)` compiles the world into
-  `{ anchors, term(id), isA(id, ancestorId, rel) }`. `isA` walks whichever relation
+  `{ anchors, baseRelation, term, isA, linked, excludes }`. `isA` walks whichever relation
   it is asked about (the `is` relation by default) and terminates on cycles.
 - `src/index.js` — server-only bootstrap: `brain(input)` loads `languages/`,
   `data/world.json` and `knowledge/` via `runtime:fs` (probing relative candidates
@@ -470,7 +482,7 @@ fromSources({ world, knowledge, languages })  // validates, merges
 node(kind, name, branch, state)
 
 import { fromWorldData } from './world.js';
-fromWorldData(data)      // { anchors, term(id), isA(id, ancestorId, rel) }
+fromWorldData(data)      // { anchors, baseRelation, term, isA, linked, excludes }
 
 import { brain } from './index.js';   // server-only convenience
 await brain("hi")                     // loads languages internally

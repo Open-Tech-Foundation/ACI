@@ -6,6 +6,17 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- Disjointness. `truth` has three values instead of two: `true`, `false`, and
+  `unknown`. Failing to find a path is no longer reported as denial — only terms
+  that **exclude** each other make a claim false. `world.excludes(x, y)` walks
+  the `different` relation, which the world already declared and never used, and
+  exclusion settles claims about kind only.
+- The ontology's own top-level splits as `different` links: physical/abstract,
+  object/substance/organism, animal/plant.
+- The `unsure` intent, voiced in `en.json` as "I don't know."
+- A contradicted claim is refused rather than learned, so teaching the brain
+  `"a cat is two"` no longer makes a cat reach `number`.
+
 - Memory. Told a claim it does not hold, the brain learns it and hands it back as
   `result.learned`, world-shaped. The brain keeps nothing — `brainFrom` stays
   pure — and `src/index.js` re-assembles knowledge through the same `fromSources`

@@ -11,6 +11,7 @@ export function fromWorldData(data) {
   for (const t of data.terms || []) terms.set(t.id, t);
 
   const isRel = (data.relations && data.relations.is) ?? null;
+  const differentRel = (data.relations && data.relations.different) ?? null;
   const anchors = data.anchors || {};
 
   // Walk one relation from a term, collecting every id it reaches. A term may
@@ -39,6 +40,29 @@ export function fromWorldData(data) {
     // signal can make: any other relation a signal names is more specific.
     baseRelation: isRel,
     term: (id) => terms.get(id) || null,
+    // Whether two terms exclude each other as kinds: anything either of them is
+    // a kind of, standing `different` to anything the other is a kind of. This
+    // is what lets the brain say no rather than only fail to say yes.
+    excludes: (x, y) => {
+      if (differentRel == null || x == null || y == null) return false;
+      const xs = reaches(x, isRel);
+      const ys = reaches(y, isRel);
+      for (const dx of xs) {
+        const t = terms.get(dx);
+        if (!t) continue;
+        for (const l of t.links || []) {
+          if (l.rel === differentRel && ys.has(l.to)) return true;
+        }
+      }
+      for (const dy of ys) {
+        const t = terms.get(dy);
+        if (!t) continue;
+        for (const l of t.links || []) {
+          if (l.rel === differentRel && xs.has(l.to)) return true;
+        }
+      }
+      return false;
+    },
     // What a term links to directly by one relation — its answer, where isA is
     // its question.
     linked: (id, rel) => {

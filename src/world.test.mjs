@@ -80,3 +80,30 @@ test("all links of a relation are followed, not only the first", () => {
   assert(w.isA(1, 3), "and the second");
   assert(w.isA(1, 4), "and on through it");
 });
+
+test("two terms exclude each other when their kinds stand different", () => {
+  const DIFF = 8;
+  const w = fromWorldData({
+    relations: { is: IS, different: DIFF },
+    terms: [
+      { id: 1, name: "thing", links: [] },
+      { id: 2, name: "here", links: [{ rel: IS, to: 1 }, { rel: DIFF, to: 3 }] },
+      { id: 3, name: "there", links: [{ rel: IS, to: 1 }] },
+      { id: 4, name: "a", links: [{ rel: IS, to: 2 }] },
+      { id: 5, name: "b", links: [{ rel: IS, to: 3 }] },
+      { id: 6, name: "loose", links: [{ rel: IS, to: 1 }] },
+    ],
+  });
+  assert(w.excludes(4, 5), "far apart, but their kinds are different");
+  assert(w.excludes(5, 4), "and it reads either way round");
+  assertEquals(w.excludes(4, 6), false, "nothing says these two exclude");
+  assertEquals(w.excludes(4, 4), false);
+});
+
+test("a world that declares no different relation excludes nothing", () => {
+  const w = fromWorldData({
+    relations: { is: IS },
+    terms: [{ id: 1, name: "a", links: [] }, { id: 2, name: "b", links: [] }],
+  });
+  assertEquals(w.excludes(1, 2), false);
+});

@@ -63,6 +63,7 @@
     "affirm":     "Yes.",
     "deny":       "No.",
     "answer":     "{meaning}",
+    "unsure":     "I don't know.",
     "unknown":    "..."
   },
   "grammar": {

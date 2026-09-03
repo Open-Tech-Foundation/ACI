@@ -3,7 +3,7 @@ import { brain, forget } from "./index.js";
 
 test("a fact told is a fact kept", async () => {
   forget();
-  assertEquals((await brain("a cat has a mind?")).expression.state.says, "No.");
+  assertEquals((await brain("a cat has a mind?")).expression.state.says, "I don't know.");
   await brain("a cat has a mind");
   assertEquals((await brain("a cat has a mind?")).expression.state.says, "Yes.");
   forget();
@@ -33,19 +33,28 @@ test("forgetting returns the brain to what it was born and taught", async () => 
   await brain("a cat has a mind");
   assertEquals((await brain("a cat has a mind?")).expression.state.says, "Yes.");
   forget();
-  assertEquals((await brain("a cat has a mind?")).expression.state.says, "No.");
+  assertEquals((await brain("a cat has a mind?")).expression.state.says, "I don't know.");
 });
 
-test("a refused claim is never kept", async () => {
+test("a claim that would close a loop is never kept", async () => {
   forget();
   await brain("a human is a person");
-  assertEquals((await brain("a human is a person?")).expression.state.says, "No.");
+  assertEquals((await brain("a human is a person?")).expression.state.says, "I don't know.");
+  forget();
+});
+
+test("a contradicted claim is never kept", async () => {
+  forget();
+  const r = await brain("a cat is a number");
+  assertEquals(r.learned, null, "the world says a cat cannot be one");
+  assertEquals(r.expression.state.says, "No.");
+  assertEquals((await brain("cat")).expression.name, "recognise", "and nothing downstream moved");
   forget();
 });
 
 test("asking never teaches", async () => {
   forget();
   await brain("a cat has a mind?");
-  assertEquals((await brain("a cat has a mind?")).expression.state.says, "No.");
+  assertEquals((await brain("a cat has a mind?")).expression.state.says, "I don't know.");
   forget();
 });
