@@ -1,5 +1,8 @@
 import { test, assert, assertEquals } from "runtime:test";
-import { brain } from "./index.js";
+import { openBrain } from "./index.js";
+
+// A store of its own, that nothing else can reach.
+const { brain, forget } = openBrain("sqlite::memory:");
 
 // Every test here owns entities no other test touches, so nothing one learns
 // can be seen by another whatever order they run in.
@@ -49,4 +52,30 @@ test("a claim that would close a loop is never kept", async () => {
 test("asking never teaches", async () => {
   await brain("an owl has a claw?");
   assertEquals(await says("an owl has a claw?"), "I don't know.");
+});
+
+test("two brains over two stores cannot reach each other", async () => {
+  const one = openBrain("sqlite::memory:");
+  const other = openBrain("sqlite::memory:");
+
+  await one.brain("a chair has five cup");
+  assertEquals((await one.brain("the chair has how many cups?")).expression.state.says, "five");
+  assertEquals(
+    (await other.brain("the chair has how many cups?")).expression.state.says,
+    "I don't know.",
+    "the other brain was never told",
+  );
+});
+
+test("forgetting reaches only the brain it was asked of", async () => {
+  const one = openBrain("sqlite::memory:");
+  const other = openBrain("sqlite::memory:");
+  await one.brain("a table has three lamp");
+  await other.brain("a table has seven lamp");
+
+  await one.forget();
+  assertEquals((await one.brain("the table has how many lamps?")).expression.state.says,
+    "I don't know.");
+  assertEquals((await other.brain("the table has how many lamps?")).expression.state.says,
+    "seven", "untouched");
 });

@@ -1,5 +1,8 @@
 import { test, assert, assertEquals } from "runtime:test";
-import { brain } from "./index.js";
+import { openBrain } from "./index.js";
+
+// A store of its own, that nothing else can reach.
+const { brain, forget } = openBrain("sqlite::memory:");
 
 // Every test owns a container and a thing no other test touches, so none of
 // them can see what another learned, whatever order they run in.

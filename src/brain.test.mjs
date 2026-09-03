@@ -1,5 +1,8 @@
 import { test, assert, assertEquals } from "runtime:test";
-import { brain, forget } from "./index.js";
+import { openBrain } from "./index.js";
+
+// A store of its own, that nothing else can reach.
+const { brain, forget } = openBrain("sqlite::memory:");
 
 function kind(root, k) {
   return (root.branch || []).find((b) => b.kind === k) || null;

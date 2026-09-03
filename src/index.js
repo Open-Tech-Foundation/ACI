@@ -7,7 +7,6 @@
 //
 // Everything the brain knows is loaded here, once, by convention:
 //
-//   data/aci.db        the world, kept in sqlite and seeded from the json below
 //   data/world.json    the world as authored — the seed, and the export format
 //   languages/*.json   one file per language
 //   knowledge/*.json   anything taught on top of it, world-shaped
@@ -21,75 +20,93 @@ import { openStore, isEmpty, seed, readWorld, write, forgetLearned } from './sto
 const LANGUAGES = 'languages';
 const KNOWLEDGE = 'knowledge';
 const WORLD = 'data/world.json';
-// Where the world is kept between runs. Nowhere, unless asked: a run that was
-// not told to remember must not be haunted by one that was.
-const STORE = 'ACI_STORE';
 
-let knowledgePromise = null;
-let sources = null;
-let store = null;
+// One brain over one store. Anyone wanting a world of their own opens one —
+// a store in memory is a world nothing else can reach, which is what a test
+// wants and what two brains on one machine want.
+export function openBrain(url) {
+  let knowledgePromise = null;
+  let sources = null;
+  let store = null;
 
-// One thing at a time at the store. A read left running blocks the next write,
-// and two brains answering at once would otherwise interleave.
-let gate = Promise.resolve();
-function inTurn(work) {
-  const run = gate.then(work, work);
-  gate = run.then(
-    () => {},
-    () => {},
-  );
-  return run;
-}
-
-function loaded() {
-  if (!knowledgePromise) knowledgePromise = assemble();
-  return knowledgePromise;
-}
-
-async function assemble() {
-  const { file } = await import('runtime:fs');
-  const root = await projectRoot(file);
-  if (!root) throw new Error(`cannot find ${WORLD} — the brain has no world`);
-
-  store = await open(root);
-  await inTurn(async () => {
-    if (await isEmpty(store)) await seed(store, await file(`${root}${WORLD}`).json());
-  });
-
-  sources = {
-    knowledge: await readAll(root, KNOWLEDGE),
-    languages: await readAll(root, LANGUAGES),
+  // One thing at a time at the store: a read left running blocks the next
+  // write, and two answers at once would otherwise interleave.
+  let gate = Promise.resolve();
+  const inTurn = (work) => {
+    const run = gate.then(work, work);
+    gate = run.then(
+      () => {},
+      () => {},
+    );
+    return run;
   };
-  return build();
-}
 
-// The store keeps the world; the shape check reads it back the same way it
-// reads any other source. Where it came from is not the brain's business, and
-// it is validated all the same.
-function build() {
-  return inTurn(async () => fromSources({ ...sources, world: await readWorld(store) }));
-}
+  const loaded = () => {
+    if (!knowledgePromise) knowledgePromise = assemble();
+    return knowledgePromise;
+  };
 
-// A file where one is named and may be written, and nothing but this run
-// otherwise. It says which, rather than quietly forgetting everything on exit.
-async function open(root) {
-  const { env } = await import('runtime:process');
-  const named = env[STORE];
-  if (!named) return openStore('sqlite::memory:');
-  const path = named.startsWith('/') ? named : `${root}${named}`;
-  try {
-    return await openStore(`sqlite:${path}`);
-  } catch {
-    console.warn(`cannot write ${path} — this run will not be remembered`);
-    return openStore('sqlite::memory:');
+  // The store keeps the world; the shape check reads it back the same way it
+  // reads any other source. Where it came from is not the brain's business,
+  // and it is validated all the same.
+  const build = () =>
+    inTurn(async () => fromSources({ ...sources, world: await readWorld(store) }));
+
+  async function assemble() {
+    const { file } = await import('runtime:fs');
+    const root = await projectRoot(file);
+    if (!root) throw new Error(`cannot find ${WORLD} — the brain has no world`);
+
+    store = await open(root);
+    await inTurn(async () => {
+      if (await isEmpty(store)) await seed(store, await file(`${root}${WORLD}`).json());
+    });
+
+    sources = {
+      knowledge: await readAll(root, KNOWLEDGE),
+      languages: await readAll(root, LANGUAGES),
+    };
+    return build();
   }
-}
 
-export async function forget() {
-  if (!store) return;
-  await inTurn(() => forgetLearned(store));
-  knowledgePromise = build();
-  await knowledgePromise;
+  // A file where one is named and may be written, and nothing but this run
+  // otherwise. It says which, rather than quietly forgetting everything on exit.
+  async function open(root) {
+    const named = url ?? (await import('runtime:process')).env.ACI_STORE;
+    if (!named) return openStore('sqlite::memory:');
+    if (named.startsWith('sqlite:')) return openStore(named);
+    const path = named.startsWith('/') ? named : `${root}${named}`;
+    try {
+      return await openStore(`sqlite:${path}`);
+    } catch {
+      console.warn(`cannot write ${path} — this run will not be remembered`);
+      return openStore('sqlite::memory:');
+    }
+  }
+
+  async function brain(input) {
+    const result = brainFrom(input, await loaded());
+    if (result.learned) {
+      try {
+        await inTurn(() => write(store, result.learned));
+      } catch {
+        // A fact that will not pass the store is not kept, and the brain's
+        // answer stands as given.
+      }
+      knowledgePromise = build();
+      await knowledgePromise;
+    }
+    return result;
+  }
+
+  async function forget() {
+    if (!store) return;
+    await inTurn(() => forgetLearned(store));
+    knowledgePromise = build();
+    await knowledgePromise;
+  }
+
+  return { brain, forget };
 }
 
 async function projectRoot(file) {
@@ -124,18 +141,7 @@ async function readAll(root, dir) {
   return out;
 }
 
-export async function brain(input) {
-  const result = brainFrom(input, await loaded());
-  if (result.learned) {
-    try {
-      await inTurn(() => write(store, result.learned));
-      knowledgePromise = build();
-      await knowledgePromise;
-    } catch {
-      // A fact that will not pass the shape check is not kept, and the brain's
-      // answer stands as given.
-      knowledgePromise = build();
-    }
-  }
-  return result;
-}
+// The brain this process speaks with, over whatever store ACI_STORE names.
+const here = openBrain();
+export const brain = (input) => here.brain(input);
+export const forget = () => here.forget();
