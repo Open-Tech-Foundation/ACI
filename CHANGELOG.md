@@ -36,6 +36,13 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
+- The brain chooses its expressive act by **walking the world**, not by the part
+  of speech: a term reaching `anchors.communication` is greeted, `anchors.number`
+  counted, `anchors.relation` confirmed. A word filed as a noun whose term is a
+  communication is greeted all the same. With no world loaded, every thing is
+  `recognise`.
+- `anchors` gains `communication` (256) and `number` (100).
+
 - **The brain holds no replies.** `express` now decides only an *intent* — one of
   `nothing`, `greet`, `count`, `confirm`, `recognise`, `understood`, `affirm`,
   `deny`, `unknown` — and the language the signal was recognized as supplies the

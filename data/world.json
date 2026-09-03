@@ -5,7 +5,9 @@
     "relation": 4,
     "action": 5,
     "living": 10,
-    "person": 29
+    "person": 29,
+    "communication": 256,
+    "number": 100
   },
   "relations": {
     "is": 294

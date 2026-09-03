@@ -30,6 +30,7 @@ What survives both is primitive, and only that may be written in code.
 | the refinements of a thing: living / nonliving / person | that a cat is an animal |
 | how to walk a relation, and how to parse a rule | the relations, and the rules |
 | the acts it can express: greet, count, confirm, recognise, understood, affirm, deny, unknown | the words each act is voiced in |
+| that it answers a communication, counts a number, confirms a relation | which term is a communication, a number, a relation |
 
 A concrete case, because this is the one that keeps being got wrong: the brain
 **never holds a reply**. It decides only *what it means to express* — an intent
@@ -50,8 +51,9 @@ The split is strict and enforced:
   whatever it is given; it never knows a language's name or rules itself.
 - **`data/world.json`** — external knowledge: what exists and how it relates.
   It holds **no language** — a term is an id and its links. The brain owns the
-  categories (`living`, `person`); the world says which term realizes each, via
-  `anchors`.
+  categories; the world says which term realizes each, via `anchors`. Every
+  judgement the brain makes — what is alive, what a signal claims, what to
+  express — is a walk over this graph.
 
 Anything the brain cannot infer structurally must come from data; anything data
 provides must only *instantiate* the brain's primitives — never hand the brain a
@@ -115,7 +117,8 @@ said — the engine has no words to fall back on.
 {
   "anchors": {                                  // brain categories -> term ids
     "thing": 2, "property": 3, "relation": 4, "action": 5,
-    "living": 10, "person": 29
+    "living": 10, "person": 29,
+    "communication": 256, "number": 100
   },
   "relations": { "is": 294 },                   // the relation is itself a term
   "terms": [
@@ -275,17 +278,23 @@ decided by walking the world, not by any rule in the engine.
 Runs on the judged, structured signal. The brain decides **what it means to
 express**; it never decides the words.
 
-`intentOf(n)` picks one of the brain's own acts from what the thing was
-understood to be:
+`intentOf(n, world)` picks one of the brain's own acts by walking the world to
+its anchors. **The part of speech plays no part** — a word filed as a noun whose
+term is a communication is still greeted, because what a thing *is* is a fact
+about the world, not about the language that named it.
 
-| the thing | intent |
+| the term reaches | intent |
 |---|---|
 | nothing was there | `nothing` |
-| an interjection | `greet` |
-| a numeral | `count` |
-| a verb | `confirm` |
-| anything else with a meaning | `recognise` |
-| no meaning | `unknown` |
+| `anchors.communication` | `greet` |
+| `anchors.number` | `count` |
+| `anchors.relation` | `confirm` |
+| anything else, with a meaning | `recognise` |
+| no meaning at all | `unknown` |
+
+A word with a meaning but no term is `recognise`: the brain knows what was said
+without being able to place it in the world. With no world loaded at all, every
+thing is `recognise` — the brain has nothing to reason over.
 
 `expression(roots, langs)` then picks the one act toward the whole signal:
 

@@ -325,25 +325,36 @@ function nearestTerm(said, from, step, anchor, world) {
 // innate acts. How that intent is voiced belongs to the language it recognized,
 // and lives in that language's data. No reply is written into the engine.
 // ---------------------------------------------------------------------------
-function express(roots, langs) {
+function express(roots, langs, world) {
   return roots.map((n) =>
     walk(n, (b) =>
       b.kind === 'thing' || b.kind === 'void'
-        ? withBranch(b, [...b.branch, speak(intentOf(b), meaningOf(b), languageOf(b), langs)])
+        ? withBranch(b, [
+            ...b.branch,
+            speak(intentOf(b, world), meaningOf(b), languageOf(b), langs),
+          ])
         : withBranch(b),
     ),
   );
 }
 
-// What the brain means to express about a thing, from what it understood it to
-// be. These are the brain's acts, not any language's words.
-function intentOf(n) {
+// What the brain means to express about a thing, decided by what the world says
+// the thing IS — never by the part of speech the language filed it under. The
+// brain walks to its own anchors and answers the kind of thing it found: it
+// answers a communication with one of its own, counts a number, confirms a
+// relation, and otherwise says it knows the thing.
+function intentOf(n, world) {
   if (!n.state.exists) return 'nothing';
   const ts = thoughtOf(n);
   if (!ts || ts.meaning == null) return 'unknown';
-  if (ts.pos === 'interjection') return 'greet';
-  if (ts.pos === 'numeral') return 'count';
-  if (ts.pos === 'verb') return 'confirm';
+
+  const concept = ts.concept;
+  const a = world && world.anchors ? world.anchors : {};
+  if (concept != null && world) {
+    if (world.isA(concept, a.communication)) return 'greet';
+    if (world.isA(concept, a.number)) return 'count';
+    if (world.isA(concept, a.relation)) return 'confirm';
+  }
   return 'recognise';
 }
 
@@ -527,7 +538,7 @@ export function brainFrom(input, langs, world) {
   const solvedRoots = solve(thoughtRoots, world);
   const structuredRoots = structurePhrase(solvedRoots, langs);
   const judgedRoots = judge(structuredRoots, world);
-  const expressedRoots = express(judgedRoots, langs);
+  const expressedRoots = express(judgedRoots, langs, world);
   return {
     input,
     roots: expressedRoots,
