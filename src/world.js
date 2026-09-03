@@ -53,21 +53,23 @@ export function fromWorldData(data) {
     // a kind of, standing `different` to anything the other is a kind of. This
     // is what lets the brain say no rather than only fail to say yes.
     excludes: (x, y) => {
-      if (differentRel == null || x == null || y == null) return false;
+      if (x == null || y == null) return false;
       const xs = reaches(x, isRel);
       const ys = reaches(y, isRel);
-      for (const dx of xs) {
-        const t = terms.get(dx);
-        if (!t) continue;
-        for (const l of t.links || []) {
-          if (l.rel === differentRel && ys.has(l.to)) return true;
-        }
-      }
-      for (const dy of ys) {
-        const t = terms.get(dy);
-        if (!t) continue;
-        for (const l of t.links || []) {
-          if (l.rel === differentRel && xs.has(l.to)) return true;
+
+      // Written out pair by pair, either way round.
+      if (differentRel != null) {
+        for (const [these, those] of [
+          [xs, ys],
+          [ys, xs],
+        ]) {
+          for (const d of these) {
+            const t = terms.get(d);
+            if (!t) continue;
+            for (const l of t.links || []) {
+              if (l.rel === differentRel && those.has(l.to)) return true;
+            }
+          }
         }
       }
       // A parent may say its children are exclusive rather than every pair of

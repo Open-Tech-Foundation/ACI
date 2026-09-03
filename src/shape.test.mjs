@@ -112,3 +112,37 @@ test("knowledge may not move an anchor", () => {
   });
   assert(msg.includes("anchor"), msg);
 });
+
+test("one thing may not be written twice in a source", () => {
+  const bad = { ...world, terms: [...world.terms, { id: 11, name: "bird", links: [] }] };
+  const msg = refuses("a second bird", { world: bad });
+  assert(msg.includes("bird") && msg.includes("one thing, one term"), msg);
+});
+
+test("nor twice between two sources", () => {
+  const msg = refuses("a bird taught beside the one known", {
+    world,
+    knowledge: [{ terms: [{ id: 12, name: "bird", links: [{ rel: IS, to: 1 }] }] }],
+  });
+  assert(msg.includes("one thing, one term"), msg);
+});
+
+test("children of a disjoint parent are kinds apart", () => {
+  const k = fromSources({
+    world: {
+      anchors: { thing: 1 },
+      relations: { is: IS },
+      terms: [
+        { id: 1, name: "thing", links: [], disjoint: true },
+        { id: 2, name: "relation", links: [] },
+        { id: IS, name: "is", links: [{ rel: IS, to: 2 }] },
+        { id: 20, name: "here", links: [{ rel: IS, to: 1 }] },
+        { id: 21, name: "there", links: [{ rel: IS, to: 1 }] },
+        { id: 22, name: "deep", links: [{ rel: IS, to: 20 }] },
+        { id: 23, name: "far", links: [{ rel: IS, to: 21 }] },
+      ],
+    },
+  });
+  assert(k.world.excludes(22, 23), "one marking did the work of every pair");
+  assertEquals(k.world.excludes(22, 20), false, "a thing is not apart from its own kind");
+});

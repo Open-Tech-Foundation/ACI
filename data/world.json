@@ -3481,28 +3481,8 @@
       ]
     },
     {
-      "id": 320,
-      "name": "earth",
-      "links": [
-        {
-          "rel": 294,
-          "to": 8
-        }
-      ]
-    },
-    {
       "id": 321,
       "name": "ground",
-      "links": [
-        {
-          "rel": 294,
-          "to": 8
-        }
-      ]
-    },
-    {
-      "id": 322,
-      "name": "sky",
       "links": [
         {
           "rel": 294,

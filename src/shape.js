@@ -33,6 +33,7 @@ export function checkWorld(data, where = 'world') {
   if (!Array.isArray(data.terms)) fail(where, 'terms must be an array');
 
   const byId = new Map();
+  const byName = new Map();
   for (const t of data.terms) {
     const at = `${where} term ${JSON.stringify(t && t.id)}`;
     if (!t || typeof t !== 'object') fail(where, 'every term must be an object');
@@ -40,6 +41,11 @@ export function checkWorld(data, where = 'world') {
     if (!isId(t.id)) fail(at, 'id must be a non-negative integer');
     if (typeof t.name !== 'string' || t.name === '') fail(at, 'name must be a non-empty string');
     if (byId.has(t.id)) fail(at, 'duplicate id');
+    // Two terms with one name are one thing written twice, and the brain would
+    // reason over each of them as though the other were not there.
+    if (byName.has(t.name)) {
+      fail(at, `"${t.name}" is already term ${byName.get(t.name)} — one thing, one term`);
+    }
     if (t.disjoint !== undefined && t.disjoint !== true) {
       fail(at, 'disjoint, where present, must be true');
     }
@@ -51,6 +57,7 @@ export function checkWorld(data, where = 'world') {
     }
     if (!Array.isArray(t.links)) fail(at, 'links must be an array');
     byId.set(t.id, t);
+    byName.set(t.name, t.id);
   }
 
   for (const t of data.terms) {
@@ -100,11 +107,22 @@ export function checkWorld(data, where = 'world') {
 // Every id a source points at must exist once the sources are merged. Checked
 // after merging, because a knowledge file may name terms from the base world.
 export function checkWhole(data, origin = null, where = 'world') {
+  // Name the source a bad term came from, not the merged whole.
+  const from = (id) => (origin && origin.get(id)) || where;
   const ids = new Set(data.terms.map((t) => t.id));
   const relationIds = new Set(Object.values(data.relations || {}));
-  // Name the source a bad link came from, not the merged whole.
-  const from = (id) => (origin && origin.get(id)) || where;
 
+  // Two sources may each be sound and still name one thing twice between them.
+  const named = new Map();
+  for (const t of data.terms) {
+    if (named.has(t.name)) {
+      fail(
+        `${from(t.id)} term ${t.id}`,
+        `"${t.name}" is already term ${named.get(t.name)} — one thing, one term`,
+      );
+    }
+    named.set(t.name, t.id);
+  }
   for (const t of data.terms) {
     for (const l of t.links) {
       if (!ids.has(l.to)) fail(`${from(t.id)} term ${t.id}`, `link to unknown term ${l.to}`);
