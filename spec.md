@@ -195,8 +195,18 @@ numbers.
 is answered in figures; the brain chooses nothing, it uses the form it was
 given, and the language is what holds both.
 
-A signal may work **more than once**: `1 + 1 + 5` names two operations, and the
-brain works them from the left, which is the only order it has.
+**A number is read, not looked up.** A run of the symbols a language counts in
+is a number whatever else it is — no word lists `125` and no term names it, and
+`1+125` is still `126`. The language says which symbols it counts in and what
+they stand as in a sentence; reading them is the brain's own, and so is what
+follows from two of them.
+
+A signal may work **more than once**: `1 + 2 × 3` names two operations. **Which
+is worked first is the world's**, said with the same `order` it puts numbers in
+— `times order plus` — and where it says nothing they are worked from the left.
+An operation the brain can perform and cannot complete (`7 ÷ 2` in a world
+holding no halves) is a sum it cannot reach, never a claim about the two
+numbers.
 
 A result the world has no term for is **written, never named**. Nothing says a
 world must name every number, and a language that counts in figures can write
@@ -206,10 +216,13 @@ names; no term is invented for it.
 
 ```
 1+1                  2
-1 + 1 + 5            7
+1 + 2 * 3            7         times binds first
+10 - 3 - 2           5         and nothing binds tighter than nothing
+1 + 125              126       a number no word lists
 one plus one         two
 100 - 1              99        the world names no ninety-nine
 1 - 5                -4        nor anything below nothing
+7 / 2                I don't know.
 what is 1 + 5        6
 what is 1            number
 ```

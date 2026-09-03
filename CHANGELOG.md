@@ -119,6 +119,18 @@ All notable changes to this project are documented in this file.
   `+` to a word — and a signal is recognized when every symbol falls in some set
   the language declares. English gained digits, signs, a word per figure and one
   for `+` and `-`; `"9 + 4"` answers *thirteen*.
+- **A number is a thing the brain reads, not a word it looks up.** `"1+125"`
+  answered *I don't know "125"*: figures worked only for the numbers English
+  happened to list. A run of the symbols a language counts in is a number
+  whatever else it is — no word for it, no term for it — so the twenty-nine
+  figure words are gone and `1+125` is `126`. A symbol set says what its figures
+  stand as in a sentence (`"pos": "numeral"`).
+- **Times and divide**, with `order` in the world saying which binds first
+  (`times order plus`) and nothing else deciding: where the world says nothing,
+  operations are worked from the left. `1+2*3` is `7`, `10-3-2` is `5`. An
+  operation the brain can perform and cannot complete — `7/2` in a world holding
+  no halves, or anything over nothing — is a sum it cannot reach rather than a
+  claim about the two numbers.
 - **Arithmetic stopped at one operation and at what the world had a term for.**
   `"1+1+5"` did not parse at all; `"100-1"` and `"1-5"` answered *I don't know*.
   A signal may work more than once now, from the left, and a result the world

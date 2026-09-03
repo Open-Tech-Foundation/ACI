@@ -202,7 +202,7 @@ function langNameOrNull(matches) {
 // ---------------------------------------------------------------------------
 // think — reason over the understood meaning using the language's data.
 // ---------------------------------------------------------------------------
-function think(roots, langs, at) {
+function think(roots, langs, at, world) {
   return roots.map((n) => {
     if (!n.state.exists) return withBranch(n);
     const langNode = findBranch(n, 'language');
@@ -210,17 +210,28 @@ function think(roots, langs, at) {
       return withBranch(n);
     }
     const first = langNode.state.matches[0];
+    // A word this language does not list may still be a number written in its
+    // own figures. Reading one is the brain's own — the language says which
+    // symbols it counts in, and the world need never have named the number.
+    const lang = (langs || []).find((l) => l.data.name === first.lang) || null;
+    const value = first.word || !lang ? null : lang.valueOfFigures(n.state.identity);
+    const read = value != null;
     const thought = {
       language: first.lang,
-      wordKnown: Boolean(first.word),
-      pos: first.word ? first.word.pos : null,
-      meaning: first.word ? first.word.meaning : null,
-      concept: first.word ? pointedAt(first.word, at) ?? first.word.concept : null,
+      wordKnown: Boolean(first.word) || read,
+      pos: first.word ? first.word.pos : read ? lang.figuresPos : null,
+      meaning: first.word ? first.word.meaning : read ? String(n.state.identity) : null,
+      concept: first.word
+        ? pointedAt(first.word, at) ?? first.word.concept
+        : read && world
+          ? world.termFor(value)
+          : null,
+      value,
       marks: first.word ? first.word.marks : null,
       negates: first.word ? first.word.negates : false,
       role: first.word ? first.word.role : null,
       when: first.word ? first.word.when : null,
-      names: first.word ? first.word.names : null,
+      names: first.word ? first.word.names : read ? false : null,
     };
     return withBranch(n, [...n.branch, node('thought', 'understood', [], { thought })]);
   });
@@ -391,7 +402,7 @@ function judge(roots, world, mood, langs, sent) {
   // A claim may be about anything that exists, not only about a thing: gravity
   // is a force, and neither of them is a thing.
   const claims = (n) =>
-    conceptOf(n) != null &&
+    (conceptOf(n) != null || numberOf(n, world) != null) &&
     // The weakest relation is the signal's joint, never one of the things being
     // joined: "what is your name" is about a name, not about `is`.
     conceptOf(n) !== world.baseRelation &&
@@ -614,24 +625,11 @@ function upward(id, world) {
 // language and any world. So this computes — it does not look anything up.
 function calculate(said, at, relation, world) {
   const a = world.anchors || {};
-  const op =
-    relation === a.plus
-      ? 'plus'
-      : relation === a.minus
-        ? 'minus'
-        : relation === a.more
-          ? 'more'
-          : relation === a.less
-            ? 'less'
-            : null;
-  if (!op) return null;
-
-  const left = valueBeside(said, at, -1, world);
-  const right = valueBeside(said, at, 1, world);
-  if (left == null || right == null) return null;
-
-  if (op === 'more' || op === 'less') {
-    const holds = op === 'more' ? left > right : left < right;
+  if (relation === a.more || relation === a.less) {
+    const left = valueBeside(said, at, -1, world);
+    const right = valueBeside(said, at, 1, world);
+    if (left == null || right == null) return null;
+    const holds = relation === a.more ? left > right : left < right;
     // The terms compared, not the numbers they name: a truth node joins terms
     // wherever it comes from, and what is said back is said in words.
     return node('truth', holds ? 'true' : 'false', [], {
@@ -641,41 +639,80 @@ function calculate(said, at, relation, world) {
     });
   }
 
-  // A signal may work more than once — `1 + 1 + 5` names two operations, not
-  // one. The brain reads the numbers and the operations off the order they
-  // came in and works them in that order, which is the only order it has.
   const run = working(said, world);
-  const value = run == null ? (op === 'plus' ? left + right : left - right) : run;
+  // An operation the brain can perform and cannot complete — nothing divides
+  // seven into two whole halves — is not a claim about the two numbers. It is
+  // a sum it cannot reach.
+  if (run == null) {
+    return operates(relation, world) == null
+      ? null
+      : node('sum', 'beyond', [], { left: null, right: null, value: null, term: null });
+  }
+  const { value, left, right } = run;
   const term = world.termFor(value);
   return node('sum', term == null ? 'beyond' : 'worked', [], { left, right, value, term });
 }
 
-// Every number and every operation in the signal, in the order perceived, then
-// worked from the left. Nothing decides which comes first but where it fell.
+// Every number and every operation in the signal, worked out.
+//
+// A signal may name more than one — `1 + 2 × 3` names two — and which of them
+// is worked first is not the brain's to decide: the world says one operation
+// comes before another, by the same `order` it puts numbers in, and where it
+// says nothing they are worked from the left. What each operation does to two
+// numbers is the brain's own, and would be the same in any world.
 function working(said, world) {
-  const a = world.anchors || {};
   const steps = [];
   for (const n of said) {
     const c = conceptOf(n);
-    if (c == null) continue;
-    const value = world.valueOf(c);
+    const value = numberOf(n, world);
+    if (c == null && value == null) continue;
     if (value != null) steps.push({ value });
-    else if (c === a.plus || c === a.minus) steps.push({ op: c });
+    else if (operates(c, world) != null) steps.push({ op: c });
   }
   if (steps.length < 3 || steps[0].op !== undefined) return null;
-  let total = steps[0].value;
+
+  // The one that binds tightest is worked first, and then again, until one
+  // number is left. Ties are settled by which came first in the signal.
+  const values = [steps[0].value];
+  const ops = [];
   for (let i = 1; i + 1 < steps.length; i += 2) {
-    const { op } = steps[i];
-    const next = steps[i + 1];
-    if (op === undefined || next == null || next.value === undefined) return null;
-    total = op === a.plus ? total + next.value : total - next.value;
+    if (steps[i].op === undefined || steps[i + 1].value === undefined) return null;
+    ops.push(steps[i].op);
+    values.push(steps[i + 1].value);
   }
-  return total;
+  if (ops.length === 0) return null;
+
+  const left = values[0];
+  const right = values[values.length - 1];
+  while (ops.length > 0) {
+    let pick = 0;
+    for (let i = 1; i < ops.length; i += 1) {
+      // Strictly tighter: an operation does not come before itself, and where
+      // the world says nothing they are worked from the left.
+      if (ops[i] !== ops[pick] && world.isA(ops[i], ops[pick], world.anchors.order)) pick = i;
+    }
+    const worked = operates(ops[pick], world)(values[pick], values[pick + 1]);
+    if (worked == null) return null;
+    values.splice(pick, 2, worked);
+    ops.splice(pick, 1);
+  }
+  return { value: values[0], left, right };
+}
+
+// What an operation does to two numbers. This is the brain's own and the whole
+// of it: the world says only which term names which operation.
+function operates(term, world) {
+  const a = world.anchors || {};
+  if (term === a.plus) return (x, y) => x + y;
+  if (term === a.minus) return (x, y) => x - y;
+  if (term === a.times) return (x, y) => x * y;
+  if (term === a.divide) return (x, y) => (y === 0 || x % y !== 0 ? null : x / y);
+  return null;
 }
 
 function valueBeside(said, from, step, world) {
   for (let i = from + step; i >= 0 && i < said.length; i += step) {
-    const v = world.valueOf(conceptOf(said[i]));
+    const v = numberOf(said[i], world);
     if (v != null) return v;
   }
   return null;
@@ -875,6 +912,16 @@ function namedRelation(said, world, claims, asking) {
     if (fallback < 0) fallback = i;
   }
   return fallback;
+}
+
+// What number this thing is. The world names some of them; the rest the brain
+// read out of the figures it was sent, and both are numbers alike.
+function numberOf(n, world) {
+  const held = world.valueOf(conceptOf(n));
+  if (held != null) return held;
+  const thought = n ? findBranch(n, 'thought') : null;
+  const read = thought && thought.state.thought ? thought.state.thought.value : null;
+  return read == null ? null : read;
 }
 
 function conceptOf(n) {
@@ -1234,9 +1281,12 @@ function claimSaid(truth, langName, langs, world) {
 // says a world must name every number — and the language may still be able to
 // write it, since its figures count from zero in the order it declared them.
 function numberSaid(term, value, langName, langs, world, written) {
-  const named = termWord(term, langName, langs, world, written);
-  if (named != null) return named;
   const lang = (langs || []).find((l) => l.data.name === langName);
+  // Written in figures, said in figures: no language needs a word for every
+  // number, and the ones it has are for when it was asked in words.
+  const inFigures = lang && written ? lang.figuresFor(value) : null;
+  const named = inFigures ?? termWord(term, langName, langs, world, written);
+  if (named != null) return named;
   if (!lang) return null;
   if (value >= 0) return lang.figuresFor(value);
   // Below nothing is still a number. The brain takes the sign from the term
@@ -1343,10 +1393,11 @@ function leafOrPhrase(c) {
   return node(c.symbol, c.symbol, (c.children || []).map(leafOrPhrase).filter(Boolean));
 }
 
+// What the brain made of the word, not what the language listed: a number read
+// out of its figures stands where the language says figures stand.
 function posOf(n) {
-  const lang = findBranch(n, 'language');
-  const word = lang && lang.state.matches && lang.state.matches[0] ? lang.state.matches[0].word : null;
-  return word ? word.pos : null;
+  const thought = thoughtOf(n);
+  return thought ? thought.pos : null;
 }
 
 function grammarOf(root, langs) {
@@ -1387,7 +1438,7 @@ export function brainFrom(input, knowledge, circumstance) {
   };
 
   const roots = understand(input, langs);
-  const thoughtRoots = think(roots, langs, at);
+  const thoughtRoots = think(roots, langs, at, world);
   const solvedRoots = solve(thoughtRoots, world, langs);
   const mood = moodOf(input, langs);
   const structuredRoots = structurePhrase(solvedRoots, langs);

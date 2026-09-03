@@ -31,7 +31,10 @@
     "past": 565,
     "now": 223,
     "future": 566,
-    "when": 567
+    "when": 567,
+    "times": 568,
+    "divide": 569,
+    "order": 249
   },
   "relations": {
     "is": 294,
@@ -43,7 +46,9 @@
     "target": 328,
     "source": 329,
     "destination": 330,
-    "when": 567
+    "when": 567,
+    "times": 568,
+    "divide": 569
   },
   "terms": [
     {
@@ -6015,6 +6020,42 @@
         {
           "rel": 294,
           "to": 4
+        }
+      ]
+    },
+    {
+      "id": 568,
+      "name": "times",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 249,
+          "to": 303
+        },
+        {
+          "rel": 249,
+          "to": 304
+        }
+      ]
+    },
+    {
+      "id": 569,
+      "name": "divide",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 249,
+          "to": 303
+        },
+        {
+          "rel": 249,
+          "to": 304
         }
       ]
     }

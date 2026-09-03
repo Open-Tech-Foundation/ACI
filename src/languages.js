@@ -46,7 +46,9 @@ function buildLanguage(data) {
     // A mark is whatever this language's own words are not made of. Nothing
     // needs to declare them: `?` ends no English word, and `+` would end one
     // the moment a language gave it to a word.
-    isWordSymbol: (ch) => inWords.has(ch),
+    // A figure is what numbers are written in, so it forms words the language
+    // never had to list.
+    isWordSymbol: (ch) => inWords.has(ch) || counting.includes(ch),
     // Any symbol this language says it is written in.
     isOwnSymbol: (ch) => own.some((set) => set.has(ch)),
     // A symbol that stands as a word of its own, wherever it falls.
@@ -55,6 +57,11 @@ function buildLanguage(data) {
     // order it declared them. A term is not needed for it: a world that never
     // named ninety-nine can still be told the answer is 99.
     figuresFor: (value) => figures(counting, value),
+    // And back: any run of them is a number, whether or not this language has
+    // a word for it and whether or not the world ever named it.
+    valueOfFigures: (text) => valued(counting, text),
+    // What a number written that way stands as, when it is put in a sentence.
+    figuresPos: counted ? counted.pos ?? null : null,
     // Another way this language writes a term, where it has one that is not
     // what the term is called.
     otherWordFor: (concept) => (concept == null ? null : written.get(concept) ?? null),
@@ -143,6 +150,20 @@ function figures(counting, value) {
     left = Math.floor(left / base);
   } while (left > 0);
   return out;
+}
+
+// A number read out of a language's own figures: every symbol counts for its
+// place in the set the language declared, and how many there are is the base.
+function valued(counting, text) {
+  const chars = Array.from(String(text));
+  if (counting.length < 2 || chars.length === 0) return null;
+  let value = 0;
+  for (const ch of chars) {
+    const digit = counting.indexOf(ch);
+    if (digit < 0) return null;
+    value = value * counting.length + digit;
+  }
+  return value;
 }
 
 function charSet(symbolInfo) {

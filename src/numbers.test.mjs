@@ -14,6 +14,41 @@ test("two numbers and an operation", async () => {
   assertEquals(await says("50 + 50"), "100");
 });
 
+test("a number is read out of its figures, whatever the world named", async () => {
+  // Nothing lists `125` as a word and no term names it. It is a number all the
+  // same: the language says which symbols it counts in, and reading them is
+  // the brain's own.
+  assertEquals(await says("1+125"), "126");
+  assertEquals(await says("125+25"), "150");
+  assertEquals(await says("999+1"), "1000");
+  assertEquals(await says("12*12"), "144");
+});
+
+test("times and divide, and what the world says binds first", async () => {
+  assertEquals(await says("2*3"), "6");
+  assertEquals(await says("2 times 3"), "6", "the numbers were figures, so the answer is");
+  assertEquals(await says("two times three"), "six");
+  assertEquals(await says("10/2"), "5");
+  assertEquals(await says("1+2*3"), "7", "times before plus, because the world says so");
+  assertEquals(await says("2*3+1"), "7");
+  assertEquals(await says("1+6/2"), "4");
+  assertEquals(await says("2+3*4-5"), "9");
+});
+
+test("what the world says nothing about is worked from the left", async () => {
+  assertEquals(await says("10-3-2"), "5");
+  assertEquals(await says("1-2+3"), "2");
+  assertEquals(await says("10/2/5"), "1");
+  assertEquals(await says("100/10/2"), "5");
+});
+
+test("an operation it cannot complete is not a claim about the numbers", async () => {
+  // This world holds no halves, and nothing is divided by nothing.
+  assertEquals(await act("7/2"), "unsure");
+  assertEquals(await act("5/0"), "unsure");
+  assertEquals(await says("0/5"), "0");
+});
+
 test("a symbol that stands alone is a word wherever it falls", async () => {
   assertEquals(await says("1+1"), "2");
   assertEquals(await says("9+4"), "13");

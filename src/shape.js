@@ -172,7 +172,10 @@ export function checkLanguage(data, where = 'language') {
       if (!info || typeof info.characters !== 'string' || info.characters === '') {
         fail(`${at} symbols.${type}`, 'characters must be a non-empty string');
       }
-      onlyKeys(info, ['characters', 'alone', 'figures'], `${at} symbols.${type}`);
+      onlyKeys(info, ['characters', 'alone', 'figures', 'pos'], `${at} symbols.${type}`);
+      if (info.pos !== undefined && (typeof info.pos !== 'string' || info.pos === '')) {
+        fail(`${at} symbols.${type}`, 'pos, where present, must be a part of speech');
+      }
       // The set a number is written in, in the order its symbols count from.
       if (info.figures !== undefined && info.figures !== true) {
         fail(`${at} symbols.${type}`, 'figures, where present, must be true');
