@@ -182,15 +182,24 @@ signs — and at least one is a symbol its words are made of, so a signal of
 nothing but marks is recognized as no language at all. The brain does not hold
 that words are made of letters.
 
+**A symbol set may say its symbols stand alone**: `"alone": true`. Those are
+words wherever they fall, so `1+1` comes apart into three and `cat` does not
+come apart at all.
+
 **A word may say it does not name its term**: `"names": false`. `6` and `six`
-are one number and only one of them is what it is called, so figures are read
-and never said back. First word wins otherwise — but not by file order, which
-JavaScript does not keep for keys that look like numbers.
+are one number and only one is what it is called. First word wins otherwise —
+but not by file order, which JavaScript does not keep for keys that look like
+numbers.
+
+**What is said back is said the way it was said.** A signal written in figures
+is answered in figures; the brain chooses nothing, it uses the form it was
+given, and the language is what holds both.
 
 ```
-9 + 4                thirteen
-nine plus four       thirteen
-what is 1 + 5        six
+1+1                  2
+1 + 1                2
+one plus one         two
+what is 1 + 5        6
 what is 1            number
 ```
 

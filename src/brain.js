@@ -156,6 +156,7 @@ function recognizeLanguage(roots, langs) {
               negates: word.negates ?? false,
               role: word.role ?? null,
               when: word.when ?? null,
+              names: word.names ?? null,
             }
           : null,
         roles: classifyRoles(identity, lang),
@@ -219,6 +220,7 @@ function think(roots, langs, at) {
       negates: first.word ? first.word.negates : false,
       role: first.word ? first.word.role : null,
       when: first.word ? first.word.when : null,
+      names: first.word ? first.word.names : null,
     };
     return withBranch(n, [...n.branch, node('thought', 'understood', [], { thought })]);
   });
@@ -1019,11 +1021,15 @@ function expression(roots, langs, mood, world, sent) {
   const unheard = unheardIn(roots);
   const feeling = feelingIn(felt, world, sent);
   const langName = parts.map((p) => p.state.language).find(Boolean) || null;
+  // Said back the way it was said: a signal written in figures is answered in
+  // figures. The brain does not choose between them — it uses what it was
+  // given, and the language is the one holding both forms.
+  const written = wroteOther(roots);
   // A question the world cannot fill is a gap, not an answer, and so is one the
   // language cannot say — a term it has no word for leaves the brain with
   // nothing to answer with. The node stays on the tree either way: what the
   // brain looked for and did not find is worth as much as what it found.
-  const answered = answer ? spoken(answer, langName, langs, world) : null;
+  const answered = answer ? spoken(answer, langName, langs, world, written) : null;
   const found = answer && answered != null;
 
   // A refusal is the last word: whatever else could be said, the brain is
@@ -1078,14 +1084,14 @@ function expression(roots, langs, mood, world, sent) {
     intent === 'unheard'
       ? unheard
       : feeling
-      ? termWord(felt.state.action, langName, langs, world)
+      ? termWord(felt.state.action, langName, langs, world, written)
       : intent === 'answer'
       ? did
-        ? termWord(did.state.term, langName, langs, world)
+        ? termWord(did.state.term, langName, langs, world, written)
         : sum
-          ? termWord(sum.state.term, langName, langs, world)
+          ? termWord(sum.state.term, langName, langs, world, written)
           : counted
-            ? termWord(counted.state.total, langName, langs, world)
+            ? termWord(counted.state.total, langName, langs, world, written)
             : answered
       : wholeMeaning(intent, parts);
   // Where the brain is speaking of its own state, it hands over the term for
@@ -1117,6 +1123,19 @@ function feelingIn(felt, world, sent) {
   return null;
 }
 
+// Whether the signal wrote its terms in words the language says do not name
+// them — figures against the words for the numbers they are.
+function wroteOther(roots) {
+  const seen = [];
+  const collect = (n) => {
+    const thought = findBranch(n, 'thought');
+    if (thought && thought.state.thought) seen.push(thought.state.thought.names);
+    (n.branch || []).forEach(collect);
+  };
+  roots.forEach(collect);
+  return seen.some((names) => names === false);
+}
+
 // The first thing in the signal that a language recognized the letters of but
 // had no word for. It is not a term and never will be until someone gives it
 // one; what the brain has of it is what it was sent.
@@ -1142,14 +1161,14 @@ function wholeMeaning(intent, parts) {
 // What the brain found is all of what it found: a thing that has three things
 // has three, and saying the first of them would be picking one. The words are
 // the language's, and so is what goes between them.
-function spoken(answer, langName, langs, world) {
+function spoken(answer, langName, langs, world, written) {
   const { found } = answer.state;
-  const words = found.map((t) => termWord(t, langName, langs, world)).filter(Boolean);
+  const words = found.map((t) => termWord(t, langName, langs, world, written)).filter(Boolean);
   // A walk that came back empty is an answer: nothing is what it has, the way
   // zero is what it counted. The node keeps its empty `found` either way.
   if (words.length === 0) {
     const none = world && world.anchors ? world.anchors.none : null;
-    return termWord(none, langName, langs, world);
+    return termWord(none, langName, langs, world, written);
   }
   return words.join(listing(langName, langs));
 }
@@ -1177,10 +1196,11 @@ function claimSaid(truth, langName, langs, world) {
 
 // A term, said in the language being spoken — or, where that language has no
 // word for it, said as it was given. A name is not translated.
-function termWord(term, langName, langs, world) {
+function termWord(term, langName, langs, world, written) {
   if (term == null) return null;
   const lang = (langs || []).find((l) => l.data.name === langName);
-  const word = lang ? lang.wordFor(term) : null;
+  const other = lang && written ? lang.otherWordFor(term) : null;
+  const word = other ?? (lang ? lang.wordFor(term) : null);
   return word ?? (world ? world.symbolOf(term) : null);
 }
 
@@ -1426,7 +1446,28 @@ function tokenize(signal, langs) {
     while (to > from && marked(t[to - 1])) to -= 1;
     return t.slice(from, to);
   };
-  return String(signal).split(/\s+/).filter(Boolean).map(bare).filter(Boolean);
+  // A symbol a language says stands alone is a word wherever it falls, so
+  // `1+1` comes apart into three and `cat` does not come apart at all.
+  const lone = (langs || []).map((l) => (ch) => l.isLoneSymbol(ch));
+  const apart = (t) => {
+    const out = [];
+    let held = '';
+    for (const ch of t) {
+      if (lone.some((is) => is(ch))) {
+        if (held) out.push(held);
+        out.push(ch);
+        held = '';
+      } else held += ch;
+    }
+    if (held) out.push(held);
+    return out;
+  };
+  return String(signal)
+    .split(/\s+/)
+    .filter(Boolean)
+    .flatMap(apart)
+    .map(bare)
+    .filter(Boolean);
 }
 
 function quote(s) {

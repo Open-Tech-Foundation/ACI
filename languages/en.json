@@ -11,7 +11,8 @@
       "characters": "0123456789"
     },
     "sign": {
-      "characters": "+ - = < >"
+      "characters": "+ - = < >",
+      "alone": true
     },
     "punctuation": {
       "characters": ". , ! ? ; : ' \" - ( ) [ ]"

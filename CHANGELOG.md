@@ -119,6 +119,12 @@ All notable changes to this project are documented in this file.
   `+` to a word — and a signal is recognized when every symbol falls in some set
   the language declares. English gained digits, signs, a word per figure and one
   for `+` and `-`; `"9 + 4"` answers *thirteen*.
+- **`"1+1"` was one word the brain had never been given.** A symbol set may say
+  its symbols stand alone (`"alone": true`), and those are words wherever they
+  fall — so `1+1` comes apart into three and `cat` does not come apart at all.
+- **What is said back is said the way it was said.** `"1 + 1"` answers *2* and
+  `"one plus one"` answers *two*: the brain chooses nothing, it uses the form it
+  was given, and the language is what holds both.
 - **A word may say it does not name its term** (`"names": false`). Without it
   `6` became what the number is *called*, since JavaScript orders keys that look
   like numbers before every other key — first-word-wins could not be relied on.

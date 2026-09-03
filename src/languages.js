@@ -10,6 +10,7 @@ function buildLanguage(data) {
   const vowels = charSet(symbols.vowel);
   const asking = charSet(symbols.question);
   const own = Object.values(symbols).map(charSet);
+  const alone = Object.values(symbols).filter((set) => set && set.alone).map(charSet);
 
   // Every character this language's words are made of.
   const inWords = new Set();
@@ -26,10 +27,12 @@ function buildLanguage(data) {
   // is another way to write the term rather than what the term is called:
   // `6` and `six` name one number and only one of them is its name.
   const named = new Map();
+  const written = new Map();
   for (const [word, info] of Object.entries(data.words || {})) {
     words.set(word.toLowerCase(), info);
-    if (info.concept == null || info.names === false) continue;
-    if (!named.has(info.concept)) named.set(info.concept, word);
+    if (info.concept == null) continue;
+    const into = info.names === false ? written : named;
+    if (!into.has(info.concept)) into.set(info.concept, word);
   }
 
   return {
@@ -44,6 +47,11 @@ function buildLanguage(data) {
     isWordSymbol: (ch) => inWords.has(ch),
     // Any symbol this language says it is written in.
     isOwnSymbol: (ch) => own.some((set) => set.has(ch)),
+    // A symbol that stands as a word of its own, wherever it falls.
+    isLoneSymbol: (ch) => alone.some((set) => set.has(ch)),
+    // Another way this language writes a term, where it has one that is not
+    // what the term is called.
+    otherWordFor: (concept) => (concept == null ? null : written.get(concept) ?? null),
     lookupWord: (w) => lookUp(words, data.derivations, w),
     wordFor: (concept) => (concept == null ? null : named.get(concept) ?? null),
     grammar: data.grammar || {},

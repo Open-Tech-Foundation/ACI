@@ -172,7 +172,12 @@ export function checkLanguage(data, where = 'language') {
       if (!info || typeof info.characters !== 'string' || info.characters === '') {
         fail(`${at} symbols.${type}`, 'characters must be a non-empty string');
       }
-      onlyKeys(info, ['characters'], `${at} symbols.${type}`);
+      onlyKeys(info, ['characters', 'alone'], `${at} symbols.${type}`);
+      // Symbols that stand as words of their own, so `1+1` comes apart where
+      // `cat` does not.
+      if (info.alone !== undefined && info.alone !== true) {
+        fail(`${at} symbols.${type}`, 'alone, where present, must be true');
+      }
     }
   }
 
