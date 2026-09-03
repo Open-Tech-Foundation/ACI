@@ -600,7 +600,7 @@
     "deny":       "No.",
     "answer":     "{meaning}",
     "unsure":     "{self} don't {relation}.",
-    "empathy":    "{self} {relation} {to} {meaning}. \u2639",
+    "empathy":    "Sorry. \ud83d\ude14",
     "unknown":    "..."
   },
   "grammar": {

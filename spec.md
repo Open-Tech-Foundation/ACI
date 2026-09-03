@@ -721,16 +721,17 @@ held as *theirs*. So the act is only the last step — what was said stands at t
 bad pole, and was said of whoever said it:
 
 ```
-> i am hurt        { from: 508 }     I know you hurt. ☹
+> i am hurt        { from: 508 }     Sorry. 😔
 > the wheel is hurt                  I know.        said of something else
 > i am nice                          I know.        the other pole
 > i am not hurt                      I know.        they denied it
 ```
 
-Two walks decide it, and nothing is weighed: **one pole, one frame**. The emoji
-is not the brain's — `"{self} {relation} {to} {meaning}. ☹"` is a frame in
-`en.json` like every other, and `src/` holds no emoji any more than it holds
-`"Yes."`.
+Two walks decide it, and nothing is weighed: **one pole, one act**. The words
+are the language's, exactly as `Hello!` is — `"empathy": "Sorry. 😔"` sits in
+`en.json`, and `src/` holds no more of it than it holds `"Yes."`. The brain
+still hands over the term that was said and its own `know`, so a language may
+voice more than this one does; English chooses not to.
 
 **A relation the brain can perform → it performs it.** Arithmetic is **innate**.
 Put it to the two questions: *would it change in another language?* No. *Would it

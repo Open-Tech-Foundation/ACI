@@ -16,10 +16,11 @@ All notable changes to this project are documented in this file.
 - **Empathy**, an act of its own. Understanding what someone feels and seeing it
   from where they stand — both halves of which the record already holds, so the
   act is the last step: what was said stands at the bad pole, and was said of
-  whoever said it. `"i am hurt"` from a sender answers *I know you hurt. ☹*,
+  whoever said it. `"i am hurt"` from a sender answers *Sorry. 😔*,
   where the same said of something else, denied, or at the other pole is simply
-  understood. Two walks decide it and nothing is weighed: one pole, one frame,
-  and the emoji is a frame in `en.json` like every other word.
+  understood. Two walks decide it and nothing is weighed: one pole, one act, and
+  the words are the language's — `"empathy": "Sorry. 😔"` sits in `en.json`
+  exactly as `Hello!` does.
 - **What is said of a thing is held as the sender's.** `good` and `bad` are
   qualities and a quality may be a kind of one (`nice is good`); a claim whose
   object stands at a pole that way is not the world's to hold. It is kept as an

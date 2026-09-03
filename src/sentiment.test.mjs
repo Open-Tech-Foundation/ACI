@@ -50,7 +50,7 @@ test("a claim the world can settle is still the world's", async () => {
 test("said of themselves, and standing at the bad pole, the brain empathizes", async () => {
   const r = await brain("i am hurt", sender);
   assertEquals(r.expression.name, "empathy");
-  assertEquals(r.expression.state.says, "I know you hurt. \u2639");
+  assertEquals(r.expression.state.says, "Sorry. \ud83d\ude14");
 });
 
 test("what they said of something else is understood, not empathized with", async () => {
