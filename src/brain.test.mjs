@@ -576,13 +576,14 @@ test("two terms and a relation is still a claim, not a question", async () => {
   assertEquals(kind(r.roots[0], "answer"), null);
 });
 
-test("a question the world cannot fill is a gap, not an empty answer", async () => {
+test("a walk that came back empty answers with nothing, and says so", async () => {
   forget();
   const r = await brain("a peacock has what?");
   const answer = kind(r.roots[0], "answer");
   assert(answer !== null, "the question the brain asked itself is on the tree");
   assertEquals(answer.state.found, [], "and it found nothing");
-  assertEquals(r.expression.name, "unknown", "so it does not answer");
+  // Nothing is what it found, the way zero is what a count of nothing finds.
+  assertEquals(r.expression.state.says, "none");
   forget();
 });
 

@@ -468,7 +468,12 @@ function judge(roots, world, mood, langs) {
     // What the world says about the relation as stated, and then what the
     // signal claimed — which is the opposite of it where the signal denies.
     const negated = said.some(negatesOn);
-    const holds = world.isA(holder, object, relation);
+    // A thing holds what its kinds hold: the claim stands if any rung it stands
+    // on reaches the object by the relation named.
+    const holds =
+      relation === world.baseRelation
+        ? world.isA(holder, object, relation)
+        : upward(holder, world).some((rung) => world.isA(rung, object, relation));
     const kindClaim = relation === world.baseRelation;
     const stands = holds
       ? 'true'
@@ -526,7 +531,7 @@ function judge(roots, world, mood, langs) {
   if (terms.length === 1 && holes.length > 0) {
     const subject = conceptOf(terms[0]);
     const naming = world.isA(relation, a.name);
-    const found = naming ? [] : world.linked(subject, relation);
+    const found = naming ? [] : reached(subject, relation, world);
     const answer = node('answer', naming ? 'name' : 'link', [], {
       subject,
       relation,
@@ -541,6 +546,34 @@ function judge(roots, world, mood, langs) {
   }
 
   return roots;
+}
+
+// What a thing has, it has by being what it is: a memory belongs to computers,
+// and this brain has one by being one. So the walk climbs the `is` chain and
+// gathers what each rung links to, nearest first. The `is` chain is the ladder
+// itself and is not climbed for its own sake — asked what a thing is, the brain
+// answers the rung above it, not every rung to the top.
+function reached(subject, relation, world) {
+  if (relation === world.baseRelation) return world.linked(subject, relation);
+  const out = [];
+  for (const rung of upward(subject, world)) {
+    for (const t of world.linked(rung, relation)) if (!out.includes(t)) out.push(t);
+  }
+  return out;
+}
+
+// The rungs a thing stands on: itself, then everything it is a kind of.
+function upward(id, world) {
+  const seen = new Set();
+  const out = [];
+  const climb = (x) => {
+    if (x == null || seen.has(x)) return;
+    seen.add(x);
+    out.push(x);
+    for (const up of world.linked(x, world.baseRelation)) climb(up);
+  };
+  climb(id);
+  return out;
 }
 
 // Arithmetic is innate. The world says only which term names which number; what
@@ -895,7 +928,7 @@ function expression(roots, langs, mood, world) {
   // language cannot say — a term it has no word for leaves the brain with
   // nothing to answer with. The node stays on the tree either way: what the
   // brain looked for and did not find is worth as much as what it found.
-  const answered = answer ? nameOf(answer, langName, langs) : null;
+  const answered = answer ? nameOf(answer, langName, langs, world) : null;
   const found = answer && answered != null;
 
   // A refusal is the last word: whatever else could be said, the brain is
@@ -972,11 +1005,17 @@ function wholeMeaning(intent, parts) {
 // What the brain found is all of what it found: a thing that has three things
 // has three, and saying the first of them would be picking one. The words are
 // the language's, and so is what goes between them.
-function nameOf(answer, langName, langs) {
+function nameOf(answer, langName, langs, world) {
   const { of, subject, found } = answer.state;
   if (of === 'name') return termWord(subject, langName, langs);
   const words = found.map((t) => termWord(t, langName, langs)).filter(Boolean);
-  return words.length === 0 ? null : words.join(listing(langName, langs));
+  // A walk that came back empty is an answer: nothing is what it has, the way
+  // zero is what it counted. The node keeps its empty `found` either way.
+  if (words.length === 0) {
+    const none = world && world.anchors ? world.anchors.none : null;
+    return termWord(none, langName, langs);
+  }
+  return words.join(listing(langName, langs));
 }
 
 // A language says what stands between things said one after another; told

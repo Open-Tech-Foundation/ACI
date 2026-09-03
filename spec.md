@@ -361,11 +361,11 @@ line of code:
 
 ```
 self      is   computer        computer  is  machine
-self      has  mind
-self      has  memory
+self      has  mind            computer  has memory
 ```
 
-It is a computer before it is a machine — not every machine is one. So
+It is a computer before it is a machine — not every machine is one — and its
+memory is not its own: every computer has one, and this is a computer. So
 `"you is an organism?"` is *No.* by exclusion, `"you is a machine?"` is *Yes.*
 by walking two links, and neither answer is held anywhere as a reply.
 
@@ -584,12 +584,16 @@ This is the difference between ignorance and knowledge:
 > a cat is not an animal     No.             refused; the world says otherwise
 ```
 
+**A thing holds what its kinds hold.** Only the `is` chain is walked for its
+own sake; every other relation is inherited down it. `"you has a memory?"` is
+*Yes.* because a computer has one, and nothing about this instance says so.
+
 **Two terms → a claim.** The nearest term either side of the relation. Adds a
 `truth` node with `{ subject, relation, object }`, and it has **three** values:
 
 | | when |
 |---|---|
-| `true` | `world.isA(subject, object, relation)` |
+| `true` | the subject, or anything it is a kind of, reaches the object by that relation |
 | `false` | the terms **exclude** each other, and the claim is about kind |
 | `unknown` | neither — the world neither holds it nor forbids it |
 
@@ -691,10 +695,15 @@ is the one being asked about, **wherever in the signal the hole fell** — a
 language puts its question words where it likes, and the brain does not need to
 know where. Adds an `answer` node with `{ subject, relation, found, of }`:
 
-- `of: "link"` — `world.linked(subject, relation)`, what the term links to
-  directly, **all of it**. A thing that has three things has three; saying the
-  first would be picking one, and the brain does not pick. What stands between
-  them said one after another is the language's (`speech.list`)
+- `of: "link"` — what the term links to by that relation, **all of it**, and
+  what it links to *by being what it is*: the walk climbs the `is` chain and
+  gathers every rung, so a computer's memory is this brain's memory without
+  anyone writing the link twice. A thing that has three things has three; saying
+  the first would be picking one, and the brain does not pick. What stands
+  between them said one after another is the language's (`speech.list`). A walk
+  that comes back empty answers with `anchors.none` — nothing is what it has,
+  the way zero is what a count of nothing counts — while the node keeps its
+  empty `found`
 - `of: "name"` — the relation reaches `anchors.name`, so the answer is what *this
   language* calls the term. A name is not a fact the brain holds anywhere: it is
   the word naming that term in the language being spoken, and where the language

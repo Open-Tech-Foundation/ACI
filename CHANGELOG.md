@@ -20,11 +20,16 @@ All notable changes to this project are documented in this file.
   world can define them, so nothing about who is talking is held anywhere: a
   person, a device, a service, all the same to the brain. Told nothing, it does
   not guess — the pointer lands nowhere and the question goes unanswered.
-- **Identity, as three links and no code.** `self is computer`, `self has mind`,
-  `self has memory`, with `machine` and `memory` as terms and `computer` moved
-  under `machine` — not every machine is a computer. So *are you an organism?* is
-  **No.** by exclusion and *are you a machine?* is **Yes.** by walking two links,
-  and neither is a reply held anywhere.
+- **Identity, as links and no code.** `self is computer`, `self has mind`, with
+  `machine` and `memory` as terms, `computer` under `machine` — not every machine
+  is a computer — and `computer has memory`, since a memory is not this
+  instance's to claim. So *are you an organism?* is **No.** by exclusion, *are
+  you a machine?* is **Yes.** by walking two links, and *do you have a memory?*
+  is **Yes.** by being a computer.
+- **A thing holds what its kinds hold.** Only the `is` chain is walked for its
+  own sake now; every other relation is inherited down it, on questions and on
+  claims alike. A walk that comes back empty answers `none` — nothing is what it
+  has, the way zero is what a count of nothing counts.
 - `i`, `me`, `my` and `am` in English. The letter `i` gives up the word to the
   pronoun, as the letter `a` already gave it up to the article.
 

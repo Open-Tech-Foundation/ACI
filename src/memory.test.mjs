@@ -19,7 +19,7 @@ test("a fact told is a fact kept", async () => {
 });
 
 test("what was learned can then be asked about", async () => {
-  assertEquals((await brain("a crow has what?")).expression.name, "unknown");
+  assertEquals(await says("a crow has what?"), "none");
   await brain("a crow has a feather");
   assertEquals(await says("a crow has what?"), "feather");
 });
