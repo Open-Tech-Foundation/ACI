@@ -6,6 +6,10 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- `src/relations.test.mjs` — proof that the engine reasons over any relation, not
+  only `is`: two relations across the same terms, each walked separately, each
+  running one way. `wing parts bird` is true while `wing is bird` is false.
+
 - Twelve ancestor words in `languages/en.json` — animal, plant, organism, human,
   person, food, fruit, substance, object, thing, number, action — each naming a
   world term that already existed but had no word pointing at it. Claims stop
