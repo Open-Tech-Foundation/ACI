@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- `marks` on a word: `"new"` introduces one, `"known"` means the one already
+  spoken of. That a signal can do either is the brain's; which word does it is the
+  language's, and `a` / `an` / `the` now say so in `en.json`. Two `a basket`s make
+  two baskets, and `the basket` with two of them means nothing — the brain says it
+  does not know rather than picking one.
+
 - **Individuals.** A term marked `individual: true` exists once and `is` its kind.
   State now belongs to one of these, never to a kind: told a basket holds three
   apples, the brain makes a basket rather than concluding that baskets hold

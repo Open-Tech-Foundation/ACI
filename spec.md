@@ -271,6 +271,23 @@ same order give the same individuals.
 none, or more than one, there is no *the* to resolve and the brain does not guess
 which was meant.
 
+### Marking one, or the one meant
+
+A word may carry `marks`, which is either `"new"` — one is being introduced — or
+`"known"` — the one already spoken of is meant. That a signal can do either is
+the brain's; **which word does it is the language's**, and in `en.json` it is
+`a` / `an` against `the`.
+
+```
+> a basket has three apple          made basket#308
+> a basket has two apple            made basket#309 — another basket
+> the basket has how many apple?    I don't know.   two of them, and no way to pick
+```
+
+Nothing exists once merely by being spoken of: a claim about kind
+(`"a basket is an object?"`) marks nothing and makes nothing. An individual is
+made only where state is given to it.
+
 ## Memory
 
 Two kinds, and they behave differently:

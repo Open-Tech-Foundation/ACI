@@ -145,3 +145,44 @@ test("an action works on the thing, not on the kind", async () => {
   assertEquals(r.learned.terms[0].id, 308, "the basket that exists, not basket the kind");
   forget();
 });
+
+test("a introduces one, and the means the one already there", async () => {
+  forget();
+  const first = await brain("a basket has three apple");
+  assertEquals(first.learned.terms[0].name, "basket#308");
+  assertEquals(await says("the basket has how many apple?"), "three");
+  forget();
+});
+
+test("a second `a` makes a second one, not a revision of the first", async () => {
+  forget();
+  const one = await brain("a basket has three apple");
+  const two = await brain("a basket has two apple");
+  assertEquals(one.learned.terms[0].id, 308);
+  assertEquals(two.learned.terms[0].id, 309, "another basket, not the same one again");
+  forget();
+});
+
+test("with two of them, `the` means nothing and the brain does not pick", async () => {
+  forget();
+  await brain("a basket has three apple");
+  await brain("a basket has two apple");
+  assertEquals(await says("the basket has how many apple?"), "I don't know.");
+  forget();
+});
+
+test("a claim about kind makes nothing, marked or not", async () => {
+  forget();
+  const r = await brain("a basket is an object?");
+  assertEquals(r.learned, null, "nothing exists once merely by being spoken of");
+  assertEquals(await says("how many container?"), "one");
+  forget();
+});
+
+test("which word marks which is the language's, not the brain's", async () => {
+  forget();
+  // `a` and `an` both mark a new one; only the language file says so.
+  const r = await brain("an basket has three apple");
+  assertEquals(r.learned.terms[0].individual, true);
+  forget();
+});

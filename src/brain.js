@@ -146,6 +146,7 @@ function recognizeLanguage(roots, langs) {
               pos: word.pos,
               meaning: word.meaning,
               concept: word.concept ?? null,
+              marks: word.marks ?? null,
             }
           : null,
         roles: classifyRoles(identity, lang),
@@ -205,6 +206,7 @@ function think(roots, langs) {
       pos: first.word ? first.word.pos : null,
       meaning: first.word ? first.word.meaning : null,
       concept: first.word ? first.word.concept : null,
+      marks: first.word ? first.word.marks : null,
     };
     return withBranch(n, [...n.branch, node('thought', 'understood', [], { thought })]);
   });
@@ -243,6 +245,11 @@ function solve(roots, world) {
       result.branch.push(node('quantity', 'quantity', [], { concept: count }));
     }
 
+    // A word beside a thing may say whether one is being introduced or the one
+    // already spoken of is meant. Which word does that is the language's.
+    const marked = markOf(roots, at, world);
+    if (marked) result.branch.push(node('mark', marked, []));
+
     return result;
   });
 }
@@ -261,6 +268,18 @@ function quantityOf(roots, at, world) {
     if (!beside || !beside.state.exists) continue;
     const c = conceptOf(beside);
     if (c != null && world.isA(c, a.number)) return c;
+  }
+  return null;
+}
+
+// Read off the order, like a count: a marker beside a thing marks that thing.
+function markOf(roots, at, world) {
+  const mine = conceptOf(roots[at]);
+  if (!world || mine == null || !world.isA(mine, (world.anchors || {}).thing)) return null;
+  for (const beside of [roots[at - 1], roots[at + 1]]) {
+    const t = beside && findBranch(beside, 'thought');
+    const marks = t && t.state.thought ? t.state.thought.marks : null;
+    if (marks) return marks;
   }
   return null;
 }
@@ -398,7 +417,8 @@ function judge(roots, world, mood) {
     // find a path is not proof of the opposite — only two terms that exclude
     // each other are, and only where the claim is about kind.
     // A state claim is about the thing that bears it, not about its kind.
-    const bearer = howMany == null ? null : bearerOf(subject, world);
+    const bearer = howMany == null ? null : bearerOf(subject, world, markAt(left));
+    if (howMany != null && bearer == null) return roots;
     const holder = bearer ? bearer.id : subject;
 
     const holds = world.isA(holder, object, relation);
@@ -502,9 +522,13 @@ function valueBeside(said, from, step, world) {
 
 // The thing that bears the state: the one of this kind already spoken of, or a
 // new one. A kind holds nothing — only something that exists once does.
-function bearerOf(kind, world) {
+function bearerOf(kind, world, mark) {
   if (world.isIndividual(kind)) return { id: kind, made: false };
+  if (mark === 'new') return { id: world.nextId(), of: kind, made: true };
   const one = world.oneOf(kind);
+  // Meaning the one already spoken of, where there is none or more than one,
+  // leaves nothing to mean. The brain does not pick.
+  if (mark === 'known') return one == null ? null : { id: one, made: false };
   if (one != null) return { id: one, made: false };
   return { id: world.nextId(), of: kind, made: true };
 }
@@ -590,6 +614,12 @@ function nearest(said, from, step, wanted) {
     if (wanted(said[i])) return said[i];
   }
   return null;
+}
+
+// Whether this thing was marked as a new one or the one already meant.
+function markAt(n) {
+  const m = n && findBranch(n, 'mark');
+  return m ? m.name : null;
 }
 
 // The number term saying how many of this thing there are, if any.

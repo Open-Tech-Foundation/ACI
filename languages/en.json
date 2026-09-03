@@ -17,9 +17,9 @@
   "words": {
     "hi":    { "pos": "interjection", "meaning": "greeting",  "concept": 277 },
     "hello": { "pos": "interjection", "meaning": "greeting",  "concept": 277 },
-    "a":     { "pos": "article",      "meaning": "indefinite article" },
-    "an":    { "pos": "article",      "meaning": "indefinite article" },
-    "the":   { "pos": "article",      "meaning": "definite article" },
+    "a":     { "pos": "article",      "meaning": "indefinite article", "marks": "new" },
+    "an":    { "pos": "article",      "meaning": "indefinite article", "marks": "new" },
+    "the":   { "pos": "article",      "meaning": "definite article",   "marks": "known" },
     "is":    { "pos": "verb",         "meaning": "to be",          "concept": 294 },
     "are":   { "pos": "verb",         "meaning": "to be (plural)", "concept": 294 },
     "one":   { "pos": "numeral",      "meaning": "1",              "concept": 114 },

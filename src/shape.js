@@ -139,10 +139,13 @@ export function checkLanguage(data, where = 'language') {
   for (const [word, info] of Object.entries(data.words)) {
     const w = `${at} word "${word}"`;
     if (!info || typeof info !== 'object') fail(w, 'must be an object');
-    onlyKeys(info, ['pos', 'meaning', 'concept'], w);
+    onlyKeys(info, ['pos', 'meaning', 'concept', 'marks'], w);
     if (typeof info.pos !== 'string' || info.pos === '') fail(w, 'pos must be a non-empty string');
     if (typeof info.meaning !== 'string') fail(w, 'meaning must be a string');
     if (info.concept !== undefined && !isId(info.concept)) fail(w, 'concept must be a term id');
+    if (info.marks !== undefined && info.marks !== 'new' && info.marks !== 'known') {
+      fail(w, 'marks must be "new" or "known" — a thing is either one, or the one meant');
+    }
   }
 
   if (data.speech !== undefined) {
