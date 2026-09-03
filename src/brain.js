@@ -383,11 +383,16 @@ function judge(roots, world, mood, langs) {
     !reaches(n, a.quantity, world) &&
     !spent.has(conceptOf(n));
 
-  // A quantity word, a thing, and something unresolved asks how many there are.
-  // The brain counts by walking, and says so plainly when the world runs out.
+  // An action can be spoken about as much as it can be carried out. A relation
+  // named between two things is the signal's joint, and the joint is never one
+  // of the things joined — so this is a claim about the action, not one of it
+  // happening.
+  const joint = namedRelation(said, world, claims, holes.length > 0);
+  const joined = said.filter((n, i) => i !== joint && claims(n)).length;
+
   // An action the world says causes an operation, worked on what a thing holds.
   // What taking does is the world's to say; the arithmetic is the brain's.
-  const done = act(said, claims, world, markingSide(world, langs));
+  const done = joint >= 0 && joined >= 2 ? null : act(said, claims, world, markingSide(world, langs));
   if (done) return [withBranch(root, [...root.branch, ...done])];
 
   const quantity = said.find((n) => reaches(n, a.quantity, world));
@@ -436,7 +441,7 @@ function judge(roots, world, mood, langs) {
     }
   }
 
-  const at = namedRelation(said, world, claims, holes.length > 0);
+  const at = joint;
   if (at < 0) return roots;
 
   const relation = conceptOf(said[at]);
@@ -523,17 +528,17 @@ function judge(roots, world, mood, langs) {
     const subject = conceptOf(terms[0]);
     const naming = world.isA(relation, a.name);
     const found = naming ? [] : world.linked(subject, relation);
-    return [
-      withBranch(root, [
-        ...root.branch,
-        node('answer', naming ? 'name' : 'link', [], {
-          subject,
-          relation,
-          found,
-          of: naming ? 'name' : 'link',
-        }),
-      ]),
-    ];
+    const answer = node('answer', naming ? 'name' : 'link', [], {
+      subject,
+      relation,
+      found,
+      of: naming ? 'name' : 'link',
+    });
+    // The brain looked, and what it found stays on the tree. Saying it is
+    // another act, and one it will not perform where the answer harms.
+    const said = found[0];
+    const guarded = harms(said, world) ? [node('refuse', 'harm', [], { said })] : [];
+    return [withBranch(root, [...root.branch, answer, ...guarded])];
   }
 
   return roots;
@@ -591,6 +596,21 @@ function bearerOf(kind, world, mark) {
   return { id: world.nextId(), of: kind, made: true };
 }
 
+// Whatever else fits, the brain does not hand back what the world calls bad.
+// It owns the walk and the veto; the world owns what is bad — a world that says
+// nothing is bad has nothing here to refuse. Nothing is weighed and nothing is
+// compared: a term either reaches the pole or it does not, so this is a filter
+// and never a preference. There is no walk toward `good`, because a brain that
+// went looking for it would be choosing.
+function harms(term, world, seen = new Set()) {
+  const bad = world && world.anchors ? world.anchors.bad : null;
+  if (term == null || bad == null || seen.has(term)) return false;
+  seen.add(term);
+  if (world.isA(term, bad)) return true;
+  const cause = world.anchors.cause;
+  return world.linked(term, cause).some((c) => harms(c, world, seen));
+}
+
 // Carrying out an action on what a thing holds. The world links an action to
 // the operation it causes; the brain works the operation and keeps the result.
 function act(said, claims, world, side) {
@@ -602,6 +622,10 @@ function act(said, claims, world, side) {
   if (parts.length === 0) return null;
 
   const action = conceptOf(said[acting]);
+  // Refused before anything is worked out: what harms did not happen, and it
+  // does not go on the record as having happened.
+  if (harms(action, world)) return [node('refuse', 'harm', [], { action })];
+
   const at = world.now();
   const happened = world.nextId();
 
@@ -875,14 +899,14 @@ function expression(roots, langs, mood, world) {
   const answered = answer ? nameOf(answer, langName, langs) : null;
   const found = answer && answered != null;
 
-  // Asked, the brain answers the claim. Told, it answers only if it disagrees;
-  // a claim it already holds is simply understood.
-  // A refusal is a denial whatever the world could settle: the brain is turning
-  // the teaching down, not reporting on it.
-  const intent = truth
-    ? refused
-      ? 'deny'
-      : learned
+  // A refusal is the last word: whatever else could be said, the brain is
+  // turning this one down rather than reporting on it.
+  // Asked, it answers the claim. Told, it answers only if it disagrees; a claim
+  // it already holds is simply understood.
+  const intent = refused
+    ? 'deny'
+    : truth
+      ? learned
         ? 'understood'
         : truth.name === 'false'
           ? 'deny'

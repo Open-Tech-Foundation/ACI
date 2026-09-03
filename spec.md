@@ -31,6 +31,7 @@ What survives both is primitive, and only that may be written in code.
 | how to walk a relation, and how to parse a rule | the relations, and the rules |
 | the acts it can express: greet, count, confirm, recognise, understood, affirm, deny, unknown | the words each act is voiced in |
 | that a signal has two sides — the one speaking, the one spoken to | which word points at each, and which term each one is |
+| that what harms is refused, and the walk that decides it | which terms are bad, and what causes them |
 | that it answers a communication, counts a number, confirms a relation | which term is a communication, a number, a relation |
 
 A concrete case, because this is the one that keeps being got wrong: the brain
@@ -588,8 +589,8 @@ A **contradicted** claim is refused the same way, with `refuse: contradiction`.
 So teaching the brain `"a cat is two"` no longer corrupts it: a cat is a kind of
 physical thing, two is a kind of abstract thing, and those stand `different`.
 
-> **Still not guarded:** the harm filter (§ harm). A claim can be consistent with
-> the world and still be one the brain should not take.
+A claim can be consistent with the world and still be one the brain should not
+answer with. That is the harm filter's job, and it runs last — see **§ Harm**.
 
 **A relation the brain can perform → it performs it.** Arithmetic is **innate**.
 Put it to the two questions: *would it change in another language?* No. *Would it
@@ -606,8 +607,10 @@ A result the world has no term for is **not invented**: the `sum` node is
 `beyond` and the brain says it does not know. `"nine plus four?"` computes 13 and
 then has nothing to call it.
 
-**An action → something that happened.** An action is not a claim between two
-terms; it has *parts*. What happened is recorded as an **individual** — of its
+**An action → something that happened**, unless the signal is *about* it. A
+relation named between two things is the signal's joint, and the joint is never
+one of the things joined — so `"catch is bad"` is a claim about catching, not a
+catching. An action is otherwise not a claim between two terms; it has *parts*. What happened is recorded as an **individual** — of its
 kind, with the parts things played in it, and with a moment — so nothing new was
 needed to hold it. An event is an individual like any other.
 
@@ -751,6 +754,37 @@ The node's **name is the act**; `state.says` is what that language made of it.
 A language with no entry for the intent leaves `says` as `null`, and the brain
 says nothing — it has no words of its own to fall back on. Void input recognizes
 no language at all, so it is always unsaid.
+
+## Harm
+
+The brain owns the walk and the veto; the world owns what is bad. Nothing in
+`src/` names a single harm, and a world that calls nothing bad has nothing here
+to refuse — the filter is inert until a world, or something taught, gives it a
+pole to walk to.
+
+```
+harms(t)  =  isA(t, anchors.bad)  or  anything t causes harms
+```
+
+There are two things the brain hands back, and both are gated:
+
+- **an act** it would carry out — refused before anything is worked out, so what
+  harms did not happen and does not go on the record as having happened;
+- **the term it would answer with** — the `answer` node stays on the tree, since
+  what the brain found is still what it found; saying it is the act it will not
+  perform.
+
+Either way it adds `refuse: harm`, and a refusal is the **last word**: it sits at
+the head of the intent chain, not inside it, so it wins whatever else would fit.
+
+It is a **filter and never a weighting**. Nothing is compared, nothing is scored,
+no answer is preferred over another: a term reaches the pole or it does not.
+There is no walk toward `good`, and `anchors.good` is read nowhere — a brain that
+went looking for good would be choosing, and choosing is weighing.
+
+Knowing is not doing. The brain still learns what is bad, still confirms it when
+asked, and still holds every link it held before; what it will not do is act on
+it or answer with it.
 
 ## Loading — `src/index.js` and `src/languages.js`
 

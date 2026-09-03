@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **The harm filter.** The brain owns the walk and the veto, the world owns what
+  is bad: a term harms when it *is* bad or causes something that harms, and
+  nothing in `src/` names a single harm — the filter is inert until a world, or
+  something taught, gives it a pole. Both outputs are gated, an act it would
+  carry out and the term it would answer with, and a refusal is the last word
+  whatever else would fit. No walk toward `good`: a brain going looking for it
+  would be weighing, and `anchors.good` is read nowhere.
 - **The other person.** A signal has two sides, and until now only one of them
   existed: `you` resolved to the brain and the one speaking had no term at all.
   `other` is that term — an individual, and a person, where the brain is a self
@@ -30,6 +37,9 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- An action in a signal was carried out even where the signal was *about* it, so
+  a claim naming one was swallowed and recorded as a happening. The joint is
+  never one of the things joined: a relation named between two things is a claim.
 - A name the language cannot say was answered with nothing at all — an empty
   string, dressed as an answer. A question the language cannot voice is a gap
   like one the world cannot fill, and the brain says it does not know.
