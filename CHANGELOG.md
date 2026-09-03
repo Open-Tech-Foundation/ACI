@@ -20,6 +20,17 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
+- `hi` / `hello` name world term 277 (`greeting -> communication -> action`), so a
+  greeting is now an `action` node rather than a living person.
+- `solve` derives thing / property / relation / action from the world's four top
+  anchors, and only a thing is living or nonliving.
+
+### Removed
+
+- The part-of-speech fallback in `solve`, and the `emotion` node it produced. A
+  word that names no world term now gets no category — the brain no longer
+  guesses one from the part of speech.
+
 - `brainFrom(input, langs, world)` now takes the world; `brain(input)` loads it
   from `data/world.json`.
 - `solve` derives `entity` by walking the world to the brain's anchors when the

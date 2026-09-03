@@ -135,13 +135,12 @@ test("single-word input is not treated as a sentence", async () => {
   assertEquals(sentence, undefined, "single word has no sentence response");
 });
 
-test("solve infers a living person entity for a greeting", async () => {
+test("a greeting is an action, not a thing", async () => {
   const r = await brain("hi");
-  const entity = kind(r.roots[0], "entity");
-  assert(entity !== null, "hi is classified as an entity");
-  assertEquals(entity.name, "living");
-  const person = entity.branch.find((b) => b.kind === "entity" && b.name === "person");
-  assert(person !== null, "living entity refines to person");
+  assertEquals(kind(r.roots[0], "entity"), null, "a greeting is no entity");
+  const action = kind(r.roots[0], "action");
+  assert(action !== null, "greeting -> communication -> action");
+  assertEquals(action.state.concept, 277);
 });
 
 test("solve infers nonliving for a numeral", async () => {
@@ -150,11 +149,11 @@ test("solve infers nonliving for a numeral", async () => {
   assertEquals(entity.name, "nonliving");
 });
 
-test("solve adds emotion kind for a greeting", async () => {
-  const r = await brain("hi");
-  const emo = kind(r.roots[0], "emotion");
-  assert(emo !== null, "greeting carries emotion");
-  assertEquals(emo.name, "kind");
+test("nothing is inferred from the part of speech alone", async () => {
+  const r = await brain("is");
+  assertEquals(kind(r.roots[0], "thought").state.thought.pos, "verb");
+  assertEquals(kind(r.roots[0], "entity"), null, "a verb names no term, so no category");
+  assertEquals(kind(r.roots[0], "action"), null);
 });
 
 test("express derives a greeting for an interjection", async () => {
@@ -240,7 +239,7 @@ test("the thought carries the world term the word names", async () => {
 });
 
 test("a word with no world term names none", async () => {
-  const r = await brain("hi");
+  const r = await brain("the");
   assertEquals(kind(r.roots[0], "thought").state.thought.concept, null);
 });
 

@@ -8,9 +8,10 @@ in the core**. All language knowledge arrives as external data files.
 
 The split is strict and enforced:
 
-- **`src/brain.js`** — the pure engine. It owns only *innate concepts*
-  (entity living/nonliving/person, emotion, social acts from parts of speech).
-  It contains **zero** hardcoded vocabulary, words, replies, or grammar rules.
+- **`src/brain.js`** — the pure engine. It owns only *innate concepts*: the four
+  ways anything can exist (thing / property / relation / action) and the
+  refinements of a thing (living / nonliving / person). It contains **zero**
+  hardcoded vocabulary, words, or grammar rules.
 - **`languages/*.json`** — external data. Supplies words (POS, meaning, and the
   world term the word names) and a context-free grammar. The brain *applies*
   whatever it is given; it never knows a language's name or rules itself.
@@ -57,7 +58,10 @@ the id of the world term it names. There is **no** `type`, `emotion`, or
 
 ```jsonc
 {
-  "anchors":   { "living": 10, "person": 29 },  // brain categories -> term ids
+  "anchors": {                                  // brain categories -> term ids
+    "thing": 2, "property": 3, "relation": 4, "action": 5,
+    "living": 10, "person": 29
+  },
   "relations": { "is": 294 },                   // the relation is itself a term
   "terms": [
     { "id": 10, "name": "organism", "links": [{ "rel": 294, "to": 6 }] },
@@ -135,23 +139,21 @@ language match. Single factual recollection; no entity reasoning here.
 
 ### 3. solve — infer entity and emotion (innate reasoning)
 
-Builds the `response` node from the meaning, then reasons about what kind of
-thing it is.
+Builds the `response` node from the meaning, then reasons about what the word
+names by walking the world's `is` chain to the brain's anchors:
 
-When the word names a world term, the entity is **derived from the world**:
-walk the `is` chain and see which anchor it reaches.
+- reaches `anchors.thing` → `entity(nonliving)`, or `entity(living)` when it also
+  reaches `anchors.living`, refined by `entity(person)` at `anchors.person`
+- reaches `anchors.action` → `action`
+- reaches `anchors.property` → `property`
+- reaches `anchors.relation` → `relation`
 
-- reaches `anchors.living` → `entity(living)`, refined by `anchors.person`
-- otherwise → `entity(nonliving)`
+So `cat` (→ animal → organism) and `tree` (→ plant → organism) are living, `apple`
+(→ fruit → food → substance) is not, and `hi` (greeting → communication → action)
+is an **action** rather than any kind of thing.
 
-So `cat` (→ animal → organism) and `tree` (→ plant → organism) are living, while
-`apple` (→ fruit → food → substance) is not — from the chain, not the part of
-speech.
-
-Words with no term fall back to part-of-speech reasoning:
-
-- `pos === 'interjection'` → `entity(living)` → `entity(person)` + `emotion(kind)`
-- `pos === 'numeral'` → `entity(nonliving)`
+A word that names no term gets no category. The brain does **not** guess from the
+part of speech.
 
 ### 4. express — derive the reply
 

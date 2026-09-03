@@ -10,8 +10,8 @@
     }
   },
   "words": {
-    "hi":    { "pos": "interjection", "meaning": "greeting" },
-    "hello": { "pos": "interjection", "meaning": "greeting" },
+    "hi":    { "pos": "interjection", "meaning": "greeting",  "concept": 277 },
+    "hello": { "pos": "interjection", "meaning": "greeting",  "concept": 277 },
     "a":     { "pos": "article",      "meaning": "indefinite article" },
     "the":   { "pos": "article",      "meaning": "definite article" },
     "is":    { "pos": "verb",         "meaning": "to be" },

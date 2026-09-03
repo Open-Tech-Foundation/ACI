@@ -211,13 +211,10 @@ function think(roots, langs) {
 }
 
 // ---------------------------------------------------------------------------
-// solve — reason about the understood meaning. The brain infers what kind of
-// thing it is (entity) and how it feels (emotion).
-//
-// When the word names a term in the world, the entity is derived by walking
-// the world's `is` chain to the brain's own anchors — the brain owns the
-// categories, the world owns the membership. Words with no term fall back to
-// the part-of-speech reasoning.
+// solve — reason about the understood meaning. The brain infers what the word
+// names by walking the world's `is` chain to its own anchors: the brain owns
+// the categories, the world owns the membership. A word that names no term
+// gets no category — the brain does not guess from the part of speech.
 // ---------------------------------------------------------------------------
 function solve(roots, world) {
   return roots.map((n) => {
@@ -238,35 +235,34 @@ function solve(roots, world) {
     // Innate reasoning: interjections are social — they come from living
     // entities (persons). The brain knows this from the part-of-speech
     // category, not from the semantic meaning.
-    const fromWorld = entityFrom(thoughtState ? thoughtState.concept : null, world);
-    if (fromWorld) {
-      result.branch.push(fromWorld);
-    } else if (pos === 'interjection') {
-      result.branch.push(
-        node('entity', 'living', [node('entity', 'person', [], { kind: 'person' })], { kind: 'person' }),
-      );
-      result.branch.push(node('emotion', 'kind', []));
-    } else if (pos === 'numeral') {
-      result.branch.push(node('entity', 'nonliving', [], { kind: 'numeral' }));
-    }
+    const known = worldNode(thoughtState ? thoughtState.concept : null, world);
+    if (known) result.branch.push(known);
 
     return result;
   });
 }
 
-// The world says what a term is; the brain reads only its own categories out
-// of it. Reaching the `living` anchor makes it living, the `person` anchor
-// refines that; anything else that exists is nonliving.
-function entityFrom(concept, world) {
+// The world says what a term is; the brain reads only its own categories out of
+// it. thing / property / relation / action are the brain's innate schema — the
+// four ways anything can exist. Only a thing is living or nonliving; an action
+// is an action, never a nonliving thing.
+function worldNode(concept, world) {
   if (concept == null || !world) return null;
-  const { living, person } = world.anchors;
-  if (world.isA(concept, living)) {
-    const kids = world.isA(concept, person)
+  const a = world.anchors || {};
+
+  if (world.isA(concept, a.thing)) {
+    if (!world.isA(concept, a.living)) {
+      return node('entity', 'nonliving', [], { concept });
+    }
+    const kids = world.isA(concept, a.person)
       ? [node('entity', 'person', [], { kind: 'person' })]
       : [];
     return node('entity', 'living', kids, { concept });
   }
-  return node('entity', 'nonliving', [], { concept });
+  if (world.isA(concept, a.action)) return node('action', 'action', [], { concept });
+  if (world.isA(concept, a.property)) return node('property', 'property', [], { concept });
+  if (world.isA(concept, a.relation)) return node('relation', 'relation', [], { concept });
+  return null;
 }
 
 // ---------------------------------------------------------------------------

@@ -1,5 +1,9 @@
 {
   "anchors": {
+    "thing": 2,
+    "property": 3,
+    "relation": 4,
+    "action": 5,
     "living": 10,
     "person": 29
   },
