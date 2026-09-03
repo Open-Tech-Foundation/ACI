@@ -64,3 +64,48 @@ test("what a thing holds is state; what it is stays permanent", async () => {
   assertEquals(await says("a basket is an object?"), "Yes.", "state did not disturb kind");
   forget();
 });
+
+test("an action works on what a thing holds", async () => {
+  forget();
+  await brain("basket has three apple");
+  const r = await brain("take one apple from basket");
+  const did = (r.roots[0].branch || []).find((b) => b.kind === "did");
+  assertEquals(did.state.before, 3);
+  assertEquals(did.state.amount, 1);
+  assertEquals(did.state.after, 2);
+  assertEquals(r.expression.state.says, "two");
+  assertEquals(await says("basket has how many apple?"), "two");
+  forget();
+});
+
+test("what an action does is the world's to say, the arithmetic is the brain's", async () => {
+  forget();
+  await brain("basket has two apple");
+  const took = await brain("take one apple from basket");
+  const gave = await brain("give three apple to basket");
+  // take links to minus and give to plus in the world; nothing in the engine
+  // knows what either word means.
+  assertEquals((took.roots[0].branch || []).find((b) => b.kind === "did").state.after, 1);
+  assertEquals((gave.roots[0].branch || []).find((b) => b.kind === "did").state.after, 4);
+  forget();
+});
+
+test("taking more than is there is refused, and leaves the state alone", async () => {
+  forget();
+  await brain("basket has one apple");
+  const r = await brain("take three apple from basket");
+  assertEquals((r.roots[0].branch || []).find((b) => b.kind === "did").state.after, -2);
+  assertEquals((r.roots[0].branch || []).find((b) => b.kind === "refuse").name, "beyond");
+  assertEquals(r.learned, null, "a state the world cannot name is not held");
+  assertEquals(r.expression.state.says, "No.");
+  assertEquals(await says("basket has how many apple?"), "one", "untouched");
+  forget();
+});
+
+test("an action on a thing holding nothing known does nothing", async () => {
+  forget();
+  const r = await brain("take one apple from basket");
+  assertEquals((r.roots[0].branch || []).find((b) => b.kind === "did"), undefined);
+  assertEquals(r.learned, null);
+  forget();
+});

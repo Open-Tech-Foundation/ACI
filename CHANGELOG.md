@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- Actions that change state. The world links an action to the operation it causes
+  by `cause` — `take` causes `minus`, `give` causes `plus` — and the brain works
+  the arithmetic on what a thing holds and keeps the result. Nothing in the engine
+  knows what taking is. A result the world cannot name is not held: taking more
+  than is there is refused and the state is left alone.
+- `take` and `give` words, `from` and `to` as prepositions, and a grammar rule for
+  the form.
+
 - **State, and memory of it.** A link may carry a `quantity`: what a thing holds
   now, as against what it is. Telling the brain a different count revises it
   instead of being refused as a contradiction, and `"basket has how many apple?"`

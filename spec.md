@@ -419,6 +419,25 @@ A result the world has no term for is **not invented**: the `sum` node is
 `beyond` and the brain says it does not know. `"nine plus four?"` computes 13 and
 then has nothing to call it.
 
+**An action the world says causes an operation → the brain carries it out.**
+The world links an action term to an operation term by `cause` — `take` causes
+`minus`, `give` causes `plus`. Nothing in the engine knows what either word
+means; it reads the link, works the arithmetic on what the thing holds, and keeps
+the result. Adds a `did` node with `{ action, operation, holder, thing, before,
+amount, after }`.
+
+A result the world cannot name is **not held**: taking more than is there is
+refused and the state is left alone.
+
+```
+> basket has three apple        I know.
+> take one apple from basket    two       3 take 1 → 2
+> take two apple from basket    zero      2 take 2 → 0
+> take one apple from basket    No.       0 take 1 → -1, refused
+> basket has how many apple?    zero      untouched
+> give three apple to basket    three     0 give 3 → 3
+```
+
 **A quantity word, a thing, and something unresolved → how many.** The brain
 counts the terms that link to the kind and names the count with `world.termFor`.
 Adds a `count` node with `{ of, members, total }`.

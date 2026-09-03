@@ -326,6 +326,11 @@ function judge(roots, world, mood) {
 
   // A quantity word, a thing, and something unresolved asks how many there are.
   // The brain counts by walking, and says so plainly when the world runs out.
+  // An action the world says causes an operation, worked on what a thing holds.
+  // What taking does is the world's to say; the arithmetic is the brain's.
+  const done = act(said, isThing, world);
+  if (done) return [withBranch(root, [...root.branch, ...done])];
+
   const quantity = said.find((n) => reaches(n, a.quantity, world));
   if (quantity && holes.length > 0) {
     const things = said.filter(isThing);
@@ -481,6 +486,56 @@ function valueBeside(said, from, step, world) {
   return null;
 }
 
+// Carrying out an action on what a thing holds. The world links an action to
+// the operation it causes; the brain works the operation and keeps the result.
+function act(said, isThing, world) {
+  const a = world.anchors || {};
+  const acting = said.find((n) => reaches(n, a.action, world));
+  if (!acting) return null;
+
+  const causes = world.linked(conceptOf(acting), a.cause);
+  const op = causes.find((c) => c === a.plus || c === a.minus);
+  if (!op) return null;
+
+  const what = said.find((n) => quantityTerm(n) != null);
+  if (!what) return null;
+  const source = said.find((n) => isThing(n) && n !== what);
+  if (!source) return null;
+
+  const amount = world.valueOf(quantityTerm(what));
+  const holder = conceptOf(source);
+  const thing = conceptOf(what);
+  const before = world.held(holder, a.has, thing);
+  if (amount == null || before == null) return null;
+
+  const after = op === a.plus ? before + amount : before - amount;
+  const term = world.termFor(after);
+  const done = node('did', world.term(conceptOf(acting)).name, [], {
+    action: conceptOf(acting),
+    operation: op,
+    holder,
+    thing,
+    before,
+    amount,
+    after,
+    term,
+  });
+
+  // A state the world cannot name is not a state the brain will hold. Taking
+  // more than is there leaves what was there untouched.
+  if (term == null) return [done, node('refuse', 'beyond', [], { after })];
+
+  return [
+    done,
+    node('learn', 'link', [], {
+      subject: holder,
+      relation: a.has,
+      object: thing,
+      quantity: after,
+    }),
+  ];
+}
+
 // Which thing in the signal names the relation being spoken of. `is` is the
 // weakest claim a signal can make, so any other relation named takes it.
 function namedRelation(said, world) {
@@ -608,6 +663,7 @@ function expression(roots, langs, mood, world) {
   const learned = bound ? findBranch(roots[0], 'learn') : null;
   const counted = bound ? findBranch(roots[0], 'count') : null;
   const sum = bound ? findBranch(roots[0], 'sum') : null;
+  const did = bound ? findBranch(roots[0], 'did') : null;
   const refused = bound ? findBranch(roots[0], 'refuse') : null;
   // A question the world cannot fill is a gap, not an answer. The node stays on
   // the tree either way — what the brain looked for and did not find is worth
@@ -631,10 +687,14 @@ function expression(roots, langs, mood, world) {
             : mood === 'ask'
               ? 'affirm'
               : 'understood'
-    : sum
-      ? sum.state.term != null
+    : did
+      ? did.state.term != null
         ? 'answer'
-        : 'unsure'
+        : 'deny'
+      : sum
+        ? sum.state.term != null
+          ? 'answer'
+          : 'unsure'
       : counted
         ? counted.state.total != null
           ? 'answer'
@@ -652,11 +712,13 @@ function expression(roots, langs, mood, world) {
   const langName = parts.map((p) => p.state.language).find(Boolean) || null;
   const said =
     intent === 'answer'
-      ? sum
-        ? termWord(sum.state.term, langName, langs)
-        : counted
-          ? termWord(counted.state.total, langName, langs)
-          : nameOf(answer, langName, langs)
+      ? did
+        ? termWord(did.state.term, langName, langs)
+        : sum
+          ? termWord(sum.state.term, langName, langs)
+          : counted
+            ? termWord(counted.state.total, langName, langs)
+            : nameOf(answer, langName, langs)
       : wholeMeaning(intent, parts);
   // Where the brain is speaking of its own state, it hands over the term for
   // that state and lets the language find the words. It holds none of them.
