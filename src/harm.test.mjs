@@ -65,7 +65,7 @@ test("an act that is bad is refused, and does not go on the record", () => {
   const r = answered("burn wheel");
   assertEquals(branchOf(r, "refuse").name, "harm");
   assertEquals(branchOf(r, "event"), null, "nothing happened");
-  assertEquals(r.expression.state.says, "No.");
+  assertEquals(r.expression.name, "deny");
 });
 
 test("an act that causes something bad is refused the same way", () => {
@@ -87,7 +87,7 @@ test("a world that calls nothing bad has nothing to refuse", () => {
 test("an answer that harms is refused, whatever else fits", () => {
   const r = answered("what has wheel");
   assertEquals(branchOf(r, "refuse").name, "harm");
-  assertEquals(r.expression.state.says, "No.");
+  assertEquals(r.expression.name, "deny");
   // What it looked for is still on the tree; saying it is what it will not do.
   assertEquals(branchOf(r, "answer").state.found, [23]);
 });

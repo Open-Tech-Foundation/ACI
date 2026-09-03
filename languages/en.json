@@ -587,6 +587,7 @@
   ],
   "speech": {
     "self": "I",
+    "one": { "before": { "vowel": "an" }, "otherwise": "a" },
     "to": "you",
     "list": ", "
   },
@@ -597,8 +598,9 @@
     "recognise":  "I recognise \"{meaning}\".",
     "learn":      "I understand.",
     "understood": "{self} {relation}.",
-    "affirm":     "Yes.",
-    "deny":       "No.",
+    "claim":      " {one} {subject} {relation} {one} {object}.",
+    "affirm":     "Yes. \u2705{meaning}",
+    "deny":       "No. \u274c",
     "answer":     "{meaning}",
     "unsure":     "{self} don't {relation}.",
     "empathy":    "Sorry. \ud83d\ude14",

@@ -356,14 +356,14 @@ test("the brain checks a claim against the world and denies it", async () => {
   assertEquals(truth.name, "false");
   assertEquals(truth.state, { subject: 79, relation: 294, object: 33, negated: false });
   assertEquals(r.expression.name, "deny");
-  assertEquals(r.expression.state.says, "No.");
+  assertEquals(r.expression.name, "deny");
 });
 
 test("a claim the world bears out is affirmed when asked", async () => {
   const r = await brain("a cat is a cat?");
   assertEquals(kind(r.roots[0], "truth").name, "true");
   assertEquals(r.expression.name, "affirm");
-  assertEquals(r.expression.state.says, "Yes.");
+  assertEquals(r.expression.name, "affirm");
 });
 
 test("the word is names the world's own is relation", async () => {
@@ -379,18 +379,18 @@ test("a signal that names no relation makes no claim", async () => {
 });
 
 test("a claim about an ancestor holds", async () => {
-  assertEquals((await brain("a dog is an organism?")).expression.state.says, "Yes.");
-  assertEquals((await brain("a bird is an animal?")).expression.state.says, "Yes.");
-  assertEquals((await brain("an apple is a food?")).expression.state.says, "Yes.");
+  assertEquals((await brain("a dog is an organism?")).expression.name, "affirm");
+  assertEquals((await brain("a bird is an animal?")).expression.name, "affirm");
+  assertEquals((await brain("an apple is a food?")).expression.name, "affirm");
 });
 
 test("a claim the chain does not bear out is denied", async () => {
-  assertEquals((await brain("a tree is an animal?")).expression.state.says, "No.");
-  assertEquals((await brain("an apple is an organism?")).expression.state.says, "No.");
+  assertEquals((await brain("a tree is an animal?")).expression.name, "deny");
+  assertEquals((await brain("an apple is an organism?")).expression.name, "deny");
 });
 
 test("the is relation runs one way only", async () => {
-  assertEquals((await brain("a person is a human?")).expression.state.says, "Yes.");
+  assertEquals((await brain("a person is a human?")).expression.name, "affirm");
   // Not denied — nothing says a human cannot be a person, only that the world
   // does not hold it. Failing to find a path is not proof of the opposite.
   assertEquals((await brain("a human is a person?")).expression.state.says, "I don't know.");
@@ -405,7 +405,7 @@ test("a claim resolves across the whole chain, however long", async () => {
 test("a numeral can stand as the subject of a claim", async () => {
   const r = await brain("three is a number?");
   assertEquals(kind(r.roots[0], "truth").state, { subject: 116, relation: 294, object: 100, negated: false });
-  assertEquals(r.expression.state.says, "Yes.");
+  assertEquals(r.expression.name, "affirm");
 });
 
 test("the brain is a thing that is not alive and has a mind", async () => {
@@ -434,14 +434,13 @@ test("a claim can be made over the has relation, not only is", async () => {
   const truth = kind(r.roots[0], "truth");
   assertEquals(truth.name, "true");
   assertEquals(truth.state, { subject: 296, relation: 295, object: 230, negated: false });
-  assertEquals(r.expression.state.says, "Yes.");
+  assertEquals(r.expression.name, "affirm");
 });
 
 test("the self is a thing, and not an animal", async () => {
-  assertEquals((await brain("you are a thing?")).expression.state.says, "Yes.");
+  assertEquals((await brain("you are a thing?")).expression.name, "affirm");
   assertEquals(
-    (await brain("you are an animal?")).expression.state.says,
-    "No.",
+    (await brain("you are an animal?")).expression.name, "deny",
     "a thing is physical or abstract, never both",
   );
 });
@@ -520,8 +519,8 @@ test("a name is a fact in memory, said as it was given", async () => {
 test("the same signal points elsewhere when it came from elsewhere", async () => {
   // A pointer holds nothing of its own: what `i` lands on is the circumstance
   // of this one signal, and the runtime is the only thing that knows it.
-  assertEquals((await brain("i am a machine?", { from: 45 })).expression.state.says, "Yes.");
-  assertEquals((await brain("i am a machine?", { from: 508 })).expression.state.says, "No.");
+  assertEquals((await brain("i am a machine?", { from: 45 })).expression.name, "affirm");
+  assertEquals((await brain("i am a machine?", { from: 508 })).expression.name, "deny");
 });
 
 test("told nothing about where a signal came from, the brain does not guess", async () => {
@@ -533,15 +532,15 @@ test("told nothing about where a signal came from, the brain does not guess", as
 test("the signal arrived here, so what it points to is the self", async () => {
   const r = await brain("you are a machine?", { from: 45 });
   assertEquals(kind(r.roots[0], "truth").state.subject, 296);
-  assertEquals(r.expression.state.says, "Yes.");
+  assertEquals(r.expression.name, "affirm");
 });
 
 test("identity is what the world says it is, not anything the engine holds", async () => {
-  assertEquals((await brain("you are a machine?")).expression.state.says, "Yes.");
-  assertEquals((await brain("you have a memory?")).expression.state.says, "Yes.");
-  assertEquals((await brain("you are a computer?")).expression.state.says, "Yes.");
-  assertEquals((await brain("you are a tool?")).expression.state.says, "No.");
-  assertEquals((await brain("you are an organism?")).expression.state.says, "No.");
+  assertEquals((await brain("you are a machine?")).expression.name, "affirm");
+  assertEquals((await brain("you have a memory?")).expression.name, "affirm");
+  assertEquals((await brain("you are a computer?")).expression.name, "affirm");
+  assertEquals((await brain("you are a tool?")).expression.name, "deny");
+  assertEquals((await brain("you are an organism?")).expression.name, "deny");
 });
 
 test("a question solves for the hole rather than checking a claim", async () => {
@@ -601,7 +600,7 @@ test("terms that exclude each other make a claim false, not unknown", async () =
   for (const q of ["a cat is a number?", "two is an animal?", "an apple is an organism?"]) {
     const r = await brain(q);
     assertEquals(kind(r.roots[0], "truth").name, "false", q);
-    assertEquals(r.expression.state.says, "No.", q);
+    assertEquals(r.expression.name, "deny", q);
   }
 });
 
@@ -623,7 +622,7 @@ test("a contradicted claim is refused rather than learned", async () => {
   assertEquals(kind(r.roots[0], "refuse").name, "contradiction");
   assertEquals(kind(r.roots[0], "learn"), null);
   assertEquals(r.learned, null);
-  assertEquals(r.expression.state.says, "No.");
+  assertEquals(r.expression.name, "deny");
   forget();
 });
 
@@ -722,9 +721,9 @@ test("a result the world has no term for is not invented", async () => {
 });
 
 test("the brain compares two numbers", async () => {
-  assertEquals((await brain("one less three?")).expression.state.says, "Yes.");
-  assertEquals((await brain("three more one?")).expression.state.says, "Yes.");
-  assertEquals((await brain("one more three?")).expression.state.says, "No.");
+  assertEquals((await brain("one less three?")).expression.name, "affirm");
+  assertEquals((await brain("three more one?")).expression.name, "affirm");
+  assertEquals((await brain("one more three?")).expression.name, "deny");
 });
 
 test("comparison is decided by value, never by a link in the world", async () => {
@@ -735,9 +734,9 @@ test("comparison is decided by value, never by a link in the world", async () =>
 });
 
 test("a plural is understood as the word it comes from", async () => {
-  assertEquals((await brain("dogs are animals?")).expression.state.says, "Yes.");
-  assertEquals((await brain("tigers are mammals?")).expression.state.says, "Yes.");
-  assertEquals((await brain("apples are fruits?")).expression.state.says, "Yes.");
+  assertEquals((await brain("dogs are animals?")).expression.name, "affirm");
+  assertEquals((await brain("tigers are mammals?")).expression.name, "affirm");
+  assertEquals((await brain("apples are fruits?")).expression.name, "affirm");
 });
 
 test("no plural is written down anywhere", async () => {
@@ -749,15 +748,15 @@ test("no plural is written down anywhere", async () => {
 });
 
 test("a claim may be about anything that exists, not only a thing", async () => {
-  assertEquals((await brain("gravity is a force?")).expression.state.says, "Yes.");
-  assertEquals((await brain("up is a position?")).expression.state.says, "Yes.");
-  assertEquals((await brain("red is a colour?")).expression.state.says, "Yes.");
-  assertEquals((await brain("fear is a feeling?")).expression.state.says, "Yes.");
+  assertEquals((await brain("gravity is a force?")).expression.name, "affirm");
+  assertEquals((await brain("up is a position?")).expression.name, "affirm");
+  assertEquals((await brain("red is a colour?")).expression.name, "affirm");
+  assertEquals((await brain("fear is a feeling?")).expression.name, "affirm");
 });
 
 test("opposites exclude each other", async () => {
-  assertEquals((await brain("up is a down?")).expression.state.says, "No.");
-  assertEquals((await brain("near is a far?")).expression.state.says, "No.");
+  assertEquals((await brain("up is a down?")).expression.name, "deny");
+  assertEquals((await brain("near is a far?")).expression.name, "deny");
 });
 
 test("the copula joins a claim, it is never one of the things joined", async () => {
@@ -786,16 +785,15 @@ test("a denial is knowledge, where not finding a path is only ignorance", async 
   assertEquals((await brain("up is a fear?")).expression.state.says, "I don't know.");
   await brain("up is not a fear");
   assertEquals(
-    (await brain("up is a fear?")).expression.state.says,
-    "No.",
+    (await brain("up is a fear?")).expression.name, "deny",
     "now it knows, rather than merely not knowing",
   );
   forget();
 });
 
 test("the brain answers a denied question", async () => {
-  assertEquals((await brain("a cat is not a plant?")).expression.state.says, "Yes.");
-  assertEquals((await brain("a cat is not an animal?")).expression.state.says, "No.");
+  assertEquals((await brain("a cat is not a plant?")).expression.name, "affirm");
+  assertEquals((await brain("a cat is not an animal?")).expression.name, "deny");
 });
 
 test("a denial the world contradicts is refused", async () => {
@@ -809,8 +807,8 @@ test("a denial the world contradicts is refused", async () => {
 test("a denied link joins nothing", async () => {
   forget();
   await brain("up is not a fear");
-  assertEquals((await brain("up is a fear?")).expression.state.says, "No.");
-  assertEquals((await brain("up is a position?")).expression.state.says, "Yes.",
+  assertEquals((await brain("up is a fear?")).expression.name, "deny");
+  assertEquals((await brain("up is a position?")).expression.name, "affirm",
     "the denial cut nothing else");
   forget();
 });

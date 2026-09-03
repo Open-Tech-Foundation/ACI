@@ -13,6 +13,14 @@ All notable changes to this project are documented in this file.
   absence of a claim about when, not a third thing to record, and it is separate
   from `at`, the moment the brain heard it. The arrow between the three is the
   world's, written with the `order` relation it already had.
+- **A claim is said back when it is affirmed.** `"a hyena is a mammal?"` answers
+  *Yes. ✅ a hyena is a mammal.* rather than a bare *Yes.* The brain hands over
+  the three terms it joined; the language orders and words them through a
+  `claim` frame, and where the brain cannot say all three there is no claim to
+  restate and it says none of it. Denial is marked the same way.
+- **A speech word may take a different form for what follows it** — `a` against
+  `an`. Which symbol set calls for which form is the language's, named from its
+  own symbol sets; the brain only knows a language may do it.
 - **Nothing is answered with silence.** `"..."` was what a signal got whenever
   the brain could not place it — including one held up by a single word it had
   never been given. It says which word now (`I don't know "hunter".`), handing

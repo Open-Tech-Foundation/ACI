@@ -7,6 +7,8 @@ const { brain, forget } = openBrain("sqlite::memory:");
 // Every test here owns entities no other test touches, so nothing one learns
 // can be seen by another whatever order they run in.
 const says = async (q) => (await brain(q)).expression.state.says;
+// The words are the language's; the act is the brain's.
+const act = async (q) => (await brain(q)).expression.name;
 const refusal = (r) => {
   const n = (r.roots[0].branch || []).find((b) => b.kind === "refuse");
   return n ? n.name : null;
@@ -15,7 +17,7 @@ const refusal = (r) => {
 test("a fact told is a fact kept", async () => {
   assertEquals(await says("a stork has a wing?"), "I don't know.");
   await brain("a stork has a wing");
-  assertEquals(await says("a stork has a wing?"), "Yes.");
+  assertEquals(await act("a stork has a wing?"), "affirm");
 });
 
 test("what was learned can then be asked about", async () => {
@@ -28,8 +30,7 @@ test("learning changes what follows from the world, not only the fact itself", a
   assertEquals(await says("left is a state?"), "I don't know.");
   await brain("left is a feeling");
   assertEquals(
-    await says("left is a state?"),
-    "Yes.",
+    await act("left is a state?"), "affirm",
     "feeling -> state was already known; the taught link reaches through it",
   );
 });

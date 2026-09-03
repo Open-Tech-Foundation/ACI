@@ -50,11 +50,31 @@ function voice(data, intent, vars, named) {
   const form = data.expressions ? data.expressions[intent] : null;
   if (typeof form !== 'string') return null;
   const speech = data.speech || {};
-  return form.replace(/\{(\w+)\}/g, (_, key) => {
+  const agreeing = (key) => key in speech && speech[key] && typeof speech[key] === 'object';
+
+  // Everything that stands on its own first, so that what agrees with what
+  // follows has something to look at.
+  const filled = form.replace(/\{(\w+)\}/g, (whole, key) => {
+    if (agreeing(key)) return whole;
     if (key in speech) return speech[key];
     const v = vars ? vars[key] : null;
     if (typeof v === 'number') return named.get(v) ?? '';
     return v == null ? '' : String(v);
+  });
+
+  // A word may take a different form for what comes after it — `a` against
+  // `an`. That a language may do this is all the brain knows; which symbols
+  // call for which form is the language's own, and it names them from its own
+  // symbol sets.
+  return filled.replace(/\{(\w+)\}/g, (whole, key, at) => {
+    const forms = speech[key];
+    if (!forms || typeof forms !== 'object') return '';
+    const rest = filled.slice(at + whole.length).replace(/^\s+/, '');
+    const next = rest ? rest[0] : '';
+    for (const [type, form] of Object.entries(forms.before || {})) {
+      if (charSet((data.symbols || {})[type]).has(next)) return form;
+    }
+    return forms.otherwise ?? '';
   });
 }
 

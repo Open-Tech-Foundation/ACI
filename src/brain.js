@@ -1075,11 +1075,16 @@ function expression(roots, langs, mood, world, sent) {
       : wholeMeaning(intent, parts);
   // Where the brain is speaking of its own state, it hands over the term for
   // that state and lets the language find the words. It holds none of them.
-  const terms =
-    KNOWING.includes(intent)
-      ? { relation: world && world.anchors ? world.anchors.know : null }
-      : null;
-  const whole = speak(intent, said, langName, langs, terms);
+  const terms = KNOWING.includes(intent)
+    ? { relation: world && world.anchors ? world.anchors.know : null }
+    : null;
+  const whole = speak(
+    intent === 'affirm' ? intent : intent,
+    intent === 'affirm' ? claimSaid(truth, langName, langs, world) : said,
+    langName,
+    langs,
+    terms,
+  );
   return withBranch(whole, parts, { ...whole.state, bound, mood });
 }
 
@@ -1140,6 +1145,19 @@ function listing(langName, langs) {
   const lang = (langs || []).find((l) => l.data.name === langName);
   const between = lang && lang.data.speech ? lang.data.speech.list : null;
   return typeof between === 'string' ? between : ' ';
+}
+
+// The claim itself, said back. The brain hands over the three terms it joined
+// and the language puts them in an order and gives them their words; where it
+// cannot say all three there is no claim to restate, and it says none of it
+// rather than a sentence with a hole in it.
+function claimSaid(truth, langName, langs, world) {
+  const lang = (langs || []).find((l) => l.data.name === langName);
+  if (!lang || !truth) return null;
+  const { subject, relation, object } = truth.state;
+  const words = [subject, relation, object].map((t) => termWord(t, langName, langs, world));
+  if (words.some((w) => w == null)) return '';
+  return lang.express('claim', { subject: words[0], relation: words[1], object: words[2] }) ?? '';
 }
 
 // A term, said in the language being spoken — or, where that language has no

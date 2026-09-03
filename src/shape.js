@@ -243,6 +243,20 @@ export function checkLanguage(data, where = 'language') {
   if (data.speech !== undefined) {
     if (!data.speech || typeof data.speech !== 'object') fail(at, 'speech must be an object');
     for (const [role, form] of Object.entries(data.speech)) {
+      // A word that agrees with what follows it gives its forms instead: which
+      // symbol set calls for which, and what it says otherwise.
+      if (form && typeof form === 'object') {
+        onlyKeys(form, ['before', 'otherwise'], `${at} speech "${role}"`);
+        if (typeof form.otherwise !== 'string') {
+          fail(`${at} speech "${role}"`, 'otherwise must be a string');
+        }
+        for (const [type, said] of Object.entries(form.before || {})) {
+          if (typeof said !== 'string') {
+            fail(`${at} speech "${role}" before ${type}`, 'must be a string');
+          }
+        }
+        continue;
+      }
       if (typeof form !== 'string') fail(`${at} speech "${role}"`, 'must be a string');
     }
   }

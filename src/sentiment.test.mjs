@@ -35,7 +35,7 @@ test("a denial is held as a denial, not as its opposite", async () => {
 test("with nobody to hold it, an opinion is not knowledge", async () => {
   const r = await brain("the ladder is nice");
   assertEquals(branchOf(r, "refuse").name, "unheld");
-  assertEquals(r.expression.state.says, "No.");
+  assertEquals(r.expression.name, "deny");
   assertEquals(r.learned, null);
 });
 

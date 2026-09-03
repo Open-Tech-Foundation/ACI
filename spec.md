@@ -148,6 +148,7 @@ runtime — never the brain — does the reading.
     "greet":      "Hello!",
     "count":      "It is {meaning}.",
     "confirm":    "Yes, it {meaning}.",
+    "claim":      " {one} {subject} {relation} {one} {object}.",
     "recognise":  "I recognise \"{meaning}\".",
     "understood": "I understand.",
     "affirm":     "Yes.",
@@ -204,9 +205,19 @@ has for them:
 - `{meaning}` is filled from what the brain understood
 
 ```jsonc
-"speech":      { "self": "I" },
+"speech":      { "self": "I", "one": { "before": { "vowel": "an" }, "otherwise": "a" } },
 "expressions": { "unsure": "{self} don't {relation}." }
 ```
+
+A speech word may take **a different form for what follows it** — `a` against
+`an`. That a language may do this is all the brain knows; which of its own
+symbol sets calls for which form is the language's, and it names them itself.
+
+Not every frame is an act. **`claim`** is the claim said back: the brain hands
+over the three terms it joined and the language orders and words them, so
+`"a hyena is a mammal?"` answers *Yes. ✅ a hyena is a mammal.* Where the brain
+cannot say all three — a term this language has no word for — there is no claim
+to restate and it says none of it, rather than a sentence with a hole in it.
 
 So `"I don't know."` is written **nowhere**. It is the speaker word, the frame's
 own negation, and whatever this language calls term 285 (`know`). Rename that

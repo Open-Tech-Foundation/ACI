@@ -24,8 +24,8 @@ test("and saying neither leaves it where it was said — now", async () => {
 });
 
 test("the arrow between them is the world's, not the engine's", async () => {
-  assertEquals((await brain("the past is a moment?")).expression.state.says, "Yes.");
-  assertEquals((await brain("the future is a moment?")).expression.state.says, "Yes.");
+  assertEquals((await brain("the past is a moment?")).expression.name, "affirm");
+  assertEquals((await brain("the future is a moment?")).expression.name, "affirm");
   // past -> now -> future, written with the order relation the world already had
   const r = await brain("what is a past?");
   assert(r.expression.state.says.includes("moment"));

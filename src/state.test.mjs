@@ -7,6 +7,8 @@ const { brain, forget } = openBrain("sqlite::memory:");
 // Every test owns a container and a thing no other test touches, so none of
 // them can see what another learned, whatever order they run in.
 const says = async (q) => (await brain(q)).expression.state.says;
+// The words are the language's; the act is the brain's.
+const act = async (q) => (await brain(q)).expression.name;
 const branch = (r, kind) => (r.roots[0].branch || []).find((b) => b.kind === kind) || null;
 
 test("a thing can hold a number of something, and the brain remembers", async () => {
@@ -39,7 +41,7 @@ test("state belongs to something that exists once, not to its kind", async () =>
   const r = await brain("a tower has five lamp");
   const made = r.learned.terms.find((t) => /^tower#/.test(t.name));
   assertEquals(made.individual, true);
-  assertEquals(await says("a tower is a building?"), "Yes.", "the kind is untouched");
+  assertEquals(await act("a tower is a building?"), "affirm", "the kind is untouched");
 });
 
 test("a introduces one, a second `a` makes a second one", async () => {
@@ -86,7 +88,7 @@ test("taking more than is there is refused, and leaves the state alone", async (
   const r = await brain("take nine saws from the bag");
   assertEquals(branch(r, "refuse").name, "beyond");
   assertEquals(r.learned, null);
-  assertEquals(r.expression.state.says, "No.");
+  assertEquals(r.expression.name, "deny");
   assertEquals(await says("the bag has how many saws?"), "two", "untouched");
 });
 
