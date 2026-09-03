@@ -326,6 +326,11 @@
     "rise":         { "pos": "noun", "meaning": "rise",            "concept": 325 },
     "stop":         { "pos": "noun", "meaning": "stop",            "concept": 326 },
 
+    "wheel":        { "pos": "noun", "meaning": "wheel",           "concept": 331 },
+    "door":         { "pos": "noun", "meaning": "door",            "concept": 332 },
+    "window":       { "pos": "noun", "meaning": "window",          "concept": 333 },
+    "wing":         { "pos": "noun", "meaning": "wing",            "concept": 334 },
+
     "not":       { "pos": "negation", "meaning": "not", "negates": true },
 
     "what":      { "pos": "interrogative", "meaning": "what", "marks": "unknown" },
