@@ -39,7 +39,11 @@
     "object":    { "pos": "noun", "meaning": "object",         "concept": 8 },
     "thing":     { "pos": "noun", "meaning": "thing",          "concept": 2 },
     "number":    { "pos": "noun", "meaning": "number",         "concept": 100 },
-    "action":    { "pos": "noun", "meaning": "action",         "concept": 5 }
+    "action":    { "pos": "noun", "meaning": "action",         "concept": 5 },
+    "mind":      { "pos": "noun", "meaning": "mind",           "concept": 230 },
+
+    "aci":       { "pos": "noun", "meaning": "self",           "concept": 296 },
+    "has":       { "pos": "verb", "meaning": "has",            "concept": 295 }
   },
   "expressions": {
     "greet":      "Hello!",

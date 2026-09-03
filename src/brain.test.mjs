@@ -400,3 +400,37 @@ test("a numeral can stand as the subject of a claim", async () => {
   assertEquals(kind(r.roots[0], "truth").state, { subject: 116, relation: 294, object: 100 });
   assertEquals(r.expression.state.says, "Yes.");
 });
+
+test("the brain is a thing that is not alive and has a mind", async () => {
+  const r = await brain("aci");
+  const entity = kind(r.roots[0], "entity");
+  assertEquals(entity.name, "nonliving");
+  assertEquals(entity.state.concept, 296, "the self term");
+  assert(
+    entity.branch.some((b) => b.kind === "mind"),
+    "mindedness is a second axis, not a third kind of thing",
+  );
+});
+
+test("being alive and having a mind are separate axes", async () => {
+  const cat = kind((await brain("cat")).roots[0], "entity");
+  assertEquals(cat.name, "living");
+  assertEquals(cat.branch.some((b) => b.kind === "mind"), false, "not taught yet");
+
+  const apple = kind((await brain("apple")).roots[0], "entity");
+  assertEquals(apple.name, "nonliving");
+  assertEquals(apple.branch.length, 0);
+});
+
+test("a claim can be made over the has relation, not only is", async () => {
+  const r = await brain("aci has a mind");
+  const truth = kind(r.roots[0], "truth");
+  assertEquals(truth.name, "true");
+  assertEquals(truth.state, { subject: 296, relation: 295, object: 230 });
+  assertEquals(r.expression.state.says, "Yes.");
+});
+
+test("the self is a thing, and not an animal", async () => {
+  assertEquals((await brain("aci is a thing")).expression.state.says, "Yes.");
+  assertEquals((await brain("aci is an animal")).expression.state.says, "No.");
+});

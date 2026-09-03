@@ -69,3 +69,24 @@ test("a slot with nothing to fill it is dropped", () => {
   const l = fromData({ ...data, expressions: { count: "It is {meaning}." } });
   assertEquals(l.express("count"), "It is .");
 });
+
+test("a term can be named back in this language's own word", () => {
+  const l = fromData({
+    ...data,
+    words: { ab: { pos: "noun", meaning: "a thing", concept: 7 } },
+  });
+  assertEquals(l.wordFor(7), "ab");
+  assertEquals(l.wordFor(8), null, "a term this language has no word for");
+  assertEquals(l.wordFor(null), null);
+});
+
+test("the first word named for a term wins, in file order", () => {
+  const l = fromData({
+    ...data,
+    words: {
+      first: { pos: "noun", meaning: "x", concept: 7 },
+      second: { pos: "noun", meaning: "x", concept: 7 },
+    },
+  });
+  assertEquals(l.wordFor(7), "first");
+});

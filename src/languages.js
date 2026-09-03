@@ -10,8 +10,12 @@ function buildLanguage(data) {
   const vowels = charSet(symbols.vowel);
 
   const words = new Map();
+  // The word a term is named by, so the brain can say a term it only holds as an
+  // id — its own name among them. First word wins, in file order.
+  const named = new Map();
   for (const [word, info] of Object.entries(data.words || {})) {
     words.set(word.toLowerCase(), info);
+    if (info.concept != null && !named.has(info.concept)) named.set(info.concept, word);
   }
 
   return {
@@ -20,6 +24,7 @@ function buildLanguage(data) {
     isLetterSymbol: (ch) => letters.has(ch),
     isVowelSymbol: (ch) => vowels.has(ch),
     lookupWord: (w) => words.get(String(w).toLowerCase()) || null,
+    wordFor: (concept) => (concept == null ? null : named.get(concept) ?? null),
     grammar: data.grammar || {},
     roles: symbolRoles(symbols),
   };

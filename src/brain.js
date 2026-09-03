@@ -245,19 +245,25 @@ function solve(roots, world) {
 // The world says what a term is; the brain reads only its own categories out of
 // it. thing / property / relation / action are the brain's innate schema — the
 // four ways anything can exist. Only a thing is living or nonliving; an action
-// is an action, never a nonliving thing.
+// is an action, never a nonliving thing. Mindedness is a separate axis: a thing
+// may have a mind whether or not it is alive.
 function worldNode(concept, world) {
   if (concept == null || !world) return null;
   const a = world.anchors || {};
 
   if (world.isA(concept, a.thing)) {
-    if (!world.isA(concept, a.living)) {
-      return node('entity', 'nonliving', [], { concept });
+    const alive = world.isA(concept, a.living);
+    const kids = [];
+    if (alive && world.isA(concept, a.person)) {
+      kids.push(node('entity', 'person', [], { kind: 'person' }));
     }
-    const kids = world.isA(concept, a.person)
-      ? [node('entity', 'person', [], { kind: 'person' })]
-      : [];
-    return node('entity', 'living', kids, { concept });
+    // Having a mind is orthogonal to being alive. A cat is both, a stone
+    // neither, and the brain itself has a mind without being alive — which is
+    // why this is a second axis and not a third kind of thing.
+    if (world.isA(concept, a.mind, a.has)) {
+      kids.push(node('mind', 'mind', [], { concept: a.mind }));
+    }
+    return node('entity', alive ? 'living' : 'nonliving', kids, { concept });
   }
   if (world.isA(concept, a.action)) return node('action', 'action', [], { concept });
   if (world.isA(concept, a.property)) return node('property', 'property', [], { concept });

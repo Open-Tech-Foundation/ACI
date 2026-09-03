@@ -7,10 +7,14 @@
     "living": 10,
     "person": 29,
     "communication": 256,
-    "number": 100
+    "number": 100,
+    "has": 295,
+    "mind": 230,
+    "self": 296
   },
   "relations": {
-    "is": 294
+    "is": 294,
+    "has": 295
   },
   "terms": [
     {
@@ -2935,6 +2939,30 @@
         {
           "rel": 294,
           "to": 4
+        }
+      ]
+    },
+    {
+      "id": 295,
+      "name": "has",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        }
+      ]
+    },
+    {
+      "id": 296,
+      "name": "self",
+      "links": [
+        {
+          "rel": 294,
+          "to": 2
+        },
+        {
+          "rel": 295,
+          "to": 230
         }
       ]
     }
