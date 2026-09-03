@@ -6,6 +6,18 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- `src/shape.js` — the one shape all knowledge must take. Every source, internal
+  or external, is validated by the same rules before the brain sees it, and a
+  source that does not fit is **refused, never trimmed to fit**: dangling links,
+  duplicate ids, anchors pointing nowhere, unknown fields, words with no meaning,
+  a grammar whose start has no rule. Errors name the file at fault.
+- `knowledge/*.json` — knowledge taught on top of the base world, world-shaped,
+  loaded by convention at startup. A file may add terms and add links to terms the
+  world already has; it may not redefine a term, move an anchor, or reassign a
+  relation.
+- `src/knowledge.js` — `fromSources({ world, knowledge, languages })` validates
+  every source, merges, and returns what the brain takes.
+
 - `src/relations.test.mjs` — proof that the engine reasons over any relation, not
   only `is`: two relations across the same terms, each walked separately, each
   running one way. `wing parts bird` is true while `wing is bird` is false.
@@ -47,6 +59,12 @@ All notable changes to this project are documented in this file.
   the only bridge from a symbol to the world.
 
 ### Changed
+
+- `brainFrom(input, knowledge)` takes **one** argument for everything it knows,
+  and will not grow another: a new source is a new file in `languages/`,
+  `knowledge/` or `data/`, assembled by the runtime.
+- `isA` follows **all** links of a relation rather than the first, so a term may
+  hold links from the world and from knowledge at once. The world is a graph.
 
 - The demo has two tabs instead of one per phase: **Expression**, what the brain
   said and the act it chose, for input/output testing; and **Tree**, the whole

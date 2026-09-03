@@ -1,14 +1,13 @@
 import { test, assert, assertEquals } from "runtime:test";
 import { brainFrom } from "./brain.js";
-import { fromData } from "./languages.js";
-import { fromWorldData } from "./world.js";
+import { fromSources } from "./knowledge.js";
 
 // A world with two relations over the same terms: one chain of `is`, one of
 // `part`. Nothing about them is special to `is` — both are terms, both are
 // walked the same way.
 const IS = 90;
 const PART = 91;
-const world = fromWorldData({
+const worldData = {
   anchors: { thing: 1, relation: 2 },
   relations: { is: IS },
   terms: [
@@ -20,9 +19,9 @@ const world = fromWorldData({
     { id: 11, name: "wing", links: [{ rel: IS, to: 1 }, { rel: PART, to: 10 }] },
     { id: 12, name: "stone", links: [{ rel: IS, to: 1 }] },
   ],
-});
+};
 
-const lang = fromData({
+const langData = {
   name: "test",
   symbols: { letter: { characters: "abcdefghijklmnopqrstuvwxyz" } },
   words: {
@@ -41,10 +40,13 @@ const lang = fromData({
       verbComplement: { rules: ["noun"] },
     },
   },
-});
+};
+
+const knowledge = fromSources({ world: worldData, languages: [langData] });
+const world = knowledge.world;
 
 const truth = (q) => {
-  const r = brainFrom(q, [lang], world);
+  const r = brainFrom(q, knowledge);
   return (r.roots[0].branch || []).find((b) => b.kind === "truth");
 };
 

@@ -532,7 +532,10 @@ function grammarOf(root, langs) {
 // never resolve the server-only runtime:fs module. A server wrapper feeds the
 // loaded data in via brainFrom(input, langs, world). See demo/server.js.
 // ---------------------------------------------------------------------------
-export function brainFrom(input, langs, world) {
+export function brainFrom(input, knowledge) {
+  const langs = (knowledge && knowledge.languages) || [];
+  const world = (knowledge && knowledge.world) || null;
+
   const roots = understand(input, langs);
   const thoughtRoots = think(roots, langs);
   const solvedRoots = solve(thoughtRoots, world);

@@ -1,0 +1,5 @@
+# Knowledge taught to the brain.
+#
+# Every .json file here is world-shaped — { terms, relations, anchors } — and is
+# merged into data/world.json at startup. A file may add terms and may add links
+# to terms the world already has; it may not redefine one.

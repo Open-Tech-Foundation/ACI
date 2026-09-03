@@ -1,0 +1,114 @@
+import { test, assert, assertEquals } from "runtime:test";
+import { fromSources } from "./knowledge.js";
+
+const IS = 9;
+const world = {
+  anchors: { thing: 1 },
+  relations: { is: IS },
+  terms: [
+    { id: 1, name: "thing", links: [] },
+    { id: 2, name: "relation", links: [] },
+    { id: IS, name: "is", links: [{ rel: IS, to: 2 }] },
+    { id: 10, name: "bird", links: [{ rel: IS, to: 1 }] },
+  ],
+};
+
+const refuses = (what, sources) => {
+  let thrown = null;
+  try {
+    fromSources(sources);
+  } catch (e) {
+    thrown = e;
+  }
+  assert(thrown !== null, `${what} was accepted`);
+  return String(thrown.message);
+};
+
+test("a well-shaped world is accepted", () => {
+  const k = fromSources({ world });
+  assert(k.world.isA(10, 1), "bird is a thing");
+});
+
+test("a link to a term that does not exist is refused", () => {
+  const bad = { ...world, terms: [...world.terms, { id: 11, name: "x", links: [{ rel: IS, to: 999 }] }] };
+  assert(refuses("dangling link", { world: bad }).includes("999"));
+});
+
+test("a link by a relation that does not exist is refused", () => {
+  const bad = { ...world, terms: [...world.terms, { id: 11, name: "x", links: [{ rel: 777, to: 1 }] }] };
+  assert(refuses("unknown relation", { world: bad }).includes("777"));
+});
+
+test("a duplicate id is refused", () => {
+  const bad = { ...world, terms: [...world.terms, { id: 10, name: "other", links: [] }] };
+  assert(refuses("duplicate id", { world: bad }).includes("duplicate"));
+});
+
+test("an anchor pointing nowhere is refused", () => {
+  const bad = { ...world, anchors: { thing: 404 } };
+  assert(refuses("dangling anchor", { world: bad }).includes("404"));
+});
+
+test("an unknown field is refused rather than ignored", () => {
+  assert(refuses("stray field", { world: { ...world, extra: true } }).includes("extra"));
+});
+
+test("terms with no relation to walk are refused", () => {
+  const bad = { terms: [{ id: 1, name: "thing", links: [] }] };
+  assert(refuses("no relations", { world: bad }).includes("relations"));
+});
+
+test("a word with no meaning is refused", () => {
+  const msg = refuses("meaningless word", {
+    languages: [{ name: "l", symbols: { letter: { characters: "ab" } }, words: { a: { pos: "one" } } }],
+  });
+  assert(msg.includes("meaning"), msg);
+});
+
+test("a language with no letters is refused", () => {
+  const msg = refuses("letterless language", {
+    languages: [{ name: "l", symbols: {}, words: {} }],
+  });
+  assert(msg.includes("letter"), msg);
+});
+
+test("external knowledge passes the same door as the world", () => {
+  const msg = refuses("dangling link from a knowledge file", {
+    world,
+    knowledge: [{ terms: [{ id: 12, name: "wing", links: [{ rel: IS, to: 888 }] }] }],
+  });
+  assert(msg.includes("knowledge[0]"), msg);
+  assert(msg.includes("888"), msg);
+});
+
+test("knowledge may add links to a term the world already has", () => {
+  const k = fromSources({
+    world,
+    knowledge: [
+      {
+        terms: [
+          { id: 20, name: "animal", links: [{ rel: IS, to: 1 }] },
+          { id: 10, name: "bird", links: [{ rel: IS, to: 20 }] },
+        ],
+      },
+    ],
+  });
+  assert(k.world.isA(10, 20), "the taught link is walked");
+  assert(k.world.isA(10, 1), "and the world's own link still is");
+});
+
+test("knowledge may not redefine a term the world already has", () => {
+  const msg = refuses("contradicting term", {
+    world,
+    knowledge: [{ terms: [{ id: 10, name: "stone", links: [] }] }],
+  });
+  assert(msg.includes("bird") && msg.includes("stone"), msg);
+});
+
+test("knowledge may not move an anchor", () => {
+  const msg = refuses("moved anchor", {
+    world,
+    knowledge: [{ anchors: { thing: 10 }, terms: [] }],
+  });
+  assert(msg.includes("anchor"), msg);
+});

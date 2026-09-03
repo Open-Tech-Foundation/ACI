@@ -65,3 +65,18 @@ test("links that are not the is relation are not followed", () => {
   });
   assertEquals(w.isA(1, 2), false);
 });
+
+test("all links of a relation are followed, not only the first", () => {
+  const w = fromWorldData({
+    relations: { is: IS },
+    terms: [
+      { id: 1, name: "a", links: [{ rel: IS, to: 2 }, { rel: IS, to: 3 }] },
+      { id: 2, name: "b", links: [] },
+      { id: 3, name: "c", links: [{ rel: IS, to: 4 }] },
+      { id: 4, name: "d", links: [] },
+    ],
+  });
+  assert(w.isA(1, 2), "the first link");
+  assert(w.isA(1, 3), "and the second");
+  assert(w.isA(1, 4), "and on through it");
+});

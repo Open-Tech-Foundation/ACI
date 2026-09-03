@@ -13,14 +13,21 @@ export function fromWorldData(data) {
   const isRel = (data.relations && data.relations.is) ?? null;
   const anchors = data.anchors || {};
 
-  // Walk one relation upward from a term, collecting every id it reaches.
+  // Walk one relation from a term, collecting every id it reaches. A term may
+  // hold several links of the same relation — the base world gives one, a
+  // knowledge file may add more — so this follows all of them, not the first.
   function reaches(id, rel) {
     const seen = new Set();
-    let cur = terms.get(id);
-    while (cur && !seen.has(cur.id)) {
-      seen.add(cur.id);
-      const up = (cur.links || []).find((l) => l.rel === rel);
-      cur = up ? terms.get(up.to) : null;
+    const pending = [id];
+    while (pending.length) {
+      const at = pending.pop();
+      if (seen.has(at)) continue;
+      seen.add(at);
+      const cur = terms.get(at);
+      if (!cur) continue;
+      for (const l of cur.links || []) {
+        if (l.rel === rel && !seen.has(l.to)) pending.push(l.to);
+      }
     }
     return seen;
   }

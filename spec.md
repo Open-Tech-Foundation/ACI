@@ -62,6 +62,54 @@ never says what the brain should decide about it. The brain derives `living` by
 walking the world, and `deny` by checking a claim — neither is a field anyone can
 set.
 
+## Knowledge — one shape, one door
+
+Every source the brain reasons over passes the same check before it is seen, and
+**a source that does not fit is refused, never trimmed to fit**. Internal and
+external knowledge use the identical door: `data/world.json` and a file taught
+from outside are validated by the same rules, in `src/shape.js`.
+
+Refused, not tolerated:
+
+- a link to a term that does not exist, or by a relation that does not exist
+- a duplicate term id
+- an anchor or relation pointing at no term
+- an unknown field, anywhere
+- terms with no relation declared to walk them
+- a word with no `pos` or no `meaning`; a language with no `symbols.letter`
+- a grammar naming a start symbol that has no rule
+
+Silently accepting half a source is how a brain ends up reasoning over knowledge
+it does not have. Errors name the file at fault, not the merged whole.
+
+### Where knowledge comes from
+
+By convention, loaded once at startup:
+
+```
+languages/*.json   one file per language
+data/world.json    the base world
+knowledge/*.json   anything taught on top of it, world-shaped
+```
+
+`knowledge/*.json` takes the same shape as the world. A file there may add new
+terms, and may add links to terms the world already has; it may **not** redefine
+a term, move an anchor, or reassign a relation — two sources disagreeing is a
+contradiction, and the brain refuses rather than picking a winner.
+
+Because a term may then hold several links of one relation, `isA` walks **all**
+of them. The world is a graph, not a tree.
+
+### The brain takes one argument for all of it
+
+```js
+brainFrom(input, knowledge)     // knowledge = { world, languages }
+```
+
+The signature does not grow to admit a new source. A new source is a new file in
+one of those directories; `fromSources()` assembles and validates, and the
+runtime — never the brain — does the reading.
+
 ## Data format — `languages/*.json`
 
 ```jsonc
@@ -329,6 +377,10 @@ no language at all, so it is always unsaid.
 ## Loading — `src/index.js` and `src/languages.js`
 
 - `src/brain.js` is **pure** — no `runtime:fs`.
+- `src/shape.js` — `checkWorld` / `checkWhole` / `checkLanguage`. The one door.
+- `src/knowledge.js` — `fromSources({ world, knowledge, languages })` validates
+  every source, merges the knowledge files into the world, and returns what the
+  brain takes.
 - `src/languages.js` — `fromData(data)` compiles a data file into a lookup object
   (`express`, `isLetterSymbol`, `isVowelSymbol`, `lookupWord`, `grammar`, `roles`).
   `loadLanguageDirectory(dir)` reads `*.json` **in name order**, so the brain sees
@@ -336,16 +388,19 @@ no language at all, so it is always unsaid.
 - `src/world.js` — `fromWorldData(data)` compiles the world into
   `{ anchors, term(id), isA(id, ancestorId, rel) }`. `isA` walks whichever relation
   it is asked about (the `is` relation by default) and terminates on cycles.
-- `src/index.js` — server-only bootstrap: `brain(input)` loads the `languages/`
-  dir and `data/world.json` via `runtime:fs` (probing relative candidates to work
-  both raw and bundled) and calls `brainFrom(input, langs, world)`. `demo/server.js`
-  is its only caller.
+- `src/index.js` — server-only bootstrap: `brain(input)` loads `languages/`,
+  `data/world.json` and `knowledge/` via `runtime:fs` (probing relative candidates
+  to work both raw and bundled), assembles them with `fromSources`, and calls
+  `brainFrom(input, knowledge)`. `demo/server.js` is its only caller.
 
 ## Public API
 
 ```js
 import { brainFrom, node } from './brain.js';
-brainFrom(input, langs, world)  // pure; returns { input, roots, phases }
+brainFrom(input, knowledge)     // pure; returns { input, roots, expression, phases }
+
+import { fromSources } from './knowledge.js';
+fromSources({ world, knowledge, languages })  // validates, merges
 node(kind, name, branch, state)
 
 import { fromWorldData } from './world.js';

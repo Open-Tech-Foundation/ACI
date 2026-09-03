@@ -1,78 +1,78 @@
 // Server-only bootstrap for the brain.
 //
-// This module is deliberately small and separate from src/brain.js:
-// importing it pulls in runtime:fs, which exists only on the server. The
-// pure engine (src/brain.js) never touches runtime:fs, so a browser build
-// that imports the engine never resolves the server-only module.
+// This module is deliberately small and separate from src/brain.js: importing
+// it pulls in runtime:fs, which exists only on the server. The pure engine
+// never touches runtime:fs, so a browser build that imports the engine never
+// resolves the server-only module.
 //
-// brain(input) — takes ONLY the input. Language files are loaded internally
-// from the languages/ directory and the world model from data/world.json; the
-// caller passes nothing.
+// Everything the brain knows is loaded here, once, by convention:
+//
+//   languages/*.json   one file per language
+//   data/world.json    the base world
+//   knowledge/*.json   anything taught on top of it, world-shaped
+//
+// brain(input) takes ONLY the input. The brain's own signature never grows to
+// admit a new source; a new source is a new file in one of those directories.
 import { brainFrom } from './brain.js';
-import { loadLanguageDirectory } from './languages.js';
-import { loadWorldFile } from './world.js';
+import { fromSources } from './knowledge.js';
 
-let cachePromise = null;
-let worldPromise = null;
+const LANGUAGES = 'languages';
+const KNOWLEDGE = 'knowledge';
+const WORLD = 'data/world.json';
 
-function loadedLanguages() {
-  if (!cachePromise) {
-    // Languages live in the project's languages/ dir. Resolve them robustly:
-    // the module's own location differs between a raw esrun run (src/index.js
-    // -> ../languages/) and an esdev bundle (demo/dist/server.js ->
-    // ../../languages/), so probe candidates instead of trusting one path.
-    const dirCandidates = [
-      new URL('../languages/', import.meta.url).pathname,
-      new URL('../../languages/', import.meta.url).pathname,
-      new URL('./languages/', import.meta.url).pathname,
-    ];
-    cachePromise = loadFirstExisting(dirCandidates).catch(() => []);
-  }
-  return cachePromise;
+let knowledgePromise = null;
+
+function loaded() {
+  if (!knowledgePromise) knowledgePromise = assemble();
+  return knowledgePromise;
 }
 
-function loadedWorld() {
-  if (!worldPromise) {
-    // Same probing as the languages dir: the module's own location differs
-    // between a raw esrun run and an esdev bundle.
-    worldPromise = loadFirstWorld([
-      new URL('../data/world.json', import.meta.url).pathname,
-      new URL('../../data/world.json', import.meta.url).pathname,
-      new URL('./data/world.json', import.meta.url).pathname,
-    ]).catch(() => null);
-    worldPromise.then((w) => {
-      // A brain with no world still runs, it just cannot say what anything is.
-      // Say so rather than degrade in silence.
-      if (!w) console.warn('no world model found — nothing will be categorized');
-    });
-  }
-  return worldPromise;
+async function assemble() {
+  const { file } = await import('runtime:fs');
+  // The module's own location differs between a raw run (src/index.js) and an
+  // esdev bundle (demo/dist/server.js), so probe upward instead of trusting one.
+  const root = await projectRoot(file);
+  if (!root) throw new Error(`cannot find ${WORLD} — the brain has no world`);
+
+  return fromSources({
+    world: await file(`${root}${WORLD}`).json(),
+    knowledge: await readAll(root, KNOWLEDGE),
+    languages: await readAll(root, LANGUAGES),
+  });
 }
 
-async function loadFirstWorld(candidates) {
-  for (const path of candidates) {
+async function projectRoot(file) {
+  for (const up of ['../', '../../', './']) {
+    const root = new URL(up, import.meta.url).pathname;
     try {
-      return await loadWorldFile(path);
+      if (await file(`${root}${WORLD}`).exists()) return root;
     } catch {
-      // try the next candidate
+      // not readable from here; try the next
     }
   }
   return null;
 }
 
-async function loadFirstExisting(candidates) {
-  for (const dir of candidates) {
-    try {
-      const langs = await loadLanguageDirectory(dir);
-      if (langs.length) return langs;
-    } catch {
-      // try the next candidate
-    }
+// Files are read in name order so the brain is assembled the same way on every
+// machine. A directory that is not there contributes nothing.
+async function readAll(root, dir) {
+  const { readDir, file } = await import('runtime:fs');
+  let entries;
+  try {
+    entries = await readDir(`${root}${dir}`);
+  } catch {
+    return [];
   }
-  return [];
+  const names = entries
+    .filter((e) => e.isFile && e.name.endsWith('.json'))
+    .map((e) => e.name)
+    .sort();
+
+  const out = [];
+  for (const name of names) out.push(await file(`${root}${dir}/${name}`).json());
+  return out;
 }
 
 export async function brain(input) {
-  const [langs, world] = await Promise.all([loadedLanguages(), loadedWorld()]);
-  return brainFrom(input, langs, world);
+  return brainFrom(input, await loaded());
 }
