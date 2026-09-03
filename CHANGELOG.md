@@ -6,6 +6,16 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- `judge` phase: a signal naming a relation between two terms makes a claim, and
+  the brain checks it against the world. It adds a `truth` node
+  (`{ subject, relation, object }`), reading the claim off the order of the things
+  it perceived rather than off any grammar symbol.
+- The word `is` names the world's own `is` relation (term 294), so `"a cat is a
+  cat"` is true and `"the apple is a tree"` is false — decided by walking the
+  world, not by a rule in the engine.
+- `result.expression` — the one reply to the whole signal, its branch holding what
+  the brain said about each thing.
+
 - World model (`data/world.json`): 293 terms linked by a reified `is` relation,
   carrying no language — a term is an id and its links, and `name` is a debug
   label the engine never reads.
@@ -22,12 +32,24 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
+- `express` runs **last**, on the structured and judged signal, so the brain
+  replies to the whole rather than to each word of it. Pipeline is now
+  understand → think → solve → structure → judge → express.
+- `world.isA(id, ancestorId, rel)` walks whichever relation it is asked about; it
+  still defaults to `is`.
+
 - `hi` / `hello` name world term 277 (`greeting -> communication -> action`), so a
   greeting is now an `action` node rather than a living person.
 - `solve` derives thing / property / relation / action from the world's four top
   anchors, and only a thing is living or nonliving.
 
 ### Fixed
+
+- Every multi-word signal lost its first word's reply: `compose` put the phrase
+  result on the opening root, which then replied for the phrase instead of for
+  itself, so `"one two three"` answered `["I understand.", "It is 2.", "It is 3."]`.
+  It now answers `["It is 1.", "It is 2.", "It is 3."]` with one expression above
+  them.
 
 - `symbol()` matched any node merely *named* `shape`, so the input word "shape"
   had its whole perception subtree replaced. It now matches a `form`'s shape.
@@ -80,6 +102,9 @@ All notable changes to this project are documented in this file.
   structured root is named after the start symbol that matched.
 
 ### Removed
+
+- `compose`, which duplicated what `structure` does and was the cause of the lost
+  first reply.
 
 - `alphabet` from the language data — it duplicated `symbols.letter.characters`,
   which is the field the loader actually reads.

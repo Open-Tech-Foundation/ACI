@@ -68,11 +68,10 @@ test("responds 'nothing' for void input", async () => {
 test("each phase output is returned separately", async () => {
   const r = await brain("hi");
   assert(r.phases, "brain() must expose separate phase outputs");
-  assertEquals(Object.keys(r.phases), ["understand", "think", "solve", "express", "structure"]);
+  assertEquals(Object.keys(r.phases), ["understand", "think", "solve", "structure", "judge", "express"]);
   assertEquals(r.phases.understand.length, r.phases.think.length);
   assertEquals(r.phases.think.length, r.phases.solve.length);
-  assertEquals(r.phases.solve.length, r.phases.express.length);
-  assertEquals(r.phases.express.length, r.phases.structure.length);
+  assertEquals(r.phases.structure.length, r.phases.express.length);
 });
 
 test("understand phase contains perception but not thought", async () => {
@@ -97,9 +96,9 @@ test("solve phase consumes think output and adds a response", async () => {
   assertEquals(kind(solve, "response").name, "greeting");
 });
 
-test("final roots match the structure phase output", async () => {
+test("final roots match the express phase output", async () => {
   const r = await brain("hi");
-  assertEquals(r.roots, r.phases.structure);
+  assertEquals(r.roots, r.phases.express);
 });
 
 test("a multi-word signal is perceived as one thing per word", async () => {
@@ -117,22 +116,35 @@ test("each word of a phrase is solved individually", async () => {
   assertEquals(kind(r.roots[1], "response").name, "1");
 });
 
-test("a phrase is bound into a sentence response", async () => {
-  const r = await brain("hi two");
-  const sentence = r.roots[0].branch.find(
-    (b) => b.kind === "response" && b.name === "sentence",
-  );
-  assert(sentence !== null, "multi-word input gets a sentence response");
-  assertEquals(sentence.state.parts, ["greeting", "2"]);
-  assertEquals(sentence.state.text, "hi two");
+test("a bound signal gets one expression for the whole", async () => {
+  const r = await brain("hi hi");
+  assertEquals(r.expression.name, "I understand.");
+  assertEquals(r.expression.state.bound, true);
 });
 
-test("single-word input is not treated as a sentence", async () => {
-  const r = await brain("hi");
-  const sentence = r.roots[0].branch.find(
-    (b) => b.kind === "response" && b.name === "sentence",
+test("the whole expression keeps what was said about each thing", async () => {
+  const r = await brain("a cat is two");
+  assertEquals(
+    r.expression.branch.map((b) => b.name),
+    [
+      'I recognise "indefinite article".',
+      'I recognise "feline animal".',
+      "Yes, it to be.",
+      "It is 2.",
+    ],
   );
-  assertEquals(sentence, undefined, "single word has no sentence response");
+});
+
+test("a single word expresses itself", async () => {
+  assertEquals((await brain("hi")).expression.name, "Hello!");
+  assertEquals((await brain("two")).expression.name, "It is 2.");
+});
+
+test("an unbound signal has no one reply, but keeps the parts", async () => {
+  const r = await brain("bird tree");
+  assertEquals(r.expression.name, "...");
+  assertEquals(r.expression.state.bound, false);
+  assertEquals(r.expression.branch.length, 2);
 });
 
 test("a greeting is an action, not a thing", async () => {
@@ -297,24 +309,15 @@ test("a signal of marks still exists, it just holds no word", async () => {
   assertEquals(r.roots[0].state.exists, true);
 });
 
-test("a phrase carries one sentence result, on the root that opens it", async () => {
-  const r = await brain("hi two");
-  const sentences = r.roots.map((n) =>
-    (n.branch || []).filter((b) => b.kind === "response" && b.name === "sentence"),
-  );
-  assertEquals(sentences[0].length, 1);
-  assertEquals(sentences[1].length, 0);
-});
-
-test("express replies to the phrase, not only to its words", async () => {
-  const r = await brain("hi two");
+test("no word loses its own reply to the phrase", async () => {
+  const r = await brain("one two three");
   const expr = [];
   const walk = (n) => {
     if (n.kind === "express") expr.push(n.name);
     (n.branch || []).forEach(walk);
   };
   r.roots.forEach(walk);
-  assert(expr.includes("I understand."), "a bound phrase is understood");
+  assertEquals(expr, ["It is 1.", "It is 2.", "It is 3."]);
 });
 
 test("which symbols are vowels comes from the data", async () => {
@@ -324,4 +327,31 @@ test("which symbols are vowels comes from the data", async () => {
     { char: "h", isVowel: false },
     { char: "i", isVowel: true },
   ]);
+});
+
+test("the brain checks a claim against the world and denies it", async () => {
+  const r = await brain("the apple is a tree");
+  const truth = kind(r.roots[0], "truth");
+  assert(truth !== null, "a signal naming a relation makes a claim");
+  assertEquals(truth.name, "false");
+  assertEquals(truth.state, { subject: 79, relation: 294, object: 33 });
+  assertEquals(r.expression.name, "No.");
+});
+
+test("a claim the world bears out is affirmed", async () => {
+  const r = await brain("a cat is a cat");
+  assertEquals(kind(r.roots[0], "truth").name, "true");
+  assertEquals(r.expression.name, "Yes.");
+});
+
+test("the word is names the world's own is relation", async () => {
+  const r = await brain("is");
+  const thought = kind(r.roots[0], "thought");
+  assertEquals(thought.state.thought.concept, 294);
+  assertEquals(kind(r.roots[0], "relation").kind, "relation");
+});
+
+test("a signal that names no relation makes no claim", async () => {
+  const r = await brain("hi hi");
+  assertEquals(kind(r.roots[0], "truth"), null);
 });

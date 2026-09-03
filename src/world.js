@@ -13,13 +13,13 @@ export function fromWorldData(data) {
   const isRel = (data.relations && data.relations.is) ?? null;
   const anchors = data.anchors || {};
 
-  // Walk the `is` chain upward from a term, collecting every ancestor id.
-  function ancestors(id) {
+  // Walk one relation upward from a term, collecting every id it reaches.
+  function reaches(id, rel) {
     const seen = new Set();
     let cur = terms.get(id);
     while (cur && !seen.has(cur.id)) {
       seen.add(cur.id);
-      const up = (cur.links || []).find((l) => l.rel === isRel);
+      const up = (cur.links || []).find((l) => l.rel === rel);
       cur = up ? terms.get(up.to) : null;
     }
     return seen;
@@ -29,9 +29,10 @@ export function fromWorldData(data) {
     data,
     anchors,
     term: (id) => terms.get(id) || null,
-    // Does `id` reach `ancestorId` by following `is`?
-    isA: (id, ancestorId) =>
-      ancestorId != null && id != null && ancestors(id).has(ancestorId),
+    // Does `id` reach `ancestorId` by following `rel` (the `is` relation by
+    // default)? The relation is a term like any other, so a signal can name it.
+    isA: (id, ancestorId, rel = isRel) =>
+      ancestorId != null && id != null && rel != null && reaches(id, rel).has(ancestorId),
   };
 }
 

@@ -23,13 +23,11 @@ define("x-ask", (el) => {
     update(el);
   }
 
-  const phases = [
-    { key: "understand", label: "1 · Understand" },
-    { key: "think", label: "2 · Think" },
-    { key: "solve", label: "3 · Solve" },
-    { key: "express", label: "4 · Express" },
-    { key: "structure", label: "5 · Structure" },
-  ];
+  const tabs = () =>
+    Object.keys(result.phases).map((key, i) => ({
+      key,
+      label: `${i + 1} · ${key[0].toUpperCase()}${key.slice(1)}`,
+    }));
 
   return () => {
     const activeTree = result && result.phases ? result.phases[active] : null;
@@ -51,7 +49,7 @@ define("x-ask", (el) => {
       ${result &&
         html`
           <div class="tabs">
-            ${phases.map((p) => html`
+            ${tabs().map((p) => html`
               <button
                 class=${active === p.key ? "tab tab-active" : "tab"}
                 onclick=${() => { active = p.key; update(el); }}
@@ -61,9 +59,12 @@ define("x-ask", (el) => {
             `)}
           </div>
           <div class="stage">
-            <div class="stage-label">${phases.find((p) => p.key === active).label}</div>
+            <div class="stage-label">${(tabs().find((p) => p.key === active) || {}).label}</div>
             ${active === "express"
-              ? html`<div class="output">${expressOutput(activeTree)}</div>`
+              ? html`
+                  <div class="output">${result.expression.name}</div>
+                  <pre class="tree">${expressOutput(result.expression.branch)}</pre>
+                `
               : html`<pre class="tree">${render(activeTree)}</pre>`}
           </div>
         `}
@@ -134,6 +135,9 @@ function formatState(state, indent) {
   if (typeof state.concept === "number") {
     lines.push(`term: ${state.concept}`);
   }
+  if (typeof state.relation === "number") {
+    lines.push(`claim: ${state.subject} ${state.relation} ${state.object}`);
+  }
   if (typeof state.language === "string") {
     lines.push(`language: ${state.language}`);
   }
@@ -151,14 +155,8 @@ function formatState(state, indent) {
     : "";
 }
 
-function expressOutput(roots) {
-  const replies = [];
-  const collect = (node) => {
-    if (node.kind === "express" && node.name && node.name !== "...") {
-      replies.push(node.name);
-    }
-    (node.branch || []).forEach(collect);
-  };
-  (roots || []).forEach(collect);
+// What the brain said about each thing, under what it said about the whole.
+function expressOutput(parts) {
+  const replies = (parts || []).map((p) => p.name).filter((n) => n && n !== "...");
   return replies.length ? replies.join("\n") : "—";
 }

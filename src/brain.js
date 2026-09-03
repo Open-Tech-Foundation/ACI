@@ -266,55 +266,109 @@ function worldNode(concept, world) {
 }
 
 // ---------------------------------------------------------------------------
-// compose — when more than one thing was perceived (a multi-word signal),
-// bind their individual solves into one sentence-level result.
+// judge — a signal that names a relation between two terms makes a claim, and
+// the brain checks it against the world. It reads the claim off the order of
+// the things it perceived, never off a grammar symbol: phrase names come from
+// data and mean nothing to the brain.
 // ---------------------------------------------------------------------------
-function compose(solvedRoots) {
-  if (!solvedRoots || solvedRoots.length < 2) return solvedRoots;
-  const parts = solvedRoots.map((n) => {
-    const r = findBranch(n, 'response');
-    return r ? r.name : 'unrecognized';
-  });
-  const sentence = node('response', 'sentence', [], {
-    parts,
-    text: solvedRoots.map((n) => n.state.identity || '').join(' '),
-  });
-  // The phrase has one result, carried by the root that opens it.
-  return solvedRoots.map((n, i) =>
-    i === 0 ? withBranch(n, [...n.branch, sentence]) : n,
+function judge(roots, world) {
+  if (!world || roots.length !== 1) return roots;
+  const root = roots[0];
+  if (root.kind === 'thing' || root.kind === 'void') return roots;
+
+  const said = [];
+  const collect = (n) => {
+    if (n.kind === 'thing') said.push(n);
+    (n.branch || []).forEach(collect);
+  };
+  collect(root);
+
+  const a = world.anchors || {};
+  const at = said.findIndex((n) => reaches(n, a.relation, world));
+  if (at < 0) return roots;
+
+  const subject = nearestTerm(said, at, -1, a.thing, world);
+  const object = nearestTerm(said, at, 1, a.thing, world);
+  if (subject == null || object == null) return roots;
+
+  const relation = conceptOf(said[at]);
+  const holds = world.isA(subject, object, relation);
+  return [
+    withBranch(root, [
+      ...root.branch,
+      node('truth', holds ? 'true' : 'false', [], { subject, relation, object }),
+    ]),
+  ];
+}
+
+function conceptOf(n) {
+  const thought = findBranch(n, 'thought');
+  return thought && thought.state.thought ? thought.state.thought.concept : null;
+}
+
+function reaches(n, anchor, world) {
+  const c = conceptOf(n);
+  return c != null && world.isA(c, anchor);
+}
+
+// The nearest thing to one side that names a term of the wanted kind.
+function nearestTerm(said, from, step, anchor, world) {
+  for (let i = from + step; i >= 0 && i < said.length; i += step) {
+    if (reaches(said[i], anchor, world)) return conceptOf(said[i]);
+  }
+  return null;
+}
+
+// ---------------------------------------------------------------------------
+// express — the brain's last phase, and it runs on the structured signal. Every
+// thing the brain perceived gets its own reply, and the signal as a whole gets
+// one. The reply is reasoned from what was understood, never read from data.
+// ---------------------------------------------------------------------------
+function express(roots) {
+  return roots.map((n) =>
+    walk(n, (b) =>
+      b.kind === 'thing' || b.kind === 'void'
+        ? withBranch(b, [...b.branch, node('express', deriveReply(b), [])])
+        : withBranch(b),
+    ),
   );
 }
 
-// ---------------------------------------------------------------------------
-// express — the brain's final phase. Given what something IS (solved: its
-// entity, emotion and meaning), express derives the actual reply. The reply is
-// reasoned from the understood structure, never read from data.
-// ---------------------------------------------------------------------------
-function express(roots) {
-  return roots.map((n) => {
-    if (!n.state.exists) {
-      return withBranch(n, [...n.branch, node('express', 'nothing', [])]);
-    }
-    const sentence = (n.branch || []).find(
-      (b) => b.kind === 'response' && b.name === 'sentence',
-    );
-    const reply = deriveReply(n, Boolean(sentence));
-    return withBranch(n, [...n.branch, node('express', reply, [])]);
-  });
+// The brain's one reply to the whole signal. Its branch keeps what it said about
+// each thing, so the parts survive under the whole.
+function expression(roots) {
+  const parts = [];
+  const collect = (n) => {
+    const said = findBranch(n, 'express');
+    if (said) parts.push(said);
+    (n.branch || []).forEach(collect);
+  };
+  roots.forEach(collect);
+
+  // One root that is not itself a thing means the signal was bound into a whole.
+  const bound =
+    roots.length === 1 && roots[0].kind !== 'thing' && roots[0].kind !== 'void';
+  const truth = bound ? findBranch(roots[0], 'truth') : null;
+  const reply = truth
+    ? truth.name === 'true'
+      ? 'Yes.'
+      : 'No.'
+    : bound
+      ? 'I understand.'
+      : parts.length === 1
+        ? parts[0].name
+        : '...';
+  return node('express', reply, parts, { bound });
 }
 
-// Deriving a reply from understanding: an interjection is a social act — the
-// brain recognizes the living entity it reasoned about and greets back. Other
-// parts of speech get a reply fitted to what they are.
-function deriveReply(n, sentence) {
+// Deriving a reply from understanding: a reply fitted to what the thing is.
+function deriveReply(n) {
+  if (!n.state.exists) return 'nothing';
   const thought = findBranch(n, 'thought');
   const ts = thought ? thought.state.thought : null;
   const pos = ts ? ts.pos : null;
   const meaning = ts ? ts.meaning : null;
 
-  if (sentence) {
-    return 'I understand.';
-  }
   if (pos === 'interjection') {
     return 'Hello!';
   }
@@ -433,7 +487,9 @@ function grammarOf(root, langs) {
 }
 
 // ---------------------------------------------------------------------------
-// Pipeline driver — the five phases, all inside the brain.
+// Pipeline driver — the five phases, all inside the brain. Express runs last,
+// on the structured signal, so the brain replies to the whole and not only to
+// each word of it.
 // The brain is pure: given the input and the already-loaded language data it
 // perceives, reasons, solves and expresses. It carries no knowledge of any
 // language; all language knowledge arrives as external data.
@@ -447,18 +503,20 @@ export function brainFrom(input, langs, world) {
   const roots = understand(input, langs);
   const thoughtRoots = think(roots, langs);
   const solvedRoots = solve(thoughtRoots, world);
-  const composedRoots = compose(solvedRoots);
-  const expressedRoots = express(composedRoots);
-  const structuredRoots = structurePhrase(expressedRoots, langs);
+  const structuredRoots = structurePhrase(solvedRoots, langs);
+  const judgedRoots = judge(structuredRoots, world);
+  const expressedRoots = express(judgedRoots);
   return {
     input,
-    roots: structuredRoots,
+    roots: expressedRoots,
+    expression: expression(expressedRoots),
     phases: {
       understand: roots,
       think: thoughtRoots,
       solve: solvedRoots,
-      express: expressedRoots,
       structure: structuredRoots,
+      judge: judgedRoots,
+      express: expressedRoots,
     },
   };
 }

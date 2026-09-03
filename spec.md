@@ -101,14 +101,15 @@ The single uniform unit of the whole system:
 
 Every stage reads nodes and adds branch nodes / state. `node(kind, name, branch, state)` creates one.
 
-## Pipeline — five phases
+## Pipeline — six phases
 
 `brainFrom(input, langs, world)` runs sequentially; each phase consumes the previous
-output and is exposed separately in `result.phases`.
+output and is exposed separately in `result.phases`. **Express runs last**, on the
+structured signal, so the brain replies to the whole and not only to each word.
 
 ```
-understand → think → solve → express → structure
-   phrase      reason   infer   reply      parse
+understand → think → solve → structure → judge → express
+  perceive    recall   infer    parse      check   reply
 ```
 
 `result` shape:
@@ -116,8 +117,10 @@ understand → think → solve → express → structure
 ```js
 {
   input: string,
-  roots: [node...],            // final output (structured sentence, or per-word roots)
-  phases: { understand, think, solve, express, structure }  // each an array of roots
+  roots: [node...],       // final output (structured signal, or per-word roots)
+  expression: node,       // the one reply to the whole signal; its branch holds
+                          // what was said about each thing
+  phases: { understand, think, solve, structure, judge, express }
 }
 ```
 
@@ -163,18 +166,7 @@ is an **action** rather than any kind of thing.
 A word that names no term gets no category. The brain does **not** guess from the
 part of speech.
 
-### 4. express — derive the reply
-
-`deriveReply(n, sentence)` produces a **string**, reasoned from the understood
-structure — never read from data:
-
-- interjection → `"Hello!"`
-- numeral → `` `It is ${meaning}.` ``
-- verb → `` `Yes, it ${meaning}.` ``
-- a bound phrase (the `response` named `sentence`) → `"I understand."`
-- otherwise → `` `I recognise "${meaning}".` '' or `'...'`
-
-### 5. structure — grammar-driven phrase building (pure CFG parse)
+### 4. structure — grammar-driven phrase building (pure CFG parse)
 
 `structurePhrase(roots, langs)`: when there are ≥2 recognized words, tag each
 with its `pos`, then run a **generic CFG parser** against the grammar from data.
@@ -208,6 +200,42 @@ sentence
 Unparseable input — including a fragment like `"a cat"`, which is a `subject` but
 no `sentence` — is returned unchanged as per-word roots. So is single-word input.
 
+### 5. judge — check the claim against the world
+
+A signal that names a **relation** between two terms makes a claim, and the brain
+checks it. `judge(roots, world)` reads the claim off the order of the things it
+perceived — never off a grammar symbol, since phrase names come from data and mean
+nothing to the brain:
+
+- find the first thing whose term reaches `anchors.relation`
+- take the nearest term reaching `anchors.thing` on each side of it
+- `world.isA(subject, object, relation)` decides
+
+It adds a `truth` node (`true` / `false`) with `{ subject, relation, object }`.
+
+This is what connects the *word* `is` to the world's own `is` relation: `en.json`
+gives `is` the concept `294`, and term 294 is the relation the world's links are
+made of. So `"a cat is a cat"` is **true**, `"the apple is a tree"` is **false** —
+decided by walking the world, not by any rule in the engine.
+
+### 6. express — derive the reply
+
+Runs on the judged, structured signal. Every `thing` gets its own reply from
+`deriveReply(n)`, reasoned from what it is — never read from data:
+
+- interjection → `"Hello!"`
+- numeral → `` `It is ${meaning}.` ``
+- verb → `` `Yes, it ${meaning}.` ``
+- otherwise → `` `I recognise "${meaning}".` '' or `'...'`
+
+`expression(roots)` then derives the **one** reply to the whole signal, keeping the
+per-thing replies in its branch:
+
+- the signal made a claim → `"Yes."` / `"No."`
+- the signal was bound into a whole → `"I understand."`
+- a single thing → that thing's own reply
+- nothing bound them → `'...'`, with every part still under it
+
 ## Loading — `src/index.js` and `src/languages.js`
 
 - `src/brain.js` is **pure** — no `runtime:fs`.
@@ -216,8 +244,8 @@ no `sentence` — is returned unchanged as per-word roots. So is single-word inp
   `loadLanguageDirectory(dir)` reads `*.json` **in name order**, so the brain sees
   the same languages in the same order on every machine.
 - `src/world.js` — `fromWorldData(data)` compiles the world into
-  `{ anchors, term(id), isA(id, ancestorId) }`. `isA` walks the `is` chain and
-  terminates on cycles.
+  `{ anchors, term(id), isA(id, ancestorId, rel) }`. `isA` walks whichever relation
+  it is asked about (the `is` relation by default) and terminates on cycles.
 - `src/index.js` — server-only bootstrap: `brain(input)` loads the `languages/`
   dir and `data/world.json` via `runtime:fs` (probing relative candidates to work
   both raw and bundled) and calls `brainFrom(input, langs, world)`.
@@ -230,7 +258,7 @@ brainFrom(input, langs, world)  // pure; returns { input, roots, phases }
 node(kind, name, branch, state)
 
 import { fromWorldData } from './world.js';
-fromWorldData(data)      // { anchors, term(id), isA(id, ancestorId) }
+fromWorldData(data)      // { anchors, term(id), isA(id, ancestorId, rel) }
 
 import { brain } from './index.js';   // server-only convenience
 await brain("hi")                     // loads languages internally
