@@ -113,6 +113,9 @@ test("what a group holds is worked before what is outside it", async () => {
   assertEquals(await says("(1+2)*(3+4)"), "21");
   assertEquals(await says("((1+2))*2"), "6");
   assertEquals(await says("(2+3)"), "5", "and a group may be the whole of it");
+  assertEquals(await says("(1+8)*(8)"), "72", "even where it holds one number");
+  assertEquals(await says("(8)+1"), "9");
+  assertEquals(await says("(8)"), "8", "a group holding a number comes to it");
   assertEquals(await says("what is (1+2)*3"), "9");
 });
 

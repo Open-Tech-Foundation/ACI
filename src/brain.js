@@ -470,7 +470,22 @@ function judge(roots, world, mood, langs, sent) {
   }
 
   const at = joint;
-  if (at < 0) return roots;
+  if (at < 0) {
+    // Nothing joins them, but a group may still hold a number and come to it.
+    const held = said.some((n) => groupOn(n)) ? working(said, world, true) : null;
+    if (held == null) return roots;
+    return [
+      withBranch(root, [
+        ...root.branch,
+        node('sum', 'worked', [], {
+          left: held.left,
+          right: held.right,
+          value: held.value,
+          term: world.termFor(held.value),
+        }),
+      ]),
+    ];
+  }
 
   const relation = conceptOf(said[at]);
 
@@ -694,7 +709,10 @@ function working(said, world, alone) {
   if (numbers === 0 || steps[0].op !== undefined) return null;
   // A number on its own is a number, not a sum — unless it is one side of
   // something asked to be the same, where what it comes to is itself.
-  if (!asked) return alone && numbers === 1 ? { value: steps[0].value, left: null, right: null } : null;
+  if (!asked) {
+    const only = steps.find((s) => s.value !== undefined);
+    return alone && numbers === 1 ? { value: only.value, left: only.value, right: only.value } : null;
+  }
 
   // Worked out with what is waiting kept on one side and what is finished on
   // the other: an operation waits while a tighter one is still to come, and a

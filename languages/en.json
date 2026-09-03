@@ -644,12 +644,13 @@
           "interrogative verb subject",
           "interrogative verb sentence",
           "open sentence close",
+          "open subject close",
           "interrogative quantifier subject",
           "verb subject preposition subject"
         ]
       },
       "subject": {
-        "rules": ["noun", "article noun", "numeral", "numeral noun", "pronoun", "possessive noun", "open sentence close"]
+        "rules": ["noun", "article noun", "numeral", "numeral noun", "pronoun", "possessive noun", "open sentence close", "open subject close"]
       },
       "predicate": {
         "rules": ["verb verbComplement", "verb negation verbComplement"]
@@ -661,6 +662,8 @@
           "numeral predicate",
           "open sentence close",
           "open sentence close predicate",
+          "open subject close",
+          "open subject close predicate",
           "article noun",
           "numeral noun",
           "interrogative",

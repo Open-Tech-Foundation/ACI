@@ -126,7 +126,9 @@ All notable changes to this project are documented in this file.
   figure words are gone and `1+125` is `126`. A symbol set says what its figures
   stand as in a sentence (`"pos": "numeral"`).
 - **Groups and equality.** A word may open or close a group (`"groups"`), and
-  what a group holds is worked before anything outside it: `(1+2)*3` is `9`.
+  what a group holds is worked before anything outside it: `(1+2)*3` is `9`. A
+  group may hold one thing as well as many — `(1+8)*(8)` is `72`, and `(8)`
+  comes to `8`.
   Two sides may be asked to be the same — each is worked out on its own and the
   brain compares what each came to, so `2+2 = 4?` is *Yes* and `2*3 = 1+5?` is
   too. `=` and `equals` write the `same` relation the world already held.
