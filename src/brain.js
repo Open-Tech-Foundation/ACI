@@ -157,6 +157,7 @@ function recognizeLanguage(roots, langs) {
               role: word.role ?? null,
               when: word.when ?? null,
               names: word.names ?? null,
+              groups: word.groups ?? null,
             }
           : null,
         roles: classifyRoles(identity, lang),
@@ -232,6 +233,7 @@ function think(roots, langs, at, world) {
       role: first.word ? first.word.role : null,
       when: first.word ? first.word.when : null,
       names: first.word ? first.word.names : read ? false : null,
+      groups: first.word ? first.word.groups : null,
     };
     return withBranch(n, [...n.branch, node('thought', 'understood', [], { thought })]);
   });
@@ -625,6 +627,21 @@ function upward(id, world) {
 // language and any world. So this computes — it does not look anything up.
 function calculate(said, at, relation, world) {
   const a = world.anchors || {};
+
+  // Two sides asked to be the same: each is worked out on its own, and what
+  // the brain compares is what each came to.
+  const between = said.findIndex((n) => conceptOf(n) === a.same);
+  if (between >= 0) {
+    const left = working(said.slice(0, between), world, true);
+    const right = working(said.slice(between + 1), world, true);
+    if (!left || !right) return null;
+    return node('truth', left.value === right.value ? 'true' : 'false', [], {
+      subject: world.termFor(left.value),
+      relation: a.same,
+      object: world.termFor(right.value),
+    });
+  }
+
   if (relation === a.more || relation === a.less) {
     const left = valueBeside(said, at, -1, world);
     const right = valueBeside(said, at, 1, world);
@@ -660,43 +677,76 @@ function calculate(said, at, relation, world) {
 // comes before another, by the same `order` it puts numbers in, and where it
 // says nothing they are worked from the left. What each operation does to two
 // numbers is the brain's own, and would be the same in any world.
-function working(said, world) {
+function working(said, world, alone) {
   const steps = [];
   for (const n of said) {
     const c = conceptOf(n);
     const value = numberOf(n, world);
-    if (c == null && value == null) continue;
+    const group = groupOn(n);
     if (value != null) steps.push({ value });
-    else if (operates(c, world) != null) steps.push({ op: c });
+    else if (group) steps.push({ group });
+    else if (c != null && operates(c, world) != null) steps.push({ op: c });
   }
-  if (steps.length < 3 || steps[0].op !== undefined) return null;
+  // Nothing is worked out where nothing was asked to be: a number on its own
+  // is a number, not a sum.
+  const numbers = steps.filter((s) => s.value !== undefined).length;
+  const asked = steps.some((s) => s.op !== undefined);
+  if (numbers === 0 || steps[0].op !== undefined) return null;
+  // A number on its own is a number, not a sum — unless it is one side of
+  // something asked to be the same, where what it comes to is itself.
+  if (!asked) return alone && numbers === 1 ? { value: steps[0].value, left: null, right: null } : null;
 
-  // The one that binds tightest is worked first, and then again, until one
-  // number is left. Ties are settled by which came first in the signal.
-  const values = [steps[0].value];
-  const ops = [];
-  for (let i = 1; i + 1 < steps.length; i += 2) {
-    if (steps[i].op === undefined || steps[i + 1].value === undefined) return null;
-    ops.push(steps[i].op);
-    values.push(steps[i + 1].value);
-  }
-  if (ops.length === 0) return null;
+  // Worked out with what is waiting kept on one side and what is finished on
+  // the other: an operation waits while a tighter one is still to come, and a
+  // group holds everything until it closes.
+  const done = [];
+  const waiting = [];
+  const fold = () => {
+    const op = waiting.pop();
+    const right = done.pop();
+    const left = done.pop();
+    if (op == null || op.group || left === undefined || right === undefined) return false;
+    const worked = operates(op.op, world)(left, right);
+    if (worked == null) return false;
+    done.push(worked);
+    return true;
+  };
 
-  const left = values[0];
-  const right = values[values.length - 1];
-  while (ops.length > 0) {
-    let pick = 0;
-    for (let i = 1; i < ops.length; i += 1) {
-      // Strictly tighter: an operation does not come before itself, and where
-      // the world says nothing they are worked from the left.
-      if (ops[i] !== ops[pick] && world.isA(ops[i], ops[pick], world.anchors.order)) pick = i;
+  for (const step of steps) {
+    if (step.value !== undefined) done.push(step.value);
+    else if (step.group === 'open') waiting.push(step);
+    else if (step.group === 'close') {
+      while (waiting.length > 0 && !waiting[waiting.length - 1].group) if (!fold()) return null;
+      if (waiting.pop() === undefined) return null;
+    } else {
+      while (waiting.length > 0 && binds(waiting[waiting.length - 1], step, world)) {
+        if (!fold()) return null;
+      }
+      waiting.push(step);
     }
-    const worked = operates(ops[pick], world)(values[pick], values[pick + 1]);
-    if (worked == null) return null;
-    values.splice(pick, 2, worked);
-    ops.splice(pick, 1);
   }
-  return { value: values[0], left, right };
+  while (waiting.length > 0) if (!fold()) return null;
+  if (done.length !== 1) return null;
+
+  const values = steps.filter((s) => s.value !== undefined).map((s) => s.value);
+  return { value: done[0], left: values[0], right: values[values.length - 1] };
+}
+
+// Whether the one already waiting is worked before the one just read. An
+// operation does not come before itself, so equals bind left to right; a group
+// waits for nothing.
+function binds(waiting, step, world) {
+  if (waiting.group) return false;
+  // The one already waiting is worked first unless the one just read binds
+  // tighter — so where the world puts neither before the other, they are
+  // worked from the left.
+  const tighter = step.op !== waiting.op && world.isA(step.op, waiting.op, world.anchors.order);
+  return !tighter;
+}
+
+function groupOn(n) {
+  const thought = n ? findBranch(n, 'thought') : null;
+  return thought && thought.state.thought ? thought.state.thought.groups : null;
 }
 
 // What an operation does to two numbers. This is the brain's own and the whole

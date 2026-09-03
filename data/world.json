@@ -34,7 +34,8 @@
     "when": 567,
     "times": 568,
     "divide": 569,
-    "order": 249
+    "order": 249,
+    "same": 250
   },
   "relations": {
     "is": 294,
@@ -48,7 +49,8 @@
     "destination": 330,
     "when": 567,
     "times": 568,
-    "divide": 569
+    "divide": 569,
+    "same": 250
   },
   "terms": [
     {

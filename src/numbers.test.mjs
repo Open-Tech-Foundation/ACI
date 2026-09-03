@@ -105,3 +105,25 @@ test("comparison is by value, and says no claim back about numbers", async () =>
   assertEquals(await act("1 more 3?"), "deny");
   assertEquals(await act("one less three?"), "affirm");
 });
+
+test("what a group holds is worked before what is outside it", async () => {
+  assertEquals(await says("(1+2)*3"), "9");
+  assertEquals(await says("1+(2*3)"), "7");
+  assertEquals(await says("2*(3+4)"), "14");
+  assertEquals(await says("(1+2)*(3+4)"), "21");
+  assertEquals(await says("((1+2))*2"), "6");
+  assertEquals(await says("(2+3)"), "5", "and a group may be the whole of it");
+  assertEquals(await says("what is (1+2)*3"), "9");
+});
+
+test("two sides asked to be the same are each worked out first", async () => {
+  assertEquals(await act("2+2 = 4?"), "affirm");
+  assertEquals(await act("2+2 = 5?"), "deny");
+  assertEquals(await act("2*3 = 1+5?"), "affirm");
+  assertEquals(await act("two plus two equals four?"), "affirm");
+});
+
+test("everything at once", async () => {
+  assertEquals(await says("1+2*3-4/2"), "5");
+  assertEquals(await says("(1+2*3)-(4/2)"), "5");
+});

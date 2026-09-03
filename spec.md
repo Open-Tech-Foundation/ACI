@@ -203,7 +203,12 @@ follows from two of them.
 
 A signal may work **more than once**: `1 + 2 × 3` names two operations. **Which
 is worked first is the world's**, said with the same `order` it puts numbers in
-— `times order plus` — and where it says nothing they are worked from the left.
+— `times order plus` — and where it puts neither before the other they are
+worked from the left. A word may **open or close a group** (`"groups": "open"`),
+and what a group holds is worked before anything outside it.
+
+Two sides may be asked to be **the same**: each is worked out on its own and the
+brain compares what each came to, so `2+2 = 4?` is *Yes* and `2*3 = 1+5?` is too.
 An operation the brain can perform and cannot complete (`7 ÷ 2` in a world
 holding no halves) is a sum it cannot reach, never a claim about the two
 numbers.
@@ -217,6 +222,8 @@ names; no term is invented for it.
 ```
 1+1                  2
 1 + 2 * 3            7         times binds first
+(1 + 2) * 3          9         and a group binds tighter still
+2 + 2 = 4?           Yes. ✅
 10 - 3 - 2           5         and nothing binds tighter than nothing
 1 + 125              126       a number no word lists
 one plus one         two

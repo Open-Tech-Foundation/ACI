@@ -194,7 +194,7 @@ export function checkLanguage(data, where = 'language') {
   for (const [word, info] of Object.entries(data.words || {})) {
     const w = `${at} word "${word}"`;
     if (!info || typeof info !== 'object') fail(w, 'must be an object');
-    onlyKeys(info, ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names'], w);
+    onlyKeys(info, ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups'], w);
     if (typeof info.pos !== 'string' || info.pos === '') fail(w, 'pos must be a non-empty string');
     if (typeof info.meaning !== 'string') fail(w, 'meaning must be a string');
     if (info.concept !== undefined && !isId(info.concept)) fail(w, 'concept must be a term id');
@@ -209,6 +209,10 @@ export function checkLanguage(data, where = 'language') {
     // Another way to write a term is not what the term is called.
     if (info.names !== undefined && info.names !== false) {
       fail(w, 'names, where present, must be false');
+    }
+    // A word may open or close a group, so what is inside it is worked first.
+    if (info.groups !== undefined && info.groups !== 'open' && info.groups !== 'close') {
+      fail(w, 'groups must be "open" or "close"');
     }
     if (info.negates !== undefined && info.negates !== true) {
       fail(w, 'negates, where present, must be true');

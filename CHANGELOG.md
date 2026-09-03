@@ -125,6 +125,11 @@ All notable changes to this project are documented in this file.
   whatever else it is — no word for it, no term for it — so the twenty-nine
   figure words are gone and `1+125` is `126`. A symbol set says what its figures
   stand as in a sentence (`"pos": "numeral"`).
+- **Groups and equality.** A word may open or close a group (`"groups"`), and
+  what a group holds is worked before anything outside it: `(1+2)*3` is `9`.
+  Two sides may be asked to be the same — each is worked out on its own and the
+  brain compares what each came to, so `2+2 = 4?` is *Yes* and `2*3 = 1+5?` is
+  too. `=` and `equals` write the `same` relation the world already held.
 - **Times and divide**, with `order` in the world saying which binds first
   (`times order plus`) and nothing else deciding: where the world says nothing,
   operations are worked from the left. `1+2*3` is `7`, `10-3-2` is `5`. An
