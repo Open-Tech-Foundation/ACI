@@ -113,6 +113,14 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A fragment was answered as though it were a sentence.** `"what is your"`
+  answered *computer*: a possessive stood as a subject on its own, so the
+  grammar took an unfinished sentence for a finished one. `your`, `ur` and `my`
+  are a part of speech of their own now, and take the noun they possess.
+- **A word that only marks was recognised as though it named something.**
+  `"what"` answered *I recognise "what".* and `"a"` answered *I recognise
+  "indefinite article".* A hole, or a word saying which one is meant, stands for
+  nothing by itself; the brain says it did not understand.
 - **A store written before the world grew kept the old world for ever.** It was
   seeded only when empty, so every term, link, anchor and relation added since
   was invisible to a run that remembered anything. The authored world is laid

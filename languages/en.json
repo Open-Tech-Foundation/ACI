@@ -571,12 +571,12 @@
     "what":      { "pos": "interrogative", "meaning": "what", "marks": "unknown" },
     "how":       { "pos": "interrogative", "meaning": "how",  "marks": "unknown" },
     "many":      { "pos": "quantifier",    "meaning": "many",  "concept": 243 },
-    "you":       { "pos": "pronoun",       "meaning": "to",    "marks": "to" },
-    "your":      { "pos": "pronoun",       "meaning": "to",    "marks": "to" },
-    "ur":        { "pos": "pronoun",       "meaning": "to",    "marks": "to" },
-    "i":         { "pos": "pronoun",       "meaning": "from",  "marks": "from" },
-    "me":        { "pos": "pronoun",       "meaning": "from",  "marks": "from" },
-    "my":        { "pos": "pronoun",       "meaning": "from",  "marks": "from" }
+    "you":       { "pos": "pronoun",       "meaning": "the one it went to",   "marks": "to" },
+    "your":      { "pos": "possessive",    "meaning": "the one it went to",   "marks": "to" },
+    "ur":        { "pos": "possessive",    "meaning": "the one it went to",   "marks": "to" },
+    "i":         { "pos": "pronoun",       "meaning": "the one it came from", "marks": "from" },
+    "me":        { "pos": "pronoun",       "meaning": "the one it came from", "marks": "from" },
+    "my":        { "pos": "possessive",    "meaning": "the one it came from", "marks": "from" }
   },
   "marking": "after",
   "parts": { "before": "agent", "after": "target" },
@@ -622,7 +622,7 @@
         ]
       },
       "subject": {
-        "rules": ["noun", "article noun", "numeral", "numeral noun", "pronoun", "pronoun noun"]
+        "rules": ["noun", "article noun", "numeral", "numeral noun", "pronoun", "possessive noun"]
       },
       "predicate": {
         "rules": ["verb verbComplement", "verb negation verbComplement"]

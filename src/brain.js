@@ -935,6 +935,9 @@ function intentOf(n, world) {
     if (world.isA(concept, a.number)) return 'count';
     if (world.isA(concept, a.relation)) return 'confirm';
   }
+  // A word that marks rather than names — a hole, or which one is meant —
+  // stands for nothing by itself, and there is nothing in it to recognise.
+  if (concept == null && ts.marks) return 'unknown';
   return 'recognise';
 }
 

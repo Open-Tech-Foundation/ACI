@@ -133,7 +133,8 @@ test("the whole expression keeps what was said about each thing", async () => {
   assertEquals(
     r.expression.branch.map((b) => b.state.says),
     [
-      'I recognise "indefinite article".',
+      // An article marks which one is meant and names nothing of its own.
+      "I don't understand.",
       'I recognise "feline animal".',
       "Yes, it to be.",
       "It is 2.",
@@ -513,7 +514,8 @@ test("a name is a fact in memory, said as it was given", async () => {
   // The runtime loaded what this instance is; no language has a word for it,
   // and none needs to — a name is not translated.
   assertEquals((await brain("what is ur name?")).expression.state.says, "ACI");
-  assertEquals((await brain("what is you name?")).expression.state.says, "ACI");
+  // `you` is not a possessive, and a possessive is what this position takes.
+  assertEquals((await brain("what is you name?")).expression.name, "unknown");
 });
 
 test("the same signal points elsewhere when it came from elsewhere", async () => {
