@@ -44,3 +44,23 @@ test("a claim the world can settle is still the world's", async () => {
   assert(branchOf(r, "truth") !== null, "judged, not held");
   assertEquals(branchOf(r, "event"), null);
 });
+
+// Empathy: understanding what someone feels, and holding it as theirs. Both
+// halves are already the record's — the act is only the last step.
+test("said of themselves, and standing at the bad pole, the brain empathizes", async () => {
+  const r = await brain("i is hurt", sender);
+  assertEquals(r.expression.name, "empathy");
+  assertEquals(r.expression.state.says, "I know you hurt. \u2639");
+});
+
+test("what they said of something else is understood, not empathized with", async () => {
+  assertEquals((await brain("the wheel is hurt", sender)).expression.name, "understood");
+});
+
+test("what stands at the other pole is not empathy either", async () => {
+  assertEquals((await brain("i is nice", sender)).expression.name, "understood");
+});
+
+test("what they denied of themselves is not what they feel", async () => {
+  assertEquals((await brain("i is not hurt", sender)).expression.name, "understood");
+});

@@ -950,7 +950,7 @@ function moodOf(input, langs) {
 
 // The brain's one act toward the whole signal, with what it said about each
 // thing kept underneath.
-function expression(roots, langs, mood, world) {
+function expression(roots, langs, mood, world, sent) {
   const parts = [];
   const collect = (n) => {
     const said = findBranch(n, 'express');
@@ -969,6 +969,12 @@ function expression(roots, langs, mood, world) {
   const sum = bound ? findBranch(roots[0], 'sum') : null;
   const did = bound ? findBranch(roots[0], 'did') : null;
   const refused = bound ? findBranch(roots[0], 'refuse') : null;
+  // Understanding what someone feels, and holding it as theirs rather than as
+  // the world's — which is what the record already is. So the act is only the
+  // last step: it was said of whoever said it, and it stands at the bad pole.
+  const felt = bound ? findBranch(roots[0], 'event') : null;
+  const feltFor = felt && sent && sent.from != null && !felt.state.not ? about(felt, world) : null;
+  const empathy = feltFor === sent?.from && sad(felt, world);
   const langName = parts.map((p) => p.state.language).find(Boolean) || null;
   // A question the world cannot fill is a gap, not an answer, and so is one the
   // language cannot say — a term it has no word for leaves the brain with
@@ -983,7 +989,9 @@ function expression(roots, langs, mood, world) {
   // it already holds is simply understood.
   const intent = refused
     ? 'deny'
-    : truth
+    : empathy
+      ? 'empathy'
+      : truth
       ? learned
         ? 'understood'
         : truth.name === 'false'
@@ -1021,7 +1029,9 @@ function expression(roots, langs, mood, world) {
           : 'unknown';
 
   const said =
-    intent === 'answer'
+    intent === 'empathy'
+      ? termWord(felt.state.action, langName, langs, world)
+      : intent === 'answer'
       ? did
         ? termWord(did.state.term, langName, langs, world)
         : sum
@@ -1033,11 +1043,24 @@ function expression(roots, langs, mood, world) {
   // Where the brain is speaking of its own state, it hands over the term for
   // that state and lets the language find the words. It holds none of them.
   const terms =
-    intent === 'understood' || intent === 'unsure'
+    intent === 'understood' || intent === 'unsure' || intent === 'empathy'
       ? { relation: world && world.anchors ? world.anchors.know : null }
       : null;
   const whole = speak(intent, said, langName, langs, terms);
   return withBranch(whole, parts, { ...whole.state, bound, mood });
+}
+
+// What a held record was said of, and whether what was said stands at the bad
+// pole. Both are walks: nothing is weighed, and one pole is one frame.
+function about(felt, world) {
+  const a = world && world.anchors ? world.anchors : {};
+  const part = (felt.state.parts || []).find((p) => p.role === a.target);
+  return part ? part.of : null;
+}
+
+function sad(felt, world) {
+  const a = world && world.anchors ? world.anchors : {};
+  return Boolean(felt) && world != null && world.isA(felt.state.action, a.bad);
 }
 
 // A one-thing signal expresses that thing, so it needs that thing's meaning.
@@ -1220,7 +1243,7 @@ export function brainFrom(input, knowledge, circumstance) {
   return {
     input,
     roots: expressedRoots,
-    expression: expression(expressedRoots, langs, mood, world),
+    expression: expression(expressedRoots, langs, mood, world, at),
     learned: learnedFrom(judgedRoots, world),
     phases: {
       understand: roots,

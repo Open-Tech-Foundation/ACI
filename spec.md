@@ -29,7 +29,7 @@ What survives both is primitive, and only that may be written in code.
 | the four ways to exist: thing / property / relation / action | which term is which |
 | the refinements of a thing: living / nonliving / person | that a cat is an animal |
 | how to walk a relation, and how to parse a rule | the relations, and the rules |
-| the acts it can express: greet, count, confirm, recognise, understood, affirm, deny, unknown | the words each act is voiced in |
+| the acts it can express: greet, count, confirm, recognise, understood, affirm, deny, empathy, unknown | the words each act is voiced in |
 | that a word may point, and that what it points at is the signal's own circumstance | which words point, and where each one points |
 | that what harms is refused, and the walk that decides it | which terms are bad, and what causes them |
 | that it answers a communication, counts a number, confirms a relation | which term is a communication, a number, a relation |
@@ -679,6 +679,23 @@ term of its own, and a claim about one (`"up is a fear"`) is a claim about kind
 like any other. The world's own valence is authored; only what is said of a
 thing is held.
 
+**Empathy** is understanding what someone feels and seeing it from where they
+stand. Both halves are the record's already: what they said is held, and it is
+held as *theirs*. So the act is only the last step — what was said stands at the
+bad pole, and was said of whoever said it:
+
+```
+> i is hurt        { from: 508 }     I know you hurt. ☹
+> the wheel is hurt                  I know.        said of something else
+> i is nice                          I know.        the other pole
+> i is not hurt                      I know.        they denied it
+```
+
+Two walks decide it, and nothing is weighed: **one pole, one frame**. The emoji
+is not the brain's — `"{self} {relation} {to} {meaning}. ☹"` is a frame in
+`en.json` like every other, and `src/` holds no emoji any more than it holds
+`"Yes."`.
+
 **A relation the brain can perform → it performs it.** Arithmetic is **innate**.
 Put it to the two questions: *would it change in another language?* No. *Would it
 change if the world were different?* No. So it belongs in the engine, and the
@@ -835,6 +852,8 @@ thing is `recognise` — the brain has nothing to reason over.
 
 | the signal | intent |
 |---|---|
+| was refused, for any reason | `deny` |
+| said something bad of whoever sent it | `empathy` |
 | made a claim the world bears out | `affirm` |
 | made a claim the world denies | `deny` |
 | was bound into a whole | `understood` |

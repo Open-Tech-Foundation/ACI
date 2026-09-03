@@ -282,6 +282,7 @@
     "comfort":      { "pos": "noun", "meaning": "comfort",         "concept": 237 },
     "good":         { "pos": "noun", "meaning": "good",            "concept": 238 },
     "nice":         { "pos": "noun", "meaning": "nice",            "concept": 563 },
+    "hurt":         { "pos": "noun", "meaning": "hurt",            "concept": 564 },
     "bad":          { "pos": "noun", "meaning": "bad",             "concept": 239 },
     "true":         { "pos": "noun", "meaning": "true",            "concept": 240 },
     "false":        { "pos": "noun", "meaning": "false",           "concept": 241 },
@@ -580,6 +581,7 @@
   ],
   "speech": {
     "self": "I",
+    "to": "you",
     "list": ", "
   },
   "expressions": {
@@ -592,6 +594,7 @@
     "deny":       "No.",
     "answer":     "{meaning}",
     "unsure":     "{self} don't {relation}.",
+    "empathy":    "{self} {relation} {to} {meaning}. \u2639",
     "unknown":    "..."
   },
   "grammar": {
