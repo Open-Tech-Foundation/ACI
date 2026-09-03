@@ -147,6 +147,7 @@ function recognizeLanguage(roots, langs) {
               meaning: word.meaning,
               concept: word.concept ?? null,
               marks: word.marks ?? null,
+              negates: word.negates ?? false,
             }
           : null,
         roles: classifyRoles(identity, lang),
@@ -207,6 +208,7 @@ function think(roots, langs) {
       meaning: first.word ? first.word.meaning : null,
       concept: first.word ? first.word.concept : null,
       marks: first.word ? first.word.marks : null,
+      negates: first.word ? first.word.negates : false,
     };
     return withBranch(n, [...n.branch, node('thought', 'understood', [], { thought })]);
   });
@@ -428,14 +430,27 @@ function judge(roots, world, mood) {
     if (howMany != null && bearer == null) return roots;
     const holder = bearer ? bearer.id : subject;
 
+    // What the world says about the relation as stated, and then what the
+    // signal claimed — which is the opposite of it where the signal denies.
+    const negated = said.some(negatesOn);
     const holds = world.isA(holder, object, relation);
     const kindClaim = relation === world.baseRelation;
-    const truth = holds
+    const stands = holds
       ? 'true'
-      : kindClaim && world.excludes(subject, object)
+      : world.denies(holder, object, relation) ||
+          (kindClaim && world.excludes(subject, object))
         ? 'false'
         : 'unknown';
-    const added = [node('truth', truth, [], { subject, relation, object })];
+    const claimed = !negated
+      ? stands
+      : stands === 'true'
+        ? 'false'
+        : stands === 'false'
+          ? 'true'
+          : 'unknown';
+    const added = [
+      node('truth', claimed, [], { subject, relation, object, negated }),
+    ];
 
     // Told a claim it does not hold, the brain learns it — unless the claim is
     // contradicted, or taking it would close a loop. A relation already running
@@ -444,23 +459,28 @@ function judge(roots, world, mood) {
     // with it, it is saying the world has moved on.
     const revises = howMany != null && world.held(holder, relation, object) !== howMany;
 
-    if (mood === 'tell' && (!holds || revises)) {
-      const loops = subject !== object && world.isA(object, subject, relation);
-      added.push(
-        !revises && (truth === 'false' || loops)
-          ? node('refuse', truth === 'false' ? 'contradiction' : 'loop', [], {
-              subject,
-              relation,
-              object,
-            })
-          : node('learn', 'link', [], {
-              subject: holder,
-              relation,
-              object,
-              quantity: howMany,
-              made: bearer && bearer.made ? bearer : null,
-            }),
-      );
+    if (mood === 'tell') {
+      const loops = !negated && subject !== object && world.isA(object, subject, relation);
+      if (!revises && (claimed === 'false' || loops)) {
+        added.push(
+          node('refuse', claimed === 'false' ? 'contradiction' : 'loop', [], {
+            subject,
+            relation,
+            object,
+          }),
+        );
+      } else if (claimed === 'unknown' || revises) {
+        added.push(
+          node('learn', 'link', [], {
+            subject: holder,
+            relation,
+            object,
+            quantity: howMany,
+            made: bearer && bearer.made ? bearer : null,
+            not: negated,
+          }),
+        );
+      }
     }
     return [withBranch(root, [...root.branch, ...added])];
   }
@@ -630,6 +650,13 @@ function nearest(said, from, step, wanted) {
     if (wanted(said[i])) return said[i];
   }
   return null;
+}
+
+// Whether this word denies what the signal says. That a claim can be denied is
+// the brain's; which word does it is the language's.
+function negatesOn(n) {
+  const t = n ? findBranch(n, 'thought') : null;
+  return Boolean(t && t.state.thought && t.state.thought.negates);
 }
 
 // What a word says about the thing beside it, or about itself.
@@ -974,8 +1001,9 @@ function learnedFrom(roots, world) {
   if (!world || roots.length !== 1) return null;
   const learn = findBranch(roots[0], 'learn');
   if (!learn) return null;
-  const { subject, relation, object, quantity, made } = learn.state;
+  const { subject, relation, object, quantity, made, not } = learn.state;
   const link = { rel: relation, to: object };
+  if (not) link.not = true;
   if (quantity != null) {
     link.quantity = quantity;
     // What is so now is so from now: state is stamped, so what was so before

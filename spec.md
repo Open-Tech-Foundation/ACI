@@ -472,6 +472,22 @@ a force, red is a colour, and neither is a thing.
 not say (`marks: "unknown"`), not merely a word with no term behind it — every
 article and preposition is one of those.
 
+**Denial.** A word may carry `negates: true`. That a claim can be denied is the
+brain's; which word does it is the language's. A signal that denies claims the
+opposite of what it states, and a link may carry `not: true` — a record that the
+relation does **not** hold. A denied link joins nothing: nothing is reached
+across it.
+
+This is the difference between ignorance and knowledge:
+
+```
+> a basket is a tool?        I don't know.   no path, and nothing said otherwise
+> a basket is not a tool     I know.         ← kept as a denial
+> a basket is a tool?        No.             now it knows
+> a basket is an object?     Yes.            the denial did not cut anything else
+> a cat is not an animal     No.             refused; the world says otherwise
+```
+
 **Two terms → a claim.** The nearest term either side of the relation. Adds a
 `truth` node with `{ subject, relation, object }`, and it has **three** values:
 

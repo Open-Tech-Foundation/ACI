@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Negation.** A word may carry `negates: true` and a link may carry
+  `not: true`. The brain could deny a claim it had checked; it could not *hold* a
+  negative fact, so `not X` was unthinkable. Now a denial is knowledge: telling it
+  `"a basket is not a tool"` turns `"a basket is a tool?"` from *I don't know* into
+  *No.* A denied link joins nothing, and a denial the world contradicts is refused.
+
 - The world reaches into the physical: `force` with `gravity` under it, `push` and
   `pull` as work, `up`/`down`/`left`/`right`/`front`/`back` and `near`/`far` as
   positions, plus `earth`, `ground`, `sky`, `mass` and `speed`. Gravity causes

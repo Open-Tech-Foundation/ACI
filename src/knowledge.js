@@ -62,7 +62,11 @@ function merge(world, sources) {
         // count does not overwrite the earlier one — it comes after it, and
         // what was so before stays so before.
         const same = held.links.find(
-          (h) => h.rel === l.rel && h.to === l.to && (h.at ?? null) === (l.at ?? null),
+          (h) =>
+            h.rel === l.rel &&
+            h.to === l.to &&
+            (h.at ?? null) === (l.at ?? null) &&
+            Boolean(h.not) === Boolean(l.not),
         );
         if (same) {
           if (l.quantity !== undefined && same.quantity !== l.quantity) {
@@ -74,6 +78,7 @@ function merge(world, sources) {
         const kept = { rel: l.rel, to: l.to };
         if (l.quantity !== undefined) kept.quantity = l.quantity;
         if (l.at !== undefined) kept.at = l.at;
+        if (l.not) kept.not = true;
         held.links.push(kept);
         origin.set(t.id, where);
       }

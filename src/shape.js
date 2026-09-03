@@ -55,7 +55,7 @@ export function checkWorld(data, where = 'world') {
     const seen = new Set();
     for (const l of t.links) {
       if (!l || typeof l !== 'object') fail(at, 'every link must be an object');
-      onlyKeys(l, ['rel', 'to', 'quantity', 'at'], at);
+      onlyKeys(l, ['rel', 'to', 'quantity', 'at', 'not'], at);
       if (!isId(l.rel)) fail(at, 'link rel must be a non-negative integer');
       if (!isId(l.to)) fail(at, 'link to must be a non-negative integer');
       if (l.quantity !== undefined && !Number.isInteger(l.quantity)) {
@@ -64,7 +64,10 @@ export function checkWorld(data, where = 'world') {
       if (l.at !== undefined && !(Number.isInteger(l.at) && l.at >= 0)) {
         fail(at, 'link at must be a whole number of ticks');
       }
-      const key = `${l.rel}:${l.to}:${l.at ?? ''}`;
+      if (l.not !== undefined && l.not !== true) {
+        fail(at, 'link not, where present, must be true — it denies the link');
+      }
+      const key = `${l.rel}:${l.to}:${l.at ?? ''}:${l.not ? 'not' : ''}`;
       if (seen.has(key)) fail(at, `duplicate link ${key}`);
       seen.add(key);
     }
@@ -146,10 +149,13 @@ export function checkLanguage(data, where = 'language') {
   for (const [word, info] of Object.entries(data.words)) {
     const w = `${at} word "${word}"`;
     if (!info || typeof info !== 'object') fail(w, 'must be an object');
-    onlyKeys(info, ['pos', 'meaning', 'concept', 'marks'], w);
+    onlyKeys(info, ['pos', 'meaning', 'concept', 'marks', 'negates'], w);
     if (typeof info.pos !== 'string' || info.pos === '') fail(w, 'pos must be a non-empty string');
     if (typeof info.meaning !== 'string') fail(w, 'meaning must be a string');
     if (info.concept !== undefined && !isId(info.concept)) fail(w, 'concept must be a term id');
+    if (info.negates !== undefined && info.negates !== true) {
+      fail(w, 'negates, where present, must be true');
+    }
     if (
       info.marks !== undefined &&
       info.marks !== 'new' &&

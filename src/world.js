@@ -27,6 +27,9 @@ export function fromWorldData(data) {
       const cur = terms.get(at);
       if (!cur) continue;
       for (const l of cur.links || []) {
+        // A denied link joins nothing. It records that the relation does not
+        // hold, and nothing can be reached across it.
+        if (l.not) continue;
         if (l.rel === rel && !seen.has(l.to)) pending.push(l.to);
       }
     }
@@ -69,7 +72,7 @@ export function fromWorldData(data) {
       if (id == null || rel == null) return [];
       const out = [];
       for (const t of terms.values()) {
-        if ((t.links || []).some((l) => l.rel === rel && l.to === id)) out.push(t.id);
+        if ((t.links || []).some((l) => !l.not && l.rel === rel && l.to === id)) out.push(t.id);
       }
       return out;
     },
@@ -84,6 +87,13 @@ export function fromWorldData(data) {
       if (!Number.isInteger(value)) return null;
       for (const t of terms.values()) if (t.value === value) return t.id;
       return null;
+    },
+    // Whether the world has been told outright that a relation does not hold.
+    // Not finding a path is ignorance; this is a denial, and it is knowledge.
+    denies: (id, object, rel) => {
+      const t = terms.get(id);
+      if (!t || rel == null) return false;
+      return (t.links || []).some((l) => l.not && l.rel === rel && l.to === object);
     },
     // A kind names many; an individual exists once. Everything else about a term
     // is the same either way — an individual simply `is` its kind.
@@ -125,7 +135,7 @@ export function fromWorldData(data) {
       if (!t || rel == null) return null;
       let latest = null;
       for (const l of t.links || []) {
-        if (l.rel !== rel || l.to !== object || !Number.isInteger(l.quantity)) continue;
+        if (l.not || l.rel !== rel || l.to !== object || !Number.isInteger(l.quantity)) continue;
         if (latest == null || (l.at ?? -1) >= (latest.at ?? -1)) latest = l;
       }
       return latest ? latest.quantity : null;
@@ -136,7 +146,7 @@ export function fromWorldData(data) {
       const t = terms.get(id);
       if (!t || rel == null) return [];
       return (t.links || [])
-        .filter((l) => l.rel === rel && l.to === object && Number.isInteger(l.quantity))
+        .filter((l) => !l.not && l.rel === rel && l.to === object && Number.isInteger(l.quantity))
         .map((l) => ({ quantity: l.quantity, at: l.at ?? 0 }))
         .sort((x, y) => x.at - y.at);
     },
@@ -154,7 +164,7 @@ export function fromWorldData(data) {
     linked: (id, rel) => {
       const t = terms.get(id);
       if (!t || rel == null) return [];
-      return (t.links || []).filter((l) => l.rel === rel).map((l) => l.to);
+      return (t.links || []).filter((l) => !l.not && l.rel === rel).map((l) => l.to);
     },
     // Does `id` reach `ancestorId` by following `rel` (the `is` relation by
     // default)? The relation is a term like any other, so a signal can name it.

@@ -349,7 +349,7 @@ test("the brain checks a claim against the world and denies it", async () => {
   const truth = kind(r.roots[0], "truth");
   assert(truth !== null, "a signal naming a relation makes a claim");
   assertEquals(truth.name, "false");
-  assertEquals(truth.state, { subject: 79, relation: 294, object: 33 });
+  assertEquals(truth.state, { subject: 79, relation: 294, object: 33, negated: false });
   assertEquals(r.expression.name, "deny");
   assertEquals(r.expression.state.says, "No.");
 });
@@ -394,12 +394,12 @@ test("the is relation runs one way only", async () => {
 test("a claim resolves across the whole chain, however long", async () => {
   const r = await brain("an apple is a thing?");
   assertEquals(kind(r.roots[0], "truth").name, "true");
-  assertEquals(kind(r.roots[0], "truth").state, { subject: 79, relation: 294, object: 2 });
+  assertEquals(kind(r.roots[0], "truth").state, { subject: 79, relation: 294, object: 2, negated: false });
 });
 
 test("a numeral can stand as the subject of a claim", async () => {
   const r = await brain("three is a number?");
-  assertEquals(kind(r.roots[0], "truth").state, { subject: 116, relation: 294, object: 100 });
+  assertEquals(kind(r.roots[0], "truth").state, { subject: 116, relation: 294, object: 100, negated: false });
   assertEquals(r.expression.state.says, "Yes.");
 });
 
@@ -428,7 +428,7 @@ test("a claim can be made over the has relation, not only is", async () => {
   const r = await brain("aci has a mind?");
   const truth = kind(r.roots[0], "truth");
   assertEquals(truth.name, "true");
-  assertEquals(truth.state, { subject: 296, relation: 295, object: 230 });
+  assertEquals(truth.state, { subject: 296, relation: 295, object: 230, negated: false });
   assertEquals(r.expression.state.says, "Yes.");
 });
 
@@ -468,6 +468,7 @@ test("told something new, the brain learns it and hands it back", async () => {
     object: 230,
     quantity: null,
     made: null,
+    not: false,
   });
   assertEquals(r.expression.name, "understood");
   assertEquals(r.learned, {
@@ -737,4 +738,43 @@ test("the world can be counted by any of its shelves", async () => {
   assertEquals((await brain("how many colour?")).expression.state.says, "six");
   assertEquals((await brain("how many feeling?")).expression.state.says, "seven");
   assertEquals((await brain("how many force?")).expression.state.says, "one");
+});
+
+test("a denial is knowledge, where not finding a path is only ignorance", async () => {
+  forget();
+  assertEquals((await brain("a basket is a tool?")).expression.state.says, "I don't know.");
+  await brain("a basket is not a tool");
+  assertEquals(
+    (await brain("a basket is a tool?")).expression.state.says,
+    "No.",
+    "now it knows, rather than merely not knowing",
+  );
+  forget();
+});
+
+test("the brain answers a denied question", async () => {
+  assertEquals((await brain("a cat is not a plant?")).expression.state.says, "Yes.");
+  assertEquals((await brain("a cat is not an animal?")).expression.state.says, "No.");
+});
+
+test("a denial the world contradicts is refused", async () => {
+  forget();
+  const r = await brain("a cat is not an animal");
+  assertEquals(kind(r.roots[0], "refuse").name, "contradiction");
+  assertEquals(r.learned, null);
+  forget();
+});
+
+test("a denied link joins nothing", async () => {
+  forget();
+  await brain("a basket is not a tool");
+  // tool is an object, but the basket does not reach object *through* the denial
+  assertEquals((await brain("a basket is a tool?")).expression.state.says, "No.");
+  assertEquals((await brain("a basket is an object?")).expression.state.says, "Yes.");
+  forget();
+});
+
+test("which word denies is the language's", async () => {
+  const r = await brain("a basket is not a tool?");
+  assertEquals(kind(r.roots[0], "truth").state.negated, true);
 });
