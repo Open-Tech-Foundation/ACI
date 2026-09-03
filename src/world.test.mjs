@@ -142,3 +142,35 @@ test("members are what link to a term, the other way from linked", () => {
   assertEquals(w.members(1, IS), [2, 3], "direct members only");
   assertEquals(w.linked(2, IS), [1]);
 });
+
+test("what a thing held is kept in order, and the latest is what it holds", () => {
+  const HAS = 5;
+  const w = fromWorldData({
+    relations: { is: IS },
+    terms: [
+      { id: 1, name: "thing", links: [] },
+      {
+        id: 2,
+        name: "one",
+        links: [
+          { rel: HAS, to: 1, quantity: 3, at: 0 },
+          { rel: HAS, to: 1, quantity: 2, at: 1 },
+          { rel: HAS, to: 1, quantity: 4, at: 2 },
+        ],
+      },
+    ],
+  });
+  assertEquals(w.held(2, HAS, 1), 4);
+  assertEquals(w.heldOver(2, HAS, 1), [
+    { quantity: 3, at: 0 },
+    { quantity: 2, at: 1 },
+    { quantity: 4, at: 2 },
+  ]);
+  assertEquals(w.now(), 3);
+});
+
+test("a world where nothing has happened is at the beginning of its clock", () => {
+  const w = fromWorldData({ relations: { is: IS }, terms: [{ id: 1, name: "a", links: [] }] });
+  assertEquals(w.now(), 0);
+  assertEquals(w.heldOver(1, 5, 1), []);
+});

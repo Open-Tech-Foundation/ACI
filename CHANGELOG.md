@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Time.** Every state link carries `at`, and `world.now()` is the brain's clock:
+  one past the latest moment anything was stamped with. It ticks on what happens,
+  not on any outside time, so the same signals in the same order give the same
+  moments. Revising a count no longer overwrites the earlier one — `world.heldOver`
+  gives what a thing held, in order, and `world.held` gives the latest.
+
 - `derivations` in `languages/*.json`: a word not listed may be derived from one
   that is, by taking an ending off and putting back what it replaced. Three rules
   reach every plural noun in English and **no plural is written down anywhere**.

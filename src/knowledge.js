@@ -58,10 +58,13 @@ function merge(world, sources) {
         held.value = t.value;
       }
       for (const l of t.links) {
-        const same = held.links.find((h) => h.rel === l.rel && h.to === l.to);
+        // A link is the same one only if it was set at the same time. A later
+        // count does not overwrite the earlier one — it comes after it, and
+        // what was so before stays so before.
+        const same = held.links.find(
+          (h) => h.rel === l.rel && h.to === l.to && (h.at ?? null) === (l.at ?? null),
+        );
         if (same) {
-          // How many is state, not a claim about what a thing is: a later
-          // source revises it rather than contradicting what came before.
           if (l.quantity !== undefined && same.quantity !== l.quantity) {
             same.quantity = l.quantity;
             origin.set(t.id, where);
@@ -70,6 +73,7 @@ function merge(world, sources) {
         }
         const kept = { rel: l.rel, to: l.to };
         if (l.quantity !== undefined) kept.quantity = l.quantity;
+        if (l.at !== undefined) kept.at = l.at;
         held.links.push(kept);
         origin.set(t.id, where);
       }

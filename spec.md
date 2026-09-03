@@ -311,6 +311,26 @@ Nothing exists once merely by being spoken of: a claim about kind
 (`"a basket is an object?"`) marks nothing and makes nothing. An individual is
 made only where state is given to it.
 
+## Time
+
+The brain has a clock, and it is innate: `world.now()` is one past the latest
+moment anything was stamped with. **It ticks on what happens, not on any outside
+time**, so the same signals in the same order always give the same moments — a
+question is not an event and does not advance it.
+
+Every state link carries `at`. Revising a count does not overwrite the earlier
+one: it comes after it, and what was so before stays on the record.
+
+```
+> a basket has three apple        at 0
+> take one apple from the basket  at 1
+> give two apples to the basket   at 2
+
+world.heldOver(basket#308, has, apple)
+  → [ { quantity: 3, at: 0 }, { quantity: 2, at: 1 }, { quantity: 4, at: 2 } ]
+world.held(...)  → 4
+```
+
 ## Memory
 
 Two kinds, and they behave differently:

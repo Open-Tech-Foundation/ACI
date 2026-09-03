@@ -123,8 +123,31 @@ export function fromWorldData(data) {
     held: (id, rel, object) => {
       const t = terms.get(id);
       if (!t || rel == null) return null;
-      const l = (t.links || []).find((x) => x.rel === rel && x.to === object);
-      return l && Number.isInteger(l.quantity) ? l.quantity : null;
+      let latest = null;
+      for (const l of t.links || []) {
+        if (l.rel !== rel || l.to !== object || !Number.isInteger(l.quantity)) continue;
+        if (latest == null || (l.at ?? -1) >= (latest.at ?? -1)) latest = l;
+      }
+      return latest ? latest.quantity : null;
+    },
+    // Everything the world has been told about what a thing held, in order.
+    // Revising a count does not erase what was so before it.
+    heldOver: (id, rel, object) => {
+      const t = terms.get(id);
+      if (!t || rel == null) return [];
+      return (t.links || [])
+        .filter((l) => l.rel === rel && l.to === object && Number.isInteger(l.quantity))
+        .map((l) => ({ quantity: l.quantity, at: l.at ?? 0 }))
+        .sort((x, y) => x.at - y.at);
+    },
+    // The brain's clock. It ticks on what happens, not on any outside time, so
+    // the same signals in the same order always give the same moments.
+    now: () => {
+      let top = -1;
+      for (const t of terms.values()) {
+        for (const l of t.links || []) if (Number.isInteger(l.at) && l.at > top) top = l.at;
+      }
+      return top + 1;
     },
     // What a term links to directly by one relation — its answer, where isA is
     // its question.

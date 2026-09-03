@@ -954,7 +954,12 @@ function learnedFrom(roots, world) {
   if (!learn) return null;
   const { subject, relation, object, quantity, made } = learn.state;
   const link = { rel: relation, to: object };
-  if (quantity != null) link.quantity = quantity;
+  if (quantity != null) {
+    link.quantity = quantity;
+    // What is so now is so from now: state is stamped, so what was so before
+    // stays on the record instead of being written over.
+    link.at = world.now();
+  }
 
   if (made) {
     const kind = world.term(made.of);

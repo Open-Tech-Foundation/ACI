@@ -186,3 +186,32 @@ test("which word marks which is the language's, not the brain's", async () => {
   assertEquals(r.learned.terms[0].individual, true);
   forget();
 });
+
+test("state is stamped with when it became so", async () => {
+  forget();
+  const first = await brain("a basket has three apple");
+  const stamped = first.learned.terms[0].links.find((l) => l.at !== undefined);
+  assertEquals(stamped.at, 0, "the clock starts at nothing having happened");
+  const next = await brain("take one apple from the basket");
+  assertEquals(next.learned.terms[0].links[0].at, 1, "and ticks on what happens");
+  forget();
+});
+
+test("revising a count does not erase what was so before it", async () => {
+  forget();
+  await brain("a basket has three apple");
+  await brain("take one apple from the basket");
+  await brain("give two apples to the basket");
+  assertEquals(await says("the basket has how many apples?"), "four", "the latest stands");
+  forget();
+});
+
+test("the clock ticks on what happens, not on being spoken to", async () => {
+  forget();
+  await brain("a basket has three apple");
+  await brain("a tiger is a mammal?");
+  await brain("how many mammals?");
+  const r = await brain("take one apple from the basket");
+  assertEquals(r.learned.terms[0].links[0].at, 1, "questions are not events");
+  forget();
+});

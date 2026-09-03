@@ -55,13 +55,16 @@ export function checkWorld(data, where = 'world') {
     const seen = new Set();
     for (const l of t.links) {
       if (!l || typeof l !== 'object') fail(at, 'every link must be an object');
-      onlyKeys(l, ['rel', 'to', 'quantity'], at);
+      onlyKeys(l, ['rel', 'to', 'quantity', 'at'], at);
       if (!isId(l.rel)) fail(at, 'link rel must be a non-negative integer');
       if (!isId(l.to)) fail(at, 'link to must be a non-negative integer');
       if (l.quantity !== undefined && !Number.isInteger(l.quantity)) {
         fail(at, 'link quantity must be a whole number');
       }
-      const key = `${l.rel}:${l.to}`;
+      if (l.at !== undefined && !(Number.isInteger(l.at) && l.at >= 0)) {
+        fail(at, 'link at must be a whole number of ticks');
+      }
+      const key = `${l.rel}:${l.to}:${l.at ?? ''}`;
       if (seen.has(key)) fail(at, `duplicate link ${key}`);
       seen.add(key);
     }
