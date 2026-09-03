@@ -11,6 +11,7 @@
     "has": 295,
     "mind": 230,
     "self": 296,
+    "other": 559,
     "name": 138,
     "know": 285,
     "zero": 124,
@@ -5927,6 +5928,17 @@
         }
       ],
       "value": 100
+    },
+    {
+      "id": 559,
+      "name": "other",
+      "links": [
+        {
+          "rel": 294,
+          "to": 29
+        }
+      ],
+      "individual": true
     }
   ]
 }

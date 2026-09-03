@@ -516,6 +516,30 @@ test("a name is not a fact the brain holds, it is what a language calls it", asy
   assertEquals((await brain("what is you name?")).expression.state.says, "ACI");
 });
 
+test("the other side of the conversation is a term of its own", async () => {
+  assertEquals((await brain("i am a person?")).expression.state.says, "Yes.");
+  // The brain is a self with a mind, and no kind of person at all.
+  assertEquals((await brain("you are a person?")).expression.state.says, "No.");
+  assertEquals((await brain("i am ACI?")).expression.state.says, "No.");
+});
+
+test("a word marking a side names no term of itself — the world's anchor does", async () => {
+  const r = await brain("what is my name?");
+  const answer = kind(r.roots[0], "answer");
+  assertEquals(answer.state.subject, 559, "it asked about the other");
+  assertEquals(answer.state.of, "name");
+  // Its own name is the word naming its self term; the other has no such word,
+  // so there is no name to give and the brain does not answer emptily.
+  assertEquals(r.expression.name, "unknown");
+});
+
+test("what the brain is told about whoever is speaking", async () => {
+  assertEquals((await brain("what am i?")).expression.state.says, "person");
+  assertEquals((await brain("i am a friend?")).expression.state.says, "I don't know.");
+  assertEquals((await brain("i am a friend")).expression.state.says, "I know.");
+  assertEquals((await brain("i am a friend?")).expression.state.says, "Yes.");
+});
+
 test("a question solves for the hole rather than checking a claim", async () => {
   const r = await brain("an apple is what?");
   const answer = kind(r.roots[0], "answer");

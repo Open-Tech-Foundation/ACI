@@ -12,6 +12,9 @@ function fail(where, why) {
   throw new ShapeError(`${where}: ${why}`);
 }
 
+// What a word may mark: which one is meant, or which side of the conversation.
+const MARKS = ['new', 'known', 'unknown', 'speaker', 'listener'];
+
 function isId(v) {
   return Number.isInteger(v) && v >= 0;
 }
@@ -180,13 +183,13 @@ export function checkLanguage(data, where = 'language') {
     if (info.negates !== undefined && info.negates !== true) {
       fail(w, 'negates, where present, must be true');
     }
-    if (
-      info.marks !== undefined &&
-      info.marks !== 'new' &&
-      info.marks !== 'known' &&
-      info.marks !== 'unknown'
-    ) {
-      fail(w, 'marks must be "new", "known" or "unknown"');
+    if (info.marks !== undefined && !MARKS.includes(info.marks)) {
+      fail(w, `marks must be one of ${MARKS.map((m) => `"${m}"`).join(', ')}`);
+    }
+    // Who is speaking is not the language's to name: the word points at a side
+    // of the conversation, and the world's anchor says which term that is.
+    if ((info.marks === 'speaker' || info.marks === 'listener') && info.concept !== undefined) {
+      fail(w, 'a word marking a side of the conversation names no term of its own');
     }
   }
 

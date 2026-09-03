@@ -22,6 +22,7 @@
     "the":   { "pos": "article",      "meaning": "definite article",   "marks": "known" },
     "is":    { "pos": "verb",         "meaning": "to be",          "concept": 294 },
     "are":   { "pos": "verb",         "meaning": "to be (plural)", "concept": 294 },
+    "am":    { "pos": "verb",         "meaning": "to be (speaker)","concept": 294 },
     "one":   { "pos": "numeral",      "meaning": "1",              "concept": 114 },
     "two":   { "pos": "numeral",      "meaning": "2",              "concept": 115 },
     "three": { "pos": "numeral",      "meaning": "3",              "concept": 116 },
@@ -207,7 +208,6 @@
     "f":            { "pos": "noun", "meaning": "f",               "concept": 147 },
     "g":            { "pos": "noun", "meaning": "g",               "concept": 148 },
     "h":            { "pos": "noun", "meaning": "h",               "concept": 149 },
-    "i":            { "pos": "noun", "meaning": "i",               "concept": 150 },
     "j":            { "pos": "noun", "meaning": "j",               "concept": 151 },
     "k":            { "pos": "noun", "meaning": "k",               "concept": 152 },
     "l":            { "pos": "noun", "meaning": "l",               "concept": 153 },
@@ -562,9 +562,12 @@
     "what":      { "pos": "interrogative", "meaning": "what", "marks": "unknown" },
     "how":       { "pos": "interrogative", "meaning": "how",  "marks": "unknown" },
     "many":      { "pos": "quantifier",    "meaning": "many",  "concept": 243 },
-    "your":      { "pos": "pronoun",       "meaning": "self",  "concept": 296 },
-    "ur":        { "pos": "pronoun",       "meaning": "self",  "concept": 296 },
-    "you":       { "pos": "pronoun",       "meaning": "self",  "concept": 296 }
+    "you":       { "pos": "pronoun",       "meaning": "self",  "marks": "listener" },
+    "your":      { "pos": "pronoun",       "meaning": "self",  "marks": "listener" },
+    "ur":        { "pos": "pronoun",       "meaning": "self",  "marks": "listener" },
+    "i":         { "pos": "pronoun",       "meaning": "other", "marks": "speaker" },
+    "me":        { "pos": "pronoun",       "meaning": "other", "marks": "speaker" },
+    "my":        { "pos": "pronoun",       "meaning": "other", "marks": "speaker" }
   },
   "marking": "after",
   "derivations": [

@@ -6,6 +6,18 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **The other person.** A signal has two sides, and until now only one of them
+  existed: `you` resolved to the brain and the one speaking had no term at all.
+  `other` is that term — an individual, and a person, where the brain is a self
+  and no kind of person. A word may now carry `marks: "speaker"` or
+  `marks: "listener"`, and names no term of its own: the language says which word
+  points at which side, the world's anchors say which term each side is, and the
+  brain turns the one round neither can — heard, the speaker is the other and the
+  listener is the brain itself. So `i am a friend` is learned of whoever is
+  speaking, and `i am ACI?` is *No.*
+- `i`, `me`, `my` and `am` in English. The letter `i` gives up the word to the
+  pronoun, as the letter `a` already gave it up to the article.
+
 - **`src/store.js` — the world kept in SQLite**, seeded once from
   `data/world.json` and read back in the same shape every other source uses, so it
   is validated on the way out like any of them. The schema is a second wall, not a
@@ -18,6 +30,9 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- A name the language cannot say was answered with nothing at all — an empty
+  string, dressed as an answer. A question the language cannot voice is a gap
+  like one the world cannot fill, and the brain says it does not know.
 - A link with no moment could be written twice: SQLite holds two nulls to be
   different, so the unique index did not catch it. The column is never null now.
 - Every test owns entities no other test touches, and the brain-level tests no

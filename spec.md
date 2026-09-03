@@ -30,6 +30,7 @@ What survives both is primitive, and only that may be written in code.
 | the refinements of a thing: living / nonliving / person | that a cat is an animal |
 | how to walk a relation, and how to parse a rule | the relations, and the rules |
 | the acts it can express: greet, count, confirm, recognise, understood, affirm, deny, unknown | the words each act is voiced in |
+| that a signal has two sides — the one speaking, the one spoken to | which word points at each, and which term each one is |
 | that it answers a communication, counts a number, confirms a relation | which term is a communication, a number, a relation |
 
 A concrete case, because this is the one that keeps being got wrong: the brain
@@ -77,6 +78,7 @@ Refused, not tolerated:
 - an unknown field, anywhere
 - terms with no relation declared to walk them
 - a word with no `pos` or no `meaning`; a language with no `symbols.letter`
+- a word that marks a side of the conversation and also names a term of its own
 - a grammar naming a start symbol that has no rule
 
 Silently accepting half a source is how a brain ends up reasoning over knowledge
@@ -124,7 +126,9 @@ runtime — never the brain — does the reading.
     "hi":    { "pos": "interjection", "meaning": "greeting",     "concept": 277 },
     "cat":   { "pos": "noun",         "meaning": "feline animal","concept": 83 },
     "is":    { "pos": "verb",         "meaning": "to be",        "concept": 294 },
-    "two":   { "pos": "numeral",      "meaning": "2",            "concept": 115 }
+    "two":   { "pos": "numeral",      "meaning": "2",            "concept": 115 },
+    "i":     { "pos": "pronoun",      "meaning": "other",        "marks": "speaker" },
+    "you":   { "pos": "pronoun",      "meaning": "self",         "marks": "listener" }
   },
   "expressions": {                   // how this language voices each brain act
     "greet":      "Hello!",
@@ -296,10 +300,11 @@ which was meant.
 
 ### Marking one, or the one meant
 
-A word may carry `marks`, which is either `"new"` — one is being introduced — or
-`"known"` — the one already spoken of is meant. That a signal can do either is
-the brain's; **which word does it is the language's**, and in `en.json` it is
-`a` / `an` against `the`.
+A word may carry `marks` — what it points at rather than names. `"new"` says one
+is being introduced, `"known"` that the one already spoken of is meant. That a
+signal can do either is the brain's; **which word does it is the language's**,
+and in `en.json` it is `a` / `an` against `the`. (`"unknown"` marks a hole, and
+`"speaker"` / `"listener"` a side of the conversation.)
 
 ```
 > a basket has three apple          made basket#308
@@ -310,6 +315,39 @@ the brain's; **which word does it is the language's**, and in `en.json` it is
 Nothing exists once merely by being spoken of: a claim about kind
 (`"a basket is an object?"`) marks nothing and makes nothing. An individual is
 made only where state is given to it.
+
+### The two sides
+
+A signal has two sides — the one speaking and the one spoken to — and each is a
+term: `anchors.self` is the brain, `anchors.other` whoever it is speaking with.
+Both exist once, so both are individuals like any other.
+
+Three things settle who a word points at, and they are three different owners:
+
+- **that there are two sides** is the brain's, and it is all the brain has to
+  know. A word carrying `marks: "speaker"` or `marks: "listener"` names no term
+  of its own — the door refuses one that tries — so the language cannot decide
+  who is meant.
+- **which word points at which side** is the language's: `i` / `me` / `my`
+  against `you` / `your`.
+- **which term each side is** is the world's, through its anchors.
+
+The brain turns the one round that neither of them can: heard, the **speaker**
+is the other and the **listener** is the brain itself. Every language's `i`
+means whoever is speaking, so the inversion is not a fact about English.
+
+```
+> what is your name?    ACI            the self, named by the word naming it
+> i am a person?        Yes.           the other is one
+> you are a person?     No.            the brain is a self, and no kind of person
+> i am ACI?             No.
+> i am a friend         I know.        learned of the other
+> what is my name?      ...            no word names the other, so no name to give
+```
+
+The other is a person, and the brain is not: it is a self with a mind, standing
+apart from every physical thing. This is the world's claim, not the engine's —
+another world may seat both sides elsewhere.
 
 ## Time
 
@@ -631,9 +669,11 @@ know where. Adds an `answer` node with `{ subject, relation, found, of }`:
   language* calls the term. The brain's own name is not a fact it holds anywhere:
   it is the word naming its `self` term in the language being spoken.
 
-A question the world cannot fill leaves `found` empty. The node **stays on the
-tree** — what the brain looked for and did not find is worth as much as what it
-found — and the signal is expressed as `unknown` rather than answered emptily.
+A question the world cannot fill leaves `found` empty, and so is one the language
+cannot say — a term it has no word for leaves the brain with nothing to answer
+with. The node **stays on the tree** either way — what the brain looked for and
+did not find is worth as much as what it found — and the signal is expressed as
+`unknown` rather than answered emptily.
 
 ```
 what is your name?     ACI       self  --name--> (the word for it)

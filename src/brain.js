@@ -194,7 +194,7 @@ function langNameOrNull(matches) {
 // ---------------------------------------------------------------------------
 // think — reason over the understood meaning using the language's data.
 // ---------------------------------------------------------------------------
-function think(roots, langs) {
+function think(roots, langs, world) {
   return roots.map((n) => {
     if (!n.state.exists) return withBranch(n);
     const langNode = findBranch(n, 'language');
@@ -207,13 +207,25 @@ function think(roots, langs) {
       wordKnown: Boolean(first.word),
       pos: first.word ? first.word.pos : null,
       meaning: first.word ? first.word.meaning : null,
-      concept: first.word ? first.word.concept : null,
+      concept: first.word ? sideOf(first.word, world) ?? first.word.concept : null,
       marks: first.word ? first.word.marks : null,
       negates: first.word ? first.word.negates : false,
       role: first.word ? first.word.role : null,
     };
     return withBranch(n, [...n.branch, node('thought', 'understood', [], { thought })]);
   });
+}
+
+// A signal has two sides — the one speaking and the one spoken to — and a word
+// may point at either. That there are two sides is the brain's; which word
+// points at which is the language's (`marks`), and which term each side is, is
+// the world's (its anchors). The brain only turns the one round: heard, the
+// speaker is the other and the listener is the brain itself.
+function sideOf(word, world) {
+  const a = world && world.anchors ? world.anchors : {};
+  if (word.marks === 'speaker') return a.other ?? null;
+  if (word.marks === 'listener') return a.self ?? null;
+  return null;
 }
 
 // ---------------------------------------------------------------------------
@@ -855,11 +867,13 @@ function expression(roots, langs, mood, world) {
   const sum = bound ? findBranch(roots[0], 'sum') : null;
   const did = bound ? findBranch(roots[0], 'did') : null;
   const refused = bound ? findBranch(roots[0], 'refuse') : null;
-  // A question the world cannot fill is a gap, not an answer. The node stays on
-  // the tree either way — what the brain looked for and did not find is worth
-  // as much as what it found.
-  const found =
-    answer && (answer.state.of === 'name' || answer.state.found.length > 0);
+  const langName = parts.map((p) => p.state.language).find(Boolean) || null;
+  // A question the world cannot fill is a gap, not an answer, and so is one the
+  // language cannot say — a term it has no word for leaves the brain with
+  // nothing to answer with. The node stays on the tree either way: what the
+  // brain looked for and did not find is worth as much as what it found.
+  const answered = answer ? nameOf(answer, langName, langs) : null;
+  const found = answer && answered != null;
 
   // Asked, the brain answers the claim. Told, it answers only if it disagrees;
   // a claim it already holds is simply understood.
@@ -899,7 +913,6 @@ function expression(roots, langs, mood, world) {
           ? parts[0].name
           : 'unknown';
 
-  const langName = parts.map((p) => p.state.language).find(Boolean) || null;
   const said =
     intent === 'answer'
       ? did
@@ -908,7 +921,7 @@ function expression(roots, langs, mood, world) {
           ? termWord(sum.state.term, langName, langs)
           : counted
             ? termWord(counted.state.total, langName, langs)
-            : nameOf(answer, langName, langs)
+            : answered
       : wholeMeaning(intent, parts);
   // Where the brain is speaking of its own state, it hands over the term for
   // that state and lets the language find the words. It holds none of them.
@@ -1059,7 +1072,7 @@ export function brainFrom(input, knowledge) {
   const world = (knowledge && knowledge.world) || null;
 
   const roots = understand(input, langs);
-  const thoughtRoots = think(roots, langs);
+  const thoughtRoots = think(roots, langs, world);
   const solvedRoots = solve(thoughtRoots, world, langs);
   const mood = moodOf(input, langs);
   const structuredRoots = structurePhrase(solvedRoots, langs);
