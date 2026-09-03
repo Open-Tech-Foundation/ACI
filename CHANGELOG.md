@@ -6,6 +6,21 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- The world roughly doubles: **554 terms, 542 words, 95% sayable.** Reptiles and
+  amphibians, twenty-five mammals, birds, fish, insects; vegetables and more fruit;
+  furniture, vehicles, buildings, tools, landforms, weather, seasons; nineteen
+  kinds of person, including the family words; numbers to twenty and the round
+  hundreds.
+- `disjoint: true` on a term: its children are kinds apart from one another, so
+  one marking replaces every pair of `different` links that would otherwise have
+  to be written. Thirty parents carry it.
+
+### Fixed
+
+- `material` duplicated `substance`, which already held the solids. Its children
+  moved under `solid` and the duplicate is gone — it had made `ice is a material?`
+  answer *No.*
+
 - **Roles, and events.** An action is no longer a claim between two terms: what
   happened is recorded as an **individual** — of its kind, with the parts things
   played in it, and with a moment. Nothing new was needed to hold it; an event is

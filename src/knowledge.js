@@ -40,6 +40,7 @@ function merge(world, sources) {
         const kept = { id: t.id, name: t.name, links: [...t.links] };
         if (t.value !== undefined) kept.value = t.value;
         if (t.individual) kept.individual = true;
+        if (t.disjoint) kept.disjoint = true;
         terms.set(t.id, kept);
         origin.set(t.id, where);
         continue;

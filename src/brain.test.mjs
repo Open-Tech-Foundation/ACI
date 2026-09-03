@@ -436,8 +436,8 @@ test("the self is a thing, and not an animal", async () => {
   assertEquals((await brain("aci is a thing?")).expression.state.says, "Yes.");
   assertEquals(
     (await brain("aci is an animal?")).expression.state.says,
-    "I don't know.",
-    "nothing yet says the self excludes an organism",
+    "No.",
+    "a thing is physical or abstract, never both",
   );
 });
 
@@ -555,7 +555,9 @@ test("a question the world cannot fill is a gap, not an empty answer", async () 
 });
 
 test("failing to find a path is not proof of the opposite", async () => {
-  const r = await brain("a cat is a dog?");
+  // position and state are both properties, and nothing says a property may be
+  // only one of them.
+  const r = await brain("up is a fear?");
   assertEquals(kind(r.roots[0], "truth").name, "unknown");
   assertEquals(r.expression.name, "unsure");
   assertEquals(r.expression.state.says, "I don't know.");
@@ -635,30 +637,30 @@ test("only a thing carries a count, never a relation", async () => {
   assertEquals(kind(leaves.find((n) => n.state.identity === "is"), "quantity"), null);
 });
 
-test("the brain counts by walking, and says the number it lands on", async () => {
-  assertEquals((await brain("how many mammal?")).expression.state.says, "seven");
-  assertEquals((await brain("how many fruit?")).expression.state.says, "five");
-  assertEquals((await brain("how many bird?")).expression.state.says, "one");
+test("the brain counts what the world holds, and says the number", async () => {
+  assertEquals((await brain("how many season?")).expression.state.says, "four");
+  assertEquals((await brain("how many weather?")).expression.state.says, "eight");
+  assertEquals((await brain("how many colour?")).expression.state.says, "ten");
 });
 
 test("nothing to count is zero, not silence", async () => {
-  const r = await brain("how many elephant?");
+  const r = await brain("how many chameleon?");
   assertEquals(kind(r.roots[0], "count").state.members, 0);
   assertEquals(r.expression.state.says, "zero");
 });
 
-test("counting stops where the world's numbers stop", async () => {
-  // Eleven numbers are known and the order chain reaches ten.
-  const r = await brain("how many number?");
+test("counting stops where the world has no word for the number", async () => {
+  // Twenty-five mammals, and no single word in English for twenty-five.
+  const r = await brain("how many mammal?");
   assertEquals(kind(r.roots[0], "count").name, "beyond");
   assertEquals(r.expression.name, "unsure", "it does not invent a number it has no term for");
 });
 
 test("the count is the terms the world holds, not a fact stored anywhere", async () => {
-  const r = await brain("how many tool?");
+  const r = await brain("how many season?");
   const counted = kind(r.roots[0], "count");
-  assertEquals(counted.state.members, 5);
-  assertEquals(counted.state.total, 118, "the term for five");
+  assertEquals(counted.state.members, 4);
+  assertEquals(counted.state.total, 117, "the term for four");
 });
 
 test("the brain adds and subtracts, and the world only names the numbers", async () => {
@@ -678,9 +680,11 @@ test("the sum is computed, not looked up", async () => {
 });
 
 test("a result the world has no term for is not invented", async () => {
-  assertEquals(kind((await brain("nine plus four?")).roots[0], "sum").state.value, 13);
-  assertEquals((await brain("nine plus four?")).expression.name, "unsure");
-  assertEquals((await brain("two minus five?")).expression.state.says, "I don't know.");
+  // Twenty-three is a number the brain can reach and English cannot say in one
+  // word, and below zero it has no term at all.
+  assertEquals(kind((await brain("twenty plus three?")).roots[0], "sum").state.value, 23);
+  assertEquals((await brain("twenty plus three?")).expression.name, "unsure");
+  assertEquals((await brain("seven minus nine?")).expression.state.says, "I don't know.");
 });
 
 test("the brain compares two numbers", async () => {
@@ -703,8 +707,11 @@ test("a plural is understood as the word it comes from", async () => {
 });
 
 test("no plural is written down anywhere", async () => {
-  const r = await brain("how many mammals?");
-  assertEquals(r.expression.state.says, "seven", "the same count as the singular");
+  assertEquals(
+    (await brain("how many seasons?")).expression.state.says,
+    (await brain("how many season?")).expression.state.says,
+    "the plural counts what the singular counts",
+  );
 });
 
 test("a claim may be about anything that exists, not only a thing", async () => {
@@ -735,17 +742,17 @@ test("a hole is a word the language marks as one, not any word without a term", 
 });
 
 test("the world can be counted by any of its shelves", async () => {
-  assertEquals((await brain("how many colour?")).expression.state.says, "six");
+  assertEquals((await brain("how many colour?")).expression.state.says, "ten");
   assertEquals((await brain("how many feeling?")).expression.state.says, "seven");
-  assertEquals((await brain("how many force?")).expression.state.says, "one");
+  assertEquals((await brain("how many amphibian?")).expression.state.says, "two");
 });
 
 test("a denial is knowledge, where not finding a path is only ignorance", async () => {
   forget();
-  assertEquals((await brain("a basket is a tool?")).expression.state.says, "I don't know.");
-  await brain("a basket is not a tool");
+  assertEquals((await brain("up is a fear?")).expression.state.says, "I don't know.");
+  await brain("up is not a fear");
   assertEquals(
-    (await brain("a basket is a tool?")).expression.state.says,
+    (await brain("up is a fear?")).expression.state.says,
     "No.",
     "now it knows, rather than merely not knowing",
   );
@@ -767,14 +774,14 @@ test("a denial the world contradicts is refused", async () => {
 
 test("a denied link joins nothing", async () => {
   forget();
-  await brain("a basket is not a tool");
-  // tool is an object, but the basket does not reach object *through* the denial
-  assertEquals((await brain("a basket is a tool?")).expression.state.says, "No.");
-  assertEquals((await brain("a basket is an object?")).expression.state.says, "Yes.");
+  await brain("up is not a fear");
+  assertEquals((await brain("up is a fear?")).expression.state.says, "No.");
+  assertEquals((await brain("up is a position?")).expression.state.says, "Yes.",
+    "the denial cut nothing else");
   forget();
 });
 
 test("which word denies is the language's", async () => {
-  const r = await brain("a basket is not a tool?");
+  const r = await brain("up is not a fear?");
   assertEquals(kind(r.roots[0], "truth").state.negated, true);
 });

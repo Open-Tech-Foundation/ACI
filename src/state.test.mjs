@@ -53,7 +53,7 @@ test("forgetting drops the state, and the brain says so", async () => {
 test("counting a kind still counts the world, not any state", async () => {
   forget();
   await brain("basket has three apple");
-  assertEquals(await says("how many fruit?"), "five", "unchanged by the basket");
+  assertEquals(await says("how many season?"), "four", "unchanged by the basket");
   forget();
 });
 

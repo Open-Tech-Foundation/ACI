@@ -36,6 +36,12 @@ export function fromWorldData(data) {
     return seen;
   }
 
+  // What a term is a kind of, one step up.
+  function up(id) {
+    const t = terms.get(id);
+    return t ? (t.links || []).filter((l) => !l.not && l.rel === isRel).map((l) => l.to) : [];
+  }
+
   return {
     data,
     anchors,
@@ -62,6 +68,19 @@ export function fromWorldData(data) {
         if (!t) continue;
         for (const l of t.links || []) {
           if (l.rel === differentRel && xs.has(l.to)) return true;
+        }
+      }
+      // A parent may say its children are exclusive rather than every pair of
+      // them being written out: two things under one such parent, by different
+      // children of it, cannot be the same kind.
+      for (const dx of xs) {
+        const parents = up(dx);
+        for (const dy of ys) {
+          if (dx === dy) continue;
+          for (const p of parents) {
+            const t = terms.get(p);
+            if (t && t.disjoint && up(dy).includes(p)) return true;
+          }
         }
       }
       return false;

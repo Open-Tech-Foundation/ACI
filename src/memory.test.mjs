@@ -19,12 +19,12 @@ test("what was learned can then be asked about", async () => {
 
 test("learning changes what follows from the world, not only the fact itself", async () => {
   forget();
-  assertEquals((await brain("a moon is a tool?")).expression.state.says, "I don't know.");
-  await brain("a moon is a computer");
+  assertEquals((await brain("up is a state?")).expression.state.says, "I don't know.");
+  await brain("up is a feeling");
   assertEquals(
-    (await brain("a moon is a tool?")).expression.state.says,
+    (await brain("up is a state?")).expression.state.says,
     "Yes.",
-    "computer -> tool was already known; the taught link reaches through it",
+    "feeling -> state was already known; the taught link reaches through it",
   );
   forget();
 });

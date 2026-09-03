@@ -499,7 +499,9 @@ This is the difference between ignorance and knowledge:
 
 Failing to find a path is **not** proof of the opposite. Only exclusion is.
 `world.excludes(x, y)` is true when anything `x` is a kind of stands `different`
-to anything `y` is a kind of — the `different` relation, declared in the world
+to anything `y` is a kind of, **or** when they descend by different children of a
+term marked `disjoint: true` — a parent saying its children are kinds apart from
+one another, so one marking does the work of every pair — the `different` relation, declared in the world
 like any other. Exclusion settles claims about **kind** only: a cat and a mind
 are different kinds, but *having* one is not *being* one.
 
