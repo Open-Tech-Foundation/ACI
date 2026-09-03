@@ -5,7 +5,7 @@
 // something handed in from outside — is the runtime's business, not the
 // brain's. Every source passes the same shape check on the way in.
 
-import { checkWorld, checkWhole, checkLanguage } from './shape.js';
+import { checkWorld, checkWhole, checkLanguage, checkWholeLanguage } from './shape.js';
 import { fromWorldData } from './world.js';
 import { fromData } from './languages.js';
 
@@ -18,10 +18,94 @@ export function fromSources({ world = NO_WORLD, knowledge = [], languages = [] }
   const { whole, origin } = merge(world, knowledge);
   checkWhole(whole, origin);
 
+  languages.forEach((l, i) => checkLanguage(l, `language[${i}]`));
+  const spoken = mergeLanguages(languages);
+
   return {
     world: fromWorldData(whole),
-    languages: languages.map((l, i) => fromData(checkLanguage(l, `language[${i}]`))),
+    languages: spoken.map((l) => fromData(checkWholeLanguage(l, 'language'))),
   };
+}
+
+// Files that name the same language are one language. A later file may add
+// words, symbols, frames and rules to what an earlier one declared — so a
+// service ships the vocabulary of its own tools, and an instance is given its
+// own name, without owning the file that holds the alphabet. It may not say
+// anything twice differently: two files disagreeing is a contradiction, and the
+// brain refuses rather than picking a winner.
+function mergeLanguages(sources) {
+  const spoken = new Map();
+  sources.forEach((data, i) => {
+    const where = `language[${i}]`;
+    const held = spoken.get(data.name);
+    if (!held) spoken.set(data.name, clone(data));
+    else join(held, data, where);
+  });
+  return [...spoken.values()];
+}
+
+function join(into, from, where) {
+  const at = `${where} "${from.name}"`;
+  for (const part of ['symbols', 'words', 'speech', 'expressions']) {
+    for (const [key, value] of Object.entries(from[part] || {})) {
+      const held = (into[part] || {})[key];
+      if (held !== undefined && !same(held, value)) {
+        throw new Error(`${at}: ${part} "${key}" was already said differently`);
+      }
+      into[part] = into[part] || {};
+      into[part][key] = clone(value);
+    }
+  }
+  if (from.marking !== undefined) {
+    if (into.marking !== undefined && into.marking !== from.marking) {
+      throw new Error(`${at}: marking was already "${into.marking}"`);
+    }
+    into.marking = from.marking;
+  }
+  for (const rule of from.derivations || []) {
+    into.derivations = into.derivations || [];
+    if (!into.derivations.some((held) => same(held, rule))) into.derivations.push(clone(rule));
+  }
+  if (from.grammar) {
+    into.grammar = into.grammar || {};
+    if (from.grammar.start !== undefined) {
+      if (into.grammar.start !== undefined && into.grammar.start !== from.grammar.start) {
+        throw new Error(`${at}: grammar starts at "${into.grammar.start}" already`);
+      }
+      into.grammar.start = from.grammar.start;
+    }
+    // A rule is added to, not replaced: another way to say a sentence is one
+    // more alternative, the way a knowledge file adds a link to a term.
+    for (const [symbol, rule] of Object.entries(from.grammar.rules || {})) {
+      into.grammar.rules = into.grammar.rules || {};
+      const held = into.grammar.rules[symbol];
+      if (!held) {
+        into.grammar.rules[symbol] = clone(rule);
+        continue;
+      }
+      for (const alternative of rule.rules) {
+        if (!held.rules.includes(alternative)) held.rules.push(alternative);
+      }
+    }
+  }
+}
+
+function clone(value) {
+  if (Array.isArray(value)) return value.map(clone);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, clone(v)]));
+  }
+  return value;
+}
+
+function same(a, b) {
+  if (a === b) return true;
+  if (Array.isArray(a) || Array.isArray(b)) {
+    return Array.isArray(a) && Array.isArray(b) && a.length === b.length && a.every((v, i) => same(v, b[i]));
+  }
+  if (!a || !b || typeof a !== 'object' || typeof b !== 'object') return false;
+  const keys = Object.keys(a);
+  return keys.length === Object.keys(b).length && keys.every((k) => same(a[k], b[k]));
 }
 
 // A knowledge file may name terms the base world already has, and add links to

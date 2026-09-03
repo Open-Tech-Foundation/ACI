@@ -160,17 +160,20 @@ export function checkLanguage(data, where = 'language') {
   }
   const at = `language "${data.name}"`;
 
-  if (!data.symbols || typeof data.symbols !== 'object') fail(at, 'symbols must be an object');
-  for (const [type, info] of Object.entries(data.symbols)) {
-    if (!info || typeof info.characters !== 'string' || info.characters === '') {
-      fail(`${at} symbols.${type}`, 'characters must be a non-empty string');
+  if (data.symbols !== undefined) {
+    if (!data.symbols || typeof data.symbols !== 'object') fail(at, 'symbols must be an object');
+    for (const [type, info] of Object.entries(data.symbols)) {
+      if (!info || typeof info.characters !== 'string' || info.characters === '') {
+        fail(`${at} symbols.${type}`, 'characters must be a non-empty string');
+      }
+      onlyKeys(info, ['characters'], `${at} symbols.${type}`);
     }
-    onlyKeys(info, ['characters'], `${at} symbols.${type}`);
   }
-  if (!data.symbols.letter) fail(at, 'symbols.letter is required — without it nothing is read');
 
-  if (!data.words || typeof data.words !== 'object') fail(at, 'words must be an object');
-  for (const [word, info] of Object.entries(data.words)) {
+  if (data.words !== undefined && (!data.words || typeof data.words !== 'object')) {
+    fail(at, 'words must be an object');
+  }
+  for (const [word, info] of Object.entries(data.words || {})) {
     const w = `${at} word "${word}"`;
     if (!info || typeof info !== 'object') fail(w, 'must be an object');
     onlyKeys(info, ['pos', 'meaning', 'concept', 'marks', 'negates', 'role'], w);
@@ -233,19 +236,40 @@ export function checkLanguage(data, where = 'language') {
   return data;
 }
 
+// What a language must have once every file that speaks it has been merged.
+// A single file need not carry all of it: one may add words to a language whose
+// alphabet and grammar another file declared, the way a knowledge file adds
+// links to a world it did not write.
+export function checkWholeLanguage(data, where = 'language') {
+  const at = `${where} "${data.name}"`;
+  if (!data.symbols || !data.symbols.letter) {
+    fail(at, 'symbols.letter is required — without it nothing is read');
+  }
+  if (!data.words || Object.keys(data.words).length === 0) {
+    fail(at, 'words are required — a language with none recognizes nothing');
+  }
+  const grammar = data.grammar;
+  if (grammar !== undefined) {
+    if (typeof grammar.start !== 'string' || grammar.start === '') {
+      fail(`${at} grammar`, 'start must name a rule');
+    }
+    if (!grammar.rules || !grammar.rules[grammar.start]) {
+      fail(`${at} grammar`, `start "${grammar.start}" has no rule`);
+    }
+  }
+  return data;
+}
+
 function checkGrammar(grammar, at) {
   if (!grammar || typeof grammar !== 'object') fail(at, 'grammar must be an object');
   onlyKeys(grammar, ['start', 'rules'], `${at} grammar`);
-  if (typeof grammar.start !== 'string' || grammar.start === '') {
+  if (grammar.start !== undefined && (typeof grammar.start !== 'string' || grammar.start === '')) {
     fail(`${at} grammar`, 'start must name a rule');
   }
-  if (!grammar.rules || typeof grammar.rules !== 'object') {
+  if (grammar.rules !== undefined && (!grammar.rules || typeof grammar.rules !== 'object')) {
     fail(`${at} grammar`, 'rules must be an object');
   }
-  if (!grammar.rules[grammar.start]) {
-    fail(`${at} grammar`, `start "${grammar.start}" has no rule`);
-  }
-  for (const [symbol, rule] of Object.entries(grammar.rules)) {
+  for (const [symbol, rule] of Object.entries(grammar.rules || {})) {
     const r = `${at} grammar rule "${symbol}"`;
     if (!rule || typeof rule !== 'object') fail(r, 'must be an object');
     onlyKeys(rule, ['rules'], r);

@@ -90,10 +90,23 @@ it does not have. Errors name the file at fault, not the merged whole.
 By convention, loaded once at startup:
 
 ```
-languages/*.json   one file per language
+languages/*.json   the languages — several files may speak one
 data/world.json    the base world
 knowledge/*.json   anything taught on top of it, world-shaped
 ```
+
+**A language is extendable the way the world is.** Files that share a `name` are
+one language: a later one may add words, symbols, frames, derivations and
+grammar rules to what an earlier one declared, and a rule already there is added
+to rather than replaced — another way to say a sentence is one more alternative.
+It may not say anything twice differently; that is a contradiction, and it is
+refused. So a service ships the vocabulary of its own tools, and an instance is
+given its own name, without either of them owning the file that holds the
+alphabet.
+
+A single file therefore need not carry a whole language — `checkLanguage` checks
+one file, `checkWholeLanguage` checks what they add up to, exactly as
+`checkWorld` and `checkWhole` do for the world.
 
 `knowledge/*.json` takes the same shape as the world. A file there may add new
 terms, and may add links to terms the world already has; it may **not** redefine
@@ -369,10 +382,18 @@ memory is not its own: every computer has one, and this is a computer. So
 `"you is an organism?"` is *No.* by exclusion, `"you is a machine?"` is *Yes.*
 by walking two links, and neither answer is held anywhere as a reply.
 
-Its **name** is not among them. A name is a word, and no language ships one for
-the `self` term — an instance has no name until one is loaded with the rest of
-its identity, and asked before then it says it does not know rather than
-inventing one.
+Its **name** is not among them. A name is a word, and no language shipped here
+names the `self` term — a name belongs to an instance, not to English. One file
+gives it one:
+
+```jsonc
+// languages/instance.json
+{ "name": "english", "words": { "aci": { "pos": "noun", "meaning": "self", "concept": 296 } } }
+```
+
+and `"what is your name?"` answers `aci`, `"aci has what?"` answers
+`mind, memory`. Without such a file the brain says it does not know its own
+name rather than inventing one.
 
 ## Time
 

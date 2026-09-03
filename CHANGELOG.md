@@ -13,6 +13,15 @@ All notable changes to this project are documented in this file.
   carry out and the term it would answer with, and a refusal is the last word
   whatever else would fit. No walk toward `good`: a brain going looking for it
   would be weighing, and `anchors.good` is read nowhere.
+- **A language is extendable the way the world is.** Files sharing a `name` are
+  one language, and a later one may add words, symbols, frames, derivations and
+  grammar rules to what an earlier declared — a rule already there is added to,
+  since another way to say a sentence is one more alternative. Saying anything
+  twice differently is a contradiction and is refused. So a service ships the
+  vocabulary of its own tools, and an instance is given its own name, without
+  owning the file that holds the alphabet. `checkLanguage` now checks one file
+  and `checkWholeLanguage` what they add up to, as `checkWorld` and `checkWhole`
+  already did for the world.
 - **Pointing.** `i`, `me`, `my`, `you`, `your` hold nothing of their own: a word
   carrying `marks: "from"` or `marks: "to"` names no term, and lands on the
   circumstance of the signal it arrived in — `brainFrom(input, knowledge,
@@ -47,9 +56,9 @@ All notable changes to this project are documented in this file.
 
 - **The brain's name.** `ACI` was a word in `languages/en.json` naming the self
   term, which made every instance of the engine answer to one name shipped in
-  the box. A name belongs to an instance, not to English, and arrives with the
-  rest of its identity — until it does, the brain says it does not know its own
-  name rather than inventing one.
+  the box. A name belongs to an instance, not to English: one file under
+  `languages/` naming term 296 gives this instance one, and without it the brain
+  says it does not know its own name rather than inventing one.
 
 ### Fixed
 

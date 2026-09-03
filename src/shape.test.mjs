@@ -1,5 +1,6 @@
 import { test, assert, assertEquals } from "runtime:test";
 import { fromSources } from "./knowledge.js";
+import { brainFrom } from "./brain.js";
 
 const IS = 9;
 const world = {
@@ -158,4 +159,109 @@ test("children of a disjoint parent are kinds apart", () => {
   });
   assert(k.world.excludes(22, 23), "one marking did the work of every pair");
   assertEquals(k.world.excludes(22, 20), false, "a thing is not apart from its own kind");
+});
+
+// ---------------------------------------------------------------------------
+// Files that name the same language are one language: a service ships the
+// words for its own tools, and an instance is given its own name, without
+// owning the file that holds the alphabet.
+// ---------------------------------------------------------------------------
+const english = {
+  name: "test",
+  symbols: { letter: { characters: "abcdefghijklmnopqrstuvwxyz" }, question: { characters: "?" } },
+  words: {
+    what: { pos: "interrogative", meaning: "what", marks: "unknown" },
+    is: { pos: "verb", meaning: "is", concept: IS },
+    your: { pos: "pronoun", meaning: "to", marks: "to" },
+    name: { pos: "noun", meaning: "name", concept: 92 },
+  },
+  expressions: { answer: "{meaning}", unknown: "..." },
+  grammar: {
+    start: "sentence",
+    rules: {
+      sentence: { rules: ["interrogative verb subject"] },
+      subject: { rules: ["pronoun noun"] },
+    },
+  },
+};
+
+const named = {
+  anchors: { thing: 1, relation: 2, name: 92, self: 99 },
+  relations: { is: IS },
+  terms: [
+    { id: 1, name: "thing", links: [] },
+    { id: 2, name: "relation", links: [] },
+    { id: IS, name: "is", links: [{ rel: IS, to: 2 }] },
+    { id: 92, name: "name", links: [{ rel: IS, to: 2 }] },
+    { id: 99, name: "self", links: [{ rel: IS, to: 1 }] },
+  ],
+};
+
+test("two files naming one language are one language", () => {
+  const k = fromSources({
+    world: named,
+    languages: [english, { name: "test", words: { zed: { pos: "noun", meaning: "zed", concept: 99 } } }],
+  });
+  assertEquals(k.languages.length, 1, "one language, not two that shout over each other");
+  assertEquals(k.languages[0].lookupWord("zed").concept, 99);
+  assertEquals(k.languages[0].lookupWord("what").meaning, "what");
+});
+
+test("an instance is given its name without owning the language", () => {
+  const bare = fromSources({ world: named, languages: [english] });
+  assertEquals(brainFrom("what is your name?", bare).expression.name, "unknown");
+
+  const told = fromSources({
+    world: named,
+    languages: [english, { name: "test", words: { zed: { pos: "noun", meaning: "zed", concept: 99 } } }],
+  });
+  assertEquals(brainFrom("what is your name?", told).expression.state.says, "zed");
+});
+
+test("a fragment carries no alphabet of its own", () => {
+  const k = fromSources({
+    world: named,
+    languages: [{ name: "test", words: { zed: { pos: "noun", meaning: "zed" } } }, english],
+  });
+  assert(k.languages[0].isLetterSymbol("q"), "the alphabet came from the other file");
+});
+
+test("a language nobody gave letters to is refused", () => {
+  const msg = refuses("a language with no file declaring letters", {
+    world: named,
+    languages: [{ name: "test", words: { zed: { pos: "noun", meaning: "zed" } } }],
+  });
+  assert(msg.includes("letter"), msg);
+});
+
+test("a word said twice differently is refused", () => {
+  const msg = refuses("two files disagreeing about a word", {
+    world: named,
+    languages: [english, { name: "test", words: { name: { pos: "noun", meaning: "label", concept: 92 } } }],
+  });
+  assert(msg.includes('words "name"'), msg);
+});
+
+test("a frame said twice differently is refused", () => {
+  const msg = refuses("two files disagreeing about an intent", {
+    world: named,
+    languages: [english, { name: "test", expressions: { answer: "it is {meaning}" } }],
+  });
+  assert(msg.includes('expressions "answer"'), msg);
+});
+
+test("another way to say a sentence is added, not swapped in", () => {
+  const k = fromSources({
+    world: named,
+    languages: [english, { name: "test", grammar: { rules: { subject: { rules: ["noun"] } } } }],
+  });
+  assertEquals(k.languages[0].grammar.rules.subject.rules, ["pronoun noun", "noun"]);
+});
+
+test("files naming different languages stay apart", () => {
+  const k = fromSources({
+    world: named,
+    languages: [english, { ...english, name: "other" }],
+  });
+  assertEquals(k.languages.length, 2);
 });
