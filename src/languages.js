@@ -31,6 +31,9 @@ function buildLanguage(data) {
     // Which side of a marking word the thing it marks falls on. English puts it
     // after — `the basket`, `from the basket` — and another language need not.
     marking: data.marking === 'before' ? 'before' : 'after',
+    // Which side of an action the doer falls on, and which side the target.
+    // English puts the doer first; a verb-final language does not.
+    parts: data.parts || null,
     roles: symbolRoles(symbols),
   };
 }

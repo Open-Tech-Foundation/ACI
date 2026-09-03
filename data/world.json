@@ -25,7 +25,7 @@
     "cause": 247,
     "name": 138,
     "agent": 327,
-    "patient": 328,
+    "target": 328,
     "source": 329,
     "destination": 330
   },
@@ -36,7 +36,7 @@
     "order": 249,
     "cause": 247,
     "agent": 327,
-    "patient": 328,
+    "target": 328,
     "source": 329,
     "destination": 330
   },
@@ -3557,7 +3557,7 @@
     },
     {
       "id": 328,
-      "name": "patient",
+      "name": "target",
       "links": [
         {
           "rel": 294,

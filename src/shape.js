@@ -157,7 +157,7 @@ export function checkLanguage(data, where = 'language') {
   if (!data || typeof data !== 'object') fail(where, 'must be an object');
   onlyKeys(
     data,
-    ['name', 'symbols', 'words', 'derivations', 'marking', 'speech', 'expressions', 'grammar'],
+    ['name', 'symbols', 'words', 'derivations', 'marking', 'parts', 'speech', 'expressions', 'grammar'],
     where,
   );
 
@@ -204,6 +204,19 @@ export function checkLanguage(data, where = 'language') {
 
   if (data.marking !== undefined && data.marking !== 'before' && data.marking !== 'after') {
     fail(at, 'marking must be "before" or "after" — which side of a marker the thing it marks falls');
+  }
+
+  // Which side of an action the doer falls on is word order, and word order is
+  // the language's. The values name parts the world anchors; the brain names
+  // neither of them.
+  if (data.parts !== undefined) {
+    if (!data.parts || typeof data.parts !== 'object') fail(at, 'parts must be an object');
+    onlyKeys(data.parts, ['before', 'after'], `${at} parts`);
+    for (const [side, role] of Object.entries(data.parts)) {
+      if (typeof role !== 'string' || role === '') {
+        fail(`${at} parts "${side}"`, 'must name the part a thing on that side plays');
+      }
+    }
   }
 
   if (data.derivations !== undefined) {

@@ -46,7 +46,7 @@ function mergeLanguages(sources) {
 
 function join(into, from, where) {
   const at = `${where} "${from.name}"`;
-  for (const part of ['symbols', 'words', 'speech', 'expressions']) {
+  for (const part of ['symbols', 'words', 'speech', 'expressions', 'parts']) {
     for (const [key, value] of Object.entries(from[part] || {})) {
       const held = (into[part] || {})[key];
       if (held !== undefined && !same(held, value)) {

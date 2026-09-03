@@ -8,7 +8,7 @@ import { openBrain } from "./index.js";
 const IS = 90;
 const CAUSE = 5;
 const worldData = {
-  anchors: { thing: 1, relation: 2, action: 3, bad: 4, cause: CAUSE, agent: 6, patient: 7 },
+  anchors: { thing: 1, relation: 2, action: 3, bad: 4, cause: CAUSE, agent: 6, target: 7 },
   relations: { is: IS, cause: CAUSE },
   terms: [
   { id: 1, name: "thing", links: [] },
@@ -37,6 +37,7 @@ const langData = {
   crush: { pos: "verb", meaning: "crush", concept: 22 },
   },
   expressions: { deny: "No.", understood: "I know.", unknown: "..." },
+  parts: { before: "agent", after: "target" },
   grammar: {
   start: "sentence",
   rules: {

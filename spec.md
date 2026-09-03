@@ -673,17 +673,20 @@ needed to hold it. An event is an individual like any other.
 ```
 take one apple from the basket
   take#332  at 1
-    patient     → apple ×1
+    target      → apple ×1
     source      → basket
 ```
 
-The parts are `agent`, `patient`, `source`, `destination` — relations like any
+The parts are `agent`, `target`, `source`, `destination` — relations like any
 other. Which thing plays which:
 
 - a word may **say so**: `from` makes a source, `to` a destination. That things
   play parts is the brain's; which word assigns which part is the language's.
-- what no word says, the brain reads off the **order** things were perceived in:
-  before the action is who did it, after it is what was done.
+- what no word says, the brain reads off the **order** things were perceived in
+  — and **which side is which is word order, so the language declares it**:
+  `"parts": { "before": "agent", "after": "target" }`. English puts the doer
+  first; a verb-final language does not, and the brain names neither side
+  itself. Told nothing, it assigns no part by order at all.
 - a marker need not touch what it marks — `from the basket` puts an article
   between — so the brain walks away from the thing over words that name nothing,
   and stops at the next thing. A marker never reaches past one.

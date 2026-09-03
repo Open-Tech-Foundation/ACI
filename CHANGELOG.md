@@ -13,6 +13,7 @@ All notable changes to this project are documented in this file.
   carry out and the term it would answer with, and a refusal is the last word
   whatever else would fit. No walk toward `good`: a brain going looking for it
   would be weighing, and `anchors.good` is read nowhere.
+- `patient` is `target` — the part an action is done to, without the hospital.
 - **A term may carry the `symbol` it is said as**, for what no language
   translates. A name is the same in every language, so it is held with the thing
   rather than in any of them — and `name` stays a label the engine never reads.
@@ -68,6 +69,11 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Word order was the engine's.** Which side of an action holds the doer was
+  decided in `src/brain.js` by position, which is English and not much else — a
+  verb-final language had it backwards. The language declares it now
+  (`"parts": { "before": "agent", "after": "target" }`), the brain names neither
+  side, and told nothing it assigns no part by order at all.
 - A question was answered with the first thing found and the rest dropped, so a
   brain that has a mind **and** a memory said only *mind*. It says all of what it
   found; what goes between them is the language's (`speech.list`).

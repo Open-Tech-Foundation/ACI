@@ -351,7 +351,7 @@
     "wing":         { "pos": "noun", "meaning": "wing",            "concept": 334 },
 
     "agent":        { "pos": "noun", "meaning": "agent",           "concept": 327 },
-    "patient":      { "pos": "noun", "meaning": "patient",         "concept": 328 },
+    "target":       { "pos": "noun", "meaning": "target",          "concept": 328 },
     "source":       { "pos": "noun", "meaning": "source",          "concept": 329 },
     "destination":  { "pos": "noun", "meaning": "destination",     "concept": 330 },
     "reptile":      { "pos": "noun", "meaning": "reptile",         "concept": 335 },
@@ -571,6 +571,7 @@
     "my":        { "pos": "pronoun",       "meaning": "from",  "marks": "from" }
   },
   "marking": "after",
+  "parts": { "before": "agent", "after": "target" },
   "derivations": [
     { "ending": "ies", "becomes": "y", "of": "noun" },
     { "ending": "es",  "becomes": "",  "of": "noun" },

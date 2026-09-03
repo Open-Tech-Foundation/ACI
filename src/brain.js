@@ -310,6 +310,12 @@ function markerFor(said, at, side, carries) {
 
 // Every loaded language marks on the same side or the brain cannot tell; where
 // they disagree it takes the first, since the signal is in one of them.
+// Which side of an action each part falls on, as this language declares it.
+function partsSide(langs) {
+  const lang = (langs || [])[0];
+  return lang && lang.parts ? lang.parts : null;
+}
+
 function markingSide(world, langs) {
   const lang = (langs || [])[0];
   return lang ? lang.marking : 'after';
@@ -391,7 +397,7 @@ function judge(roots, world, mood, langs) {
 
   // An action the world says causes an operation, worked on what a thing holds.
   // What taking does is the world's to say; the arithmetic is the brain's.
-  const done = joint >= 0 && joined >= 2 ? null : act(said, claims, world, markingSide(world, langs));
+  const done = joint >= 0 && joined >= 2 ? null : act(said, claims, world, markingSide(world, langs), partsSide(langs));
   if (done) return [withBranch(root, [...root.branch, ...done])];
 
   const quantity = said.find((n) => reaches(n, a.quantity, world));
@@ -641,12 +647,12 @@ function harms(term, world, seen = new Set()) {
 
 // Carrying out an action on what a thing holds. The world links an action to
 // the operation it causes; the brain works the operation and keeps the result.
-function act(said, claims, world, side) {
+function act(said, claims, world, side, sides) {
   const a = world.anchors || {};
   const acting = said.findIndex((n) => reaches(n, a.action, world));
   if (acting < 0) return null;
 
-  const parts = rolesIn(said, acting, claims, world, side);
+  const parts = rolesIn(said, acting, claims, world, side, sides);
   if (parts.length === 0) return null;
 
   const action = conceptOf(said[acting]);
@@ -679,7 +685,7 @@ function act(said, claims, world, side) {
 // and that is the language's to decide. What it does not say, the brain reads
 // off the order things were perceived in: before the action is who did it,
 // after it is what was done.
-function rolesIn(said, acting, claims, world, side) {
+function rolesIn(said, acting, claims, world, side, sides) {
   const a = world.anchors || {};
   const of = (i) => markerFor(said, i, side, roleOn);
   const parts = [];
@@ -693,9 +699,12 @@ function rolesIn(said, acting, claims, world, side) {
     taken.add(i);
   });
 
+  // What no word says, the brain reads off the order things were perceived in —
+  // but which side of the action is the doer is word order, and word order is
+  // the language's. Told nothing, the brain assigns no part by order at all.
   said.forEach((n, i) => {
-    if (i === acting || taken.has(i) || !claims(n)) return;
-    const role = i < acting ? a.agent : a.patient;
+    if (i === acting || taken.has(i) || !claims(n) || !sides) return;
+    const role = a[i < acting ? sides.before : sides.after];
     if (role != null) parts.push({ role, of: conceptOf(n), amount: amountOf(n, world), at: i });
   });
 
@@ -709,21 +718,21 @@ function amountOf(n, world) {
 
 // An action the world says causes an operation, worked on what a thing holds.
 // Which thing that is comes from the parts: taking draws from its source,
-// giving adds to its destination, and the amount is what the patient counted.
+// giving adds to its destination, and the amount is what the target counted.
 function work(action, parts, at, world) {
   const a = world.anchors || {};
   const causes = world.linked(action, a.cause);
   const op = causes.find((c) => c === a.plus || c === a.minus);
   if (!op) return null;
 
-  const patient = parts.find((p) => p.role === a.patient);
+  const target = parts.find((p) => p.role === a.target);
   const place = parts.find((p) => p.role === (op === a.plus ? a.destination : a.source));
-  if (!patient || !place) return null;
+  if (!target || !place) return null;
 
-  const amount = patient.amount;
+  const amount = target.amount;
   const one = world.oneOf(place.of);
   const bearer = one == null ? place.of : one;
-  const before = world.held(bearer, a.has, patient.of);
+  const before = world.held(bearer, a.has, target.of);
   if (amount == null || before == null) return null;
 
   const after = op === a.plus ? before + amount : before - amount;
@@ -732,7 +741,7 @@ function work(action, parts, at, world) {
     action,
     operation: op,
     holder: bearer,
-    thing: patient.of,
+    thing: target.of,
     before,
     amount,
     after,
@@ -748,7 +757,7 @@ function work(action, parts, at, world) {
     node('learn', 'link', [], {
       subject: bearer,
       relation: a.has,
-      object: patient.of,
+      object: target.of,
       quantity: after,
       not: false,
     }),
