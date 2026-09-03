@@ -292,9 +292,24 @@ function solve(roots, world, langs) {
   });
 }
 
+// Walk away from a position in one direction until something answers to
+// `wanted`, stopping if a thing that carries its own concept gets in the way
+// first. This is the one mechanism solve() and judge() both find a neighbor
+// through: solve reads a marker or a number beside a thing, judge reads which
+// thing beside an action plays which part — neither ever reaches past a thing
+// that isn't the one it was looking for.
+function nearestOver(said, from, step, wanted) {
+  for (let i = from + step; i >= 0 && i < said.length; i += step) {
+    if (wanted(said[i])) return said[i];
+    if (conceptOf(said[i]) != null) return null;
+  }
+  return null;
+}
+
 // A number standing beside a thing says how many of it there are. The brain
 // reads this off the order of the things it perceived — a language may put the
-// number on either side, and it does not need to know which.
+// number on either side, and it does not need to know which, so both are
+// tried, left first.
 function quantityOf(roots, at, world) {
   if (!world) return null;
   const a = world.anchors || {};
@@ -302,12 +317,9 @@ function quantityOf(roots, at, world) {
   // A number is not a count of itself.
   if (mine == null || world.isA(mine, a.number) || !world.isA(mine, a.thing)) return null;
 
-  for (const beside of [roots[at - 1], roots[at + 1]]) {
-    if (!beside || !beside.state.exists) continue;
-    const c = conceptOf(beside);
-    if (c != null && world.isA(c, a.number)) return c;
-  }
-  return null;
+  const isNumber = (n) => n && n.state.exists && world.isA(conceptOf(n), a.number);
+  const found = nearestOver(roots, at, -1, isNumber) || nearestOver(roots, at, 1, isNumber);
+  return found ? conceptOf(found) : null;
 }
 
 // Read off the order, like a count: a marker beside a thing marks that thing.
@@ -321,14 +333,11 @@ function markOf(roots, at, world, langs) {
 
 // The word marking a thing need not touch it — `from the basket` puts an
 // article between. Walk away from the thing over words that name nothing, and
-// stop at the next thing: a marker never reaches past one.
+// stop at the next thing: a marker never reaches past one. The walk itself is
+// `nearestOver` — a marker is simply a word with nothing else to find first.
 function markerFor(said, at, side, carries) {
   const step = side === 'before' ? 1 : -1;
-  for (let i = at + step; i >= 0 && i < said.length; i += step) {
-    if (conceptOf(said[i]) != null) return null;
-    if (carries(said[i])) return said[i];
-  }
-  return null;
+  return nearestOver(said, at, step, carries);
 }
 
 // Every loaded language marks on the same side or the brain cannot tell; where
@@ -827,11 +836,8 @@ function operates(term, world) {
 }
 
 function valueBeside(said, from, step, world) {
-  for (let i = from + step; i >= 0 && i < said.length; i += step) {
-    const v = numberOf(said[i], world);
-    if (v != null) return v;
-  }
-  return null;
+  const n = nearest(said, from, step, (t) => numberOf(t, world) != null);
+  return n ? numberOf(n, world) : null;
 }
 
 // The thing that bears the state: the one of this kind already spoken of, or a

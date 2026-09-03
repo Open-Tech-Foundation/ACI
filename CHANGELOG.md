@@ -4,6 +4,15 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- **solve() and judge() read a neighbor through one walk.** `quantityOf` carried
+  its own two-line stand-in for what `markerFor` already did — find the next
+  thing in one direction, but never reach past a real thing to get there. Both
+  now run on `nearestOver`, and `markerFor` is a one-line call into it.
+  `valueBeside` was the same duplicate a second time over, inside `judge()`
+  alone, and now reuses `nearest`.
+
 ### Added
 
 - **Time: past ← now → future.** Three positions and nothing between them to
