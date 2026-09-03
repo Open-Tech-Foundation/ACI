@@ -51,6 +51,14 @@ All notable changes to this project are documented in this file.
 - `demo/server.js`: a malformed `/brain` body returns 400 instead of rejecting
   inside the handler, and a static path that climbs out of the served directory,
   however encoded, is refused.
+- The demo could not read the world model: `demo/esdev.json` granted read on
+  `.` and `../languages` only, so `data/world.json` was denied and the load was
+  swallowed — every node lost its category while the CLI kept them. The grant now
+  includes `../data`, and a missing world is reported instead of degrading in
+  silence.
+- `demo/src/main.js` labelled a tab Express while rendering the structure phase,
+  and had no tab for structure at all. Each of the five tabs now shows its own
+  phase, and the tree shows the world term a node names.
 - `demo/server.js` served the whole `demo/` folder — sources, `node_modules` and
   all — when started outside esdev, because the source `index.html` sits next to
   the module. Only a built site is served now; `demo/` is told apart by the esdev

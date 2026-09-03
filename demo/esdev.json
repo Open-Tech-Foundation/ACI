@@ -13,9 +13,17 @@
   },
   "permissions": {
     "allow": {
-      "read": [".", "../languages"],
-      "listen": ["4199"],
-      "env": ["PORT"]
+      "read": [
+        ".",
+        "../languages",
+        "../data"
+      ],
+      "listen": [
+        "4199"
+      ],
+      "env": [
+        "PORT"
+      ]
     }
   }
 }

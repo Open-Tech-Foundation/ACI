@@ -40,6 +40,11 @@ function loadedWorld() {
       new URL('../../data/world.json', import.meta.url).pathname,
       new URL('./data/world.json', import.meta.url).pathname,
     ]).catch(() => null);
+    worldPromise.then((w) => {
+      // A brain with no world still runs, it just cannot say what anything is.
+      // Say so rather than degrade in silence.
+      if (!w) console.warn('no world model found — nothing will be categorized');
+    });
   }
   return worldPromise;
 }

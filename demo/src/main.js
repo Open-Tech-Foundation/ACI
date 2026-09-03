@@ -28,14 +28,11 @@ define("x-ask", (el) => {
     { key: "think", label: "2 · Think" },
     { key: "solve", label: "3 · Solve" },
     { key: "express", label: "4 · Express" },
+    { key: "structure", label: "5 · Structure" },
   ];
 
   return () => {
-    const activeTree = result
-      ? active === "express"
-        ? result.roots
-        : result.phases && result.phases[active]
-      : null;
+    const activeTree = result && result.phases ? result.phases[active] : null;
 
     return html`
     <div class="app">
@@ -66,7 +63,7 @@ define("x-ask", (el) => {
           <div class="stage">
             <div class="stage-label">${phases.find((p) => p.key === active).label}</div>
             ${active === "express"
-              ? html`<div class="output">${expressOutput(result.roots)}</div>`
+              ? html`<div class="output">${expressOutput(activeTree)}</div>`
               : html`<pre class="tree">${render(activeTree)}</pre>`}
           </div>
         `}
@@ -132,6 +129,10 @@ function formatState(state, indent) {
     const t = state.thought;
     lines.push(`meaning: ${t.meaning ?? "—"}`);
     lines.push(`pos: ${t.pos ?? "—"}`);
+    lines.push(`term: ${t.concept ?? "—"}`);
+  }
+  if (typeof state.concept === "number") {
+    lines.push(`term: ${state.concept}`);
   }
   if (typeof state.language === "string") {
     lines.push(`language: ${state.language}`);
