@@ -4,8 +4,8 @@
 // serves the site over HTTP. The browser never touches runtime:fs — it just
 // fetches /brain, so no CORS / server-only-module problem in the browser.
 //
-//   GET /              -> serves the built site (demo/dist)
-//   GET /brain?q=<in>  -> runs brain(<in>) and returns its JSON result
+//   GET  /             -> serves the built site (demo/dist)
+//   POST /brain {q}    -> runs brain(q) and returns its JSON result
 //
 // Uses the ES-Runtime built-in HTTP server (runtime:http) and file system
 // (runtime:fs). Start with:  esrun --allow-net --allow-read demo/server.js
@@ -34,7 +34,8 @@ async function resolveSiteDir() {
 let DIST = await resolveSiteDir();
 
 async function serveStatic(url) {
-  let rel = url.pathname === "/" ? "/index.html" : url.pathname;
+  const rel = url.pathname === "/" ? "/index.html" : safePath(url.pathname);
+  if (rel === null) return null;
   const path = `${DIST}${rel}`;
   try {
     const f = file(path);
@@ -46,6 +47,21 @@ async function serveStatic(url) {
   } catch {
     return null;
   }
+}
+
+// Decode the request path and keep it inside DIST: a segment that climbs out,
+// however it was encoded, is not served.
+function safePath(pathname) {
+  let decoded;
+  try {
+    decoded = decodeURIComponent(pathname);
+  } catch {
+    return null;
+  }
+  if (decoded.includes("\0")) return null;
+  const parts = decoded.split("/");
+  if (parts.some((p) => p === "..")) return null;
+  return decoded;
 }
 
 function contentType(path) {
@@ -67,7 +83,12 @@ const server = serve({ port: PORT }, async (request) => {
     if (request.method !== "POST") {
       return new Response("method not allowed", { status: 405 });
     }
-    const { q } = await request.json();
+    let q;
+    try {
+      ({ q } = await request.json());
+    } catch {
+      return new Response("expected a JSON body of { q }", { status: 400 });
+    }
     const result = await brain(String(q ?? ""));
     return Response.json(result);
   }

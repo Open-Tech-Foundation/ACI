@@ -30,9 +30,9 @@ data; the brain derives those).
 ```jsonc
 {
   "name": "english",                 // label used only as a name
-  "alphabet": "abcdefghijklmnopqrstuvwxyz",
   "symbols": {
     "letter":      { "characters": "abcdefghijklmnopqrstuvwxyz" },
+    "vowel":       { "characters": "aeiou" },
     "punctuation": { "characters": ". , ! ? ; : ' \" - ( ) [ ]" }
   },
   "words": {
@@ -125,22 +125,24 @@ understand → think → solve → express → structure
 
 Climbs a fixed ladder:
 
-- `existence(signal)` — `void` if blank; else **one root per white-space token**
-  (`multi` flag when >1).
+- `existence(signal)` — `void` if the signal is empty or nothing but space; else
+  **one root per white-space token**. A signal of marks alone (`"?"`) still
+  exists — it simply holds no word.
 - `thing` — names the thing by its identity; records `identity`, `charCount`.
-- `quality` — sensory branches `visual` and `sound` (phonetics derived purely from
-  the symbol sequence, e.g. vowel/consonant — no language knowledge).
+- `quality` — sensory branches `visual` and `sound`. `sound` appears only when a
+  loaded language recognizes a symbol; which symbols are vowels comes from that
+  language's `symbols.vowel`, never from a built-in alphabet.
 - `form` → `symbol` — visual shape placeholder chain.
 - `recognizeLanguage(roots, langs)` — for each token, find every loaded language
-  whose letter set contains all of the token's letters and whose vocabulary
-  resolves the word. Records a `language` node with `matches`:
+  whose letter set contains all of the token's letters, and look the word up in
+  its vocabulary. The letter set is the only gate; no alphabet is assumed. Records a `language` node with `matches`:
   ```js
-  { lang, word: { text, pos, meaning } | null, roles: [...] }
+  { lang, word: { text, pos, meaning, concept } | null, roles: [...] }
   ```
 
 ### 2. think — reason over the understood meaning
 
-Adds a `thought` node: `{ language, wordKnown, pos, meaning }` from the
+Adds a `thought` node: `{ language, wordKnown, pos, meaning, concept }` from the
 language match. Single factual recollection; no entity reasoning here.
 
 ### 3. solve — infer entity and emotion (innate reasoning)
@@ -169,7 +171,7 @@ structure — never read from data:
 - interjection → `"Hello!"`
 - numeral → `` `It is ${meaning}.` ``
 - verb → `` `Yes, it ${meaning}.` ``
-- sentence response → `"I understand."`
+- a bound phrase (the `response` named `sentence`) → `"I understand."`
 - otherwise → `` `I recognise "${meaning}".` '' or `'...'`
 
 ### 5. structure — grammar-driven phrase building (pure CFG parse)
@@ -209,8 +211,10 @@ no `sentence` — is returned unchanged as per-word roots. So is single-word inp
 ## Loading — `src/index.js` and `src/languages.js`
 
 - `src/brain.js` is **pure** — no `runtime:fs`.
-- `src/languages.js` — `buildLanguage(data)` compiles a data file into a lookup
-  object (`isLetterSymbol`, `lookupWord`, `grammar`, `roles`).
+- `src/languages.js` — `fromData(data)` compiles a data file into a lookup object
+  (`isLetterSymbol`, `isVowelSymbol`, `lookupWord`, `grammar`, `roles`).
+  `loadLanguageDirectory(dir)` reads `*.json` **in name order**, so the brain sees
+  the same languages in the same order on every machine.
 - `src/world.js` — `fromWorldData(data)` compiles the world into
   `{ anchors, term(id), isA(id, ancestorId) }`. `isA` walks the `is` chain and
   terminates on cycles.

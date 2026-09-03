@@ -29,6 +29,33 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- `symbol()` matched any node merely *named* `shape`, so the input word "shape"
+  had its whole perception subtree replaced. It now matches a `form`'s shape.
+- `"I understand."` was unreachable: `express` took the first `response` branch,
+  which `solve` had already filled with the word's own meaning. It now looks up
+  the response named `sentence`.
+- `compose` appended one shared node object to every root. The phrase result is
+  now carried once, by the root that opens it.
+- A signal of nothing but space was perceived as a thing. It is now `void`, while
+  a signal of marks alone still exists.
+- Word lookup was gated on a hardcoded `/^[a-zA-Z]+$/`, so a non-Latin language
+  file could never resolve a word. The loaded letter set is now the only gate.
+- Vowels were hardcoded as `aeiou` in the core. They come from
+  `symbols.vowel` in the language data, and `sound` is perceived only where a
+  loaded language recognizes a symbol.
+- `allRoles` keyed the role map by word text rather than part of speech, filling
+  it with empty sets. Roles are now the data's symbol types only.
+- Language files are read in name order, so load order no longer depends on the
+  filesystem.
+- Tokenizing and quoting used Latin character classes; both are now Unicode.
+- `demo/server.js`: a malformed `/brain` body returns 400 instead of rejecting
+  inside the handler, and a static path that climbs out of the served directory,
+  however encoded, is refused.
+- `demo/src/main.js`: a failed request shows an error instead of leaving the page
+  silently unchanged.
+- `package.json` `cli` and `demo` scripts pointed at `bin/aci.js`, which does not
+  exist. `cli` now runs `bin/ask.js`, and the dead `demo` script is gone.
+
 - The CFG parser now enumerates every parse of a symbol at a position instead of
   committing to the first alternative, so `sentence -> interjection sentence`
   works: `"hi hi"` and `"hi a cat is two"` parse where they previously fell back
@@ -40,6 +67,11 @@ All notable changes to this project are documented in this file.
   structured root is named after the start symbol that matched.
 
 ### Removed
+
+- `alphabet` from the language data — it duplicated `symbols.letter.characters`,
+  which is the field the loader actually reads.
+- `loadLanguage` and `loadLanguagesFromFiles`, which nothing called.
+- The unused `multi` flag on an existence node.
 
 - The part-of-speech fallback in `solve`, and the `emotion` node it produced. A
   word that names no world term now gets no category — the brain no longer

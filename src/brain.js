@@ -23,7 +23,7 @@ function understand(input, langs) {
   let roots = existence(input);
 
   roots = thing(roots);
-  roots = quality(roots);
+  roots = quality(roots, langs);
   roots = form(roots);
   roots = symbol(roots);
 
@@ -33,17 +33,16 @@ function understand(input, langs) {
 }
 
 function existence(signal) {
-  if (signal === undefined || signal === null || signal === '') {
-    return [node('void', 'void', [], { exists: false })];
-  }
   const raw = toString(signal);
+  // Nothing, or nothing but space, is nothing at all.
+  if (raw.trim() === '') return [node('void', 'void', [], { exists: false })];
   // A multi-word signal is perceived as one thing per word, so each token
   // climbs the whole ladder on its own. Single-word input stays a single root.
   let tokens = tokenize(raw);
-  if (tokens.length === 0) tokens = [raw];
-  const multi = tokens.length > 1;
+  // A signal made only of marks still exists — it just holds no word.
+  if (tokens.length === 0) tokens = [raw.trim()];
   return tokens.map((t) =>
-    node('existence', 'something', [], { exists: true, raw: t, multi }),
+    node('existence', 'something', [], { exists: true, raw: t }),
   );
 }
 
@@ -66,14 +65,14 @@ function thing(prev) {
   return out;
 }
 
-function quality(prev) {
+function quality(prev, langs) {
   return prev.map((n) => {
     if (!n.state.exists) return withBranch(n);
     const raw = n.state.identity;
     const branches = [];
     const visualSense = senseVisual(raw);
     if (visualSense) branches.push(visualSense);
-    const soundSense = senseSound(raw);
+    const soundSense = senseSound(raw, langs);
     if (soundSense) branches.push(soundSense);
     return withBranch(n, branches);
   });
@@ -84,18 +83,19 @@ function senseVisual(raw) {
   return node('quality', 'visual', []);
 }
 
-function senseSound(raw) {
-  const isLetter = /[a-zA-Z]/.test(raw);
-  if (!isLetter) return null;
-  const phonetics = structurePhonetics(raw);
-  return node('quality', 'sound', [], { phonetics });
+function senseSound(raw, langs) {
+  const chars = Array.from(String(raw));
+  const heard = (langs || []).filter((l) => chars.some((ch) => l.isLetterSymbol(ch)));
+  if (heard.length === 0) return null;
+  return node('quality', 'sound', [], { phonetics: structurePhonetics(chars, heard) });
 }
 
-// phonetics is inferred purely from the symbol sequence, not any language.
-function structurePhonetics(raw) {
-  return raw.split('').map((ch) => {
+// Phonetics is read off the symbol sequence. Which symbols are vowels is not
+// something the brain can know by itself — it comes from the loaded symbol sets.
+function structurePhonetics(chars, langs) {
+  return chars.map((ch) => {
     const c = ch.toLowerCase();
-    return { char: c, isVowel: 'aeiou'.includes(c) };
+    return { char: c, isVowel: langs.some((l) => l.isVowelSymbol(c)) };
   });
 }
 
@@ -112,7 +112,7 @@ function form(prev) {
 function symbol(prev) {
   return prev.map((n) =>
     walk(n, (b) => {
-      if (b.name !== 'shape') return withBranch(b);
+      if (b.kind !== 'form' || b.name !== 'shape') return withBranch(b);
       return withBranch(b, [node('symbol', 'symbol', [])]);
     }),
   );
@@ -137,7 +137,7 @@ function recognizeLanguage(roots, langs) {
     for (const lang of langs) {
       const allRecognized = letters.length > 0 && letters.every((ch) => lang.isLetterSymbol(ch));
       if (!allRecognized) continue;
-      const word = /^[a-zA-Z]+$/.test(identity) ? lang.lookupWord(identity) : null;
+      const word = lang.lookupWord(identity);
       matching.push({
         lang: lang.data.name,
         word: word
@@ -279,7 +279,10 @@ function compose(solvedRoots) {
     parts,
     text: solvedRoots.map((n) => n.state.identity || '').join(' '),
   });
-  return solvedRoots.map((n) => withBranch(n, [...n.branch, sentence]));
+  // The phrase has one result, carried by the root that opens it.
+  return solvedRoots.map((n, i) =>
+    i === 0 ? withBranch(n, [...n.branch, sentence]) : n,
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -292,8 +295,10 @@ function express(roots) {
     if (!n.state.exists) {
       return withBranch(n, [...n.branch, node('express', 'nothing', [])]);
     }
-    const sentence = findBranch(n, 'response');
-    const reply = deriveReply(n, sentence && sentence.name === 'sentence');
+    const sentence = (n.branch || []).find(
+      (b) => b.kind === 'response' && b.name === 'sentence',
+    );
+    const reply = deriveReply(n, Boolean(sentence));
     return withBranch(n, [...n.branch, node('express', reply, [])]);
   });
 }
@@ -488,12 +493,12 @@ function tokenize(signal) {
   return String(signal)
     .split(/\s+/)
     .filter(Boolean)
-    .map((t) => t.replace(/^[^\w]+|[^\w]+$/g, ''))
+    .map((t) => t.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, ''))
     .filter(Boolean);
 }
 
 function quote(s) {
-  return /^[a-zA-Z0-9]+$/.test(s) ? s : `"${s}"`;
+  return /^[\p{L}\p{N}]+$/u.test(s) ? s : `"${s}"`;
 }
 
 export { node };

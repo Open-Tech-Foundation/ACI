@@ -1,9 +1,11 @@
 {
   "name": "english",
-  "alphabet": "abcdefghijklmnopqrstuvwxyz",
   "symbols": {
     "letter": {
       "characters": "abcdefghijklmnopqrstuvwxyz"
+    },
+    "vowel": {
+      "characters": "aeiou"
     },
     "punctuation": {
       "characters": ". , ! ? ; : ' \" - ( ) [ ]"

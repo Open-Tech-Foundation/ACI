@@ -3,16 +3,23 @@ import { define, html, update } from "@opentf/micro-ui";
 define("x-ask", (el) => {
   let input = "";
   let result = null;
+  let error = null;
   let active = "understand";
 
   async function run() {
-    const res = await fetch("/brain", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ q: input }),
-    });
-    result = await res.json();
-    active = "understand";
+    error = null;
+    try {
+      const res = await fetch("/brain", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ q: input }),
+      });
+      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+      result = await res.json();
+      active = "understand";
+    } catch (e) {
+      error = String(e.message || e);
+    }
     update(el);
   }
 
@@ -43,6 +50,7 @@ define("x-ask", (el) => {
         />
         <button onclick=${run}>Think</button>
       </div>
+      ${error && html`<div class="error">${error}</div>`}
       ${result &&
         html`
           <div class="tabs">

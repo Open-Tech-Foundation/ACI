@@ -278,3 +278,50 @@ test("the root is named after the grammar's start symbol", async () => {
   assertEquals(r.roots[0].kind, "sentence");
   assertEquals(r.roots[0].name, "sentence");
 });
+
+test("a word named after a perception node keeps its perception", async () => {
+  const r = await brain("shape");
+  const qualities = (r.roots[0].branch || []).filter((b) => b.kind === "quality");
+  assertEquals(qualities.length, 2, "visual and sound survive a name collision");
+});
+
+test("a signal of nothing but space is nothing", async () => {
+  const r = await brain("   ");
+  assertEquals(r.roots[0].kind, "void");
+  assertEquals(kind(r.roots[0], "response").name, "nothing");
+});
+
+test("a signal of marks still exists, it just holds no word", async () => {
+  const r = await brain("?");
+  assertEquals(r.roots[0].kind, "thing");
+  assertEquals(r.roots[0].state.exists, true);
+});
+
+test("a phrase carries one sentence result, on the root that opens it", async () => {
+  const r = await brain("hi two");
+  const sentences = r.roots.map((n) =>
+    (n.branch || []).filter((b) => b.kind === "response" && b.name === "sentence"),
+  );
+  assertEquals(sentences[0].length, 1);
+  assertEquals(sentences[1].length, 0);
+});
+
+test("express replies to the phrase, not only to its words", async () => {
+  const r = await brain("hi two");
+  const expr = [];
+  const walk = (n) => {
+    if (n.kind === "express") expr.push(n.name);
+    (n.branch || []).forEach(walk);
+  };
+  r.roots.forEach(walk);
+  assert(expr.includes("I understand."), "a bound phrase is understood");
+});
+
+test("which symbols are vowels comes from the data", async () => {
+  const r = await brain("hi");
+  const sound = (r.roots[0].branch || []).find((b) => b.name === "sound");
+  assertEquals(sound.state.phonetics, [
+    { char: "h", isVowel: false },
+    { char: "i", isVowel: true },
+  ]);
+});

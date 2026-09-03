@@ -14,8 +14,7 @@
   "scripts": {
     "test": "esdev test",
     "build": "esdev build --lib src --out=dist",
-    "cli": "esrun --allow-imports bin/aci.js",
-    "demo": "esrun --allow-imports bin/aci.js --demo",
+    "cli": "esrun --allow-read --allow-imports bin/ask.js",
     "dev": "esdev start --config=demo/esdev.json",
     "build:site": "esdev build --config=demo/esdev.json --minify"
   },
