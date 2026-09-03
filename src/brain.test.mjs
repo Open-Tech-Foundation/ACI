@@ -467,6 +467,7 @@ test("told something new, the brain learns it and hands it back", async () => {
     relation: 295,
     object: 230,
     quantity: null,
+    made: null,
   });
   assertEquals(r.expression.name, "understood");
   assertEquals(r.learned, {

@@ -340,14 +340,16 @@ function judge(roots, world, mood) {
     if (rel >= 0 && things.length >= 2) {
       const subject = conceptOf(things[0]);
       const object = conceptOf(things[things.length - 1]);
-      const howMany = world.held(subject, conceptOf(said[rel]), object);
+      const of = world.oneOf(subject);
+      const bearer = of == null ? subject : of;
+      const howMany = world.held(bearer, conceptOf(said[rel]), object);
       const total = howMany == null ? null : world.termFor(howMany);
       return [
         withBranch(root, [
           ...root.branch,
           node('count', total == null ? 'beyond' : 'counted', [], {
             of: object,
-            held: subject,
+            held: bearer,
             members: howMany,
             total,
           }),
@@ -358,7 +360,9 @@ function judge(roots, world, mood) {
     // Asked how many of a kind there are, it counts what it knows.
     if (things.length === 1) {
       const kind = conceptOf(things[0]);
-      const members = world.members(kind, world.baseRelation);
+      const members = world
+        .members(kind, world.baseRelation)
+        .filter((id) => !world.isIndividual(id));
       const total = world.termFor(members.length);
       return [
         withBranch(root, [
@@ -393,7 +397,11 @@ function judge(roots, world, mood) {
     // A claim either holds, is contradicted, or is simply not known. Failing to
     // find a path is not proof of the opposite — only two terms that exclude
     // each other are, and only where the claim is about kind.
-    const holds = world.isA(subject, object, relation);
+    // A state claim is about the thing that bears it, not about its kind.
+    const bearer = howMany == null ? null : bearerOf(subject, world);
+    const holder = bearer ? bearer.id : subject;
+
+    const holds = world.isA(holder, object, relation);
     const kindClaim = relation === world.baseRelation;
     const truth = holds
       ? 'true'
@@ -407,7 +415,7 @@ function judge(roots, world, mood) {
     // from the object to the subject cannot also run back.
     // How many is state: telling the brain a different count is not disagreeing
     // with it, it is saying the world has moved on.
-    const revises = howMany != null && world.held(subject, relation, object) !== howMany;
+    const revises = howMany != null && world.held(holder, relation, object) !== howMany;
 
     if (mood === 'tell' && (!holds || revises)) {
       const loops = subject !== object && world.isA(object, subject, relation);
@@ -418,7 +426,13 @@ function judge(roots, world, mood) {
               relation,
               object,
             })
-          : node('learn', 'link', [], { subject, relation, object, quantity: howMany }),
+          : node('learn', 'link', [], {
+              subject: holder,
+              relation,
+              object,
+              quantity: howMany,
+              made: bearer && bearer.made ? bearer : null,
+            }),
       );
     }
     return [withBranch(root, [...root.branch, ...added])];
@@ -486,6 +500,15 @@ function valueBeside(said, from, step, world) {
   return null;
 }
 
+// The thing that bears the state: the one of this kind already spoken of, or a
+// new one. A kind holds nothing — only something that exists once does.
+function bearerOf(kind, world) {
+  if (world.isIndividual(kind)) return { id: kind, made: false };
+  const one = world.oneOf(kind);
+  if (one != null) return { id: one, made: false };
+  return { id: world.nextId(), of: kind, made: true };
+}
+
 // Carrying out an action on what a thing holds. The world links an action to
 // the operation it causes; the brain works the operation and keeps the result.
 function act(said, isThing, world) {
@@ -505,7 +528,9 @@ function act(said, isThing, world) {
   const amount = world.valueOf(quantityTerm(what));
   const holder = conceptOf(source);
   const thing = conceptOf(what);
-  const before = world.held(holder, a.has, thing);
+  const one = world.oneOf(holder);
+  const bearer = one == null ? holder : one;
+  const before = world.held(bearer, a.has, thing);
   if (amount == null || before == null) return null;
 
   const after = op === a.plus ? before + amount : before - amount;
@@ -528,7 +553,7 @@ function act(said, isThing, world) {
   return [
     done,
     node('learn', 'link', [], {
-      subject: holder,
+      subject: bearer,
       relation: a.has,
       object: thing,
       quantity: after,
@@ -897,11 +922,27 @@ function learnedFrom(roots, world) {
   if (!world || roots.length !== 1) return null;
   const learn = findBranch(roots[0], 'learn');
   if (!learn) return null;
-  const { subject, relation, object, quantity } = learn.state;
-  const term = world.term(subject);
-  if (!term) return null;
+  const { subject, relation, object, quantity, made } = learn.state;
   const link = { rel: relation, to: object };
   if (quantity != null) link.quantity = quantity;
+
+  if (made) {
+    const kind = world.term(made.of);
+    if (!kind) return null;
+    return {
+      terms: [
+        {
+          id: made.id,
+          name: `${kind.name}#${made.id}`,
+          individual: true,
+          links: [{ rel: world.baseRelation, to: made.of }, link],
+        },
+      ],
+    };
+  }
+
+  const term = world.term(subject);
+  if (!term) return null;
   return { terms: [{ id: subject, name: term.name, links: [link] }] };
 }
 

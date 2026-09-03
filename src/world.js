@@ -85,6 +85,39 @@ export function fromWorldData(data) {
       for (const t of terms.values()) if (t.value === value) return t.id;
       return null;
     },
+    // A kind names many; an individual exists once. Everything else about a term
+    // is the same either way — an individual simply `is` its kind.
+    isIndividual: (id) => {
+      const t = terms.get(id);
+      return Boolean(t && t.individual);
+    },
+    individualsOf: (kind) => {
+      const out = [];
+      for (const t of terms.values()) {
+        if (!t.individual) continue;
+        if ((t.links || []).some((l) => l.rel === isRel && l.to === kind)) out.push(t.id);
+      }
+      return out;
+    },
+    // The one individual of a kind. None yet, or more than one, and there is no
+    // "the" to resolve — the brain does not guess which was meant.
+    oneOf: (kind) => {
+      let found = null;
+      for (const t of terms.values()) {
+        if (!t.individual) continue;
+        if (!(t.links || []).some((l) => l.rel === isRel && l.to === kind)) continue;
+        if (found != null) return null;
+        found = t.id;
+      }
+      return found;
+    },
+    // The next id nothing has taken. Deterministic: the same signals in the same
+    // order give the same individuals.
+    nextId: () => {
+      let top = -1;
+      for (const id of terms.keys()) if (id > top) top = id;
+      return top + 1;
+    },
     // How many of `object` a term holds by one relation, where the world has
     // been told. This is state — what is so now — not what a thing is.
     held: (id, rel, object) => {

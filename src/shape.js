@@ -36,10 +36,13 @@ export function checkWorld(data, where = 'world') {
   for (const t of data.terms) {
     const at = `${where} term ${JSON.stringify(t && t.id)}`;
     if (!t || typeof t !== 'object') fail(where, 'every term must be an object');
-    onlyKeys(t, ['id', 'name', 'links', 'value'], at);
+    onlyKeys(t, ['id', 'name', 'links', 'value', 'individual'], at);
     if (!isId(t.id)) fail(at, 'id must be a non-negative integer');
     if (typeof t.name !== 'string' || t.name === '') fail(at, 'name must be a non-empty string');
     if (byId.has(t.id)) fail(at, 'duplicate id');
+    if (t.individual !== undefined && t.individual !== true) {
+      fail(at, 'individual, where present, must be true');
+    }
     if (t.value !== undefined && !Number.isInteger(t.value)) {
       fail(at, 'value must be a whole number — it is what the term names, not a label');
     }

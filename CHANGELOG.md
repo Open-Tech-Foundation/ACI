@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Individuals.** A term marked `individual: true` exists once and `is` its kind.
+  State now belongs to one of these, never to a kind: told a basket holds three
+  apples, the brain makes a basket rather than concluding that baskets hold
+  apples. Individuals are created by the brain, handed back in `learned` like any
+  other knowledge, and given the next free id, so the same signals in the same
+  order give the same individuals.
+- `world.isIndividual`, `individualsOf`, `oneOf` and `nextId`. Counting a kind
+  counts kinds and skips the things that exist once.
+
 - Actions that change state. The world links an action to the operation it causes
   by `cause` — `take` causes `minus`, `give` causes `plus` — and the brain works
   the arithmetic on what a thing holds and keeps the result. Nothing in the engine

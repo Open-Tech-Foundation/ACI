@@ -247,6 +247,30 @@ understand → think → solve → structure → judge → express
 }
 ```
 
+## Kinds and individuals
+
+A term names a **kind** — `basket`, `apple`, `mammal`. A term marked
+`individual: true` **exists once**, and simply `is` its kind. Everything else
+about a term is the same either way, so nothing in the engine needed changing to
+hold one.
+
+**State belongs to an individual, never to a kind.** Told that a basket holds
+three apples, the brain does not conclude that *baskets* hold three apples: it
+takes the basket being spoken of, and makes one if there is not one yet. The
+individual is created by the brain, handed back in `learned` like any other
+knowledge, and given the next free id — deterministic, so the same signals in the
+same order give the same individuals.
+
+```
+> basket has three apple      I know.     ← made basket#308, and gave it the apples
+> a basket is an object?      Yes.        the kind is untouched
+> how many container?         one         one kind of container, not two
+```
+
+`world.oneOf(kind)` resolves a kind to the one individual of it. Where there is
+none, or more than one, there is no *the* to resolve and the brain does not guess
+which was meant.
+
 ## Memory
 
 Two kinds, and they behave differently:

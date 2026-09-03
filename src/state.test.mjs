@@ -109,3 +109,39 @@ test("an action on a thing holding nothing known does nothing", async () => {
   assertEquals(r.learned, null);
   forget();
 });
+
+test("state belongs to something that exists once, not to its kind", async () => {
+  forget();
+  const r = await brain("basket has three apple");
+  const made = r.learned.terms[0];
+  assertEquals(made.individual, true);
+  assertEquals(made.name, "basket#308", "one basket, named after the kind it is one of");
+  assert(made.links.some((l) => l.to === 307), "and it is a basket");
+  forget();
+});
+
+test("the kind is left holding nothing", async () => {
+  forget();
+  await brain("basket has three apple");
+  assertEquals(await says("a basket is an object?"), "Yes.", "the kind is untouched");
+  assertEquals(await says("how many container?"), "one", "one kind of container, not two");
+  forget();
+});
+
+test("the same thing is spoken of again, not a second one", async () => {
+  forget();
+  await brain("basket has three apple");
+  const again = await brain("basket has three apple");
+  assertEquals(again.learned, null, "nothing new");
+  await brain("basket has two apple");
+  assertEquals(await says("basket has how many apple?"), "two", "the same basket, revised");
+  forget();
+});
+
+test("an action works on the thing, not on the kind", async () => {
+  forget();
+  await brain("basket has three apple");
+  const r = await brain("take one apple from basket");
+  assertEquals(r.learned.terms[0].id, 308, "the basket that exists, not basket the kind");
+  forget();
+});
