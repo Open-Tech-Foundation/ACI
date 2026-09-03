@@ -48,7 +48,7 @@ test("a claim the world can settle is still the world's", async () => {
 // Empathy: understanding what someone feels, and holding it as theirs. Both
 // halves are already the record's — the act is only the last step.
 test("said of themselves, and standing at the bad pole, the brain empathizes", async () => {
-  const r = await brain("i is hurt", sender);
+  const r = await brain("i am hurt", sender);
   assertEquals(r.expression.name, "empathy");
   assertEquals(r.expression.state.says, "I know you hurt. \u2639");
 });
@@ -58,9 +58,9 @@ test("what they said of something else is understood, not empathized with", asyn
 });
 
 test("what stands at the other pole is not empathy either", async () => {
-  assertEquals((await brain("i is nice", sender)).expression.name, "understood");
+  assertEquals((await brain("i am nice", sender)).expression.name, "understood");
 });
 
 test("what they denied of themselves is not what they feel", async () => {
-  assertEquals((await brain("i is not hurt", sender)).expression.name, "understood");
+  assertEquals((await brain("i am not hurt", sender)).expression.name, "understood");
 });

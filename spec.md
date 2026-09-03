@@ -358,9 +358,9 @@ brain does not guess**: the pointer lands nowhere, the word names nothing, and a
 question built on it is unanswered rather than answered wrongly.
 
 ```
-> i is a tool?      { from: 45 }     Yes.    45 is a computer, and a computer is a tool
-> i is a tool?      { from: 508 }    No.     508 is a doctor
-> i is a tool?      —                ...     nothing was said about where it came from
+> i am a machine?   { from: 45 }     Yes.    45 is a computer, and a computer is a machine
+> i am a machine?   { from: 508 }    No.     508 is a doctor
+> i am a machine?   —                ...     nothing was said about where it came from
 ```
 
 `this` / `that` and `now` / `then` are the same mechanism unfinished: more
@@ -379,7 +379,7 @@ self      has  mind            computer  has memory
 
 It is a computer before it is a machine — not every machine is one — and its
 memory is not its own: every computer has one, and this is a computer. So
-`"you is an organism?"` is *No.* by exclusion, `"you is a machine?"` is *Yes.*
+`"you are an organism?"` is *No.* by exclusion, `"you are a machine?"` is *Yes.*
 by walking two links, and neither answer is held anywhere as a reply.
 
 Its **name** is not among them, because a name is not the same kind of fact. It
@@ -467,6 +467,14 @@ every link, and a unique link tuple.
 data/aci.db        the world, seeded once from the json below
 data/world.json    the world as authored — the seed, and the export format
 ```
+
+The authored world is **laid down again on every open**, not only the first: a
+world grows — a term added, a link moved, one renamed — and a store written
+before that would otherwise keep the old world for ever. What was **seeded** is
+replaced; what was **learned** is left exactly where it is, so a memory that
+survived a restart is not thrown away to get the new world in. A term dropped
+from `data/world.json` is the one thing that lingers, since something learned
+may still point at it.
 
 Persistence is **opt-in**, by naming a path in `ACI_STORE`. A run that was not
 told to remember uses an in-memory store, so it is never haunted by one that was.
@@ -641,7 +649,7 @@ This is the difference between ignorance and knowledge:
 ```
 
 **A thing holds what its kinds hold.** Only the `is` chain is walked for its
-own sake; every other relation is inherited down it. `"you has a memory?"` is
+own sake; every other relation is inherited down it. `"you have a memory?"` is
 *Yes.* because a computer has one, and nothing about this instance says so.
 
 **Two terms → a claim.** The nearest term either side of the relation. Adds a
@@ -713,10 +721,10 @@ held as *theirs*. So the act is only the last step — what was said stands at t
 bad pole, and was said of whoever said it:
 
 ```
-> i is hurt        { from: 508 }     I know you hurt. ☹
+> i am hurt        { from: 508 }     I know you hurt. ☹
 > the wheel is hurt                  I know.        said of something else
-> i is nice                          I know.        the other pole
-> i is not hurt                      I know.        they denied it
+> i am nice                          I know.        the other pole
+> i am not hurt                      I know.        they denied it
 ```
 
 Two walks decide it, and nothing is weighed: **one pole, one frame**. The emoji
@@ -825,7 +833,7 @@ did not find is worth as much as what it found — and the signal is expressed a
 what is your name?     ACI       self  --name--> a term said as "ACI"
 what is a cat?         animal    cat   --is-->   animal
 a cat is what?         animal    same answer, hole at the other end
-you has what?          mind, memory        self  --has--> both of them
+you have what?          mind, memory        self  --has--> both of them
 a cat is an animal?    Yes.      two terms, so a claim
 ```
 

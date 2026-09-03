@@ -20,7 +20,7 @@ test("or after it", async () => {
 });
 
 test("and saying neither leaves it where it was said — now", async () => {
-  assertEquals(stood(await brain("i is hurt", sender)), undefined);
+  assertEquals(stood(await brain("i am hurt", sender)), undefined);
 });
 
 test("the arrow between them is the world's, not the engine's", async () => {

@@ -108,6 +108,7 @@
     "basket":     { "pos": "noun", "meaning": "basket",         "concept": 307 },
 
     "has":       { "pos": "verb", "meaning": "has",            "concept": 295 },
+    "have":      { "pos": "verb", "meaning": "have",           "concept": 295 },
     "know":      { "pos": "verb", "meaning": "know",           "concept": 285 },
     "plus":      { "pos": "verb", "meaning": "plus",           "concept": 303 },
     "minus":     { "pos": "verb", "meaning": "minus",          "concept": 304 },

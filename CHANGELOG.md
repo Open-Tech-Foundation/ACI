@@ -16,7 +16,7 @@ All notable changes to this project are documented in this file.
 - **Empathy**, an act of its own. Understanding what someone feels and seeing it
   from where they stand — both halves of which the record already holds, so the
   act is the last step: what was said stands at the bad pole, and was said of
-  whoever said it. `"i is hurt"` from a sender answers *I know you hurt. ☹*,
+  whoever said it. `"i am hurt"` from a sender answers *I know you hurt. ☹*,
   where the same said of something else, denied, or at the other pole is simply
   understood. Two walks decide it and nothing is weighed: one pole, one frame,
   and the emoji is a frame in `en.json` like every other word.
@@ -91,6 +91,12 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A store written before the world grew kept the old world for ever.** It was
+  seeded only when empty, so every term, link, anchor and relation added since
+  was invisible to a run that remembered anything. The authored world is laid
+  down again on every open now, and what was learned is left exactly where it
+  is. A store predating the `symbol` column gains it on open.
+- `have` was not a word — only `has` — so `"you have a memory?"` did not parse.
 - **Word order was the engine's.** Which side of an action holds the doer was
   decided in `src/brain.js` by position, which is English and not much else — a
   verb-final language had it backwards. The language declares it now

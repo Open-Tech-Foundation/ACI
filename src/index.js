@@ -15,7 +15,7 @@
 // admit a new source; a new source is a new file in one of those directories.
 import { brainFrom } from './brain.js';
 import { fromSources } from './knowledge.js';
-import { openStore, isEmpty, seed, readWorld, write, forgetLearned } from './store.js';
+import { openStore, seed, readWorld, write, forgetLearned } from './store.js';
 
 const LANGUAGES = 'languages';
 const KNOWLEDGE = 'knowledge';
@@ -59,7 +59,9 @@ export function openBrain(url) {
 
     store = await open(root);
     await inTurn(async () => {
-      if (await isEmpty(store)) await seed(store, await file(`${root}${WORLD}`).json());
+      // Every open, not only the first: the authored world may have grown since
+      // this store was written, and what was learned is kept through it.
+      await seed(store, await file(`${root}${WORLD}`).json());
     });
 
     sources = {

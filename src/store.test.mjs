@@ -81,3 +81,30 @@ test("writing the same fact twice writes it once", async () => {
   const links = (await readWorld(db)).terms.find((t) => t.id === 31).links;
   assertEquals(links.length, 1);
 });
+
+test("a world that has grown since reaches a store written before it", async () => {
+  const db = await fresh();
+  await write(db, { terms: [{ id: 30, name: "sack", links: [{ rel: IS, to: 20 }] }] });
+
+  // The same store, opened over a world with a term added, one renamed, and a
+  // link gone from it.
+  const grown = {
+    ...world,
+    anchors: { ...world.anchors, load: 21 },
+    terms: [
+      ...world.terms.slice(0, 4),
+      { id: 21, name: "burden", links: [{ rel: IS, to: 1 }] },
+      world.terms[5],
+      { id: 23, name: "axle", links: [{ rel: IS, to: 20 }] },
+    ],
+  };
+  await seed(db, grown);
+  const back = await readWorld(db);
+
+  assertEquals(back.anchors.load, 21, "an anchor it did not have");
+  assert(back.terms.some((t) => t.id === 23), "a term it did not have");
+  assertEquals(back.terms.find((t) => t.id === 21).name, "burden", "one it knew by another name");
+  assertEquals(back.terms.find((t) => t.id === 21).links.length, 1, "and a link no longer written");
+  assert(back.terms.some((t) => t.id === 30), "what was learned is left where it is");
+  assertEquals(back.terms.find((t) => t.id === 30).links.length, 1, "links and all");
+});

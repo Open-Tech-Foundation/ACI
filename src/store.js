@@ -50,6 +50,12 @@ export async function openStore(url) {
   const db = await connect(url, { driver: sqlite });
   await db.query(sql`pragma foreign_keys = on`);
   for (const statement of SCHEMA) await db.query(statement);
+  // A store written before a column existed keeps its rows: `create table if
+  // not exists` adds nothing to a table that is already there.
+  const columns = await rows(db, sql`pragma table_info(term)`);
+  if (!columns.some((c) => c.name === 'symbol')) {
+    await db.query(sql`alter table term add column symbol text`);
+  }
   return db;
 }
 
@@ -69,22 +75,38 @@ export async function isEmpty(db) {
   return n === 0;
 }
 
-// Put a world in, once. Terms first, then everything that points at one.
+// Put the authored world in — on the first open, and on every one after it.
+//
+// A world grows: a term is added, a link moved, one renamed. A store written
+// before that would keep the old world for ever, since it is only ever seeded
+// when empty. So what was seeded is laid down again each time, and what was
+// learned is left exactly where it is: a memory that survived a restart is not
+// thrown away to get the new world in.
 export async function seed(db, world) {
   const learned = 0;
+  await db.query(sql`delete from link where learned = 0`);
   for (const t of world.terms) {
     await db.query(sql`insert into term (id, name, value, symbol, individual, disjoint, learned)
                        values (${t.id}, ${t.name}, ${t.value ?? null}, ${t.symbol ?? null},
-                               ${t.individual ? 1 : 0}, ${t.disjoint ? 1 : 0}, ${learned})`);
+                               ${t.individual ? 1 : 0}, ${t.disjoint ? 1 : 0}, ${learned})
+                       on conflict (id) do update set
+                         name = excluded.name,
+                         value = excluded.value,
+                         symbol = excluded.symbol,
+                         individual = excluded.individual,
+                         disjoint = excluded.disjoint
+                       where term.learned = 0`);
   }
   for (const t of world.terms) {
     for (const l of t.links || []) await putLink(db, t.id, l, learned);
   }
   for (const [name, id] of Object.entries(world.anchors || {})) {
-    await db.query(sql`insert into anchor (name, term) values (${name}, ${id})`);
+    await db.query(sql`insert into anchor (name, term) values (${name}, ${id})
+                       on conflict (name) do update set term = excluded.term`);
   }
   for (const [name, id] of Object.entries(world.relations || {})) {
-    await db.query(sql`insert into relation (name, term) values (${name}, ${id})`);
+    await db.query(sql`insert into relation (name, term) values (${name}, ${id})
+                       on conflict (name) do update set term = excluded.term`);
   }
 }
 

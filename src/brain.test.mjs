@@ -428,7 +428,7 @@ test("being alive and having a mind are separate axes", async () => {
 });
 
 test("a claim can be made over the has relation, not only is", async () => {
-  const r = await brain("you has a mind?");
+  const r = await brain("you have a mind?");
   const truth = kind(r.roots[0], "truth");
   assertEquals(truth.name, "true");
   assertEquals(truth.state, { subject: 296, relation: 295, object: 230, negated: false });
@@ -436,9 +436,9 @@ test("a claim can be made over the has relation, not only is", async () => {
 });
 
 test("the self is a thing, and not an animal", async () => {
-  assertEquals((await brain("you is a thing?")).expression.state.says, "Yes.");
+  assertEquals((await brain("you are a thing?")).expression.state.says, "Yes.");
   assertEquals(
-    (await brain("you is an animal?")).expression.state.says,
+    (await brain("you are an animal?")).expression.state.says,
     "No.",
     "a thing is physical or abstract, never both",
   );
@@ -518,28 +518,28 @@ test("a name is a fact in memory, said as it was given", async () => {
 test("the same signal points elsewhere when it came from elsewhere", async () => {
   // A pointer holds nothing of its own: what `i` lands on is the circumstance
   // of this one signal, and the runtime is the only thing that knows it.
-  assertEquals((await brain("i is a machine?", { from: 45 })).expression.state.says, "Yes.");
-  assertEquals((await brain("i is a machine?", { from: 508 })).expression.state.says, "No.");
+  assertEquals((await brain("i am a machine?", { from: 45 })).expression.state.says, "Yes.");
+  assertEquals((await brain("i am a machine?", { from: 508 })).expression.state.says, "No.");
 });
 
 test("told nothing about where a signal came from, the brain does not guess", async () => {
-  const r = await brain("i is a machine?");
+  const r = await brain("i am a machine?");
   assertEquals(kind(r.roots[0], "truth"), null, "there was nothing to make a claim about");
   assertEquals(r.expression.state.says, "...");
 });
 
 test("the signal arrived here, so what it points to is the self", async () => {
-  const r = await brain("you is a machine?", { from: 45 });
+  const r = await brain("you are a machine?", { from: 45 });
   assertEquals(kind(r.roots[0], "truth").state.subject, 296);
   assertEquals(r.expression.state.says, "Yes.");
 });
 
 test("identity is what the world says it is, not anything the engine holds", async () => {
-  assertEquals((await brain("you is a machine?")).expression.state.says, "Yes.");
-  assertEquals((await brain("you has a memory?")).expression.state.says, "Yes.");
-  assertEquals((await brain("you is a computer?")).expression.state.says, "Yes.");
-  assertEquals((await brain("you is a tool?")).expression.state.says, "No.");
-  assertEquals((await brain("you is an organism?")).expression.state.says, "No.");
+  assertEquals((await brain("you are a machine?")).expression.state.says, "Yes.");
+  assertEquals((await brain("you have a memory?")).expression.state.says, "Yes.");
+  assertEquals((await brain("you are a computer?")).expression.state.says, "Yes.");
+  assertEquals((await brain("you are a tool?")).expression.state.says, "No.");
+  assertEquals((await brain("you are an organism?")).expression.state.says, "No.");
 });
 
 test("a question solves for the hole rather than checking a claim", async () => {
@@ -557,7 +557,7 @@ test("the term given is the one asked about, wherever the hole falls", async () 
 });
 
 test("a question over a relation other than is answers with all it found", async () => {
-  const r = await brain("you has what?");
+  const r = await brain("you have what?");
   assertEquals(kind(r.roots[0], "answer").state.relation, 295);
   // Two links, so two things said: naming the first of them would be picking.
   assertEquals(kind(r.roots[0], "answer").state.found, [230, 561]);
