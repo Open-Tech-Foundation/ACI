@@ -6,6 +6,17 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **23 more words that name two things.** `saw` proved the mechanism; the world
+  now holds the doing that shares a spelling with a thing it already held —
+  `planting`, `watering`, `lighting`, `ironing`, `fishing`, `marking`,
+  `forming`, `placing`, `handing`, `training`, `shipping`, `parting`,
+  `bearing`, `combing`, `brushing`, `milking` under work; `signing`, `naming`,
+  `ordering`, `phoning`, `penning` under communication; `picturing` under
+  perception; `heading` under motion. A term's name is one to a term, so the
+  doing is named for itself and English spells it the way it spells the thing.
+  Each is sayable both ways, with the past written out.
+  `src/homonyms.test.mjs` puts all 24 through every case.
+
 - **A word may name more than one thing, and the signal settles which.** A saw
   is a tool, and it is also what someone did with their eyes. An entry in a
   language may hold several readings; every one of them is carried through
@@ -120,6 +131,12 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A word still to be settled counted as what joined the signal.** `settle`
+  asked whether anything in the signal was already a relation or a doing, and
+  took the undecided word's own first reading as an answer — so `"i mark an
+  apple"` saw `mark` the relation and left it there. A word that is not yet
+  what it will be cannot stand as the joint. Five of the 24 read wrong before
+  this; all 24 read right after.
 - **The authored world failed its own shape check.** `remainder` linked `order
   → plus` twice. The store's unique index swallowed it, so nothing broke at
   runtime — but loaded straight through `fromSources` the file threw

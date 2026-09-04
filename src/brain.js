@@ -323,7 +323,11 @@ function settle(roots, world) {
     thought && thought.concept != null && world.isA(thought.concept, a.action);
   const joining = (thought) =>
     thought && thought.concept != null && world.isA(thought.concept, a.relation);
+  // Only a word that is already what it is can be what joins the signal. One
+  // still to be settled is not yet anything, and cannot stand as the joint on
+  // the strength of a reading the brain has not taken.
   const already = roots.some((n) => {
+    if (ways(n)) return false;
     const t = findBranch(n, 'thought');
     return t && (doing(t.state.thought) || joining(t.state.thought));
   });

@@ -270,11 +270,18 @@
       "meaning": "animal",
       "concept": 24
     },
-    "plant": {
-      "pos": "noun",
-      "meaning": "plant",
-      "concept": 25
-    },
+    "plant": [
+      {
+        "pos": "noun",
+        "meaning": "plant",
+        "concept": 25
+      },
+      {
+        "pos": "verb",
+        "meaning": "plant",
+        "concept": 593
+      }
+    ],
     "organism": {
       "pos": "noun",
       "meaning": "organism",
@@ -385,11 +392,18 @@
       "meaning": "sparrow",
       "concept": 87
     },
-    "fish": {
-      "pos": "noun",
-      "meaning": "fish",
-      "concept": 28
-    },
+    "fish": [
+      {
+        "pos": "noun",
+        "meaning": "fish",
+        "concept": 28
+      },
+      {
+        "pos": "verb",
+        "meaning": "fish",
+        "concept": 597
+      }
+    ],
     "insect": {
       "pos": "noun",
       "meaning": "insect",
@@ -415,16 +429,30 @@
       "meaning": "hammer",
       "concept": 42
     },
-    "pen": {
-      "pos": "noun",
-      "meaning": "pen",
-      "concept": 43
-    },
-    "phone": {
-      "pos": "noun",
-      "meaning": "phone",
-      "concept": 44
-    },
+    "pen": [
+      {
+        "pos": "noun",
+        "meaning": "pen",
+        "concept": 43
+      },
+      {
+        "pos": "verb",
+        "meaning": "pen",
+        "concept": 613
+      }
+    ],
+    "phone": [
+      {
+        "pos": "noun",
+        "meaning": "phone",
+        "concept": 44
+      },
+      {
+        "pos": "verb",
+        "meaning": "phone",
+        "concept": 612
+      }
+    ],
     "computer": {
       "pos": "noun",
       "meaning": "computer",
@@ -809,11 +837,18 @@
       "meaning": "to",
       "role": "destination"
     },
-    "name": {
-      "pos": "noun",
-      "meaning": "name",
-      "concept": 138
-    },
+    "name": [
+      {
+        "pos": "noun",
+        "meaning": "name",
+        "concept": 138
+      },
+      {
+        "pos": "verb",
+        "meaning": "name",
+        "concept": 610
+      }
+    ],
     "existence": {
       "pos": "noun",
       "meaning": "existence",
@@ -829,11 +864,18 @@
       "meaning": "relation",
       "concept": 4
     },
-    "place": {
-      "pos": "noun",
-      "meaning": "place",
-      "concept": 11
-    },
+    "place": [
+      {
+        "pos": "noun",
+        "meaning": "place",
+        "concept": 11
+      },
+      {
+        "pos": "verb",
+        "meaning": "place",
+        "concept": 600
+      }
+    ],
     "energy": {
       "pos": "noun",
       "meaning": "energy",
@@ -904,11 +946,18 @@
       "meaning": "bus",
       "concept": 47
     },
-    "train": {
-      "pos": "noun",
-      "meaning": "train",
-      "concept": 48
-    },
+    "train": [
+      {
+        "pos": "noun",
+        "meaning": "train",
+        "concept": 48
+      },
+      {
+        "pos": "verb",
+        "meaning": "train",
+        "concept": 602
+      }
+    ],
     "boat": {
       "pos": "noun",
       "meaning": "boat",
@@ -934,16 +983,30 @@
       "meaning": "shop",
       "concept": 53
     },
-    "hand": {
-      "pos": "noun",
-      "meaning": "hand",
-      "concept": 54
-    },
-    "head": {
-      "pos": "noun",
-      "meaning": "head",
-      "concept": 55
-    },
+    "hand": [
+      {
+        "pos": "noun",
+        "meaning": "hand",
+        "concept": 54
+      },
+      {
+        "pos": "verb",
+        "meaning": "hand",
+        "concept": 601
+      }
+    ],
+    "head": [
+      {
+        "pos": "noun",
+        "meaning": "head",
+        "concept": 55
+      },
+      {
+        "pos": "verb",
+        "meaning": "head",
+        "concept": 615
+      }
+    ],
     "eye": {
       "pos": "noun",
       "meaning": "eye",
@@ -979,16 +1042,30 @@
       "meaning": "hair",
       "concept": 62
     },
-    "water": {
-      "pos": "noun",
-      "meaning": "water",
-      "concept": 63
-    },
-    "milk": {
-      "pos": "noun",
-      "meaning": "milk",
-      "concept": 64
-    },
+    "water": [
+      {
+        "pos": "noun",
+        "meaning": "water",
+        "concept": 63
+      },
+      {
+        "pos": "verb",
+        "meaning": "water",
+        "concept": 594
+      }
+    ],
+    "milk": [
+      {
+        "pos": "noun",
+        "meaning": "milk",
+        "concept": 64
+      },
+      {
+        "pos": "verb",
+        "meaning": "milk",
+        "concept": 608
+      }
+    ],
     "oil": {
       "pos": "noun",
       "meaning": "oil",
@@ -1089,11 +1166,18 @@
       "meaning": "lake",
       "concept": 94
     },
-    "light": {
-      "pos": "noun",
-      "meaning": "light",
-      "concept": 95
-    },
+    "light": [
+      {
+        "pos": "noun",
+        "meaning": "light",
+        "concept": 95
+      },
+      {
+        "pos": "verb",
+        "meaning": "light",
+        "concept": 595
+      }
+    ],
     "sound": {
       "pos": "noun",
       "meaning": "sound",
@@ -1119,11 +1203,18 @@
       "meaning": "system",
       "concept": 101
     },
-    "sign": {
-      "pos": "noun",
-      "meaning": "sign",
-      "concept": 102
-    },
+    "sign": [
+      {
+        "pos": "noun",
+        "meaning": "sign",
+        "concept": 102
+      },
+      {
+        "pos": "verb",
+        "meaning": "sign",
+        "concept": 609
+      }
+    ],
     "meaning": {
       "pos": "noun",
       "meaning": "meaning",
@@ -1169,11 +1260,18 @@
       "meaning": "poem",
       "concept": 111
     },
-    "picture": {
-      "pos": "noun",
-      "meaning": "picture",
-      "concept": 112
-    },
+    "picture": [
+      {
+        "pos": "noun",
+        "meaning": "picture",
+        "concept": 112
+      },
+      {
+        "pos": "verb",
+        "meaning": "picture",
+        "concept": 614
+      }
+    ],
     "language": {
       "pos": "noun",
       "meaning": "language",
@@ -1224,11 +1322,18 @@
       "meaning": "digit",
       "concept": 134
     },
-    "mark": {
-      "pos": "noun",
-      "meaning": "mark",
-      "concept": 135
-    },
+    "mark": [
+      {
+        "pos": "noun",
+        "meaning": "mark",
+        "concept": 135
+      },
+      {
+        "pos": "verb",
+        "meaning": "mark",
+        "concept": 598
+      }
+    ],
     "yes": {
       "pos": "noun",
       "meaning": "yes",
@@ -1364,11 +1469,18 @@
       "meaning": "z",
       "concept": 167
     },
-    "form": {
-      "pos": "noun",
-      "meaning": "form",
-      "concept": 182
-    },
+    "form": [
+      {
+        "pos": "noun",
+        "meaning": "form",
+        "concept": 182
+      },
+      {
+        "pos": "verb",
+        "meaning": "form",
+        "concept": 599
+      }
+    ],
     "size": {
       "pos": "noun",
       "meaning": "size",
@@ -1709,16 +1821,30 @@
       "meaning": "cause",
       "concept": 247
     },
-    "part": {
-      "pos": "noun",
-      "meaning": "part",
-      "concept": 248
-    },
-    "order": {
-      "pos": "noun",
-      "meaning": "order",
-      "concept": 249
-    },
+    "part": [
+      {
+        "pos": "noun",
+        "meaning": "part",
+        "concept": 248
+      },
+      {
+        "pos": "verb",
+        "meaning": "part",
+        "concept": 604
+      }
+    ],
+    "order": [
+      {
+        "pos": "noun",
+        "meaning": "order",
+        "concept": 249
+      },
+      {
+        "pos": "verb",
+        "meaning": "order",
+        "concept": 611
+      }
+    ],
     "same": {
       "pos": "noun",
       "meaning": "same",
@@ -2163,11 +2289,18 @@
       "meaning": "dolphin",
       "concept": 348
     },
-    "bear": {
-      "pos": "noun",
-      "meaning": "bear",
-      "concept": 349
-    },
+    "bear": [
+      {
+        "pos": "noun",
+        "meaning": "bear",
+        "concept": 349
+      },
+      {
+        "pos": "verb",
+        "meaning": "bear",
+        "concept": 605
+      }
+    ],
     "wolf": {
       "pos": "noun",
       "meaning": "wolf",
@@ -2683,16 +2816,30 @@
       "meaning": "mirror",
       "concept": 453
     },
-    "brush": {
-      "pos": "noun",
-      "meaning": "brush",
-      "concept": 454
-    },
-    "comb": {
-      "pos": "noun",
-      "meaning": "comb",
-      "concept": 455
-    },
+    "brush": [
+      {
+        "pos": "noun",
+        "meaning": "brush",
+        "concept": 454
+      },
+      {
+        "pos": "verb",
+        "meaning": "brush",
+        "concept": 607
+      }
+    ],
+    "comb": [
+      {
+        "pos": "noun",
+        "meaning": "comb",
+        "concept": 455
+      },
+      {
+        "pos": "verb",
+        "meaning": "comb",
+        "concept": 606
+      }
+    ],
     "axe": {
       "pos": "noun",
       "meaning": "axe",
@@ -2721,11 +2868,18 @@
       "meaning": "wheelbarrow",
       "concept": 459
     },
-    "ship": {
-      "pos": "noun",
-      "meaning": "ship",
-      "concept": 460
-    },
+    "ship": [
+      {
+        "pos": "noun",
+        "meaning": "ship",
+        "concept": 460
+      },
+      {
+        "pos": "verb",
+        "meaning": "ship",
+        "concept": 603
+      }
+    ],
     "plane": {
       "pos": "noun",
       "meaning": "plane",
@@ -2766,11 +2920,18 @@
       "meaning": "market",
       "concept": 468
     },
-    "iron": {
-      "pos": "noun",
-      "meaning": "iron",
-      "concept": 469
-    },
+    "iron": [
+      {
+        "pos": "noun",
+        "meaning": "iron",
+        "concept": 469
+      },
+      {
+        "pos": "verb",
+        "meaning": "iron",
+        "concept": 596
+      }
+    ],
     "gold": {
       "pos": "noun",
       "meaning": "gold",
@@ -3658,6 +3819,259 @@
       "pos": "preposition",
       "meaning": "for",
       "concept": 591
+    },
+    "planted": {
+      "pos": "verb",
+      "meaning": "planted",
+      "concept": 593,
+      "when": "past"
+    },
+    "watered": {
+      "pos": "verb",
+      "meaning": "watered",
+      "concept": 594,
+      "when": "past"
+    },
+    "lit": {
+      "pos": "verb",
+      "meaning": "lit",
+      "concept": 595,
+      "when": "past"
+    },
+    "ironed": {
+      "pos": "verb",
+      "meaning": "ironed",
+      "concept": 596,
+      "when": "past"
+    },
+    "fished": {
+      "pos": "verb",
+      "meaning": "fished",
+      "concept": 597,
+      "when": "past"
+    },
+    "marked": {
+      "pos": "verb",
+      "meaning": "marked",
+      "concept": 598,
+      "when": "past"
+    },
+    "formed": {
+      "pos": "verb",
+      "meaning": "formed",
+      "concept": 599,
+      "when": "past"
+    },
+    "placed": {
+      "pos": "verb",
+      "meaning": "placed",
+      "concept": 600,
+      "when": "past"
+    },
+    "handed": {
+      "pos": "verb",
+      "meaning": "handed",
+      "concept": 601,
+      "when": "past"
+    },
+    "trained": {
+      "pos": "verb",
+      "meaning": "trained",
+      "concept": 602,
+      "when": "past"
+    },
+    "shipped": {
+      "pos": "verb",
+      "meaning": "shipped",
+      "concept": 603,
+      "when": "past"
+    },
+    "parted": {
+      "pos": "verb",
+      "meaning": "parted",
+      "concept": 604,
+      "when": "past"
+    },
+    "bore": {
+      "pos": "verb",
+      "meaning": "bore",
+      "concept": 605,
+      "when": "past"
+    },
+    "combed": {
+      "pos": "verb",
+      "meaning": "combed",
+      "concept": 606,
+      "when": "past"
+    },
+    "brushed": {
+      "pos": "verb",
+      "meaning": "brushed",
+      "concept": 607,
+      "when": "past"
+    },
+    "milked": {
+      "pos": "verb",
+      "meaning": "milked",
+      "concept": 608,
+      "when": "past"
+    },
+    "signed": {
+      "pos": "verb",
+      "meaning": "signed",
+      "concept": 609,
+      "when": "past"
+    },
+    "named": {
+      "pos": "verb",
+      "meaning": "named",
+      "concept": 610,
+      "when": "past"
+    },
+    "ordered": {
+      "pos": "verb",
+      "meaning": "ordered",
+      "concept": 611,
+      "when": "past"
+    },
+    "phoned": {
+      "pos": "verb",
+      "meaning": "phoned",
+      "concept": 612,
+      "when": "past"
+    },
+    "penned": {
+      "pos": "verb",
+      "meaning": "penned",
+      "concept": 613,
+      "when": "past"
+    },
+    "pictured": {
+      "pos": "verb",
+      "meaning": "pictured",
+      "concept": 614,
+      "when": "past"
+    },
+    "headed": {
+      "pos": "verb",
+      "meaning": "headed",
+      "concept": 615,
+      "when": "past"
+    },
+    "planting": {
+      "pos": "noun",
+      "meaning": "planting",
+      "concept": 593
+    },
+    "watering": {
+      "pos": "noun",
+      "meaning": "watering",
+      "concept": 594
+    },
+    "lighting": {
+      "pos": "noun",
+      "meaning": "lighting",
+      "concept": 595
+    },
+    "ironing": {
+      "pos": "noun",
+      "meaning": "ironing",
+      "concept": 596
+    },
+    "fishing": {
+      "pos": "noun",
+      "meaning": "fishing",
+      "concept": 597
+    },
+    "marking": {
+      "pos": "noun",
+      "meaning": "marking",
+      "concept": 598
+    },
+    "forming": {
+      "pos": "noun",
+      "meaning": "forming",
+      "concept": 599
+    },
+    "placing": {
+      "pos": "noun",
+      "meaning": "placing",
+      "concept": 600
+    },
+    "handing": {
+      "pos": "noun",
+      "meaning": "handing",
+      "concept": 601
+    },
+    "training": {
+      "pos": "noun",
+      "meaning": "training",
+      "concept": 602
+    },
+    "shipping": {
+      "pos": "noun",
+      "meaning": "shipping",
+      "concept": 603
+    },
+    "parting": {
+      "pos": "noun",
+      "meaning": "parting",
+      "concept": 604
+    },
+    "bearing": {
+      "pos": "noun",
+      "meaning": "bearing",
+      "concept": 605
+    },
+    "combing": {
+      "pos": "noun",
+      "meaning": "combing",
+      "concept": 606
+    },
+    "brushing": {
+      "pos": "noun",
+      "meaning": "brushing",
+      "concept": 607
+    },
+    "milking": {
+      "pos": "noun",
+      "meaning": "milking",
+      "concept": 608
+    },
+    "signing": {
+      "pos": "noun",
+      "meaning": "signing",
+      "concept": 609
+    },
+    "naming": {
+      "pos": "noun",
+      "meaning": "naming",
+      "concept": 610
+    },
+    "ordering": {
+      "pos": "noun",
+      "meaning": "ordering",
+      "concept": 611
+    },
+    "phoning": {
+      "pos": "noun",
+      "meaning": "phoning",
+      "concept": 612
+    },
+    "penning": {
+      "pos": "noun",
+      "meaning": "penning",
+      "concept": 613
+    },
+    "picturing": {
+      "pos": "noun",
+      "meaning": "picturing",
+      "concept": 614
+    },
+    "heading": {
+      "pos": "noun",
+      "meaning": "heading",
+      "concept": 615
     }
   },
   "marking": "after",
