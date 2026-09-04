@@ -4082,6 +4082,56 @@
       "pos": "noun",
       "meaning": "lightweight",
       "concept": 201
+    },
+    "weighs": {
+      "pos": "verb",
+      "meaning": "weighs",
+      "concept": 617,
+      "person": "third",
+      "number": "singular"
+    },
+    "weigh": {
+      "pos": "verb",
+      "meaning": "weigh",
+      "concept": 617
+    },
+    "weighed": {
+      "pos": "verb",
+      "meaning": "weighed",
+      "concept": 617,
+      "when": "past"
+    },
+    "gram": {
+      "pos": "noun",
+      "meaning": "gram",
+      "concept": 619
+    },
+    "kilogram": {
+      "pos": "noun",
+      "meaning": "kilogram",
+      "concept": 620
+    },
+    "metre": {
+      "pos": "noun",
+      "meaning": "metre",
+      "concept": 621
+    },
+    "degree": {
+      "pos": "noun",
+      "meaning": "degree",
+      "concept": 623
+    },
+    "unit": {
+      "pos": "noun",
+      "meaning": "unit",
+      "concept": 618
+    },
+    "measures": {
+      "pos": "verb",
+      "meaning": "measures",
+      "concept": 617,
+      "person": "third",
+      "number": "singular"
     }
   },
   "marking": "after",

@@ -6,33 +6,25 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
-- **Scale — an order a property runs along.** A property's named ways stop
-  being unrelated kinds of it and become places on one order: light before
-  heavy, cold before cool before warm before hot, small before big, short
-  before long. The world says the order with the same `order` relation it
-  already used to say which arithmetic binds first.
+- **Scale — what a property takes its values on.** A value is an amount of a
+  unit, and a unit says which property it is of: `gram` and `kilogram` measure
+  weight, `metre` size, `second` time, `degree` temperature. A thing is
+  measured on a scale — `"an apple weighs ten gram"` — and the amount is what
+  is kept.
 
-  `more` and `less` stop being arithmetic. They are the brain's way of standing
-  two **things** on one scale and finding one further along — and two numbers
-  are only the case where the world can already say which is greater. Told a
-  stone is heavy and an apple lightweight, `"a stone more an apple?"` is *Yes*
-  with no number anywhere; `"3 more 2?"` still answers as it did. Told nothing,
-  a thing has no place, and the brain says so.
+  `more` and `less` stop being arithmetic. They stand two **things** on one
+  scale and let the amounts say which is further along; two numbers are only
+  the case where the world can already say which is greater. An apple of ten
+  grams is heavier than a stone of five, whatever anyone called either of them.
 
-  **A reading is not a thing that has one.** Hot is not a thing that is hot —
-  it is what a thing's temperature comes to, and nothing in the world says one
-  reading is more than another. So `"hot more cold?"` is *I don't know*: a
-  thing is placed on a scale only by what it **is**, never by being a place
-  itself.
+  **What a thing has been called decides nothing.** Told a stone is heavy and
+  an apple lightweight, `"a stone more an apple?"` is *I don't know* — the
+  names are regions of a scale, and which region a value falls in depends on
+  what it is read against. A thing nothing has measured has no place on the
+  scale at all.
 
-  A property with **no** scale refuses the comparison rather than guessing —
-  `"red more blue?"` is *I don't know*, and nothing about colour says it could
-  be otherwise. So is a comparison across two scales: a thing may be heavier
-  and smaller at once, and neither of those is the comparison.
-
-  `none`, `few`, `many`, `all` are ordered too, but they are kinds of quantity
-  — what a signal says *of* a thing rather than a thing it speaks about — so
-  the order is there with no way yet to ask after it.
+  Two units are not one scale until something says how they stand: five
+  kilograms and ten grams do not compare yet.
 
 - **The universe, above existence.** The world had no top: `existence` was the
   root and the four ways of being sat under it. It now sits inside a
