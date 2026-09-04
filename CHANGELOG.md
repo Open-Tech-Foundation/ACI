@@ -6,6 +6,24 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **`else`, `say`, `>` and names for values** — the four things `"if x > 10
+  then say big else say small"` needed.
+
+  `else` gives a condition its other side: where the condition does not stand,
+  what the signal puts after `else` stands instead.
+
+  An act of saying, with nobody doing it, says what it was given to say — so
+  `"say big"` answers *big*. Nothing is worked out and nothing looked up.
+
+  `>` and `<` are other ways to write `more` and `less`, not what they are
+  called.
+
+  **A word may be given a name for a value** and stand for it after. `"x is 5"`
+  gives; `"x > 10"` asks — giving is done with the weakest joint there is, so
+  the two never run into each other. A name belongs to the **conversation**,
+  not to the world: the brain keeps none of it, hands it back like what was
+  last spoken of, and another conversation was given no such name.
+
 - **A signal may say that one claim follows from another.** `if` puts a claim
   as a condition and `then` says what follows. Neither is made: the brain
   checks the condition, and only where that already stands does what follows

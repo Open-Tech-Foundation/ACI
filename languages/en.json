@@ -1407,7 +1407,7 @@
     "n": {
       "pos": "noun",
       "meaning": "n",
-      "concept": 155
+      "marks": "named"
     },
     "o": {
       "pos": "noun",
@@ -1457,17 +1457,17 @@
     "x": {
       "pos": "noun",
       "meaning": "x",
-      "concept": 165
+      "marks": "named"
     },
     "y": {
       "pos": "noun",
       "meaning": "y",
-      "concept": 166
+      "marks": "named"
     },
     "z": {
       "pos": "noun",
       "meaning": "z",
-      "concept": 167
+      "marks": "named"
     },
     "form": [
       {
@@ -6652,6 +6652,28 @@
       "pos": "noun",
       "meaning": "yoghurt",
       "concept": 1126
+    },
+    ">": {
+      "pos": "verb",
+      "meaning": ">",
+      "concept": 305,
+      "names": false
+    },
+    "<": {
+      "pos": "verb",
+      "meaning": "<",
+      "concept": 306,
+      "names": false
+    },
+    "else": {
+      "pos": "otherwise",
+      "meaning": "else"
+    },
+    "say": {
+      "pos": "verb",
+      "meaning": "say",
+      "concept": 271,
+      "names": false
     }
   },
   "marking": "after",
@@ -6709,12 +6731,14 @@
     "rules": {
       "sentence": {
         "rules": [
+          "conditional clause consequent sentence otherwise sentence",
           "conditional clause consequent sentence",
           "clause conjunction sentence",
           "interjection",
           "interjection sentence",
           "subject predicate",
           "subject verb",
+          "verb subject",
           "interrogative verb subject",
           "interrogative verb sentence",
           "open sentence close",
@@ -6730,11 +6754,13 @@
       },
       "clause": {
         "rules": [
+          "conditional clause consequent sentence otherwise sentence",
           "conditional clause consequent sentence",
           "interjection",
           "interjection sentence",
           "subject predicate",
           "subject verb",
+          "verb subject",
           "interrogative verb subject",
           "interrogative verb sentence",
           "open sentence close",

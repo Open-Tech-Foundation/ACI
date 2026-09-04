@@ -256,6 +256,9 @@ function pointedAt(word, at) {
   if (word.marks === 'from') return (at && at.from) ?? null;
   if (word.marks === 'to') return (at && at.to) ?? null;
   if (word.marks === 'spoken') return (at && at.spoken) ?? null;
+  // A word given a name in this conversation stands for whatever it was given.
+  // Which word was given what is the circumstance's, the same as the rest.
+  if (word.marks === 'named') return (at && at.names && at.names[word.text]) ?? null;
   return null;
 }
 
@@ -480,13 +483,16 @@ function judge(roots, world, mood, langs, sent) {
   // and the brain says what it found rather than taking either claim in.
   const rule = conditionIn(root);
   if (rule) {
-    const [when, so] = rule;
+    const [when, so, otherwise] = rule;
     const [asked] = judge([when], world, 'ask', langs, sent);
     const stood = (asked.branch || []).find((n) => n.kind === 'standing');
-    if (!stood || stood.name !== 'held') {
-      return [withBranch(root, [...root.branch, ...(asked.branch || []).filter(taken)])];
-    }
-    const [followed] = judge([so], world, mood, langs, sent);
+    const held = stood && stood.name === 'held';
+    // Where the condition stands, what follows stands. Where it does not, the
+    // signal may say what stands instead; where it says nothing, nothing
+    // follows, and the brain says only what it found of the condition.
+    const next = held ? so : otherwise;
+    if (!next) return [withBranch(root, [...root.branch, ...(asked.branch || []).filter(taken)])];
+    const [followed] = judge([next], world, mood, langs, sent);
     return [withBranch(root, [...root.branch, ...(followed.branch || []).filter(taken)])];
   }
 
@@ -515,6 +521,15 @@ function judge(roots, world, mood, langs, sent) {
   collect(root);
 
   const a = world.anchors || {};
+
+  // A signal may give a name rather than make a claim: `x is 5` says what x
+  // stands for from here on. A name belongs to the conversation, not to the
+  // world, so nothing is written down — it is handed back like anything else.
+  const gave = givings(said, world, mood);
+  if (gave.length > 0) {
+    return [withBranch(root, [...root.branch, node('named', 'name', [], { gave })])];
+  }
+
   // A hole is a word standing for what the signal does not say — not merely a
   // word with no term behind it, which every article and preposition is. The
   // language marks which of its words do that.
@@ -810,7 +825,7 @@ function joinedWhole(b, whole) {
 // brain's; which words say so is the language's.
 function conditionIn(root) {
   const wholes = (root.branch || []).filter((b) => joinedWhole(b, root));
-  if (wholes.length !== 2 || !marksWith(root, 'conditional')) return null;
+  if (wholes.length < 2 || wholes.length > 3 || !marksWith(root, 'conditional')) return null;
   return wholes;
 }
 
@@ -1295,6 +1310,16 @@ function act(said, claims, world, side, sides) {
   // does not go on the record as having happened.
   if (harms(action, world)) return [node('refuse', 'harm', [], { action })];
 
+  // An act of saying says what it was given to say. Nothing is worked out and
+  // nothing is looked up: what the brain answers with is the thing it was told
+  // to say.
+  if (world.isA(action, a.communication) && !parts.some((p) => p.role === a.agent)) {
+    const said = parts.find((p) => p.role === a.target && !world.isA(p.of, a.action));
+    if (said) {
+      return [node('answer', 'link', [], { subject: null, relation: null, found: [said.of] })];
+    }
+  }
+
   const at = world.now();
   const worked = work(action, parts, at, world);
   // Nobody did an operation a signal named outright. Nothing happened to
@@ -1667,6 +1692,7 @@ function expression(roots, langs, mood, world, sent) {
   const answer = bound ? findBranch(roots[0], 'answer') : null;
   const learned = bound ? findBranch(roots[0], 'learn') : null;
   const counted = bound ? findBranch(roots[0], 'count') : null;
+  const gave = bound ? findBranch(roots[0], 'named') : null;
   const sum = bound ? findBranch(roots[0], 'sum') : null;
   const did = bound ? findBranch(roots[0], 'did') : null;
   const refused = bound ? findBranch(roots[0], 'refuse') : null;
@@ -1696,6 +1722,8 @@ function expression(roots, langs, mood, world, sent) {
   // it already holds is simply understood.
   const intent = refused
     ? 'deny'
+    : gave
+      ? 'learn'
     : feeling
       ? feeling
       : stood
@@ -2027,6 +2055,9 @@ export function brainFrom(input, knowledge, circumstance) {
     // who is speaking: it was handed back after the signal before this one, and
     // it comes back the same way, or it does not come back at all.
     spoken: circumstance && circumstance.spoken != null ? circumstance.spoken : null,
+    // What this conversation has given a name to. No more the brain's to keep
+    // than who is speaking: it was handed back and comes back the same way.
+    names: (circumstance && circumstance.names) || {},
   };
 
   const roots = understand(input, langs);
@@ -2042,6 +2073,7 @@ export function brainFrom(input, knowledge, circumstance) {
     expression: expression(expressedRoots, langs, mood, world, at),
     learned: learnedFrom(judgedRoots, world),
     spoken: spokenOf(judgedRoots, at),
+    names: namedIn(solvedRoots, { ...at, world, mood }),
     phases: {
       understand: roots,
       think: thoughtRoots,
@@ -2051,6 +2083,36 @@ export function brainFrom(input, knowledge, circumstance) {
       express: expressedRoots,
     },
   };
+}
+
+// What this signal gave a name to. A word that stands for whatever it was
+// given, standing beside a term, is being given that term: `x is 5` says that
+// x is the brain's word for five from here on. The brain keeps none of it — it
+// hands it back, and the runtime decides whether the next signal is still the
+// same conversation.
+function namedIn(roots, at) {
+  const given = { ...at.names };
+  for (const { name, of } of givings(roots, at.world, at.mood)) given[name] = of;
+  return given;
+}
+
+// Each name this signal gave, and what it was given. The word joining them is
+// the signal's joint and not what the name stands for: `x is 5` gives x five,
+// not being.
+function givings(roots, world, mood) {
+  const out = [];
+  if (mood !== 'tell') return out;
+  roots.forEach((n, i) => {
+    const thought = thoughtOf(n);
+    if (!thought || thought.marks !== 'named') return;
+    // Giving a name is done with the weakest joint there is: `x is 5` gives,
+    // `x > 10` asks. So what stands next to the name must be that joint, and
+    // what stands past it is what the name was given.
+    const after = roots.slice(i + 1).filter((other) => conceptOf(other) != null);
+    if (after.length < 2 || conceptOf(after[0]) !== world.baseRelation) return;
+    out.push({ name: n.state.identity, of: conceptOf(after[1]) });
+  });
+  return out;
 }
 
 // What the signal was about, so that the signal after it may point back at it.

@@ -14,7 +14,7 @@ function fail(where, why) {
 
 // What a word may mark: which one is meant, which side of the conversation, or
 // the thing the conversation was last about.
-const MARKS = ['new', 'known', 'unknown', 'from', 'to', 'spoken'];
+const MARKS = ['new', 'known', 'unknown', 'from', 'to', 'spoken', 'named'];
 const PERSONS = ['first', 'second', 'third'];
 const NUMBERS = ['singular', 'plural'];
 

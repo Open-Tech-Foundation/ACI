@@ -103,9 +103,10 @@ export function openBrain(url) {
   // nothing, the brain does not guess who it is talking to.
   async function brain(input, circumstance) {
     const thread = (circumstance && circumstance.conversation) ?? ALONE;
-    const said = { spoken: threads.get(thread) ?? null, ...(circumstance || {}) };
+    const held = threads.get(thread) || {};
+    const said = { spoken: held.spoken ?? null, names: held.names || {}, ...(circumstance || {}) };
     const result = brainFrom(input, await loaded(), said);
-    threads.set(thread, result.spoken);
+    threads.set(thread, { spoken: result.spoken, names: result.names });
     if (result.learned) {
       try {
         await inTurn(() => write(store, result.learned));
