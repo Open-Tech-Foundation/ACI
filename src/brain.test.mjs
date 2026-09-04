@@ -685,10 +685,10 @@ test("nothing to count is zero, not silence", async () => {
 });
 
 test("counting past what the world names invents no term, and still answers", async () => {
-  // Twenty-five mammals, and no single word in English for twenty-five.
+  // Seventy-six mammals, and no single word in English for seventy-six.
   const r = await brain("how many mammal?");
   assertEquals(kind(r.roots[0], "count").name, "beyond", "no term was invented for it");
-  assertEquals(r.expression.state.says, "25", "and the language can still write it");
+  assertEquals(r.expression.state.says, "76", "and the language can still write it");
 });
 
 test("the count is the terms the world holds, not a fact stored anywhere", async () => {
@@ -785,7 +785,7 @@ test("a hole is a word the language marks as one, not any word without a term", 
 test("the world can be counted by any of its shelves", async () => {
   assertEquals((await brain("how many colour?")).expression.state.says, "ten");
   assertEquals((await brain("how many feeling?")).expression.state.says, "seven");
-  assertEquals((await brain("how many amphibian?")).expression.state.says, "two");
+  assertEquals((await brain("how many amphibian?")).expression.state.says, "four");
 });
 
 test("a denial is knowledge, where not finding a path is only ignorance", async () => {
