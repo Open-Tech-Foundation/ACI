@@ -28,7 +28,8 @@ test("a sign with something to take from is still taking away", async () => {
 test("a word for taking away stands before what it takes, and is not part of it", async () => {
   await forget();
   await brain("a bucket holds three nail");
-  assertEquals((await brain("subtract one nail from it")).expression.state.says, "two",
+  await brain("subtract one nail from it");
+  assertEquals((await brain("it holds how many nails?")).expression.state.says, "two",
     "it took one, and did not read minus one");
   await forget();
 });

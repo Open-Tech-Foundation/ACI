@@ -1905,9 +1905,14 @@ function expression(roots, langs, mood, world, sent) {
               ? 'affirm'
               : 'understood'
     : did
-      ? did.state.term != null
-        ? 'answer'
-        : 'deny'
+      ? did.state.term == null
+        ? 'deny'
+        : // Told that something was done, the brain works out what it comes to
+          // and takes that in — but nobody asked it for the number, so what it
+          // says is that it has it, not the number itself.
+          mood === 'ask'
+          ? 'answer'
+          : 'learn'
       : sum
         ? sum.state.term != null || sayable(sum.state.value, langName, langs)
           ? 'answer'

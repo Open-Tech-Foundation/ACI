@@ -72,8 +72,8 @@ test("an action works on what a thing holds", async () => {
   const did = branch(r, "did");
   assertEquals(did.state.before, 8);
   assertEquals(did.state.after, 5);
-  assertEquals(r.expression.state.says, "five");
-  assertEquals(await says("the cave holds how many axes?"), "five");
+  assertEquals(r.expression.name, "learn", "nobody asked for the number");
+  assertEquals(await says("the cave holds how many axes?"), "five", "asked, it says it");
 });
 
 test("what an action does is the world's to say, the arithmetic is the brain's", async () => {
@@ -139,3 +139,11 @@ async function termOf(word) {
   const t = (r.roots[0].branch || []).find((b) => b.kind === "thought");
   return t.state.thought.concept;
 }
+
+test("told what was done, it says it took it in — not the number", async () => {
+  // Nobody asked how many were left. The brain works it out and keeps it, and
+  // what it says is that it has it.
+  await brain("a crate holds six lamp");
+  assertEquals((await brain("take two lamps from the crate")).expression.name, "learn");
+  assertEquals(await says("the crate holds how many lamps?"), "four", "asked, it says it");
+});

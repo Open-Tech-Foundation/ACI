@@ -10,8 +10,9 @@ const PERSON = 29;
 test("a signal may say who did it", async () => {
   await forget();
   await brain("a basket holds three apple");
+  await brain("i take one apple from the basket", { from: PERSON });
   assertEquals(
-    (await brain("i take one apple from the basket", { from: PERSON })).expression.state.says,
+    (await brain("the basket holds how many apples?")).expression.state.says,
     "two",
     "the doer standing before the action does not stop it being read",
   );
@@ -28,7 +29,7 @@ test("what a word does in the past it does the same, on the other side of now", 
 test("what a get goes to is whoever did it", async () => {
   await forget();
   await brain("a person holds two apple");
-  assertEquals((await brain("i got one apple", { from: PERSON })).expression.state.says, "three");
+  assertEquals((await brain("i got one apple", { from: PERSON })).expression.name, "learn");
   assertEquals(
     (await brain("i hold how many apples?", { from: PERSON })).expression.state.says,
     "three",

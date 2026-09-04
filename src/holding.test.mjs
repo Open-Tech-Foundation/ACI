@@ -53,7 +53,8 @@ test("holding is its own relation, not being and not having", async () => {
 test("what is put into a thing is what it comes to hold", async () => {
   await forget();
   await brain("a basket holds three apple");
-  assertEquals((await brain("add one apple into it")).expression.state.says, "four");
+  assertEquals((await brain("add one apple into it")).expression.name, "learn",
+    "told what was done, it takes it in rather than reading the number back");
   assertEquals((await brain("it holds how many apples?")).expression.state.says, "four");
   await forget();
 });
@@ -82,7 +83,8 @@ test("nobody did an operation the signal named, so nothing happened", async () =
 test("taking works from a source the same way", async () => {
   await forget();
   await brain("a basket holds three apple");
-  assertEquals((await brain("subtract one apple from it")).expression.state.says, "two");
+  await brain("subtract one apple from it");
+  assertEquals((await brain("it holds how many apples?")).expression.state.says, "two");
   await forget();
 });
 
@@ -104,7 +106,7 @@ test("what a thing has in it may have been said either way", async () => {
   // Told a bucket *has* three nails, taking one still takes one: whichever
   // word the count was kept under is the one that changes.
   await brain("a bucket has three nail");
-  assertEquals((await brain("i take one nail from the bucket", { from: 29 })).expression.state.says, "two");
+  await brain("i take one nail from the bucket", { from: 29 });
   assertEquals((await brain("the bucket has how many nails?")).expression.state.says, "two");
   await forget();
 });
