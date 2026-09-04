@@ -7898,6 +7898,94 @@
     "because": {
       "pos": "conjunction",
       "meaning": "because"
+    },
+    "bigger": {
+      "pos": "verb",
+      "meaning": "bigger",
+      "concept": 305,
+      "names": false,
+      "on": 183
+    },
+    "smaller": {
+      "pos": "verb",
+      "meaning": "smaller",
+      "concept": 306,
+      "names": false,
+      "on": 183
+    },
+    "longer": {
+      "pos": "verb",
+      "meaning": "longer",
+      "concept": 305,
+      "names": false,
+      "on": 183
+    },
+    "shorter": {
+      "pos": "verb",
+      "meaning": "shorter",
+      "concept": 306,
+      "names": false,
+      "on": 183
+    },
+    "heavier": {
+      "pos": "verb",
+      "meaning": "heavier",
+      "concept": 305,
+      "names": false,
+      "on": 184
+    },
+    "lighter": {
+      "pos": "verb",
+      "meaning": "lighter",
+      "concept": 306,
+      "names": false,
+      "on": 184
+    },
+    "hotter": {
+      "pos": "verb",
+      "meaning": "hotter",
+      "concept": 305,
+      "names": false,
+      "on": 186
+    },
+    "colder": {
+      "pos": "verb",
+      "meaning": "colder",
+      "concept": 306,
+      "names": false,
+      "on": 186
+    },
+    "faster": {
+      "pos": "verb",
+      "meaning": "faster",
+      "concept": 305,
+      "names": false,
+      "on": 324
+    },
+    "slower": {
+      "pos": "verb",
+      "meaning": "slower",
+      "concept": 306,
+      "names": false,
+      "on": 324
+    },
+    "older": {
+      "pos": "verb",
+      "meaning": "older",
+      "concept": 305,
+      "names": false,
+      "on": 187
+    },
+    "younger": {
+      "pos": "verb",
+      "meaning": "younger",
+      "concept": 306,
+      "names": false,
+      "on": 187
+    },
+    "than": {
+      "pos": "preposition",
+      "meaning": "than"
     }
   },
   "marking": "after",
@@ -7956,6 +8044,7 @@
     "rules": {
       "sentence": {
         "rules": [
+          "subject verb preposition subject",
           "conditional clause consequent subject",
           "conditional clause consequent subject otherwise sentence",
           "conditional clause consequent sentence otherwise subject",
@@ -7983,6 +8072,7 @@
       },
       "clause": {
         "rules": [
+          "subject verb preposition subject",
           "conditional clause consequent subject",
           "conditional clause consequent subject otherwise sentence",
           "conditional clause consequent sentence otherwise subject",
@@ -8046,6 +8136,7 @@
       },
       "verbComplement": {
         "rules": [
+          "verb preposition subject",
           "noun",
           "adjective",
           "numeral",

@@ -6,6 +6,21 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Comparatives.** `heavier`, `bigger`, `hotter`, `faster`, `older` and their
+  opposites, with `than`. A comparative names the comparing and says which
+  scale it compares **on** — a new field a word may carry — so the same two
+  things answer differently to *heavier* and *bigger*, and neither reads the
+  other's scale. With no scale said, two scales that disagree are no answer.
+- **Reflexives.** `myself`, `yourself`, `itself` — the marks the pointers
+  already carried. Nothing else was needed: one thing may play two parts in
+  what happened, and always could.
+- **`causes`, `caused`, `because`.** The world already held causing; English
+  could not say it. A cause reaches as far as the causing goes, so a storm
+  causing a wind and a wind a fire is a storm causing a fire, unasked — a
+  relation is walked as far as it runs. `because` joins two claims and both
+  are answered; that the second is *why* the first is not written down, a
+  claim not being a thing the world can hold.
+
 - **Two number words side by side are one number.** `twenty` and `five` were
   both in the language and nothing made them twenty-five. `think` now reads
   them together, the way it already reads a sign against a number: a round one

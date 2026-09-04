@@ -158,6 +158,7 @@ function recognizeLanguage(roots, langs) {
         when: word.when ?? null,
         names: word.names ?? null,
         groups: word.groups ?? null,
+        on: word.on ?? null,
       }));
       matching.push({
         lang: lang.data.name,
@@ -240,6 +241,8 @@ function think(roots, langs, at, world) {
       // word. A language writes its numbers in words its own way, and only
       // words are written that way.
       figures: read,
+      // Which scale a word compares on, where it says so.
+      on: word ? word.on ?? null : null,
       groups: word ? word.groups : null,
     });
     // A word that names more than one thing is thought of every way it may be
@@ -1231,11 +1234,15 @@ function reached(subject, relation, world) {
 // and which is further along is what their amounts say — not what either of
 // them has been called. An apple of ten grams is heavier than a stone of five,
 // whatever anyone called either of them.
-function alongScale(left, right, relation, world) {
+function alongScale(left, right, relation, world, on) {
   const a = world.anchors || {};
   if (a.measure == null || left == null || right == null) return null;
-  const lefts = valuesOn(conceptOf(left), world);
-  const rights = valuesOn(conceptOf(right), world);
+  // A word may say which scale it compares on — heavier is more, on weight —
+  // and then only what is measured on that scale counts.
+  const reads = (v) =>
+    on == null || world.linked(v.unit, a.measure).includes(on);
+  const lefts = valuesOn(conceptOf(left), world).filter(reads);
+  const rights = valuesOn(conceptOf(right), world).filter(reads);
 
   const found = [];
   for (const l of lefts) {
@@ -1257,6 +1264,12 @@ function alongScale(left, right, relation, world) {
     relation,
     object: conceptOf(right),
   });
+}
+
+// Which scale a word compares on, where it says so.
+function onOf(n) {
+  const thought = n ? thoughtOf(n) : null;
+  return thought ? thought.on ?? null : null;
 }
 
 // What a thing has been measured at: an amount, and the unit it was taken in.
@@ -1351,12 +1364,15 @@ function calculate(said, at, relation, world) {
     // greater. Where they are not numbers, they may still stand on one scale,
     // and being further along it is the same thing said without counting.
     if (left == null || right == null) {
-      const named = (n) => conceptOf(n) != null;
+      // The things compared, not the words joining them: `a cow is heavier than
+      // a goat` names two relations and neither is one of the things.
+      const thing = (n) => conceptOf(n) != null && !world.isA(conceptOf(n), a.relation);
       return alongScale(
-        nearest(said, at, -1, named),
-        nearest(said, at, 1, named),
+        nearest(said, at, -1, thing),
+        nearest(said, at, 1, thing),
         relation,
         world,
+        onOf(said[at]),
       );
     }
     const holds = relation === a.more ? left > right : left < right;

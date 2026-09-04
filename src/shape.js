@@ -333,7 +333,7 @@ function checkWord(info, w) {
   if (!info || typeof info !== 'object' || Array.isArray(info)) fail(w, 'must be an object');
   onlyKeys(
     info,
-    ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'person', 'number'],
+    ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'person', 'number', 'on'],
     w,
   );
   // A word may be more than one part of speech — English says a walk and
@@ -345,6 +345,9 @@ function checkWord(info, w) {
   }
   if (typeof info.meaning !== 'string') fail(w, 'meaning must be a string');
   if (info.concept !== undefined && !isId(info.concept)) fail(w, 'concept must be a term id');
+  // Which scale a word compares on: heavier is more, on weight. The word names
+  // the comparing; the scale says what is being compared.
+  if (info.on !== undefined && !isId(info.on)) fail(w, 'on must be a term id');
   if (info.role !== undefined && (typeof info.role !== 'string' || info.role === '')) {
     fail(w, 'role, where present, must name the part a thing plays');
   }
