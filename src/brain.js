@@ -751,6 +751,16 @@ function judge(roots, world, mood, langs, sent) {
     return [withBranch(root, [...root.branch, ...(followed.branch || []).filter(taken)])];
   }
 
+  // A word may hold a claim at arm's length rather than make it: `a cat might
+  // be an animal` says nothing is so, it says what might be. The brain checks
+  // it, which is what being asked does, and takes nothing in. It cannot tell
+  // might from does-not-know — it has no notion of what could be, only of what
+  // it holds — so what it says is what it found.
+  if (mood === 'tell' && marksAnywhere(root, 'modal')) {
+    const [asked] = judge([root], world, 'ask', langs, sent);
+    return [asked];
+  }
+
   const spoken = claimWithin(root);
   if (spoken) {
     const [checked] = judge([spoken], world, 'ask', langs, sent);
@@ -1274,6 +1284,12 @@ function conditionIn(root) {
   // thing to say, which is what `else small` says.
   const parts = (root.branch || []).filter((b) => b.kind !== 'thing');
   return parts.length >= 2 && parts.length <= 3 ? parts : null;
+}
+
+// Whether a word of this part of speech stands anywhere in the signal.
+function marksAnywhere(n, part) {
+  if (n.kind === 'thing' && posOf(n).includes(part)) return true;
+  return (n.branch || []).some((b) => marksAnywhere(b, part));
 }
 
 // Whether one of the words standing here is of this part of speech.

@@ -7150,9 +7150,8 @@
       "concept": 1216
     },
     "can": {
-      "pos": "noun",
-      "meaning": "can",
-      "concept": 1217
+      "pos": "modal",
+      "meaning": "can"
     },
     "bin": {
       "pos": "noun",
@@ -8608,9 +8607,8 @@
       "concept": 1501
     },
     "may": {
-      "pos": "noun",
-      "meaning": "may",
-      "concept": 1502
+      "pos": "modal",
+      "meaning": "may"
     },
     "june": {
       "pos": "noun",
@@ -8791,6 +8789,39 @@
       "meaning": "nasty",
       "concept": 239,
       "names": false
+    },
+    "might": {
+      "pos": "modal",
+      "meaning": "might"
+    },
+    "could": {
+      "pos": "modal",
+      "meaning": "could"
+    },
+    "would": {
+      "pos": "modal",
+      "meaning": "would"
+    },
+    "should": {
+      "pos": "modal",
+      "meaning": "should"
+    },
+    "must": {
+      "pos": "modal",
+      "meaning": "must"
+    },
+    "be": {
+      "pos": "verb",
+      "meaning": "be",
+      "concept": 294,
+      "names": false
+    },
+    "been": {
+      "pos": "verb",
+      "meaning": "been",
+      "concept": 294,
+      "names": false,
+      "when": "past"
     }
   },
   "marking": "after",
@@ -8945,6 +8976,8 @@
       },
       "predicate": {
         "rules": [
+          "modal predicate",
+          "modal verb verbComplement",
           "verb verbComplement",
           "verb negation verbComplement"
         ]
