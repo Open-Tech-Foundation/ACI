@@ -27,15 +27,24 @@ test("each member of a togetherness gets its own verdict said in full", async ()
 });
 
 test("a question asked of several things answers every one of them", async () => {
-  const r = await brain("what is a cat and a dog");
+  const r = await brain("what is a sparrow and a snake");
   assertEquals(all(r.roots[0], "answer").length, 2);
-  assertEquals(r.expression.state.says, "mammal, mammal");
+  assertEquals(r.expression.state.says, "bird, animal");
 });
 
 test("a togetherness may hold more than two", async () => {
   const r = await brain("1 and 2 and 3 are what");
   assertEquals(all(r.roots[0], "answer").length, 3);
-  assertEquals(r.expression.state.says, "number, number, number");
+});
+
+test("three asked about, three answered, one thing to say", async () => {
+  assertEquals((await brain("1 and 2 and 3 are what")).expression.state.says, "number");
+});
+
+test("the same answer reached twice is said once", async () => {
+  const r = await brain("1+8 and 5+4");
+  assertEquals(all(r.roots[0], "sum").map((n) => n.state.value), [9, 9]);
+  assertEquals(r.expression.state.says, "9", "judged twice, said once");
 });
 
 test("every fact a togetherness taught is handed back, not only the first", async () => {
@@ -81,7 +90,7 @@ test("a signal speaking of one thing carries no mark telling members apart", asy
 test("a thing named twice is judged twice — the signal said it twice", async () => {
   const r = await brain("a sparrow and a sparrow are animals");
   assertEquals(all(r.roots[0], "truth").length, 2);
-  assertEquals(r.expression.state.says, "I know. I know.");
+  assertEquals(r.expression.state.says, "I know.");
 });
 
 test("the object side joins too, and the claim is checked against each", async () => {
@@ -125,7 +134,7 @@ test("a question laid over a join reaches the join underneath it", async () => {
 test("a denial reaches every member of a togetherness", async () => {
   const r = await brain("a cat and a dog are not animals");
   assertEquals(all(r.roots[0], "truth").map((t) => t.name), ["false", "false"]);
-  assertEquals(r.expression.state.says, "No. ❌ No. ❌");
+  assertEquals(r.expression.state.says, "No. ❌");
 });
 
 test("a joining word leaves a working out alone", async () => {

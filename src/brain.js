@@ -1300,10 +1300,13 @@ function expression(roots, langs, mood, world, sent) {
     const between = parts.every((p) => p.name === 'answer')
       ? listing(langName, langs)
       : ' ';
-    const says = parts
-      .map((p) => p.state.says)
-      .filter((s) => s != null)
-      .join(between);
+    // Each was judged in full and each verdict stays on the tree, but saying
+    // one of them twice says nothing the first did not. Two that came out
+    // differently are both worth saying; two that came out the same are one
+    // thing to say, however many things it was reached about.
+    const says = [
+      ...new Set(parts.map((p) => p.state.says).filter((s) => s != null)),
+    ].join(between);
     return withBranch(
       node('express', parts[0].name, [], { says: says || null, language: langName }),
       parts,

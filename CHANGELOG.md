@@ -12,8 +12,12 @@ All notable changes to this project are documented in this file.
   held together rather than one blurred one: each member is judged in full,
   each keeps its own verdict, each fact it taught is handed back, and the
   brain says all of them. Where the parts say terms the language's list
-  separator goes between them (`"mammal, mammal"`); where they say whole
-  sentences nothing goes between but the space (`"I know. No. ❌"`).
+  separator goes between them (`"bird, animal"`); where they say whole
+  sentences nothing goes between but the space (`"I know. No. ❌"`). Judging
+  and saying are separate acts: every verdict stays on the tree, but two that
+  came out the same are one thing to say, however many things they were
+  reached about — `"a sparrow and a snake are animals"` is judged twice and
+  said once, `"I know."`
 - **Both sides of a claim may join.** `"a sparrow is a plant and a bird"` is
   two claims about one thing, the way `"a sparrow and a snake are animals"` is
   one claim about two. Joined on both sides, every pairing is a claim of its
