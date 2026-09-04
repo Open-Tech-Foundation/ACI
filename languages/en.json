@@ -139,6 +139,7 @@
     "multiply":  { "pos": "function", "meaning": "times",          "concept": 568 },
     "with":      { "pos": "preposition", "meaning": "with" },
     "by":        { "pos": "preposition", "meaning": "by" },
+    "and":       { "pos": "conjunction", "meaning": "and" },
     "power":     { "pos": "verb", "meaning": "to the power of", "concept": 570 },
     "^":         { "pos": "verb", "meaning": "to the power of", "concept": 570, "names": false },
     "remainder": { "pos": "verb", "meaning": "remainder of",    "concept": 571 },
@@ -669,10 +670,30 @@
           "function sentence",
           "function subject preposition subject",
           "interrogative quantifier subject",
+          "verb subject preposition subject",
+          "clause conjunction sentence"
+        ]
+      },
+      "clause": {
+        "rules": [
+          "interjection",
+          "interjection sentence",
+          "subject predicate",
+          "interrogative verb subject",
+          "interrogative verb sentence",
+          "open sentence close",
+          "open subject close",
+          "function subject",
+          "function sentence",
+          "function subject preposition subject",
+          "interrogative quantifier subject",
           "verb subject preposition subject"
         ]
       },
       "subject": {
+        "rules": ["noun", "article noun", "numeral", "numeral noun", "pronoun", "possessive noun", "open sentence close", "open subject close", "function subject", "item conjunction subject"]
+      },
+      "item": {
         "rules": ["noun", "article noun", "numeral", "numeral noun", "pronoun", "possessive noun", "open sentence close", "open subject close", "function subject"]
       },
       "predicate": {

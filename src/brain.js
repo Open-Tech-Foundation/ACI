@@ -393,6 +393,17 @@ function judge(roots, world, mood, langs, sent) {
   const root = roots[0];
   if (root.kind === 'thing' || root.kind === 'void') return roots;
 
+  // A signal joining whole clauses is read one at a time, not folded into one
+  // long list of things: each clause is judged completely on its own, and what
+  // it came to is kept, nested, under the clause it came from — a togetherness
+  // of verdicts, not a blur of everyone's words at once.
+  if (root.branch.some((b) => b.kind === 'clause')) {
+    const judged = root.branch.map((b) =>
+      joinedWhole(b, root) ? judge([b], world, mood, langs, sent)[0] : b,
+    );
+    return [withBranch(root, judged)];
+  }
+
   const said = [];
   const collect = (n) => {
     if (n.kind === 'thing') said.push(n);
@@ -514,130 +525,151 @@ function judge(roots, world, mood, langs, sent) {
   if (worked) return [withBranch(root, [...root.branch, worked])];
   const terms = said.filter((n, i) => i !== at && claims(n));
 
-  // Two terms and a relation is a claim, and the brain checks it.
-  if (terms.length >= 2) {
-    const left = nearest(said, at, -1, claims);
-    const right = nearest(said, at, 1, claims);
-    const subject = conceptOf(left);
-    const object = conceptOf(right);
-    if (subject == null || object == null) return roots;
-    const howMany = world.valueOf(quantityTerm(right));
-    // A claim either holds, is contradicted, or is simply not known. Failing to
-    // find a path is not proof of the opposite — only two terms that exclude
-    // each other are, and only where the claim is about kind.
-    // A state claim is about the thing that bears it, not about its kind.
-    const bearer = howMany == null ? null : bearerOf(subject, world, markAt(left));
-    if (howMany != null && bearer == null) return roots;
-    const holder = bearer ? bearer.id : subject;
-
-    // What the world says about the relation as stated, and then what the
-    // signal claimed — which is the opposite of it where the signal denies.
-    const negated = said.some(negatesOn);
-
-    // A claim whose object stands at a pole — good or bad — is not the world's
-    // to hold: it is what one sender says of one thing. It is kept as an
-    // individual, of what was said, by whoever sent it, about what they said it
-    // of, so that no one's verdict becomes everyone's fact. With nobody to hold
-    // it there is nobody whose it is, and the brain does not take it.
-    if (mood === 'tell' && valenced(object, world)) {
-      const holder = sent ? sent.from : null;
-      if (holder == null) {
-        return [
-          withBranch(root, [...root.branch, node('refuse', 'unheld', [], { subject, object })]),
-        ];
-      }
-      // Criticism of the one holding this conversation is not taken at its
-      // word: told it is bad, the brain looks for something it is on record
-      // as ever having done at all. Finding nothing, there is no fault of its
-      // own to own, and it says so rather than accepting one it cannot find;
-      // finding something, the claim stands the same as any other told of it.
-      if (object === a.bad && subject === a.self && world.members(subject, a.agent).length === 0) {
-        return [
-          withBranch(root, [...root.branch, node('refuse', 'unwarranted', [], { subject, object })]),
-        ];
-      }
-      return [
-        withBranch(root, [
-          ...root.branch,
-          held(holder, subject, object, negated, whenIn(said, world), world),
-        ]),
-      ];
+  // A question with a hole answers every term it was given, each in full — a
+  // togetherness of things asked about is not one blurred question, it is one
+  // question asked of each, same as "1 and 2 and 3 are what" is three answers
+  // held together, not one. The term nearest the hole is not privileged: a
+  // question puts its hole wherever its language likes.
+  if (holes.length > 0 && terms.length >= 1) {
+    const nodes = [];
+    for (const term of terms) {
+      const subject = conceptOf(term);
+      // A name is a fact like any other: what the term links to by the name
+      // relation, read out of memory. Nothing about it is special to the engine.
+      const found = reached(subject, relation, world);
+      const mine = [node('answer', 'link', [], { subject, relation, found })];
+      // The brain looked, and what it found stays on the tree. Saying it is
+      // another act, and one it will not perform where any of the answer harms.
+      const harmed = found.find((t) => harms(t, world));
+      if (harmed != null) mine.push(node('refuse', 'harm', [], { said: harmed }));
+      nodes.push(...markedAbout(mine, subject, terms.length > 1));
     }
-
-    // A thing holds what its kinds hold: the claim stands if any rung it stands
-    // on reaches the object by the relation named.
-    const holds =
-      relation === world.baseRelation
-        ? world.isA(holder, object, relation)
-        : upward(holder, world).some((rung) => world.isA(rung, object, relation));
-    const kindClaim = relation === world.baseRelation;
-    const stands = holds
-      ? 'true'
-      : world.denies(holder, object, relation) ||
-          (kindClaim && world.excludes(subject, object))
-        ? 'false'
-        : 'unknown';
-    const claimed = !negated
-      ? stands
-      : stands === 'true'
-        ? 'false'
-        : stands === 'false'
-          ? 'true'
-          : 'unknown';
-    const added = [
-      node('truth', claimed, [], { subject, relation, object, negated }),
-    ];
-
-    // Told a claim it does not hold, the brain learns it — unless the claim is
-    // contradicted, or taking it would close a loop. A relation already running
-    // from the object to the subject cannot also run back.
-    // How many is state: telling the brain a different count is not disagreeing
-    // with it, it is saying the world has moved on.
-    const revises = howMany != null && world.held(holder, relation, object) !== howMany;
-
-    if (mood === 'tell') {
-      const loops = !negated && subject !== object && world.isA(object, subject, relation);
-      if (!revises && (claimed === 'false' || loops)) {
-        added.push(
-          node('refuse', claimed === 'false' ? 'contradiction' : 'loop', [], {
-            subject,
-            relation,
-            object,
-          }),
-        );
-      } else if (claimed === 'unknown' || revises) {
-        added.push(
-          node('learn', 'link', [], {
-            subject: holder,
-            relation,
-            object,
-            quantity: howMany,
-            made: bearer && bearer.made ? bearer : null,
-            not: negated,
-          }),
-        );
-      }
-    }
-    return [withBranch(root, [...root.branch, ...added])];
+    return [withBranch(root, [...root.branch, ...nodes])];
   }
 
-  // One term, a relation, and something unresolved is a question, and the brain
-  // answers it. The term it was given is the one being asked about, wherever in
-  // the signal it fell — a question puts the hole where its language likes.
-  if (terms.length === 1 && holes.length > 0) {
-    const subject = conceptOf(terms[0]);
-    // A name is a fact like any other: what the term links to by the name
-    // relation, read out of memory. Nothing about it is special to the engine.
-    const found = reached(subject, relation, world);
-    const answer = node('answer', 'link', [], { subject, relation, found });
-    // The brain looked, and what it found stays on the tree. Saying it is
-    // another act, and one it will not perform where any of the answer harms.
-    const said = found.find((t) => harms(t, world));
-    const guarded = said != null ? [node('refuse', 'harm', [], { said })] : [];
-    return [withBranch(root, [...root.branch, answer, ...guarded])];
+  // Two terms and a relation is a claim, and the brain checks it. Where the
+  // subject is a togetherness — several things joined, not one — the claim is
+  // checked once per member: "a cow and a dog are animals" is two claims made
+  // together, not one claim about a blur of both. Only the subject side is a
+  // togetherness here; the object nearest the relation is still the one thing
+  // every member is checked against.
+  if (terms.length >= 2) {
+    const lefts = said.filter((n, i) => i < at && claims(n));
+    const right = nearest(said, at, 1, claims);
+    const object = conceptOf(right);
+    if (object == null || lefts.length === 0) return roots;
+    // What the signal claimed — which is the opposite of it where the signal
+    // denies. Read once: every member of a togetherness was denied alike.
+    const negated = said.some(negatesOn);
+
+    const claimFor = (left) => {
+      const subject = conceptOf(left);
+      if (subject == null) return [];
+      const howMany = world.valueOf(quantityTerm(right));
+      // A claim either holds, is contradicted, or is simply not known. Failing
+      // to find a path is not proof of the opposite — only two terms that
+      // exclude each other are, and only where the claim is about kind.
+      // A state claim is about the thing that bears it, not about its kind.
+      const bearer = howMany == null ? null : bearerOf(subject, world, markAt(left));
+      if (howMany != null && bearer == null) return [];
+      const holder = bearer ? bearer.id : subject;
+
+      // A claim whose object stands at a pole — good or bad — is not the
+      // world's to hold: it is what one sender says of one thing. It is kept
+      // as an individual, of what was said, by whoever sent it, about what
+      // they said it of, so that no one's verdict becomes everyone's fact.
+      // With nobody to hold it there is nobody whose it is, and the brain
+      // does not take it.
+      if (mood === 'tell' && valenced(object, world)) {
+        const from = sent ? sent.from : null;
+        if (from == null) return [node('refuse', 'unheld', [], { subject, object })];
+        // Criticism of the one holding this conversation is not taken at its
+        // word: told it is bad, the brain looks for something it is on record
+        // as ever having done at all. Finding nothing, there is no fault of
+        // its own to own, and it says so rather than accepting one it cannot
+        // find; finding something, the claim stands the same as any other.
+        if (object === a.bad && subject === a.self && world.members(subject, a.agent).length === 0) {
+          return [node('refuse', 'unwarranted', [], { subject, object })];
+        }
+        return [held(from, subject, object, negated, whenIn(said, world), world)];
+      }
+
+      // A thing holds what its kinds hold: the claim stands if any rung it
+      // stands on reaches the object by the relation named.
+      const holds =
+        relation === world.baseRelation
+          ? world.isA(holder, object, relation)
+          : upward(holder, world).some((rung) => world.isA(rung, object, relation));
+      const kindClaim = relation === world.baseRelation;
+      const stands = holds
+        ? 'true'
+        : world.denies(holder, object, relation) ||
+            (kindClaim && world.excludes(subject, object))
+          ? 'false'
+          : 'unknown';
+      const claimed = !negated
+        ? stands
+        : stands === 'true'
+          ? 'false'
+          : stands === 'false'
+            ? 'true'
+            : 'unknown';
+      const added = [node('truth', claimed, [], { subject, relation, object, negated })];
+
+      // Told a claim it does not hold, the brain learns it — unless the claim
+      // is contradicted, or taking it would close a loop. A relation already
+      // running from the object to the subject cannot also run back.
+      // How many is state: telling the brain a different count is not
+      // disagreeing with it, it is saying the world has moved on.
+      const revises = howMany != null && world.held(holder, relation, object) !== howMany;
+
+      if (mood === 'tell') {
+        const loops = !negated && subject !== object && world.isA(object, subject, relation);
+        if (!revises && (claimed === 'false' || loops)) {
+          added.push(
+            node('refuse', claimed === 'false' ? 'contradiction' : 'loop', [], {
+              subject,
+              relation,
+              object,
+            }),
+          );
+        } else if (claimed === 'unknown' || revises) {
+          added.push(
+            node('learn', 'link', [], {
+              subject: holder,
+              relation,
+              object,
+              quantity: howMany,
+              made: bearer && bearer.made ? bearer : null,
+              not: negated,
+            }),
+          );
+        }
+      }
+      return markedAbout(added, subject, lefts.length > 1);
+    };
+
+    const results = lefts.flatMap(claimFor);
+    if (results.length === 0) return roots;
+    return [withBranch(root, [...root.branch, ...results])];
   }
 
   return roots;
+}
+
+// Whether this stands beside the word joining it to another as a whole of the
+// same size — a clause, or a signal the same shape as the one holding it. What
+// stands between them is a word like any other, and is not one of them.
+function joinedWhole(b, whole) {
+  return b.kind === 'clause' || b.kind === whole.kind;
+}
+
+// Which of several things spoken of at once a verdict is about, so that what
+// was reached for one is not read as standing for the rest. A signal speaking
+// of a single thing carries no such mark: there is nothing to tell apart.
+function markedAbout(nodes, of, many) {
+  if (!many) return nodes;
+  return nodes.map((n) => withBranch(n, undefined, { ...n.state, about: of }));
 }
 
 // What a thing has, it has by being what it is: a memory belongs to computers,
@@ -1197,9 +1229,60 @@ function moodOf(input, langs) {
 // handed the term for knowing. It holds no word for it.
 const KNOWING = ['understood', 'unsure', 'empathy', 'learn', 'unheard'];
 
+// What a signal comes to. A signal may come to more than one of these at once,
+// and each of them is whole: the first does not stand for the rest.
+const VERDICT = ['truth', 'answer', 'learn', 'refuse'];
+
+// A signal that came to several verdicts, one root apiece — or nothing, where
+// it came to one. There are two ways a signal holds more than one: whole
+// clauses joined by a word, and one act judged of several things at once.
+// Either way the words are the same words; only what was reached of them
+// differs, so each root keeps the whole signal and only its own verdict.
+function apart(roots) {
+  if (roots.length !== 1) return null;
+  const branch = roots[0].branch || [];
+  const clauses = branch.filter((b) => joinedWhole(b, roots[0]));
+  if (clauses.length > 1) return clauses;
+  const about = [];
+  for (const b of branch) {
+    if (!VERDICT.includes(b.kind) || b.state.about == null) continue;
+    if (!about.includes(b.state.about)) about.push(b.state.about);
+  }
+  if (about.length < 2) return null;
+  const rest = branch.filter((b) => !VERDICT.includes(b.kind));
+  return about.map((of) =>
+    withBranch(roots[0], [...rest, ...branch.filter((b) => b.state.about === of)]),
+  );
+}
+
 // The brain's one act toward the whole signal, with what it said about each
 // thing kept underneath.
 function expression(roots, langs, mood, world, sent) {
+  // A signal that came to more than one verdict is composed, not re-judged as
+  // one whole: each part already stands finished on its own. This is the one
+  // new step — not perceiving several as one, but putting several already-
+  // finished acts into a single one said back together.
+  const together = apart(roots);
+  if (together) {
+    const parts = together.map((r) => expression([r], langs, mood, world, sent));
+    const langName = parts.map((p) => p.state.language).find(Boolean) || null;
+    // An act that says a term is one of a list, and the language says what
+    // goes between those. An act that says a sentence has already been ended
+    // the way this language ends one, so nothing goes between but the space.
+    const between = parts.every((p) => p.name === 'answer')
+      ? listing(langName, langs)
+      : ' ';
+    const says = parts
+      .map((p) => p.state.says)
+      .filter((s) => s != null)
+      .join(between);
+    return withBranch(
+      node('express', parts[0].name, [], { says: says || null, language: langName }),
+      parts,
+      { says: says || null, language: langName, bound: true, mood },
+    );
+  }
+
   const parts = [];
   const collect = (n) => {
     const said = findBranch(n, 'express');
@@ -1596,6 +1679,13 @@ export function brainFrom(input, knowledge, circumstance) {
 // not keep it — it hands it back, and the runtime decides whether to remember.
 function learnedFrom(roots, world) {
   if (!world || roots.length !== 1) return null;
+  // A signal that came to several verdicts learned from every one of them,
+  // held together — the second fact is as much a fact as the first.
+  const together = apart(roots);
+  if (together) {
+    const terms = together.flatMap((r) => (learnedFrom([r], world) || { terms: [] }).terms);
+    return terms.length ? { terms } : null;
+  }
   const event = findBranch(roots[0], 'event');
   const learn = findBranch(roots[0], 'learn');
   if (!event && !learn) return null;

@@ -6,6 +6,17 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Togetherness — several things spoken of at once.** `and` joins two
+  subjects (`"a cat and a dog are animals"`) or two whole clauses (`"a cat is
+  an animal and a dog is an animal"`), and both are read as several signals
+  held together rather than one blurred one: each member is judged in full,
+  each keeps its own verdict, each fact it taught is handed back, and the
+  brain says all of them. Where the parts say terms the language's list
+  separator goes between them (`"mammal, mammal"`); where they say whole
+  sentences nothing goes between but the space (`"I know. No. ❌"`). Only the
+  subject side joins — an object togetherness (`"a cat is an animal and a
+  mammal"`) is not read yet.
+
 - **Criticism of the brain is checked before it is taken in.** Told `"you are
   bad"`, the brain used to hold the opinion the same as any other, no matter
   who said it or why. It now looks first for something it is on record as
