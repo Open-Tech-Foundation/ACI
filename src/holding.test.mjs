@@ -98,3 +98,13 @@ test("adding to a count the world never gave stays unknown", async () => {
 test("a joining word still leaves arithmetic alone", async () => {
   assertEquals((await brain("add 1 and 2")).expression.state.says, "3");
 });
+
+test("what a thing has in it may have been said either way", async () => {
+  await forget();
+  // Told a bucket *has* three nails, taking one still takes one: whichever
+  // word the count was kept under is the one that changes.
+  await brain("a bucket has three nail");
+  assertEquals((await brain("i take one nail from the bucket", { from: 29 })).expression.state.says, "two");
+  assertEquals((await brain("the bucket has how many nails?")).expression.state.says, "two");
+  await forget();
+});

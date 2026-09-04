@@ -1576,7 +1576,11 @@ function work(action, parts, at, world) {
   const amount = target.amount;
   const one = world.oneOf(place.of);
   const bearer = one == null ? place.of : one;
-  const before = world.held(bearer, a.hold, target.of);
+  // What a thing has in it may have been said either way — that a basket
+  // holds three apples, or that it has them. Whichever the count was kept
+  // under is the one that changes.
+  const kept = [a.hold, a.has].find((rel) => world.held(bearer, rel, target.of) != null) ?? a.hold;
+  const before = world.held(bearer, kept, target.of);
   if (amount == null || before == null) return null;
 
   const after = op === a.plus ? before + amount : before - amount;
@@ -1600,7 +1604,7 @@ function work(action, parts, at, world) {
     done,
     node('learn', 'link', [], {
       subject: bearer,
-      relation: a.hold,
+      relation: kept,
       object: target.of,
       quantity: after,
       not: false,
