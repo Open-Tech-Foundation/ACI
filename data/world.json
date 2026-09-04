@@ -45,7 +45,8 @@
     "cosine": 576,
     "tangent": 577,
     "magnitude": 578,
-    "hold": 579
+    "hold": 579,
+    "placement": 585
   },
   "relations": {
     "is": 294,
@@ -70,7 +71,10 @@
     "cosine": 576,
     "tangent": 577,
     "magnitude": 578,
-    "hold": 579
+    "hold": 579,
+    "in": 586,
+    "on": 587,
+    "under": 588
   },
   "terms": [
     {
@@ -6262,6 +6266,104 @@
         {
           "rel": 294,
           "to": 4
+        }
+      ]
+    },
+    {
+      "id": 580,
+      "name": "inside",
+      "links": [
+        {
+          "rel": 294,
+          "to": 191
+        },
+        {
+          "rel": 251,
+          "to": 581
+        }
+      ]
+    },
+    {
+      "id": 581,
+      "name": "outside",
+      "links": [
+        {
+          "rel": 294,
+          "to": 191
+        }
+      ]
+    },
+    {
+      "id": 582,
+      "name": "top",
+      "links": [
+        {
+          "rel": 294,
+          "to": 191
+        },
+        {
+          "rel": 251,
+          "to": 583
+        }
+      ]
+    },
+    {
+      "id": 583,
+      "name": "bottom",
+      "links": [
+        {
+          "rel": 294,
+          "to": 191
+        }
+      ]
+    },
+    {
+      "id": 584,
+      "name": "side",
+      "links": [
+        {
+          "rel": 294,
+          "to": 191
+        }
+      ]
+    },
+    {
+      "id": 585,
+      "name": "placement",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        }
+      ]
+    },
+    {
+      "id": 586,
+      "name": "in",
+      "links": [
+        {
+          "rel": 294,
+          "to": 585
+        }
+      ]
+    },
+    {
+      "id": 587,
+      "name": "on",
+      "links": [
+        {
+          "rel": 294,
+          "to": 585
+        }
+      ]
+    },
+    {
+      "id": 588,
+      "name": "under",
+      "links": [
+        {
+          "rel": 294,
+          "to": 585
         }
       ]
     }

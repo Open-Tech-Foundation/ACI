@@ -28,6 +28,18 @@ All notable changes to this project are documented in this file.
   own. Adding to a count the world was never given stays unknown: not having
   been told a basket holds spoons is not being told it holds none.
 
+- **Placement — where a thing stands relative to another.** The world had
+  `position` (up/down, left/right, front/back, near/far) but nothing that put
+  a thing anywhere. It gains `inside`/`outside`, `top`/`bottom` and `side` as
+  positions in that same opposed-pair family, and `placement` as its own kind
+  of relation, with `in`, `on` and `under` under it. English says them with
+  prepositions, and the grammar gains `preposition subject` and `preposition
+  interrogative` as complements, so a thing can be told and asked where it
+  stands: `"an apple is on a table"`, then `"an apple is on what"` answers
+  `"table"`. Two relations stand in such a signal and the more specific one is
+  its joint — the claim is a placement, not what the apple is, and what a
+  thing is does not change by moving it.
+
 ### Fixed
 
 - **A thing is itself without standing in every relation to itself.**
