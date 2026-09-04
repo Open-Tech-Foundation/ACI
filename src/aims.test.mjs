@@ -18,7 +18,7 @@ const AIMS = [
     [["5 + 7"], "12"],
     [["10 > 2"], "Yes"],
     [["15 > 20?"], "No"],
-    [["a is 1", "b is 2", "add a and b"], "3"],
+    [["x is 1", "y is 2", "add x and y"], "three"],
     [["a box holds 10 coins", "take 3 coins from the box", "the box holds how many coins?"], "seven"],
     [["a tree holds 5 birds", "take 2 birds from the tree", "the tree holds how many birds?"], "three"],
   ]],
@@ -36,11 +36,12 @@ const AIMS = [
   ]],
   ["standing on a scale", [
     [["alice measures 2 metre", "bob measures 1 metre", "alice is bigger than bob?"], "Yes"],
-    [["tom is older than sam?"], "I don't know"],
+    [["tom is a person", "sam is a person", "tom is older than sam?"], "I don't know"],
   ]],
   ["what a word says", [
-    [["the food is good"], "good"],
-    [["ravi is a person", "ravi works in chennai", "where is ravi"], "chennai"],
+    [["i am sad"], "Sorry"],
+    [["i am happy"], "Good"],
+    [["ravi is in chennai", "where is ravi"], "chennai"],
     [["the boy kicked the ball", "who kicked the ball"], "boy"],
   ]],
   ["holding a conversation", [

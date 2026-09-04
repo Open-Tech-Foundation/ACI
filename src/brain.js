@@ -422,16 +422,27 @@ function calling(roots, world, mood) {
   if (!world || mood !== 'tell') return roots;
   const a = world.anchors || {};
   let next = world.nextId();
+  // A word stands in a claim where the signal has something to join it to
+  // something else. Only then is there anything to name.
+  const joined = roots.some((n) => world.isA(conceptOf(n), a.relation));
+  if (!joined) return roots;
   return roots.map((n, i) => {
     const thought = thoughtOf(n);
     if (!thought || thought.wordKnown || thought.concept != null) return n;
-    const rest = roots.slice(i + 1).filter((other) => conceptOf(other) != null);
-    if (rest.length < 2) return n;
+    const rest = roots.slice(i + 1).filter((other) => stands(other, world));
+    const before = roots.slice(0, i).filter((other) => stands(other, world));
+    if (rest.length < 2 && before.length < 2) return n;
+    // A name given a number holds the number: `p is 1` is not a thing called
+    // p, it is p standing for one. That is the conversation's to keep, not the
+    // world's, and it is left to whoever keeps the conversation.
+    if (rest.length >= 2 && conceptOf(rest[0]) === world.baseRelation && numberOf(rest[1], world) != null) {
+      return n;
+    }
     // Said to be of a kind, that is the kind it is; said anything else, there
     // is still a thing being spoken of, and a thing is what it is.
-    const of = conceptOf(rest[1]);
+    const of = rest.length >= 2 ? conceptOf(rest[1]) : null;
     const kind =
-      conceptOf(rest[0]) === world.baseRelation && of != null && world.isA(of, a.thing)
+      rest.length >= 2 && conceptOf(rest[0]) === world.baseRelation && of != null && world.isA(of, a.thing)
         ? of
         : a.thing;
     const id = next;
@@ -2540,12 +2551,15 @@ function givings(roots, world, mood) {
   if (mood !== 'tell') return out;
   roots.forEach((n, i) => {
     const thought = thoughtOf(n);
-    if (!thought || thought.marks !== 'named') return;
+    // A word the language marks as a name, or one nothing knows at all: both
+    // stand for whatever they were given.
+    if (!thought || (thought.marks !== 'named' && thought.wordKnown)) return;
     // Giving a name is done with the weakest joint there is: `x is 5` gives,
     // `x > 10` asks. So what stands next to the name must be that joint, and
     // what stands past it is what the name was given.
     const rest = roots.slice(i + 1).filter((other) => stands(other, world));
     if (rest.length < 2 || conceptOf(rest[0]) !== world.baseRelation) return;
+    if (thought.marks !== 'named' && numberOf(rest[1], world) == null) return;
     // A name holds what it was given, term or amount. No world names every
     // number, and a name given one the world has no word for holds it all the
     // same.
@@ -2627,6 +2641,9 @@ function learnedFrom(roots, world) {
     ...called.map((c) => ({
       id: c.state.id,
       name: c.state.name,
+      // A name is not translated: it is the same in every language, so it is
+      // held as what the thing is written as rather than looked for in one.
+      symbol: c.state.name,
       individual: true,
       links: [{ rel: world.baseRelation, to: c.state.of }],
     })),

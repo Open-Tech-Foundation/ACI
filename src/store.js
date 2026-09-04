@@ -151,6 +151,8 @@ export async function readWorld(db) {
 // one that is not is made. Nothing here decides whether to keep it — that was
 // settled before this was called.
 export async function write(db, learned) {
+  // Every term first, then every link. One signal may name two things and join
+  // them to each other, and a link cannot reach a term that is not there yet.
   for (const t of learned.terms || []) {
     const seen = await rows(db, sql`select id from term where id = ${t.id}`);
     if (seen.length === 0) {
@@ -158,6 +160,8 @@ export async function write(db, learned) {
                          values (${t.id}, ${t.name}, ${t.value ?? null}, ${t.symbol ?? null},
                                  ${t.individual ? 1 : 0}, ${t.disjoint ? 1 : 0}, 1)`);
     }
+  }
+  for (const t of learned.terms || []) {
     for (const l of t.links || []) await putLink(db, t.id, l, 1);
   }
 }
