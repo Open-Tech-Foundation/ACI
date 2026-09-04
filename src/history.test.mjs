@@ -85,3 +85,13 @@ test("a kind is counted by everything that is one of it", async () => {
   assertEquals(await says("how many shop"), "one", "the one that was made counts");
   await forget();
 });
+
+test("asked after several kinds at once, the count is all of them together", async () => {
+  await forget();
+  await brain("a family has two sisters and one brother");
+  assertEquals(await says("how many sisters"), "two");
+  assertEquals(await says("how many brothers"), "one");
+  assertEquals(await says("how many brothers and sisters"), "three");
+  assertEquals(await says("how many humans"), "three", "and a kind that covers both");
+  await forget();
+});

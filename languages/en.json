@@ -8050,6 +8050,23 @@
       "pos": "preposition",
       "meaning": "out",
       "concept": 581
+    },
+    "them": {
+      "pos": "pronoun",
+      "meaning": "them",
+      "marks": "spoken"
+    },
+    "people": {
+      "pos": "noun",
+      "meaning": "people",
+      "concept": 29,
+      "names": false
+    },
+    "store": {
+      "pos": "noun",
+      "meaning": "store",
+      "concept": 53,
+      "names": false
     }
   },
   "marking": "after",

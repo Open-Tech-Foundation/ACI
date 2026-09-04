@@ -795,13 +795,22 @@ function judge(roots, world, mood, langs, sent) {
     // thing last spoken of is whose — where it holds any of them. `a pond has
     // a thousand stones` then `how many stones?` is asking after the pond, and
     // not after how many kinds of stone the world holds.
-    if (things.length === 1 && sent && sent.spoken != null) {
-      const kind = conceptOf(things[0]);
+    if (things.length >= 1 && rel < 0 && sent && sent.spoken != null) {
       const of = world.oneOf(sent.spoken);
       const bearer = of == null ? sent.spoken : of;
-      const howMany = [a.hold, a.has]
-        .map((relation) => world.held(bearer, relation, kind))
-        .find((many) => many != null) ?? heldUnder(bearer, kind, world);
+      // Asked after several kinds at once, the count is all of them together:
+      // how many brothers and sisters is how many of each, added.
+      const each = things.map((n) => {
+        const kind = conceptOf(n);
+        return (
+          [a.hold, a.has].map((relation) => world.held(bearer, relation, kind)).find((many) => many != null) ??
+          heldUnder(bearer, kind, world)
+        );
+      });
+      const kind = conceptOf(things[0]);
+      const howMany = each.some((many) => many == null)
+        ? null
+        : each.reduce((sum, many) => sum + many, 0);
       if (howMany != null) {
         return [
           withBranch(root, [
