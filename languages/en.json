@@ -4088,18 +4088,21 @@
       "meaning": "weighs",
       "concept": 617,
       "person": "third",
-      "number": "singular"
+      "number": "singular",
+      "names": false
     },
     "weigh": {
       "pos": "verb",
       "meaning": "weigh",
-      "concept": 617
+      "concept": 617,
+      "names": false
     },
     "weighed": {
       "pos": "verb",
       "meaning": "weighed",
       "concept": 617,
-      "when": "past"
+      "when": "past",
+      "names": false
     },
     "gram": {
       "pos": "noun",

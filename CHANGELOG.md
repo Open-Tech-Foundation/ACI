@@ -6,6 +6,19 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A thing is in a state; a scale measures the state; a unit is what the
+  scale reads in.** The world said `hot is a temperature` — a thing being a
+  kind of what measures it, like a warmth being a kind of thermometer.
+  `hot`, `warm`, `cool`, `cold`, `heavy`, `light-weight`, `big`, `small`,
+  `long`, `short` and `tall` are **states** now, and the scale that reads each
+  of them says so: temperature measures hot, weight measures heavy, and a
+  degree measures a temperature.
+
+  **Where a state begins on its scale is not fixed.** Heavy and light are said
+  against whatever is being compared — a heavy apple is lighter than a light
+  stone — so a measured thing is not thereby named, and the brain does not
+  name it.
+
 - **Scale — what a property takes its values on.** A value is an amount of a
   unit, and a unit says which property it is of: `gram` and `kilogram` measure
   weight, `metre` size, `second` time, `degree` temperature. A thing is

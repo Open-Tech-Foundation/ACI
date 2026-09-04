@@ -75,3 +75,41 @@ test("counting is the case where the world can already say which is greater", as
   assertEquals((await fresh("2 less 3?")).expression.name, "affirm");
   await forget();
 });
+
+test("a thing is in a state; a scale measures the state; a unit is what it reads in", async () => {
+  await forget();
+  assertEquals((await brain("hot is a state?")).expression.name, "affirm");
+  assertEquals((await brain("heavy is a state?")).expression.name, "affirm");
+  assertEquals((await brain("temperature measures hot?")).expression.name, "affirm");
+  assertEquals((await brain("weight measures heavy?")).expression.name, "affirm");
+  assertEquals((await brain("a degree measures a temperature?")).expression.name, "affirm");
+  assertEquals((await brain("a gram measures a weight?")).expression.name, "affirm");
+  await forget();
+});
+
+test("a state is not a kind of what measures it", async () => {
+  await forget();
+  // Hot was filed as a kind of temperature, which is a thing being a kind of
+  // what reads it — like a warmth being a kind of thermometer.
+  assertEquals((await brain("hot is a temperature?")).expression.name, "unsure");
+  assertEquals((await brain("heavy is a weight?")).expression.name, "unsure");
+  await forget();
+});
+
+test("one scale does not measure another's states", async () => {
+  await forget();
+  assertEquals((await brain("temperature measures heavy?")).expression.name, "unsure");
+  assertEquals((await brain("weight measures hot?")).expression.name, "unsure");
+  await forget();
+});
+
+test("where a state begins on the scale is not fixed", async () => {
+  await forget();
+  // Heavy and light are said against whatever is being compared: a heavy apple
+  // is lighter than a light stone. So a measured thing is not thereby named,
+  // and the brain does not name it.
+  await brain("an apple weighs ten gram");
+  assertEquals((await brain("an apple is heavy?")).expression.name, "unsure");
+  assertEquals((await brain("an apple is lightweight?")).expression.name, "unsure");
+  await forget();
+});
