@@ -4077,6 +4077,11 @@
       "pos": "noun",
       "meaning": "universe",
       "concept": 616
+    },
+    "lightweight": {
+      "pos": "noun",
+      "meaning": "lightweight",
+      "concept": 201
     }
   },
   "marking": "after",

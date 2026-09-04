@@ -855,6 +855,53 @@ function reached(subject, relation, world) {
   return out;
 }
 
+// A scale is an order a property runs along, and its ways sit on it one before
+// another: light before heavy, cold before cool before warm before hot. Two
+// terms on one scale can be told apart with no number anywhere — being further
+// along is what more and less say, and counting steps is only the case where
+// the world can already say how many.
+//
+// A property with no scale refuses the comparison rather than guessing at one:
+// red is not more than blue, and nothing about colour says it could be.
+function alongScale(left, right, relation, world) {
+  const a = world.anchors || {};
+  if (a.order == null || left == null || right == null) return null;
+  const lefts = placesOn(conceptOf(left), world);
+  const rights = placesOn(conceptOf(right), world);
+
+  const found = [];
+  for (const l of lefts) {
+    for (const r of rights) {
+      if (l === r) continue;
+      // Reaching the other by the order is standing before it on the scale.
+      if (world.isA(r, l, a.order)) found.push(true);
+      else if (world.isA(l, r, a.order)) found.push(false);
+    }
+  }
+  // Nothing in common to stand on, or two scales that disagree — a thing may
+  // be heavier and smaller at once, and neither of those is the comparison.
+  if (found.length === 0 || found.some((x) => x !== found[0])) return null;
+
+  const further = found[0];
+  const holds = relation === a.more ? further : !further;
+  return node('standing', holds ? 'held' : 'against', [], {
+    subject: conceptOf(left),
+    relation,
+    object: conceptOf(right),
+  });
+}
+
+// Where a term stands on a scale. A way of a property is its own place; a
+// thing is placed by what it is — a stone said to be heavy stands where heavy
+// stands. A term on nothing ordered has no place at all.
+function placesOn(term, world) {
+  const a = world.anchors || {};
+  if (term == null) return [];
+  return upward(term, world).filter(
+    (x) => world.linked(x, a.order).length > 0 || world.members(x, a.order).length > 0,
+  );
+}
+
 // What the universe's forces do, everything physical has. Nobody has to say a
 // stone is heavy for the brain to know a stone has weight: a stone is a
 // physical thing, the universe has gravity, gravity acts on everything
@@ -928,7 +975,18 @@ function calculate(said, at, relation, world) {
   if (relation === a.more || relation === a.less) {
     const left = valueBeside(said, at, -1, world);
     const right = valueBeside(said, at, 1, world);
-    if (left == null || right == null) return null;
+    // Two numbers are the case where the world can already say which is
+    // greater. Where they are not numbers, they may still stand on one scale,
+    // and being further along it is the same thing said without counting.
+    if (left == null || right == null) {
+      const named = (n) => conceptOf(n) != null;
+      return alongScale(
+        nearest(said, at, -1, named),
+        nearest(said, at, 1, named),
+        relation,
+        world,
+      );
+    }
     const holds = relation === a.more ? left > right : left < right;
     // The terms compared, not the numbers they name: a standing joins terms
     // wherever it comes from, and what is said back is said in words.

@@ -6,6 +6,31 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Scale — an order a property runs along.** A property's named ways stop
+  being unrelated kinds of it and become places on one order: light before
+  heavy, cold before cool before warm before hot, small before big, short
+  before long. The world says the order with the same `order` relation it
+  already used to say which arithmetic binds first.
+
+  `more` and `less` stop being arithmetic. They are the brain's way of standing
+  two terms on one scale and finding one further along — and **two numbers are
+  only the case where the world can already say which is greater**. So
+  `"hot more cold?"` is *Yes* with no number anywhere, and `"3 more 2?"` still
+  answers as it did.
+
+  A thing is placed on a scale by what it is: told a stone is heavy and an
+  apple lightweight, `"a stone more an apple?"` is *Yes*. Told nothing, it has
+  no place, and the brain says so.
+
+  A property with **no** scale refuses the comparison rather than guessing —
+  `"red more blue?"` is *I don't know*, and nothing about colour says it could
+  be otherwise. So is a comparison across two scales: a thing may be heavier
+  and smaller at once, and neither of those is the comparison.
+
+  `none`, `few`, `many`, `all` are ordered too, but they are kinds of quantity
+  — what a signal says *of* a thing rather than a thing it speaks about — so
+  the order is there with no way yet to ask after it.
+
 - **The universe, above existence.** The world had no top: `existence` was the
   root and the four ways of being sat under it. It now sits inside a
   `universe`, and what the universe has besides is **force**. A force is no
@@ -152,6 +177,9 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A comparison was taken in as a fact.** Told `"hot more cold"`, the brain
+  wrote down a bare link from hot to cold, having no way to work the
+  comparison out. It works it out now and takes nothing in.
 - **`"an apple has three weight"` was taken in as a fact — two of them.** A
   number beside a thing says how many of it there are, and `quantityOf` will
   not count a property, so `three` never attached to `weight`. Left loose, it
