@@ -207,7 +207,7 @@ function langNameOrNull(matches) {
 // think — reason over the understood meaning using the language's data.
 // ---------------------------------------------------------------------------
 function think(roots, langs, at, world) {
-  return roots.map((n) => {
+  const thought = roots.map((n) => {
     if (!n.state.exists) return withBranch(n);
     const langNode = findBranch(n, 'language');
     if (!langNode || !langNode.state.matches || langNode.state.matches.length === 0) {
@@ -230,7 +230,7 @@ function think(roots, langs, at, world) {
         : read && world
           ? world.termFor(value)
           : null,
-      value,
+      value: word && word.marks === 'named' ? givenValue(word, at) : value,
       marks: word ? word.marks : null,
       negates: word ? word.negates : false,
       role: word ? word.role : null,
@@ -245,6 +245,52 @@ function think(roots, langs, at, world) {
     const state = ways.length > 1 ? { thought: ways[0], ways } : { thought: ways[0] };
     return withBranch(n, [...n.branch, node('thought', 'understood', [], state)]);
   });
+  return reshaped(thought, world);
+}
+
+// What one word came to may not be what the words come to together. Having
+// thought each on its own, the brain looks at them side by side and takes the
+// ones that are really one thing as one: a sign for taking away, standing
+// where there is nothing to take from, is not an operation but part of the
+// number after it — `-500` is five hundred below nothing.
+function reshaped(roots, world) {
+  if (!world) return roots;
+  const a = world.anchors || {};
+  const amount = (n) => (n ? numberOf(n, world) : null);
+  const out = [];
+  for (let i = 0; i < roots.length; i += 1) {
+    const here = roots[i];
+    const next = roots[i + 1];
+    const before = out[out.length - 1];
+    // Only a sign may be written against a number. A word for taking away
+    // stands before what it takes and is not part of it: `subtract one apple`
+    // takes one, and does not name minus one. The language says which of its
+    // words are the name of a thing and which are another way to write it.
+    const sign = thoughtOf(here);
+    const written = sign != null && sign.names === false;
+    const takesAway = a.minus != null && conceptOf(here) === a.minus && written;
+    if (takesAway && next && amount(next) != null && amount(before) == null) {
+      out.push(below(here, next, world));
+      i += 1;
+      continue;
+    }
+    out.push(here);
+  }
+  return out;
+}
+
+// One word standing for how far below nothing a number is.
+function below(sign, number, world) {
+  const value = -numberOf(number, world);
+  const thought = thoughtOf(number) || {};
+  const said = `${sign.state.identity}${number.state.identity}`;
+  const rebuilt = { ...thought, value, concept: world.termFor(value), meaning: said };
+  return withBranch(
+    Object.assign({}, number, { name: quote(said), state: { ...number.state, identity: said } }),
+    (number.branch || []).map((b) =>
+      b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: rebuilt }) : b,
+    ),
+  );
 }
 
 // A pointer means something different every time it is said, so no world can
@@ -258,8 +304,17 @@ function pointedAt(word, at) {
   if (word.marks === 'spoken') return (at && at.spoken) ?? null;
   // A word given a name in this conversation stands for whatever it was given.
   // Which word was given what is the circumstance's, the same as the rest.
-  if (word.marks === 'named') return (at && at.names && at.names[word.text]) ?? null;
+  if (word.marks === 'named') return given(word, at).of ?? null;
   return null;
+}
+
+function given(word, at) {
+  return (at && at.names && at.names[word.text]) || {};
+}
+
+function givenValue(word, at) {
+  const held = given(word, at);
+  return held.value ?? null;
 }
 
 // ---------------------------------------------------------------------------
@@ -2175,8 +2230,16 @@ export function brainFrom(input, knowledge, circumstance) {
 // same conversation.
 function namedIn(roots, at) {
   const given = { ...at.names };
-  for (const { name, of } of givings(roots, at.world, at.mood)) given[name] = of;
+  for (const { name, of, value } of givings(roots, at.world, at.mood)) {
+    given[name] = { of, value };
+  }
   return given;
+}
+
+// Whether a word stands for anything at all — a term, or an amount the world
+// never named.
+function stands(n, world) {
+  return conceptOf(n) != null || numberOf(n, world) != null;
 }
 
 // Each name this signal gave, and what it was given. The word joining them is
@@ -2191,9 +2254,16 @@ function givings(roots, world, mood) {
     // Giving a name is done with the weakest joint there is: `x is 5` gives,
     // `x > 10` asks. So what stands next to the name must be that joint, and
     // what stands past it is what the name was given.
-    const after = roots.slice(i + 1).filter((other) => conceptOf(other) != null);
-    if (after.length < 2 || conceptOf(after[0]) !== world.baseRelation) return;
-    out.push({ name: n.state.identity, of: conceptOf(after[1]) });
+    const rest = roots.slice(i + 1).filter((other) => stands(other, world));
+    if (rest.length < 2 || conceptOf(rest[0]) !== world.baseRelation) return;
+    // A name holds what it was given, term or amount. No world names every
+    // number, and a name given one the world has no word for holds it all the
+    // same.
+    out.push({
+      name: n.state.identity,
+      of: conceptOf(rest[1]),
+      value: numberOf(rest[1], world),
+    });
   });
   return out;
 }

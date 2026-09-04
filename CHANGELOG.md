@@ -6,6 +6,20 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **`think` reads the words side by side, not only one at a time.** Having
+  thought each word on its own, it looks at them together and takes as one the
+  ones that are really one thing, reshaping the tree before anything else sees
+  it. The first of these: a sign written against a number is part of the
+  number — `-500` is five hundred below nothing, and `-500 + 700` is 200.
+
+  Only a **sign** may be written that way. A word for taking away stands
+  before what it takes and is not part of it, so `"subtract one nail from it"`
+  still takes one. Which of its words are the name of a thing and which are
+  another way to write it is the language's to say, and it already said so.
+- **A name may be given an amount the world never named.** No term names five
+  hundred, and `"x is 500"` holds it all the same — a name keeps what it was
+  given, term or amount.
+
 - **Instruction following.** A condition put on something to *do* is an
   instruction, not a question. Where the brain cannot reach the condition yet,
   it does not shrug — it agrees to follow, and says so.
