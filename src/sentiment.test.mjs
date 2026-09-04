@@ -41,7 +41,7 @@ test("with nobody to hold it, an opinion is not knowledge", async () => {
 
 test("a claim the world can settle is still the world's", async () => {
   const r = await brain("a spoon is a tool", sender);
-  assert(branchOf(r, "truth") !== null, "judged, not held");
+  assert(branchOf(r, "standing") !== null, "judged, not held");
   assertEquals(branchOf(r, "event"), null);
 });
 

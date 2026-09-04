@@ -6,6 +6,27 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A signal offers facts, and the brain has many already.** A claim was read
+  as a truth to be checked; it is now read as one or more facts offered, laid
+  against the facts the brain holds. `truth` becomes `standing`, and its three
+  names stop being a boolean with a third case bolted on: `held` (already
+  among what the brain holds), `against` (something it holds stands against
+  it), `absent` (nothing it holds bears on it). Arithmetic reaches the same
+  two standings by working them out rather than looking them up.
+- **Facts offered together are one offering.** `"a sparrow and a river are
+  animals"` offers two facts, and the brain answers the thing it was handed:
+  finding something standing against either, it will not take the offering —
+  and takes no part of it, since no part of it was offered on its own. It
+  says `"No. ❌"`, not `"I know. No. ❌"`. Each fact is still laid against the
+  world on its own and that work is kept under the standing. Joined clauses
+  are two offerings, not one, and are still answered one apiece.
+- **One thing spoken of is one thing, however many facts are offered about
+  it.** `"a cupboard has three cup and two plate"` used to make two cupboards,
+  one holding cups and one holding plates: the bearer of a state was made once
+  per fact. It is now made once for the thing that was spoken of, and every
+  fact taken in is handed back — `learnedFrom` reads all of them, not the
+  first.
+
 - **Togetherness — several things spoken of at once.** `and` joins two
   subjects (`"a cat and a dog are animals"`) or two whole clauses (`"a cat is
   an animal and a dog is an animal"`), and both are read as several signals

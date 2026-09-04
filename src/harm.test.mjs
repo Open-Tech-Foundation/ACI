@@ -97,6 +97,6 @@ const { brain } = openBrain("sqlite::memory:");
 
 test("a claim about an action is a claim, not the action happening", async () => {
   const r = await brain("catch is work");
-  assert((r.roots[0].branch || []).some((b) => b.kind === "truth"), "it was judged");
+  assert((r.roots[0].branch || []).some((b) => b.kind === "standing"), "it was judged");
   assert(!(r.roots[0].branch || []).some((b) => b.kind === "event"), "nothing happened");
 });

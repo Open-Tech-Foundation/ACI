@@ -14,16 +14,25 @@ function all(root, k) {
   return found;
 }
 
-test("a claim made of several things is checked once per thing", async () => {
-  const r = await brain("a cat and a dog are animals");
-  const truths = all(r.roots[0], "truth");
-  assertEquals(truths.length, 2);
-  assertEquals(truths.map((t) => t.name), ["true", "true"]);
+test("things joined offer several facts, laid against what the brain holds", async () => {
+  const r = await brain("a sparrow and a snake are animals");
+  const whole = all(r.roots[0], "standing")[0];
+  assertEquals(whole.branch.map((n) => n.name), ["held", "held"], "each was laid against");
+  assertEquals(whole.name, "held", "and the offering came to one standing");
 });
 
-test("each member of a togetherness gets its own verdict said in full", async () => {
-  const r = await brain("a cat and a stone are animals");
-  assertEquals(r.expression.state.says, "I know. No. ❌");
+test("what is offered as one thing is answered as one thing", async () => {
+  const r = await brain("a sparrow and a river are animals");
+  const whole = all(r.roots[0], "standing")[0];
+  assertEquals(whole.branch.map((n) => n.name), ["held", "against"]);
+  assertEquals(whole.name, "against", "one standing against it stands against the offering");
+  assertEquals(r.expression.state.says, "No. ❌");
+});
+
+test("the offering is about all of them and about no one of them", async () => {
+  const whole = all((await brain("a sparrow and a snake are animals")).roots[0], "standing")[0];
+  assertEquals(whole.state.subject, null);
+  assertEquals(whole.state.object, null);
 });
 
 test("a question asked of several things answers every one of them", async () => {
@@ -56,23 +65,31 @@ test("every fact a togetherness taught is handed back, not only the first", asyn
   await forget();
 });
 
-test("a togetherness learns the half it can and refuses the half it cannot", async () => {
+test("an offering it will not take, it takes no part of", async () => {
   await forget();
   const r = await brain("a story and a cat are art");
-  assertEquals(r.learned.terms.map((t) => t.name), ["story"]);
   assert(all(r.roots[0], "refuse").some((n) => n.name === "contradiction"));
+  assertEquals(r.learned, null, "no part of it was offered on its own");
+  assertEquals((await brain("a story is art?")).expression.name, "unsure");
   await forget();
 });
 
-test("joined clauses are judged one at a time and said back together", async () => {
-  const r = await brain("a cat is an animal and a stone is an animal");
-  assertEquals(all(r.roots[0], "truth").map((t) => t.name), ["true", "false"]);
+test("what was offered on its own is taken on its own", async () => {
+  await forget();
+  await brain("a story is art");
+  assertEquals((await brain("a story is art?")).expression.name, "affirm");
+  await forget();
+});
+
+test("joined clauses are two offerings, not one — each answered on its own", async () => {
+  const r = await brain("a sparrow is an animal and a river is an animal");
+  assertEquals(all(r.roots[0], "standing").map((t) => t.name), ["held", "against"]);
   assertEquals(r.expression.state.says, "I know. No. ❌");
 });
 
 test("clauses join as many deep as they are written", async () => {
-  const r = await brain("a cat is an animal and a dog is an animal and a cow is an animal");
-  assertEquals(all(r.roots[0], "truth").length, 3);
+  const r = await brain("a sparrow is an animal and a snake is an animal and a cow is an animal");
+  assertEquals(all(r.roots[0], "standing").length, 3);
 });
 
 test("every clause that taught something is handed back", async () => {
@@ -82,26 +99,30 @@ test("every clause that taught something is handed back", async () => {
   await forget();
 });
 
-test("a signal speaking of one thing carries no mark telling members apart", async () => {
-  const r = await brain("a cat is an animal");
-  assertEquals(all(r.roots[0], "truth")[0].state.among, undefined);
+test("one fact offered stands on its own, with nothing held underneath it", async () => {
+  const r = await brain("a sparrow is an animal");
+  const whole = all(r.roots[0], "standing")[0];
+  assertEquals(whole.branch.length, 0);
+  assertEquals(whole.state.subject != null, true, "and it says what it is about");
 });
 
-test("a thing named twice is judged twice — the signal said it twice", async () => {
+test("a thing named twice offers the fact twice, and it stands the same", async () => {
   const r = await brain("a sparrow and a sparrow are animals");
-  assertEquals(all(r.roots[0], "truth").length, 2);
+  assertEquals(all(r.roots[0], "standing")[0].branch.length, 2);
   assertEquals(r.expression.state.says, "I know.");
 });
 
-test("the object side joins too, and the claim is checked against each", async () => {
+test("the object side joins too, and offers a fact for each", async () => {
   const r = await brain("a sparrow is a plant and a bird");
-  assertEquals(all(r.roots[0], "truth").map((t) => t.name), ["false", "true"]);
-  assertEquals(r.expression.state.says, "No. ❌ I know.");
+  const whole = all(r.roots[0], "standing")[0];
+  assertEquals(whole.branch.map((n) => n.name), ["against", "held"]);
+  assertEquals(r.expression.state.says, "No. ❌");
 });
 
-test("joined on both sides, every pairing is a claim of its own", async () => {
-  const r = await brain("a sparrow and a snake are animals and birds");
-  assertEquals(all(r.roots[0], "truth").map((t) => t.name), ["true", "true", "true", "false"]);
+test("joined on both sides, as many facts are offered as the sides pair into", async () => {
+  const whole = all((await brain("a sparrow and a snake are animals and birds")).roots[0], "standing")[0];
+  assertEquals(whole.branch.map((n) => n.name), ["held", "held", "held", "against"]);
+  assertEquals(whole.name, "against");
 });
 
 test("what an object togetherness taught is one thing learned, not two", async () => {
@@ -131,9 +152,10 @@ test("a question laid over a join reaches the join underneath it", async () => {
   assertEquals(r.expression.state.says, "9, 14");
 });
 
-test("a denial reaches every member of a togetherness", async () => {
-  const r = await brain("a cat and a dog are not animals");
-  assertEquals(all(r.roots[0], "truth").map((t) => t.name), ["false", "false"]);
+test("a denial reaches every fact the offering holds", async () => {
+  const r = await brain("a sparrow and a snake are not animals");
+  const whole = all(r.roots[0], "standing")[0];
+  assertEquals(whole.branch.map((n) => n.name), ["against", "against"]);
   assertEquals(r.expression.state.says, "No. ❌");
 });
 

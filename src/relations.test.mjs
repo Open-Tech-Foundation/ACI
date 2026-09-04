@@ -47,25 +47,25 @@ const world = knowledge.world;
 
 const truth = (q) => {
   const r = brainFrom(q, knowledge);
-  return (r.roots[0].branch || []).find((b) => b.kind === "truth");
+  return (r.roots[0].branch || []).find((b) => b.kind === "standing");
 };
 
 test("a claim is checked against the relation the signal named", () => {
-  assertEquals(truth("wing parts bird").name, "true");
+  assertEquals(truth("wing parts bird").name, "held");
   assertEquals(truth("wing parts bird").state.relation, PART);
 });
 
 test("the same pair does not hold under a different relation", () => {
-  assertEquals(truth("wing is bird").name, "unknown", "nothing says it cannot be");
+  assertEquals(truth("wing is bird").name, "absent", "nothing says it cannot be");
   assertEquals(truth("wing is bird").state.relation, IS);
 });
 
 test("a relation holds only where the data links it", () => {
-  assertEquals(truth("stone parts bird").name, "unknown");
+  assertEquals(truth("stone parts bird").name, "absent");
 });
 
 test("each relation runs one way", () => {
-  assertEquals(truth("bird parts wing").name, "unknown", "not backwards, and not denied");
+  assertEquals(truth("bird parts wing").name, "absent", "not backwards, and not denied");
 });
 
 test("a term reached by one relation is not reached by another", () => {

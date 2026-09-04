@@ -352,9 +352,9 @@ test("which symbols are vowels comes from the data", async () => {
 
 test("the brain checks a claim against the world and denies it", async () => {
   const r = await brain("the apple is a tree?");
-  const truth = kind(r.roots[0], "truth");
+  const truth = kind(r.roots[0], "standing");
   assert(truth !== null, "a signal naming a relation makes a claim");
-  assertEquals(truth.name, "false");
+  assertEquals(truth.name, "against");
   assertEquals(truth.state, { subject: 79, relation: 294, object: 33, negated: false });
   assertEquals(r.expression.name, "deny");
   assertEquals(r.expression.name, "deny");
@@ -362,7 +362,7 @@ test("the brain checks a claim against the world and denies it", async () => {
 
 test("a claim the world bears out is affirmed when asked", async () => {
   const r = await brain("a cat is a cat?");
-  assertEquals(kind(r.roots[0], "truth").name, "true");
+  assertEquals(kind(r.roots[0], "standing").name, "held");
   assertEquals(r.expression.name, "affirm");
   assertEquals(r.expression.name, "affirm");
 });
@@ -376,7 +376,7 @@ test("the word is names the world's own is relation", async () => {
 
 test("a signal that names no relation makes no claim", async () => {
   const r = await brain("hi hi");
-  assertEquals(kind(r.roots[0], "truth"), null);
+  assertEquals(kind(r.roots[0], "standing"), null);
 });
 
 test("a claim about an ancestor holds", async () => {
@@ -399,13 +399,13 @@ test("the is relation runs one way only", async () => {
 
 test("a claim resolves across the whole chain, however long", async () => {
   const r = await brain("an apple is a thing?");
-  assertEquals(kind(r.roots[0], "truth").name, "true");
-  assertEquals(kind(r.roots[0], "truth").state, { subject: 79, relation: 294, object: 2, negated: false });
+  assertEquals(kind(r.roots[0], "standing").name, "held");
+  assertEquals(kind(r.roots[0], "standing").state, { subject: 79, relation: 294, object: 2, negated: false });
 });
 
 test("a numeral can stand as the subject of a claim", async () => {
   const r = await brain("three is a number?");
-  assertEquals(kind(r.roots[0], "truth").state, { subject: 116, relation: 294, object: 100, negated: false });
+  assertEquals(kind(r.roots[0], "standing").state, { subject: 116, relation: 294, object: 100, negated: false });
   assertEquals(r.expression.name, "affirm");
 });
 
@@ -432,8 +432,8 @@ test("being alive and having a mind are separate axes", async () => {
 
 test("a claim can be made over the has relation, not only is", async () => {
   const r = await brain("you have a mind?");
-  const truth = kind(r.roots[0], "truth");
-  assertEquals(truth.name, "true");
+  const truth = kind(r.roots[0], "standing");
+  assertEquals(truth.name, "held");
   assertEquals(truth.state, { subject: 296, relation: 295, object: 230, negated: false });
   assertEquals(r.expression.name, "affirm");
 });
@@ -527,13 +527,13 @@ test("the same signal points elsewhere when it came from elsewhere", async () =>
 
 test("told nothing about where a signal came from, the brain does not guess", async () => {
   const r = await brain("i am a machine?");
-  assertEquals(kind(r.roots[0], "truth"), null, "there was nothing to make a claim about");
+  assertEquals(kind(r.roots[0], "standing"), null, "there was nothing to make a claim about");
   assertEquals(r.expression.state.says, "I don't understand.");
 });
 
 test("the signal arrived here, so what it points to is the self", async () => {
   const r = await brain("you are a machine?", { from: 45 });
-  assertEquals(kind(r.roots[0], "truth").state.subject, 296);
+  assertEquals(kind(r.roots[0], "standing").state.subject, 296);
   assertEquals(r.expression.name, "affirm");
 });
 
@@ -574,7 +574,7 @@ test("a more specific relation takes precedence over is", async () => {
 
 test("two terms and a relation is still a claim, not a question", async () => {
   const r = await brain("a cat is an animal?");
-  assert(kind(r.roots[0], "truth") !== null);
+  assert(kind(r.roots[0], "standing") !== null);
   assertEquals(kind(r.roots[0], "answer"), null);
 });
 
@@ -593,7 +593,7 @@ test("failing to find a path is not proof of the opposite", async () => {
   // position and state are both properties, and nothing says a property may be
   // only one of them.
   const r = await brain("up is a fear?");
-  assertEquals(kind(r.roots[0], "truth").name, "unknown");
+  assertEquals(kind(r.roots[0], "standing").name, "absent");
   assertEquals(r.expression.name, "unsure");
   assertEquals(r.expression.state.says, "I don't know.");
 });
@@ -601,7 +601,7 @@ test("failing to find a path is not proof of the opposite", async () => {
 test("terms that exclude each other make a claim false, not unknown", async () => {
   for (const q of ["a cat is a number?", "two is an animal?", "an apple is an organism?"]) {
     const r = await brain(q);
-    assertEquals(kind(r.roots[0], "truth").name, "false", q);
+    assertEquals(kind(r.roots[0], "standing").name, "against", q);
     assertEquals(r.expression.name, "deny", q);
   }
 });
@@ -609,13 +609,13 @@ test("terms that exclude each other make a claim false, not unknown", async () =
 test("exclusion is read off the kinds, however far apart they sit", async () => {
   // cat -> animal -> organism -> physical-thing, two -> number -> abstract-thing,
   // and physical-thing stands `different` to abstract-thing.
-  assertEquals(kind((await brain("a cat is two?")).roots[0], "truth").name, "false");
+  assertEquals(kind((await brain("a cat is two?")).roots[0], "standing").name, "against");
 });
 
 test("only a claim about kind can be excluded", async () => {
   // A peacock and a mind are different kinds, but having one is not being one.
   const r = await brain("a peacock has a mind?");
-  assertEquals(kind(r.roots[0], "truth").name, "unknown", "not denied by exclusion");
+  assertEquals(kind(r.roots[0], "standing").name, "absent", "not denied by exclusion");
 });
 
 test("a contradicted claim is refused rather than learned", async () => {
@@ -733,7 +733,7 @@ test("the brain compares two numbers", async () => {
 
 test("comparison is decided by value, never by a link in the world", async () => {
   const r = await brain("three more one?");
-  const truth = kind(r.roots[0], "truth");
+  const truth = kind(r.roots[0], "standing");
   // Decided by the values, and nothing in the world was walked. A truth node
   // joins terms wherever it came from, so terms are what it keeps.
   assertEquals(truth.state.subject, 116);
@@ -777,7 +777,7 @@ test("the copula joins a claim, it is never one of the things joined", async () 
 test("a hole is a word the language marks as one, not any word without a term", async () => {
   // `a` has no term behind it and is not a hole; `what` is.
   const claim = await brain("gravity is a force?");
-  assert(kind(claim.roots[0], "truth") !== null, "an article did not make it a question");
+  assert(kind(claim.roots[0], "standing") !== null, "an article did not make it a question");
   const asked = await brain("what is gravity?");
   assert(kind(asked.roots[0], "answer") !== null);
 });
@@ -823,5 +823,5 @@ test("a denied link joins nothing", async () => {
 
 test("which word denies is the language's", async () => {
   const r = await brain("up is not a fear?");
-  assertEquals(kind(r.roots[0], "truth").state.negated, true);
+  assertEquals(kind(r.roots[0], "standing").state.negated, true);
 });
