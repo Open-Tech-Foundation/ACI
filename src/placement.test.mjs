@@ -25,10 +25,40 @@ test("standing in a thing is a placement of its own", async () => {
   await forget();
 });
 
-test("one placement is not another the world was never told of", async () => {
+test("a placement the world says is a different one stands against this", async () => {
   await forget();
   await brain("an apple is on a table");
-  assertEquals((await brain("an apple is under a table?")).expression.name, "unsure");
+  assertEquals((await brain("an apple is under a table?")).expression.name, "deny",
+    "a thing on a table is not under it");
+  assertEquals((await brain("an apple is on a table?")).expression.name, "affirm");
+  await forget();
+});
+
+test("a placement nothing was said about either way stays unknown", async () => {
+  await forget();
+  await brain("an apple is on a table");
+  assertEquals((await brain("an apple is in a table?")).expression.name, "unsure",
+    "nothing says in and on are ways apart");
+  await forget();
+});
+
+test("one relation may be another the other way round", async () => {
+  await forget();
+  await brain("an apple is in a basket");
+  assertEquals((await brain("a basket holds an apple?")).expression.name, "affirm",
+    "being in a thing and its holding you are one fact");
+  await forget();
+  await brain("a basket holds an apple");
+  assertEquals((await brain("an apple is in a basket?")).expression.name, "affirm",
+    "and it is read from either end");
+  await forget();
+});
+
+test("the other end is said once and read both ways", async () => {
+  await forget();
+  // The world says `in converse hold` and nothing says `hold converse in`.
+  await brain("a basket holds an apple");
+  assertEquals((await brain("an apple is in a basket?")).expression.name, "affirm");
   await forget();
 });
 

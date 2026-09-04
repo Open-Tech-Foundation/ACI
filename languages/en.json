@@ -15,7 +15,7 @@
       "places": 10
     },
     "sign": {
-      "characters": "+ - = < > * / \u00d7 \u00f7 ^ %",
+      "characters": "+ - = < > * / × ÷ ^ %",
       "alone": true
     },
     "group": {
@@ -30,651 +30,3671 @@
     }
   },
   "words": {
-    "hi":    { "pos": "interjection", "meaning": "greeting",  "concept": 277 },
-    "hello": { "pos": "interjection", "meaning": "greeting",  "concept": 277 },
-    "a":     { "pos": "article",      "meaning": "indefinite article", "marks": "new" },
-    "an":    { "pos": "article",      "meaning": "indefinite article", "marks": "new" },
-    "the":   { "pos": "article",      "meaning": "definite article",   "marks": "known" },
-    "is":    { "pos": "verb",         "meaning": "to be",          "concept": 294, "person": "third", "number": "singular" },
-    "are":   { "pos": "verb",         "meaning": "to be (plural)", "concept": 294, "number": "plural" },
-    "am":    { "pos": "verb",         "meaning": "to be (speaker)","concept": 294, "person": "first", "number": "singular" },
-    "was":   { "pos": "verb",         "meaning": "to be (past)",   "concept": 294, "when": "past", "number": "singular" },
-    "were":  { "pos": "verb",         "meaning": "to be (past)",   "concept": 294, "when": "past", "number": "plural" },
-    "will":  { "pos": "verb",         "meaning": "to be (later)",  "concept": 294, "when": "future" },
-    "one":   { "pos": "numeral",      "meaning": "1",              "concept": 114 },
-    "two":   { "pos": "numeral",      "meaning": "2",              "concept": 115 },
-    "three": { "pos": "numeral",      "meaning": "3",              "concept": 116 },
-    "four":  { "pos": "numeral",      "meaning": "4",              "concept": 117 },
-    "five":  { "pos": "numeral",      "meaning": "5",              "concept": 118 },
-    "six":   { "pos": "numeral",      "meaning": "6",              "concept": 119 },
-    "seven": { "pos": "numeral",      "meaning": "7",              "concept": 120 },
-    "eight": { "pos": "numeral",      "meaning": "8",              "concept": 121 },
-    "nine":  { "pos": "numeral",      "meaning": "9",              "concept": 122 },
-    "ten":   { "pos": "numeral",      "meaning": "10",             "concept": 123 },
-    "zero":  { "pos": "numeral",      "meaning": "0",              "concept": 124 },
-    "eleven":     { "pos": "numeral",     "meaning": "11",            "concept": 541 },
-    "twelve":     { "pos": "numeral",     "meaning": "12",            "concept": 542 },
-    "thirteen":   { "pos": "numeral",     "meaning": "13",            "concept": 543 },
-    "fourteen":   { "pos": "numeral",     "meaning": "14",            "concept": 544 },
-    "fifteen":    { "pos": "numeral",     "meaning": "15",            "concept": 545 },
-    "sixteen":    { "pos": "numeral",     "meaning": "16",            "concept": 546 },
-    "seventeen":  { "pos": "numeral",     "meaning": "17",            "concept": 547 },
-    "eighteen":   { "pos": "numeral",     "meaning": "18",            "concept": 548 },
-    "nineteen":   { "pos": "numeral",     "meaning": "19",            "concept": 549 },
-    "twenty":     { "pos": "numeral",     "meaning": "20",            "concept": 550 },
-    "thirty":     { "pos": "numeral",     "meaning": "30",            "concept": 551 },
-    "forty":      { "pos": "numeral",     "meaning": "40",            "concept": 552 },
-    "fifty":      { "pos": "numeral",     "meaning": "50",            "concept": 553 },
-    "sixty":      { "pos": "numeral",     "meaning": "60",            "concept": 554 },
-    "seventy":    { "pos": "numeral",     "meaning": "70",            "concept": 555 },
-    "eighty":     { "pos": "numeral",     "meaning": "80",            "concept": 556 },
-    "ninety":     { "pos": "numeral",     "meaning": "90",            "concept": 557 },
-    "hundred":    { "pos": "numeral",     "meaning": "100",           "concept": 558 },
-    "cat":   { "pos": "noun",         "meaning": "feline animal",  "concept": 83 },
-    "dog":   { "pos": "noun",         "meaning": "canine animal",  "concept": 82 },
-    "apple": { "pos": "noun",         "meaning": "fruit",          "concept": 79 },
-    "bird":  { "pos": "noun",         "meaning": "flying animal",  "concept": 85 },
-    "tree":  { "pos": "noun",         "meaning": "plant",          "concept": 33 },
-
-    "animal":    { "pos": "noun", "meaning": "animal",         "concept": 24 },
-    "plant":     { "pos": "noun", "meaning": "plant",          "concept": 25 },
-    "organism":  { "pos": "noun", "meaning": "organism",       "concept": 10 },
-    "human":     { "pos": "noun", "meaning": "human",          "concept": 26 },
-    "person":    { "pos": "noun", "meaning": "person",         "concept": 29 },
-    "food":      { "pos": "noun", "meaning": "food",           "concept": 23 },
-    "fruit":     { "pos": "noun", "meaning": "fruit",          "concept": 73 },
-    "substance": { "pos": "noun", "meaning": "substance",      "concept": 9 },
-    "object":    { "pos": "noun", "meaning": "object",         "concept": 8 },
-    "thing":     { "pos": "noun", "meaning": "thing",          "concept": 2 },
-    "number":    { "pos": "noun", "meaning": "number",         "concept": 100 },
-    "action":    { "pos": "noun", "meaning": "action",         "concept": 5 },
-    "mind":      { "pos": "noun", "meaning": "mind",           "concept": 230 },
-
-    "mammal":     { "pos": "noun", "meaning": "mammal",         "concept": 297 },
-    "tiger":      { "pos": "noun", "meaning": "tiger",          "concept": 298 },
-    "elephant":   { "pos": "noun", "meaning": "elephant",       "concept": 299 },
-    "hyena":      { "pos": "noun", "meaning": "hyena",          "concept": 300 },
-    "pear":       { "pos": "noun", "meaning": "pear",           "concept": 301 },
-    "orange":     { "pos": "noun", "meaning": "orange",         "concept": 302 },
-    "mango":      { "pos": "noun", "meaning": "mango",          "concept": 80 },
-    "banana":     { "pos": "noun", "meaning": "banana",         "concept": 81 },
-    "cow":        { "pos": "noun", "meaning": "cow",            "concept": 84 },
-    "snake":      { "pos": "noun", "meaning": "snake",          "concept": 86 },
-    "sparrow":    { "pos": "noun", "meaning": "sparrow",        "concept": 87 },
-    "fish":       { "pos": "noun", "meaning": "fish",           "concept": 28 },
-    "insect":     { "pos": "noun", "meaning": "insect",         "concept": 27 },
-    "flower":     { "pos": "noun", "meaning": "flower",         "concept": 34 },
-    "grass":      { "pos": "noun", "meaning": "grass",          "concept": 35 },
-    "knife":      { "pos": "noun", "meaning": "knife",          "concept": 41 },
-    "hammer":     { "pos": "noun", "meaning": "hammer",         "concept": 42 },
-    "pen":        { "pos": "noun", "meaning": "pen",            "concept": 43 },
-    "phone":      { "pos": "noun", "meaning": "phone",          "concept": 44 },
-    "computer":   { "pos": "noun", "meaning": "computer",       "concept": 45 },
-    "machine":    { "pos": "noun", "meaning": "machine",        "concept": 560 },
-    "memory":     { "pos": "noun", "meaning": "memory",         "concept": 561 },
-    "book":       { "pos": "noun", "meaning": "book",           "concept": 18 },
-    "moon":       { "pos": "noun", "meaning": "moon",           "concept": 289 },
-    "star":       { "pos": "noun", "meaning": "star",           "concept": 290 },
-    "cloud":      { "pos": "noun", "meaning": "cloud",          "concept": 291 },
-    "tool":       { "pos": "noun", "meaning": "tool",           "concept": 13 },
-    "vehicle":    { "pos": "noun", "meaning": "vehicle",        "concept": 14 },
-    "building":   { "pos": "noun", "meaning": "building",       "concept": 15 },
-    "container":  { "pos": "noun", "meaning": "container",      "concept": 19 },
-    "basket":     { "pos": "noun", "meaning": "basket",         "concept": 307 },
-
-    "has":       { "pos": "verb", "meaning": "has",            "concept": 295 },
-    "have":      { "pos": "verb", "meaning": "have",           "concept": 295 },
-    "know":      { "pos": "verb", "meaning": "know",           "concept": 285 },
-    "plus":      { "pos": "verb", "meaning": "plus",           "concept": 303 },
-    "+":         { "pos": "verb", "meaning": "plus",           "concept": 303, "names": false },
-    "-":         { "pos": "verb", "meaning": "minus",          "concept": 304, "names": false },
-    "times":     { "pos": "verb", "meaning": "times",          "concept": 568 },
-    "*":         { "pos": "verb", "meaning": "times",          "concept": 568, "names": false },
-    "\u00d7":         { "pos": "verb", "meaning": "times",          "concept": 568, "names": false },
-    "divide":    { "pos": "verb", "meaning": "divide",         "concept": 569 },
-    "equals":    { "pos": "verb", "meaning": "equals",         "concept": 250 },
-    "=":         { "pos": "verb", "meaning": "equals",         "concept": 250, "names": false },
-    "add":       { "pos": "function", "meaning": "plus",           "concept": 303 },
-    "subtract":  { "pos": "function", "meaning": "minus",          "concept": 304 },
-    "multiply":  { "pos": "function", "meaning": "times",          "concept": 568 },
-    "with":      { "pos": "preposition", "meaning": "with" },
-    "by":        { "pos": "preposition", "meaning": "by" },
-    "into":      { "pos": "preposition", "meaning": "into", "role": "destination" },
-    "in":        { "pos": "preposition", "meaning": "in",    "concept": 586 },
-    "on":        { "pos": "preposition", "meaning": "on",    "concept": 587 },
-    "under":     { "pos": "preposition", "meaning": "under", "concept": 588 },
-    "placement": { "pos": "noun", "meaning": "placement", "concept": 585 },
-    "inside":    { "pos": "noun", "meaning": "inside",  "concept": 580 },
-    "outside":   { "pos": "noun", "meaning": "outside", "concept": 581 },
-    "top":       { "pos": "noun", "meaning": "top",     "concept": 582 },
-    "bottom":    { "pos": "noun", "meaning": "bottom",  "concept": 583 },
-    "side":      { "pos": "noun", "meaning": "side",    "concept": 584 },
-    "and":       { "pos": "conjunction", "meaning": "and" },
-    "hold":      { "pos": "verb", "meaning": "hold", "concept": 579 },
-    "holds":     { "pos": "verb", "meaning": "holds", "concept": 579, "person": "third", "number": "singular" },
-    "it":        { "pos": "pronoun", "meaning": "it", "marks": "spoken", "person": "third", "number": "singular" },
-    "power":     { "pos": "verb", "meaning": "to the power of", "concept": 570 },
-    "^":         { "pos": "verb", "meaning": "to the power of", "concept": 570, "names": false },
-    "remainder": { "pos": "verb", "meaning": "remainder of",    "concept": 571 },
-    "%":         { "pos": "verb", "meaning": "remainder of",    "concept": 571, "names": false },
-    "root":      { "pos": "function", "meaning": "square root of", "concept": 572 },
-    "log":       { "pos": "function", "meaning": "logarithm of",   "concept": 573 },
-    "ln":        { "pos": "function", "meaning": "natural logarithm of", "concept": 574 },
-    "sin":       { "pos": "function", "meaning": "sine of",         "concept": 575 },
-    "cos":       { "pos": "function", "meaning": "cosine of",       "concept": 576 },
-    "tan":       { "pos": "function", "meaning": "tangent of",      "concept": 577 },
-    "abs":       { "pos": "function", "meaning": "size of",         "concept": 578 },
-    "(":         { "pos": "open",  "meaning": "opens a group", "groups": "open" },
-    ")":         { "pos": "close", "meaning": "closes a group", "groups": "close" },
-    "/":         { "pos": "verb", "meaning": "divide",         "concept": 569, "names": false },
-    "\u00f7":         { "pos": "verb", "meaning": "divide",         "concept": 569, "names": false },
-    "minus":     { "pos": "verb", "meaning": "minus",          "concept": 304 },
-    "more":      { "pos": "verb", "meaning": "more than",      "concept": 305 },
-    "less":      { "pos": "verb", "meaning": "less than",      "concept": 306 },
-    "take":      { "pos": "verb", "meaning": "take",           "concept": 283 },
-    "took":      { "pos": "verb", "meaning": "took",  "concept": 283, "when": "past" },
-    "get":       { "pos": "verb", "meaning": "get",   "concept": 589 },
-    "gets":      { "pos": "verb", "meaning": "gets",  "concept": 589, "person": "third", "number": "singular" },
-    "got":       { "pos": "verb", "meaning": "got",   "concept": 589, "when": "past" },
-    "gave":      { "pos": "verb", "meaning": "gave",  "concept": 282, "when": "past" },
-    "had":       { "pos": "verb", "meaning": "had",   "concept": 295, "when": "past" },
-    "held":      { "pos": "verb", "meaning": "held",  "concept": 579, "when": "past" },
-    "knew":      { "pos": "verb", "meaning": "knew",  "concept": 285, "when": "past" },
-    "give":      { "pos": "verb", "meaning": "give",           "concept": 282 },
-    "from":      { "pos": "preposition", "meaning": "from", "role": "source" },
-    "to":        { "pos": "preposition", "meaning": "to",   "role": "destination" },
-    "name":      { "pos": "noun", "meaning": "name",           "concept": 138 },
-
-    "existence":    { "pos": "noun", "meaning": "existence",       "concept": 1 },
-    "property":     { "pos": "noun", "meaning": "property",        "concept": 3 },
-    "relation":     { "pos": "noun", "meaning": "relation",        "concept": 4 },
-    "place":        { "pos": "noun", "meaning": "place",           "concept": 11 },
-    "energy":       { "pos": "noun", "meaning": "energy",          "concept": 12 },
-    "body":         { "pos": "noun", "meaning": "body",            "concept": 16 },
-    "liquid":       { "pos": "noun", "meaning": "liquid",          "concept": 20 },
-    "gas":          { "pos": "noun", "meaning": "gas",             "concept": 21 },
-    "solid":        { "pos": "noun", "meaning": "solid",           "concept": 22 },
-    "man":          { "pos": "noun", "meaning": "man",             "concept": 30 },
-    "woman":        { "pos": "noun", "meaning": "woman",           "concept": 31 },
-    "child":        { "pos": "noun", "meaning": "child",           "concept": 32 },
-    "planet":       { "pos": "noun", "meaning": "planet",          "concept": 36 },
-    "land":         { "pos": "noun", "meaning": "land",            "concept": 37 },
-    "room":         { "pos": "noun", "meaning": "room",            "concept": 39 },
-    "sky":          { "pos": "noun", "meaning": "sky",             "concept": 40 },
-    "car":          { "pos": "noun", "meaning": "car",             "concept": 46 },
-    "bus":          { "pos": "noun", "meaning": "bus",             "concept": 47 },
-    "train":        { "pos": "noun", "meaning": "train",           "concept": 48 },
-    "boat":         { "pos": "noun", "meaning": "boat",            "concept": 49 },
-    "house":        { "pos": "noun", "meaning": "house",           "concept": 50 },
-    "school":       { "pos": "noun", "meaning": "school",          "concept": 51 },
-    "temple":       { "pos": "noun", "meaning": "temple",          "concept": 52 },
-    "shop":         { "pos": "noun", "meaning": "shop",            "concept": 53 },
-    "hand":         { "pos": "noun", "meaning": "hand",            "concept": 54 },
-    "head":         { "pos": "noun", "meaning": "head",            "concept": 55 },
-    "eye":          { "pos": "noun", "meaning": "eye",             "concept": 56 },
-    "ear":          { "pos": "noun", "meaning": "ear",             "concept": 57 },
-    "leg":          { "pos": "noun", "meaning": "leg",             "concept": 58 },
-    "heart":        { "pos": "noun", "meaning": "heart",           "concept": 59 },
-    "brain":        { "pos": "noun", "meaning": "brain",           "concept": 60 },
-    "skin":         { "pos": "noun", "meaning": "skin",            "concept": 61 },
-    "hair":         { "pos": "noun", "meaning": "hair",            "concept": 62 },
-    "water":        { "pos": "noun", "meaning": "water",           "concept": 63 },
-    "milk":         { "pos": "noun", "meaning": "milk",            "concept": 64 },
-    "oil":          { "pos": "noun", "meaning": "oil",             "concept": 65 },
-    "blood":        { "pos": "noun", "meaning": "blood",           "concept": 66 },
-    "air":          { "pos": "noun", "meaning": "air",             "concept": 67 },
-    "smoke":        { "pos": "noun", "meaning": "smoke",           "concept": 68 },
-    "stone":        { "pos": "noun", "meaning": "stone",           "concept": 69 },
-    "metal":        { "pos": "noun", "meaning": "metal",           "concept": 70 },
-    "wood":         { "pos": "noun", "meaning": "wood",            "concept": 71 },
-    "ice":          { "pos": "noun", "meaning": "ice",             "concept": 72 },
-    "rice":         { "pos": "noun", "meaning": "rice",            "concept": 74 },
-    "bread":        { "pos": "noun", "meaning": "bread",           "concept": 75 },
-    "meat":         { "pos": "noun", "meaning": "meat",            "concept": 76 },
-    "salt":         { "pos": "noun", "meaning": "salt",            "concept": 77 },
-    "sugar":        { "pos": "noun", "meaning": "sugar",           "concept": 78 },
-    "earth":        { "pos": "noun", "meaning": "earth",           "concept": 88 },
-    "mountain":     { "pos": "noun", "meaning": "mountain",        "concept": 89 },
-    "field":        { "pos": "noun", "meaning": "field",           "concept": 90 },
-    "road":         { "pos": "noun", "meaning": "road",            "concept": 91 },
-    "sea":          { "pos": "noun", "meaning": "sea",             "concept": 92 },
-    "river":        { "pos": "noun", "meaning": "river",           "concept": 93 },
-    "lake":         { "pos": "noun", "meaning": "lake",            "concept": 94 },
-    "light":        { "pos": "noun", "meaning": "light",           "concept": 95 },
-    "sound":        { "pos": "noun", "meaning": "sound",           "concept": 96 },
-    "heat":         { "pos": "noun", "meaning": "heat",            "concept": 97 },
-    "fire":         { "pos": "noun", "meaning": "fire",            "concept": 98 },
-    "idea":         { "pos": "noun", "meaning": "idea",            "concept": 99 },
-    "system":       { "pos": "noun", "meaning": "system",          "concept": 101 },
-    "sign":         { "pos": "noun", "meaning": "sign",            "concept": 102 },
-    "meaning":      { "pos": "noun", "meaning": "meaning",         "concept": 103 },
-    "truth":        { "pos": "noun", "meaning": "truth",           "concept": 104 },
-    "art":          { "pos": "noun", "meaning": "art",             "concept": 105 },
-    "law":          { "pos": "noun", "meaning": "law",             "concept": 106 },
-    "story":        { "pos": "noun", "meaning": "story",           "concept": 107 },
-    "question":     { "pos": "noun", "meaning": "question",        "concept": 108 },
-    "answer":       { "pos": "noun", "meaning": "answer",          "concept": 109 },
-    "music":        { "pos": "noun", "meaning": "music",           "concept": 110 },
-    "poem":         { "pos": "noun", "meaning": "poem",            "concept": 111 },
-    "picture":      { "pos": "noun", "meaning": "picture",         "concept": 112 },
-    "language":     { "pos": "noun", "meaning": "language",        "concept": 125 },
-    "alphabet":     { "pos": "noun", "meaning": "alphabet",        "concept": 126 },
-    "society":      { "pos": "noun", "meaning": "society",         "concept": 127 },
-    "family":       { "pos": "noun", "meaning": "family",          "concept": 128 },
-    "english":      { "pos": "noun", "meaning": "english",         "concept": 129 },
-    "tamil":        { "pos": "noun", "meaning": "tamil",           "concept": 130 },
-    "symbol":       { "pos": "noun", "meaning": "symbol",          "concept": 131 },
-    "word":         { "pos": "noun", "meaning": "word",            "concept": 132 },
-    "character":    { "pos": "noun", "meaning": "character",       "concept": 133 },
-    "digit":        { "pos": "noun", "meaning": "digit",           "concept": 134 },
-    "mark":         { "pos": "noun", "meaning": "mark",            "concept": 135 },
-    "yes":          { "pos": "noun", "meaning": "yes",             "concept": 139 },
-    "no":           { "pos": "noun", "meaning": "no",              "concept": 140 },
-    "letter":       { "pos": "noun", "meaning": "letter",          "concept": 141 },
-    "b":            { "pos": "noun", "meaning": "b",               "concept": 143 },
-    "c":            { "pos": "noun", "meaning": "c",               "concept": 144 },
-    "d":            { "pos": "noun", "meaning": "d",               "concept": 145 },
-    "e":            { "pos": "noun", "meaning": "e",               "concept": 146 },
-    "f":            { "pos": "noun", "meaning": "f",               "concept": 147 },
-    "g":            { "pos": "noun", "meaning": "g",               "concept": 148 },
-    "h":            { "pos": "noun", "meaning": "h",               "concept": 149 },
-    "j":            { "pos": "noun", "meaning": "j",               "concept": 151 },
-    "k":            { "pos": "noun", "meaning": "k",               "concept": 152 },
-    "l":            { "pos": "noun", "meaning": "l",               "concept": 153 },
-    "m":            { "pos": "noun", "meaning": "m",               "concept": 154 },
-    "n":            { "pos": "noun", "meaning": "n",               "concept": 155 },
-    "o":            { "pos": "noun", "meaning": "o",               "concept": 156 },
-    "p":            { "pos": "noun", "meaning": "p",               "concept": 157 },
-    "q":            { "pos": "noun", "meaning": "q",               "concept": 158 },
-    "r":            { "pos": "noun", "meaning": "r",               "concept": 159 },
-    "s":            { "pos": "noun", "meaning": "s",               "concept": 160 },
-    "t":            { "pos": "noun", "meaning": "t",               "concept": 161 },
-    "u":            { "pos": "noun", "meaning": "u",               "concept": 162 },
-    "v":            { "pos": "noun", "meaning": "v",               "concept": 163 },
-    "w":            { "pos": "noun", "meaning": "w",               "concept": 164 },
-    "x":            { "pos": "noun", "meaning": "x",               "concept": 165 },
-    "y":            { "pos": "noun", "meaning": "y",               "concept": 166 },
-    "z":            { "pos": "noun", "meaning": "z",               "concept": 167 },
-    "form":         { "pos": "noun", "meaning": "form",            "concept": 182 },
-    "size":         { "pos": "noun", "meaning": "size",            "concept": 183 },
-    "weight":       { "pos": "noun", "meaning": "weight",          "concept": 184 },
-    "colour":       { "pos": "noun", "meaning": "colour",          "concept": 185 },
-    "temperature":  { "pos": "noun", "meaning": "temperature",     "concept": 186 },
-    "time":         { "pos": "noun", "meaning": "time",            "concept": 187 },
-    "state":        { "pos": "noun", "meaning": "state",           "concept": 188 },
-    "quality":      { "pos": "noun", "meaning": "quality",         "concept": 189 },
-    "quantity":     { "pos": "noun", "meaning": "quantity",        "concept": 190 },
-    "position":     { "pos": "noun", "meaning": "position",        "concept": 191 },
-    "shape":        { "pos": "noun", "meaning": "shape",           "concept": 192 },
-    "pattern":      { "pos": "noun", "meaning": "pattern",         "concept": 193 },
-    "structure":    { "pos": "noun", "meaning": "structure",       "concept": 194 },
-    "big":          { "pos": "noun", "meaning": "big",             "concept": 195 },
-    "small":        { "pos": "noun", "meaning": "small",           "concept": 196 },
-    "long":         { "pos": "noun", "meaning": "long",            "concept": 197 },
-    "short":        { "pos": "noun", "meaning": "short",           "concept": 198 },
-    "tall":         { "pos": "noun", "meaning": "tall",            "concept": 199 },
-    "heavy":        { "pos": "noun", "meaning": "heavy",           "concept": 200 },
-    "red":          { "pos": "noun", "meaning": "red",             "concept": 202 },
-    "blue":         { "pos": "noun", "meaning": "blue",            "concept": 203 },
-    "green":        { "pos": "noun", "meaning": "green",           "concept": 204 },
-    "yellow":       { "pos": "noun", "meaning": "yellow",          "concept": 205 },
-    "black":        { "pos": "noun", "meaning": "black",           "concept": 206 },
-    "white":        { "pos": "noun", "meaning": "white",           "concept": 207 },
-    "hot":          { "pos": "noun", "meaning": "hot",             "concept": 208 },
-    "cold":         { "pos": "noun", "meaning": "cold",            "concept": 209 },
-    "warm":         { "pos": "noun", "meaning": "warm",            "concept": 210 },
-    "cool":         { "pos": "noun", "meaning": "cool",            "concept": 211 },
-    "period":       { "pos": "noun", "meaning": "period",          "concept": 212 },
-    "moment":       { "pos": "noun", "meaning": "moment",          "concept": 213 },
-    "age":          { "pos": "noun", "meaning": "age",             "concept": 214 },
-    "day":          { "pos": "noun", "meaning": "day",             "concept": 215 },
-    "night":        { "pos": "noun", "meaning": "night",           "concept": 216 },
-    "week":         { "pos": "noun", "meaning": "week",            "concept": 217 },
-    "month":        { "pos": "noun", "meaning": "month",           "concept": 218 },
-    "year":         { "pos": "noun", "meaning": "year",            "concept": 219 },
-    "hour":         { "pos": "noun", "meaning": "hour",            "concept": 220 },
-    "minute":       { "pos": "noun", "meaning": "minute",          "concept": 221 },
-    "second":       { "pos": "noun", "meaning": "second",          "concept": 222 },
-    "now":          { "pos": "noun", "meaning": "now",             "concept": 223 },
-    "past":         { "pos": "noun", "meaning": "past",            "concept": 565 },
-    "future":       { "pos": "noun", "meaning": "future",          "concept": 566 },
-    "then":         { "pos": "noun", "meaning": "then",            "concept": 224 },
-    "life":         { "pos": "noun", "meaning": "life",            "concept": 225 },
-    "death":        { "pos": "noun", "meaning": "death",           "concept": 226 },
-    "sleep":        { "pos": "noun", "meaning": "sleep",           "concept": 227 },
-    "health":       { "pos": "noun", "meaning": "health",          "concept": 228 },
-    "feeling":      { "pos": "noun", "meaning": "feeling",         "concept": 229 },
-    "love":         { "pos": "noun", "meaning": "love",            "concept": 231 },
-    "fear":         { "pos": "noun", "meaning": "fear",            "concept": 232 },
-    "anger":        { "pos": "noun", "meaning": "anger",           "concept": 233 },
-    "joy":          { "pos": "noun", "meaning": "joy",             "concept": 234 },
-    "sadness":      { "pos": "noun", "meaning": "sadness",         "concept": 235 },
-    "pain":         { "pos": "noun", "meaning": "pain",            "concept": 236 },
-    "comfort":      { "pos": "noun", "meaning": "comfort",         "concept": 237 },
-    "good":         { "pos": "noun", "meaning": "good",            "concept": 238 },
-    "nice":         { "pos": "noun", "meaning": "nice",            "concept": 563 },
-    "hurt":         { "pos": "noun", "meaning": "hurt",            "concept": 564 },
-    "bad":          { "pos": "noun", "meaning": "bad",             "concept": 239 },
-    "happy":        { "pos": "adjective", "meaning": "happy",      "concept": 238 },
-    "sad":          { "pos": "adjective", "meaning": "sad",        "concept": 239 },
-    "true":         { "pos": "noun", "meaning": "true",            "concept": 240 },
-    "false":        { "pos": "noun", "meaning": "false",           "concept": 241 },
-    "beautiful":    { "pos": "noun", "meaning": "beautiful",       "concept": 242 },
-    "few":          { "pos": "noun", "meaning": "few",             "concept": 244 },
-    "all":          { "pos": "noun", "meaning": "all",             "concept": 245 },
-    "none":         { "pos": "noun", "meaning": "none",            "concept": 246 },
-    "cause":        { "pos": "noun", "meaning": "cause",           "concept": 247 },
-    "part":         { "pos": "noun", "meaning": "part",            "concept": 248 },
-    "order":        { "pos": "noun", "meaning": "order",           "concept": 249 },
-    "same":         { "pos": "noun", "meaning": "same",            "concept": 250 },
-    "different":    { "pos": "noun", "meaning": "different",       "concept": 251 },
-    "distance":     { "pos": "noun", "meaning": "distance",        "concept": 252 },
-    "motion":       { "pos": "noun", "meaning": "motion",          "concept": 253 },
-    "event":        { "pos": "noun", "meaning": "event",           "concept": 254 },
-    "process":      { "pos": "noun", "meaning": "process",         "concept": 255 },
-    "communication": { "pos": "noun", "meaning": "communication",   "concept": 256 },
-    "work":         { "pos": "noun", "meaning": "work",            "concept": 257 },
-    "run":          { "pos": "noun", "meaning": "run",             "concept": 258 },
-    "walk":         { "pos": "noun", "meaning": "walk",            "concept": 259 },
-    "fly":          { "pos": "noun", "meaning": "fly",             "concept": 260 },
-    "swim":         { "pos": "noun", "meaning": "swim",            "concept": 261 },
-    "fall":         { "pos": "noun", "meaning": "fall",            "concept": 262 },
-    "come":         { "pos": "noun", "meaning": "come",            "concept": 263 },
-    "go":           { "pos": "noun", "meaning": "go",              "concept": 264 },
-    "birth":        { "pos": "noun", "meaning": "birth",           "concept": 265 },
-    "accident":     { "pos": "noun", "meaning": "accident",        "concept": 266 },
-    "meeting":      { "pos": "noun", "meaning": "meeting",         "concept": 267 },
-    "growth":       { "pos": "noun", "meaning": "growth",          "concept": 268 },
-    "burning":      { "pos": "noun", "meaning": "burning",         "concept": 269 },
-    "learning":     { "pos": "noun", "meaning": "learning",        "concept": 270 },
-    "speak":        { "pos": "noun", "meaning": "speak",           "concept": 271 },
-    "write":        { "pos": "noun", "meaning": "write",           "concept": 272 },
-    "read":         { "pos": "noun", "meaning": "read",            "concept": 273 },
-    "listen":       { "pos": "noun", "meaning": "listen",          "concept": 274 },
-    "ask":          { "pos": "noun", "meaning": "ask",             "concept": 275 },
-    "eat":          { "pos": "noun", "meaning": "eat",             "concept": 278 },
-    "drink":        { "pos": "noun", "meaning": "drink",           "concept": 279 },
-    "make":         { "pos": "noun", "meaning": "make",            "concept": 280 },
-    "build":        { "pos": "noun", "meaning": "build",           "concept": 281 },
-    "think":        { "pos": "noun", "meaning": "think",           "concept": 284 },
-    "see":          { "pos": "noun", "meaning": "see",             "concept": 286 },
-    "hear":         { "pos": "noun", "meaning": "hear",            "concept": 287 },
-    "sun":          { "pos": "noun", "meaning": "sun",             "concept": 288 },
-    "perception":   { "pos": "noun", "meaning": "perception",      "concept": 292 },
-    "group":        { "pos": "noun", "meaning": "group",           "concept": 293 },
-    "force":        { "pos": "noun", "meaning": "force",           "concept": 308 },
-    "gravity":      { "pos": "noun", "meaning": "gravity",         "concept": 309 },
-    "push":         { "pos": "noun", "meaning": "push",            "concept": 310 },
-    "pull":         { "pos": "noun", "meaning": "pull",            "concept": 311 },
-    "up":           { "pos": "noun", "meaning": "up",              "concept": 312 },
-    "down":         { "pos": "noun", "meaning": "down",            "concept": 313 },
-    "left":         { "pos": "noun", "meaning": "left",            "concept": 314 },
-    "right":        { "pos": "noun", "meaning": "right",           "concept": 315 },
-    "front":        { "pos": "noun", "meaning": "front",           "concept": 316 },
-    "back":         { "pos": "noun", "meaning": "back",            "concept": 317 },
-    "near":         { "pos": "noun", "meaning": "near",            "concept": 318 },
-    "far":          { "pos": "noun", "meaning": "far",             "concept": 319 },
-    "ground":       { "pos": "noun", "meaning": "ground",          "concept": 321 },
-    "mass":         { "pos": "noun", "meaning": "mass",            "concept": 323 },
-    "speed":        { "pos": "noun", "meaning": "speed",           "concept": 324 },
-    "rise":         { "pos": "noun", "meaning": "rise",            "concept": 325 },
-    "stop":         { "pos": "noun", "meaning": "stop",            "concept": 326 },
-
-    "wheel":        { "pos": "noun", "meaning": "wheel",           "concept": 331 },
-    "door":         { "pos": "noun", "meaning": "door",            "concept": 332 },
-    "window":       { "pos": "noun", "meaning": "window",          "concept": 333 },
-    "wing":         { "pos": "noun", "meaning": "wing",            "concept": 334 },
-
-    "agent":        { "pos": "noun", "meaning": "agent",           "concept": 327 },
-    "target":       { "pos": "noun", "meaning": "target",          "concept": 328 },
-    "source":       { "pos": "noun", "meaning": "source",          "concept": 329 },
-    "destination":  { "pos": "noun", "meaning": "destination",     "concept": 330 },
-    "reptile":      { "pos": "noun", "meaning": "reptile",         "concept": 335 },
-    "amphibian":    { "pos": "noun", "meaning": "amphibian",       "concept": 336 },
-    "lion":         { "pos": "noun", "meaning": "lion",            "concept": 337 },
-    "horse":        { "pos": "noun", "meaning": "horse",           "concept": 338 },
-    "goat":         { "pos": "noun", "meaning": "goat",            "concept": 339 },
-    "sheep":        { "pos": "noun", "meaning": "sheep",           "concept": 340 },
-    "pig":          { "pos": "noun", "meaning": "pig",             "concept": 341 },
-    "deer":         { "pos": "noun", "meaning": "deer",            "concept": 342 },
-    "monkey":       { "pos": "noun", "meaning": "monkey",          "concept": 343 },
-    "rabbit":       { "pos": "noun", "meaning": "rabbit",          "concept": 344 },
-    "rat":          { "pos": "noun", "meaning": "rat",             "concept": 345 },
-    "bat":          { "pos": "noun", "meaning": "bat",             "concept": 346 },
-    "whale":        { "pos": "noun", "meaning": "whale",           "concept": 347 },
-    "dolphin":      { "pos": "noun", "meaning": "dolphin",         "concept": 348 },
-    "bear":         { "pos": "noun", "meaning": "bear",            "concept": 349 },
-    "wolf":         { "pos": "noun", "meaning": "wolf",            "concept": 350 },
-    "fox":          { "pos": "noun", "meaning": "fox",             "concept": 351 },
-    "camel":        { "pos": "noun", "meaning": "camel",           "concept": 352 },
-    "donkey":       { "pos": "noun", "meaning": "donkey",          "concept": 353 },
-    "mouse":        { "pos": "noun", "meaning": "mouse",           "concept": 354 },
-    "crow":         { "pos": "noun", "meaning": "crow",            "concept": 355 },
-    "eagle":        { "pos": "noun", "meaning": "eagle",           "concept": 356 },
-    "owl":          { "pos": "noun", "meaning": "owl",             "concept": 357 },
-    "parrot":       { "pos": "noun", "meaning": "parrot",          "concept": 358 },
-    "duck":         { "pos": "noun", "meaning": "duck",            "concept": 359 },
-    "hen":          { "pos": "noun", "meaning": "hen",             "concept": 360 },
-    "peacock":      { "pos": "noun", "meaning": "peacock",         "concept": 361 },
-    "pigeon":       { "pos": "noun", "meaning": "pigeon",          "concept": 362 },
-    "swan":         { "pos": "noun", "meaning": "swan",            "concept": 363 },
-    "stork":        { "pos": "noun", "meaning": "stork",           "concept": 364 },
-    "shark":        { "pos": "noun", "meaning": "shark",           "concept": 365 },
-    "tuna":         { "pos": "noun", "meaning": "tuna",            "concept": 366 },
-    "salmon":       { "pos": "noun", "meaning": "salmon",          "concept": 367 },
-    "carp":         { "pos": "noun", "meaning": "carp",            "concept": 368 },
-    "ant":          { "pos": "noun", "meaning": "ant",             "concept": 369 },
-    "bee":          { "pos": "noun", "meaning": "bee",             "concept": 370 },
-    "butterfly":    { "pos": "noun", "meaning": "butterfly",       "concept": 371 },
-    "mosquito":     { "pos": "noun", "meaning": "mosquito",        "concept": 372 },
-    "beetle":       { "pos": "noun", "meaning": "beetle",          "concept": 373 },
-    "moth":         { "pos": "noun", "meaning": "moth",            "concept": 374 },
-    "lizard":       { "pos": "noun", "meaning": "lizard",          "concept": 375 },
-    "crocodile":    { "pos": "noun", "meaning": "crocodile",       "concept": 376 },
-    "turtle":       { "pos": "noun", "meaning": "turtle",          "concept": 377 },
-    "chameleon":    { "pos": "noun", "meaning": "chameleon",       "concept": 378 },
-    "frog":         { "pos": "noun", "meaning": "frog",            "concept": 379 },
-    "toad":         { "pos": "noun", "meaning": "toad",            "concept": 380 },
-    "bush":         { "pos": "noun", "meaning": "bush",            "concept": 381 },
-    "herb":         { "pos": "noun", "meaning": "herb",            "concept": 382 },
-    "vine":         { "pos": "noun", "meaning": "vine",            "concept": 383 },
-    "moss":         { "pos": "noun", "meaning": "moss",            "concept": 384 },
-    "fern":         { "pos": "noun", "meaning": "fern",            "concept": 385 },
-    "oak":          { "pos": "noun", "meaning": "oak",             "concept": 386 },
-    "pine":         { "pos": "noun", "meaning": "pine",            "concept": 387 },
-    "palm":         { "pos": "noun", "meaning": "palm",            "concept": 388 },
-    "bamboo":       { "pos": "noun", "meaning": "bamboo",          "concept": 389 },
-    "teak":         { "pos": "noun", "meaning": "teak",            "concept": 390 },
-    "grape":        { "pos": "noun", "meaning": "grape",           "concept": 391 },
-    "lemon":        { "pos": "noun", "meaning": "lemon",           "concept": 392 },
-    "cherry":       { "pos": "noun", "meaning": "cherry",          "concept": 393 },
-    "peach":        { "pos": "noun", "meaning": "peach",           "concept": 394 },
-    "melon":        { "pos": "noun", "meaning": "melon",           "concept": 395 },
-    "coconut":      { "pos": "noun", "meaning": "coconut",         "concept": 396 },
-    "fig":          { "pos": "noun", "meaning": "fig",             "concept": 397 },
-    "date":         { "pos": "noun", "meaning": "date",            "concept": 398 },
-    "vegetable":    { "pos": "noun", "meaning": "vegetable",       "concept": 399 },
-    "egg":          { "pos": "noun", "meaning": "egg",             "concept": 400 },
-    "honey":        { "pos": "noun", "meaning": "honey",           "concept": 401 },
-    "cheese":       { "pos": "noun", "meaning": "cheese",          "concept": 402 },
-    "butter":       { "pos": "noun", "meaning": "butter",          "concept": 403 },
-    "tea":          { "pos": "noun", "meaning": "tea",             "concept": 404 },
-    "coffee":       { "pos": "noun", "meaning": "coffee",          "concept": 405 },
-    "soup":         { "pos": "noun", "meaning": "soup",            "concept": 406 },
-    "potato":       { "pos": "noun", "meaning": "potato",          "concept": 407 },
-    "tomato":       { "pos": "noun", "meaning": "tomato",          "concept": 408 },
-    "onion":        { "pos": "noun", "meaning": "onion",           "concept": 409 },
-    "carrot":       { "pos": "noun", "meaning": "carrot",          "concept": 410 },
-    "pea":          { "pos": "noun", "meaning": "pea",             "concept": 411 },
-    "bean":         { "pos": "noun", "meaning": "bean",            "concept": 412 },
-    "garlic":       { "pos": "noun", "meaning": "garlic",          "concept": 413 },
-    "spinach":      { "pos": "noun", "meaning": "spinach",         "concept": 414 },
-    "nose":         { "pos": "noun", "meaning": "nose",            "concept": 415 },
-    "mouth":        { "pos": "noun", "meaning": "mouth",           "concept": 416 },
-    "tooth":        { "pos": "noun", "meaning": "tooth",           "concept": 417 },
-    "tongue":       { "pos": "noun", "meaning": "tongue",          "concept": 418 },
-    "neck":         { "pos": "noun", "meaning": "neck",            "concept": 419 },
-    "arm":          { "pos": "noun", "meaning": "arm",             "concept": 420 },
-    "foot":         { "pos": "noun", "meaning": "foot",            "concept": 421 },
-    "finger":       { "pos": "noun", "meaning": "finger",          "concept": 422 },
-    "bone":         { "pos": "noun", "meaning": "bone",            "concept": 423 },
-    "stomach":      { "pos": "noun", "meaning": "stomach",         "concept": 424 },
-    "lung":         { "pos": "noun", "meaning": "lung",            "concept": 425 },
-    "liver":        { "pos": "noun", "meaning": "liver",           "concept": 426 },
-    "tail":         { "pos": "noun", "meaning": "tail",            "concept": 427 },
-    "horn":         { "pos": "noun", "meaning": "horn",            "concept": 428 },
-    "claw":         { "pos": "noun", "meaning": "claw",            "concept": 429 },
-    "feather":      { "pos": "noun", "meaning": "feather",         "concept": 430 },
-    "shell":        { "pos": "noun", "meaning": "shell",           "concept": 431 },
-    "furniture":    { "pos": "noun", "meaning": "furniture",       "concept": 432 },
-    "landform":     { "pos": "noun", "meaning": "landform",        "concept": 434 },
-    "shelf":        { "pos": "noun", "meaning": "shelf",           "concept": 435 },
-    "chair":        { "pos": "noun", "meaning": "chair",           "concept": 436 },
-    "table":        { "pos": "noun", "meaning": "table",           "concept": 437 },
-    "bed":          { "pos": "noun", "meaning": "bed",             "concept": 438 },
-    "cupboard":     { "pos": "noun", "meaning": "cupboard",        "concept": 439 },
-    "bench":        { "pos": "noun", "meaning": "bench",           "concept": 440 },
-    "spoon":        { "pos": "noun", "meaning": "spoon",           "concept": 441 },
-    "fork":         { "pos": "noun", "meaning": "fork",            "concept": 442 },
-    "cup":          { "pos": "noun", "meaning": "cup",             "concept": 443 },
-    "plate":        { "pos": "noun", "meaning": "plate",           "concept": 444 },
-    "bottle":       { "pos": "noun", "meaning": "bottle",          "concept": 445 },
-    "bag":          { "pos": "noun", "meaning": "bag",             "concept": 446 },
-    "rope":         { "pos": "noun", "meaning": "rope",            "concept": 447 },
-    "needle":       { "pos": "noun", "meaning": "needle",          "concept": 448 },
-    "key":          { "pos": "noun", "meaning": "key",             "concept": 449 },
-    "lock":         { "pos": "noun", "meaning": "lock",            "concept": 450 },
-    "clock":        { "pos": "noun", "meaning": "clock",           "concept": 451 },
-    "lamp":         { "pos": "noun", "meaning": "lamp",            "concept": 452 },
-    "mirror":       { "pos": "noun", "meaning": "mirror",          "concept": 453 },
-    "brush":        { "pos": "noun", "meaning": "brush",           "concept": 454 },
-    "comb":         { "pos": "noun", "meaning": "comb",            "concept": 455 },
-    "axe":          { "pos": "noun", "meaning": "axe",             "concept": 456 },
-    "saw":          { "pos": "noun", "meaning": "saw",             "concept": 457 },
-    "ladder":       { "pos": "noun", "meaning": "ladder",          "concept": 458 },
-    "wheelbarrow":  { "pos": "noun", "meaning": "wheelbarrow",     "concept": 459 },
-    "ship":         { "pos": "noun", "meaning": "ship",            "concept": 460 },
-    "plane":        { "pos": "noun", "meaning": "plane",           "concept": 461 },
-    "bicycle":      { "pos": "noun", "meaning": "bicycle",         "concept": 462 },
-    "cart":         { "pos": "noun", "meaning": "cart",            "concept": 463 },
-    "truck":        { "pos": "noun", "meaning": "truck",           "concept": 464 },
-    "hospital":     { "pos": "noun", "meaning": "hospital",        "concept": 465 },
-    "bridge":       { "pos": "noun", "meaning": "bridge",          "concept": 466 },
-    "tower":        { "pos": "noun", "meaning": "tower",           "concept": 467 },
-    "market":       { "pos": "noun", "meaning": "market",          "concept": 468 },
-    "iron":         { "pos": "noun", "meaning": "iron",            "concept": 469 },
-    "gold":         { "pos": "noun", "meaning": "gold",            "concept": 470 },
-    "silver":       { "pos": "noun", "meaning": "silver",          "concept": 471 },
-    "glass":        { "pos": "noun", "meaning": "glass",           "concept": 472 },
-    "paper":        { "pos": "noun", "meaning": "paper",           "concept": 473 },
-    "cloth":        { "pos": "noun", "meaning": "cloth",           "concept": 474 },
-    "plastic":      { "pos": "noun", "meaning": "plastic",         "concept": 475 },
-    "sand":         { "pos": "noun", "meaning": "sand",            "concept": 476 },
-    "mud":          { "pos": "noun", "meaning": "mud",             "concept": 477 },
-    "clay":         { "pos": "noun", "meaning": "clay",            "concept": 478 },
-    "rubber":       { "pos": "noun", "meaning": "rubber",          "concept": 479 },
-    "hill":         { "pos": "noun", "meaning": "hill",            "concept": 480 },
-    "valley":       { "pos": "noun", "meaning": "valley",          "concept": 481 },
-    "ocean":        { "pos": "noun", "meaning": "ocean",           "concept": 482 },
-    "island":       { "pos": "noun", "meaning": "island",          "concept": 483 },
-    "forest":       { "pos": "noun", "meaning": "forest",          "concept": 484 },
-    "desert":       { "pos": "noun", "meaning": "desert",          "concept": 485 },
-    "cave":         { "pos": "noun", "meaning": "cave",            "concept": 486 },
-    "beach":        { "pos": "noun", "meaning": "beach",           "concept": 487 },
-    "stream":       { "pos": "noun", "meaning": "stream",          "concept": 488 },
-    "pond":         { "pos": "noun", "meaning": "pond",            "concept": 489 },
-    "weather":      { "pos": "noun", "meaning": "weather",         "concept": 490 },
-    "rain":         { "pos": "noun", "meaning": "rain",            "concept": 491 },
-    "snow":         { "pos": "noun", "meaning": "snow",            "concept": 492 },
-    "wind":         { "pos": "noun", "meaning": "wind",            "concept": 493 },
-    "storm":        { "pos": "noun", "meaning": "storm",           "concept": 494 },
-    "fog":          { "pos": "noun", "meaning": "fog",             "concept": 495 },
-    "thunder":      { "pos": "noun", "meaning": "thunder",         "concept": 496 },
-    "lightning":    { "pos": "noun", "meaning": "lightning",       "concept": 497 },
-    "frost":        { "pos": "noun", "meaning": "frost",           "concept": 498 },
-    "baby":         { "pos": "noun", "meaning": "baby",            "concept": 499 },
-    "boy":          { "pos": "noun", "meaning": "boy",             "concept": 500 },
-    "girl":         { "pos": "noun", "meaning": "girl",            "concept": 501 },
-    "mother":       { "pos": "noun", "meaning": "mother",          "concept": 502 },
-    "father":       { "pos": "noun", "meaning": "father",          "concept": 503 },
-    "brother":      { "pos": "noun", "meaning": "brother",         "concept": 504 },
-    "sister":       { "pos": "noun", "meaning": "sister",          "concept": 505 },
-    "friend":       { "pos": "noun", "meaning": "friend",          "concept": 506 },
-    "teacher":      { "pos": "noun", "meaning": "teacher",         "concept": 507 },
-    "doctor":       { "pos": "noun", "meaning": "doctor",          "concept": 508 },
-    "farmer":       { "pos": "noun", "meaning": "farmer",          "concept": 509 },
-    "worker":       { "pos": "noun", "meaning": "worker",          "concept": 510 },
-    "king":         { "pos": "noun", "meaning": "king",            "concept": 511 },
-    "queen":        { "pos": "noun", "meaning": "queen",           "concept": 512 },
-    "neighbour":    { "pos": "noun", "meaning": "neighbour",       "concept": 513 },
-    "brown":        { "pos": "noun", "meaning": "brown",           "concept": 514 },
-    "grey":         { "pos": "noun", "meaning": "grey",            "concept": 515 },
-    "pink":         { "pos": "noun", "meaning": "pink",            "concept": 516 },
-    "purple":       { "pos": "noun", "meaning": "purple",          "concept": 517 },
-    "morning":      { "pos": "noun", "meaning": "morning",         "concept": 518 },
-    "evening":      { "pos": "noun", "meaning": "evening",         "concept": 519 },
-    "noon":         { "pos": "noun", "meaning": "noon",            "concept": 520 },
-    "midnight":     { "pos": "noun", "meaning": "midnight",        "concept": 521 },
-    "season":       { "pos": "noun", "meaning": "season",          "concept": 522 },
-    "spring":       { "pos": "noun", "meaning": "spring",          "concept": 524 },
-    "summer":       { "pos": "noun", "meaning": "summer",          "concept": 525 },
-    "autumn":       { "pos": "noun", "meaning": "autumn",          "concept": 526 },
-    "winter":       { "pos": "noun", "meaning": "winter",          "concept": 527 },
-    "jump":         { "pos": "noun", "meaning": "jump",            "concept": 528 },
-    "crawl":        { "pos": "noun", "meaning": "crawl",           "concept": 529 },
-    "slide":        { "pos": "noun", "meaning": "slide",           "concept": 530 },
-    "spin":         { "pos": "noun", "meaning": "spin",            "concept": 531 },
-    "cut":          { "pos": "noun", "meaning": "cut",             "concept": 533 },
-    "cook":         { "pos": "noun", "meaning": "cook",            "concept": 534 },
-    "wash":         { "pos": "noun", "meaning": "wash",            "concept": 535 },
-    "carry":        { "pos": "noun", "meaning": "carry",           "concept": 536 },
-    "throw":        { "pos": "noun", "meaning": "throw",           "concept": 537 },
-    "catch":        { "pos": "noun", "meaning": "catch",           "concept": 538 },
-    "open":         { "pos": "noun", "meaning": "open",            "concept": 539 },
-    "close":        { "pos": "noun", "meaning": "close",           "concept": 540 },
-
-    "not":       { "pos": "negation", "meaning": "not", "negates": true },
-
-    "what":      { "pos": "interrogative", "meaning": "what", "marks": "unknown" },
-    "who":       { "pos": "interrogative", "meaning": "who",  "marks": "unknown", "concept": 138 },
-    "how":       { "pos": "interrogative", "meaning": "how",  "marks": "unknown" },
-    "many":      { "pos": "quantifier",    "meaning": "many",  "concept": 243 },
-    "you":       { "pos": "pronoun",       "meaning": "the one it went to",   "marks": "to", "person": "second" },
-    "your":      { "pos": "possessive",    "meaning": "the one it went to",   "marks": "to", "person": "second" },
-    "ur":        { "pos": "possessive",    "meaning": "the one it went to",   "marks": "to", "person": "second" },
-    "i":         { "pos": "pronoun",       "meaning": "the one it came from", "marks": "from", "person": "first", "number": "singular" },
-    "me":        { "pos": "pronoun",       "meaning": "the one it came from", "marks": "from", "person": "first", "number": "singular" },
-    "my":        { "pos": "possessive",    "meaning": "the one it came from", "marks": "from", "person": "first", "number": "singular" }
+    "hi": {
+      "pos": "interjection",
+      "meaning": "greeting",
+      "concept": 277
+    },
+    "hello": {
+      "pos": "interjection",
+      "meaning": "greeting",
+      "concept": 277
+    },
+    "a": {
+      "pos": "article",
+      "meaning": "indefinite article",
+      "marks": "new"
+    },
+    "an": {
+      "pos": "article",
+      "meaning": "indefinite article",
+      "marks": "new"
+    },
+    "the": {
+      "pos": "article",
+      "meaning": "definite article",
+      "marks": "known"
+    },
+    "is": {
+      "pos": "verb",
+      "meaning": "to be",
+      "concept": 294,
+      "person": "third",
+      "number": "singular"
+    },
+    "are": {
+      "pos": "verb",
+      "meaning": "to be (plural)",
+      "concept": 294,
+      "number": "plural"
+    },
+    "am": {
+      "pos": "verb",
+      "meaning": "to be (speaker)",
+      "concept": 294,
+      "person": "first",
+      "number": "singular"
+    },
+    "was": {
+      "pos": "verb",
+      "meaning": "to be (past)",
+      "concept": 294,
+      "when": "past",
+      "number": "singular"
+    },
+    "were": {
+      "pos": "verb",
+      "meaning": "to be (past)",
+      "concept": 294,
+      "when": "past",
+      "number": "plural"
+    },
+    "will": {
+      "pos": "verb",
+      "meaning": "to be (later)",
+      "concept": 294,
+      "when": "future"
+    },
+    "one": {
+      "pos": "numeral",
+      "meaning": "1",
+      "concept": 114
+    },
+    "two": {
+      "pos": "numeral",
+      "meaning": "2",
+      "concept": 115
+    },
+    "three": {
+      "pos": "numeral",
+      "meaning": "3",
+      "concept": 116
+    },
+    "four": {
+      "pos": "numeral",
+      "meaning": "4",
+      "concept": 117
+    },
+    "five": {
+      "pos": "numeral",
+      "meaning": "5",
+      "concept": 118
+    },
+    "six": {
+      "pos": "numeral",
+      "meaning": "6",
+      "concept": 119
+    },
+    "seven": {
+      "pos": "numeral",
+      "meaning": "7",
+      "concept": 120
+    },
+    "eight": {
+      "pos": "numeral",
+      "meaning": "8",
+      "concept": 121
+    },
+    "nine": {
+      "pos": "numeral",
+      "meaning": "9",
+      "concept": 122
+    },
+    "ten": {
+      "pos": "numeral",
+      "meaning": "10",
+      "concept": 123
+    },
+    "zero": {
+      "pos": "numeral",
+      "meaning": "0",
+      "concept": 124
+    },
+    "eleven": {
+      "pos": "numeral",
+      "meaning": "11",
+      "concept": 541
+    },
+    "twelve": {
+      "pos": "numeral",
+      "meaning": "12",
+      "concept": 542
+    },
+    "thirteen": {
+      "pos": "numeral",
+      "meaning": "13",
+      "concept": 543
+    },
+    "fourteen": {
+      "pos": "numeral",
+      "meaning": "14",
+      "concept": 544
+    },
+    "fifteen": {
+      "pos": "numeral",
+      "meaning": "15",
+      "concept": 545
+    },
+    "sixteen": {
+      "pos": "numeral",
+      "meaning": "16",
+      "concept": 546
+    },
+    "seventeen": {
+      "pos": "numeral",
+      "meaning": "17",
+      "concept": 547
+    },
+    "eighteen": {
+      "pos": "numeral",
+      "meaning": "18",
+      "concept": 548
+    },
+    "nineteen": {
+      "pos": "numeral",
+      "meaning": "19",
+      "concept": 549
+    },
+    "twenty": {
+      "pos": "numeral",
+      "meaning": "20",
+      "concept": 550
+    },
+    "thirty": {
+      "pos": "numeral",
+      "meaning": "30",
+      "concept": 551
+    },
+    "forty": {
+      "pos": "numeral",
+      "meaning": "40",
+      "concept": 552
+    },
+    "fifty": {
+      "pos": "numeral",
+      "meaning": "50",
+      "concept": 553
+    },
+    "sixty": {
+      "pos": "numeral",
+      "meaning": "60",
+      "concept": 554
+    },
+    "seventy": {
+      "pos": "numeral",
+      "meaning": "70",
+      "concept": 555
+    },
+    "eighty": {
+      "pos": "numeral",
+      "meaning": "80",
+      "concept": 556
+    },
+    "ninety": {
+      "pos": "numeral",
+      "meaning": "90",
+      "concept": 557
+    },
+    "hundred": {
+      "pos": "numeral",
+      "meaning": "100",
+      "concept": 558
+    },
+    "cat": {
+      "pos": "noun",
+      "meaning": "feline animal",
+      "concept": 83
+    },
+    "dog": {
+      "pos": "noun",
+      "meaning": "canine animal",
+      "concept": 82
+    },
+    "apple": {
+      "pos": "noun",
+      "meaning": "fruit",
+      "concept": 79
+    },
+    "bird": {
+      "pos": "noun",
+      "meaning": "flying animal",
+      "concept": 85
+    },
+    "tree": {
+      "pos": "noun",
+      "meaning": "plant",
+      "concept": 33
+    },
+    "animal": {
+      "pos": "noun",
+      "meaning": "animal",
+      "concept": 24
+    },
+    "plant": {
+      "pos": "noun",
+      "meaning": "plant",
+      "concept": 25
+    },
+    "organism": {
+      "pos": "noun",
+      "meaning": "organism",
+      "concept": 10
+    },
+    "human": {
+      "pos": "noun",
+      "meaning": "human",
+      "concept": 26
+    },
+    "person": {
+      "pos": "noun",
+      "meaning": "person",
+      "concept": 29
+    },
+    "food": {
+      "pos": "noun",
+      "meaning": "food",
+      "concept": 23
+    },
+    "fruit": {
+      "pos": "noun",
+      "meaning": "fruit",
+      "concept": 73
+    },
+    "substance": {
+      "pos": "noun",
+      "meaning": "substance",
+      "concept": 9
+    },
+    "object": {
+      "pos": "noun",
+      "meaning": "object",
+      "concept": 8
+    },
+    "thing": {
+      "pos": "noun",
+      "meaning": "thing",
+      "concept": 2
+    },
+    "number": {
+      "pos": "noun",
+      "meaning": "number",
+      "concept": 100
+    },
+    "action": {
+      "pos": "noun",
+      "meaning": "action",
+      "concept": 5
+    },
+    "mind": {
+      "pos": "noun",
+      "meaning": "mind",
+      "concept": 230
+    },
+    "mammal": {
+      "pos": "noun",
+      "meaning": "mammal",
+      "concept": 297
+    },
+    "tiger": {
+      "pos": "noun",
+      "meaning": "tiger",
+      "concept": 298
+    },
+    "elephant": {
+      "pos": "noun",
+      "meaning": "elephant",
+      "concept": 299
+    },
+    "hyena": {
+      "pos": "noun",
+      "meaning": "hyena",
+      "concept": 300
+    },
+    "pear": {
+      "pos": "noun",
+      "meaning": "pear",
+      "concept": 301
+    },
+    "orange": {
+      "pos": "noun",
+      "meaning": "orange",
+      "concept": 302
+    },
+    "mango": {
+      "pos": "noun",
+      "meaning": "mango",
+      "concept": 80
+    },
+    "banana": {
+      "pos": "noun",
+      "meaning": "banana",
+      "concept": 81
+    },
+    "cow": {
+      "pos": "noun",
+      "meaning": "cow",
+      "concept": 84
+    },
+    "snake": {
+      "pos": "noun",
+      "meaning": "snake",
+      "concept": 86
+    },
+    "sparrow": {
+      "pos": "noun",
+      "meaning": "sparrow",
+      "concept": 87
+    },
+    "fish": {
+      "pos": "noun",
+      "meaning": "fish",
+      "concept": 28
+    },
+    "insect": {
+      "pos": "noun",
+      "meaning": "insect",
+      "concept": 27
+    },
+    "flower": {
+      "pos": "noun",
+      "meaning": "flower",
+      "concept": 34
+    },
+    "grass": {
+      "pos": "noun",
+      "meaning": "grass",
+      "concept": 35
+    },
+    "knife": {
+      "pos": "noun",
+      "meaning": "knife",
+      "concept": 41
+    },
+    "hammer": {
+      "pos": "noun",
+      "meaning": "hammer",
+      "concept": 42
+    },
+    "pen": {
+      "pos": "noun",
+      "meaning": "pen",
+      "concept": 43
+    },
+    "phone": {
+      "pos": "noun",
+      "meaning": "phone",
+      "concept": 44
+    },
+    "computer": {
+      "pos": "noun",
+      "meaning": "computer",
+      "concept": 45
+    },
+    "machine": {
+      "pos": "noun",
+      "meaning": "machine",
+      "concept": 560
+    },
+    "memory": {
+      "pos": "noun",
+      "meaning": "memory",
+      "concept": 561
+    },
+    "book": {
+      "pos": "noun",
+      "meaning": "book",
+      "concept": 18
+    },
+    "moon": {
+      "pos": "noun",
+      "meaning": "moon",
+      "concept": 289
+    },
+    "star": {
+      "pos": "noun",
+      "meaning": "star",
+      "concept": 290
+    },
+    "cloud": {
+      "pos": "noun",
+      "meaning": "cloud",
+      "concept": 291
+    },
+    "tool": {
+      "pos": "noun",
+      "meaning": "tool",
+      "concept": 13
+    },
+    "vehicle": {
+      "pos": "noun",
+      "meaning": "vehicle",
+      "concept": 14
+    },
+    "building": {
+      "pos": "noun",
+      "meaning": "building",
+      "concept": 15
+    },
+    "container": {
+      "pos": "noun",
+      "meaning": "container",
+      "concept": 19
+    },
+    "basket": {
+      "pos": "noun",
+      "meaning": "basket",
+      "concept": 307
+    },
+    "has": {
+      "pos": "verb",
+      "meaning": "has",
+      "concept": 295
+    },
+    "have": {
+      "pos": "verb",
+      "meaning": "have",
+      "concept": 295
+    },
+    "know": {
+      "pos": "verb",
+      "meaning": "know",
+      "concept": 285
+    },
+    "plus": {
+      "pos": "verb",
+      "meaning": "plus",
+      "concept": 303
+    },
+    "+": {
+      "pos": "verb",
+      "meaning": "plus",
+      "concept": 303,
+      "names": false
+    },
+    "-": {
+      "pos": "verb",
+      "meaning": "minus",
+      "concept": 304,
+      "names": false
+    },
+    "times": {
+      "pos": "verb",
+      "meaning": "times",
+      "concept": 568
+    },
+    "*": {
+      "pos": "verb",
+      "meaning": "times",
+      "concept": 568,
+      "names": false
+    },
+    "×": {
+      "pos": "verb",
+      "meaning": "times",
+      "concept": 568,
+      "names": false
+    },
+    "divide": {
+      "pos": "verb",
+      "meaning": "divide",
+      "concept": 569
+    },
+    "equals": {
+      "pos": "verb",
+      "meaning": "equals",
+      "concept": 250
+    },
+    "=": {
+      "pos": "verb",
+      "meaning": "equals",
+      "concept": 250,
+      "names": false
+    },
+    "add": {
+      "pos": "function",
+      "meaning": "plus",
+      "concept": 303
+    },
+    "subtract": {
+      "pos": "function",
+      "meaning": "minus",
+      "concept": 304
+    },
+    "multiply": {
+      "pos": "function",
+      "meaning": "times",
+      "concept": 568
+    },
+    "with": {
+      "pos": "preposition",
+      "meaning": "with"
+    },
+    "by": {
+      "pos": "preposition",
+      "meaning": "by"
+    },
+    "into": {
+      "pos": "preposition",
+      "meaning": "into",
+      "role": "destination"
+    },
+    "in": {
+      "pos": "preposition",
+      "meaning": "in",
+      "concept": 586
+    },
+    "on": {
+      "pos": "preposition",
+      "meaning": "on",
+      "concept": 587
+    },
+    "under": {
+      "pos": "preposition",
+      "meaning": "under",
+      "concept": 588
+    },
+    "placement": {
+      "pos": "noun",
+      "meaning": "placement",
+      "concept": 585
+    },
+    "inside": {
+      "pos": "noun",
+      "meaning": "inside",
+      "concept": 580
+    },
+    "outside": {
+      "pos": "noun",
+      "meaning": "outside",
+      "concept": 581
+    },
+    "top": {
+      "pos": "noun",
+      "meaning": "top",
+      "concept": 582
+    },
+    "bottom": {
+      "pos": "noun",
+      "meaning": "bottom",
+      "concept": 583
+    },
+    "side": {
+      "pos": "noun",
+      "meaning": "side",
+      "concept": 584
+    },
+    "and": {
+      "pos": "conjunction",
+      "meaning": "and"
+    },
+    "hold": {
+      "pos": "verb",
+      "meaning": "hold",
+      "concept": 579
+    },
+    "holds": {
+      "pos": "verb",
+      "meaning": "holds",
+      "concept": 579,
+      "person": "third",
+      "number": "singular"
+    },
+    "it": {
+      "pos": "pronoun",
+      "meaning": "it",
+      "marks": "spoken",
+      "person": "third",
+      "number": "singular"
+    },
+    "power": {
+      "pos": "verb",
+      "meaning": "to the power of",
+      "concept": 570
+    },
+    "^": {
+      "pos": "verb",
+      "meaning": "to the power of",
+      "concept": 570,
+      "names": false
+    },
+    "remainder": {
+      "pos": "verb",
+      "meaning": "remainder of",
+      "concept": 571
+    },
+    "%": {
+      "pos": "verb",
+      "meaning": "remainder of",
+      "concept": 571,
+      "names": false
+    },
+    "root": {
+      "pos": "function",
+      "meaning": "square root of",
+      "concept": 572
+    },
+    "log": {
+      "pos": "function",
+      "meaning": "logarithm of",
+      "concept": 573
+    },
+    "ln": {
+      "pos": "function",
+      "meaning": "natural logarithm of",
+      "concept": 574
+    },
+    "sin": {
+      "pos": "function",
+      "meaning": "sine of",
+      "concept": 575
+    },
+    "cos": {
+      "pos": "function",
+      "meaning": "cosine of",
+      "concept": 576
+    },
+    "tan": {
+      "pos": "function",
+      "meaning": "tangent of",
+      "concept": 577
+    },
+    "abs": {
+      "pos": "function",
+      "meaning": "size of",
+      "concept": 578
+    },
+    "(": {
+      "pos": "open",
+      "meaning": "opens a group",
+      "groups": "open"
+    },
+    ")": {
+      "pos": "close",
+      "meaning": "closes a group",
+      "groups": "close"
+    },
+    "/": {
+      "pos": "verb",
+      "meaning": "divide",
+      "concept": 569,
+      "names": false
+    },
+    "÷": {
+      "pos": "verb",
+      "meaning": "divide",
+      "concept": 569,
+      "names": false
+    },
+    "minus": {
+      "pos": "verb",
+      "meaning": "minus",
+      "concept": 304
+    },
+    "more": {
+      "pos": "verb",
+      "meaning": "more than",
+      "concept": 305
+    },
+    "less": {
+      "pos": "verb",
+      "meaning": "less than",
+      "concept": 306
+    },
+    "take": {
+      "pos": "verb",
+      "meaning": "take",
+      "concept": 283
+    },
+    "took": {
+      "pos": "verb",
+      "meaning": "took",
+      "concept": 283,
+      "when": "past"
+    },
+    "get": {
+      "pos": "verb",
+      "meaning": "get",
+      "concept": 589
+    },
+    "gets": {
+      "pos": "verb",
+      "meaning": "gets",
+      "concept": 589,
+      "person": "third",
+      "number": "singular"
+    },
+    "got": {
+      "pos": "verb",
+      "meaning": "got",
+      "concept": 589,
+      "when": "past"
+    },
+    "gave": {
+      "pos": "verb",
+      "meaning": "gave",
+      "concept": 282,
+      "when": "past"
+    },
+    "had": {
+      "pos": "verb",
+      "meaning": "had",
+      "concept": 295,
+      "when": "past"
+    },
+    "held": {
+      "pos": "verb",
+      "meaning": "held",
+      "concept": 579,
+      "when": "past"
+    },
+    "knew": {
+      "pos": "verb",
+      "meaning": "knew",
+      "concept": 285,
+      "when": "past"
+    },
+    "give": {
+      "pos": "verb",
+      "meaning": "give",
+      "concept": 282
+    },
+    "from": {
+      "pos": "preposition",
+      "meaning": "from",
+      "role": "source"
+    },
+    "to": {
+      "pos": "preposition",
+      "meaning": "to",
+      "role": "destination"
+    },
+    "name": {
+      "pos": "noun",
+      "meaning": "name",
+      "concept": 138
+    },
+    "existence": {
+      "pos": "noun",
+      "meaning": "existence",
+      "concept": 1
+    },
+    "property": {
+      "pos": "noun",
+      "meaning": "property",
+      "concept": 3
+    },
+    "relation": {
+      "pos": "noun",
+      "meaning": "relation",
+      "concept": 4
+    },
+    "place": {
+      "pos": "noun",
+      "meaning": "place",
+      "concept": 11
+    },
+    "energy": {
+      "pos": "noun",
+      "meaning": "energy",
+      "concept": 12
+    },
+    "body": {
+      "pos": "noun",
+      "meaning": "body",
+      "concept": 16
+    },
+    "liquid": {
+      "pos": "noun",
+      "meaning": "liquid",
+      "concept": 20
+    },
+    "gas": {
+      "pos": "noun",
+      "meaning": "gas",
+      "concept": 21
+    },
+    "solid": {
+      "pos": "noun",
+      "meaning": "solid",
+      "concept": 22
+    },
+    "man": {
+      "pos": "noun",
+      "meaning": "man",
+      "concept": 30
+    },
+    "woman": {
+      "pos": "noun",
+      "meaning": "woman",
+      "concept": 31
+    },
+    "child": {
+      "pos": "noun",
+      "meaning": "child",
+      "concept": 32
+    },
+    "planet": {
+      "pos": "noun",
+      "meaning": "planet",
+      "concept": 36
+    },
+    "land": {
+      "pos": "noun",
+      "meaning": "land",
+      "concept": 37
+    },
+    "room": {
+      "pos": "noun",
+      "meaning": "room",
+      "concept": 39
+    },
+    "sky": {
+      "pos": "noun",
+      "meaning": "sky",
+      "concept": 40
+    },
+    "car": {
+      "pos": "noun",
+      "meaning": "car",
+      "concept": 46
+    },
+    "bus": {
+      "pos": "noun",
+      "meaning": "bus",
+      "concept": 47
+    },
+    "train": {
+      "pos": "noun",
+      "meaning": "train",
+      "concept": 48
+    },
+    "boat": {
+      "pos": "noun",
+      "meaning": "boat",
+      "concept": 49
+    },
+    "house": {
+      "pos": "noun",
+      "meaning": "house",
+      "concept": 50
+    },
+    "school": {
+      "pos": "noun",
+      "meaning": "school",
+      "concept": 51
+    },
+    "temple": {
+      "pos": "noun",
+      "meaning": "temple",
+      "concept": 52
+    },
+    "shop": {
+      "pos": "noun",
+      "meaning": "shop",
+      "concept": 53
+    },
+    "hand": {
+      "pos": "noun",
+      "meaning": "hand",
+      "concept": 54
+    },
+    "head": {
+      "pos": "noun",
+      "meaning": "head",
+      "concept": 55
+    },
+    "eye": {
+      "pos": "noun",
+      "meaning": "eye",
+      "concept": 56
+    },
+    "ear": {
+      "pos": "noun",
+      "meaning": "ear",
+      "concept": 57
+    },
+    "leg": {
+      "pos": "noun",
+      "meaning": "leg",
+      "concept": 58
+    },
+    "heart": {
+      "pos": "noun",
+      "meaning": "heart",
+      "concept": 59
+    },
+    "brain": {
+      "pos": "noun",
+      "meaning": "brain",
+      "concept": 60
+    },
+    "skin": {
+      "pos": "noun",
+      "meaning": "skin",
+      "concept": 61
+    },
+    "hair": {
+      "pos": "noun",
+      "meaning": "hair",
+      "concept": 62
+    },
+    "water": {
+      "pos": "noun",
+      "meaning": "water",
+      "concept": 63
+    },
+    "milk": {
+      "pos": "noun",
+      "meaning": "milk",
+      "concept": 64
+    },
+    "oil": {
+      "pos": "noun",
+      "meaning": "oil",
+      "concept": 65
+    },
+    "blood": {
+      "pos": "noun",
+      "meaning": "blood",
+      "concept": 66
+    },
+    "air": {
+      "pos": "noun",
+      "meaning": "air",
+      "concept": 67
+    },
+    "smoke": {
+      "pos": "noun",
+      "meaning": "smoke",
+      "concept": 68
+    },
+    "stone": {
+      "pos": "noun",
+      "meaning": "stone",
+      "concept": 69
+    },
+    "metal": {
+      "pos": "noun",
+      "meaning": "metal",
+      "concept": 70
+    },
+    "wood": {
+      "pos": "noun",
+      "meaning": "wood",
+      "concept": 71
+    },
+    "ice": {
+      "pos": "noun",
+      "meaning": "ice",
+      "concept": 72
+    },
+    "rice": {
+      "pos": "noun",
+      "meaning": "rice",
+      "concept": 74
+    },
+    "bread": {
+      "pos": "noun",
+      "meaning": "bread",
+      "concept": 75
+    },
+    "meat": {
+      "pos": "noun",
+      "meaning": "meat",
+      "concept": 76
+    },
+    "salt": {
+      "pos": "noun",
+      "meaning": "salt",
+      "concept": 77
+    },
+    "sugar": {
+      "pos": "noun",
+      "meaning": "sugar",
+      "concept": 78
+    },
+    "earth": {
+      "pos": "noun",
+      "meaning": "earth",
+      "concept": 88
+    },
+    "mountain": {
+      "pos": "noun",
+      "meaning": "mountain",
+      "concept": 89
+    },
+    "field": {
+      "pos": "noun",
+      "meaning": "field",
+      "concept": 90
+    },
+    "road": {
+      "pos": "noun",
+      "meaning": "road",
+      "concept": 91
+    },
+    "sea": {
+      "pos": "noun",
+      "meaning": "sea",
+      "concept": 92
+    },
+    "river": {
+      "pos": "noun",
+      "meaning": "river",
+      "concept": 93
+    },
+    "lake": {
+      "pos": "noun",
+      "meaning": "lake",
+      "concept": 94
+    },
+    "light": {
+      "pos": "noun",
+      "meaning": "light",
+      "concept": 95
+    },
+    "sound": {
+      "pos": "noun",
+      "meaning": "sound",
+      "concept": 96
+    },
+    "heat": {
+      "pos": "noun",
+      "meaning": "heat",
+      "concept": 97
+    },
+    "fire": {
+      "pos": "noun",
+      "meaning": "fire",
+      "concept": 98
+    },
+    "idea": {
+      "pos": "noun",
+      "meaning": "idea",
+      "concept": 99
+    },
+    "system": {
+      "pos": "noun",
+      "meaning": "system",
+      "concept": 101
+    },
+    "sign": {
+      "pos": "noun",
+      "meaning": "sign",
+      "concept": 102
+    },
+    "meaning": {
+      "pos": "noun",
+      "meaning": "meaning",
+      "concept": 103
+    },
+    "truth": {
+      "pos": "noun",
+      "meaning": "truth",
+      "concept": 104
+    },
+    "art": {
+      "pos": "noun",
+      "meaning": "art",
+      "concept": 105
+    },
+    "law": {
+      "pos": "noun",
+      "meaning": "law",
+      "concept": 106
+    },
+    "story": {
+      "pos": "noun",
+      "meaning": "story",
+      "concept": 107
+    },
+    "question": {
+      "pos": "noun",
+      "meaning": "question",
+      "concept": 108
+    },
+    "answer": {
+      "pos": "noun",
+      "meaning": "answer",
+      "concept": 109
+    },
+    "music": {
+      "pos": "noun",
+      "meaning": "music",
+      "concept": 110
+    },
+    "poem": {
+      "pos": "noun",
+      "meaning": "poem",
+      "concept": 111
+    },
+    "picture": {
+      "pos": "noun",
+      "meaning": "picture",
+      "concept": 112
+    },
+    "language": {
+      "pos": "noun",
+      "meaning": "language",
+      "concept": 125
+    },
+    "alphabet": {
+      "pos": "noun",
+      "meaning": "alphabet",
+      "concept": 126
+    },
+    "society": {
+      "pos": "noun",
+      "meaning": "society",
+      "concept": 127
+    },
+    "family": {
+      "pos": "noun",
+      "meaning": "family",
+      "concept": 128
+    },
+    "english": {
+      "pos": "noun",
+      "meaning": "english",
+      "concept": 129
+    },
+    "tamil": {
+      "pos": "noun",
+      "meaning": "tamil",
+      "concept": 130
+    },
+    "symbol": {
+      "pos": "noun",
+      "meaning": "symbol",
+      "concept": 131
+    },
+    "word": {
+      "pos": "noun",
+      "meaning": "word",
+      "concept": 132
+    },
+    "character": {
+      "pos": "noun",
+      "meaning": "character",
+      "concept": 133
+    },
+    "digit": {
+      "pos": "noun",
+      "meaning": "digit",
+      "concept": 134
+    },
+    "mark": {
+      "pos": "noun",
+      "meaning": "mark",
+      "concept": 135
+    },
+    "yes": {
+      "pos": "noun",
+      "meaning": "yes",
+      "concept": 139
+    },
+    "no": {
+      "pos": "noun",
+      "meaning": "no",
+      "concept": 140
+    },
+    "letter": {
+      "pos": "noun",
+      "meaning": "letter",
+      "concept": 141
+    },
+    "b": {
+      "pos": "noun",
+      "meaning": "b",
+      "concept": 143
+    },
+    "c": {
+      "pos": "noun",
+      "meaning": "c",
+      "concept": 144
+    },
+    "d": {
+      "pos": "noun",
+      "meaning": "d",
+      "concept": 145
+    },
+    "e": {
+      "pos": "noun",
+      "meaning": "e",
+      "concept": 146
+    },
+    "f": {
+      "pos": "noun",
+      "meaning": "f",
+      "concept": 147
+    },
+    "g": {
+      "pos": "noun",
+      "meaning": "g",
+      "concept": 148
+    },
+    "h": {
+      "pos": "noun",
+      "meaning": "h",
+      "concept": 149
+    },
+    "j": {
+      "pos": "noun",
+      "meaning": "j",
+      "concept": 151
+    },
+    "k": {
+      "pos": "noun",
+      "meaning": "k",
+      "concept": 152
+    },
+    "l": {
+      "pos": "noun",
+      "meaning": "l",
+      "concept": 153
+    },
+    "m": {
+      "pos": "noun",
+      "meaning": "m",
+      "concept": 154
+    },
+    "n": {
+      "pos": "noun",
+      "meaning": "n",
+      "concept": 155
+    },
+    "o": {
+      "pos": "noun",
+      "meaning": "o",
+      "concept": 156
+    },
+    "p": {
+      "pos": "noun",
+      "meaning": "p",
+      "concept": 157
+    },
+    "q": {
+      "pos": "noun",
+      "meaning": "q",
+      "concept": 158
+    },
+    "r": {
+      "pos": "noun",
+      "meaning": "r",
+      "concept": 159
+    },
+    "s": {
+      "pos": "noun",
+      "meaning": "s",
+      "concept": 160
+    },
+    "t": {
+      "pos": "noun",
+      "meaning": "t",
+      "concept": 161
+    },
+    "u": {
+      "pos": "noun",
+      "meaning": "u",
+      "concept": 162
+    },
+    "v": {
+      "pos": "noun",
+      "meaning": "v",
+      "concept": 163
+    },
+    "w": {
+      "pos": "noun",
+      "meaning": "w",
+      "concept": 164
+    },
+    "x": {
+      "pos": "noun",
+      "meaning": "x",
+      "concept": 165
+    },
+    "y": {
+      "pos": "noun",
+      "meaning": "y",
+      "concept": 166
+    },
+    "z": {
+      "pos": "noun",
+      "meaning": "z",
+      "concept": 167
+    },
+    "form": {
+      "pos": "noun",
+      "meaning": "form",
+      "concept": 182
+    },
+    "size": {
+      "pos": "noun",
+      "meaning": "size",
+      "concept": 183
+    },
+    "weight": {
+      "pos": "noun",
+      "meaning": "weight",
+      "concept": 184
+    },
+    "colour": {
+      "pos": "noun",
+      "meaning": "colour",
+      "concept": 185
+    },
+    "temperature": {
+      "pos": "noun",
+      "meaning": "temperature",
+      "concept": 186
+    },
+    "time": {
+      "pos": "noun",
+      "meaning": "time",
+      "concept": 187
+    },
+    "state": {
+      "pos": "noun",
+      "meaning": "state",
+      "concept": 188
+    },
+    "quality": {
+      "pos": "noun",
+      "meaning": "quality",
+      "concept": 189
+    },
+    "quantity": {
+      "pos": "noun",
+      "meaning": "quantity",
+      "concept": 190
+    },
+    "position": {
+      "pos": "noun",
+      "meaning": "position",
+      "concept": 191
+    },
+    "shape": {
+      "pos": "noun",
+      "meaning": "shape",
+      "concept": 192
+    },
+    "pattern": {
+      "pos": "noun",
+      "meaning": "pattern",
+      "concept": 193
+    },
+    "structure": {
+      "pos": "noun",
+      "meaning": "structure",
+      "concept": 194
+    },
+    "big": {
+      "pos": "noun",
+      "meaning": "big",
+      "concept": 195
+    },
+    "small": {
+      "pos": "noun",
+      "meaning": "small",
+      "concept": 196
+    },
+    "long": {
+      "pos": "noun",
+      "meaning": "long",
+      "concept": 197
+    },
+    "short": {
+      "pos": "noun",
+      "meaning": "short",
+      "concept": 198
+    },
+    "tall": {
+      "pos": "noun",
+      "meaning": "tall",
+      "concept": 199
+    },
+    "heavy": {
+      "pos": "noun",
+      "meaning": "heavy",
+      "concept": 200
+    },
+    "red": {
+      "pos": "noun",
+      "meaning": "red",
+      "concept": 202
+    },
+    "blue": {
+      "pos": "noun",
+      "meaning": "blue",
+      "concept": 203
+    },
+    "green": {
+      "pos": "noun",
+      "meaning": "green",
+      "concept": 204
+    },
+    "yellow": {
+      "pos": "noun",
+      "meaning": "yellow",
+      "concept": 205
+    },
+    "black": {
+      "pos": "noun",
+      "meaning": "black",
+      "concept": 206
+    },
+    "white": {
+      "pos": "noun",
+      "meaning": "white",
+      "concept": 207
+    },
+    "hot": {
+      "pos": "noun",
+      "meaning": "hot",
+      "concept": 208
+    },
+    "cold": {
+      "pos": "noun",
+      "meaning": "cold",
+      "concept": 209
+    },
+    "warm": {
+      "pos": "noun",
+      "meaning": "warm",
+      "concept": 210
+    },
+    "cool": {
+      "pos": "noun",
+      "meaning": "cool",
+      "concept": 211
+    },
+    "period": {
+      "pos": "noun",
+      "meaning": "period",
+      "concept": 212
+    },
+    "moment": {
+      "pos": "noun",
+      "meaning": "moment",
+      "concept": 213
+    },
+    "age": {
+      "pos": "noun",
+      "meaning": "age",
+      "concept": 214
+    },
+    "day": {
+      "pos": "noun",
+      "meaning": "day",
+      "concept": 215
+    },
+    "night": {
+      "pos": "noun",
+      "meaning": "night",
+      "concept": 216
+    },
+    "week": {
+      "pos": "noun",
+      "meaning": "week",
+      "concept": 217
+    },
+    "month": {
+      "pos": "noun",
+      "meaning": "month",
+      "concept": 218
+    },
+    "year": {
+      "pos": "noun",
+      "meaning": "year",
+      "concept": 219
+    },
+    "hour": {
+      "pos": "noun",
+      "meaning": "hour",
+      "concept": 220
+    },
+    "minute": {
+      "pos": "noun",
+      "meaning": "minute",
+      "concept": 221
+    },
+    "second": {
+      "pos": "noun",
+      "meaning": "second",
+      "concept": 222
+    },
+    "now": {
+      "pos": "noun",
+      "meaning": "now",
+      "concept": 223
+    },
+    "past": {
+      "pos": "noun",
+      "meaning": "past",
+      "concept": 565
+    },
+    "future": {
+      "pos": "noun",
+      "meaning": "future",
+      "concept": 566
+    },
+    "then": {
+      "pos": "noun",
+      "meaning": "then",
+      "concept": 224
+    },
+    "life": {
+      "pos": "noun",
+      "meaning": "life",
+      "concept": 225
+    },
+    "death": {
+      "pos": "noun",
+      "meaning": "death",
+      "concept": 226
+    },
+    "sleep": {
+      "pos": "noun",
+      "meaning": "sleep",
+      "concept": 227
+    },
+    "health": {
+      "pos": "noun",
+      "meaning": "health",
+      "concept": 228
+    },
+    "feeling": {
+      "pos": "noun",
+      "meaning": "feeling",
+      "concept": 229
+    },
+    "love": {
+      "pos": "noun",
+      "meaning": "love",
+      "concept": 231
+    },
+    "fear": {
+      "pos": "noun",
+      "meaning": "fear",
+      "concept": 232
+    },
+    "anger": {
+      "pos": "noun",
+      "meaning": "anger",
+      "concept": 233
+    },
+    "joy": {
+      "pos": "noun",
+      "meaning": "joy",
+      "concept": 234
+    },
+    "sadness": {
+      "pos": "noun",
+      "meaning": "sadness",
+      "concept": 235
+    },
+    "pain": {
+      "pos": "noun",
+      "meaning": "pain",
+      "concept": 236
+    },
+    "comfort": {
+      "pos": "noun",
+      "meaning": "comfort",
+      "concept": 237
+    },
+    "good": {
+      "pos": "noun",
+      "meaning": "good",
+      "concept": 238
+    },
+    "nice": {
+      "pos": "noun",
+      "meaning": "nice",
+      "concept": 563
+    },
+    "hurt": {
+      "pos": "noun",
+      "meaning": "hurt",
+      "concept": 564
+    },
+    "bad": {
+      "pos": "noun",
+      "meaning": "bad",
+      "concept": 239
+    },
+    "happy": {
+      "pos": "adjective",
+      "meaning": "happy",
+      "concept": 238
+    },
+    "sad": {
+      "pos": "adjective",
+      "meaning": "sad",
+      "concept": 239
+    },
+    "true": {
+      "pos": "noun",
+      "meaning": "true",
+      "concept": 240
+    },
+    "false": {
+      "pos": "noun",
+      "meaning": "false",
+      "concept": 241
+    },
+    "beautiful": {
+      "pos": "noun",
+      "meaning": "beautiful",
+      "concept": 242
+    },
+    "few": {
+      "pos": "noun",
+      "meaning": "few",
+      "concept": 244
+    },
+    "all": {
+      "pos": "noun",
+      "meaning": "all",
+      "concept": 245
+    },
+    "none": {
+      "pos": "noun",
+      "meaning": "none",
+      "concept": 246
+    },
+    "cause": {
+      "pos": "noun",
+      "meaning": "cause",
+      "concept": 247
+    },
+    "part": {
+      "pos": "noun",
+      "meaning": "part",
+      "concept": 248
+    },
+    "order": {
+      "pos": "noun",
+      "meaning": "order",
+      "concept": 249
+    },
+    "same": {
+      "pos": "noun",
+      "meaning": "same",
+      "concept": 250
+    },
+    "different": {
+      "pos": "noun",
+      "meaning": "different",
+      "concept": 251
+    },
+    "distance": {
+      "pos": "noun",
+      "meaning": "distance",
+      "concept": 252
+    },
+    "motion": {
+      "pos": "noun",
+      "meaning": "motion",
+      "concept": 253
+    },
+    "event": {
+      "pos": "noun",
+      "meaning": "event",
+      "concept": 254
+    },
+    "process": {
+      "pos": "noun",
+      "meaning": "process",
+      "concept": 255
+    },
+    "communication": {
+      "pos": "noun",
+      "meaning": "communication",
+      "concept": 256
+    },
+    "work": {
+      "pos": "noun",
+      "meaning": "work",
+      "concept": 257
+    },
+    "run": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "run",
+      "concept": 258
+    },
+    "walk": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "walk",
+      "concept": 259
+    },
+    "fly": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "fly",
+      "concept": 260
+    },
+    "swim": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "swim",
+      "concept": 261
+    },
+    "fall": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "fall",
+      "concept": 262
+    },
+    "come": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "come",
+      "concept": 263
+    },
+    "go": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "go",
+      "concept": 264
+    },
+    "birth": {
+      "pos": "noun",
+      "meaning": "birth",
+      "concept": 265
+    },
+    "accident": {
+      "pos": "noun",
+      "meaning": "accident",
+      "concept": 266
+    },
+    "meeting": {
+      "pos": "noun",
+      "meaning": "meeting",
+      "concept": 267
+    },
+    "growth": {
+      "pos": "noun",
+      "meaning": "growth",
+      "concept": 268
+    },
+    "burning": {
+      "pos": "noun",
+      "meaning": "burning",
+      "concept": 269
+    },
+    "learning": {
+      "pos": "noun",
+      "meaning": "learning",
+      "concept": 270
+    },
+    "speak": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "speak",
+      "concept": 271
+    },
+    "write": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "write",
+      "concept": 272
+    },
+    "read": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "read",
+      "concept": 273
+    },
+    "listen": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "listen",
+      "concept": 274
+    },
+    "ask": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "ask",
+      "concept": 275
+    },
+    "eat": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "eat",
+      "concept": 278
+    },
+    "drink": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "drink",
+      "concept": 279
+    },
+    "make": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "make",
+      "concept": 280
+    },
+    "build": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "build",
+      "concept": 281
+    },
+    "think": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "think",
+      "concept": 284
+    },
+    "see": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "see",
+      "concept": 286
+    },
+    "hear": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "hear",
+      "concept": 287
+    },
+    "sun": {
+      "pos": "noun",
+      "meaning": "sun",
+      "concept": 288
+    },
+    "perception": {
+      "pos": "noun",
+      "meaning": "perception",
+      "concept": 292
+    },
+    "group": {
+      "pos": "noun",
+      "meaning": "group",
+      "concept": 293
+    },
+    "force": {
+      "pos": "noun",
+      "meaning": "force",
+      "concept": 308
+    },
+    "gravity": {
+      "pos": "noun",
+      "meaning": "gravity",
+      "concept": 309
+    },
+    "push": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "push",
+      "concept": 310
+    },
+    "pull": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "pull",
+      "concept": 311
+    },
+    "up": {
+      "pos": "noun",
+      "meaning": "up",
+      "concept": 312
+    },
+    "down": {
+      "pos": "noun",
+      "meaning": "down",
+      "concept": 313
+    },
+    "left": {
+      "pos": "noun",
+      "meaning": "left",
+      "concept": 314
+    },
+    "right": {
+      "pos": "noun",
+      "meaning": "right",
+      "concept": 315
+    },
+    "front": {
+      "pos": "noun",
+      "meaning": "front",
+      "concept": 316
+    },
+    "back": {
+      "pos": "noun",
+      "meaning": "back",
+      "concept": 317
+    },
+    "near": {
+      "pos": "noun",
+      "meaning": "near",
+      "concept": 318
+    },
+    "far": {
+      "pos": "noun",
+      "meaning": "far",
+      "concept": 319
+    },
+    "ground": {
+      "pos": "noun",
+      "meaning": "ground",
+      "concept": 321
+    },
+    "mass": {
+      "pos": "noun",
+      "meaning": "mass",
+      "concept": 323
+    },
+    "speed": {
+      "pos": "noun",
+      "meaning": "speed",
+      "concept": 324
+    },
+    "rise": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "rise",
+      "concept": 325
+    },
+    "stop": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "stop",
+      "concept": 326
+    },
+    "wheel": {
+      "pos": "noun",
+      "meaning": "wheel",
+      "concept": 331
+    },
+    "door": {
+      "pos": "noun",
+      "meaning": "door",
+      "concept": 332
+    },
+    "window": {
+      "pos": "noun",
+      "meaning": "window",
+      "concept": 333
+    },
+    "wing": {
+      "pos": "noun",
+      "meaning": "wing",
+      "concept": 334
+    },
+    "agent": {
+      "pos": "noun",
+      "meaning": "agent",
+      "concept": 327
+    },
+    "target": {
+      "pos": "noun",
+      "meaning": "target",
+      "concept": 328
+    },
+    "source": {
+      "pos": "noun",
+      "meaning": "source",
+      "concept": 329
+    },
+    "destination": {
+      "pos": "noun",
+      "meaning": "destination",
+      "concept": 330
+    },
+    "reptile": {
+      "pos": "noun",
+      "meaning": "reptile",
+      "concept": 335
+    },
+    "amphibian": {
+      "pos": "noun",
+      "meaning": "amphibian",
+      "concept": 336
+    },
+    "lion": {
+      "pos": "noun",
+      "meaning": "lion",
+      "concept": 337
+    },
+    "horse": {
+      "pos": "noun",
+      "meaning": "horse",
+      "concept": 338
+    },
+    "goat": {
+      "pos": "noun",
+      "meaning": "goat",
+      "concept": 339
+    },
+    "sheep": {
+      "pos": "noun",
+      "meaning": "sheep",
+      "concept": 340
+    },
+    "pig": {
+      "pos": "noun",
+      "meaning": "pig",
+      "concept": 341
+    },
+    "deer": {
+      "pos": "noun",
+      "meaning": "deer",
+      "concept": 342
+    },
+    "monkey": {
+      "pos": "noun",
+      "meaning": "monkey",
+      "concept": 343
+    },
+    "rabbit": {
+      "pos": "noun",
+      "meaning": "rabbit",
+      "concept": 344
+    },
+    "rat": {
+      "pos": "noun",
+      "meaning": "rat",
+      "concept": 345
+    },
+    "bat": {
+      "pos": "noun",
+      "meaning": "bat",
+      "concept": 346
+    },
+    "whale": {
+      "pos": "noun",
+      "meaning": "whale",
+      "concept": 347
+    },
+    "dolphin": {
+      "pos": "noun",
+      "meaning": "dolphin",
+      "concept": 348
+    },
+    "bear": {
+      "pos": "noun",
+      "meaning": "bear",
+      "concept": 349
+    },
+    "wolf": {
+      "pos": "noun",
+      "meaning": "wolf",
+      "concept": 350
+    },
+    "fox": {
+      "pos": "noun",
+      "meaning": "fox",
+      "concept": 351
+    },
+    "camel": {
+      "pos": "noun",
+      "meaning": "camel",
+      "concept": 352
+    },
+    "donkey": {
+      "pos": "noun",
+      "meaning": "donkey",
+      "concept": 353
+    },
+    "mouse": {
+      "pos": "noun",
+      "meaning": "mouse",
+      "concept": 354
+    },
+    "crow": {
+      "pos": "noun",
+      "meaning": "crow",
+      "concept": 355
+    },
+    "eagle": {
+      "pos": "noun",
+      "meaning": "eagle",
+      "concept": 356
+    },
+    "owl": {
+      "pos": "noun",
+      "meaning": "owl",
+      "concept": 357
+    },
+    "parrot": {
+      "pos": "noun",
+      "meaning": "parrot",
+      "concept": 358
+    },
+    "duck": {
+      "pos": "noun",
+      "meaning": "duck",
+      "concept": 359
+    },
+    "hen": {
+      "pos": "noun",
+      "meaning": "hen",
+      "concept": 360
+    },
+    "peacock": {
+      "pos": "noun",
+      "meaning": "peacock",
+      "concept": 361
+    },
+    "pigeon": {
+      "pos": "noun",
+      "meaning": "pigeon",
+      "concept": 362
+    },
+    "swan": {
+      "pos": "noun",
+      "meaning": "swan",
+      "concept": 363
+    },
+    "stork": {
+      "pos": "noun",
+      "meaning": "stork",
+      "concept": 364
+    },
+    "shark": {
+      "pos": "noun",
+      "meaning": "shark",
+      "concept": 365
+    },
+    "tuna": {
+      "pos": "noun",
+      "meaning": "tuna",
+      "concept": 366
+    },
+    "salmon": {
+      "pos": "noun",
+      "meaning": "salmon",
+      "concept": 367
+    },
+    "carp": {
+      "pos": "noun",
+      "meaning": "carp",
+      "concept": 368
+    },
+    "ant": {
+      "pos": "noun",
+      "meaning": "ant",
+      "concept": 369
+    },
+    "bee": {
+      "pos": "noun",
+      "meaning": "bee",
+      "concept": 370
+    },
+    "butterfly": {
+      "pos": "noun",
+      "meaning": "butterfly",
+      "concept": 371
+    },
+    "mosquito": {
+      "pos": "noun",
+      "meaning": "mosquito",
+      "concept": 372
+    },
+    "beetle": {
+      "pos": "noun",
+      "meaning": "beetle",
+      "concept": 373
+    },
+    "moth": {
+      "pos": "noun",
+      "meaning": "moth",
+      "concept": 374
+    },
+    "lizard": {
+      "pos": "noun",
+      "meaning": "lizard",
+      "concept": 375
+    },
+    "crocodile": {
+      "pos": "noun",
+      "meaning": "crocodile",
+      "concept": 376
+    },
+    "turtle": {
+      "pos": "noun",
+      "meaning": "turtle",
+      "concept": 377
+    },
+    "chameleon": {
+      "pos": "noun",
+      "meaning": "chameleon",
+      "concept": 378
+    },
+    "frog": {
+      "pos": "noun",
+      "meaning": "frog",
+      "concept": 379
+    },
+    "toad": {
+      "pos": "noun",
+      "meaning": "toad",
+      "concept": 380
+    },
+    "bush": {
+      "pos": "noun",
+      "meaning": "bush",
+      "concept": 381
+    },
+    "herb": {
+      "pos": "noun",
+      "meaning": "herb",
+      "concept": 382
+    },
+    "vine": {
+      "pos": "noun",
+      "meaning": "vine",
+      "concept": 383
+    },
+    "moss": {
+      "pos": "noun",
+      "meaning": "moss",
+      "concept": 384
+    },
+    "fern": {
+      "pos": "noun",
+      "meaning": "fern",
+      "concept": 385
+    },
+    "oak": {
+      "pos": "noun",
+      "meaning": "oak",
+      "concept": 386
+    },
+    "pine": {
+      "pos": "noun",
+      "meaning": "pine",
+      "concept": 387
+    },
+    "palm": {
+      "pos": "noun",
+      "meaning": "palm",
+      "concept": 388
+    },
+    "bamboo": {
+      "pos": "noun",
+      "meaning": "bamboo",
+      "concept": 389
+    },
+    "teak": {
+      "pos": "noun",
+      "meaning": "teak",
+      "concept": 390
+    },
+    "grape": {
+      "pos": "noun",
+      "meaning": "grape",
+      "concept": 391
+    },
+    "lemon": {
+      "pos": "noun",
+      "meaning": "lemon",
+      "concept": 392
+    },
+    "cherry": {
+      "pos": "noun",
+      "meaning": "cherry",
+      "concept": 393
+    },
+    "peach": {
+      "pos": "noun",
+      "meaning": "peach",
+      "concept": 394
+    },
+    "melon": {
+      "pos": "noun",
+      "meaning": "melon",
+      "concept": 395
+    },
+    "coconut": {
+      "pos": "noun",
+      "meaning": "coconut",
+      "concept": 396
+    },
+    "fig": {
+      "pos": "noun",
+      "meaning": "fig",
+      "concept": 397
+    },
+    "date": {
+      "pos": "noun",
+      "meaning": "date",
+      "concept": 398
+    },
+    "vegetable": {
+      "pos": "noun",
+      "meaning": "vegetable",
+      "concept": 399
+    },
+    "egg": {
+      "pos": "noun",
+      "meaning": "egg",
+      "concept": 400
+    },
+    "honey": {
+      "pos": "noun",
+      "meaning": "honey",
+      "concept": 401
+    },
+    "cheese": {
+      "pos": "noun",
+      "meaning": "cheese",
+      "concept": 402
+    },
+    "butter": {
+      "pos": "noun",
+      "meaning": "butter",
+      "concept": 403
+    },
+    "tea": {
+      "pos": "noun",
+      "meaning": "tea",
+      "concept": 404
+    },
+    "coffee": {
+      "pos": "noun",
+      "meaning": "coffee",
+      "concept": 405
+    },
+    "soup": {
+      "pos": "noun",
+      "meaning": "soup",
+      "concept": 406
+    },
+    "potato": {
+      "pos": "noun",
+      "meaning": "potato",
+      "concept": 407
+    },
+    "tomato": {
+      "pos": "noun",
+      "meaning": "tomato",
+      "concept": 408
+    },
+    "onion": {
+      "pos": "noun",
+      "meaning": "onion",
+      "concept": 409
+    },
+    "carrot": {
+      "pos": "noun",
+      "meaning": "carrot",
+      "concept": 410
+    },
+    "pea": {
+      "pos": "noun",
+      "meaning": "pea",
+      "concept": 411
+    },
+    "bean": {
+      "pos": "noun",
+      "meaning": "bean",
+      "concept": 412
+    },
+    "garlic": {
+      "pos": "noun",
+      "meaning": "garlic",
+      "concept": 413
+    },
+    "spinach": {
+      "pos": "noun",
+      "meaning": "spinach",
+      "concept": 414
+    },
+    "nose": {
+      "pos": "noun",
+      "meaning": "nose",
+      "concept": 415
+    },
+    "mouth": {
+      "pos": "noun",
+      "meaning": "mouth",
+      "concept": 416
+    },
+    "tooth": {
+      "pos": "noun",
+      "meaning": "tooth",
+      "concept": 417
+    },
+    "tongue": {
+      "pos": "noun",
+      "meaning": "tongue",
+      "concept": 418
+    },
+    "neck": {
+      "pos": "noun",
+      "meaning": "neck",
+      "concept": 419
+    },
+    "arm": {
+      "pos": "noun",
+      "meaning": "arm",
+      "concept": 420
+    },
+    "foot": {
+      "pos": "noun",
+      "meaning": "foot",
+      "concept": 421
+    },
+    "finger": {
+      "pos": "noun",
+      "meaning": "finger",
+      "concept": 422
+    },
+    "bone": {
+      "pos": "noun",
+      "meaning": "bone",
+      "concept": 423
+    },
+    "stomach": {
+      "pos": "noun",
+      "meaning": "stomach",
+      "concept": 424
+    },
+    "lung": {
+      "pos": "noun",
+      "meaning": "lung",
+      "concept": 425
+    },
+    "liver": {
+      "pos": "noun",
+      "meaning": "liver",
+      "concept": 426
+    },
+    "tail": {
+      "pos": "noun",
+      "meaning": "tail",
+      "concept": 427
+    },
+    "horn": {
+      "pos": "noun",
+      "meaning": "horn",
+      "concept": 428
+    },
+    "claw": {
+      "pos": "noun",
+      "meaning": "claw",
+      "concept": 429
+    },
+    "feather": {
+      "pos": "noun",
+      "meaning": "feather",
+      "concept": 430
+    },
+    "shell": {
+      "pos": "noun",
+      "meaning": "shell",
+      "concept": 431
+    },
+    "furniture": {
+      "pos": "noun",
+      "meaning": "furniture",
+      "concept": 432
+    },
+    "landform": {
+      "pos": "noun",
+      "meaning": "landform",
+      "concept": 434
+    },
+    "shelf": {
+      "pos": "noun",
+      "meaning": "shelf",
+      "concept": 435
+    },
+    "chair": {
+      "pos": "noun",
+      "meaning": "chair",
+      "concept": 436
+    },
+    "table": {
+      "pos": "noun",
+      "meaning": "table",
+      "concept": 437
+    },
+    "bed": {
+      "pos": "noun",
+      "meaning": "bed",
+      "concept": 438
+    },
+    "cupboard": {
+      "pos": "noun",
+      "meaning": "cupboard",
+      "concept": 439
+    },
+    "bench": {
+      "pos": "noun",
+      "meaning": "bench",
+      "concept": 440
+    },
+    "spoon": {
+      "pos": "noun",
+      "meaning": "spoon",
+      "concept": 441
+    },
+    "fork": {
+      "pos": "noun",
+      "meaning": "fork",
+      "concept": 442
+    },
+    "cup": {
+      "pos": "noun",
+      "meaning": "cup",
+      "concept": 443
+    },
+    "plate": {
+      "pos": "noun",
+      "meaning": "plate",
+      "concept": 444
+    },
+    "bottle": {
+      "pos": "noun",
+      "meaning": "bottle",
+      "concept": 445
+    },
+    "bag": {
+      "pos": "noun",
+      "meaning": "bag",
+      "concept": 446
+    },
+    "rope": {
+      "pos": "noun",
+      "meaning": "rope",
+      "concept": 447
+    },
+    "needle": {
+      "pos": "noun",
+      "meaning": "needle",
+      "concept": 448
+    },
+    "key": {
+      "pos": "noun",
+      "meaning": "key",
+      "concept": 449
+    },
+    "lock": {
+      "pos": "noun",
+      "meaning": "lock",
+      "concept": 450
+    },
+    "clock": {
+      "pos": "noun",
+      "meaning": "clock",
+      "concept": 451
+    },
+    "lamp": {
+      "pos": "noun",
+      "meaning": "lamp",
+      "concept": 452
+    },
+    "mirror": {
+      "pos": "noun",
+      "meaning": "mirror",
+      "concept": 453
+    },
+    "brush": {
+      "pos": "noun",
+      "meaning": "brush",
+      "concept": 454
+    },
+    "comb": {
+      "pos": "noun",
+      "meaning": "comb",
+      "concept": 455
+    },
+    "axe": {
+      "pos": "noun",
+      "meaning": "axe",
+      "concept": 456
+    },
+    "saw": {
+      "pos": "noun",
+      "meaning": "saw",
+      "concept": 457
+    },
+    "ladder": {
+      "pos": "noun",
+      "meaning": "ladder",
+      "concept": 458
+    },
+    "wheelbarrow": {
+      "pos": "noun",
+      "meaning": "wheelbarrow",
+      "concept": 459
+    },
+    "ship": {
+      "pos": "noun",
+      "meaning": "ship",
+      "concept": 460
+    },
+    "plane": {
+      "pos": "noun",
+      "meaning": "plane",
+      "concept": 461
+    },
+    "bicycle": {
+      "pos": "noun",
+      "meaning": "bicycle",
+      "concept": 462
+    },
+    "cart": {
+      "pos": "noun",
+      "meaning": "cart",
+      "concept": 463
+    },
+    "truck": {
+      "pos": "noun",
+      "meaning": "truck",
+      "concept": 464
+    },
+    "hospital": {
+      "pos": "noun",
+      "meaning": "hospital",
+      "concept": 465
+    },
+    "bridge": {
+      "pos": "noun",
+      "meaning": "bridge",
+      "concept": 466
+    },
+    "tower": {
+      "pos": "noun",
+      "meaning": "tower",
+      "concept": 467
+    },
+    "market": {
+      "pos": "noun",
+      "meaning": "market",
+      "concept": 468
+    },
+    "iron": {
+      "pos": "noun",
+      "meaning": "iron",
+      "concept": 469
+    },
+    "gold": {
+      "pos": "noun",
+      "meaning": "gold",
+      "concept": 470
+    },
+    "silver": {
+      "pos": "noun",
+      "meaning": "silver",
+      "concept": 471
+    },
+    "glass": {
+      "pos": "noun",
+      "meaning": "glass",
+      "concept": 472
+    },
+    "paper": {
+      "pos": "noun",
+      "meaning": "paper",
+      "concept": 473
+    },
+    "cloth": {
+      "pos": "noun",
+      "meaning": "cloth",
+      "concept": 474
+    },
+    "plastic": {
+      "pos": "noun",
+      "meaning": "plastic",
+      "concept": 475
+    },
+    "sand": {
+      "pos": "noun",
+      "meaning": "sand",
+      "concept": 476
+    },
+    "mud": {
+      "pos": "noun",
+      "meaning": "mud",
+      "concept": 477
+    },
+    "clay": {
+      "pos": "noun",
+      "meaning": "clay",
+      "concept": 478
+    },
+    "rubber": {
+      "pos": "noun",
+      "meaning": "rubber",
+      "concept": 479
+    },
+    "hill": {
+      "pos": "noun",
+      "meaning": "hill",
+      "concept": 480
+    },
+    "valley": {
+      "pos": "noun",
+      "meaning": "valley",
+      "concept": 481
+    },
+    "ocean": {
+      "pos": "noun",
+      "meaning": "ocean",
+      "concept": 482
+    },
+    "island": {
+      "pos": "noun",
+      "meaning": "island",
+      "concept": 483
+    },
+    "forest": {
+      "pos": "noun",
+      "meaning": "forest",
+      "concept": 484
+    },
+    "desert": {
+      "pos": "noun",
+      "meaning": "desert",
+      "concept": 485
+    },
+    "cave": {
+      "pos": "noun",
+      "meaning": "cave",
+      "concept": 486
+    },
+    "beach": {
+      "pos": "noun",
+      "meaning": "beach",
+      "concept": 487
+    },
+    "stream": {
+      "pos": "noun",
+      "meaning": "stream",
+      "concept": 488
+    },
+    "pond": {
+      "pos": "noun",
+      "meaning": "pond",
+      "concept": 489
+    },
+    "weather": {
+      "pos": "noun",
+      "meaning": "weather",
+      "concept": 490
+    },
+    "rain": {
+      "pos": "noun",
+      "meaning": "rain",
+      "concept": 491
+    },
+    "snow": {
+      "pos": "noun",
+      "meaning": "snow",
+      "concept": 492
+    },
+    "wind": {
+      "pos": "noun",
+      "meaning": "wind",
+      "concept": 493
+    },
+    "storm": {
+      "pos": "noun",
+      "meaning": "storm",
+      "concept": 494
+    },
+    "fog": {
+      "pos": "noun",
+      "meaning": "fog",
+      "concept": 495
+    },
+    "thunder": {
+      "pos": "noun",
+      "meaning": "thunder",
+      "concept": 496
+    },
+    "lightning": {
+      "pos": "noun",
+      "meaning": "lightning",
+      "concept": 497
+    },
+    "frost": {
+      "pos": "noun",
+      "meaning": "frost",
+      "concept": 498
+    },
+    "baby": {
+      "pos": "noun",
+      "meaning": "baby",
+      "concept": 499
+    },
+    "boy": {
+      "pos": "noun",
+      "meaning": "boy",
+      "concept": 500
+    },
+    "girl": {
+      "pos": "noun",
+      "meaning": "girl",
+      "concept": 501
+    },
+    "mother": {
+      "pos": "noun",
+      "meaning": "mother",
+      "concept": 502
+    },
+    "father": {
+      "pos": "noun",
+      "meaning": "father",
+      "concept": 503
+    },
+    "brother": {
+      "pos": "noun",
+      "meaning": "brother",
+      "concept": 504
+    },
+    "sister": {
+      "pos": "noun",
+      "meaning": "sister",
+      "concept": 505
+    },
+    "friend": {
+      "pos": "noun",
+      "meaning": "friend",
+      "concept": 506
+    },
+    "teacher": {
+      "pos": "noun",
+      "meaning": "teacher",
+      "concept": 507
+    },
+    "doctor": {
+      "pos": "noun",
+      "meaning": "doctor",
+      "concept": 508
+    },
+    "farmer": {
+      "pos": "noun",
+      "meaning": "farmer",
+      "concept": 509
+    },
+    "worker": {
+      "pos": "noun",
+      "meaning": "worker",
+      "concept": 510
+    },
+    "king": {
+      "pos": "noun",
+      "meaning": "king",
+      "concept": 511
+    },
+    "queen": {
+      "pos": "noun",
+      "meaning": "queen",
+      "concept": 512
+    },
+    "neighbour": {
+      "pos": "noun",
+      "meaning": "neighbour",
+      "concept": 513
+    },
+    "brown": {
+      "pos": "noun",
+      "meaning": "brown",
+      "concept": 514
+    },
+    "grey": {
+      "pos": "noun",
+      "meaning": "grey",
+      "concept": 515
+    },
+    "pink": {
+      "pos": "noun",
+      "meaning": "pink",
+      "concept": 516
+    },
+    "purple": {
+      "pos": "noun",
+      "meaning": "purple",
+      "concept": 517
+    },
+    "morning": {
+      "pos": "noun",
+      "meaning": "morning",
+      "concept": 518
+    },
+    "evening": {
+      "pos": "noun",
+      "meaning": "evening",
+      "concept": 519
+    },
+    "noon": {
+      "pos": "noun",
+      "meaning": "noon",
+      "concept": 520
+    },
+    "midnight": {
+      "pos": "noun",
+      "meaning": "midnight",
+      "concept": 521
+    },
+    "season": {
+      "pos": "noun",
+      "meaning": "season",
+      "concept": 522
+    },
+    "spring": {
+      "pos": "noun",
+      "meaning": "spring",
+      "concept": 524
+    },
+    "summer": {
+      "pos": "noun",
+      "meaning": "summer",
+      "concept": 525
+    },
+    "autumn": {
+      "pos": "noun",
+      "meaning": "autumn",
+      "concept": 526
+    },
+    "winter": {
+      "pos": "noun",
+      "meaning": "winter",
+      "concept": 527
+    },
+    "jump": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "jump",
+      "concept": 528
+    },
+    "crawl": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "crawl",
+      "concept": 529
+    },
+    "slide": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "slide",
+      "concept": 530
+    },
+    "spin": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "spin",
+      "concept": 531
+    },
+    "cut": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "cut",
+      "concept": 533
+    },
+    "cook": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "cook",
+      "concept": 534
+    },
+    "wash": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "wash",
+      "concept": 535
+    },
+    "carry": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "carry",
+      "concept": 536
+    },
+    "throw": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "throw",
+      "concept": 537
+    },
+    "catch": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "catch",
+      "concept": 538
+    },
+    "open": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "open",
+      "concept": 539
+    },
+    "close": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "close",
+      "concept": 540
+    },
+    "not": {
+      "pos": "negation",
+      "meaning": "not",
+      "negates": true
+    },
+    "what": {
+      "pos": "interrogative",
+      "meaning": "what",
+      "marks": "unknown"
+    },
+    "who": {
+      "pos": "interrogative",
+      "meaning": "who",
+      "marks": "unknown",
+      "concept": 138
+    },
+    "how": {
+      "pos": "interrogative",
+      "meaning": "how",
+      "marks": "unknown"
+    },
+    "many": {
+      "pos": "quantifier",
+      "meaning": "many",
+      "concept": 243
+    },
+    "you": {
+      "pos": "pronoun",
+      "meaning": "the one it went to",
+      "marks": "to",
+      "person": "second"
+    },
+    "your": {
+      "pos": "possessive",
+      "meaning": "the one it went to",
+      "marks": "to",
+      "person": "second"
+    },
+    "ur": {
+      "pos": "possessive",
+      "meaning": "the one it went to",
+      "marks": "to",
+      "person": "second"
+    },
+    "i": {
+      "pos": "pronoun",
+      "meaning": "the one it came from",
+      "marks": "from",
+      "person": "first",
+      "number": "singular"
+    },
+    "me": {
+      "pos": "pronoun",
+      "meaning": "the one it came from",
+      "marks": "from",
+      "person": "first",
+      "number": "singular"
+    },
+    "my": {
+      "pos": "possessive",
+      "meaning": "the one it came from",
+      "marks": "from",
+      "person": "first",
+      "number": "singular"
+    },
+    "runs": {
+      "pos": "verb",
+      "meaning": "runs",
+      "concept": 258,
+      "person": "third",
+      "number": "singular"
+    },
+    "ran": {
+      "pos": "verb",
+      "meaning": "ran",
+      "concept": 258,
+      "when": "past"
+    },
+    "walks": {
+      "pos": "verb",
+      "meaning": "walks",
+      "concept": 259,
+      "person": "third",
+      "number": "singular"
+    },
+    "walked": {
+      "pos": "verb",
+      "meaning": "walked",
+      "concept": 259,
+      "when": "past"
+    },
+    "flies": {
+      "pos": "verb",
+      "meaning": "flies",
+      "concept": 260,
+      "person": "third",
+      "number": "singular"
+    },
+    "flew": {
+      "pos": "verb",
+      "meaning": "flew",
+      "concept": 260,
+      "when": "past"
+    },
+    "swims": {
+      "pos": "verb",
+      "meaning": "swims",
+      "concept": 261,
+      "person": "third",
+      "number": "singular"
+    },
+    "swam": {
+      "pos": "verb",
+      "meaning": "swam",
+      "concept": 261,
+      "when": "past"
+    },
+    "falls": {
+      "pos": "verb",
+      "meaning": "falls",
+      "concept": 262,
+      "person": "third",
+      "number": "singular"
+    },
+    "fell": {
+      "pos": "verb",
+      "meaning": "fell",
+      "concept": 262,
+      "when": "past"
+    },
+    "comes": {
+      "pos": "verb",
+      "meaning": "comes",
+      "concept": 263,
+      "person": "third",
+      "number": "singular"
+    },
+    "came": {
+      "pos": "verb",
+      "meaning": "came",
+      "concept": 263,
+      "when": "past"
+    },
+    "goes": {
+      "pos": "verb",
+      "meaning": "goes",
+      "concept": 264,
+      "person": "third",
+      "number": "singular"
+    },
+    "went": {
+      "pos": "verb",
+      "meaning": "went",
+      "concept": 264,
+      "when": "past"
+    },
+    "speaks": {
+      "pos": "verb",
+      "meaning": "speaks",
+      "concept": 271,
+      "person": "third",
+      "number": "singular"
+    },
+    "spoke": {
+      "pos": "verb",
+      "meaning": "spoke",
+      "concept": 271,
+      "when": "past"
+    },
+    "writes": {
+      "pos": "verb",
+      "meaning": "writes",
+      "concept": 272,
+      "person": "third",
+      "number": "singular"
+    },
+    "wrote": {
+      "pos": "verb",
+      "meaning": "wrote",
+      "concept": 272,
+      "when": "past"
+    },
+    "reads": {
+      "pos": "verb",
+      "meaning": "reads",
+      "concept": 273,
+      "person": "third",
+      "number": "singular"
+    },
+    "listens": {
+      "pos": "verb",
+      "meaning": "listens",
+      "concept": 274,
+      "person": "third",
+      "number": "singular"
+    },
+    "listened": {
+      "pos": "verb",
+      "meaning": "listened",
+      "concept": 274,
+      "when": "past"
+    },
+    "asks": {
+      "pos": "verb",
+      "meaning": "asks",
+      "concept": 275,
+      "person": "third",
+      "number": "singular"
+    },
+    "asked": {
+      "pos": "verb",
+      "meaning": "asked",
+      "concept": 275,
+      "when": "past"
+    },
+    "eats": {
+      "pos": "verb",
+      "meaning": "eats",
+      "concept": 278,
+      "person": "third",
+      "number": "singular"
+    },
+    "ate": {
+      "pos": "verb",
+      "meaning": "ate",
+      "concept": 278,
+      "when": "past"
+    },
+    "drinks": {
+      "pos": "verb",
+      "meaning": "drinks",
+      "concept": 279,
+      "person": "third",
+      "number": "singular"
+    },
+    "drank": {
+      "pos": "verb",
+      "meaning": "drank",
+      "concept": 279,
+      "when": "past"
+    },
+    "makes": {
+      "pos": "verb",
+      "meaning": "makes",
+      "concept": 280,
+      "person": "third",
+      "number": "singular"
+    },
+    "made": {
+      "pos": "verb",
+      "meaning": "made",
+      "concept": 280,
+      "when": "past"
+    },
+    "builds": {
+      "pos": "verb",
+      "meaning": "builds",
+      "concept": 281,
+      "person": "third",
+      "number": "singular"
+    },
+    "built": {
+      "pos": "verb",
+      "meaning": "built",
+      "concept": 281,
+      "when": "past"
+    },
+    "thinks": {
+      "pos": "verb",
+      "meaning": "thinks",
+      "concept": 284,
+      "person": "third",
+      "number": "singular"
+    },
+    "thought": {
+      "pos": "verb",
+      "meaning": "thought",
+      "concept": 284,
+      "when": "past"
+    },
+    "sees": {
+      "pos": "verb",
+      "meaning": "sees",
+      "concept": 286,
+      "person": "third",
+      "number": "singular"
+    },
+    "hears": {
+      "pos": "verb",
+      "meaning": "hears",
+      "concept": 287,
+      "person": "third",
+      "number": "singular"
+    },
+    "heard": {
+      "pos": "verb",
+      "meaning": "heard",
+      "concept": 287,
+      "when": "past"
+    },
+    "pushes": {
+      "pos": "verb",
+      "meaning": "pushes",
+      "concept": 310,
+      "person": "third",
+      "number": "singular"
+    },
+    "pushed": {
+      "pos": "verb",
+      "meaning": "pushed",
+      "concept": 310,
+      "when": "past"
+    },
+    "pulls": {
+      "pos": "verb",
+      "meaning": "pulls",
+      "concept": 311,
+      "person": "third",
+      "number": "singular"
+    },
+    "pulled": {
+      "pos": "verb",
+      "meaning": "pulled",
+      "concept": 311,
+      "when": "past"
+    },
+    "rises": {
+      "pos": "verb",
+      "meaning": "rises",
+      "concept": 325,
+      "person": "third",
+      "number": "singular"
+    },
+    "rose": {
+      "pos": "verb",
+      "meaning": "rose",
+      "concept": 325,
+      "when": "past"
+    },
+    "stops": {
+      "pos": "verb",
+      "meaning": "stops",
+      "concept": 326,
+      "person": "third",
+      "number": "singular"
+    },
+    "stopped": {
+      "pos": "verb",
+      "meaning": "stopped",
+      "concept": 326,
+      "when": "past"
+    },
+    "jumps": {
+      "pos": "verb",
+      "meaning": "jumps",
+      "concept": 528,
+      "person": "third",
+      "number": "singular"
+    },
+    "jumped": {
+      "pos": "verb",
+      "meaning": "jumped",
+      "concept": 528,
+      "when": "past"
+    },
+    "crawls": {
+      "pos": "verb",
+      "meaning": "crawls",
+      "concept": 529,
+      "person": "third",
+      "number": "singular"
+    },
+    "crawled": {
+      "pos": "verb",
+      "meaning": "crawled",
+      "concept": 529,
+      "when": "past"
+    },
+    "slides": {
+      "pos": "verb",
+      "meaning": "slides",
+      "concept": 530,
+      "person": "third",
+      "number": "singular"
+    },
+    "slid": {
+      "pos": "verb",
+      "meaning": "slid",
+      "concept": 530,
+      "when": "past"
+    },
+    "spins": {
+      "pos": "verb",
+      "meaning": "spins",
+      "concept": 531,
+      "person": "third",
+      "number": "singular"
+    },
+    "spun": {
+      "pos": "verb",
+      "meaning": "spun",
+      "concept": 531,
+      "when": "past"
+    },
+    "cuts": {
+      "pos": "verb",
+      "meaning": "cuts",
+      "concept": 533,
+      "person": "third",
+      "number": "singular"
+    },
+    "cooks": {
+      "pos": "verb",
+      "meaning": "cooks",
+      "concept": 534,
+      "person": "third",
+      "number": "singular"
+    },
+    "cooked": {
+      "pos": "verb",
+      "meaning": "cooked",
+      "concept": 534,
+      "when": "past"
+    },
+    "washes": {
+      "pos": "verb",
+      "meaning": "washes",
+      "concept": 535,
+      "person": "third",
+      "number": "singular"
+    },
+    "washed": {
+      "pos": "verb",
+      "meaning": "washed",
+      "concept": 535,
+      "when": "past"
+    },
+    "carries": {
+      "pos": "verb",
+      "meaning": "carries",
+      "concept": 536,
+      "person": "third",
+      "number": "singular"
+    },
+    "carried": {
+      "pos": "verb",
+      "meaning": "carried",
+      "concept": 536,
+      "when": "past"
+    },
+    "throws": {
+      "pos": "verb",
+      "meaning": "throws",
+      "concept": 537,
+      "person": "third",
+      "number": "singular"
+    },
+    "threw": {
+      "pos": "verb",
+      "meaning": "threw",
+      "concept": 537,
+      "when": "past"
+    },
+    "catches": {
+      "pos": "verb",
+      "meaning": "catches",
+      "concept": 538,
+      "person": "third",
+      "number": "singular"
+    },
+    "caught": {
+      "pos": "verb",
+      "meaning": "caught",
+      "concept": 538,
+      "when": "past"
+    },
+    "opens": {
+      "pos": "verb",
+      "meaning": "opens",
+      "concept": 539,
+      "person": "third",
+      "number": "singular"
+    },
+    "opened": {
+      "pos": "verb",
+      "meaning": "opened",
+      "concept": 539,
+      "when": "past"
+    },
+    "closes": {
+      "pos": "verb",
+      "meaning": "closes",
+      "concept": 540,
+      "person": "third",
+      "number": "singular"
+    },
+    "closed": {
+      "pos": "verb",
+      "meaning": "closed",
+      "concept": 540,
+      "when": "past"
+    }
   },
   "marking": "after",
-  "parts": { "before": "agent", "after": "target" },
+  "parts": {
+    "before": "agent",
+    "after": "target"
+  },
   "derivations": [
-    { "ending": "ies", "becomes": "y", "of": "noun" },
-    { "ending": "es",  "becomes": "",  "of": "noun" },
-    { "ending": "s",   "becomes": "",  "of": "noun" }
+    {
+      "ending": "ies",
+      "becomes": "y",
+      "of": "noun"
+    },
+    {
+      "ending": "es",
+      "becomes": "",
+      "of": "noun"
+    },
+    {
+      "ending": "s",
+      "becomes": "",
+      "of": "noun"
+    }
   ],
   "speech": {
     "self": "I",
-    "one": { "before": { "vowel": "an" }, "otherwise": "a" },
+    "one": {
+      "before": {
+        "vowel": "an"
+      },
+      "otherwise": "a"
+    },
     "to": "you",
     "list": ", "
   },
   "expressions": {
-    "greet":      "Hello!",
-    "count":      "It is {meaning}.",
-    "confirm":    "Yes, it {meaning}.",
-    "recognise":  "I recognise \"{meaning}\".",
-    "learn":      "I understand.",
+    "greet": "Hello!",
+    "count": "It is {meaning}.",
+    "confirm": "Yes, it {meaning}.",
+    "recognise": "I recognise \"{meaning}\".",
+    "learn": "I understand.",
     "understood": "{self} {relation}.",
-    "claim":      " {one} {subject} {relation} {one} {object}.",
-    "affirm":     "Yes. \u2705{meaning}",
-    "deny":       "No. \u274c",
-    "answer":     "{meaning}",
-    "unsure":     "{self} don't {relation}.",
-    "empathy":    "Sorry. \ud83d\ude14",
-    "glad":       "Good. \ud83d\ude42",
-    "unheard":    "{self} don't {relation} \"{meaning}\".",
-    "unknown":    "I don't understand."
+    "claim": " {one} {subject} {relation} {one} {object}.",
+    "affirm": "Yes. ✅{meaning}",
+    "deny": "No. ❌",
+    "answer": "{meaning}",
+    "unsure": "{self} don't {relation}.",
+    "empathy": "Sorry. 😔",
+    "glad": "Good. 🙂",
+    "unheard": "{self} don't {relation} \"{meaning}\".",
+    "unknown": "I don't understand."
   },
   "grammar": {
     "start": "sentence",
@@ -685,6 +3705,7 @@
           "interjection",
           "interjection sentence",
           "subject predicate",
+          "subject verb",
           "interrogative verb subject",
           "interrogative verb sentence",
           "open sentence close",
@@ -703,6 +3724,7 @@
           "interjection",
           "interjection sentence",
           "subject predicate",
+          "subject verb",
           "interrogative verb subject",
           "interrogative verb sentence",
           "open sentence close",
@@ -717,13 +3739,37 @@
         ]
       },
       "subject": {
-        "rules": ["noun", "article noun", "numeral", "numeral noun", "pronoun", "possessive noun", "open sentence close", "open subject close", "function subject", "item conjunction subject"]
+        "rules": [
+          "noun",
+          "article noun",
+          "numeral",
+          "numeral noun",
+          "pronoun",
+          "possessive noun",
+          "open sentence close",
+          "open subject close",
+          "function subject",
+          "item conjunction subject"
+        ]
       },
       "item": {
-        "rules": ["noun", "article noun", "numeral", "numeral noun", "pronoun", "possessive noun", "open sentence close", "open subject close", "function subject"]
+        "rules": [
+          "noun",
+          "article noun",
+          "numeral",
+          "numeral noun",
+          "pronoun",
+          "possessive noun",
+          "open sentence close",
+          "open subject close",
+          "function subject"
+        ]
       },
       "predicate": {
-        "rules": ["verb verbComplement", "verb negation verbComplement"]
+        "rules": [
+          "verb verbComplement",
+          "verb negation verbComplement"
+        ]
       },
       "verbComplement": {
         "rules": [

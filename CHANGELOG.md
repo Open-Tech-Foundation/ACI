@@ -6,6 +6,25 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **The world may say how one relation stands to another.** It could say how
+  two *terms* stand — `different`, `order`, `cause` — and relations are terms,
+  but nothing read that of them. Two ways of standing now count. **`converse`**:
+  one relation is another the other way round, said once and read both ways, so
+  `"an apple is in a basket"` and `"a basket holds an apple"` are one fact and
+  either question answers *yes*. **`different`**: two things joined by a
+  relation the world calls a different one are not joined by this — a thing on
+  a table is **not** under it, so `"an apple is under a table?"` is now *No*
+  where it was *I don't know*.
+- **A word may be more than one part of speech.** `pos` may be a list, and
+  which one a word is in a signal is what the parse settles. English says *a
+  walk* and *walks* with one word, and both now work.
+- **The actions the world holds are sayable.** The world had 63 actions and
+  English worded 58 of them as **nouns only** — `see`, `make`, `walk`, `throw`
+  named the right terms but could never be the verb of a sentence. 35 of them
+  are now noun and verb both, with 67 forms added for the third person and the
+  past. And a doing needs nothing done to it: `subject verb` is a sentence, so
+  `"i think"` and `"a person walks"` are told rather than not understood.
+
 - **A signal may say who did it.** `"take one apple from the basket"` worked
   and `"i take one apple from the basket"` did not — the grammar had no rule
   with a doer standing before the action, though English already declared that
@@ -70,6 +89,12 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **The authored world failed its own shape check.** `remainder` linked `order
+  → plus` twice. The store's unique index swallowed it, so nothing broke at
+  runtime — but loaded straight through `fromSources` the file threw
+  *duplicate link*. Fixed, and `src/world-data.test.mjs` now reads the world
+  and the knowledge the way any source is read, so a fault in the files fails
+  the suite rather than hiding behind an index.
 - **English had no `who`.** `"who are you"` came back *I don't know "who"* —
   the word was simply missing. It is a hole like `what`, and it differs in
   what it asks across: asked who a thing is, the answer is its name; asked

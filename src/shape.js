@@ -209,7 +209,13 @@ export function checkLanguage(data, where = 'language') {
       ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'person', 'number'],
       w,
     );
-    if (typeof info.pos !== 'string' || info.pos === '') fail(w, 'pos must be a non-empty string');
+    // A word may be more than one part of speech — English says a walk and
+    // walks with the same word — so `pos` is one or a list of them, and which
+    // one it is in a signal is what the parse settles.
+    const parts = Array.isArray(info.pos) ? info.pos : [info.pos];
+    if (parts.length === 0 || parts.some((p) => typeof p !== 'string' || p === '')) {
+      fail(w, 'pos must be a non-empty string, or a list of them');
+    }
     if (typeof info.meaning !== 'string') fail(w, 'meaning must be a string');
     if (info.concept !== undefined && !isId(info.concept)) fail(w, 'concept must be a term id');
     if (info.role !== undefined && (typeof info.role !== 'string' || info.role === '')) {

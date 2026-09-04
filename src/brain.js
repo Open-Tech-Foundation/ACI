@@ -609,19 +609,27 @@ function judge(roots, world, mood, langs, sent) {
 
       // A thing holds what its kinds hold: the fact is among what the brain
       // holds if any rung the thing stands on reaches the object by the
-      // relation named.
+      // relation named — or by the other end of it, where the world says one
+      // relation is another the other way round. Being in a thing and its
+      // holding you are one fact, and the brain has it either way it is told.
+      const joins = (from, to, rel) =>
+        rel === world.baseRelation
+          ? world.isA(from, to, rel)
+          : upward(from, world).some((rung) => world.isA(rung, to, rel));
       const holds =
-        relation === world.baseRelation
-          ? world.isA(holder, object, relation)
-          : upward(holder, world).some((rung) => world.isA(rung, object, relation));
+        joins(holder, object, relation) ||
+        bothWays(relation, world).some((back) => joins(object, holder, back));
       // Something the brain holds stands against the fact where it says the
-      // two are not so joined, or where the two terms exclude each other and
-      // the fact is about kind. Failing to find a path is neither: not having
-      // reached a thing is not holding anything against it.
+      // two are not so joined, where the two terms exclude each other and the
+      // fact is about kind, or where it holds them joined by a relation it
+      // says is a different one — a thing on a table is not under it. Failing
+      // to find a path is none of those: not having reached a thing is not
+      // holding anything against it.
       const kindFact = relation === world.baseRelation;
       const opposed =
         world.denies(holder, object, relation) ||
-        (kindFact && world.excludes(subject, object));
+        (kindFact && world.excludes(subject, object)) ||
+        apartFrom(relation, world).some((other) => joins(holder, object, other));
       const found = holds ? 'held' : opposed ? 'against' : 'absent';
       // Denied, the fact offered is the other one: what the brain holds stands
       // against a denial of it, and what it holds against, a denial is among.
@@ -760,6 +768,24 @@ function reached(subject, relation, world) {
     for (const t of world.linked(rung, relation)) if (!out.includes(t)) out.push(t);
   }
   return out;
+}
+
+// The other end of a relation, where the world says one is another the other
+// way round. Said once and read both ways, the way the world says two terms
+// stand `different` and the brain reads that pair either way about.
+function bothWays(relation, world) {
+  const a = world.anchors || {};
+  if (a.converse == null || relation == null) return [];
+  return [...world.linked(relation, a.converse), ...world.members(relation, a.converse)];
+}
+
+// The relations the world says are a different one from this. Two things
+// joined by one of those are not joined by this: a thing on a table is not
+// under it, and that is the world's to say, not the brain's.
+function apartFrom(relation, world) {
+  const a = world.anchors || {};
+  if (a.different == null || relation == null) return [];
+  return [...world.linked(relation, a.different), ...world.members(relation, a.different)];
 }
 
 // The rungs a thing stands on: itself, then everything it is a kind of.
@@ -1636,7 +1662,7 @@ function termWord(term, langName, langs, world, written) {
 function structurePhrase(roots, langs) {
   if (!roots || roots.length < 2) return roots;
   const tagged = roots.map((n) => ({ root: n, pos: posOf(n) }));
-  if (tagged.some((t) => !t.pos)) return roots;
+  if (tagged.some((t) => t.pos.length === 0)) return roots;
 
   const grammar = grammarOf(roots[0], langs);
   const start = grammar && grammar.start;
@@ -1674,7 +1700,7 @@ function parsesFrom(rules, symbol, tagged, index, memo) {
   if (!rule || !rule.rules) {
     // terminal: matches one token's part-of-speech
     results =
-      index < tagged.length && tagged[index].pos === symbol
+      index < tagged.length && tagged[index].pos.includes(symbol)
         ? [{ next: index + 1, tree: { symbol, root: tagged[index].root } }]
         : [];
   } else {
@@ -1714,10 +1740,14 @@ function leafOrPhrase(c) {
 }
 
 // What the brain made of the word, not what the language listed: a number read
-// out of its figures stands where the language says figures stand.
+// out of its figures stands where the language says figures stand. A word may
+// be more than one part of speech, and every one it may be is offered to the
+// parse; which one it is, is what a successful parse settles.
 function posOf(n) {
   const thought = thoughtOf(n);
-  return thought ? thought.pos : null;
+  const pos = thought ? thought.pos : null;
+  if (pos == null) return [];
+  return Array.isArray(pos) ? pos : [pos];
 }
 
 function grammarOf(root, langs) {
