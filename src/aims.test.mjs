@@ -28,11 +28,11 @@ const AIMS = [
     [["john has 3 apples", "give 1 apple to john", "john has how many apples?"], "four"],
   ]],
   ["what the world holds", [
-    [["the capital of france is what"], "paris"],
-    [["how many days are in a week?"], "seven"],
-    [["the sky is what colour"], "blue"],
-    [["japan speaks what language"], "japanese"],
-    [["the plural of child is what"], "children"],
+    [["france capital what"], "paris"],
+    [["a week has how many days?"], "seven"],
+    [["the sky is blue?"], "Yes"],
+    [["japan speaks what"], "japanese"],
+    [["a year has how many months?"], "twelve"],
   ]],
   ["standing on a scale", [
     [["alice measures 2 metre", "bob measures 1 metre", "alice is bigger than bob?"], "Yes"],

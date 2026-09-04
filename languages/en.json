@@ -1981,14 +1981,22 @@
       "meaning": "learning",
       "concept": 270
     },
-    "speak": {
-      "pos": [
-        "noun",
-        "verb"
-      ],
-      "meaning": "speak",
-      "concept": 271
-    },
+    "speak": [
+      {
+        "pos": [
+          "noun",
+          "verb"
+        ],
+        "meaning": "speak",
+        "concept": 271
+      },
+      {
+        "pos": "verb",
+        "meaning": "speak",
+        "concept": 1398,
+        "names": false
+      }
+    ],
     "write": {
       "pos": [
         "noun",
@@ -3482,7 +3490,7 @@
     "speaks": {
       "pos": "verb",
       "meaning": "speaks",
-      "concept": 271,
+      "concept": 1398,
       "person": "third",
       "number": "singular"
     },
@@ -7505,11 +7513,19 @@
       "meaning": "hamlet",
       "concept": 1310
     },
-    "capital": {
-      "pos": "noun",
-      "meaning": "capital",
-      "concept": 1311
-    },
+    "capital": [
+      {
+        "pos": "verb",
+        "meaning": "capital",
+        "concept": 1397,
+        "names": false
+      },
+      {
+        "pos": "noun",
+        "meaning": "capital",
+        "concept": 1311
+      }
+    ],
     "suburb": {
       "pos": "noun",
       "meaning": "suburb",
@@ -8067,6 +8083,566 @@
       "meaning": "store",
       "concept": 53,
       "names": false
+    },
+    "capital-of": {
+      "pos": "noun",
+      "meaning": "capital-of",
+      "concept": 1397
+    },
+    "country": {
+      "pos": "noun",
+      "meaning": "country",
+      "concept": 1399
+    },
+    "france": {
+      "pos": "noun",
+      "meaning": "france",
+      "concept": 1400
+    },
+    "paris": {
+      "pos": "noun",
+      "meaning": "paris",
+      "concept": 1401
+    },
+    "french": {
+      "pos": "noun",
+      "meaning": "french",
+      "concept": 1402
+    },
+    "japan": {
+      "pos": "noun",
+      "meaning": "japan",
+      "concept": 1403
+    },
+    "tokyo": {
+      "pos": "noun",
+      "meaning": "tokyo",
+      "concept": 1404
+    },
+    "japanese": {
+      "pos": "noun",
+      "meaning": "japanese",
+      "concept": 1405
+    },
+    "india": {
+      "pos": "noun",
+      "meaning": "india",
+      "concept": 1406
+    },
+    "delhi": {
+      "pos": "noun",
+      "meaning": "delhi",
+      "concept": 1407
+    },
+    "hindi": {
+      "pos": "noun",
+      "meaning": "hindi",
+      "concept": 1408
+    },
+    "china": {
+      "pos": "noun",
+      "meaning": "china",
+      "concept": 1409
+    },
+    "beijing": {
+      "pos": "noun",
+      "meaning": "beijing",
+      "concept": 1410
+    },
+    "chinese": {
+      "pos": "noun",
+      "meaning": "chinese",
+      "concept": 1411
+    },
+    "germany": {
+      "pos": "noun",
+      "meaning": "germany",
+      "concept": 1412
+    },
+    "berlin": {
+      "pos": "noun",
+      "meaning": "berlin",
+      "concept": 1413
+    },
+    "german": {
+      "pos": "noun",
+      "meaning": "german",
+      "concept": 1414
+    },
+    "italy": {
+      "pos": "noun",
+      "meaning": "italy",
+      "concept": 1415
+    },
+    "rome": {
+      "pos": "noun",
+      "meaning": "rome",
+      "concept": 1416
+    },
+    "italian": {
+      "pos": "noun",
+      "meaning": "italian",
+      "concept": 1417
+    },
+    "spain": {
+      "pos": "noun",
+      "meaning": "spain",
+      "concept": 1418
+    },
+    "madrid": {
+      "pos": "noun",
+      "meaning": "madrid",
+      "concept": 1419
+    },
+    "spanish": {
+      "pos": "noun",
+      "meaning": "spanish",
+      "concept": 1420
+    },
+    "russia": {
+      "pos": "noun",
+      "meaning": "russia",
+      "concept": 1421
+    },
+    "moscow": {
+      "pos": "noun",
+      "meaning": "moscow",
+      "concept": 1422
+    },
+    "russian": {
+      "pos": "noun",
+      "meaning": "russian",
+      "concept": 1423
+    },
+    "egypt": {
+      "pos": "noun",
+      "meaning": "egypt",
+      "concept": 1424
+    },
+    "cairo": {
+      "pos": "noun",
+      "meaning": "cairo",
+      "concept": 1425
+    },
+    "arabic": {
+      "pos": "noun",
+      "meaning": "arabic",
+      "concept": 1426
+    },
+    "kenya": {
+      "pos": "noun",
+      "meaning": "kenya",
+      "concept": 1427
+    },
+    "nairobi": {
+      "pos": "noun",
+      "meaning": "nairobi",
+      "concept": 1428
+    },
+    "swahili": {
+      "pos": "noun",
+      "meaning": "swahili",
+      "concept": 1429
+    },
+    "brazil": {
+      "pos": "noun",
+      "meaning": "brazil",
+      "concept": 1430
+    },
+    "brasilia": {
+      "pos": "noun",
+      "meaning": "brasilia",
+      "concept": 1431
+    },
+    "portuguese": {
+      "pos": "noun",
+      "meaning": "portuguese",
+      "concept": 1432
+    },
+    "canada": {
+      "pos": "noun",
+      "meaning": "canada",
+      "concept": 1433
+    },
+    "ottawa": {
+      "pos": "noun",
+      "meaning": "ottawa",
+      "concept": 1434
+    },
+    "australia": {
+      "pos": "noun",
+      "meaning": "australia",
+      "concept": 1435
+    },
+    "canberra": {
+      "pos": "noun",
+      "meaning": "canberra",
+      "concept": 1436
+    },
+    "thailand": {
+      "pos": "noun",
+      "meaning": "thailand",
+      "concept": 1437
+    },
+    "bangkok": {
+      "pos": "noun",
+      "meaning": "bangkok",
+      "concept": 1438
+    },
+    "thai": {
+      "pos": "noun",
+      "meaning": "thai",
+      "concept": 1439
+    },
+    "greece": {
+      "pos": "noun",
+      "meaning": "greece",
+      "concept": 1440
+    },
+    "athens": {
+      "pos": "noun",
+      "meaning": "athens",
+      "concept": 1441
+    },
+    "greek": {
+      "pos": "noun",
+      "meaning": "greek",
+      "concept": 1442
+    },
+    "ankara": {
+      "pos": "noun",
+      "meaning": "ankara",
+      "concept": 1443
+    },
+    "turkish": {
+      "pos": "noun",
+      "meaning": "turkish",
+      "concept": 1444
+    },
+    "poland": {
+      "pos": "noun",
+      "meaning": "poland",
+      "concept": 1445
+    },
+    "warsaw": {
+      "pos": "noun",
+      "meaning": "warsaw",
+      "concept": 1446
+    },
+    "polish": {
+      "pos": "noun",
+      "meaning": "polish",
+      "concept": 1447
+    },
+    "sweden": {
+      "pos": "noun",
+      "meaning": "sweden",
+      "concept": 1448
+    },
+    "stockholm": {
+      "pos": "noun",
+      "meaning": "stockholm",
+      "concept": 1449
+    },
+    "swedish": {
+      "pos": "noun",
+      "meaning": "swedish",
+      "concept": 1450
+    },
+    "norway": {
+      "pos": "noun",
+      "meaning": "norway",
+      "concept": 1451
+    },
+    "oslo": {
+      "pos": "noun",
+      "meaning": "oslo",
+      "concept": 1452
+    },
+    "norwegian": {
+      "pos": "noun",
+      "meaning": "norwegian",
+      "concept": 1453
+    },
+    "portugal": {
+      "pos": "noun",
+      "meaning": "portugal",
+      "concept": 1454
+    },
+    "lisbon": {
+      "pos": "noun",
+      "meaning": "lisbon",
+      "concept": 1455
+    },
+    "korea": {
+      "pos": "noun",
+      "meaning": "korea",
+      "concept": 1456
+    },
+    "seoul": {
+      "pos": "noun",
+      "meaning": "seoul",
+      "concept": 1457
+    },
+    "korean": {
+      "pos": "noun",
+      "meaning": "korean",
+      "concept": 1458
+    },
+    "vietnam": {
+      "pos": "noun",
+      "meaning": "vietnam",
+      "concept": 1459
+    },
+    "hanoi": {
+      "pos": "noun",
+      "meaning": "hanoi",
+      "concept": 1460
+    },
+    "vietnamese": {
+      "pos": "noun",
+      "meaning": "vietnamese",
+      "concept": 1461
+    },
+    "indonesia": {
+      "pos": "noun",
+      "meaning": "indonesia",
+      "concept": 1462
+    },
+    "jakarta": {
+      "pos": "noun",
+      "meaning": "jakarta",
+      "concept": 1463
+    },
+    "indonesian": {
+      "pos": "noun",
+      "meaning": "indonesian",
+      "concept": 1464
+    },
+    "nigeria": {
+      "pos": "noun",
+      "meaning": "nigeria",
+      "concept": 1465
+    },
+    "abuja": {
+      "pos": "noun",
+      "meaning": "abuja",
+      "concept": 1466
+    },
+    "peru": {
+      "pos": "noun",
+      "meaning": "peru",
+      "concept": 1467
+    },
+    "lima": {
+      "pos": "noun",
+      "meaning": "lima",
+      "concept": 1468
+    },
+    "chile": {
+      "pos": "noun",
+      "meaning": "chile",
+      "concept": 1469
+    },
+    "santiago": {
+      "pos": "noun",
+      "meaning": "santiago",
+      "concept": 1470
+    },
+    "cuba": {
+      "pos": "noun",
+      "meaning": "cuba",
+      "concept": 1471
+    },
+    "havana": {
+      "pos": "noun",
+      "meaning": "havana",
+      "concept": 1472
+    },
+    "iran": {
+      "pos": "noun",
+      "meaning": "iran",
+      "concept": 1473
+    },
+    "tehran": {
+      "pos": "noun",
+      "meaning": "tehran",
+      "concept": 1474
+    },
+    "persian": {
+      "pos": "noun",
+      "meaning": "persian",
+      "concept": 1475
+    },
+    "iraq": {
+      "pos": "noun",
+      "meaning": "iraq",
+      "concept": 1476
+    },
+    "baghdad": {
+      "pos": "noun",
+      "meaning": "baghdad",
+      "concept": 1477
+    },
+    "nepal": {
+      "pos": "noun",
+      "meaning": "nepal",
+      "concept": 1478
+    },
+    "kathmandu": {
+      "pos": "noun",
+      "meaning": "kathmandu",
+      "concept": 1479
+    },
+    "nepali": {
+      "pos": "noun",
+      "meaning": "nepali",
+      "concept": 1480
+    },
+    "finland": {
+      "pos": "noun",
+      "meaning": "finland",
+      "concept": 1481
+    },
+    "helsinki": {
+      "pos": "noun",
+      "meaning": "helsinki",
+      "concept": 1482
+    },
+    "finnish": {
+      "pos": "noun",
+      "meaning": "finnish",
+      "concept": 1483
+    },
+    "denmark": {
+      "pos": "noun",
+      "meaning": "denmark",
+      "concept": 1484
+    },
+    "copenhagen": {
+      "pos": "noun",
+      "meaning": "copenhagen",
+      "concept": 1485
+    },
+    "danish": {
+      "pos": "noun",
+      "meaning": "danish",
+      "concept": 1486
+    },
+    "austria": {
+      "pos": "noun",
+      "meaning": "austria",
+      "concept": 1487
+    },
+    "vienna": {
+      "pos": "noun",
+      "meaning": "vienna",
+      "concept": 1488
+    },
+    "ireland": {
+      "pos": "noun",
+      "meaning": "ireland",
+      "concept": 1489
+    },
+    "dublin": {
+      "pos": "noun",
+      "meaning": "dublin",
+      "concept": 1490
+    },
+    "monday": {
+      "pos": "noun",
+      "meaning": "monday",
+      "concept": 1491
+    },
+    "tuesday": {
+      "pos": "noun",
+      "meaning": "tuesday",
+      "concept": 1492
+    },
+    "wednesday": {
+      "pos": "noun",
+      "meaning": "wednesday",
+      "concept": 1493
+    },
+    "thursday": {
+      "pos": "noun",
+      "meaning": "thursday",
+      "concept": 1494
+    },
+    "friday": {
+      "pos": "noun",
+      "meaning": "friday",
+      "concept": 1495
+    },
+    "saturday": {
+      "pos": "noun",
+      "meaning": "saturday",
+      "concept": 1496
+    },
+    "sunday": {
+      "pos": "noun",
+      "meaning": "sunday",
+      "concept": 1497
+    },
+    "january": {
+      "pos": "noun",
+      "meaning": "january",
+      "concept": 1498
+    },
+    "february": {
+      "pos": "noun",
+      "meaning": "february",
+      "concept": 1499
+    },
+    "march": {
+      "pos": "noun",
+      "meaning": "march",
+      "concept": 1500
+    },
+    "april": {
+      "pos": "noun",
+      "meaning": "april",
+      "concept": 1501
+    },
+    "may": {
+      "pos": "noun",
+      "meaning": "may",
+      "concept": 1502
+    },
+    "june": {
+      "pos": "noun",
+      "meaning": "june",
+      "concept": 1503
+    },
+    "july": {
+      "pos": "noun",
+      "meaning": "july",
+      "concept": 1504
+    },
+    "august": {
+      "pos": "noun",
+      "meaning": "august",
+      "concept": 1505
+    },
+    "september": {
+      "pos": "noun",
+      "meaning": "september",
+      "concept": 1506
+    },
+    "october": {
+      "pos": "noun",
+      "meaning": "october",
+      "concept": 1507
+    },
+    "november": {
+      "pos": "noun",
+      "meaning": "november",
+      "concept": 1508
+    },
+    "december": {
+      "pos": "noun",
+      "meaning": "december",
+      "concept": 1509
     }
   },
   "marking": "after",
