@@ -1692,9 +1692,8 @@
       "concept": 566
     },
     "then": {
-      "pos": "noun",
-      "meaning": "then",
-      "concept": 224
+      "pos": "consequent",
+      "meaning": "then"
     },
     "life": {
       "pos": "noun",
@@ -4139,6 +4138,10 @@
     "that": {
       "pos": "complementizer",
       "meaning": "that"
+    },
+    "if": {
+      "pos": "conditional",
+      "meaning": "if"
     }
   },
   "marking": "after",
@@ -4196,6 +4199,7 @@
     "rules": {
       "sentence": {
         "rules": [
+          "conditional clause consequent sentence",
           "clause conjunction sentence",
           "interjection",
           "interjection sentence",
@@ -4216,6 +4220,7 @@
       },
       "clause": {
         "rules": [
+          "conditional clause consequent sentence",
           "interjection",
           "interjection sentence",
           "subject predicate",

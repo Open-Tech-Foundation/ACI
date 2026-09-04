@@ -474,6 +474,22 @@ function judge(roots, world, mood, langs, sent) {
   // brain checks it — that is what it is being told about — and takes nothing
   // in, which is exactly what being asked does. Asserting it would be putting
   // words in the sender's mouth.
+  // A signal may say that one claim follows from another. Neither is made: the
+  // brain checks the one put as the condition, and only where that already
+  // stands does what follows stand too. Where it does not, nothing follows,
+  // and the brain says what it found rather than taking either claim in.
+  const rule = conditionIn(root);
+  if (rule) {
+    const [when, so] = rule;
+    const [asked] = judge([when], world, 'ask', langs, sent);
+    const stood = (asked.branch || []).find((n) => n.kind === 'standing');
+    if (!stood || stood.name !== 'held') {
+      return [withBranch(root, [...root.branch, ...(asked.branch || []).filter(taken)])];
+    }
+    const [followed] = judge([so], world, mood, langs, sent);
+    return [withBranch(root, [...root.branch, ...(followed.branch || []).filter(taken)])];
+  }
+
   const spoken = claimWithin(root);
   if (spoken) {
     const [checked] = judge([spoken], world, 'ask', langs, sent);
@@ -789,6 +805,24 @@ function joinedWhole(b, whole) {
   return b.kind === 'clause' || b.kind === whole.kind;
 }
 
+// The two claims of a signal that says one follows from another: what is put
+// as the condition, and what follows it. That a signal may do this is the
+// brain's; which words say so is the language's.
+function conditionIn(root) {
+  const wholes = (root.branch || []).filter((b) => joinedWhole(b, root));
+  if (wholes.length !== 2 || !marksWith(root, 'conditional')) return null;
+  return wholes;
+}
+
+// Whether one of the words standing here is of this part of speech.
+function marksWith(n, part) {
+  return (n.branch || []).some((b) => {
+    const t = b.kind === 'thing' ? thoughtOf(b) : null;
+    const pos = t ? t.pos : null;
+    return pos != null && (Array.isArray(pos) ? pos : [pos]).includes(part);
+  });
+}
+
 // A claim the signal speaks of rather than makes. A word may say that what
 // follows is a claim and not a thing — English says `that` — and what follows
 // it stands whole, the way a joined clause does.
@@ -826,7 +860,10 @@ function joinIn(n) {
   // A join is in the signal, never in what the brain made of it: the work kept
   // under a verdict is not more of the signal, and is not looked through.
   if (VERDICT.includes(n.kind)) return null;
-  if (n.branch.filter((b) => joinedWhole(b, n)).length > 1) return n;
+  // Two wholes standing together are not joined where one is put as the
+  // condition of the other: what follows from a claim is not a second signal
+  // said alongside it.
+  if (!marksWith(n, 'conditional') && n.branch.filter((b) => joinedWhole(b, n)).length > 1) return n;
   for (const b of n.branch) {
     const found = joinIn(b);
     if (found) return found;

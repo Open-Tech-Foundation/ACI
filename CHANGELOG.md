@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A signal may say that one claim follows from another.** `if` puts a claim
+  as a condition and `then` says what follows. Neither is made: the brain
+  checks the condition, and only where that already stands does what follows
+  stand too — checked in its turn, and taken in if it is new. Where the
+  condition does not stand, nothing follows and nothing is taken in, the
+  condition itself least of all. Two wholes standing together are a join only
+  where nothing puts one as the condition of the other.
+
 - **A signal may speak *of* a claim rather than make one.** A word may say that
   what follows is a claim and not a thing — English says `that` — and what
   follows stands whole, the way a joined clause does.
