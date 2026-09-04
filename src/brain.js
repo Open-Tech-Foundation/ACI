@@ -1112,7 +1112,15 @@ function work(action, parts, at, world) {
   if (!op) return null;
 
   const target = parts.find((p) => p.role === a.target);
-  const place = parts.find((p) => p.role === (op === a.plus ? a.destination : a.source));
+  const wanted = op === a.plus ? a.destination : a.source;
+  // An action may say that the part it goes to, or comes from, is one already
+  // named: what a get goes to is whoever did it. No signal has to say that
+  // twice, and which actions are like that is the world's to say, not the
+  // brain's — it reads the role off the action the same way it reads the
+  // operation off it.
+  const also = world.linked(action, wanted);
+  const place =
+    parts.find((p) => p.role === wanted) ?? parts.find((p) => also.includes(p.role));
   if (!target || !place) return null;
 
   const amount = target.amount;

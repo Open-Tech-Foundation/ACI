@@ -6,6 +6,20 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A signal may say who did it.** `"take one apple from the basket"` worked
+  and `"i take one apple from the basket"` did not — the grammar had no rule
+  with a doer standing before the action, though English already declared that
+  what stands there is the agent. Two rules of data, no engine change.
+- **`get`, and an action that says which of its parts plays another.** The
+  world says which action causes which operation; a `get` also says that what
+  it goes to is whoever did it, so no signal has to say that twice. `"i got one
+  apple"` leaves the getter holding one more. Which actions are like that is
+  the world's to say — `work()` reads the role off the action the same way it
+  reads the operation off it.
+- **The past of the words English already had**: `had`, `held`, `took`,
+  `gave`, `knew`, `got`. Tense was never missing — `was` has carried
+  `when: "past"` all along — only the forms were.
+
 - **Holding, as its own relation.** A thing may hold things, and what it holds
   is neither what it is nor what it has: it can begin, end and be counted
   without the thing becoming anything different. `hold` is a relation in the

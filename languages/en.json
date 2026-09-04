@@ -172,6 +172,14 @@
     "more":      { "pos": "verb", "meaning": "more than",      "concept": 305 },
     "less":      { "pos": "verb", "meaning": "less than",      "concept": 306 },
     "take":      { "pos": "verb", "meaning": "take",           "concept": 283 },
+    "took":      { "pos": "verb", "meaning": "took",  "concept": 283, "when": "past" },
+    "get":       { "pos": "verb", "meaning": "get",   "concept": 589 },
+    "gets":      { "pos": "verb", "meaning": "gets",  "concept": 589, "person": "third", "number": "singular" },
+    "got":       { "pos": "verb", "meaning": "got",   "concept": 589, "when": "past" },
+    "gave":      { "pos": "verb", "meaning": "gave",  "concept": 282, "when": "past" },
+    "had":       { "pos": "verb", "meaning": "had",   "concept": 295, "when": "past" },
+    "held":      { "pos": "verb", "meaning": "held",  "concept": 579, "when": "past" },
+    "knew":      { "pos": "verb", "meaning": "knew",  "concept": 285, "when": "past" },
     "give":      { "pos": "verb", "meaning": "give",           "concept": 282 },
     "from":      { "pos": "preposition", "meaning": "from", "role": "source" },
     "to":        { "pos": "preposition", "meaning": "to",   "role": "destination" },
@@ -685,7 +693,9 @@
           "function sentence",
           "function subject preposition subject",
           "interrogative quantifier subject",
-          "verb subject preposition subject"
+          "verb subject preposition subject",
+          "subject verb subject preposition subject",
+          "subject verb subject"
         ]
       },
       "clause": {
@@ -701,7 +711,9 @@
           "function sentence",
           "function subject preposition subject",
           "interrogative quantifier subject",
-          "verb subject preposition subject"
+          "verb subject preposition subject",
+          "subject verb subject preposition subject",
+          "subject verb subject"
         ]
       },
       "subject": {
