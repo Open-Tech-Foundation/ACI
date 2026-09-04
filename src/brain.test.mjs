@@ -673,18 +673,21 @@ test("only a thing carries a count, never a relation", async () => {
 });
 
 test("the brain counts what the world holds, and says the number", async () => {
+  forget();  // asked cold, with nothing being spoken of
   assertEquals((await brain("how many season?")).expression.state.says, "four");
   assertEquals((await brain("how many weather?")).expression.state.says, "eight");
   assertEquals((await brain("how many colour?")).expression.state.says, "ten");
 });
 
 test("nothing to count is zero, not silence", async () => {
+  forget();
   const r = await brain("how many chameleon?");
   assertEquals(kind(r.roots[0], "count").state.members, 0);
   assertEquals(r.expression.state.says, "zero");
 });
 
 test("counting past what the world names invents no term, and still answers", async () => {
+  forget();
   // Seventy-six mammals, and no single word in English for seventy-six.
   const r = await brain("how many mammal?");
   assertEquals(kind(r.roots[0], "count").name, "beyond", "no term was invented for it");
@@ -692,6 +695,7 @@ test("counting past what the world names invents no term, and still answers", as
 });
 
 test("the count is the terms the world holds, not a fact stored anywhere", async () => {
+  forget();
   const r = await brain("how many season?");
   const counted = kind(r.roots[0], "count");
   assertEquals(counted.state.members, 4);
@@ -783,6 +787,7 @@ test("a hole is a word the language marks as one, not any word without a term", 
 });
 
 test("the world can be counted by any of its shelves", async () => {
+  forget();
   assertEquals((await brain("how many colour?")).expression.state.says, "ten");
   assertEquals((await brain("how many feeling?")).expression.state.says, "seven");
   assertEquals((await brain("how many amphibian?")).expression.state.says, "four");

@@ -54,8 +54,9 @@ test("asked how many with nothing said of whose, it is what was last spoken of",
   await forget();
   await brain("a pond has 1000 stones");
   assertEquals(await says("how many stones?"), "1000");
-  // And where it holds none of them, it is still the world being counted.
-  assertEquals(await says("how many amphibian?"), "four");
+  // And where it holds none of them, the brain does not go and count what it
+  // holds of its own instead: whoever is talking to it knows nothing of that.
+  assertEquals((await brain("how many amphibian?")).expression.name, "unsure");
   await forget();
 });
 

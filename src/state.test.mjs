@@ -130,8 +130,14 @@ test("giving works on its destination, taking on its source", async () => {
 });
 
 test("counting a kind counts the world, not any state", async () => {
+  forget();
   await brain("a hospital has four clock");
-  assertEquals(await says("how many season?"), "four", "unchanged by the hospital");
+  // Asked after a kind the hospital holds none of, the brain does not answer
+  // out of its own shelves: whoever is talking about a hospital knows nothing
+  // of how many seasons it holds terms for, and did not ask.
+  assertEquals((await brain("how many season?")).expression.name, "unsure");
+  forget();
+  assertEquals(await says("how many season?"), "four", "asked cold, it is the world being counted");
 });
 
 async function termOf(word) {

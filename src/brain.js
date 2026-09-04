@@ -811,6 +811,21 @@ function judge(roots, world, mood, langs, sent) {
       const howMany = each.some((many) => many == null)
         ? null
         : each.reduce((sum, many) => sum + many, 0);
+      // Something is being spoken of, so the question is about it. Where it
+      // holds none of what was asked after, the brain does not know — it does
+      // not go and count what it holds of its own instead. Whoever is talking
+      // to it knows nothing of that, and never asked.
+      // Unless the question is about the sort of thing being spoken of, in
+      // which case it is the world being asked after and not that one thing.
+      const sameSort = things.some((n) => world.isA(bearer, conceptOf(n)));
+      if (howMany == null && !sameSort) {
+        return [
+          withBranch(root, [
+            ...root.branch,
+            node('count', 'beyond', [], { of: conceptOf(things[0]), held: bearer, members: null, total: null }),
+          ]),
+        ];
+      }
       if (howMany != null) {
         return [
           withBranch(root, [
