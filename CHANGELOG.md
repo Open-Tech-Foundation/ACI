@@ -56,6 +56,14 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **English had no `who`.** `"who are you"` came back *I don't know "who"* —
+  the word was simply missing. It is the same hole `what` is, marked the same
+  way: the brain walks the relation it was given either way, and that English
+  asks after a person with one word and a thing with the other is the
+  language's business, not the brain's. `"who are you"` now answers
+  `"computer"`, and `"who am i"` answers where the runtime says who is
+  speaking and stays silent where it does not.
+
 - **A thing is itself without standing in every relation to itself.**
   `world.isA(x, y, rel)` walked with `reaches`, which seeds its set with the
   starting term — so `isA(thing, thing, hold)` was true, and any thing that

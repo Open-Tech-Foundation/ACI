@@ -825,3 +825,24 @@ test("which word denies is the language's", async () => {
   const r = await brain("up is not a fear?");
   assertEquals(kind(r.roots[0], "standing").state.negated, true);
 });
+
+test("which word stands for what a signal does not say is the language's", async () => {
+  // `who` and `what` are one hole to the brain: it walks the relation it was
+  // given either way. That English asks after a person with one and a thing
+  // with the other is the language's business, and it says so by giving both
+  // words the same mark.
+  assertEquals(
+    (await brain("who is a cat")).expression.state.says,
+    (await brain("what is a cat")).expression.state.says,
+  );
+  assertEquals((await brain("who are you")).expression.state.says, "computer");
+});
+
+test("a hole falls wherever its language puts it", async () => {
+  assertEquals((await brain("a cat is who")).expression.state.says, "mammal");
+});
+
+test("asked who is speaking, the brain answers only where it was told", async () => {
+  assertEquals((await brain("who am i")).expression.name, "unknown", "nobody was named");
+  assertEquals((await brain("who am i", { from: 29 })).expression.state.says, "human");
+});
