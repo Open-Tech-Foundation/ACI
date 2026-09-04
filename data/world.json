@@ -50,7 +50,10 @@
     "converse": 590,
     "use": 591,
     "instrument": 592,
-    "different": 251
+    "different": 251,
+    "universe": 616,
+    "force": 308,
+    "physical": 6
   },
   "relations": {
     "is": 294,
@@ -3389,7 +3392,7 @@
       "links": [
         {
           "rel": 294,
-          "to": 7
+          "to": 1
         }
       ]
     },
@@ -6654,6 +6657,20 @@
         {
           "rel": 294,
           "to": 253
+        }
+      ]
+    },
+    {
+      "id": 616,
+      "name": "universe",
+      "links": [
+        {
+          "rel": 295,
+          "to": 1
+        },
+        {
+          "rel": 295,
+          "to": 308
         }
       ]
     }

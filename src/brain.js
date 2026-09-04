@@ -702,7 +702,8 @@ function judge(roots, world, mood, langs, sent) {
           : upward(from, world).some((rung) => world.isA(rung, to, rel));
       const holds =
         joins(holder, object, relation) ||
-        bothWays(relation, world).some((back) => joins(object, holder, back));
+        bothWays(relation, world).some((back) => joins(object, holder, back)) ||
+        forced(holder, object, relation, world);
       // Something the brain holds stands against the fact where it says the
       // two are not so joined, where the two terms exclude each other and the
       // fact is about kind, or where it holds them joined by a relation it
@@ -852,6 +853,24 @@ function reached(subject, relation, world) {
     for (const t of world.linked(rung, relation)) if (!out.includes(t)) out.push(t);
   }
   return out;
+}
+
+// What the universe's forces do, everything physical has. Nobody has to say a
+// stone is heavy for the brain to know a stone has weight: a stone is a
+// physical thing, the universe has gravity, gravity acts on everything
+// physical, and what gravity causes is weight. This does not come down the
+// ladder the way a kind's facts do — it comes from the universe inward.
+//
+// That a force reaches the physical and nothing else is the brain's: a number
+// has no weight, and no world has to say so. Which forces there are, and what
+// each one causes, is the world's.
+function forced(thing, had, relation, world) {
+  const a = world.anchors || {};
+  if (relation !== a.has || a.force == null || a.physical == null || a.cause == null) return false;
+  if (!world.isA(thing, a.physical)) return false;
+  return world
+    .members(a.force, world.baseRelation)
+    .some((force) => world.isA(force, had, a.cause));
 }
 
 // The other end of a relation, where the world says one is another the other

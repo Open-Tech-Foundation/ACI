@@ -6,6 +6,27 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **The universe, above existence.** The world had no top: `existence` was the
+  root and the four ways of being sat under it. It now sits inside a
+  `universe`, and what the universe has besides is **force**. A force is no
+  longer filed as a kind of abstract thing — it is not a thing, it is what the
+  universe has and does.
+- **What a force does, everything physical has.** A new way for the brain to
+  know something, and it does not come down the ladder the way a kind's facts
+  do — it comes from the universe inward. Nobody has to say a stone is heavy
+  for the brain to know a stone has weight: a stone is physical, the universe
+  has gravity, and what gravity causes is weight. The world already held
+  `gravity causes weight` and `gravity causes fall`; both now reach every
+  physical thing, and neither reaches a number or an idea.
+
+  That a force reaches the physical and nothing else is the brain's — no world
+  has to say a number is weightless. Which forces there are and what each
+  causes stays the world's.
+
+  Having a property is not being at one end of it: a stone **has weight** and
+  is not thereby **heavy**. How much of a property a thing has is still
+  unknown, and still needs telling.
+
 - **23 more words that name two things.** `saw` proved the mechanism; the world
   now holds the doing that shares a spelling with a thing it already held —
   `planting`, `watering`, `lighting`, `ironing`, `fishing`, `marking`,

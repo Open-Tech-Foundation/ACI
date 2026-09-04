@@ -17,9 +17,10 @@ test("how much is not how many, and the brain says so", async () => {
 test("a number beside a property is not a thing the signal named", async () => {
   await forget();
   await brain("an apple has three weight");
-  // What it refused to take, it did not quietly take some other way: neither
-  // the number nor the property became something an apple has.
-  assertEquals((await brain("an apple has a weight?")).expression.name, "unsure");
+  // That an apple has weight, the brain knew from the universe before anyone
+  // said anything. What it refused was the count, and it did not quietly take
+  // that some other way.
+  assertEquals((await brain("the apple has how many weights?")).expression.name, "unsure");
   assert(
     (await brain("an apple has three?")).expression.name !== "affirm",
     "nor did the number become something an apple has three of",

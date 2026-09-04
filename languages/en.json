@@ -4072,6 +4072,11 @@
       "pos": "noun",
       "meaning": "heading",
       "concept": 615
+    },
+    "universe": {
+      "pos": "noun",
+      "meaning": "universe",
+      "concept": 616
     }
   },
   "marking": "after",
