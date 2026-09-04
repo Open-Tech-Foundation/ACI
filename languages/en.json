@@ -1339,11 +1339,19 @@
       "meaning": "yes",
       "concept": 139
     },
-    "no": {
-      "pos": "noun",
-      "meaning": "no",
-      "concept": 140
-    },
+    "no": [
+      {
+        "pos": "quantifier",
+        "meaning": "no",
+        "concept": 246,
+        "names": false
+      },
+      {
+        "pos": "noun",
+        "meaning": "no",
+        "concept": 140
+      }
+    ],
     "letter": {
       "pos": "noun",
       "meaning": "letter",
@@ -1806,7 +1814,10 @@
       "concept": 244
     },
     "all": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "quantifier"
+      ],
       "meaning": "all",
       "concept": 245
     },
@@ -6692,6 +6703,17 @@
       "pos": "noun",
       "meaning": "instruction",
       "concept": 1128
+    },
+    "every": {
+      "pos": "quantifier",
+      "meaning": "every",
+      "concept": 245,
+      "names": false
+    },
+    "some": {
+      "pos": "quantifier",
+      "meaning": "some",
+      "concept": 1129
     }
   },
   "marking": "after",
@@ -6803,6 +6825,7 @@
       },
       "subject": {
         "rules": [
+          "quantifier noun",
           "noun",
           "article noun",
           "numeral",
@@ -6817,6 +6840,7 @@
       },
       "item": {
         "rules": [
+          "quantifier noun",
           "noun",
           "article noun",
           "numeral",

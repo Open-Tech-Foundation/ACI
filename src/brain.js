@@ -436,6 +436,18 @@ function measured(said, world) {
   });
 }
 
+// How many of a kind a claim is about, where a word beside it says so. That a
+// claim may be about all of a kind, some of it, or none, is the brain's; which
+// words say which is the language's, and which term each is, is the world's.
+function manyOf(said, at, world) {
+  const a = world.anchors || {};
+  if (at < 0) return null;
+  const isMany = (n) =>
+    n && n.state.exists && [a.all, a.some, a.none].includes(conceptOf(n));
+  const found = nearestOver(said, at, -1, isMany) || nearestOver(said, at, 1, isMany);
+  return found ? conceptOf(found) : null;
+}
+
 // A number standing beside a thing says how many of it there are. The brain
 // reads this off the order of the things it perceived — a language may put the
 // number on either side, and it does not need to know which, so both are
@@ -787,11 +799,14 @@ function judge(roots, world, mood, langs, sent) {
       const subject = conceptOf(left);
       const object = conceptOf(right);
       if (subject == null) return [];
-      const howMany = world.valueOf(quantityTerm(right));
+      // How many of the kind the claim is about. Told nothing, a claim is
+      // about the kind itself, which is every one of it.
+      const howMany = manyOf(said, said.indexOf(left), world);
+      const counted = world.valueOf(quantityTerm(right));
       // A fact about how many is about the thing that bears it, not about its
       // kind.
-      const bearer = howMany == null ? null : bearerFor(left, subject);
-      if (howMany != null && bearer == null) return [];
+      const bearer = counted == null ? null : bearerFor(left, subject);
+      if (counted != null && bearer == null) return [];
       const holder = bearer ? bearer.id : subject;
 
       // A claim whose object stands at a pole — good or bad — is not the
@@ -838,17 +853,32 @@ function judge(roots, world, mood, langs, sent) {
         world.denies(holder, object, relation) ||
         (kindFact && world.excludes(subject, object)) ||
         apartFrom(relation, world).some((other) => joins(holder, object, other));
-      const found = holds ? 'held' : opposed ? 'against' : 'absent';
+      // Some of a kind is not the kind. What the kind reaches, some of it
+      // reaches; what it does not, some of it may still — one crow being
+      // white is not crows being white, and nothing about crows says no.
+      const found =
+        howMany === a.some
+          ? holds || world.members(subject, world.baseRelation).some((one) => joins(one, object, relation))
+            ? 'held'
+            : 'absent'
+          : holds
+            ? 'held'
+            : opposed
+              ? 'against'
+              : 'absent';
+      // None of a kind denies the claim of every one of it: `no crow is a fish`
+      // says of crows what `a crow is not a fish` says.
+      const denied = negated || howMany === a.none;
       // Denied, the fact offered is the other one: what the brain holds stands
       // against a denial of it, and what it holds against, a denial is among.
-      const stands = !negated
+      const stands = !denied
         ? found
         : found === 'held'
           ? 'against'
           : found === 'against'
             ? 'held'
             : 'absent';
-      const added = [node('standing', stands, [], { subject, relation, object, negated })];
+      const added = [node('standing', stands, [], { subject, relation, object, negated: denied })];
 
       // Offered a fact nothing it holds bears on, the brain takes it in —
       // unless something stands against it, or taking it would close a loop. A
@@ -856,10 +886,10 @@ function judge(roots, world, mood, langs, sent) {
       // run back.
       // How many is state: telling the brain a different count is not standing
       // against what it holds, it is saying the world has moved on.
-      const revises = howMany != null && world.held(holder, relation, object) !== howMany;
+      const revises = counted != null && world.held(holder, relation, object) !== counted;
 
       if (mood === 'tell') {
-        const loops = !negated && subject !== object && world.isA(object, subject, relation);
+        const loops = !denied && subject !== object && world.isA(object, subject, relation);
         if (!revises && (stands === 'against' || loops)) {
           added.push(
             node('refuse', stands === 'against' ? 'contradiction' : 'loop', [], {
@@ -874,9 +904,9 @@ function judge(roots, world, mood, langs, sent) {
               subject: holder,
               relation,
               object,
-              quantity: howMany,
+              quantity: counted,
               made: bearer && bearer.made ? bearer : null,
-              not: negated,
+              not: denied,
             }),
           );
         }
@@ -2014,7 +2044,10 @@ function listing(langName, langs) {
 function claimSaid(stood, langName, langs, world) {
   const lang = (langs || []).find((l) => l.data.name === langName);
   if (!lang || !stood) return null;
-  const { subject, relation, object } = stood.state;
+  const { subject, relation, object, negated } = stood.state;
+  // A claim that was denied cannot be said back in a frame with no room for
+  // the denial: saying it without would say the opposite of what was asked.
+  if (negated) return '';
   // A number is not one of a kind, and does not go in a frame built for one.
   const a = world && world.anchors ? world.anchors : {};
   if (world && (world.isA(subject, a.number) || world.isA(object, a.number))) return '';

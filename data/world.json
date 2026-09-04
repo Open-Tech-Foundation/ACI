@@ -57,7 +57,9 @@
     "measure": 617,
     "unit": 618,
     "follow": 1127,
-    "instruction": 1128
+    "instruction": 1128,
+    "all": 245,
+    "some": 1129
   },
   "relations": {
     "is": 294,
@@ -11853,6 +11855,16 @@
         {
           "rel": 294,
           "to": 7
+        }
+      ]
+    },
+    {
+      "id": 1129,
+      "name": "some",
+      "links": [
+        {
+          "rel": 294,
+          "to": 190
         }
       ]
     }
