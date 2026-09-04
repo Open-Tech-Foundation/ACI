@@ -15,14 +15,9 @@ All notable changes to this project are documented in this file.
   telling the brain it is so, and asserting it would be putting words in the
   sender's mouth:
 
-  ```
-  a story is art                    I understand.   ← taken in
-  i know that a story is art        I don't know.   ← checked, nothing taken in
-  i know that a cat is an animal    I know.
-  i know that a cat is a dog        No. ❌          ← and not refused as yours
-  ```
-
-  Nothing is turned down either, because nothing was offered. This is the one
+  Told `"ice is a liquid"` it takes it in; told `"i know that ice is a liquid"`
+  it checks the claim and its world is unchanged. Nothing is turned down
+  either, because nothing was offered. This is the one
   primitive under conditionals, modals and knowing-that alike: a claim that is
   not about the world but about another claim.
 
