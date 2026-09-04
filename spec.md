@@ -176,6 +176,18 @@ or says of its neighbour), `negates`, `role` (which part its neighbour plays),
 `when`, `names`, `groups`, `person` and `number`. There is **no** `type`,
 `emotion`, or `reply` — the brain derives those.
 
+**A word may be more than one part of speech.** `pos` may be a list, and which
+one a word is in a signal is what the parse settles — English says *a walk* and
+*walks* with one word.
+
+**A word may name more than one thing.** An entry may hold several readings,
+each with its own `pos` and `concept` — a saw is a tool, and it is also what
+someone did with their eyes. Every reading is carried through `understand` and
+`think`; `solve` settles which.
+
+**A word may say which scale it compares on** (`on`): *heavier* is more, on
+weight.
+
 **A hole may name the relation it asks across.** `marks: "unknown"` makes a
 word a hole; a `concept` on it says what the hole asks after. So `who` names
 the `name` relation and `what` names nothing, and asked who a thing is the
@@ -215,6 +227,13 @@ before it has to be — no word lists `125` and no term names it, and
 `1+125` is still `126`. The language says which symbols it counts in and what
 they stand as in a sentence; reading them is the brain's own, and so is what
 follows from two of them.
+
+**A machine that counts in halves cannot hold a tenth.** The operations with an
+exact answer — plus, minus, times, divide, remainder — are worked in whole parts
+through `Decimal` from `@opentf/std`, so a tenth and two tenths make three
+tenths and the brain can match what it works out. What has no exact answer — a
+root, a logarithm, an angle — is worked as closely as the machine can and no
+closer.
 
 A signal may work **more than once**: `1 + 2 × 3` names two operations. **Which
 is worked first is the world's**, said with the same `order` it puts numbers in
@@ -382,6 +401,9 @@ understand → think → solve → structure → judge → express
   spoken: termId | null,       // what this signal was about, for the next one
                                // to point back at; null where there was none
                                // or more than one
+  names: { [word]: { of, value } },  // what this conversation has given a name
+  told: string | null,         // an instruction it agreed to and could not yet
+                               // act on, for the runtime to bring round again
   phases: { understand, think, solve, structure, judge, express }
 }
 ```
@@ -575,6 +597,27 @@ world.heldOver(basket#308, has, apple)
 world.held(...)  → 4
 ```
 
+### What was so before
+
+State is stamped and never written over, so the history is already there. Asked
+on the **past side of now**, the brain steps back a stamp: `the crate holds how
+many lamps?` and `the crate held how many lamps?` are the same question asked of
+two moments. Nothing is remembered on purpose; the record was never erased.
+
+### Counting
+
+Asked how many of a kind, with **something being spoken of**, the question is
+about that thing — and where it holds none of what was asked after, the brain
+does not know. It does not go and count what it holds of its own instead:
+whoever is talking to it knows nothing of its shelves and never asked. Only
+where **nothing** is being spoken of is it the world being counted.
+
+What a thing holds is counted across the kinds it holds — nothing says a shop
+holds *things*, it holds bats and balls, and those are things. Asked after
+several kinds at once, the count is all of them together. A count needs no term
+for its number: no world names every number, and a thousand stones is still a
+thousand.
+
 ## Where the world is kept
 
 `src/store.js` keeps the world in SQLite. **The brain never comes here.** It is
@@ -670,12 +713,56 @@ Climbs a fixed ladder:
   { lang, word: { text, pos, meaning, concept } | null, roles: [...] }
   ```
 
-### 2. think — reason over the understood meaning
+### 2. think — reason over the understood meaning, then read the words together
+
+Each word is thought of on its own first: what the language says it is, and
+what it names. Then the brain looks at them **side by side** and takes as one
+the ones that are really one thing, reshaping the tree before anything else
+sees it.
+
+- **A sign written against a number is part of it.** `-500` is five hundred
+  below nothing. Only a sign — a word for taking away stands before what it
+  takes and is not part of it, and the language already says which of its
+  words are a thing's name and which are another way to write it.
+- **Two number words side by side are one number.** A round one with a smaller
+  one after it is added; a smaller one before a round one multiplies it; a run
+  is taken as it is read, so `one hundred twenty five` is 125. Figures are
+  whole as written and are never run together.
+
+A word may name **more than one thing** — a saw is a tool and it is also what
+someone did with their eyes. Every reading is carried out of `think`, because
+there the brain has a word and not yet a signal, and picking then would be
+guessing. `solve` settles it.
+
+### 2a. think — reason over the understood meaning
 
 Adds a `thought` node: `{ language, wordKnown, pos, meaning, concept }` from the
 language match. Single factual recollection; no entity reasoning here.
 
-### 3. solve — infer entity and emotion (innate reasoning)
+### 3. solve — settle what the words are, name what has no name, infer the rest
+
+**Settling a word that may be meant two ways.** A signal names things and needs
+something joining them — a relation, or a doing. Where nothing does, and a word
+could have been a doing all along, that is what it was: `i saw an apple` names
+a person and a fruit and nothing between them until `saw` is read as the seeing
+it also is. Where something already joins them — `i cut an apple with a saw` —
+every word stands as it was first thought, and the saw is the tool. A word
+still to be settled cannot itself be what joins the signal.
+
+**Naming a thing.** A word no language lists and no world holds, standing where
+a thing stands and spoken of as though it were one, is a name being given. The
+thing is made here, before anything is judged, so what else the signal says of
+it is said of **it** and not of nothing: `john has 3 apples` names john and
+gives him the apples in one breath. Said to be of a kind, that is the kind it
+is; said anything else, a thing is what it is. A name for a thing is the
+world's — it goes on being there after the talking stops — and it is met again
+by what it is **called**, the world being asked for a term of that name.
+
+A name given a **number** is the conversation's instead: `x is 5` gives x five,
+and giving is done with the weakest joint there is, so `x > 10` asks rather
+than gives.
+
+### 3a. solve — infer entity and emotion (innate reasoning)
 
 Builds the `response` node from the meaning, then reasons about what the word
 names by walking the world's `is` chain to the brain's anchors:
@@ -755,7 +842,18 @@ a force, red is a colour, and neither is a thing.
 
 **A hole** is a word the language *marks* as standing for what the signal does
 not say (`marks: "unknown"`), not merely a word with no term behind it — every
-article and preposition is one of those.
+article and preposition is one of those. A hole is known by its **mark**, not
+by naming nothing: a word may both stand for what is not said and name
+something of its own.
+
+A hole may say **which relation it asks across** — `who` names the name
+relation, `where` names being in something, and `what` names nothing, so it
+walks whatever the signal's joint is. It may say **what kind of answer it
+wants**, either by standing beside a word for it (`what colour is the car`) or
+by carrying it (`how` asks after the way a thing is); everything else the thing
+is stays true and is not the reply. And a hole standing **where something played
+a part** in what happened asks which thing played it — `who kicked the ball`
+looks through what the brain was told happened for one whose named parts match.
 
 **Denial.** A word may carry `negates: true`. That a claim can be denied is the
 brain's; which word does it is the language's. A signal that denies claims the
@@ -776,6 +874,14 @@ This is the difference between ignorance and knowledge:
 **A thing holds what its kinds hold.** Only the `is` chain is walked for its
 own sake; every other relation is inherited down it. `"you have a memory?"` is
 *Yes.* because a computer has one, and nothing about this instance says so.
+
+**A signal may turn its joint to the front.** `is a cat an animal?` says both
+sides after it, and the first of them is the one the rest is said of. An
+operation standing before everything it takes is not a joint at all but a thing
+being done, and an operation between two sides is worked out rather than joined
+across: in `1+1 > 1` the joint is the comparing.
+
+**A greeting standing before a whole signal** is said alongside it, not in it.
 
 **A signal offers facts.** It carries no truth value. It hands the brain one or
 more facts, and the brain has many already to lay each one against. Two terms
@@ -895,6 +1001,86 @@ to anybody, and no event goes on the record:
 
 The last is the same rule that governs everything else: not having been told a
 basket holds spoons is not being told it holds none.
+
+### How many of a kind a claim is about
+
+Told nothing, a claim is about the kind itself, which is every one of it.
+A word may say otherwise: **all** and **every** say so outright; **no** says of
+a kind what a denial says of it; and **some** is not the kind — what the kind
+reaches, some of it reaches, and some of it may reach what the kind does not,
+so it is never denied merely for a path the kind has not got.
+
+`nobody` is not a body: it is a person, and the word denies what is said of one.
+
+### Scale, state and measure
+
+A thing is **in a state**; a **scale** measures the state; a **unit** is what
+the scale reads in. Hot, warm, cool, cold, heavy, light and the sizes are
+states; temperature measures hot, weight measures heavy, and a degree measures
+a temperature.
+
+**A value is an amount of a unit**, and a unit says which property it is of.
+A thing measured on a scale keeps the amount, and that is what compares:
+`more` and `less` stand two **things** on one scale and let the amounts say
+which is further along. Two numbers are only the case where the world can
+already say which is greater; each side of a comparison is worked out on its
+own first.
+
+**What a thing has been called decides nothing.** Told a stone is heavy and an
+apple light, `a stone more an apple?` is *I don't know* — the names are regions
+of a scale, and which region a value falls in depends on what it is read
+against. Where a state begins on its scale is not fixed.
+
+A **comparative** names the comparing and says which scale it compares **on**:
+the same two things answer differently to *heavier* and *bigger*, and neither
+reads the other's scale. Two units are not one scale until something says how
+they stand.
+
+**How much is not how many.** A number beside a property says how much, and the
+brain counts without being able to measure, so it says it does not know rather
+than taking the number for a thing there are three of.
+
+### The universe, and what its forces do
+
+Everything that is, is inside a **universe**, and what the universe has besides
+is **force**. A force is not a thing — it is what the universe has and does.
+
+**What a force does, everything physical has.** This does not come down the
+ladder the way a kind's facts do; it comes from the universe inward. Nobody has
+to say a stone is heavy for the brain to know a stone **has weight**: a stone is
+physical, the universe has gravity, and what gravity causes is weight. That a
+force reaches the physical and nothing else is the brain's — no world has to say
+a number is weightless. Which forces there are, and what each causes, is the
+world's.
+
+Having a property is not being at one end of it. A stone has weight and is not
+thereby heavy.
+
+### A claim about a claim
+
+A word may say that what follows is a **claim and not a thing** — English says
+`that` — and what follows stands whole, the way a joined clause does.
+
+The brain **checks** the claim it was told about, because that is what it was
+told about, and **takes nothing in**: saying you know something is not telling
+the brain it is so, and asserting it would be putting words in the sender's
+mouth. Nothing is turned down either, because nothing was offered.
+
+**A condition.** `if` puts a claim as a condition and `then` says what follows;
+`else` gives it its other side. Neither is made: the brain checks the condition,
+and only where that already stands does what follows stand too. Where something
+**stands against** the condition, what comes after `else` stands instead. A
+condition the brain cannot reach is neither — it did not fail, it was never
+reached — so nothing follows. Either side may be a whole signal or a thing on
+its own, and a thing put where a claim would go is the thing to say.
+
+**An instruction.** A condition put on something to *do* is an instruction, not
+a question, and what the brain answers is whether it will follow it. Its memory
+holds the answer — written where its own name is written, by whoever runs it,
+not by whoever is talking to it. Told outright that it does not follow, it says
+no, and nothing said to it changes that. Where nothing denies it, it agrees, and
+the instruction is handed back for the runtime to bring round again when
+something has moved.
 
 ### What is said of a thing
 
