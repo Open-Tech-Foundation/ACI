@@ -6724,7 +6724,8 @@
     "empathy": "Sorry. 😔",
     "glad": "Good. 🙂",
     "unheard": "{self} don't {relation} \"{meaning}\".",
-    "unknown": "I don't understand."
+    "unknown": "I don't understand.",
+    "agree": "Ok."
   },
   "grammar": {
     "start": "sentence",

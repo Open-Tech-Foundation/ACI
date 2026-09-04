@@ -6,6 +6,18 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Instruction following.** A condition put on something to *do* is an
+  instruction, not a question. Where the brain cannot reach the condition yet,
+  it does not shrug — it agrees to follow, and says so.
+
+  It keeps none of it. The instruction is handed back like what was last
+  spoken of, the runtime holds it for that conversation, and brings it round
+  again after every later signal. Where something has moved and the condition
+  can be reached at last, acting on it is the brain's answer:
+  `"if x > 10, then say big else say small"` is *Ok.*; `"x is 5"` after it is
+  *small*; `"x is 15"` is *big*. An instruction given in one conversation is
+  nothing to another.
+
 - **`else`, `say`, `>` and names for values** — the four things `"if x > 10
   then say big else say small"` needed.
 

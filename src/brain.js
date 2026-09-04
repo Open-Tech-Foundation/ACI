@@ -492,9 +492,13 @@ function judge(roots, world, mood, langs, sent) {
     // never reached, and nothing follows from it either way.
     const next = !stood ? null : stood.name === 'held' ? so : stood.name === 'against' ? otherwise : null;
     if (!next) {
+      // A condition put on something to *do* is an instruction, not a question.
+      // The brain has understood it and cannot reach the condition yet, so what
+      // it answers is whether it will follow it — not that it knows nothing.
+      if ([so, otherwise].some((part) => part && asksToAct(part, root, world))) {
+        return [withBranch(root, [...root.branch, node('agree', 'follow', [], {})])];
+      }
       const found = (asked.branch || []).filter(taken);
-      // A condition it could make nothing of leaves it knowing nothing, and
-      // saying so beats saying either side.
       const nothing = node('standing', 'absent', [], {
         subject: null,
         relation: null,
@@ -840,6 +844,21 @@ function judge(roots, world, mood, langs, sent) {
 // stands between them is a word like any other, and is not one of them.
 function joinedWhole(b, whole) {
   return b.kind === 'clause' || b.kind === whole.kind;
+}
+
+// Whether this part of a signal asks for something to be done rather than says
+// something is so. A doing named in it does; and so does a thing standing on
+// its own where a claim would go, since that is a thing to say.
+function asksToAct(part, whole, world) {
+  const a = world.anchors || {};
+  if (!joinedWhole(part, whole)) return true;
+  let found = false;
+  const walk = (n) => {
+    if (n.kind === 'thing' && world.isA(conceptOf(n), a.action)) found = true;
+    (n.branch || []).forEach(walk);
+  };
+  walk(part);
+  return found;
 }
 
 // The one term standing under a part of the signal, where there is exactly one.
@@ -1729,6 +1748,7 @@ function expression(roots, langs, mood, world, sent) {
   const learned = bound ? findBranch(roots[0], 'learn') : null;
   const counted = bound ? findBranch(roots[0], 'count') : null;
   const gave = bound ? findBranch(roots[0], 'named') : null;
+  const agreed = bound ? findBranch(roots[0], 'agree') : null;
   const sum = bound ? findBranch(roots[0], 'sum') : null;
   const did = bound ? findBranch(roots[0], 'did') : null;
   const refused = bound ? findBranch(roots[0], 'refuse') : null;
@@ -1758,7 +1778,9 @@ function expression(roots, langs, mood, world, sent) {
   // it already holds is simply understood.
   const intent = refused
     ? 'deny'
-    : gave
+    : agreed
+      ? 'agree'
+      : gave
       ? 'learn'
     : feeling
       ? feeling
@@ -2110,6 +2132,10 @@ export function brainFrom(input, knowledge, circumstance) {
     learned: learnedFrom(judgedRoots, world),
     spoken: spokenOf(judgedRoots, at),
     names: namedIn(solvedRoots, { ...at, world, mood }),
+    // An instruction the brain agreed to follow and could not act on yet. It
+    // keeps none of it: it hands it back, and the runtime brings it round again
+    // when something has moved.
+    told: findBranch(judgedRoots[0] || node('void', 'void'), 'agree') ? toString(input) : null,
     phases: {
       understand: roots,
       think: thoughtRoots,

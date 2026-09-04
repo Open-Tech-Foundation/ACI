@@ -105,8 +105,25 @@ export function openBrain(url) {
     const thread = (circumstance && circumstance.conversation) ?? ALONE;
     const held = threads.get(thread) || {};
     const said = { spoken: held.spoken ?? null, names: held.names || {}, ...(circumstance || {}) };
-    const result = brainFrom(input, await loaded(), said);
-    threads.set(thread, { spoken: result.spoken, names: result.names });
+    const knowledge = await loaded();
+    const result = brainFrom(input, knowledge, said);
+    const standing = [...(held.told || [])];
+    if (result.told && !standing.includes(result.told)) standing.push(result.told);
+    threads.set(thread, { spoken: result.spoken, names: result.names, told: standing });
+
+    // What it agreed to follow, brought round again now something has moved.
+    // The brain holds no instruction; it is asked afresh, and where it can act
+    // on one at last, that is its answer.
+    for (const instruction of standing) {
+      if (instruction === String(input)) continue;
+      const again = brainFrom(instruction, knowledge, {
+        spoken: result.spoken,
+        names: result.names,
+        from: said.from,
+        to: said.to,
+      });
+      if (again.told == null && again.expression.name !== "unsure") return again;
+    }
     if (result.learned) {
       try {
         await inTurn(() => write(store, result.learned));

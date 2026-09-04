@@ -44,8 +44,8 @@ test("the brain keeps no name of its own — it is told each time", async () => 
   await brain("n is 4", { conversation: "one" });
   assertEquals(
     (await brain("if n > 2 then say big else say small", { conversation: "two" })).expression.name,
-    "unsure",
-    "another conversation was given no such name, and neither side follows",
+    "agree",
+    "another conversation was given no such name, so there is nothing to act on yet",
   );
   assertEquals(
     (await brain("if n > 2 then say big else say small", { conversation: "one" })).expression.state.says,
@@ -76,7 +76,32 @@ test("a condition it cannot work out takes neither side", async () => {
   await forget();
   // Nothing has said what x stands for. The condition did not fail — it was
   // never reached — so neither what follows nor what stands instead follows.
-  const r = await brain("if x > 10, then say big else say small");
+  const r = await brain("if x > 10 then a wren is a bird");
   assertEquals(r.expression.name, "unsure");
+  await forget();
+});
+
+test("a condition put on something to do is an instruction, and it agrees", async () => {
+  await forget();
+  const r = await brain("if x > 10, then say big else say small");
+  assertEquals(r.expression.name, "agree");
+  assert(r.told != null, "and it hands the instruction back to be brought round again");
+  await forget();
+});
+
+test("an instruction agreed to is followed when it can be", async () => {
+  await forget();
+  assertEquals((await brain("if x > 10, then say big else say small")).expression.name, "agree");
+  assertEquals((await brain("x is 5")).expression.state.says, "small");
+  assertEquals((await brain("x is 15")).expression.state.says, "big");
+  await forget();
+});
+
+test("an instruction belongs to the conversation it was given in", async () => {
+  await forget();
+  await brain("if y > 4 then say wool else say silk", { conversation: "one" });
+  assertEquals((await brain("y is 9", { conversation: "two" })).expression.name, "learn",
+    "the other conversation was told nothing to follow");
+  assertEquals((await brain("y is 9", { conversation: "one" })).expression.state.says, "wool");
   await forget();
 });
