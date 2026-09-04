@@ -8649,6 +8649,27 @@
       "meaning": "where",
       "marks": "unknown",
       "concept": 586
+    },
+    "kick": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "kick",
+      "concept": 1510
+    },
+    "kicks": {
+      "pos": "verb",
+      "meaning": "kicks",
+      "concept": 1510,
+      "person": "third",
+      "number": "singular"
+    },
+    "kicked": {
+      "pos": "verb",
+      "meaning": "kicked",
+      "concept": 1510,
+      "when": "past"
     }
   },
   "marking": "after",
@@ -8762,6 +8783,7 @@
       },
       "subject": {
         "rules": [
+          "interrogative noun",
           "degree noun",
           "quantifier noun",
           "noun",
@@ -8779,6 +8801,7 @@
       },
       "item": {
         "rules": [
+          "interrogative noun",
           "degree noun",
           "quantifier noun",
           "noun",
@@ -8801,6 +8824,7 @@
       },
       "verbComplement": {
         "rules": [
+          "interrogative noun",
           "degree adjective",
           "degree noun",
           "verb preposition subject",
@@ -8826,6 +8850,7 @@
       },
       "complement": {
         "rules": [
+          "interrogative noun",
           "degree noun",
           "noun",
           "adjective",

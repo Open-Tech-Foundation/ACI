@@ -6,6 +6,18 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A hole may say what kind of answer it wants.** `what colour is the car`
+  asks after the car and will take only a colour for an answer; everything
+  else the car is stays true and is not the reply. The kind asked after is not
+  one of the things asked about.
+- **A hole standing where something played a part asks which thing played it.**
+  `who kicked the ball` looks through what the brain was told happened for one
+  where the named parts match, and answers with whatever played the part the
+  hole stands in. A hole is known by its mark, not by naming nothing — a word
+  may both stand for what is not said and name the relation it asks across.
+- **`where`**, a hole that asks across being in something, the way `who` asks
+  across a name.
+
 - **A thing may be given a name.** A word no language lists and no world holds,
   standing where a thing stands and said to be of a kind, is a name being
   given: `"luna is a cat"` says there is a cat called luna, and the brain

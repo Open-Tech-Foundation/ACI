@@ -744,6 +744,13 @@ function judge(roots, world, mood, langs, sent) {
   // word with no term behind it, which every article and preposition is. The
   // language marks which of its words do that.
   const holes = said.filter((n) => markOn(n) === 'unknown');
+  // A hole may stand beside a term saying what kind the answer must be: `what
+  // colour is the car` asks after the car, and will take only a colour for an
+  // answer. The term saying so is not one of the things asked about.
+  const wanted = holes
+    .map((hole) => nearestOver(said, said.indexOf(hole), 1, (n) => conceptOf(n) != null))
+    .filter((n) => n != null && reaches(n, (world.anchors || {}).property, world));
+  const asking = new Set(wanted.map((n) => conceptOf(n)));
   // A number spent saying how many of something there are is not itself one of
   // the things being spoken about.
   const spent = new Set(
@@ -774,6 +781,7 @@ function judge(roots, world, mood, langs, sent) {
     conceptOf(n) !== world.baseRelation &&
     !reaches(n, a.quantity, world) &&
     !spent.has(conceptOf(n)) &&
+    !asking.has(conceptOf(n)) &&
     // A number the world never named is spent all the same.
     !(conceptOf(n) == null && spentSaying.has(numberOf(n, world)));
 
@@ -783,6 +791,13 @@ function judge(roots, world, mood, langs, sent) {
   // happening.
   const joint = namedRelation(said, world, claims, holes.length > 0);
   const joined = said.filter((n, i) => i !== joint && claims(n)).length;
+
+  // A hole standing where something played a part in what happened is asking
+  // which thing played it: `who kicked the ball` asks after the one who did
+  // it. The brain looks through what it was told happened, and answers with
+  // whatever played the part the hole stands in.
+  const asked = holes.length > 0 ? partAsked(said, world, claims, markingSide(world, langs), partsSide(langs)) : null;
+  if (asked) return [withBranch(root, [...root.branch, asked])];
 
   // An action the world says causes an operation, worked on what a thing holds.
   // What taking does is the world's to say; the arithmetic is the brain's.
@@ -954,7 +969,12 @@ function judge(roots, world, mood, langs, sent) {
       const subject = conceptOf(term);
       // A name is a fact like any other: what the term links to by the name
       // relation, read out of memory. Nothing about it is special to the engine.
-      const found = reached(subject, relation, world);
+      // Where the hole said what kind of answer it wants, only that kind is an
+      // answer. Everything else the thing is remains true and is not the reply.
+      const of = asking.size === 1 ? [...asking][0] : null;
+      const found = reached(subject, relation, world).filter(
+        (t) => of == null || world.isA(t, of),
+      );
       const mine = [node('answer', 'link', [], { subject, relation, found })];
       // The brain looked, and what it found stays on the tree. Saying it is
       // another act, and one it will not perform where any of the answer harms.
@@ -1879,6 +1899,47 @@ function nearest(said, from, step, wanted) {
     if (wanted(said[i])) return said[i];
   }
   return null;
+}
+
+// What played the part a hole stands in. Everything the signal names has a
+// part in what happened, the hole included; the brain looks through what it
+// was told happened for one where the named parts match, and answers with what
+// played the hole's part.
+function partAsked(said, world, claims, side, sides) {
+  const a = world.anchors || {};
+  const acting = said.findIndex((n) => reaches(n, a.action, world));
+  if (acting < 0) return null;
+
+  // A hole plays a part the same way anything else does, and is known by its
+  // mark rather than by naming nothing — a word may both stand for what is not
+  // said and name the relation it asks across.
+  const asking = (n) => claims(n) || markOn(n) === 'unknown';
+  const of = (i) => markerFor(said, i, side, roleOn);
+  const played = [];
+  said.forEach((n, i) => {
+    if (i === acting || !asking(n)) return;
+    const named = roleOn(of(i));
+    const role =
+      named && a[named] != null
+        ? a[named]
+        : sides
+          ? a[i < acting ? sides.before : sides.after]
+          : null;
+    if (role == null) return;
+    played.push({ role, of: markOn(n) === 'unknown' ? null : conceptOf(n) });
+  });
+  const hole = played.find((p) => p.of == null);
+  const known = played.filter((p) => p.of != null);
+  if (!hole || known.length === 0) return null;
+
+  const action = conceptOf(said[acting]);
+  const found = [];
+  for (const one of world.members(action, world.baseRelation)) {
+    if (!world.isIndividual(one)) continue;
+    if (!known.every((p) => world.linked(one, p.role).includes(p.of))) continue;
+    for (const t of world.linked(one, hole.role)) if (!found.includes(t)) found.push(t);
+  }
+  return node('answer', 'link', [], { subject: action, relation: hole.role, found });
 }
 
 // The part a word says the thing beside it plays in what happened. Which word

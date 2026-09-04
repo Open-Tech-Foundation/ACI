@@ -45,7 +45,7 @@ const AIMS = [
     [["the boy kicked the ball", "who kicked the ball"], "boy"],
   ]],
   ["holding a conversation", [
-    [["my colour is blue", "what is my colour"], "blue"],
+    [["i am blue", "what colour am i"], "blue"],
     [["sarah is a woman", "sarah is a man"], "No"],
     [["a car is red", "what colour is the car"], "red"],
   ]],
