@@ -7,16 +7,26 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@opentf/std':
+        specifier: ^0.18.0
+        version: 0.18.0
     devDependencies:
       '@opentf/esrun-types':
         specifier: latest
-        version: 0.3.0
+        version: 0.4.0
 
 packages:
 
-  '@opentf/esrun-types@0.3.0':
-    resolution: {integrity: sha512-uz4vkaTq2p6Eej8cVMCxHl3BjOqeXtohy53cyk3Zxmy562U3JPQJxVT0mMMlW7HPDY30GVyiwDH0mpBYmfXuTg==}
+  '@opentf/esrun-types@0.4.0':
+    resolution: {integrity: sha512-MEjKuFur/3zBP8xY05tLD7GKI07NWTMcmbyJjnL8g/Mt5Qu0Beetj+MjMDlog/Lbdr3krziGAQIBbRqtXd60Dg==}
+
+  '@opentf/std@0.18.0':
+    resolution: {integrity: sha512-860vQJifbxZhm/LmxOssz2gvltkNCUALZ6SEI8PwkcyuTzvGSkTEZBxdCF4JR0OWBGLTW+uHODyElb2zM7+3DA==}
+    engines: {node: '>=20.0.0'}
 
 snapshots:
 
-  '@opentf/esrun-types@0.3.0': {}
+  '@opentf/esrun-types@0.4.0': {}
+
+  '@opentf/std@0.18.0': {}

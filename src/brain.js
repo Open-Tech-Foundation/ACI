@@ -7,6 +7,8 @@
 // understanding phase, driven solely by externally-loaded language data
 // (see src/languages.js). It never knows a language's name.
 
+import { Decimal } from '@opentf/std';
+
 const $ = Symbol.for('aci.node');
 
 // A node is the single uniform unit of the whole system:
@@ -1636,13 +1638,26 @@ function groupOn(n) {
 // numbers it is given, and where there is no answer at all — nothing over
 // nothing, the root of less than nothing, the logarithm of nothing — it says
 // so rather than reaching for one.
+// A machine that counts in halves cannot hold a tenth, so the four operations
+// that have an exact answer are worked in whole parts and not in halves: a
+// tenth and two tenths make three tenths, and not something a hair beside it.
+// What has no exact answer — a root, a logarithm, an angle — is worked as
+// closely as the machine can and no closer.
+const exactly = (work) => (x, y) => {
+  try {
+    return work(new Decimal(x), new Decimal(y)).toNumber();
+  } catch {
+    return null;
+  }
+};
+
 const OPERATIONS = [
-  ['plus', 2, (x, y) => x + y],
-  ['minus', 2, (x, y) => x - y],
-  ['times', 2, (x, y) => x * y],
-  ['divide', 2, (x, y) => (y === 0 ? null : x / y)],
+  ['plus', 2, exactly((x, y) => x.add(y))],
+  ['minus', 2, exactly((x, y) => x.subtract(y))],
+  ['times', 2, exactly((x, y) => x.multiply(y))],
+  ['divide', 2, (x, y) => (y === 0 ? null : exactly((a, b) => a.divide(b))(x, y))],
   ['power', 2, (x, y) => finite(x ** y)],
-  ['remainder', 2, (x, y) => (y === 0 ? null : x % y)],
+  ['remainder', 2, (x, y) => (y === 0 ? null : exactly((a, b) => a.modulo(b))(x, y))],
   ['root', 1, (x) => (x < 0 ? null : Math.sqrt(x))],
   ['logarithm', 1, (x) => (x > 0 ? Math.log10(x) : null)],
   ['natural-logarithm', 1, (x) => (x > 0 ? Math.log(x) : null)],

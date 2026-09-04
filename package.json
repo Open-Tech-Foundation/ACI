@@ -19,5 +19,8 @@
   },
   "devDependencies": {
     "@opentf/esrun-types": "latest"
+  },
+  "dependencies": {
+    "@opentf/std": "^0.18.0"
   }
 }

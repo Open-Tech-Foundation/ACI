@@ -316,6 +316,14 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **The brain could not agree with itself about a tenth.** `0.1+0.2` said
+  `0.3` and `0.1+0.2 = 0.3` said *No*: it worked out a value it could not then
+  match, because a machine that counts in halves cannot hold a tenth. The four
+  operations with an exact answer — plus, minus, times, divide and the
+  remainder — are worked in whole parts now, through `Decimal` from
+  `@opentf/std`. What has no exact answer, a root or a logarithm or an angle,
+  is worked as closely as the machine can and no closer.
+
 - **A comparison was taken in as a fact.** Told `"hot more cold"`, the brain
   wrote down a bare link from hot to cold, having no way to work the
   comparison out. It works it out now and takes nothing in.
