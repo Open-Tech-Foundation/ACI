@@ -6,6 +6,26 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A signal may speak *of* a claim rather than make one.** A word may say that
+  what follows is a claim and not a thing — English says `that` — and what
+  follows stands whole, the way a joined clause does.
+
+  The brain checks the claim it was told about, because that is what it was
+  told about, and **takes nothing in**. Saying you know something is not
+  telling the brain it is so, and asserting it would be putting words in the
+  sender's mouth:
+
+  ```
+  a story is art                    I understand.   ← taken in
+  i know that a story is art        I don't know.   ← checked, nothing taken in
+  i know that a cat is an animal    I know.
+  i know that a cat is a dog        No. ❌          ← and not refused as yours
+  ```
+
+  Nothing is turned down either, because nothing was offered. This is the one
+  primitive under conditionals, modals and knowing-that alike: a claim that is
+  not about the world but about another claim.
+
 - **A thing is in a state; a scale measures the state; a unit is what the
   scale reads in.** The world said `hot is a temperature` — a thing being a
   kind of what measures it, like a warmth being a kind of thermometer.

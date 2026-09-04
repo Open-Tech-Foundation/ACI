@@ -4135,6 +4135,10 @@
       "concept": 617,
       "person": "third",
       "number": "singular"
+    },
+    "that": {
+      "pos": "complementizer",
+      "meaning": "that"
     }
   },
   "marking": "after",
@@ -4280,7 +4284,8 @@
           "interrogative quantifier noun",
           "preposition subject",
           "preposition interrogative",
-          "complement conjunction verbComplement"
+          "complement conjunction verbComplement",
+          "complementizer sentence"
         ]
       },
       "complement": {

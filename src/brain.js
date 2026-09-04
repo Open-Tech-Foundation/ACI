@@ -469,6 +469,17 @@ function judge(roots, world, mood, langs, sent) {
   // long list of things: each clause is judged completely on its own, and what
   // it came to is kept, nested, under the clause it came from — a togetherness
   // of verdicts, not a blur of everyone's words at once.
+  // A signal may speak *of* a claim rather than make one: `i know that a cat is
+  // an animal` says something about the claim, and does not say the claim. The
+  // brain checks it — that is what it is being told about — and takes nothing
+  // in, which is exactly what being asked does. Asserting it would be putting
+  // words in the sender's mouth.
+  const spoken = claimWithin(root);
+  if (spoken) {
+    const [checked] = judge([spoken], world, 'ask', langs, sent);
+    return [withBranch(root, [...root.branch, ...(checked.branch || []).filter(taken)])];
+  }
+
   const join = joinIn(root);
   if (join) {
     const judged = withBranch(
@@ -776,6 +787,34 @@ function judge(roots, world, mood, langs, sent) {
 // stands between them is a word like any other, and is not one of them.
 function joinedWhole(b, whole) {
   return b.kind === 'clause' || b.kind === whole.kind;
+}
+
+// A claim the signal speaks of rather than makes. A word may say that what
+// follows is a claim and not a thing — English says `that` — and what follows
+// it stands whole, the way a joined clause does.
+function claimWithin(n, whole) {
+  const held = whole ?? n;
+  for (const b of n.branch || []) {
+    if (encloses(n) && joinedWhole(b, held)) return b;
+    const found = claimWithin(b, held);
+    if (found) return found;
+  }
+  return null;
+}
+
+// Whether one of the words here says a claim follows. That a word may do that
+// is the brain's; which word does it is the language's.
+function encloses(n) {
+  return (n.branch || []).some((b) => {
+    const t = b.kind === 'thing' ? thoughtOf(b) : null;
+    const pos = t ? t.pos : null;
+    return pos != null && (Array.isArray(pos) ? pos : [pos]).includes('complementizer');
+  });
+}
+
+// What the brain came to, and not the walking it did to get there.
+function taken(n) {
+  return VERDICT.includes(n.kind) || n.kind === 'count' || n.kind === 'sum';
 }
 
 // Where in the signal whole ones were joined. A join need not stand at the
