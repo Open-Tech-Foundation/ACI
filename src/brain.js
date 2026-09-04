@@ -574,7 +574,11 @@ function measured(said, world) {
   return said.some((n, at) => {
     if (!n.state.exists || !world.isA(conceptOf(n), a.number)) return false;
     const beside = nearestOver(said, at, 1, named) ?? nearestOver(said, at, -1, named);
-    return beside != null && world.isA(conceptOf(beside), a.property);
+    if (beside == null) return false;
+    // A unit is the one thing a number beside it does say how much of: ten
+    // hours is a measure, and an hour is a period of time for all that.
+    if (a.unit != null && world.isA(conceptOf(beside), a.unit)) return false;
+    return world.isA(conceptOf(beside), a.property);
   });
 }
 
