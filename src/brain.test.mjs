@@ -285,7 +285,7 @@ test("a recursive rule parses — the parser backtracks past a short match", asy
 test("an interjection followed by a full sentence parses", async () => {
   const r = await brain("hi a cat is two?");
   assertEquals(r.roots.length, 1);
-  const inner = r.roots[0].branch.find((b) => b.kind === "sentence");
+  const inner = r.phases.structure[0].branch.find((b) => b.kind === "sentence");
   assert(inner !== null);
   assertEquals(
     inner.branch.map((b) => b.kind),

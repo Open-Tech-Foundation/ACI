@@ -723,6 +723,12 @@ function judge(roots, world, mood, langs, sent) {
     return [instead(root, join, judged)];
   }
 
+  const greeted = greeting(root);
+  if (greeted) {
+    const [, rest] = greeted;
+    return [instead(root, rest, judge([rest], world, mood, langs, sent)[0])];
+  }
+
   const said = [];
   const collect = (n) => {
     if (n.kind === 'thing') said.push(n);
@@ -751,6 +757,12 @@ function judge(roots, world, mood, langs, sent) {
     .map((hole) => nearestOver(said, said.indexOf(hole), 1, (n) => conceptOf(n) != null))
     .filter((n) => n != null && reaches(n, (world.anchors || {}).property, world));
   const asking = new Set(wanted.map((n) => conceptOf(n)));
+  // A hole may carry the kind it asks after rather than stand beside it: `how`
+  // asks after the way a thing is, and there is no word beside it saying so.
+  for (const hole of holes) {
+    const on = onOf(hole);
+    if (on != null) asking.add(on);
+  }
   // A number spent saying how many of something there are is not itself one of
   // the things being spoken about.
   const spent = new Set(
@@ -1248,6 +1260,26 @@ function encloses(n) {
 // What the brain came to, and not the walking it did to get there.
 function taken(n) {
   return VERDICT.includes(n.kind) || n.kind === 'count' || n.kind === 'sum';
+}
+
+// A greeting standing before a whole signal is said alongside it, not in it:
+// `hello, how are you` is a greeting and a question, and neither is part of
+// the other. Which words greet is the language's; that a greeting is its own
+// act is the brain's.
+function greeting(root) {
+  const branch = root.branch || [];
+  const said = branch.filter((b) => joinedWhole(b, root));
+  const greets = branch.filter((b) => b.kind === 'thing' && posOf(b).includes('interjection'));
+  if (greets.length === 0 || said.length !== 1) return null;
+  // Only where what follows says something of its own. One greeting after
+  // another is two greetings, not a greeting and a signal.
+  let other = false;
+  const walk = (n) => {
+    if (n.kind === 'thing' && !posOf(n).includes('interjection')) other = true;
+    (n.branch || []).forEach(walk);
+  };
+  walk(said[0]);
+  return other ? [...greets, said[0]] : null;
 }
 
 // Where in the signal whole ones were joined. A join need not stand at the
@@ -2086,6 +2118,8 @@ const VERDICT = ['standing', 'answer', 'learn', 'refuse'];
 // differs, so each root keeps the whole signal and only its own verdict.
 function apart(roots) {
   if (roots.length !== 1) return null;
+  const greeted = greeting(roots[0]);
+  if (greeted) return greeted;
   const join = joinIn(roots[0]);
   if (join) return join.branch.filter((b) => joinedWhole(b, join));
   const branch = roots[0].branch || [];

@@ -46,3 +46,27 @@ test("what was told of one doing is not told of another", async () => {
   assertEquals(r.expression.state.says, "man");
   await forget();
 });
+
+test("a greeting before a signal is said alongside it, not in it", async () => {
+  await forget();
+  const r = await brain("hello, how are you?", { from: PERSON });
+  assertEquals(r.expression.name, "greet");
+  assert(r.expression.state.says.startsWith("Hello!"), "greeted");
+  assert(r.expression.branch.length > 1, "and the rest answered on its own");
+  await forget();
+});
+
+test("one greeting after another is two greetings, not a greeting and a signal", async () => {
+  await forget();
+  assertEquals((await brain("hi hi")).expression.name, "learn");
+  await forget();
+});
+
+test("how asks after the way a thing is, not what it is", async () => {
+  await forget();
+  // The brain holds no state of its own, so there is none to give — which is
+  // not the same as not knowing.
+  assertEquals((await brain("how are you?", { from: PERSON })).expression.state.says, "none");
+  assertEquals((await brain("what are you")).expression.state.says, "computer");
+  await forget();
+});
