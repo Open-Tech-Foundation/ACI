@@ -826,23 +826,28 @@ test("which word denies is the language's", async () => {
   assertEquals(kind(r.roots[0], "standing").state.negated, true);
 });
 
-test("which word stands for what a signal does not say is the language's", async () => {
-  // `who` and `what` are one hole to the brain: it walks the relation it was
-  // given either way. That English asks after a person with one and a thing
-  // with the other is the language's business, and it says so by giving both
-  // words the same mark.
+test("a hole may name the relation it asks across", async () => {
+  // Asked who a thing is, the answer is its name; asked what it is, the answer
+  // is what it is a kind of. Both are holes, and they differ only in what they
+  // ask across — `who` names the name relation itself, so the brain walks that
+  // one instead of the `is` beside it. Nothing in the brain tells them apart.
+  assertEquals((await brain("who are you")).expression.state.says, "ACI");
+  assertEquals((await brain("what are you")).expression.state.says, "computer");
+});
+
+test("asking who a thing is, and asking its name, are one question", async () => {
   assertEquals(
-    (await brain("who is a cat")).expression.state.says,
-    (await brain("what is a cat")).expression.state.says,
+    (await brain("who are you")).expression.state.says,
+    (await brain("what is your name")).expression.state.says,
   );
-  assertEquals((await brain("who are you")).expression.state.says, "computer");
+});
+
+test("a thing with no name has none to give, and that is an answer", async () => {
+  assertEquals((await brain("who is a cat")).expression.state.says, "none");
+  assertEquals((await brain("what is a cat")).expression.state.says, "mammal");
 });
 
 test("a hole falls wherever its language puts it", async () => {
-  assertEquals((await brain("a cat is who")).expression.state.says, "mammal");
-});
-
-test("asked who is speaking, the brain answers only where it was told", async () => {
-  assertEquals((await brain("who am i")).expression.name, "unknown", "nobody was named");
-  assertEquals((await brain("who am i", { from: 29 })).expression.state.says, "human");
+  assertEquals((await brain("a cat is who")).expression.state.says, "none");
+  assertEquals((await brain("a cat is what")).expression.state.says, "mammal");
 });

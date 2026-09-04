@@ -628,7 +628,7 @@
     "not":       { "pos": "negation", "meaning": "not", "negates": true },
 
     "what":      { "pos": "interrogative", "meaning": "what", "marks": "unknown" },
-    "who":       { "pos": "interrogative", "meaning": "who",  "marks": "unknown" },
+    "who":       { "pos": "interrogative", "meaning": "who",  "marks": "unknown", "concept": 138 },
     "how":       { "pos": "interrogative", "meaning": "how",  "marks": "unknown" },
     "many":      { "pos": "quantifier",    "meaning": "many",  "concept": 243 },
     "you":       { "pos": "pronoun",       "meaning": "the one it went to",   "marks": "to", "person": "second" },
