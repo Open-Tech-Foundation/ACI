@@ -6,6 +6,26 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A word may name more than one thing, and the signal settles which.** A saw
+  is a tool, and it is also what someone did with their eyes. An entry in a
+  language may hold several readings; every one of them is carried through
+  `understand` and `think`, because there the brain has a word and not yet a
+  signal, and picking then would be guessing.
+
+  `solve` settles it, where the whole signal is in hand. A signal names things
+  and needs something joining them — a relation, or a doing. Where nothing
+  does, and a word could have been a doing all along, that is what it was:
+
+  ```
+  i saw an apple             a person and a fruit, and nothing between them
+                             until `saw` is read as the seeing it also is
+                             → see#593, agent: person, target: apple, past
+
+  a saw is a tool?           `is` joins them → Yes, the tool
+  i cut an apple with a saw  `cut` is the doing → the saw is what it was
+                             done with
+  ```
+
 - **What a tool is for.** `tool is object` was all the world said of one, so
   the brain could not know a saw is a thing a person uses to do work. `use` is
   a relation now, and a tool is used for work — inherited down the kind, so a

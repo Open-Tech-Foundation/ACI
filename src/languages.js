@@ -33,11 +33,16 @@ function buildLanguage(data) {
   // `6` and `six` name one number and only one of them is its name.
   const named = new Map();
   const written = new Map();
-  for (const [word, info] of Object.entries(data.words || {})) {
-    words.set(word.toLowerCase(), info);
-    if (info.concept == null) continue;
-    const into = info.names === false ? written : named;
-    if (!into.has(info.concept)) into.set(info.concept, word);
+  for (const [word, entry] of Object.entries(data.words || {})) {
+    // A word may name more than one thing. Every reading of it is kept, and
+    // which one a signal means is settled later, by the signal.
+    const readings = Array.isArray(entry) ? entry : [entry];
+    words.set(word.toLowerCase(), readings);
+    for (const info of readings) {
+      if (info.concept == null) continue;
+      const into = info.names === false ? written : named;
+      if (!into.has(info.concept)) into.set(info.concept, word);
+    }
   }
 
   return {
@@ -125,6 +130,8 @@ function voice(data, intent, vars, named) {
 // take the ending off, put back what it replaced, and look again. Rules are the
 // language's, and there are few of them; the words they reach are many and none
 // of them is written down. A listed word always wins over a derived one.
+// Every reading of a word, or none. A word listed outright gives its own; one
+// reached by a derivation gives the readings of the stem it was derived from.
 function lookUp(words, derivations, w) {
   const surface = String(w).toLowerCase();
   const listed = words.get(surface);
@@ -134,10 +141,16 @@ function lookUp(words, derivations, w) {
     if (!surface.endsWith(rule.ending) || surface.length <= rule.ending.length) continue;
     const stem = surface.slice(0, -rule.ending.length) + rule.becomes;
     const found = words.get(stem);
-    if (!found || (rule.of !== undefined && found.pos !== rule.of)) continue;
-    return { ...found, derived: { from: stem, ending: rule.ending } };
+    if (!found) continue;
+    const fits = found.filter((info) => rule.of === undefined || partsOf(info).includes(rule.of));
+    if (fits.length === 0) continue;
+    return fits.map((info) => ({ ...info, derived: { from: stem, ending: rule.ending } }));
   }
   return null;
+}
+
+function partsOf(info) {
+  return Array.isArray(info.pos) ? info.pos : [info.pos];
 }
 
 // A symbol set holds both cases: the data lists one, the brain may meet either.

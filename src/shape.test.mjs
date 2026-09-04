@@ -203,8 +203,8 @@ test("two files naming one language are one language", () => {
     languages: [english, { name: "test", words: { zed: { pos: "noun", meaning: "zed", concept: 99 } } }],
   });
   assertEquals(k.languages.length, 1, "one language, not two that shout over each other");
-  assertEquals(k.languages[0].lookupWord("zed").concept, 99);
-  assertEquals(k.languages[0].lookupWord("what").meaning, "what");
+  assertEquals(k.languages[0].lookupWord("zed")[0].concept, 99);
+  assertEquals(k.languages[0].lookupWord("what")[0].meaning, "what");
 });
 
 test("an instance is given its name in memory, not in a language", () => {

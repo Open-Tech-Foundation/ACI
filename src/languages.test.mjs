@@ -31,7 +31,7 @@ test("a language with no vowel set hears none", () => {
 
 test("word lookup ignores case", () => {
   const l = fromData(data);
-  assertEquals(l.lookupWord("AB").meaning, "a thing");
+  assertEquals(l.lookupWord("AB")[0].meaning, "a thing", "every reading, and this word has one");
   assertEquals(l.lookupWord("zz"), null);
 });
 
@@ -100,10 +100,10 @@ test("a word not listed may be one the language derives", () => {
       { ending: "s", becomes: "", of: "noun" },
     ],
   });
-  assertEquals(l.lookupWord("dogs").meaning, "dog");
-  assertEquals(l.lookupWord("flies").meaning, "fly");
-  assertEquals(l.lookupWord("dogs").derived, { from: "dog", ending: "s" });
-  assertEquals(l.lookupWord("dog").derived, undefined, "a listed word is not derived");
+  assertEquals(l.lookupWord("dogs")[0].meaning, "dog");
+  assertEquals(l.lookupWord("flies")[0].meaning, "fly");
+  assertEquals(l.lookupWord("dogs")[0].derived, { from: "dog", ending: "s" });
+  assertEquals(l.lookupWord("dog")[0].derived, undefined, "a listed word is not derived");
 });
 
 test("a listed word always wins over a derived one", () => {
@@ -115,7 +115,7 @@ test("a listed word always wins over a derived one", () => {
     },
     derivations: [{ ending: "s", becomes: "", of: "noun" }],
   });
-  assertEquals(l.lookupWord("as").meaning, "an as");
+  assertEquals(l.lookupWord("as")[0].meaning, "an as");
 });
 
 test("a rule reaches only the part of speech it names", () => {
@@ -138,5 +138,5 @@ test("nothing is derived from a word shorter than the ending", () => {
     words: { s: { pos: "noun", meaning: "s" } },
     derivations: [{ ending: "s", becomes: "", of: "noun" }],
   });
-  assertEquals(l.lookupWord("s").meaning, "s");
+  assertEquals(l.lookupWord("s")[0].meaning, "s");
 });

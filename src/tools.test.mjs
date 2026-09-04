@@ -40,3 +40,33 @@ test("a signal may say what a doing was done with", async () => {
   assert(held.role !== parts.find((p) => p.of === PERSON).role, "and not the doer's part");
   await forget();
 });
+
+test("a word may name more than one thing", async () => {
+  await forget();
+  // A saw is a tool, and it is also what someone did with their eyes. The
+  // brain thinks it both ways and does not pick while it has only the word.
+  const r = await brain("i saw an apple", { from: PERSON });
+  const ways = (r.phases.think[1].branch || []).find((b) => b.kind === "thought").state.ways;
+  assertEquals(ways.length, 2, "both ways it may be meant");
+  await forget();
+});
+
+test("what joins the things a signal names settles which way it was meant", async () => {
+  await forget();
+  // Nothing joins a person and a fruit until `saw` is read as the seeing.
+  const seeing = branch(await brain("i saw an apple", { from: PERSON }), "event");
+  assert(/^see#\d+$/.test(seeing.name), "a person saw a thing");
+  assertEquals(seeing.state.parts.map((p) => p.of), [PERSON, 79]);
+  assert(seeing.state.when != null, "and did it before now");
+  await forget();
+});
+
+test("a signal that already has something joining it leaves the word alone", async () => {
+  await forget();
+  assertEquals((await brain("a saw is a tool?")).expression.name, "affirm",
+    "`is` joins them, so the saw is the tool");
+  const cutting = branch(await brain("i cut an apple with a saw", { from: PERSON }), "event");
+  assert(/^cut#\d+$/.test(cutting.name), "cutting is the doing");
+  assert(cutting.state.parts.some((p) => p.of === 457), "and the saw is the tool it was done with");
+  await forget();
+});

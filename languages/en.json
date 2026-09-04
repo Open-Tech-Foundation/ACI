@@ -2698,11 +2698,19 @@
       "meaning": "axe",
       "concept": 456
     },
-    "saw": {
-      "pos": "noun",
-      "meaning": "saw",
-      "concept": 457
-    },
+    "saw": [
+      {
+        "pos": "noun",
+        "meaning": "saw",
+        "concept": 457
+      },
+      {
+        "pos": "verb",
+        "meaning": "saw",
+        "concept": 286,
+        "when": "past"
+      }
+    ],
     "ladder": {
       "pos": "noun",
       "meaning": "ladder",

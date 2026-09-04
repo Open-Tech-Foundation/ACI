@@ -201,58 +201,15 @@ export function checkLanguage(data, where = 'language') {
   if (data.words !== undefined && (!data.words || typeof data.words !== 'object')) {
     fail(at, 'words must be an object');
   }
-  for (const [word, info] of Object.entries(data.words || {})) {
+  for (const [word, entry] of Object.entries(data.words || {})) {
     const w = `${at} word "${word}"`;
-    if (!info || typeof info !== 'object') fail(w, 'must be an object');
-    onlyKeys(
-      info,
-      ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'person', 'number'],
-      w,
-    );
-    // A word may be more than one part of speech — English says a walk and
-    // walks with the same word — so `pos` is one or a list of them, and which
-    // one it is in a signal is what the parse settles.
-    const parts = Array.isArray(info.pos) ? info.pos : [info.pos];
-    if (parts.length === 0 || parts.some((p) => typeof p !== 'string' || p === '')) {
-      fail(w, 'pos must be a non-empty string, or a list of them');
-    }
-    if (typeof info.meaning !== 'string') fail(w, 'meaning must be a string');
-    if (info.concept !== undefined && !isId(info.concept)) fail(w, 'concept must be a term id');
-    if (info.role !== undefined && (typeof info.role !== 'string' || info.role === '')) {
-      fail(w, 'role, where present, must name the part a thing plays');
-    }
-    // Which side of now what is said falls on. The value names a moment the
-    // world anchors; the brain names none of them.
-    if (info.when !== undefined && (typeof info.when !== 'string' || info.when === '')) {
-      fail(w, 'when, where present, must name a moment');
-    }
-    // Who a word is said of, and how many. Closed sets, the same as `marks`:
-    // there are exactly three persons and exactly two numbers to be.
-    if (info.person !== undefined && !PERSONS.includes(info.person)) {
-      fail(w, `person must be one of ${PERSONS.map((p) => `"${p}"`).join(', ')}`);
-    }
-    if (info.number !== undefined && !NUMBERS.includes(info.number)) {
-      fail(w, `number must be one of ${NUMBERS.map((n) => `"${n}"`).join(', ')}`);
-    }
-    // Another way to write a term is not what the term is called.
-    if (info.names !== undefined && info.names !== false) {
-      fail(w, 'names, where present, must be false');
-    }
-    // A word may open or close a group, so what is inside it is worked first.
-    if (info.groups !== undefined && info.groups !== 'open' && info.groups !== 'close') {
-      fail(w, 'groups must be "open" or "close"');
-    }
-    if (info.negates !== undefined && info.negates !== true) {
-      fail(w, 'negates, where present, must be true');
-    }
-    if (info.marks !== undefined && !MARKS.includes(info.marks)) {
-      fail(w, `marks must be one of ${MARKS.map((m) => `"${m}"`).join(', ')}`);
-    }
-    // A pointer names no term: what it points at is the circumstance of the
-    // signal it arrived in, and no world can hold that.
-    if ((info.marks === 'from' || info.marks === 'to') && info.concept !== undefined) {
-      fail(w, 'a word that points names no term of its own');
-    }
+    if (!entry || typeof entry !== 'object') fail(w, 'must be an object');
+    // A word may name more than one thing — a saw is a tool, and it is also
+    // what someone did with their eyes. An entry is one reading or a list of
+    // them, and which one a signal means is the brain's to settle.
+    const readings = Array.isArray(entry) ? entry : [entry];
+    if (readings.length === 0) fail(w, 'must hold at least one reading');
+    for (const info of readings) checkWord(info, w);
   }
 
   if (data.marking !== undefined && data.marking !== 'before' && data.marking !== 'after') {
@@ -369,3 +326,58 @@ function checkGrammar(grammar, at) {
 }
 
 export { ShapeError };
+
+// One reading of a word: what it is, what it names, and what it says of
+// what stands beside it.
+function checkWord(info, w) {
+  if (!info || typeof info !== 'object' || Array.isArray(info)) fail(w, 'must be an object');
+  onlyKeys(
+    info,
+    ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'person', 'number'],
+    w,
+  );
+  // A word may be more than one part of speech — English says a walk and
+  // walks with the same word — so `pos` is one or a list of them, and which
+  // one it is in a signal is what the parse settles.
+  const parts = Array.isArray(info.pos) ? info.pos : [info.pos];
+  if (parts.length === 0 || parts.some((p) => typeof p !== 'string' || p === '')) {
+    fail(w, 'pos must be a non-empty string, or a list of them');
+  }
+  if (typeof info.meaning !== 'string') fail(w, 'meaning must be a string');
+  if (info.concept !== undefined && !isId(info.concept)) fail(w, 'concept must be a term id');
+  if (info.role !== undefined && (typeof info.role !== 'string' || info.role === '')) {
+    fail(w, 'role, where present, must name the part a thing plays');
+  }
+  // Which side of now what is said falls on. The value names a moment the
+  // world anchors; the brain names none of them.
+  if (info.when !== undefined && (typeof info.when !== 'string' || info.when === '')) {
+    fail(w, 'when, where present, must name a moment');
+  }
+  // Who a word is said of, and how many. Closed sets, the same as `marks`:
+  // there are exactly three persons and exactly two numbers to be.
+  if (info.person !== undefined && !PERSONS.includes(info.person)) {
+    fail(w, `person must be one of ${PERSONS.map((p) => `"${p}"`).join(', ')}`);
+  }
+  if (info.number !== undefined && !NUMBERS.includes(info.number)) {
+    fail(w, `number must be one of ${NUMBERS.map((n) => `"${n}"`).join(', ')}`);
+  }
+  // Another way to write a term is not what the term is called.
+  if (info.names !== undefined && info.names !== false) {
+    fail(w, 'names, where present, must be false');
+  }
+  // A word may open or close a group, so what is inside it is worked first.
+  if (info.groups !== undefined && info.groups !== 'open' && info.groups !== 'close') {
+    fail(w, 'groups must be "open" or "close"');
+  }
+  if (info.negates !== undefined && info.negates !== true) {
+    fail(w, 'negates, where present, must be true');
+  }
+  if (info.marks !== undefined && !MARKS.includes(info.marks)) {
+    fail(w, `marks must be one of ${MARKS.map((m) => `"${m}"`).join(', ')}`);
+  }
+  // A pointer names no term: what it points at is the circumstance of the
+  // signal it arrived in, and no world can hold that.
+  if ((info.marks === 'from' || info.marks === 'to') && info.concept !== undefined) {
+    fail(w, 'a word that points names no term of its own');
+  }
+}

@@ -143,23 +143,26 @@ function recognizeLanguage(roots, langs) {
         letters.every((ch) => lang.isOwnSymbol(ch)) &&
         letters.some((ch) => lang.isWordSymbol(ch));
       if (!allRecognized) continue;
-      const word = lang.lookupWord(identity);
+      // Every reading this language has of the word. One is the usual case;
+      // more than one is a word that names more than one thing, and which of
+      // them the signal means is settled later, by the signal.
+      const found = lang.lookupWord(identity);
+      const readings = (found || []).map((word) => ({
+        text: identity,
+        pos: word.pos,
+        meaning: word.meaning,
+        concept: word.concept ?? null,
+        marks: word.marks ?? null,
+        negates: word.negates ?? false,
+        role: word.role ?? null,
+        when: word.when ?? null,
+        names: word.names ?? null,
+        groups: word.groups ?? null,
+      }));
       matching.push({
         lang: lang.data.name,
-        word: word
-          ? {
-              text: identity,
-              pos: word.pos,
-              meaning: word.meaning,
-              concept: word.concept ?? null,
-              marks: word.marks ?? null,
-              negates: word.negates ?? false,
-              role: word.role ?? null,
-              when: word.when ?? null,
-              names: word.names ?? null,
-              groups: word.groups ?? null,
-            }
-          : null,
+        word: readings[0] ?? null,
+        words: readings,
         roles: classifyRoles(identity, lang),
       });
     }
@@ -217,25 +220,30 @@ function think(roots, langs, at, world) {
     const lang = (langs || []).find((l) => l.data.name === first.lang) || null;
     const value = first.word || !lang ? null : lang.valueOfFigures(n.state.identity);
     const read = value != null;
-    const thought = {
+    const readOf = (word) => ({
       language: first.lang,
-      wordKnown: Boolean(first.word) || read,
-      pos: first.word ? first.word.pos : read ? lang.figuresPos : null,
-      meaning: first.word ? first.word.meaning : read ? String(n.state.identity) : null,
-      concept: first.word
-        ? pointedAt(first.word, at) ?? first.word.concept
+      wordKnown: Boolean(word) || read,
+      pos: word ? word.pos : read ? lang.figuresPos : null,
+      meaning: word ? word.meaning : read ? String(n.state.identity) : null,
+      concept: word
+        ? pointedAt(word, at) ?? word.concept
         : read && world
           ? world.termFor(value)
           : null,
       value,
-      marks: first.word ? first.word.marks : null,
-      negates: first.word ? first.word.negates : false,
-      role: first.word ? first.word.role : null,
-      when: first.word ? first.word.when : null,
-      names: first.word ? first.word.names : read ? false : null,
-      groups: first.word ? first.word.groups : null,
-    };
-    return withBranch(n, [...n.branch, node('thought', 'understood', [], { thought })]);
+      marks: word ? word.marks : null,
+      negates: word ? word.negates : false,
+      role: word ? word.role : null,
+      when: word ? word.when : null,
+      names: word ? word.names : read ? false : null,
+      groups: word ? word.groups : null,
+    });
+    // A word that names more than one thing is thought of every way it may be
+    // meant. The brain does not pick here: it has one word and not yet a
+    // signal, and picking now would be guessing.
+    const ways = (first.words && first.words.length > 1 ? first.words : [first.word]).map(readOf);
+    const state = ways.length > 1 ? { thought: ways[0], ways } : { thought: ways[0] };
+    return withBranch(n, [...n.branch, node('thought', 'understood', [], state)]);
   });
 }
 
@@ -258,7 +266,8 @@ function pointedAt(word, at) {
 // gets no category — the brain does not guess from the part of speech.
 // ---------------------------------------------------------------------------
 function solve(roots, world, langs) {
-  return roots.map((n, at) => {
+  const settled = settle(roots, world);
+  return settled.map((n, at) => {
     if (!n.state.exists) {
       return withBranch(n, [...n.branch, node('response', 'nothing', [])]);
     }
@@ -279,17 +288,60 @@ function solve(roots, world, langs) {
     const known = worldNode(thoughtState ? thoughtState.concept : null, world);
     if (known) result.branch.push(known);
 
-    const count = quantityOf(roots, at, world);
+    const count = quantityOf(settled, at, world);
     if (count != null) {
       result.branch.push(node('quantity', 'quantity', [], { concept: count }));
     }
 
     // A word beside a thing may say whether one is being introduced or the one
     // already spoken of is meant. Which word does that is the language's.
-    const marked = markOf(roots, at, world, langs);
+    const marked = markOf(settled, at, world, langs);
     if (marked) result.branch.push(node('mark', marked, []));
 
     return result;
+  });
+}
+
+// A word that may be meant more than one way is settled here, where the brain
+// has the whole signal and not only the word. A signal names things, and it
+// needs something joining them — a relation, or a doing. Where nothing does,
+// and a word could have been a doing all along, that is what it was: `i saw an
+// apple` names a person and a fruit and nothing between them until `saw` is
+// read as the seeing it also is. Where something already joins them, every
+// word stands as it was first thought: `i cut an apple with a saw` has its
+// doing, so the saw is the tool.
+function settle(roots, world) {
+  if (!world) return roots;
+  const a = world.anchors || {};
+  const ways = (n) => {
+    const t = findBranch(n, 'thought');
+    return t && t.state.ways ? t.state.ways : null;
+  };
+  if (!roots.some(ways)) return roots;
+
+  const doing = (thought) =>
+    thought && thought.concept != null && world.isA(thought.concept, a.action);
+  const joining = (thought) =>
+    thought && thought.concept != null && world.isA(thought.concept, a.relation);
+  const already = roots.some((n) => {
+    const t = findBranch(n, 'thought');
+    return t && (doing(t.state.thought) || joining(t.state.thought));
+  });
+  if (already) return roots;
+
+  let taken = false;
+  return roots.map((n) => {
+    const mine = ways(n);
+    if (taken || !mine) return n;
+    const other = mine.find(doing);
+    if (!other) return n;
+    taken = true;
+    return withBranch(
+      n,
+      n.branch.map((b) =>
+        b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: other }) : b,
+      ),
+    );
   });
 }
 
