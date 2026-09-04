@@ -891,15 +891,17 @@ function alongScale(left, right, relation, world) {
   });
 }
 
-// Where a term stands on a scale. A way of a property is its own place; a
-// thing is placed by what it is — a stone said to be heavy stands where heavy
-// stands. A term on nothing ordered has no place at all.
+// Where a thing stands on a scale — which is never the thing itself. A place on
+// a scale is a reading, not something that has one: hot is not a thing that is
+// hot, it is what a thing's temperature comes to. So a thing is placed only by
+// what it *is* — a stone said to be heavy stands where heavy stands — and a
+// reading, asked to stand somewhere, has nowhere to stand.
 function placesOn(term, world) {
   const a = world.anchors || {};
   if (term == null) return [];
-  return upward(term, world).filter(
-    (x) => world.linked(x, a.order).length > 0 || world.members(x, a.order).length > 0,
-  );
+  return upward(term, world)
+    .slice(1)
+    .filter((x) => world.linked(x, a.order).length > 0 || world.members(x, a.order).length > 0);
 }
 
 // What the universe's forces do, everything physical has. Nobody has to say a

@@ -11,32 +11,35 @@ async function fresh(...said) {
   return last;
 }
 
-test("a property may run along a scale, and its ways sit on it in order", async () => {
-  assertEquals((await fresh("hot more cold?")).expression.name, "affirm");
-  assertEquals((await fresh("warm more cold?")).expression.name, "affirm");
-  assertEquals((await fresh("hot more warm?")).expression.name, "affirm");
-  assertEquals((await fresh("heavy more lightweight?")).expression.name, "affirm");
-  assertEquals((await fresh("big more small?")).expression.name, "affirm");
+test("a reading is not a thing that has one", async () => {
+  // Hot is not a thing that is hot. It is what a thing's temperature comes to,
+  // and nothing in the world says one reading is more than another reading.
+  assertEquals((await fresh("hot more cold?")).expression.name, "unsure");
+  assertEquals((await fresh("heavy more lightweight?")).expression.name, "unsure");
+  assertEquals((await fresh("big more small?")).expression.name, "unsure");
   await forget();
 });
 
 test("standing further along one way is standing less far the other", async () => {
-  assertEquals((await fresh("cold more hot?")).expression.name, "deny");
-  assertEquals((await fresh("cold less hot?")).expression.name, "affirm");
-  assertEquals((await fresh("hot less cold?")).expression.name, "deny");
+  const told = ["a stone is heavy", "an apple is lightweight"];
+  assertEquals((await fresh(...told, "an apple more a stone?")).expression.name, "deny");
+  assertEquals((await fresh(...told, "an apple less a stone?")).expression.name, "affirm");
+  assertEquals((await fresh(...told, "a stone less an apple?")).expression.name, "deny");
   await forget();
 });
 
 test("a property with no scale refuses the comparison rather than guessing", async () => {
   // Red is not more than blue, and nothing about colour says it could be.
-  assertEquals((await fresh("red more blue?")).expression.name, "unsure");
-  assertEquals((await fresh("blue more red?")).expression.name, "unsure");
+  const told = ["a stone is red", "an apple is blue"];
+  assertEquals((await fresh(...told, "a stone more an apple?")).expression.name, "unsure");
   await forget();
 });
 
 test("two scales are not one scale", async () => {
-  assertEquals((await fresh("hot more big?")).expression.name, "unsure");
-  assertEquals((await fresh("heavy more cold?")).expression.name, "unsure");
+  // A thing may be heavier and colder at once, and neither of those is the
+  // comparison, so the brain does not pick one.
+  const told = ["a stone is heavy", "a stone is cold", "an apple is lightweight", "an apple is hot"];
+  assertEquals((await fresh(...told, "a stone more an apple?")).expression.name, "unsure");
   await forget();
 });
 
@@ -54,8 +57,8 @@ test("a thing nothing has placed has no place", async () => {
 });
 
 test("a comparison is worked out, never taken in as a fact", async () => {
-  const r = await fresh("hot more cold");
-  assertEquals(r.expression.name, "understood", "it already knew, from the scale");
+  const r = await fresh("a stone is heavy", "an apple is lightweight", "a stone more an apple");
+  assertEquals(r.expression.name, "understood", "it already knew, from where each stands");
   assertEquals(r.learned, null, "and there was nothing to write down");
   await forget();
 });

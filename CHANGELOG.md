@@ -13,14 +13,17 @@ All notable changes to this project are documented in this file.
   already used to say which arithmetic binds first.
 
   `more` and `less` stop being arithmetic. They are the brain's way of standing
-  two terms on one scale and finding one further along — and **two numbers are
-  only the case where the world can already say which is greater**. So
-  `"hot more cold?"` is *Yes* with no number anywhere, and `"3 more 2?"` still
-  answers as it did.
+  two **things** on one scale and finding one further along — and two numbers
+  are only the case where the world can already say which is greater. Told a
+  stone is heavy and an apple lightweight, `"a stone more an apple?"` is *Yes*
+  with no number anywhere; `"3 more 2?"` still answers as it did. Told nothing,
+  a thing has no place, and the brain says so.
 
-  A thing is placed on a scale by what it is: told a stone is heavy and an
-  apple lightweight, `"a stone more an apple?"` is *Yes*. Told nothing, it has
-  no place, and the brain says so.
+  **A reading is not a thing that has one.** Hot is not a thing that is hot —
+  it is what a thing's temperature comes to, and nothing in the world says one
+  reading is more than another. So `"hot more cold?"` is *I don't know*: a
+  thing is placed on a scale only by what it **is**, never by being a place
+  itself.
 
   A property with **no** scale refuses the comparison rather than guessing —
   `"red more blue?"` is *I don't know*, and nothing about colour says it could
