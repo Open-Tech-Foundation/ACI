@@ -13,9 +13,18 @@ All notable changes to this project are documented in this file.
   each keeps its own verdict, each fact it taught is handed back, and the
   brain says all of them. Where the parts say terms the language's list
   separator goes between them (`"mammal, mammal"`); where they say whole
-  sentences nothing goes between but the space (`"I know. No. ❌"`). Only the
-  subject side joins — an object togetherness (`"a cat is an animal and a
-  mammal"`) is not read yet.
+  sentences nothing goes between but the space (`"I know. No. ❌"`).
+- **Both sides of a claim may join.** `"a sparrow is a plant and a bird"` is
+  two claims about one thing, the way `"a sparrow and a snake are animals"` is
+  one claim about two. Joined on both sides, every pairing is a claim of its
+  own — `"a sparrow and a snake are animals and birds"` is four. What several
+  of them taught about one and the same thing is handed back as one thing
+  learned, holding each link once.
+- **A join is read at its widest, and wherever it stands.** `"1+8 and 5+9"` is
+  two workings-out, not one sentence with a joined complement, so the grammar
+  offers the joined reading first. And a signal laid over a join reaches it:
+  `"what is 1+8 and 5+9"` answers `"9, 14"` — what wraps a join adds no term
+  of its own, so the join is looked for all the way down.
 
 - **Criticism of the brain is checked before it is taken in.** Told `"you are
   bad"`, the brain used to hold the opinion the same as any other, no matter

@@ -397,11 +397,15 @@ function judge(roots, world, mood, langs, sent) {
   // long list of things: each clause is judged completely on its own, and what
   // it came to is kept, nested, under the clause it came from — a togetherness
   // of verdicts, not a blur of everyone's words at once.
-  if (root.branch.some((b) => b.kind === 'clause')) {
-    const judged = root.branch.map((b) =>
-      joinedWhole(b, root) ? judge([b], world, mood, langs, sent)[0] : b,
+  const join = joinIn(root);
+  if (join) {
+    const judged = withBranch(
+      join,
+      join.branch.map((b) =>
+        joinedWhole(b, join) ? judge([b], world, mood, langs, sent)[0] : b,
+      ),
     );
-    return [withBranch(root, judged)];
+    return [instead(root, join, judged)];
   }
 
   const said = [];
@@ -532,7 +536,7 @@ function judge(roots, world, mood, langs, sent) {
   // question puts its hole wherever its language likes.
   if (holes.length > 0 && terms.length >= 1) {
     const nodes = [];
-    for (const term of terms) {
+    for (const [i, term] of terms.entries()) {
       const subject = conceptOf(term);
       // A name is a fact like any other: what the term links to by the name
       // relation, read out of memory. Nothing about it is special to the engine.
@@ -542,28 +546,28 @@ function judge(roots, world, mood, langs, sent) {
       // another act, and one it will not perform where any of the answer harms.
       const harmed = found.find((t) => harms(t, world));
       if (harmed != null) mine.push(node('refuse', 'harm', [], { said: harmed }));
-      nodes.push(...markedAbout(mine, subject, terms.length > 1));
+      nodes.push(...among(mine, i, terms.length > 1));
     }
     return [withBranch(root, [...root.branch, ...nodes])];
   }
 
-  // Two terms and a relation is a claim, and the brain checks it. Where the
-  // subject is a togetherness — several things joined, not one — the claim is
-  // checked once per member: "a cow and a dog are animals" is two claims made
-  // together, not one claim about a blur of both. Only the subject side is a
-  // togetherness here; the object nearest the relation is still the one thing
-  // every member is checked against.
+  // Two terms and a relation is a claim, and the brain checks it. Either side
+  // may be a togetherness — several things joined, not one — and the claim is
+  // then checked once for every pairing of them: "a cow and a dog are animals"
+  // is two claims made together, and so is "a cow is an animal and a mammal".
+  // Joined on both sides, every one of them is a claim of its own; nothing is
+  // blurred into a single term standing for several.
   if (terms.length >= 2) {
     const lefts = said.filter((n, i) => i < at && claims(n));
-    const right = nearest(said, at, 1, claims);
-    const object = conceptOf(right);
-    if (object == null || lefts.length === 0) return roots;
+    const rights = said.filter((n, i) => i > at && claims(n) && conceptOf(n) != null);
+    if (lefts.length === 0 || rights.length === 0) return roots;
     // What the signal claimed — which is the opposite of it where the signal
     // denies. Read once: every member of a togetherness was denied alike.
     const negated = said.some(negatesOn);
 
-    const claimFor = (left) => {
+    const claimFor = (left, right) => {
       const subject = conceptOf(left);
+      const object = conceptOf(right);
       if (subject == null) return [];
       const howMany = world.valueOf(quantityTerm(right));
       // A claim either holds, is contradicted, or is simply not known. Failing
@@ -646,10 +650,14 @@ function judge(roots, world, mood, langs, sent) {
           );
         }
       }
-      return markedAbout(added, subject, lefts.length > 1);
+      return added;
     };
 
-    const results = lefts.flatMap(claimFor);
+    // Every pairing the signal made, in the order it made them.
+    const pairs = lefts.flatMap((left) => rights.map((right) => [left, right]));
+    const results = pairs.flatMap(([left, right], i) =>
+      among(claimFor(left, right), i, pairs.length > 1),
+    );
     if (results.length === 0) return roots;
     return [withBranch(root, [...root.branch, ...results])];
   }
@@ -664,12 +672,32 @@ function joinedWhole(b, whole) {
   return b.kind === 'clause' || b.kind === whole.kind;
 }
 
-// Which of several things spoken of at once a verdict is about, so that what
-// was reached for one is not read as standing for the rest. A signal speaking
-// of a single thing carries no such mark: there is nothing to tell apart.
-function markedAbout(nodes, of, many) {
+// Where in the signal whole ones were joined. A join need not stand at the
+// top: a question may be laid over one — "what is 1+8 and 5+9" asks two whole
+// workings-out — and what wraps it adds no term of its own, so the join is
+// looked for all the way down and the wrapping is left as it was found.
+function joinIn(n) {
+  if (!n || !n.branch) return null;
+  if (n.branch.filter((b) => joinedWhole(b, n)).length > 1) return n;
+  for (const b of n.branch) {
+    const found = joinIn(b);
+    if (found) return found;
+  }
+  return null;
+}
+
+// The same tree with one node standing in place of another.
+function instead(n, target, made) {
+  if (n === target) return made;
+  return withBranch(n, (n.branch || []).map((b) => instead(b, target, made)));
+}
+
+// Which of several verdicts reached at once this one is, so that what was
+// reached for one is not read as standing for the rest. A signal that reached
+// a single verdict carries no such mark: there is nothing to tell apart.
+function among(nodes, which, many) {
   if (!many) return nodes;
-  return nodes.map((n) => withBranch(n, undefined, { ...n.state, about: of }));
+  return nodes.map((n) => withBranch(n, undefined, { ...n.state, among: which }));
 }
 
 // What a thing has, it has by being what it is: a memory belongs to computers,
@@ -1240,18 +1268,18 @@ const VERDICT = ['truth', 'answer', 'learn', 'refuse'];
 // differs, so each root keeps the whole signal and only its own verdict.
 function apart(roots) {
   if (roots.length !== 1) return null;
+  const join = joinIn(roots[0]);
+  if (join) return join.branch.filter((b) => joinedWhole(b, join));
   const branch = roots[0].branch || [];
-  const clauses = branch.filter((b) => joinedWhole(b, roots[0]));
-  if (clauses.length > 1) return clauses;
-  const about = [];
+  const places = [];
   for (const b of branch) {
-    if (!VERDICT.includes(b.kind) || b.state.about == null) continue;
-    if (!about.includes(b.state.about)) about.push(b.state.about);
+    if (!VERDICT.includes(b.kind) || b.state.among == null) continue;
+    if (!places.includes(b.state.among)) places.push(b.state.among);
   }
-  if (about.length < 2) return null;
+  if (places.length < 2) return null;
   const rest = branch.filter((b) => !VERDICT.includes(b.kind));
-  return about.map((of) =>
-    withBranch(roots[0], [...rest, ...branch.filter((b) => b.state.about === of)]),
+  return places.map((which) =>
+    withBranch(roots[0], [...rest, ...branch.filter((b) => b.state.among === which)]),
   );
 }
 
@@ -1683,7 +1711,9 @@ function learnedFrom(roots, world) {
   // held together — the second fact is as much a fact as the first.
   const together = apart(roots);
   if (together) {
-    const terms = together.flatMap((r) => (learnedFrom([r], world) || { terms: [] }).terms);
+    const terms = asOne(
+      together.flatMap((r) => (learnedFrom([r], world) || { terms: [] }).terms),
+    );
     return terms.length ? { terms } : null;
   }
   const event = findBranch(roots[0], 'event');
@@ -1730,6 +1760,26 @@ function learnedFrom(roots, world) {
   if (!term) return terms.length ? { terms } : null;
   terms.push({ id: subject, name: term.name, links: [link] });
   return { terms };
+}
+
+// Several verdicts may have been reached about one and the same thing — a
+// thing given two things at once, or spoken of twice over. What was learned of
+// it is one thing learned, holding everything reached about it and holding
+// each of those once.
+function asOne(terms) {
+  const held = new Map();
+  const same = (l) => JSON.stringify([l.rel, l.to, l.not ?? false, l.quantity ?? null, l.at ?? null]);
+  for (const term of terms) {
+    const already = held.get(term.id);
+    if (!already) {
+      held.set(term.id, { ...term, links: [...term.links] });
+      continue;
+    }
+    for (const link of term.links) {
+      if (!already.links.some((l) => same(l) === same(link))) already.links.push(link);
+    }
+  }
+  return [...held.values()];
 }
 
 // ---- tree helpers ---------------------------------------------------------

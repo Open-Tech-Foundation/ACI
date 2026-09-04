@@ -75,12 +75,51 @@ test("every clause that taught something is handed back", async () => {
 
 test("a signal speaking of one thing carries no mark telling members apart", async () => {
   const r = await brain("a cat is an animal");
-  assertEquals(all(r.roots[0], "truth")[0].state.about, undefined);
+  assertEquals(all(r.roots[0], "truth")[0].state.among, undefined);
 });
 
-test("the same thing said twice is one thing, not a togetherness", async () => {
-  const r = await brain("a cat and a cat are animals");
-  assertEquals(r.expression.state.says, "I know.");
+test("a thing named twice is judged twice — the signal said it twice", async () => {
+  const r = await brain("a sparrow and a sparrow are animals");
+  assertEquals(all(r.roots[0], "truth").length, 2);
+  assertEquals(r.expression.state.says, "I know. I know.");
+});
+
+test("the object side joins too, and the claim is checked against each", async () => {
+  const r = await brain("a sparrow is a plant and a bird");
+  assertEquals(all(r.roots[0], "truth").map((t) => t.name), ["false", "true"]);
+  assertEquals(r.expression.state.says, "No. ❌ I know.");
+});
+
+test("joined on both sides, every pairing is a claim of its own", async () => {
+  const r = await brain("a sparrow and a snake are animals and birds");
+  assertEquals(all(r.roots[0], "truth").map((t) => t.name), ["true", "true", "true", "false"]);
+});
+
+test("what an object togetherness taught is one thing learned, not two", async () => {
+  await forget();
+  const r = await brain("a story is art and a question");
+  assertEquals(r.learned.terms.length, 1);
+  assertEquals(r.learned.terms[0].links.length, 2);
+  assertEquals((await brain("a story is a question?")).expression.name, "affirm");
+  await forget();
+});
+
+test("a thing may be given two things at once", async () => {
+  await forget();
+  await brain("a cupboard has three cup and two plate");
+  assertEquals((await brain("the cupboard has how many cups?")).expression.state.says, "three");
+  assertEquals((await brain("the cupboard has how many plates?")).expression.state.says, "two");
+  await forget();
+});
+
+test("a join is read at its widest, not at the first thing that parses", async () => {
+  assertEquals((await brain("1+8 and 5+9")).expression.state.says, "9, 14");
+});
+
+test("a question laid over a join reaches the join underneath it", async () => {
+  const r = await brain("what is 1+8 and 5+9");
+  assertEquals(all(r.roots[0], "sum").map((n) => n.state.value), [9, 14]);
+  assertEquals(r.expression.state.says, "9, 14");
 });
 
 test("a denial reaches every member of a togetherness", async () => {

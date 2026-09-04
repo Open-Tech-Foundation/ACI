@@ -659,6 +659,7 @@
     "rules": {
       "sentence": {
         "rules": [
+          "clause conjunction sentence",
           "interjection",
           "interjection sentence",
           "subject predicate",
@@ -670,8 +671,7 @@
           "function sentence",
           "function subject preposition subject",
           "interrogative quantifier subject",
-          "verb subject preposition subject",
-          "clause conjunction sentence"
+          "verb subject preposition subject"
         ]
       },
       "clause": {
@@ -700,6 +700,25 @@
         "rules": ["verb verbComplement", "verb negation verbComplement"]
       },
       "verbComplement": {
+        "rules": [
+          "noun",
+          "adjective",
+          "numeral",
+          "numeral predicate",
+          "function subject",
+          "function subject predicate",
+          "open sentence close",
+          "open sentence close predicate",
+          "open subject close",
+          "open subject close predicate",
+          "article noun",
+          "numeral noun",
+          "interrogative",
+          "interrogative quantifier noun",
+          "complement conjunction verbComplement"
+        ]
+      },
+      "complement": {
         "rules": [
           "noun",
           "adjective",
