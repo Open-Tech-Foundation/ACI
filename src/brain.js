@@ -491,6 +491,23 @@ function manyOf(said, at, world) {
   return found ? conceptOf(found) : null;
 }
 
+// How many of a kind a thing holds, counting everything it holds that is one
+// of that kind. Nothing says a thing holds `things`; it holds bats and balls,
+// and those are things.
+function heldUnder(bearer, kind, world) {
+  const a = world.anchors || {};
+  let total = null;
+  for (const relation of [a.hold, a.has]) {
+    if (relation == null) continue;
+    for (const of of world.linked(bearer, relation)) {
+      if (of === kind || !world.isA(of, kind)) continue;
+      const many = world.held(bearer, relation, of);
+      if (many != null) total = (total ?? 0) + many;
+    }
+  }
+  return total;
+}
+
 // A number standing beside a thing says how many of it there are. The brain
 // reads this off the order of the things it perceived — a language may put the
 // number on either side, and it does not need to know which, so both are
@@ -741,6 +758,10 @@ function judge(roots, world, mood, langs, sent) {
         })),
       ];
       const way = ways.find((w) => world.held(w.bearer, w.relation, w.of) != null) ?? ways[0];
+      // Asked after a kind it holds none of by name, but several kinds under
+      // it, the count is all of those together: a shop of five bats and two
+      // balls holds seven things.
+      const under = heldUnder(way.bearer, way.of, world);
       // Asked on the past side of now, the brain reads what was so then. What
       // a thing held is kept in order and never written over, so stepping back
       // one stamp is all it takes: it does not have to have remembered
@@ -751,7 +772,7 @@ function judge(roots, world, mood, langs, sent) {
         ? over.length > 1
           ? over[over.length - 2].quantity
           : null
-        : world.held(way.bearer, way.relation, way.of);
+        : world.held(way.bearer, way.relation, way.of) ?? under;
       const total = howMany == null ? null : world.termFor(howMany);
       return [
         withBranch(root, [
@@ -777,7 +798,7 @@ function judge(roots, world, mood, langs, sent) {
       const bearer = of == null ? sent.spoken : of;
       const howMany = [a.hold, a.has]
         .map((relation) => world.held(bearer, relation, kind))
-        .find((many) => many != null);
+        .find((many) => many != null) ?? heldUnder(bearer, kind, world);
       if (howMany != null) {
         return [
           withBranch(root, [
@@ -796,9 +817,7 @@ function judge(roots, world, mood, langs, sent) {
     // Asked how many of a kind there are, it counts what it knows.
     if (things.length === 1) {
       const kind = conceptOf(things[0]);
-      const members = world
-        .members(kind, world.baseRelation)
-        .filter((id) => !world.isIndividual(id));
+      const members = world.members(kind, world.baseRelation);
       const total = world.termFor(members.length);
       return [
         withBranch(root, [
