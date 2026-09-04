@@ -44,7 +44,8 @@
     "sine": 575,
     "cosine": 576,
     "tangent": 577,
-    "magnitude": 578
+    "magnitude": 578,
+    "hold": 579
   },
   "relations": {
     "is": 294,
@@ -68,7 +69,8 @@
     "sine": 575,
     "cosine": 576,
     "tangent": 577,
-    "magnitude": 578
+    "magnitude": 578,
+    "hold": 579
   },
   "terms": [
     {
@@ -276,6 +278,10 @@
         {
           "rel": 294,
           "to": 8
+        },
+        {
+          "rel": 579,
+          "to": 2
         }
       ]
     },
@@ -6246,6 +6252,16 @@
         {
           "rel": 249,
           "to": 569
+        }
+      ]
+    },
+    {
+      "id": 579,
+      "name": "hold",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
         }
       ]
     }

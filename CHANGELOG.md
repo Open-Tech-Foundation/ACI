@@ -6,6 +6,25 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Holding, as its own relation.** A thing may hold things, and what it holds
+  is neither what it is nor what it has: it can begin, end and be counted
+  without the thing becoming anything different. `hold` is a relation in the
+  world and an anchor the brain knows; English says it with `hold`/`holds`. A
+  container holds things, which is what *"a basket can hold things"* states —
+  no modal needed, the ability is the fact that its kind holds them. What a
+  thing holds is stamped as state already is, so `"a basket holds three
+  apple"` then `"it holds five apple"` revises without erasing what was so
+  before.
+
+### Fixed
+
+- **A thing is itself without standing in every relation to itself.**
+  `world.isA(x, y, rel)` walked with `reaches`, which seeds its set with the
+  starting term — so `isA(thing, thing, hold)` was true, and any thing that
+  climbed to `thing` "held" things. `"a stone holds things?"` answered yes.
+  `isA` now follows a relation for real unless it is the `is` ladder the world
+  is built of, where a thing reaching itself is the point.
+
 - **A word may point at what was last spoken of.** `marks` gains `spoken`
   alongside `from` and `to`, and English gives it to `it`. What it lands on is
   the circumstance of this one signal, exactly as the other two are: the brain

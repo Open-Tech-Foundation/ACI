@@ -140,6 +140,8 @@
     "with":      { "pos": "preposition", "meaning": "with" },
     "by":        { "pos": "preposition", "meaning": "by" },
     "and":       { "pos": "conjunction", "meaning": "and" },
+    "hold":      { "pos": "verb", "meaning": "hold", "concept": 579 },
+    "holds":     { "pos": "verb", "meaning": "holds", "concept": 579, "person": "third", "number": "singular" },
     "it":        { "pos": "pronoun", "meaning": "it", "marks": "spoken", "person": "third", "number": "singular" },
     "power":     { "pos": "verb", "meaning": "to the power of", "concept": 570 },
     "^":         { "pos": "verb", "meaning": "to the power of", "concept": 570, "names": false },

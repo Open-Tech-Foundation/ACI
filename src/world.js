@@ -36,6 +36,31 @@ export function fromWorldData(data) {
     return seen;
   }
 
+  // What a term reaches by actually following a relation. A thing is itself,
+  // but it does not stand in every relation to itself: a stone is a stone, and
+  // that is no reason to say a stone holds a stone. Only the ladder the world
+  // is built of counts a term as reaching itself, which is why `reaches` seeds
+  // its walk and this does not.
+  function reachedBy(id, rel) {
+    const found = new Set();
+    const seen = new Set([id]);
+    const pending = [id];
+    while (pending.length) {
+      const at = pending.pop();
+      const cur = terms.get(at);
+      if (!cur) continue;
+      for (const l of cur.links || []) {
+        if (l.not || l.rel !== rel) continue;
+        found.add(l.to);
+        if (!seen.has(l.to)) {
+          seen.add(l.to);
+          pending.push(l.to);
+        }
+      }
+    }
+    return found;
+  }
+
   // What a term is a kind of, one step up.
   function up(id) {
     const t = terms.get(id);
@@ -197,7 +222,10 @@ export function fromWorldData(data) {
     // Does `id` reach `ancestorId` by following `rel` (the `is` relation by
     // default)? The relation is a term like any other, so a signal can name it.
     isA: (id, ancestorId, rel = isRel) =>
-      ancestorId != null && id != null && rel != null && reaches(id, rel).has(ancestorId),
+      ancestorId != null &&
+      id != null &&
+      rel != null &&
+      (rel === isRel ? reaches(id, rel) : reachedBy(id, rel)).has(ancestorId),
   };
 }
 
