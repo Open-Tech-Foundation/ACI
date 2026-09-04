@@ -74,6 +74,15 @@ export function fromWorldData(data) {
     // signal can make: any other relation a signal names is more specific.
     baseRelation: isRel,
     term: (id) => terms.get(id) || null,
+    // A term by the name it was given. A name given in conversation is held
+    // nowhere else — no language lists it — so this is how a word that is a
+    // name is met again.
+    termNamed: (name) => {
+      if (typeof name !== 'string') return null;
+      const wanted = name.toLowerCase();
+      for (const t of terms.values()) if (t.name.toLowerCase() === wanted) return t.id;
+      return null;
+    },
     // Whether two terms exclude each other as kinds: anything either of them is
     // a kind of, standing `different` to anything the other is a kind of. This
     // is what lets the brain say no rather than only fail to say yes.

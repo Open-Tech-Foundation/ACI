@@ -221,16 +221,23 @@ function think(roots, langs, at, world) {
     const lang = (langs || []).find((l) => l.data.name === first.lang) || null;
     const value = first.word || !lang ? null : lang.valueOfFigures(n.state.identity);
     const read = value != null;
+    // A word no language lists may still be a name — one given in some
+    // conversation and held in the world since. Nothing about a name is
+    // special to the brain: it is a term, met by what it is called.
+    const called = first.word || read || !world ? null : world.termNamed(n.state.identity);
     const readOf = (word) => ({
       language: first.lang,
-      wordKnown: Boolean(word) || read,
-      pos: word ? word.pos : read ? lang.figuresPos : null,
-      meaning: word ? word.meaning : read ? String(n.state.identity) : null,
+      wordKnown: Boolean(word) || read || called != null,
+      // A word nothing knows still stands where it stands. Standing where a
+      // thing stands is what a name does, so that is what it is taken as —
+      // and `wordKnown` stays false, because nothing knows it yet.
+      pos: word ? word.pos : read ? lang.figuresPos : 'noun',
+      meaning: word ? word.meaning : read || called != null ? String(n.state.identity) : null,
       concept: word
         ? pointedAt(word, at) ?? word.concept
         : read && world
           ? world.termFor(value)
-          : null,
+          : called,
       value: word && word.marks === 'named' ? givenValue(word, at) : value,
       marks: word ? word.marks : null,
       negates: word ? word.negates : false,
@@ -680,6 +687,15 @@ function judge(roots, world, mood, langs, sent) {
   collect(root);
 
   const a = world.anchors || {};
+
+  // A word no language lists and no world holds, standing where a thing stands
+  // and joined to a kind, is a name being given to a thing: `luna is a cat`
+  // says there is a cat called luna. A name for a thing is the world's, not
+  // the conversation's — the thing goes on being there after the talking stops.
+  const called = namings(said, world, mood);
+  if (called.length > 0) {
+    return [withBranch(root, [...root.branch, ...called.map((c) => node('call', c.name, [], c))])];
+  }
 
   // A signal may give a name rather than make a claim: `x is 5` says what x
   // stands for from here on. A name belongs to the conversation, not to the
@@ -2028,6 +2044,7 @@ function expression(roots, langs, mood, world, sent) {
   const counted = bound ? findBranch(roots[0], 'count') : null;
   const gave = bound ? findBranch(roots[0], 'named') : null;
   const agreed = bound ? findBranch(roots[0], 'agree') : null;
+  const named = bound ? findBranch(roots[0], 'call') : null;
   const sum = bound ? findBranch(roots[0], 'sum') : null;
   const did = bound ? findBranch(roots[0], 'did') : null;
   const refused = bound ? findBranch(roots[0], 'refuse') : null;
@@ -2059,7 +2076,7 @@ function expression(roots, langs, mood, world, sent) {
     ? 'deny'
     : agreed
       ? 'agree'
-      : gave
+      : gave || named
       ? 'learn'
     : feeling
       ? feeling
@@ -2456,6 +2473,25 @@ function stands(n, world) {
   return conceptOf(n) != null || numberOf(n, world) != null;
 }
 
+// Each thing this signal named, and what kind it was said to be. The word is
+// one nothing knows — no language lists it and no world holds it — and it
+// stands before the weakest joint there is, which is how a thing is said to
+// be of a kind.
+function namings(said, world, mood) {
+  const out = [];
+  if (mood !== 'tell' || !world) return out;
+  said.forEach((n, i) => {
+    const thought = thoughtOf(n);
+    if (!thought || thought.wordKnown || thought.concept != null) return;
+    const rest = said.slice(i + 1).filter((other) => conceptOf(other) != null);
+    if (rest.length < 2 || conceptOf(rest[0]) !== world.baseRelation) return;
+    const of = conceptOf(rest[1]);
+    if (of == null || !world.isA(of, (world.anchors || {}).thing)) return;
+    out.push({ name: n.state.identity, of });
+  });
+  return out;
+}
+
 // Each name this signal gave, and what it was given. The word joining them is
 // the signal's joint and not what the name stands for: `x is 5` gives x five,
 // not being.
@@ -2534,10 +2570,19 @@ function learnedFrom(roots, world) {
   const branch = roots[0].branch || [];
   const events = branch.filter((b) => b.kind === 'event');
   const learns = branch.filter((b) => b.kind === 'learn');
-  if (events.length === 0 && learns.length === 0) return null;
+  const called = branch.filter((b) => b.kind === 'call');
+  if (events.length === 0 && learns.length === 0 && called.length === 0) return null;
   const terms = asOne([
     ...events.flatMap((e) => tookPlace(e, world)),
     ...learns.flatMap((l) => tookIn(l, world)),
+    // A thing given a name is a thing there is one of, called what it was
+    // called. Nothing about a name is special: it is a term like any other.
+    ...called.map((c, i) => ({
+      id: world.nextId() + i,
+      name: c.state.name,
+      individual: true,
+      links: [{ rel: world.baseRelation, to: c.state.of }],
+    })),
   ]);
   return terms.length ? { terms } : null;
 }

@@ -6,6 +6,21 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A thing may be given a name.** A word no language lists and no world holds,
+  standing where a thing stands and said to be of a kind, is a name being
+  given: `"luna is a cat"` says there is a cat called luna, and the brain
+  hands it back as a thing there is one of. It is met again by what it is
+  called — the world is asked for a term of that name, which is how a name
+  given in conversation is found later.
+
+  A name for a thing is the world's, not the conversation's: the thing goes on
+  being there after the talking stops. That is what tells it apart from `x is
+  5`, where the name belongs to the conversation.
+
+  A word nothing knows also stands as a thing now, since standing where a
+  thing stands is what a name does — but it stays unknown until something says
+  what it is.
+
 - **Comparatives.** `heavier`, `bigger`, `hotter`, `faster`, `older` and their
   opposites, with `than`. A comparative names the comparing and says which
   scale it compares **on** — a new field a word may carry — so the same two
