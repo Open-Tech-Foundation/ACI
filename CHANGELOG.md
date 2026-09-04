@@ -6,6 +6,17 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Two number words side by side are one number.** `twenty` and `five` were
+  both in the language and nothing made them twenty-five. `think` now reads
+  them together, the way it already reads a sign against a number: a round one
+  with a smaller one after it is added, a smaller one before a round one
+  multiplies it, and a run of them is taken as it is read — `one hundred
+  twenty five` is 125. Figures are already whole as written and are never run
+  together, so `3 4` is still two things.
+- **220 more everyday things**, and the shelves they needed: clothing, toy,
+  game, sport, shape, money, device, settlement. Ball, shirt, coin, circle,
+  city, wall, roof, football. The world holds 1347 terms.
+
 - **What was so before.** State has always been stamped and never written
   over — the history was there and nothing could reach it. Asked on the past
   side of now, the brain now steps back a stamp: `"the crate holds how many

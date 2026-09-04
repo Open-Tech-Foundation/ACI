@@ -236,6 +236,10 @@ function think(roots, langs, at, world) {
       role: word ? word.role : null,
       when: word ? word.when : null,
       names: word ? word.names : read ? false : null,
+      // Whether the number was read off its figures rather than looked up as a
+      // word. A language writes its numbers in words its own way, and only
+      // words are written that way.
+      figures: read,
       groups: word ? word.groups : null,
     });
     // A word that names more than one thing is thought of every way it may be
@@ -275,8 +279,45 @@ function reshaped(roots, world) {
       continue;
     }
     out.push(here);
+    // Two number words side by side are one number: a round one and a smaller
+    // one after it are added, a smaller one before a round one multiplies it.
+    // Twenty five is twenty and five; two hundred is two of a hundred; and one
+    // hundred twenty five is all of that, taken as it is read.
+    while (out.length > 1) {
+      const joined = together(out[out.length - 2], out[out.length - 1], world);
+      if (!joined) break;
+      out.splice(out.length - 2, 2, joined);
+    }
   }
   return out;
+}
+
+// Two number words that are really one number, or nothing. Only words: a
+// language writes its numbers in words its own way, and figures are already
+// whole as written.
+function together(here, next, world) {
+  const left = inWords(here, world);
+  const right = inWords(next, world);
+  if (left == null || right == null || left < 1 || right < 1) return null;
+  const round = (v) => v >= 10 && v % 10 === 0;
+  const value = left > right && round(left) ? left + right : left < right && round(right) ? left * right : null;
+  if (value == null) return null;
+  const said = `${here.state.identity} ${next.state.identity}`;
+  const thought = { ...thoughtOf(next), value, concept: world.termFor(value), meaning: said };
+  return withBranch(
+    Object.assign({}, next, { name: quote(said), state: { ...next.state, identity: said } }),
+    (next.branch || []).map((b) =>
+      b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought }) : b,
+    ),
+  );
+}
+
+// The number a word says, where a word said it and not a run of figures.
+function inWords(n, world) {
+  const thought = n ? thoughtOf(n) : null;
+  if (!thought || thought.figures) return null;
+  const value = numberOf(n, world);
+  return Number.isInteger(value) ? value : null;
 }
 
 // One word standing for how far below nothing a number is.
@@ -1810,6 +1851,8 @@ function intentOf(n, world) {
     if (world.isA(concept, a.number)) return 'count';
     if (world.isA(concept, a.relation)) return 'confirm';
   }
+  // A number the world never named is still a number.
+  if (concept == null && ts.value != null) return 'count';
   // A word that marks rather than names — a hole, or which one is meant —
   // stands for nothing by itself, and there is nothing in it to recognise.
   if (concept == null && ts.marks) return 'unknown';
