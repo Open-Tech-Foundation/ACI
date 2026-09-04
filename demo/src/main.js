@@ -23,8 +23,23 @@ function keep(id) {
   }
 }
 
+// A name for this thread that no other thread will take. `crypto.randomUUID`
+// is only there in a secure context, and the demo is served over plain http on
+// whatever host it is run from, so the bytes are drawn directly — and where
+// even those are missing, from the weakest source there is, which is still
+// enough to tell two tabs apart.
+function made() {
+  const bytes = new Uint8Array(16);
+  if (globalThis.crypto && typeof crypto.getRandomValues === "function") {
+    crypto.getRandomValues(bytes);
+  } else {
+    for (let i = 0; i < bytes.length; i += 1) bytes[i] = Math.floor(Math.random() * 256);
+  }
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+}
+
 function named() {
-  const id = held() || crypto.randomUUID();
+  const id = held() || made();
   keep(id);
   return id;
 }
@@ -64,7 +79,7 @@ define("x-ask", (el) => {
   }
 
   function fresh() {
-    conversation = crypto.randomUUID();
+    conversation = made();
     keep(conversation);
     turns = [];
     error = null;
