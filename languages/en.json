@@ -8671,6 +8671,124 @@
       "meaning": "kicked",
       "concept": 1510,
       "when": "past"
+    },
+    "greater": {
+      "pos": "verb",
+      "meaning": "greater",
+      "concept": 305,
+      "names": false
+    },
+    "fewer": {
+      "pos": "verb",
+      "meaning": "fewer",
+      "concept": 306,
+      "names": false
+    },
+    "this": {
+      "pos": [
+        "article",
+        "pronoun"
+      ],
+      "meaning": "this",
+      "marks": "spoken"
+    },
+    "these": {
+      "pos": [
+        "article",
+        "pronoun"
+      ],
+      "meaning": "these",
+      "marks": "spoken"
+    },
+    "those": {
+      "pos": [
+        "article",
+        "pronoun"
+      ],
+      "meaning": "those",
+      "marks": "spoken"
+    },
+    "movie": {
+      "pos": "noun",
+      "meaning": "movie",
+      "concept": 1511
+    },
+    "film": {
+      "pos": "noun",
+      "meaning": "film",
+      "concept": 1512
+    },
+    "terrible": {
+      "pos": [
+        "noun",
+        "adjective"
+      ],
+      "meaning": "terrible",
+      "concept": 239,
+      "names": false
+    },
+    "awful": {
+      "pos": [
+        "noun",
+        "adjective"
+      ],
+      "meaning": "awful",
+      "concept": 239,
+      "names": false
+    },
+    "horrible": {
+      "pos": [
+        "noun",
+        "adjective"
+      ],
+      "meaning": "horrible",
+      "concept": 239,
+      "names": false
+    },
+    "wonderful": {
+      "pos": [
+        "noun",
+        "adjective"
+      ],
+      "meaning": "wonderful",
+      "concept": 238,
+      "names": false
+    },
+    "great": {
+      "pos": [
+        "noun",
+        "adjective"
+      ],
+      "meaning": "great",
+      "concept": 238,
+      "names": false
+    },
+    "excellent": {
+      "pos": [
+        "noun",
+        "adjective"
+      ],
+      "meaning": "excellent",
+      "concept": 238,
+      "names": false
+    },
+    "lovely": {
+      "pos": [
+        "noun",
+        "adjective"
+      ],
+      "meaning": "lovely",
+      "concept": 238,
+      "names": false
+    },
+    "nasty": {
+      "pos": [
+        "noun",
+        "adjective"
+      ],
+      "meaning": "nasty",
+      "concept": 239,
+      "names": false
     }
   },
   "marking": "after",
@@ -8729,6 +8847,8 @@
     "rules": {
       "sentence": {
         "rules": [
+          "verb subject verbComplement",
+          "verb sentence",
           "subject verb preposition subject",
           "conditional clause consequent subject",
           "conditional clause consequent subject otherwise sentence",
@@ -8757,6 +8877,8 @@
       },
       "clause": {
         "rules": [
+          "verb subject verbComplement",
+          "verb sentence",
           "subject verb preposition subject",
           "conditional clause consequent subject",
           "conditional clause consequent subject otherwise sentence",

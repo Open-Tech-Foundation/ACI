@@ -39,3 +39,19 @@ test("what has no exact answer is worked as closely as it can be", async () => {
   assertEquals(await says("1 divide 3"), "0.3333333333");
   await forget();
 });
+
+test("each side of a comparison is worked out on its own", async () => {
+  // What is compared is what each side comes to, not the nearest number
+  // standing in it.
+  assertEquals(await says("0.1+0.2 > 0.3?"), "No. ❌");
+  assertEquals(await says("1+1 > 1?"), "Yes. ✅");
+  assertEquals(await says("is 0.1+0.2 greater than 0.29?"), "Yes. ✅");
+  await forget();
+});
+
+test("an operation is worked out, not joined across", async () => {
+  // In `1+1 > 1` the joint is the comparing; the adding is one of the sides.
+  assertEquals(await says("2+2 > 3?"), "Yes. ✅");
+  assertEquals(await says("2+2 = 4?"), "Yes. ✅");
+  await forget();
+});

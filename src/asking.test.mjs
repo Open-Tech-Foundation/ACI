@@ -70,3 +70,19 @@ test("how asks after the way a thing is, not what it is", async () => {
   assertEquals((await brain("what are you")).expression.state.says, "computer");
   await forget();
 });
+
+test("a signal may turn its joint to the front", async () => {
+  await forget();
+  assertEquals((await brain("is a cat an animal?")).expression.name, "affirm");
+  assertEquals((await brain("is a cat a fish?")).expression.name, "deny");
+  assertEquals((await brain("is 10 greater than 2?")).expression.name, "affirm");
+  await forget();
+});
+
+test("an operation standing before what it takes is a doing, not a joint", async () => {
+  await forget();
+  await brain("a basket holds three apple");
+  assertEquals((await brain("add one apple into it", { from: PERSON })).expression.name, "learn");
+  assertEquals((await brain("it holds how many apples?")).expression.state.says, "four");
+  await forget();
+});

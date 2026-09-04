@@ -1006,8 +1006,14 @@ function judge(roots, world, mood, langs, sent) {
   // mammal". They are offered together and answered together — what is offered
   // as one thing is taken or turned down as one thing.
   if (terms.length >= 2) {
-    const lefts = said.filter((n, i) => i < at && claims(n));
-    const rights = said.filter((n, i) => i > at && claims(n) && conceptOf(n) != null);
+    let lefts = said.filter((n, i) => i < at && claims(n));
+    let rights = said.filter((n, i) => i > at && claims(n) && conceptOf(n) != null);
+    // A signal that turns its joint to the front says both sides after it, and
+    // the first of them is the one the rest is said of.
+    if (lefts.length === 0 && rights.length >= 2 && operates(relation, world) == null) {
+      lefts = rights.slice(0, 1);
+      rights = rights.slice(1);
+    }
     if (lefts.length === 0 || rights.length === 0) return roots;
     // What the signal offered — the other fact, where the signal denies. Read
     // once: every fact in one offering was denied alike.
@@ -1495,8 +1501,13 @@ function calculate(said, at, relation, world) {
   }
 
   if (relation === a.more || relation === a.less) {
-    const left = valueBeside(said, at, -1, world);
-    const right = valueBeside(said, at, 1, world);
+    // Each side is worked out on its own, the way two sides asked to be the
+    // same are: what is compared is what each side comes to, not the nearest
+    // number standing in it.
+    const before = working(said.slice(0, at), world, true);
+    const after = working(said.slice(at + 1), world, true);
+    const left = before ? before.value : valueBeside(said, at, -1, world);
+    const right = after ? after.value : valueBeside(said, at, 1, world);
     // Two numbers are the case where the world can already say which is
     // greater. Where they are not numbers, they may still stand on one scale,
     // and being further along it is the same thing said without counting.
@@ -1911,13 +1922,27 @@ function work(action, parts, at, world) {
 function namedRelation(said, world, claims, asking) {
   const a = world.anchors || {};
   let fallback = -1;
+  let worked = -1;
   for (let i = 0; i < said.length; i += 1) {
     if (!reaches(said[i], a.relation, world)) continue;
-    if (!asking && !(nearest(said, i, -1, claims) && nearest(said, i, 1, claims))) continue;
+    // An operation is worked out, not joined across: in `1+1 > 1` the joint is
+    // the comparing, and the adding is one of the sides being compared. Where
+    // nothing else joins, the operation is all there is — and standing before
+    // everything it takes, it is not a joint at all but a thing being done.
+    if (operates(conceptOf(said[i]), world) != null) {
+      if (worked < 0 && nearest(said, i, -1, claims)) worked = i;
+      continue;
+    }
+    // Something on each side for it to hold between — or, where a signal turns
+    // its joint to the front, two things after it and none before, which is
+    // the same claim said the other way round.
+    const ahead = said.filter((n, j) => j > i && claims(n)).length;
+    const behind = nearest(said, i, -1, claims);
+    if (!asking && !(behind && nearest(said, i, 1, claims)) && !(!behind && ahead >= 2)) continue;
     if (conceptOf(said[i]) !== world.baseRelation) return i;
     if (fallback < 0) fallback = i;
   }
-  return fallback;
+  return fallback >= 0 ? fallback : worked;
 }
 
 // What number this thing is. The world names some of them; the rest the brain
