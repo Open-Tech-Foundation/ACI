@@ -68,3 +68,32 @@ test("the brain keeps nothing across signals — it is told each time", async ()
   );
   await forget();
 });
+
+test("two conversations over one world do not finish each other's sentences", async () => {
+  await forget();
+  await brain("a basket holds three apple", { conversation: "one" });
+  await brain("a cupboard holds two cup", { conversation: "two" });
+  assertEquals((await brain("what is it", { conversation: "one" })).expression.state.says, "basket");
+  assertEquals((await brain("what is it", { conversation: "two" })).expression.state.says, "cupboard");
+  await forget();
+});
+
+test("what one conversation taught, every conversation knows", async () => {
+  await forget();
+  await brain("a basket holds three apple", { conversation: "one" });
+  assertEquals(
+    (await brain("a basket holds how many apples?", { conversation: "two" })).expression.state.says,
+    "three",
+    "the world is one, the threads are many",
+  );
+  await forget();
+});
+
+test("a signal naming no conversation is in the one unnamed thread", async () => {
+  await forget();
+  await brain("a basket holds three apple", { conversation: "one" });
+  assertEquals((await brain("what is it")).expression.name, "unknown");
+  await brain("a cupboard holds two cup");
+  assertEquals((await brain("what is it")).expression.state.says, "cupboard");
+  await forget();
+});

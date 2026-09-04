@@ -4,8 +4,15 @@
 // serves the site over HTTP. The browser never touches runtime:fs — it just
 // fetches /brain, so no CORS / server-only-module problem in the browser.
 //
-//   GET  /             -> serves the built site (demo/dist)
-//   POST /brain {q}    -> runs brain(q) and returns its JSON result
+//   GET  /                          -> serves the built site (demo/dist)
+//   POST /brain {q, conversation}   -> runs brain(q) in that conversation and
+//                                      returns its JSON result
+//
+// One brain over one world. A conversation is a thread of signals through it:
+// what was last spoken of carries from one signal to the next within a thread
+// and not between threads, so two people talking to the same brain do not
+// finish each other's sentences. What the brain learns is the world's, and is
+// shared by all of them.
 //
 // Uses the ES-Runtime built-in HTTP server (runtime:http) and file system
 // (runtime:fs). In development run it through esdev, which builds the site and
@@ -94,13 +101,15 @@ const server = serve({ port: PORT }, async (request) => {
       return new Response("method not allowed", { status: 405 });
     }
     let q;
+    let conversation;
     try {
-      ({ q } = await request.json());
+      ({ q, conversation } = await request.json());
     } catch {
-      return new Response("expected a JSON body of { q }", { status: 400 });
+      return new Response("expected a JSON body of { q, conversation }", { status: 400 });
     }
-    const result = await brain(String(q ?? ""));
-    return Response.json(result);
+    const thread = conversation == null ? null : String(conversation);
+    const result = await brain(String(q ?? ""), thread ? { conversation: thread } : undefined);
+    return Response.json({ ...result, conversation: thread });
   }
 
   const asset = await serveStatic(url);

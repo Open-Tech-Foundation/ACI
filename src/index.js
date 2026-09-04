@@ -88,17 +88,24 @@ export function openBrain(url) {
 
   // What the last signal was about, so a pointer in the next one has something
   // to land on. The brain hands this back and keeps none of it; holding it
-  // across signals is what makes these signals one conversation, and that is
+  // across signals is what makes a run of signals one conversation, and that is
   // the runtime's to decide.
-  let spoken = null;
+  //
+  // Signals may be threaded several at a time — two people talking to the same
+  // brain are two conversations over one world, and what was last spoken of in
+  // one is nothing to the other. A signal that names no conversation is in the
+  // one unnamed thread.
+  const threads = new Map();
+  const ALONE = Symbol('one thread');
 
   // The circumstance of the signal — where it came from, where it went, what
   // was last spoken of — is the runtime's to supply, and it is optional: told
   // nothing, the brain does not guess who it is talking to.
   async function brain(input, circumstance) {
-    const said = { spoken, ...(circumstance || {}) };
+    const thread = (circumstance && circumstance.conversation) ?? ALONE;
+    const said = { spoken: threads.get(thread) ?? null, ...(circumstance || {}) };
     const result = brainFrom(input, await loaded(), said);
-    spoken = result.spoken;
+    threads.set(thread, result.spoken);
     if (result.learned) {
       try {
         await inTurn(() => write(store, result.learned));
@@ -113,7 +120,7 @@ export function openBrain(url) {
   }
 
   async function forget() {
-    spoken = null;
+    threads.clear();
     if (!store) return;
     await inTurn(() => forgetLearned(store));
     knowledgePromise = build();
@@ -157,5 +164,5 @@ async function readAll(root, dir) {
 
 // The brain this process speaks with, over whatever store ACI_STORE names.
 const here = openBrain();
-export const brain = (input) => here.brain(input);
+export const brain = (input, circumstance) => here.brain(input, circumstance);
 export const forget = () => here.forget();

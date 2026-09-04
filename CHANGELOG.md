@@ -40,6 +40,20 @@ All notable changes to this project are documented in this file.
   its joint — the claim is a placement, not what the apple is, and what a
   thing is does not change by moving it.
 
+- **Conversations, named.** `brain(input, { conversation })` threads what was
+  last spoken of under that name, so several conversations run over one world:
+  what one of them was last about is nothing to another, while what any of them
+  taught, all of them know. A signal naming no conversation is in the one
+  unnamed thread, which is what every caller had before. The brain is unchanged
+  — it still keeps nothing across signals and is told each time; holding the
+  threads is the runtime's job.
+- **The demo site is a conversation.** Turns stack up as they are said, the
+  input sits under them, and each turn keeps its own tree behind a toggle
+  rather than one shared pane. The page makes a conversation id on load and
+  keeps it in `sessionStorage`, so a reload stays in the same conversation and
+  `New` is what breaks the thread. `POST /brain` takes `{ q, conversation }`
+  and gives the conversation back with the result.
+
 ### Fixed
 
 - **A thing is itself without standing in every relation to itself.**

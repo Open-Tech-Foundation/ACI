@@ -1,81 +1,135 @@
 import { define, html, update } from "@opentf/micro-ui";
 
-define("x-ask", (el) => {
-  let input = "";
-  let result = null;
-  let error = null;
-  let active = "expression";
+// One conversation is one thread of signals through the brain's one world.
+// The id is the thread's name: the server keeps what was last spoken of under
+// it, so a pointer in one signal lands on the thing the signal before it was
+// about. It is kept in sessionStorage so a reload stays in the same
+// conversation, and starting a new one is what breaks the thread.
+const KEY = "aci.conversation";
 
-  async function run() {
+function held() {
+  try {
+    return sessionStorage.getItem(KEY);
+  } catch {
+    return null;
+  }
+}
+
+function keep(id) {
+  try {
+    sessionStorage.setItem(KEY, id);
+  } catch {
+    // A browser that will not keep it still holds it for this page.
+  }
+}
+
+function named() {
+  const id = held() || crypto.randomUUID();
+  keep(id);
+  return id;
+}
+
+define("x-ask", (el) => {
+  let conversation = named();
+  let turns = [];
+  let input = "";
+  let pending = false;
+  let error = null;
+
+  async function send() {
+    const q = input.trim();
+    if (!q || pending) return;
+    input = "";
     error = null;
+    pending = true;
+    update(el);
+
     try {
       const res = await fetch("/brain", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ q: input }),
+        body: JSON.stringify({ q, conversation }),
       });
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-      result = await res.json();
-      active = "expression";
+      turns = [...turns, { q, result: await res.json(), open: false }];
     } catch (e) {
       error = String(e.message || e);
     }
+    pending = false;
+    update(el);
+    queueMicrotask(() => {
+      const list = el.querySelector(".turns");
+      if (list) list.scrollTop = list.scrollHeight;
+    });
+  }
+
+  function fresh() {
+    conversation = crypto.randomUUID();
+    keep(conversation);
+    turns = [];
+    error = null;
     update(el);
   }
 
-  // Two views: what the brain said, and the objects it built to say it.
-  const tabs = [
-    { key: "expression", label: "Expression" },
-    { key: "tree", label: "Tree" },
-  ];
+  function toggle(turn) {
+    turn.open = !turn.open;
+    update(el);
+  }
 
   return () => html`
     <div class="app">
-      <h1>ACI</h1>
+      <div class="head">
+        <h1>ACI</h1>
+        <div class="thread">
+          <span class="id">${conversation.slice(0, 8)}</span>
+          <button class="new" onclick=${fresh}>New</button>
+        </div>
+      </div>
+
+      <div class="turns">
+        ${turns.length === 0 && !pending
+          ? html`<div class="empty">Nothing said yet.</div>`
+          : ""}
+        ${turns.map(
+          (turn) => html`
+            <div class="turn">
+              <div class="said">${turn.q}</div>
+              <div class="reply">${turn.result.expression.state.says ?? "— unsaid"}</div>
+              <div class="foot">
+                <span class="act">
+                  ${turn.result.expression.name}${turn.result.expression.state.language
+                    ? ` · ${turn.result.expression.state.language}`
+                    : " · no language"}${turn.result.learned ? " · learned" : ""}
+                </span>
+                <button class="tab" onclick=${() => toggle(turn)}>
+                  ${turn.open ? "Hide tree" : "Tree"}
+                </button>
+              </div>
+              ${turn.open
+                ? html`<pre class="tree">${render(turn.result.roots)}</pre>`
+                : ""}
+            </div>
+          `,
+        )}
+        ${pending ? html`<div class="turn pending">…</div>` : ""}
+      </div>
+
+      ${error ? html`<div class="error">${error}</div>` : ""}
+
       <div class="input-row">
         <input
           type="text"
-          placeholder="try 'the bird is a dog'"
+          placeholder="a basket holds three apple"
           value=${input}
-          oninput=${(e) => { input = e.target.value; }}
-          onkeydown=${(e) => { if (e.key === "Enter") run(); }}
+          oninput=${(e) => {
+            input = e.target.value;
+          }}
+          onkeydown=${(e) => {
+            if (e.key === "Enter") send();
+          }}
         />
-        <button onclick=${run}>Think</button>
+        <button onclick=${send} disabled=${pending}>Say</button>
       </div>
-      ${error && html`<div class="error">${error}</div>`}
-      ${result &&
-        html`
-          <div class="tabs">
-            ${tabs.map((t) => html`
-              <button
-                class=${active === t.key ? "tab tab-active" : "tab"}
-                onclick=${() => { active = t.key; update(el); }}
-              >
-                ${t.label}
-              </button>
-            `)}
-          </div>
-          <div class="stage">
-            ${active === "expression"
-              ? html`
-                  <div class="stage-label">${result.input ? `"${result.input}"` : "no signal"}</div>
-                  <div class="output">${result.expression.state.says ?? "— unsaid"}</div>
-                  <div class="act">
-                    ${result.expression.name}
-                    ${result.expression.state.language
-                      ? ` · ${result.expression.state.language}`
-                      : " · no language"}
-                  </div>
-                  ${result.expression.branch.length > 1
-                    ? html`<pre class="parts">${expressOutput(result.expression.branch)}</pre>`
-                    : ""}
-                `
-              : html`
-                  <div class="stage-label">${result.roots.length} root${result.roots.length === 1 ? "" : "s"}</div>
-                  <pre class="tree">${render(result.roots)}</pre>
-                `}
-          </div>
-        `}
     </div>
   `;
 });
@@ -163,12 +217,4 @@ function formatState(state, indent) {
         .map((l) => indent + "· " + l + "\n")
         .join("")
     : "";
-}
-
-// What the brain said about each thing, under what it said about the whole.
-function expressOutput(parts) {
-  const replies = (parts || [])
-    .map((p) => p.state.says)
-    .filter((n) => n && n !== "...");
-  return replies.length ? replies.join("\n") : "—";
 }
