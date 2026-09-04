@@ -64,7 +64,7 @@ test("a unit says which property it is of", async () => {
 
 test("a comparison is worked out, never taken in as a fact", async () => {
   const r = await fresh(...WEIGHED, "an apple more a stone");
-  assertEquals(r.expression.name, "understood", "it worked it out from the amounts");
+  assertEquals(r.expression.name, "affirm", "it worked it out from the amounts");
   assertEquals(r.learned, null, "and there was nothing to write down");
   await forget();
 });

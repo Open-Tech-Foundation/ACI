@@ -1263,6 +1263,7 @@ function alongScale(left, right, relation, world, on) {
     subject: conceptOf(left),
     relation,
     object: conceptOf(right),
+    worked: true,
   });
 }
 
@@ -1354,6 +1355,7 @@ function calculate(said, at, relation, world) {
       subject: world.termFor(left.value),
       relation: a.same,
       object: world.termFor(right.value),
+      worked: true,
     });
   }
 
@@ -1382,6 +1384,7 @@ function calculate(said, at, relation, world) {
       subject: world.termFor(left),
       relation,
       object: world.termFor(right),
+      worked: true,
     });
   }
 
@@ -2046,7 +2049,10 @@ function expression(roots, langs, mood, world, sent) {
           ? 'deny'
           : stood.name === 'absent'
             ? 'unsure'
-            : mood === 'ask'
+            : // What the brain worked out, it answers — asked or not. Told
+              // that ten is more than two, saying it already knew is beside
+              // the point: it did not know it, it worked it out.
+              mood === 'ask' || stood.state.worked
               ? 'affirm'
               : 'understood'
     : did

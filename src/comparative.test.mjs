@@ -50,3 +50,16 @@ test("the things compared are the things, not the words joining them", async () 
   assertEquals(one.expression.name, "affirm");
   await forget();
 });
+
+test("what the brain worked out, it answers — asked or not", async () => {
+  await forget();
+  // Told that ten is more than two, saying it already knew is beside the
+  // point: it did not know it, it worked it out.
+  assertEquals((await brain("10 > 2")).expression.name, "affirm");
+  assertEquals((await brain("1 > 2")).expression.name, "deny");
+  assertEquals((await brain("2 equals 2")).expression.name, "affirm");
+  // A claim laid against the world is another matter: told one it holds, it
+  // says it knew.
+  assertEquals((await brain("a mango is a fruit")).expression.name, "understood");
+  await forget();
+});
