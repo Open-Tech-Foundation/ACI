@@ -49,3 +49,52 @@ test("holding is its own relation, not being and not having", async () => {
     "what it holds is not what it has");
   await forget();
 });
+
+test("what is put into a thing is what it comes to hold", async () => {
+  await forget();
+  await brain("a basket holds three apple");
+  assertEquals((await brain("add one apple into it")).expression.state.says, "four");
+  assertEquals((await brain("it holds how many apples?")).expression.state.says, "four");
+  await forget();
+});
+
+test("an operation named outright is the same act as one an action causes", async () => {
+  await forget();
+  await brain("a basket holds three apple");
+  const added = await brain("add one apple into it");
+  await forget();
+  await brain("a basket holds three apple");
+  const gave = await brain("give one apple to it");
+  assertEquals(added.expression.state.says, gave.expression.state.says);
+  await forget();
+});
+
+test("nobody did an operation the signal named, so nothing happened", async () => {
+  await forget();
+  await brain("a basket holds three apple");
+  const added = await brain("add one apple into it");
+  const gave = await brain("give one apple to it");
+  assertEquals((added.roots[0].branch || []).some((b) => b.kind === "event"), false);
+  assert((gave.roots[0].branch || []).some((b) => b.kind === "event"), "someone gave it");
+  await forget();
+});
+
+test("taking works from a source the same way", async () => {
+  await forget();
+  await brain("a basket holds three apple");
+  assertEquals((await brain("subtract one apple from it")).expression.state.says, "two");
+  await forget();
+});
+
+test("adding to a count the world never gave stays unknown", async () => {
+  await forget();
+  await brain("a basket holds three apple");
+  const r = await brain("add one spoon into it");
+  assertEquals(r.expression.name, "unsure", "holding no spoons was never said");
+  assertEquals(r.learned, null);
+  await forget();
+});
+
+test("a joining word still leaves arithmetic alone", async () => {
+  assertEquals((await brain("add 1 and 2")).expression.state.says, "3");
+});

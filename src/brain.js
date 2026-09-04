@@ -1017,17 +1017,27 @@ function held(holder, about, said, negated, when, world) {
 function act(said, claims, world, side, sides) {
   const a = world.anchors || {};
   const acting = said.findIndex((n) => reaches(n, a.action, world));
-  if (acting < 0) return null;
+  // A signal may name what was done, or name the operation itself: `give one
+  // spoon to it` and `add one spoon into it` come to the same change in what a
+  // thing holds, and only one of them has anyone doing it.
+  const named = acting >= 0 ? acting : said.findIndex((n) => operated(conceptOf(n), world));
+  if (named < 0) return null;
 
-  const parts = rolesIn(said, acting, claims, world, side, sides);
+  const parts = rolesIn(said, named, claims, world, side, sides);
   if (parts.length === 0) return null;
 
-  const action = conceptOf(said[acting]);
+  const action = conceptOf(said[named]);
   // Refused before anything is worked out: what harms did not happen, and it
   // does not go on the record as having happened.
   if (harms(action, world)) return [node('refuse', 'harm', [], { action })];
 
   const at = world.now();
+  const worked = work(action, parts, at, world);
+  // Nobody did an operation a signal named outright. Nothing happened to
+  // anyone — only what a thing holds coming to something else — so there is
+  // nothing that happened to put on the record.
+  if (acting < 0) return worked;
+
   const happened = world.nextId();
 
   // What happened is a thing that happened once: it is of its kind, it has the
@@ -1041,12 +1051,18 @@ function act(said, claims, world, side, sides) {
     parts,
   });
 
-  const worked = work(action, parts, at, world);
   // What the brain refuses did not happen, and it does not go on the record as
   // having happened. Where it simply cannot tell what followed, the event
   // stands: it was told something occurred, and that much is so.
   if (worked && worked.some((n) => n.kind === 'refuse')) return worked;
   return worked ? [event, ...worked] : [event];
+}
+
+// The operation a term is, where it is one at all. The world says which
+// actions cause which; this is the operation named outright.
+function operated(term, world) {
+  const a = world.anchors || {};
+  return term != null && (term === a.plus || term === a.minus) ? term : null;
 }
 
 // Which thing played which part. A word may say so — `from` makes a source —
@@ -1089,8 +1105,10 @@ function amountOf(n, world) {
 // giving adds to its destination, and the amount is what the target counted.
 function work(action, parts, at, world) {
   const a = world.anchors || {};
+  // The world says which action causes which operation; where the signal named
+  // the operation itself there is nothing to look up.
   const causes = world.linked(action, a.cause);
-  const op = causes.find((c) => c === a.plus || c === a.minus);
+  const op = causes.find((c) => c === a.plus || c === a.minus) ?? operated(action, world);
   if (!op) return null;
 
   const target = parts.find((p) => p.role === a.target);
@@ -1100,7 +1118,7 @@ function work(action, parts, at, world) {
   const amount = target.amount;
   const one = world.oneOf(place.of);
   const bearer = one == null ? place.of : one;
-  const before = world.held(bearer, a.has, target.of);
+  const before = world.held(bearer, a.hold, target.of);
   if (amount == null || before == null) return null;
 
   const after = op === a.plus ? before + amount : before - amount;
@@ -1124,7 +1142,7 @@ function work(action, parts, at, world) {
     done,
     node('learn', 'link', [], {
       subject: bearer,
-      relation: a.has,
+      relation: a.hold,
       object: target.of,
       quantity: after,
       not: false,

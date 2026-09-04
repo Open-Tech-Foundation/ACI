@@ -16,6 +16,18 @@ All notable changes to this project are documented in this file.
   apple"` then `"it holds five apple"` revises without erasing what was so
   before.
 
+- **`into`, and an operation named outright.** English gains `into` as the
+  destination preposition beside `to`. And where the world said which action
+  causes which operation — a `give` causes a plus — a signal may now name the
+  operation itself: `"add one apple into it"` and `"give one apple to it"`
+  come to the same change in what a thing holds. Only one of them has anyone
+  doing it, so only that one puts an event on the record; naming an operation
+  outright changes what a thing holds and nothing happened to anybody.
+- **Putting into and taking from work on what a thing holds**, not on what it
+  has — `work()` reads and writes the `hold` relation now that holding is its
+  own. Adding to a count the world was never given stays unknown: not having
+  been told a basket holds spoons is not being told it holds none.
+
 ### Fixed
 
 - **A thing is itself without standing in every relation to itself.**

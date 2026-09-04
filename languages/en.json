@@ -139,6 +139,7 @@
     "multiply":  { "pos": "function", "meaning": "times",          "concept": 568 },
     "with":      { "pos": "preposition", "meaning": "with" },
     "by":        { "pos": "preposition", "meaning": "by" },
+    "into":      { "pos": "preposition", "meaning": "into", "role": "destination" },
     "and":       { "pos": "conjunction", "meaning": "and" },
     "hold":      { "pos": "verb", "meaning": "hold", "concept": 579 },
     "holds":     { "pos": "verb", "meaning": "holds", "concept": 579, "person": "third", "number": "singular" },
