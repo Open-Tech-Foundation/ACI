@@ -7849,6 +7849,36 @@
       "pos": "noun",
       "meaning": "world",
       "concept": 1396
+    },
+    "myself": {
+      "pos": "pronoun",
+      "meaning": "myself",
+      "marks": "from"
+    },
+    "yourself": {
+      "pos": "pronoun",
+      "meaning": "yourself",
+      "marks": "to"
+    },
+    "itself": {
+      "pos": "pronoun",
+      "meaning": "itself",
+      "marks": "spoken"
+    },
+    "himself": {
+      "pos": "pronoun",
+      "meaning": "himself",
+      "marks": "spoken"
+    },
+    "herself": {
+      "pos": "pronoun",
+      "meaning": "herself",
+      "marks": "spoken"
+    },
+    "themselves": {
+      "pos": "pronoun",
+      "meaning": "themselves",
+      "marks": "spoken"
     }
   },
   "marking": "after",
