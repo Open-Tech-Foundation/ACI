@@ -6835,7 +6835,8 @@
           "open sentence close",
           "open subject close",
           "function subject",
-          "item conjunction subject"
+          "item conjunction subject",
+          "noun preposition subject"
         ]
       },
       "item": {
@@ -6849,7 +6850,8 @@
           "possessive noun",
           "open sentence close",
           "open subject close",
-          "function subject"
+          "function subject",
+          "noun preposition subject"
         ]
       },
       "predicate": {

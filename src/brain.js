@@ -348,7 +348,9 @@ function solve(roots, world, langs) {
 
     const count = quantityOf(settled, at, world);
     if (count != null) {
-      result.branch.push(node('quantity', 'quantity', [], { concept: count }));
+      result.branch.push(
+        node('quantity', 'quantity', [], { concept: count.concept, value: count.value }),
+      );
     }
 
     // A word beside a thing may say whether one is being introduced or the one
@@ -459,9 +461,12 @@ function quantityOf(roots, at, world) {
   // A number is not a count of itself.
   if (mine == null || world.isA(mine, a.number) || !world.isA(mine, a.thing)) return null;
 
-  const isNumber = (n) => n && n.state.exists && world.isA(conceptOf(n), a.number);
+  // A number is a number whether or not the world ever named it: no world
+  // names every one, and a thousand stones is still a thousand.
+  const isNumber = (n) =>
+    n && n.state.exists && (world.isA(conceptOf(n), a.number) || numberOf(n, world) != null);
   const found = nearestOver(roots, at, -1, isNumber) || nearestOver(roots, at, 1, isNumber);
-  return found ? conceptOf(found) : null;
+  return found ? { concept: conceptOf(found), value: numberOf(found, world), said: found } : null;
 }
 
 // Read off the order, like a count: a marker beside a thing marks that thing.
@@ -632,6 +637,9 @@ function judge(roots, world, mood, langs, sent) {
   const spent = new Set(
     said.map((n) => quantityTerm(n)).filter((c) => c != null),
   );
+  const spentSaying = new Set(
+    said.map((n) => (findBranch(n, 'quantity') || { state: {} }).state.value).filter((v) => v != null),
+  );
   // A number beside a thing says how many of it there are. Beside a property
   // it says how *much* — an apple does not have three weights, it weighs some
   // amount — and the brain counts but cannot measure. So it says it does not
@@ -653,7 +661,9 @@ function judge(roots, world, mood, langs, sent) {
     // joined: "what is your name" is about a name, not about `is`.
     conceptOf(n) !== world.baseRelation &&
     !reaches(n, a.quantity, world) &&
-    !spent.has(conceptOf(n));
+    !spent.has(conceptOf(n)) &&
+    // A number the world never named is spent all the same.
+    !(conceptOf(n) == null && spentSaying.has(numberOf(n, world)));
 
   // An action can be spoken about as much as it can be carried out. A relation
   // named between two things is the signal's joint, and the joint is never one
@@ -676,32 +686,70 @@ function judge(roots, world, mood, langs, sent) {
     if (rel >= 0 && things.length >= 2) {
       const subject = conceptOf(things[0]);
       const object = conceptOf(things[things.length - 1]);
-      const of = world.oneOf(subject);
-      const bearer = of == null ? subject : of;
+      const one = (term) => world.oneOf(term) ?? term;
+      // A relation may be another the other way round, and the count sits on
+      // whichever end holds it: asked how many stones are *in* a pond, it is
+      // the pond that holds them, and that is the same fact from the far end.
+      const named = conceptOf(said[rel]);
+      const ways = [
+        { bearer: one(subject), of: object, relation: named },
+        ...bothWays(named, world).map((back) => ({
+          bearer: one(object),
+          of: subject,
+          relation: back,
+        })),
+      ];
+      const way = ways.find((w) => world.held(w.bearer, w.relation, w.of) != null) ?? ways[0];
       // Asked on the past side of now, the brain reads what was so then. What
       // a thing held is kept in order and never written over, so stepping back
       // one stamp is all it takes: it does not have to have remembered
       // anything on purpose.
-      const over = world.heldOver(bearer, conceptOf(said[rel]), object);
+      const over = world.heldOver(way.bearer, way.relation, way.of);
       const back = whenIn(said, world) === a.past;
       const howMany = back
         ? over.length > 1
           ? over[over.length - 2].quantity
           : null
-        : world.held(bearer, conceptOf(said[rel]), object);
+        : world.held(way.bearer, way.relation, way.of);
       const total = howMany == null ? null : world.termFor(howMany);
       return [
         withBranch(root, [
           ...root.branch,
           node('count', total == null ? 'beyond' : 'counted', [], {
-            of: object,
-            held: bearer,
+            of: way.of,
+            held: way.bearer,
             members: howMany,
             total,
             when: back ? a.past : a.now,
           }),
         ]),
       ];
+    }
+
+    // Asked how many of a kind there are, with nothing said of whose, the
+    // thing last spoken of is whose — where it holds any of them. `a pond has
+    // a thousand stones` then `how many stones?` is asking after the pond, and
+    // not after how many kinds of stone the world holds.
+    if (things.length === 1 && sent && sent.spoken != null) {
+      const kind = conceptOf(things[0]);
+      const of = world.oneOf(sent.spoken);
+      const bearer = of == null ? sent.spoken : of;
+      const howMany = [a.hold, a.has]
+        .map((relation) => world.held(bearer, relation, kind))
+        .find((many) => many != null);
+      if (howMany != null) {
+        return [
+          withBranch(root, [
+            ...root.branch,
+            node('count', world.termFor(howMany) == null ? 'beyond' : 'counted', [], {
+              of: kind,
+              held: bearer,
+              members: howMany,
+              total: world.termFor(howMany),
+            }),
+          ]),
+        ];
+      }
     }
 
     // Asked how many of a kind there are, it counts what it knows.
@@ -813,7 +861,7 @@ function judge(roots, world, mood, langs, sent) {
       // How many of the kind the claim is about. Told nothing, a claim is
       // about the kind itself, which is every one of it.
       const howMany = manyOf(said, said.indexOf(left), world);
-      const counted = world.valueOf(quantityTerm(right));
+      const counted = quantityAmount(right, world);
       // A fact about how many is about the thing that bears it, not about its
       // kind.
       const bearer = counted == null ? null : bearerFor(left, subject);
@@ -1713,6 +1761,14 @@ function markAt(n) {
 }
 
 // The number term saying how many of this thing there are, if any.
+// How many of this thing the signal said there were, as a number — whether or
+// not the world has a term for it.
+function quantityAmount(n, world) {
+  const q = n && findBranch(n, 'quantity');
+  if (!q) return null;
+  return q.state.value ?? world.valueOf(q.state.concept);
+}
+
 function quantityTerm(n) {
   const q = n && findBranch(n, 'quantity');
   return q ? q.state.concept : null;
