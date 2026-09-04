@@ -131,6 +131,15 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **`"an apple has three weight"` was taken in as a fact — two of them.** A
+  number beside a thing says how many of it there are, and `quantityOf` will
+  not count a property, so `three` never attached to `weight`. Left loose, it
+  was read as a term of its own, and the brain learned *an apple has three*
+  and *an apple has weight*. It now sees what the signal is doing: a number
+  beside a property says how **much**, and the brain counts without being able
+  to measure. So it says it does not know, and takes no part of it. Nothing
+  else moved — a number beside a thing is still how many, and a number being
+  worked on is still arithmetic.
 - **A word still to be settled counted as what joined the signal.** `settle`
   asked whether anything in the signal was already a relation or a doing, and
   took the undecided word's own first reading as an answer — so `"i mark an

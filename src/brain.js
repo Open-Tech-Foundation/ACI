@@ -363,6 +363,21 @@ function nearestOver(said, from, step, wanted) {
   return null;
 }
 
+// Whether the signal says how much of something rather than how many of it. A
+// number standing beside a property is a measure, and the brain has no measure
+// to hold: how many is a count of things, and a property is not a thing to be
+// counted.
+function measured(said, world) {
+  const a = world.anchors || {};
+  if (a.property == null) return false;
+  const named = (n) => conceptOf(n) != null;
+  return said.some((n, at) => {
+    if (!n.state.exists || !world.isA(conceptOf(n), a.number)) return false;
+    const beside = nearestOver(said, at, 1, named) ?? nearestOver(said, at, -1, named);
+    return beside != null && world.isA(conceptOf(beside), a.property);
+  });
+}
+
 // A number standing beside a thing says how many of it there are. The brain
 // reads this off the order of the things it perceived — a language may put the
 // number on either side, and it does not need to know which, so both are
@@ -482,6 +497,19 @@ function judge(roots, world, mood, langs, sent) {
   const spent = new Set(
     said.map((n) => quantityTerm(n)).filter((c) => c != null),
   );
+  // A number beside a thing says how many of it there are. Beside a property
+  // it says how *much* — an apple does not have three weights, it weighs some
+  // amount — and the brain counts but cannot measure. So it says it does not
+  // know, rather than taking the number for a thing the apple has three of.
+  if (measured(said, world)) {
+    return [
+      withBranch(root, [
+        ...root.branch,
+        node('standing', 'absent', [], { subject: null, relation: null, object: null, negated: false }),
+      ]),
+    ];
+  }
+
   // A claim may be about anything that exists, not only about a thing: gravity
   // is a force, and neither of them is a thing.
   const claims = (n) =>
