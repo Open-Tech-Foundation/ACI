@@ -143,7 +143,9 @@ runtime — never the brain — does the reading.
     "is":    { "pos": "verb",         "meaning": "to be",        "concept": 294 },
     "two":   { "pos": "numeral",      "meaning": "2",            "concept": 115 },
     "i":     { "pos": "pronoun",      "meaning": "from",         "marks": "from" },
-    "you":   { "pos": "pronoun",      "meaning": "to",           "marks": "to" }
+    "you":   { "pos": "pronoun",      "meaning": "to",           "marks": "to" },
+    "it":    { "pos": "pronoun",      "meaning": "it",           "marks": "spoken" },
+    "who":   { "pos": "interrogative","meaning": "who",  "marks": "unknown", "concept": 138 }
   },
   "expressions": {                   // how this language voices each brain act
     "greet":      "Hello!",
@@ -169,8 +171,17 @@ runtime — never the brain — does the reading.
 ```
 
 Each word carries `pos` (part of speech), `meaning`, and optionally `concept` —
-the id of the world term it names. There is **no** `type`, `emotion`, or
-`reply` — the brain derives those.
+the id of the world term it names. It may also carry `marks` (what it points at
+or says of its neighbour), `negates`, `role` (which part its neighbour plays),
+`when`, `names`, `groups`, `person` and `number`. There is **no** `type`,
+`emotion`, or `reply` — the brain derives those.
+
+**A hole may name the relation it asks across.** `marks: "unknown"` makes a
+word a hole; a `concept` on it says what the hole asks after. So `who` names
+the `name` relation and `what` names nothing, and asked who a thing is the
+brain walks to its name while asked what it is it walks to what it is a kind
+of. Nothing in the brain tells the two apart — the machinery that prefers the
+more specific relation as the signal's joint does the whole job.
 
 ### Symbols, marks and figures
 
@@ -368,9 +379,19 @@ understand → think → solve → structure → judge → express
   expression: node,       // the one reply to the whole signal; its branch holds
                           // what was said about each thing
   learned: { terms } | null,   // what it accepted, for the runtime to keep
+  spoken: termId | null,       // what this signal was about, for the next one
+                               // to point back at; null where there was none
+                               // or more than one
   phases: { understand, think, solve, structure, judge, express }
 }
 ```
+
+The six are six: `solve` reasons over each word on its own — what the world says
+it is, whether a number stands beside it, whether a word marks it — while
+`judge` reasons over the whole signal, which only exists once `structure` has
+bound it. They share one mechanism, `nearestOver`, for finding a neighbour
+without reaching past a thing that is not the one being looked for; sharing a
+walk is not being one phase.
 
 ## Kinds and individuals
 
@@ -422,16 +443,16 @@ on is different every time they are said. They point at the **circumstance of
 the signal**, and the circumstance arrives with the signal:
 
 ```js
-brainFrom(input, knowledge, { from, to })
+brainFrom(input, knowledge, { from, to, spoken })
 ```
 
 Three owners, and none of them may be the other:
 
 - **that a word may point** is the brain's, and it is all the brain knows. A
-  word carrying `marks: "from"` or `marks: "to"` names no term of its own — the
-  door refuses one that tries.
+  word carrying `marks: "from"`, `"to"` or `"spoken"` names no term of its own
+  — the door refuses one that tries.
 - **which words point where** is the language's: `i` / `me` / `my` against
-  `you` / `your`.
+  `you` / `your`, and `it` for what was last spoken of.
 - **what they land on** is the runtime's, and it is per signal. A person, a
   device, a service, another brain — the brain never asks what kind of thing it
   is talking to, and holds no term for it.
@@ -446,6 +467,26 @@ question built on it is unanswered rather than answered wrongly.
 > i am a machine?   { from: 508 }    No.     508 is a doctor
 > i am a machine?   —                ...     nothing was said about where it came from
 ```
+
+**What was last spoken of** is the third, and it is what makes a run of signals
+a conversation. After each signal the brain hands back `result.spoken` — the
+thing that signal was about — and the runtime feeds it into the next. What the
+brain did to the world names the thing more exactly than what the fact stood
+on, so a state taken in points at the one thing bearing it, not at its kind.
+One thing offered several facts is still one thing spoken of; several things
+offered facts together leave no one of them to point back at, and the brain
+does not pick. A signal it could make nothing of says nothing about what was
+spoken of, and what stood before it still stands.
+
+```
+> a cupboard has three cup and two plate    I understand.
+> it has how many plates?                   two
+```
+
+The brain keeps none of this. Holding the thread is the runtime's act, and
+holding **several** threads is how two conversations run over one world: what
+one was last about is nothing to the other, while what any of them taught, all
+of them know. A signal naming no conversation is in the one unnamed thread.
 
 `this` / `that` and `now` / `then` are the same mechanism unfinished: more
 pointer names, more circumstance fields, no redesign. The clock is already there
@@ -736,16 +777,22 @@ This is the difference between ignorance and knowledge:
 own sake; every other relation is inherited down it. `"you have a memory?"` is
 *Yes.* because a computer has one, and nothing about this instance says so.
 
-**Two terms → a claim.** The nearest term either side of the relation. Adds a
-`truth` node with `{ subject, relation, object }`, and it has **three** values:
+**A signal offers facts.** It carries no truth value. It hands the brain one or
+more facts, and the brain has many already to lay each one against. Two terms
+and a relation offer one; things joined offer as many as the sides pair into.
 
-| | when |
+Each offered fact gets a `standing` node with `{ subject, relation, object,
+negated }`, and a standing is **not a boolean with a third case bolted on** —
+it is what the brain found among its own facts:
+
+| | what it found |
 |---|---|
-| `true` | the subject, or anything it is a kind of, reaches the object by that relation |
-| `false` | the terms **exclude** each other, and the claim is about kind |
-| `unknown` | neither — the world neither holds it nor forbids it |
+| `held` | the fact is already among what it holds: the subject, or anything it is a kind of, reaches the object by that relation |
+| `against` | something it holds stands against the fact — the world denies that link, or the two terms **exclude** each other and the fact is about kind |
+| `absent` | nothing it holds bears on the fact either way |
 
-Failing to find a path is **not** proof of the opposite. Only exclusion is.
+Failing to find a path is **not** something standing against. Only a denial or
+an exclusion is.
 `world.excludes(x, y)` is true when anything `x` is a kind of stands `different`
 to anything `y` is a kind of, **or** when they descend by different children of a
 term marked `disjoint: true` — a parent saying its children are kinds apart from
@@ -753,9 +800,15 @@ one another, so one marking does the work of every pair — the `different` rela
 like any other. Exclusion settles claims about **kind** only: a cat and a mind
 are different kinds, but *having* one is not *being* one.
 
-**Told a claim it does not hold → the brain learns it.** A `learn` node, handed
-back as `result.learned` in the one shape all knowledge takes. The brain keeps
-nothing: `brainFrom` stays pure, and remembering is the runtime's act.
+**Denied, the fact offered is the other one.** What the brain holds stands
+against a denial of it, and what it holds against, a denial is among.
+
+**Offered a fact nothing bears on → the brain takes it in.** A `learn` node,
+handed back as `result.learned` in the one shape all knowledge takes. One signal
+may take in more than one fact, and every one is handed back; what several of
+them said about one and the same thing comes back as **one** thing learned,
+holding each link once. The brain keeps nothing: `brainFrom` stays pure, and
+remembering is the runtime's act.
 
 A claim that would **close a loop** is refused instead — a relation already
 running from the object to the subject cannot also run back, so a `refuse` node
@@ -767,6 +820,81 @@ physical thing, two is a kind of abstract thing, and those stand `different`.
 
 A claim can be consistent with the world and still be one the brain should not
 answer with. That is the harm filter's job, and it runs last — see **§ Harm**.
+
+### Several things at once
+
+A word may **join** two wholes of the same size. Which word does it is the
+language's (`pos: "conjunction"`), and the grammar says where one may stand.
+
+**Joined subjects or objects are one offering.** `"a sparrow and a river are
+animals"` offers two facts, `"a sparrow is a plant and a bird"` two more, and
+joined on both sides as many as the sides pair into. The brain lays every one
+against the world and that work stays under the standing — but what it was
+handed was **one thing**, and one thing is what it answers. Finding something
+standing against any of them, it will not take the offering, and takes **no
+part of it**, since no part of it was offered on its own.
+
+```
+> a sparrow and a snake are animals     I know.
+> a sparrow and a river are animals     No.      ← and nothing is learned
+> a story and a question are art        I understand.   ← both facts taken in
+```
+
+**Joined clauses are two offerings**, not one, and each is answered on its own.
+The join is read at its **widest** — `"1+8 and 5+9"` is two workings-out, not
+one sentence with a joined complement — and it is found **wherever it stands**:
+a signal laid over a join reaches it, so `"what is 1+8 and 5+9"` answers both.
+
+**Judging and saying are separate acts.** Every verdict stays on the tree, but
+saying one twice says nothing the first did not: two that came out differently
+are both said, two that came out the same are one thing to say.
+
+```
+> a sparrow is an animal and a river is an animal    I know. No.
+> 1 and 2 and 3 are what                             number      ← three answers, one said
+```
+
+Parts that say a **term** are joined by what the language puts between listed
+things; parts that say a **whole sentence** are joined by nothing but the
+space, each having already ended the way the language ends one.
+
+### Holding and placement
+
+**Holding** is neither being nor having: what a thing holds can begin, end and
+be counted without the thing becoming anything different. `hold` is a relation
+in the world and an anchor the brain knows. What a thing holds is state, and
+state is stamped, so it changes without erasing what was so before.
+
+Which things hold is the world's to say, and it needs no modal to say it: *a
+container holds things* is the fact, and *"a basket can hold things"* is that
+fact read back. `"a stone holds things?"` is *I don't know*, nothing having
+said so.
+
+**Placement** is where a thing stands relative to another. The world had
+positions — up/down, left/right, front/back, near/far — but nothing that put a
+thing at one; `placement` is its own kind of relation holding `in`, `on` and
+`under`, over positions that now include inside/outside, top/bottom and side. A
+language says a placement with a preposition, so a complement may be one.
+
+Two relations stand in `"an apple is on a table"`, and the more specific is the
+signal's joint: the claim is a placement, not what the apple is. **What a thing
+is does not change by moving it.**
+
+**What is put into a thing is what it comes to hold.** The world says which
+action causes which operation — a `give` causes a plus — and a signal may name
+the operation itself instead, which is the same change reached without anyone
+doing it. Nobody did an operation a signal named outright, so nothing happened
+to anybody, and no event goes on the record:
+
+```
+> a basket holds three apple      I understand.
+> add one apple into it           four        ← no event; only what it holds
+> give one apple to it            four        ← someone gave it; an event
+> add one spoon into it           I don't know.
+```
+
+The last is the same rule that governs everything else: not having been told a
+basket holds spoons is not being told it holds none.
 
 ### What is said of a thing
 
@@ -835,8 +963,8 @@ it says so rather than reaching for one.
 | the signal names | the brain does | node |
 |---|---|---|
 | an operation it can perform | works it, then finds the term for the result | `sum` |
-| `anchors.more` / `anchors.less` | compares the values | `truth` |
-| `anchors.same` | works out each side and compares what they came to | `truth` |
+| `anchors.more` / `anchors.less` | compares the values | `standing` |
+| `anchors.same` | works out each side and compares what they came to | `standing` |
 
 A result the world has no term for is **not invented**: the `sum` node is
 `beyond` and the brain says it does not know. `"nine plus four?"` computes 13 and
@@ -940,8 +1068,8 @@ perceived — never off a grammar symbol, since phrase names come from data and 
 nothing to the brain:
 
 - find the first thing whose term reaches `anchors.relation`
-- take the nearest term reaching `anchors.thing` on each side of it
-- `world.isA(subject, object, relation)` decides
+- take every term that claims on each side of it, and pair them
+- `world.isA(subject, object, relation)` decides each pairing
 
 This is what connects the *word* `is` to the world's own `is` relation: `en.json`
 gives `is` the concept `294`, and term 294 is the relation the world's links are
@@ -1076,7 +1204,7 @@ it or answer with it.
 
 ```js
 import { brainFrom, node } from './brain.js';
-brainFrom(input, knowledge, { from, to })   // circumstance optional; pure
+brainFrom(input, knowledge, { from, to, spoken })  // circumstance optional; pure
 
 import { fromSources } from './knowledge.js';
 fromSources({ world, knowledge, languages })  // validates, merges
@@ -1085,9 +1213,17 @@ node(kind, name, branch, state)
 import { fromWorldData } from './world.js';
 fromWorldData(data)      // { anchors, baseRelation, term, isA, linked, excludes }
 
-import { brain } from './index.js';   // server-only convenience
-await brain("hi", { from })           // loads languages internally
+import { openBrain, brain } from './index.js';   // server-only convenience
+await brain("hi", { from, conversation })        // loads languages internally
 ```
+
+`isA(id, ancestor, rel)` follows the relation for real. A thing is itself, but
+it does not stand in **every** relation to itself: only the `is` ladder the
+world is built of counts a term as reaching itself, which is why *a stone is a
+stone* and *a stone holds a stone* are not the same answer.
+
+`openBrain(url)` keeps the store and the conversation threads. `conversation`
+names a thread; told none, the signal is in the one unnamed thread.
 
 ## Demo
 
@@ -1095,18 +1231,31 @@ The demo site is the **only** way to run the brain by hand. There is no CLI: a
 second surface meant a second tree renderer, and the two drifted. One surface,
 two views.
 
-- `demo/server.js` — ES-Runtime HTTP server. `POST /brain` `{ "q": "... " }`
-  returns the full brain result; serves the static site.
-- `demo/src/main.js` — UI (`@opentf/micro-ui`): an input box and **two** tabs.
+- `demo/server.js` — ES-Runtime HTTP server. `POST /brain`
+  `{ "q": "...", "conversation": "..." }` returns the full brain result and the
+  conversation it was in; serves the static site.
+- `demo/src/main.js` — UI (`@opentf/micro-ui`): a conversation. Turns stack up
+  as they are said, the input sits under them, and each turn keeps its own view
+  of the tree.
 
-  - **Expression** — what the brain said (`result.expression.state.says`), the act
-    it chose and the language it spoke, and beneath them what it said about each
-    thing. This is the input/output view: type a signal, read the answer.
-  - **Tree** — `render(result.roots)`, the whole accumulated tree of objects with
-    every node's state. This is the debugging view: when an answer is wrong, the
-    step that got it wrong is visible here.
+  - what the brain said (`result.expression.state.says`), with the act it
+    chose, the language it spoke, and whether it learned. This is the
+    input/output view: say a signal, read the answer.
+  - **Tree** — `render(turn.result.roots)` behind a toggle on that turn: the
+    whole accumulated tree of objects with every node's state. This is the
+    debugging view, and it is per turn because the answers are.
 
-  The tabs are deliberately not per-phase. The phases are a property of today's
-  pipeline; expression and state are properties of the brain, and hold for any
-  domain the brain later takes on. `result.phases` remains in the payload for
-  tests and programmatic use.
+  The views are deliberately not per-phase. The phases are a property of
+  today's pipeline; expression and state are properties of the brain, and hold
+  for any domain the brain later takes on. `result.phases` remains in the
+  payload for tests and programmatic use.
+
+  The page makes a conversation id on load and keeps it in `sessionStorage`, so
+  a reload stays in the same conversation and **New** is what breaks the
+  thread. `crypto.randomUUID` is not there outside a secure context, so the id
+  is drawn from `crypto.getRandomValues`.
+
+**The dev loop watches `demo/` only.** Changes to `src/`, `languages/` or
+`data/` neither rebuild nor restart it, and the server reads its language and
+knowledge files once at startup — so a change to the brain or its data needs
+the server restarted, not rebuilt.
