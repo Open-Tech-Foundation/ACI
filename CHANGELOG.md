@@ -6,6 +6,17 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **What a tool is for.** `tool is object` was all the world said of one, so
+  the brain could not know a saw is a thing a person uses to do work. `use` is
+  a relation now, and a tool is used for work — inherited down the kind, so a
+  knife is for work and an apple is not. English says it with `for`, the way it
+  says where a thing stands: `"a saw is for work?"`, `"a saw is for what"`.
+  Being used for work is not being work.
+- **A doing may say what it was done with.** The world had `agent`, `target`,
+  `source` and `destination`; `instrument` joins them, and English gives it to
+  `with`. `"i cut an apple with a saw"` records the saw as the part it was
+  done with.
+
 - **The world may say how one relation stands to another.** It could say how
   two *terms* stand — `different`, `order`, `cause` — and relations are terms,
   but nothing read that of them. Two ways of standing now count. **`converse`**:

@@ -48,6 +48,8 @@
     "hold": 579,
     "placement": 585,
     "converse": 590,
+    "use": 591,
+    "instrument": 592,
     "different": 251
   },
   "relations": {
@@ -220,6 +222,10 @@
         {
           "rel": 294,
           "to": 8
+        },
+        {
+          "rel": 591,
+          "to": 257
         }
       ],
       "disjoint": true
@@ -6370,6 +6376,26 @@
         {
           "rel": 294,
           "to": 585
+        }
+      ]
+    },
+    {
+      "id": 591,
+      "name": "use",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        }
+      ]
+    },
+    {
+      "id": 592,
+      "name": "instrument",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
         }
       ]
     },

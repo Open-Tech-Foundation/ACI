@@ -567,7 +567,8 @@
     },
     "with": {
       "pos": "preposition",
-      "meaning": "with"
+      "meaning": "with",
+      "role": "instrument"
     },
     "by": {
       "pos": "preposition",
@@ -3644,6 +3645,11 @@
       "meaning": "closed",
       "concept": 540,
       "when": "past"
+    },
+    "for": {
+      "pos": "preposition",
+      "meaning": "for",
+      "concept": 591
     }
   },
   "marking": "after",
