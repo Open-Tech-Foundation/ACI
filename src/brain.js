@@ -486,12 +486,23 @@ function judge(roots, world, mood, langs, sent) {
     const [when, so, otherwise] = rule;
     const [asked] = judge([when], world, 'ask', langs, sent);
     const stood = (asked.branch || []).find((n) => n.kind === 'standing');
-    const held = stood && stood.name === 'held';
-    // Where the condition stands, what follows stands. Where it does not, the
-    // signal may say what stands instead; where it says nothing, nothing
-    // follows, and the brain says only what it found of the condition.
-    const next = held ? so : otherwise;
-    if (!next) return [withBranch(root, [...root.branch, ...(asked.branch || []).filter(taken)])];
+    // Where the condition stands, what follows stands; where something stands
+    // against it, what the signal put on the other side stands instead. A
+    // condition the brain cannot work out is neither: it did not fail, it was
+    // never reached, and nothing follows from it either way.
+    const next = !stood ? null : stood.name === 'held' ? so : stood.name === 'against' ? otherwise : null;
+    if (!next) {
+      const found = (asked.branch || []).filter(taken);
+      // A condition it could make nothing of leaves it knowing nothing, and
+      // saying so beats saying either side.
+      const nothing = node('standing', 'absent', [], {
+        subject: null,
+        relation: null,
+        object: null,
+        negated: false,
+      });
+      return [withBranch(root, [...root.branch, ...(found.length ? found : [nothing])])];
+    }
     // A thing standing where a claim would stand is the thing to say.
     if (!joinedWhole(next, root)) {
       const of = named(next);

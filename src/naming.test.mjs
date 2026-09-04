@@ -43,9 +43,9 @@ test("the brain keeps no name of its own — it is told each time", async () => 
   await forget();
   await brain("n is 4", { conversation: "one" });
   assertEquals(
-    (await brain("if n > 2 then say big else say small", { conversation: "two" })).expression.state.says,
-    "small",
-    "another conversation was given no such name",
+    (await brain("if n > 2 then say big else say small", { conversation: "two" })).expression.name,
+    "unsure",
+    "another conversation was given no such name, and neither side follows",
   );
   assertEquals(
     (await brain("if n > 2 then say big else say small", { conversation: "one" })).expression.state.says,
@@ -69,5 +69,14 @@ test("a thing put where a claim would go is the thing to say", async () => {
   assertEquals((await brain("if z > 10 then wool else silk")).expression.state.says, "silk");
   await brain("z is 30");
   assertEquals((await brain("if z > 10 then wool else silk")).expression.state.says, "wool");
+  await forget();
+});
+
+test("a condition it cannot work out takes neither side", async () => {
+  await forget();
+  // Nothing has said what x stands for. The condition did not fail — it was
+  // never reached — so neither what follows nor what stands instead follows.
+  const r = await brain("if x > 10, then say big else say small");
+  assertEquals(r.expression.name, "unsure");
   await forget();
 });
