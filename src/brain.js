@@ -377,7 +377,7 @@ function givenValue(word, at) {
 // gets no category — the brain does not guess from the part of speech.
 // ---------------------------------------------------------------------------
 function solve(roots, world, langs, mood) {
-  const settled = calling(settle(roots, world), world, mood);
+  const settled = whose(calling(settle(roots, world), world, mood), world, langs, mood);
   return settled.map((n, at) => {
     if (!n.state.exists) {
       return withBranch(n, [...n.branch, node('response', 'nothing', [])]);
@@ -412,6 +412,49 @@ function solve(roots, world, langs, mood) {
     if (marked) result.branch.push(node('mark', marked, []));
 
     return result;
+  });
+}
+
+// A thing may be whose. `my cat` is not cats, it is the one cat the sender has,
+// and the brain reads it as that one thing: which word says whose is the
+// language's (`pos: "possessive"`), and whom it points at is the circumstance's.
+//
+// Where the world already holds one such thing, that is the one meant. Where it
+// holds none and the signal is telling, one is made and given to whoever it
+// belongs to. Where it holds more than one there is no *the* to resolve, and
+// the brain does not pick.
+function whose(roots, world, langs, mood) {
+  if (!world) return roots;
+  const a = world.anchors || {};
+  if (a.has == null) return roots;
+  const side = markingSide(world, langs);
+  const owning = (n) => {
+    const t = n ? thoughtOf(n) : null;
+    return t && posOf(n).includes('possessive') && t.concept != null ? t.concept : null;
+  };
+  let next = world.nextId() + roots.length;
+  return roots.map((n, i) => {
+    const kind = conceptOf(n);
+    if (kind == null || !world.isA(kind, a.thing) || world.isIndividual(kind)) return n;
+    const owner = owning(markerFor(roots, i, side, owning));
+    if (owner == null) return n;
+    const held = world
+      .individualsOf(kind)
+      .filter((one) => world.linked(owner, a.has).includes(one));
+    if (held.length > 1) return n;
+    const id = held.length === 1 ? held[0] : mood === 'tell' ? next++ : null;
+    if (id == null) return n;
+    const thought = { ...thoughtOf(n), concept: id };
+    const made =
+      held.length === 1
+        ? []
+        : [node('call', `${world.term(kind).name}#${id}`, [], { name: `${world.term(kind).name}#${id}`, id, of: kind, whose: owner })];
+    return withBranch(n, [
+      ...n.branch.map((b) =>
+        b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought }) : b,
+      ),
+      ...made,
+    ]);
   });
 }
 
@@ -2782,6 +2825,14 @@ function learnedFrom(roots, world) {
       individual: true,
       links: [{ rel: world.baseRelation, to: c.state.of }],
     })),
+    // And whoever it belongs to has it.
+    ...called
+      .filter((c) => c.state.whose != null)
+      .map((c) => ({
+        id: c.state.whose,
+        name: world.term(c.state.whose) ? world.term(c.state.whose).name : c.state.name,
+        links: [{ rel: world.anchors.has, to: c.state.id }],
+      })),
     ...events.flatMap((e) => tookPlace(e, world)),
     ...learns.flatMap((l) => tookIn(l, world, naming)),
   ]);

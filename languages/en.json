@@ -8061,7 +8061,9 @@
     },
     "of": {
       "pos": "preposition",
-      "meaning": "of"
+      "meaning": "of",
+      "concept": 295,
+      "names": false
     },
     "out": {
       "pos": "preposition",
@@ -8919,7 +8921,8 @@
           "open subject close",
           "function subject",
           "item conjunction subject",
-          "noun preposition subject"
+          "noun preposition subject",
+          "article noun preposition subject"
         ]
       },
       "item": {
@@ -8936,7 +8939,8 @@
           "open sentence close",
           "open subject close",
           "function subject",
-          "noun preposition subject"
+          "noun preposition subject",
+          "article noun preposition subject"
         ]
       },
       "predicate": {

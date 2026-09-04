@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A thing may be whose.** `my cat` is not cats — it is the one cat the sender
+  has, and what is said of it is said of that one. Which word says whose is the
+  language's; whom it points at is the circumstance's. Where the world holds
+  one such thing that is the one meant; where it holds none and the signal is
+  telling, one is made and given to whoever it belongs to; where it holds more
+  than one there is no *the* to resolve and the brain does not pick. `of` says
+  the same the long way round.
+
 - **A hole may say what kind of answer it wants.** `what colour is the car`
   asks after the car and will take only a colour for an answer; everything
   else the car is stays true and is not the reply. The kind asked after is not
