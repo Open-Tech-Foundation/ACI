@@ -140,6 +140,7 @@
     "with":      { "pos": "preposition", "meaning": "with" },
     "by":        { "pos": "preposition", "meaning": "by" },
     "and":       { "pos": "conjunction", "meaning": "and" },
+    "it":        { "pos": "pronoun", "meaning": "it", "marks": "spoken", "person": "third", "number": "singular" },
     "power":     { "pos": "verb", "meaning": "to the power of", "concept": 570 },
     "^":         { "pos": "verb", "meaning": "to the power of", "concept": 570, "names": false },
     "remainder": { "pos": "verb", "meaning": "remainder of",    "concept": 571 },

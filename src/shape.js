@@ -12,8 +12,9 @@ function fail(where, why) {
   throw new ShapeError(`${where}: ${why}`);
 }
 
-// What a word may mark: which one is meant, or which side of the conversation.
-const MARKS = ['new', 'known', 'unknown', 'from', 'to'];
+// What a word may mark: which one is meant, which side of the conversation, or
+// the thing the conversation was last about.
+const MARKS = ['new', 'known', 'unknown', 'from', 'to', 'spoken'];
 const PERSONS = ['first', 'second', 'third'];
 const NUMBERS = ['singular', 'plural'];
 

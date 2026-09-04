@@ -242,11 +242,12 @@ function think(roots, langs, at, world) {
 // A pointer means something different every time it is said, so no world can
 // hold what it points at. That a word may point is the brain's; which words do
 // it is the language's (`marks`); what they land on is the circumstance of this
-// one signal — where it came from and where it went. Told neither, the brain
-// does not guess, and the word names nothing.
+// one signal — where it came from, where it went, and what was last spoken of.
+// Told none of them, the brain does not guess, and the word names nothing.
 function pointedAt(word, at) {
   if (word.marks === 'from') return (at && at.from) ?? null;
   if (word.marks === 'to') return (at && at.to) ?? null;
+  if (word.marks === 'spoken') return (at && at.spoken) ?? null;
   return null;
 }
 
@@ -1728,6 +1729,10 @@ export function brainFrom(input, knowledge, circumstance) {
       circumstance && circumstance.to != null
         ? circumstance.to
         : (world && world.anchors ? world.anchors.self : null) ?? null,
+    // What the conversation was last about is no more the brain's to keep than
+    // who is speaking: it was handed back after the signal before this one, and
+    // it comes back the same way, or it does not come back at all.
+    spoken: circumstance && circumstance.spoken != null ? circumstance.spoken : null,
   };
 
   const roots = understand(input, langs);
@@ -1742,6 +1747,7 @@ export function brainFrom(input, knowledge, circumstance) {
     roots: expressedRoots,
     expression: expression(expressedRoots, langs, mood, world, at),
     learned: learnedFrom(judgedRoots, world),
+    spoken: spokenOf(judgedRoots, at),
     phases: {
       understand: roots,
       think: thoughtRoots,
@@ -1751,6 +1757,38 @@ export function brainFrom(input, knowledge, circumstance) {
       express: expressedRoots,
     },
   };
+}
+
+// What the signal was about, so that the signal after it may point back at it.
+// The brain keeps this no more than it keeps what it learned — it hands it
+// back, and the runtime decides whether the next signal is the same
+// conversation.
+//
+// One thing offered several facts is still the one thing spoken of. Several
+// things offered facts together are several, and there is no one of them to
+// point back at: where there is none or more than one, the brain does not
+// pick. A signal it could make nothing of says nothing about what was spoken
+// of, and what was spoken of before it still stands.
+function spokenOf(roots, at) {
+  if (roots.length !== 1) return at.spoken;
+  const took = [];
+  const stood = [];
+  const walk = (n) => {
+    // What the brain did to the world names the thing more exactly than what
+    // the fact stood on: a state was taken in for the one thing bearing it,
+    // and that one, not its kind, is what was spoken of.
+    if (n.kind === 'learn') keep(took, n.state.subject);
+    if (n.kind === 'standing' || n.kind === 'answer') keep(stood, n.state.subject);
+    (n.branch || []).forEach(walk);
+  };
+  roots.forEach(walk);
+  const found = took.length > 0 ? took : stood;
+  if (found.length === 0) return at.spoken;
+  return found.length === 1 ? found[0] : null;
+}
+
+function keep(found, of) {
+  if (of != null && !found.includes(of)) found.push(of);
 }
 
 // What the brain accepted, in the one shape all knowledge takes. The brain does

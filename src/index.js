@@ -86,11 +86,19 @@ export function openBrain(url) {
     }
   }
 
-  // The circumstance of the signal — where it came from, where it went — is the
-  // runtime's to supply, and it is optional: told nothing, the brain does not
-  // guess who it is talking to.
+  // What the last signal was about, so a pointer in the next one has something
+  // to land on. The brain hands this back and keeps none of it; holding it
+  // across signals is what makes these signals one conversation, and that is
+  // the runtime's to decide.
+  let spoken = null;
+
+  // The circumstance of the signal — where it came from, where it went, what
+  // was last spoken of — is the runtime's to supply, and it is optional: told
+  // nothing, the brain does not guess who it is talking to.
   async function brain(input, circumstance) {
-    const result = brainFrom(input, await loaded(), circumstance);
+    const said = { spoken, ...(circumstance || {}) };
+    const result = brainFrom(input, await loaded(), said);
+    spoken = result.spoken;
     if (result.learned) {
       try {
         await inTurn(() => write(store, result.learned));
@@ -105,6 +113,7 @@ export function openBrain(url) {
   }
 
   async function forget() {
+    spoken = null;
     if (!store) return;
     await inTurn(() => forgetLearned(store));
     knowledgePromise = build();

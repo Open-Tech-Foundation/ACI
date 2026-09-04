@@ -6,6 +6,20 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A word may point at what was last spoken of.** `marks` gains `spoken`
+  alongside `from` and `to`, and English gives it to `it`. What it lands on is
+  the circumstance of this one signal, exactly as the other two are: the brain
+  keeps nothing across signals. After each one it hands back `spoken` — the
+  thing that signal was about — and the runtime feeds it into the next, which
+  is what makes a run of signals one conversation. What the brain did to the
+  world names the thing more exactly than what the fact stood on, so a state
+  taken in points at the one thing bearing it, not at its kind:
+  `"a cupboard has three cup and two plate"` then `"it has how many plates?"`
+  answers `"two"`. One thing offered several facts is still one thing spoken
+  of; several things offered facts together leave no one of them to point back
+  at, and the brain does not pick. A signal it could make nothing of says
+  nothing about what was spoken of, and what stood before it still stands.
+
 - **A signal offers facts, and the brain has many already.** A claim was read
   as a truth to be checked; it is now read as one or more facts offered, laid
   against the facts the brain holds. `truth` becomes `standing`, and its three
