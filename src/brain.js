@@ -496,7 +496,7 @@ function judge(roots, world, mood, langs, sent) {
       // The brain has understood it and cannot reach the condition yet, so what
       // it answers is whether it will follow it — not that it knows nothing.
       if ([so, otherwise].some((part) => part && asksToAct(part, root, world))) {
-        return [withBranch(root, [...root.branch, node('agree', 'follow', [], {})])];
+        return [withBranch(root, [...root.branch, ...following(world)])];
       }
       const found = (asked.branch || []).filter(taken);
       const nothing = node('standing', 'absent', [], {
@@ -844,6 +844,27 @@ function judge(roots, world, mood, langs, sent) {
 // stands between them is a word like any other, and is not one of them.
 function joinedWhole(b, whole) {
   return b.kind === 'clause' || b.kind === whole.kind;
+}
+
+// Whether the brain follows what it is told to do. It is the one being asked,
+// so it is the one this is about: the answer is a fact its memory holds of
+// itself, and nothing in the signal can change it. Told outright that it does
+// not, it says no; told nothing either way, it agrees.
+function following(world) {
+  const a = world.anchors || {};
+  if (a.follow == null || a.instruction == null || a.self == null) {
+    return [node('agree', 'follow', [], {})];
+  }
+  if (world.denies(a.self, a.instruction, a.follow)) {
+    return [
+      node('refuse', 'unfollowed', [], {
+        subject: a.self,
+        relation: a.follow,
+        object: a.instruction,
+      }),
+    ];
+  }
+  return [node('agree', 'follow', [], {})];
 }
 
 // Whether this part of a signal asks for something to be done rather than says

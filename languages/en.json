@@ -6674,6 +6674,24 @@
       "meaning": "say",
       "concept": 271,
       "names": false
+    },
+    "follow": {
+      "pos": "verb",
+      "meaning": "follow",
+      "concept": 1127
+    },
+    "follows": {
+      "pos": "verb",
+      "meaning": "follows",
+      "concept": 1127,
+      "names": false,
+      "person": "third",
+      "number": "singular"
+    },
+    "instruction": {
+      "pos": "noun",
+      "meaning": "instruction",
+      "concept": 1128
     }
   },
   "marking": "after",
