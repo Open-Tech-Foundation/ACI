@@ -6731,6 +6731,10 @@
     "rules": {
       "sentence": {
         "rules": [
+          "conditional clause consequent subject",
+          "conditional clause consequent subject otherwise sentence",
+          "conditional clause consequent sentence otherwise subject",
+          "conditional clause consequent subject otherwise subject",
           "conditional clause consequent sentence otherwise sentence",
           "conditional clause consequent sentence",
           "clause conjunction sentence",
@@ -6754,6 +6758,10 @@
       },
       "clause": {
         "rules": [
+          "conditional clause consequent subject",
+          "conditional clause consequent subject otherwise sentence",
+          "conditional clause consequent sentence otherwise subject",
+          "conditional clause consequent subject otherwise subject",
           "conditional clause consequent sentence otherwise sentence",
           "conditional clause consequent sentence",
           "interjection",

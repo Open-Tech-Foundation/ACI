@@ -61,3 +61,13 @@ test("what follows may be said outright", async () => {
   assertEquals((await brain("if 5 > 10 then say wool else say silk")).expression.state.says, "silk");
   await forget();
 });
+
+test("a thing put where a claim would go is the thing to say", async () => {
+  await forget();
+  await brain("z is 3");
+  assertEquals((await brain("if z > 10 then say wool else silk")).expression.state.says, "silk");
+  assertEquals((await brain("if z > 10 then wool else silk")).expression.state.says, "silk");
+  await brain("z is 30");
+  assertEquals((await brain("if z > 10 then wool else silk")).expression.state.says, "wool");
+  await forget();
+});

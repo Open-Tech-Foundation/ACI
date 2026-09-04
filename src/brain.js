@@ -492,6 +492,17 @@ function judge(roots, world, mood, langs, sent) {
     // follows, and the brain says only what it found of the condition.
     const next = held ? so : otherwise;
     if (!next) return [withBranch(root, [...root.branch, ...(asked.branch || []).filter(taken)])];
+    // A thing standing where a claim would stand is the thing to say.
+    if (!joinedWhole(next, root)) {
+      const of = named(next);
+      if (of == null) return [withBranch(root, [...root.branch, ...(asked.branch || []).filter(taken)])];
+      return [
+        withBranch(root, [
+          ...root.branch,
+          node('answer', 'link', [], { subject: null, relation: null, found: [of] }),
+        ]),
+      ];
+    }
     const [followed] = judge([next], world, mood, langs, sent);
     return [withBranch(root, [...root.branch, ...(followed.branch || []).filter(taken)])];
   }
@@ -820,13 +831,27 @@ function joinedWhole(b, whole) {
   return b.kind === 'clause' || b.kind === whole.kind;
 }
 
+// The one term standing under a part of the signal, where there is exactly one.
+function named(part) {
+  const found = [];
+  const walk = (n) => {
+    if (n.kind === 'thing' && conceptOf(n) != null) found.push(conceptOf(n));
+    (n.branch || []).forEach(walk);
+  };
+  walk(part);
+  return found.length === 1 ? found[0] : null;
+}
+
 // The two claims of a signal that says one follows from another: what is put
 // as the condition, and what follows it. That a signal may do this is the
 // brain's; which words say so is the language's.
 function conditionIn(root) {
-  const wholes = (root.branch || []).filter((b) => joinedWhole(b, root));
-  if (wholes.length < 2 || wholes.length > 3 || !marksWith(root, 'conditional')) return null;
-  return wholes;
+  if (!marksWith(root, 'conditional')) return null;
+  // What stands on either side of the words that mark a condition. A whole
+  // signal, or a thing on its own — a thing put where a claim would go is the
+  // thing to say, which is what `else small` says.
+  const parts = (root.branch || []).filter((b) => b.kind !== 'thing');
+  return parts.length >= 2 && parts.length <= 3 ? parts : null;
 }
 
 // Whether one of the words standing here is of this part of speech.
