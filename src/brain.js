@@ -374,8 +374,8 @@ function givenValue(word, at) {
 // the categories, the world owns the membership. A word that names no term
 // gets no category — the brain does not guess from the part of speech.
 // ---------------------------------------------------------------------------
-function solve(roots, world, langs) {
-  const settled = settle(roots, world);
+function solve(roots, world, langs, mood) {
+  const settled = calling(settle(roots, world), world, mood);
   return settled.map((n, at) => {
     if (!n.state.exists) {
       return withBranch(n, [...n.branch, node('response', 'nothing', [])]);
@@ -410,6 +410,39 @@ function solve(roots, world, langs) {
     if (marked) result.branch.push(node('mark', marked, []));
 
     return result;
+  });
+}
+
+// A word nothing knows, standing where a thing stands and spoken of as though
+// it were one, is a name being given. The thing is made here, before anything
+// is judged, so that whatever else the signal says of it is said of it and not
+// of nothing: `john has 3 apples` names john and gives him the apples in one
+// breath.
+function calling(roots, world, mood) {
+  if (!world || mood !== 'tell') return roots;
+  const a = world.anchors || {};
+  let next = world.nextId();
+  return roots.map((n, i) => {
+    const thought = thoughtOf(n);
+    if (!thought || thought.wordKnown || thought.concept != null) return n;
+    const rest = roots.slice(i + 1).filter((other) => conceptOf(other) != null);
+    if (rest.length < 2) return n;
+    // Said to be of a kind, that is the kind it is; said anything else, there
+    // is still a thing being spoken of, and a thing is what it is.
+    const of = conceptOf(rest[1]);
+    const kind =
+      conceptOf(rest[0]) === world.baseRelation && of != null && world.isA(of, a.thing)
+        ? of
+        : a.thing;
+    const id = next;
+    next += 1;
+    const given = { ...thought, concept: id, wordKnown: true };
+    return withBranch(n, [
+      ...n.branch.map((b) =>
+        b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: given }) : b,
+      ),
+      node('call', n.state.identity, [], { name: n.state.identity, id, of: kind }),
+    ]);
   });
 }
 
@@ -688,15 +721,6 @@ function judge(roots, world, mood, langs, sent) {
 
   const a = world.anchors || {};
 
-  // A word no language lists and no world holds, standing where a thing stands
-  // and joined to a kind, is a name being given to a thing: `luna is a cat`
-  // says there is a cat called luna. A name for a thing is the world's, not
-  // the conversation's — the thing goes on being there after the talking stops.
-  const called = namings(said, world, mood);
-  if (called.length > 0) {
-    return [withBranch(root, [...root.branch, ...called.map((c) => node('call', c.name, [], c))])];
-  }
-
   // A signal may give a name rather than make a claim: `x is 5` says what x
   // stands for from here on. A name belongs to the conversation, not to the
   // world, so nothing is written down — it is handed back like anything else.
@@ -950,7 +974,16 @@ function judge(roots, world, mood, langs, sent) {
     // plates would be two cupboards, one of each.
     const bearers = new Map();
     const bearerFor = (left, subject) => {
-      if (!bearers.has(left)) bearers.set(left, bearerOf(subject, world, markAt(left)));
+      if (!bearers.has(left)) {
+        // A thing named in this very signal is the one that bears what is said
+        // of it. The world does not know it yet — it is being made — so there
+        // is nothing to look up and nothing to make twice.
+        const made = findBranch(left, 'call');
+        bearers.set(
+          left,
+          made ? { id: made.state.id, made: false } : bearerOf(subject, world, markAt(left)),
+        );
+      }
       return bearers.get(left);
     };
 
@@ -2044,7 +2077,7 @@ function expression(roots, langs, mood, world, sent) {
   const counted = bound ? findBranch(roots[0], 'count') : null;
   const gave = bound ? findBranch(roots[0], 'named') : null;
   const agreed = bound ? findBranch(roots[0], 'agree') : null;
-  const named = bound ? findBranch(roots[0], 'call') : null;
+  const named = bound ? within(roots[0], 'call') : null;
   const sum = bound ? findBranch(roots[0], 'sum') : null;
   const did = bound ? findBranch(roots[0], 'did') : null;
   const refused = bound ? findBranch(roots[0], 'refuse') : null;
@@ -2427,8 +2460,8 @@ export function brainFrom(input, knowledge, circumstance) {
 
   const roots = understand(input, langs);
   const thoughtRoots = think(roots, langs, at, world);
-  const solvedRoots = solve(thoughtRoots, world, langs);
   const mood = moodOf(input, langs);
+  const solvedRoots = solve(thoughtRoots, world, langs, mood);
   const structuredRoots = structurePhrase(solvedRoots, langs);
   const judgedRoots = judge(structuredRoots, world, mood, langs, at);
   const expressedRoots = express(judgedRoots, langs, world);
@@ -2484,9 +2517,16 @@ function namings(said, world, mood) {
     const thought = thoughtOf(n);
     if (!thought || thought.wordKnown || thought.concept != null) return;
     const rest = said.slice(i + 1).filter((other) => conceptOf(other) != null);
-    if (rest.length < 2 || conceptOf(rest[0]) !== world.baseRelation) return;
-    const of = conceptOf(rest[1]);
-    if (of == null || !world.isA(of, (world.anchors || {}).thing)) return;
+    if (rest.length < 2) return;
+    // Said to be of a kind, that is the kind it is. Said anything else — that
+    // it has something, that it weighs something — there is still a thing
+    // being spoken of, and a thing is what it is.
+    const a = world.anchors || {};
+    const said_of = conceptOf(rest[1]);
+    const of =
+      conceptOf(rest[0]) === world.baseRelation && said_of != null && world.isA(said_of, a.thing)
+        ? said_of
+        : a.thing;
     out.push({ name: n.state.identity, of });
   });
   return out;
@@ -2570,19 +2610,28 @@ function learnedFrom(roots, world) {
   const branch = roots[0].branch || [];
   const events = branch.filter((b) => b.kind === 'event');
   const learns = branch.filter((b) => b.kind === 'learn');
-  const called = branch.filter((b) => b.kind === 'call');
+  const called = [];
+  const gather = (n) => {
+    if (n.kind === 'call') called.push(n);
+    (n.branch || []).forEach(gather);
+  };
+  gather(roots[0]);
   if (events.length === 0 && learns.length === 0 && called.length === 0) return null;
+  // What was named in this signal is not in the world yet, so its name is
+  // known here and nowhere else.
+  const naming = new Map(called.map((c) => [c.state.id, c.state.name]));
   const terms = asOne([
-    ...events.flatMap((e) => tookPlace(e, world)),
-    ...learns.flatMap((l) => tookIn(l, world)),
     // A thing given a name is a thing there is one of, called what it was
-    // called. Nothing about a name is special: it is a term like any other.
-    ...called.map((c, i) => ({
-      id: world.nextId() + i,
+    // called. It comes first, because what else the signal said of it is said
+    // of that thing.
+    ...called.map((c) => ({
+      id: c.state.id,
       name: c.state.name,
       individual: true,
       links: [{ rel: world.baseRelation, to: c.state.of }],
     })),
+    ...events.flatMap((e) => tookPlace(e, world)),
+    ...learns.flatMap((l) => tookIn(l, world, naming)),
   ]);
   return terms.length ? { terms } : null;
 }
@@ -2605,7 +2654,7 @@ function tookPlace(event, world) {
 
 // A fact the brain took in. A world with no term for what it is about has
 // nowhere to put it, and it comes back with nothing.
-function tookIn(learn, world) {
+function tookIn(learn, world, naming) {
   const { subject, relation, object, quantity, made, not } = learn.state;
   const link = { rel: relation, to: object };
   if (not) link.not = true;
@@ -2628,8 +2677,9 @@ function tookIn(learn, world) {
     ];
   }
   const term = world.term(subject);
-  if (!term) return [];
-  return [{ id: subject, name: term.name, links: [link] }];
+  const name = term ? term.name : (naming && naming.get(subject)) ?? null;
+  if (name == null) return [];
+  return [{ id: subject, name, links: [link] }];
 }
 
 // Several verdicts may have been reached about one and the same thing — a
@@ -2663,6 +2713,16 @@ function withBranch(node, branch, state) {
     branch: branch === undefined ? node.branch : branch,
     state: state === undefined ? node.state : state,
   });
+}
+
+// The first node of a kind anywhere under this one.
+function within(n, kind) {
+  if (n.kind === kind) return n;
+  for (const b of n.branch || []) {
+    const found = within(b, kind);
+    if (found) return found;
+  }
+  return null;
 }
 
 function findBranch(n, kind) {

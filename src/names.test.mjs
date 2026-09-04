@@ -47,3 +47,22 @@ test("two things may be named, and told apart", async () => {
   assertEquals((await brain("bruno is a dog?")).expression.name, "affirm");
   await forget();
 });
+
+test("a thing named keeps what the same signal said of it", async () => {
+  await forget();
+  // The name and what is said of it arrive together, so the thing is made
+  // before anything is judged and the rest is said of it, not of nothing.
+  await brain("john has 3 apples");
+  assertEquals(await says("john has how many apples?"), "three");
+  await brain("give 1 apple to john", { from: 29 });
+  assertEquals(await says("john has how many apples?"), "four");
+  await forget();
+});
+
+test("a thing named by anything said of it is still a thing", async () => {
+  await forget();
+  await brain("alice measures 2 metre");
+  await brain("bob measures 1 metre");
+  assertEquals((await brain("alice is bigger than bob?")).expression.name, "affirm");
+  await forget();
+});
