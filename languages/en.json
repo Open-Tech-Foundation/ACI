@@ -7986,6 +7986,70 @@
     "than": {
       "pos": "preposition",
       "meaning": "than"
+    },
+    "his": {
+      "pos": "possessive",
+      "meaning": "his",
+      "marks": "spoken"
+    },
+    "her": {
+      "pos": "possessive",
+      "meaning": "her",
+      "marks": "spoken"
+    },
+    "its": {
+      "pos": "possessive",
+      "meaning": "its",
+      "marks": "spoken"
+    },
+    "their": {
+      "pos": "possessive",
+      "meaning": "their",
+      "marks": "spoken"
+    },
+    "nobody": {
+      "pos": "pronoun",
+      "meaning": "nobody",
+      "concept": 29,
+      "negates": true
+    },
+    "nothing": {
+      "pos": "pronoun",
+      "meaning": "nothing",
+      "concept": 2,
+      "negates": true
+    },
+    "no one": {
+      "pos": "pronoun",
+      "meaning": "no one",
+      "concept": 29,
+      "negates": true,
+      "names": false
+    },
+    "very": {
+      "pos": "degree",
+      "meaning": "very"
+    },
+    "quite": {
+      "pos": "degree",
+      "meaning": "quite"
+    },
+    "too": {
+      "pos": "degree",
+      "meaning": "too"
+    },
+    "rather": {
+      "pos": "degree",
+      "meaning": "rather"
+    },
+    "of": {
+      "pos": "preposition",
+      "meaning": "of"
+    },
+    "out": {
+      "pos": "preposition",
+      "meaning": "out",
+      "concept": 581
     }
   },
   "marking": "after",
@@ -8099,6 +8163,7 @@
       },
       "subject": {
         "rules": [
+          "degree noun",
           "quantifier noun",
           "noun",
           "article noun",
@@ -8115,6 +8180,7 @@
       },
       "item": {
         "rules": [
+          "degree noun",
           "quantifier noun",
           "noun",
           "article noun",
@@ -8136,6 +8202,8 @@
       },
       "verbComplement": {
         "rules": [
+          "degree adjective",
+          "degree noun",
           "verb preposition subject",
           "noun",
           "adjective",
@@ -8159,6 +8227,7 @@
       },
       "complement": {
         "rules": [
+          "degree noun",
           "noun",
           "adjective",
           "numeral",
