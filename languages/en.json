@@ -7879,6 +7879,25 @@
       "pos": "pronoun",
       "meaning": "themselves",
       "marks": "spoken"
+    },
+    "causes": {
+      "pos": "verb",
+      "meaning": "causes",
+      "concept": 247,
+      "names": false,
+      "person": "third",
+      "number": "singular"
+    },
+    "caused": {
+      "pos": "verb",
+      "meaning": "caused",
+      "concept": 247,
+      "names": false,
+      "when": "past"
+    },
+    "because": {
+      "pos": "conjunction",
+      "meaning": "because"
     }
   },
   "marking": "after",
