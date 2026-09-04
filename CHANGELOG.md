@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **What was so before.** State has always been stamped and never written
+  over — the history was there and nothing could reach it. Asked on the past
+  side of now, the brain now steps back a stamp: `"the crate holds how many
+  lamps?"` and `"the crate held how many lamps?"` are the same question asked
+  of two moments. Nothing is remembered on purpose; the record was never
+  erased in the first place.
+
 - **`think` reads the words side by side, not only one at a time.** Having
   thought each word on its own, it looks at them together and takes as one the
   ones that are really one thing, reshaping the tree before anything else sees

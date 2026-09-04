@@ -678,7 +678,17 @@ function judge(roots, world, mood, langs, sent) {
       const object = conceptOf(things[things.length - 1]);
       const of = world.oneOf(subject);
       const bearer = of == null ? subject : of;
-      const howMany = world.held(bearer, conceptOf(said[rel]), object);
+      // Asked on the past side of now, the brain reads what was so then. What
+      // a thing held is kept in order and never written over, so stepping back
+      // one stamp is all it takes: it does not have to have remembered
+      // anything on purpose.
+      const over = world.heldOver(bearer, conceptOf(said[rel]), object);
+      const back = whenIn(said, world) === a.past;
+      const howMany = back
+        ? over.length > 1
+          ? over[over.length - 2].quantity
+          : null
+        : world.held(bearer, conceptOf(said[rel]), object);
       const total = howMany == null ? null : world.termFor(howMany);
       return [
         withBranch(root, [
@@ -688,6 +698,7 @@ function judge(roots, world, mood, langs, sent) {
             held: bearer,
             members: howMany,
             total,
+            when: back ? a.past : a.now,
           }),
         ]),
       ];
