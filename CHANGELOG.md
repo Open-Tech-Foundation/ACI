@@ -6,6 +6,16 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A third-person `it` on speaker-side focus stands for what is held.**
+  `I have 3 chocolates / what is it?` answered with the bearer (`person`)
+  because a pointer lands on one `spoken` id and the bearer is that id.
+  The brain now carries the word's `person`/`number` through to the thought
+  and, where a bare `it` lands on a speaker-side bearer holding exactly one
+  kind, resolves to the held kind instead. Bearer-only threads (`a cupboard
+  has three cup / what is it?` → `cupboard`) are unchanged, and `who am i?`
+  still asks name (`none` where unnamed) while `what am i?` asks kind
+  (`human`).
+
 - **The demo ran without anything under `knowledge/`.** Its permission list
   granted `../languages` and `../data` and not `../knowledge`, so the one file
   that says what this instance is called was never read — *what is your name?*

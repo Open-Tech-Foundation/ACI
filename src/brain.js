@@ -162,6 +162,8 @@ function recognizeLanguage(roots, langs) {
         names: word.names ?? null,
         groups: word.groups ?? null,
         on: word.on ?? null,
+        person: word.person ?? null,
+        number: word.number ?? null,
       }));
       matching.push({
         lang: lang.data.name,
@@ -255,6 +257,10 @@ function think(roots, langs, at, world) {
       // Which scale a word compares on, where it says so.
       on: word ? word.on ?? null : null,
       groups: word ? word.groups : null,
+      // Who a word is said of, and how many. The language's to say; the brain
+      // reads third-person pointers as not the speaker nor who was spoken to.
+      person: word ? word.person ?? null : null,
+      number: word ? word.number ?? null : null,
     });
     // A word that names more than one thing is thought of every way it may be
     // meant. The brain does not pick here: it has one word and not yet a
@@ -1166,7 +1172,12 @@ function judge(roots, world, mood, langs, sent) {
   if (holes.length > 0 && terms.length >= 1) {
     const nodes = [];
     for (const [i, term] of terms.entries()) {
-      const subject = conceptOf(term);
+      let subject = conceptOf(term);
+      // A bare third-person pointer on speaker-side focus stands for what is
+      // held, not who holds it: `I have 3 chocolates / what is it?` is about
+      // the chocolates.
+      const focused = focusFor(term, world, sent);
+      if (focused !== undefined) subject = focused;
       // A name is a fact like any other: what the term links to by the name
       // relation, read out of memory. Nothing about it is special to the engine.
       // Where the hole said what kind of answer it wants, only that kind is an
@@ -2319,6 +2330,37 @@ function markOn(n) {
 function markAt(n) {
   const m = n && findBranch(n, 'mark');
   return m ? m.name : null;
+}
+
+// Who a word is said of (first/second/third), where the language says so.
+function personOf(n) {
+  const t = n ? findBranch(n, 'thought') : null;
+  return t && t.state.thought ? t.state.thought.person ?? null : null;
+}
+
+// Focus: what a bare third-person pointer (`it`) may stand for. The bearer the
+// pointer landed on is speaker-side (an individual of who spoke) and it
+// directly holds exactly one kind: `it` is that kind, not who holds it.
+// Otherwise the pointer stands — existing threads (`cupboard` answers) keep
+// working, and the brain never guesses beyond this one exclusion.
+function focusFor(term, world, sent) {
+  const subject = conceptOf(term);
+  if (subject == null || !world || !sent) return undefined;
+  if (markOn(term) !== 'spoken' || personOf(term) !== 'third') return undefined;
+  if (sent.from == null && sent.to == null) return undefined;
+  const a = world.anchors || {};
+  const speakerSide = (id) =>
+    id != null &&
+    ((sent.from != null && (id === sent.from || world.isA(id, sent.from))) ||
+      (sent.to != null && (id === sent.to || world.isA(id, sent.to))));
+  if (!speakerSide(subject)) return undefined;
+  const held = [];
+  for (const rel of [a.has, a.hold]) {
+    if (rel == null) continue;
+    for (const of of world.linked(subject, rel)) if (!held.includes(of)) held.push(of);
+  }
+  if (held.length === 1) return held[0];
+  return undefined;
 }
 
 // The number term saying how many of this thing there are, if any.
