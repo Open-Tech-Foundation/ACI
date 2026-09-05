@@ -128,6 +128,18 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Forty-five more doings, three of them second senses.** happen, provide,
+  lose, pay, include, continue, set, create, allow, spend, grow, win, offer,
+  remember, consider, appear, buy, wait, serve, die, send, expect, stay,
+  reach, kill, remain, teach, need, become, smile, laugh, cry, call, try,
+  keep, seem, find, turn, show, put, let and live go under work, said both
+  ways; love, change and lead name a second thing the way saw does, settled
+  the same way. Irregulars listed where deriving cannot reach them (lost,
+  paid, spent, grew, grown, won, bought, taught, sent, kept, found, became,
+  shown); the rest derive. Stayed out where the name is taken: meet (a
+  gathering), learn (knowledge), mean (a sense), feel (a state) and leave
+  (left is a direction).
+
 - **Ten more doings, statives filed like the rest.** talk, like, want, help,
   start, play, move, believe, bring and sit go under work, said both ways —
   what was wanted is on the record as what happened. Regular pasts derive and

@@ -112,13 +112,33 @@ test("wanting, liking and the rest happen like any doing", async () => {
 
 test("derived and irregular pasts put the doing before now", async () => {
   await forget();
-  // talked and helped were never written down: -ed derives. brought and sat
-  // were, being irregular.
+  // talked and helped were never written down: -ed derives. brought and sat,
+  // being irregular, are.
   for (const said of ["i talked", "i helped an apple", "i brought an apple", "i sat"]) {
     const r = await brain(said, { from: PERSON });
     const event = (r.roots[0].branch || []).find((b) => b.kind === "event");
     assert(event != null && event.state.when != null, `${said} happened before now`);
   }
+  await forget();
+});
+
+test("the batch verbs happen, told or asked, now or before", async () => {
+  await forget();
+  for (const said of ["i happen", "i provide an apple", "i lose an apple", "i pay an apple", "i spend an apple", "i grow an apple", "i win an apple", "i buy an apple", "i teach an apple", "i send an apple", "i keep an apple", "i find an apple", "i love an apple", "i change an apple", "i lead an apple", "i smiled", "i stayed", "i reached an apple", "i included an apple", "i live"]) {
+    const r = await brain(said, { from: PERSON });
+    assert((r.roots[0].branch || []).some((b) => b.kind === "event"), `${said} happened`);
+  }
+  // Irregulars listed, regulars derived — both land before now.
+  for (const said of ["i lost an apple", "i paid an apple", "i bought an apple"]) {
+    const r = await brain(said, { from: PERSON });
+    const event = (r.roots[0].branch || []).find((b) => b.kind === "event");
+    assert(event != null && event.state.when != null, `${said} happened before now`);
+  }
+  // A third person doing it is someone doing it.
+  const third = await brain("the boy turns", { from: PERSON });
+  assert((third.roots[0].branch || []).some((b) => b.kind === "event"), "someone turned");
+  // And what the nouns always named is untouched.
+  assertEquals((await brain("love is a feeling?")).expression.name, "affirm");
   await forget();
 });
 

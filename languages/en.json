@@ -4262,11 +4262,18 @@
       "meaning": "feeling",
       "concept": 229
     },
-    "love": {
-      "pos": "noun",
-      "meaning": "love",
-      "concept": 231
-    },
+    "love": [
+      {
+        "pos": "noun",
+        "meaning": "love",
+        "concept": 231
+      },
+      {
+        "pos": "verb",
+        "meaning": "love",
+        "concept": 2717
+      }
+    ],
     "fear": {
       "pos": "noun",
       "meaning": "fear",
@@ -8060,6 +8067,966 @@
       "meaning": "sitting",
       "concept": 2675
     },
+    "happen": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "happen",
+      "concept": 2676
+    },
+    "happens": {
+      "pos": "verb",
+      "meaning": "happens",
+      "concept": 2676,
+      "person": "third",
+      "number": "singular"
+    },
+    "happening": {
+      "pos": "noun",
+      "meaning": "happening",
+      "concept": 2676
+    },
+    "provide": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "provide",
+      "concept": 2677
+    },
+    "provides": {
+      "pos": "verb",
+      "meaning": "provides",
+      "concept": 2677,
+      "person": "third",
+      "number": "singular"
+    },
+    "provideing": {
+      "pos": "noun",
+      "meaning": "provideing",
+      "concept": 2677
+    },
+    "lose": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "lose",
+      "concept": 2678
+    },
+    "loses": {
+      "pos": "verb",
+      "meaning": "loses",
+      "concept": 2678,
+      "person": "third",
+      "number": "singular"
+    },
+    "lost": {
+      "pos": "verb",
+      "meaning": "lost",
+      "concept": 2678,
+      "when": "past"
+    },
+    "loseing": {
+      "pos": "noun",
+      "meaning": "loseing",
+      "concept": 2678
+    },
+    "pay": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "pay",
+      "concept": 2679
+    },
+    "pays": {
+      "pos": "verb",
+      "meaning": "pays",
+      "concept": 2679,
+      "person": "third",
+      "number": "singular"
+    },
+    "paid": {
+      "pos": "verb",
+      "meaning": "paid",
+      "concept": 2679,
+      "when": "past"
+    },
+    "paying": {
+      "pos": "noun",
+      "meaning": "paying",
+      "concept": 2679
+    },
+    "include": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "include",
+      "concept": 2680
+    },
+    "includes": {
+      "pos": "verb",
+      "meaning": "includes",
+      "concept": 2680,
+      "person": "third",
+      "number": "singular"
+    },
+    "includeing": {
+      "pos": "noun",
+      "meaning": "includeing",
+      "concept": 2680
+    },
+    "continue": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "continue",
+      "concept": 2681
+    },
+    "continues": {
+      "pos": "verb",
+      "meaning": "continues",
+      "concept": 2681,
+      "person": "third",
+      "number": "singular"
+    },
+    "continueing": {
+      "pos": "noun",
+      "meaning": "continueing",
+      "concept": 2681
+    },
+    "set": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "set",
+      "concept": 2682
+    },
+    "sets": {
+      "pos": "verb",
+      "meaning": "sets",
+      "concept": 2682,
+      "person": "third",
+      "number": "singular"
+    },
+    "seting": {
+      "pos": "noun",
+      "meaning": "seting",
+      "concept": 2682
+    },
+    "create": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "create",
+      "concept": 2683
+    },
+    "creates": {
+      "pos": "verb",
+      "meaning": "creates",
+      "concept": 2683,
+      "person": "third",
+      "number": "singular"
+    },
+    "createing": {
+      "pos": "noun",
+      "meaning": "createing",
+      "concept": 2683
+    },
+    "allow": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "allow",
+      "concept": 2684
+    },
+    "allows": {
+      "pos": "verb",
+      "meaning": "allows",
+      "concept": 2684,
+      "person": "third",
+      "number": "singular"
+    },
+    "allowing": {
+      "pos": "noun",
+      "meaning": "allowing",
+      "concept": 2684
+    },
+    "spend": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "spend",
+      "concept": 2685
+    },
+    "spends": {
+      "pos": "verb",
+      "meaning": "spends",
+      "concept": 2685,
+      "person": "third",
+      "number": "singular"
+    },
+    "spent": {
+      "pos": "verb",
+      "meaning": "spent",
+      "concept": 2685,
+      "when": "past"
+    },
+    "spending": {
+      "pos": "noun",
+      "meaning": "spending",
+      "concept": 2685
+    },
+    "grow": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "grow",
+      "concept": 2686
+    },
+    "grows": {
+      "pos": "verb",
+      "meaning": "grows",
+      "concept": 2686,
+      "person": "third",
+      "number": "singular"
+    },
+    "grew": {
+      "pos": "verb",
+      "meaning": "grew",
+      "concept": 2686,
+      "when": "past"
+    },
+    "grown": {
+      "pos": "verb",
+      "meaning": "grown",
+      "concept": 2686,
+      "when": "past"
+    },
+    "growing": {
+      "pos": "noun",
+      "meaning": "growing",
+      "concept": 2686
+    },
+    "win": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "win",
+      "concept": 2687
+    },
+    "wins": {
+      "pos": "verb",
+      "meaning": "wins",
+      "concept": 2687,
+      "person": "third",
+      "number": "singular"
+    },
+    "won": {
+      "pos": "verb",
+      "meaning": "won",
+      "concept": 2687,
+      "when": "past"
+    },
+    "wining": {
+      "pos": "noun",
+      "meaning": "wining",
+      "concept": 2687
+    },
+    "offer": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "offer",
+      "concept": 2688
+    },
+    "offers": {
+      "pos": "verb",
+      "meaning": "offers",
+      "concept": 2688,
+      "person": "third",
+      "number": "singular"
+    },
+    "offering": {
+      "pos": "noun",
+      "meaning": "offering",
+      "concept": 2688
+    },
+    "remember": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "remember",
+      "concept": 2689
+    },
+    "remembers": {
+      "pos": "verb",
+      "meaning": "remembers",
+      "concept": 2689,
+      "person": "third",
+      "number": "singular"
+    },
+    "remembering": {
+      "pos": "noun",
+      "meaning": "remembering",
+      "concept": 2689
+    },
+    "consider": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "consider",
+      "concept": 2690
+    },
+    "considers": {
+      "pos": "verb",
+      "meaning": "considers",
+      "concept": 2690,
+      "person": "third",
+      "number": "singular"
+    },
+    "considering": {
+      "pos": "noun",
+      "meaning": "considering",
+      "concept": 2690
+    },
+    "appear": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "appear",
+      "concept": 2691
+    },
+    "appears": {
+      "pos": "verb",
+      "meaning": "appears",
+      "concept": 2691,
+      "person": "third",
+      "number": "singular"
+    },
+    "appearing": {
+      "pos": "noun",
+      "meaning": "appearing",
+      "concept": 2691
+    },
+    "buy": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "buy",
+      "concept": 2692
+    },
+    "buys": {
+      "pos": "verb",
+      "meaning": "buys",
+      "concept": 2692,
+      "person": "third",
+      "number": "singular"
+    },
+    "bought": {
+      "pos": "verb",
+      "meaning": "bought",
+      "concept": 2692,
+      "when": "past"
+    },
+    "buying": {
+      "pos": "noun",
+      "meaning": "buying",
+      "concept": 2692
+    },
+    "wait": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "wait",
+      "concept": 2693
+    },
+    "waits": {
+      "pos": "verb",
+      "meaning": "waits",
+      "concept": 2693,
+      "person": "third",
+      "number": "singular"
+    },
+    "waiting": {
+      "pos": "noun",
+      "meaning": "waiting",
+      "concept": 2693
+    },
+    "serve": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "serve",
+      "concept": 2694
+    },
+    "serves": {
+      "pos": "verb",
+      "meaning": "serves",
+      "concept": 2694,
+      "person": "third",
+      "number": "singular"
+    },
+    "serveing": {
+      "pos": "noun",
+      "meaning": "serveing",
+      "concept": 2694
+    },
+    "die": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "die",
+      "concept": 2695
+    },
+    "dies": {
+      "pos": "verb",
+      "meaning": "dies",
+      "concept": 2695,
+      "person": "third",
+      "number": "singular"
+    },
+    "dying": {
+      "pos": "noun",
+      "meaning": "dying",
+      "concept": 2695
+    },
+    "send": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "send",
+      "concept": 2696
+    },
+    "sends": {
+      "pos": "verb",
+      "meaning": "sends",
+      "concept": 2696,
+      "person": "third",
+      "number": "singular"
+    },
+    "sent": {
+      "pos": "verb",
+      "meaning": "sent",
+      "concept": 2696,
+      "when": "past"
+    },
+    "sending": {
+      "pos": "noun",
+      "meaning": "sending",
+      "concept": 2696
+    },
+    "expect": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "expect",
+      "concept": 2697
+    },
+    "expects": {
+      "pos": "verb",
+      "meaning": "expects",
+      "concept": 2697,
+      "person": "third",
+      "number": "singular"
+    },
+    "expecting": {
+      "pos": "noun",
+      "meaning": "expecting",
+      "concept": 2697
+    },
+    "stay": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "stay",
+      "concept": 2698
+    },
+    "stays": {
+      "pos": "verb",
+      "meaning": "stays",
+      "concept": 2698,
+      "person": "third",
+      "number": "singular"
+    },
+    "staying": {
+      "pos": "noun",
+      "meaning": "staying",
+      "concept": 2698
+    },
+    "reach": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "reach",
+      "concept": 2699
+    },
+    "reaches": {
+      "pos": "verb",
+      "meaning": "reaches",
+      "concept": 2699,
+      "person": "third",
+      "number": "singular"
+    },
+    "reaching": {
+      "pos": "noun",
+      "meaning": "reaching",
+      "concept": 2699
+    },
+    "kill": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "kill",
+      "concept": 2700
+    },
+    "kills": {
+      "pos": "verb",
+      "meaning": "kills",
+      "concept": 2700,
+      "person": "third",
+      "number": "singular"
+    },
+    "killing": {
+      "pos": "noun",
+      "meaning": "killing",
+      "concept": 2700
+    },
+    "remain": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "remain",
+      "concept": 2701
+    },
+    "remains": {
+      "pos": "verb",
+      "meaning": "remains",
+      "concept": 2701,
+      "person": "third",
+      "number": "singular"
+    },
+    "remaining": {
+      "pos": "noun",
+      "meaning": "remaining",
+      "concept": 2701
+    },
+    "teach": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "teach",
+      "concept": 2702
+    },
+    "teaches": {
+      "pos": "verb",
+      "meaning": "teaches",
+      "concept": 2702,
+      "person": "third",
+      "number": "singular"
+    },
+    "taught": {
+      "pos": "verb",
+      "meaning": "taught",
+      "concept": 2702,
+      "when": "past"
+    },
+    "teaching": {
+      "pos": "noun",
+      "meaning": "teaching",
+      "concept": 2702
+    },
+    "need": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "need",
+      "concept": 2703
+    },
+    "needs": {
+      "pos": "verb",
+      "meaning": "needs",
+      "concept": 2703,
+      "person": "third",
+      "number": "singular"
+    },
+    "needing": {
+      "pos": "noun",
+      "meaning": "needing",
+      "concept": 2703
+    },
+    "become": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "become",
+      "concept": 2704
+    },
+    "becomes": {
+      "pos": "verb",
+      "meaning": "becomes",
+      "concept": 2704,
+      "person": "third",
+      "number": "singular"
+    },
+    "became": {
+      "pos": "verb",
+      "meaning": "became",
+      "concept": 2704,
+      "when": "past"
+    },
+    "becomeing": {
+      "pos": "noun",
+      "meaning": "becomeing",
+      "concept": 2704
+    },
+    "smile": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "smile",
+      "concept": 2705
+    },
+    "smiles": {
+      "pos": "verb",
+      "meaning": "smiles",
+      "concept": 2705,
+      "person": "third",
+      "number": "singular"
+    },
+    "smileing": {
+      "pos": "noun",
+      "meaning": "smileing",
+      "concept": 2705
+    },
+    "laugh": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "laugh",
+      "concept": 2706
+    },
+    "laughs": {
+      "pos": "verb",
+      "meaning": "laughs",
+      "concept": 2706,
+      "person": "third",
+      "number": "singular"
+    },
+    "laughing": {
+      "pos": "noun",
+      "meaning": "laughing",
+      "concept": 2706
+    },
+    "cry": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "cry",
+      "concept": 2707
+    },
+    "cries": {
+      "pos": "verb",
+      "meaning": "cries",
+      "concept": 2707,
+      "person": "third",
+      "number": "singular"
+    },
+    "crying": {
+      "pos": "noun",
+      "meaning": "crying",
+      "concept": 2707
+    },
+    "call": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "call",
+      "concept": 2708
+    },
+    "calls": {
+      "pos": "verb",
+      "meaning": "calls",
+      "concept": 2708,
+      "person": "third",
+      "number": "singular"
+    },
+    "calling": {
+      "pos": "noun",
+      "meaning": "calling",
+      "concept": 2708
+    },
+    "try": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "try",
+      "concept": 2709
+    },
+    "tries": {
+      "pos": "verb",
+      "meaning": "tries",
+      "concept": 2709,
+      "person": "third",
+      "number": "singular"
+    },
+    "trying": {
+      "pos": "noun",
+      "meaning": "trying",
+      "concept": 2709
+    },
+    "keep": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "keep",
+      "concept": 2710
+    },
+    "keeps": {
+      "pos": "verb",
+      "meaning": "keeps",
+      "concept": 2710,
+      "person": "third",
+      "number": "singular"
+    },
+    "kept": {
+      "pos": "verb",
+      "meaning": "kept",
+      "concept": 2710,
+      "when": "past"
+    },
+    "keeping": {
+      "pos": "noun",
+      "meaning": "keeping",
+      "concept": 2710
+    },
+    "seem": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "seem",
+      "concept": 2711
+    },
+    "seems": {
+      "pos": "verb",
+      "meaning": "seems",
+      "concept": 2711,
+      "person": "third",
+      "number": "singular"
+    },
+    "seeming": {
+      "pos": "noun",
+      "meaning": "seeming",
+      "concept": 2711
+    },
+    "find": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "find",
+      "concept": 2712
+    },
+    "finds": {
+      "pos": "verb",
+      "meaning": "finds",
+      "concept": 2712,
+      "person": "third",
+      "number": "singular"
+    },
+    "found": {
+      "pos": "verb",
+      "meaning": "found",
+      "concept": 2712,
+      "when": "past"
+    },
+    "finding": {
+      "pos": "noun",
+      "meaning": "finding",
+      "concept": 2712
+    },
+    "turn": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "turn",
+      "concept": 2713
+    },
+    "turns": {
+      "pos": "verb",
+      "meaning": "turns",
+      "concept": 2713,
+      "person": "third",
+      "number": "singular"
+    },
+    "turning": {
+      "pos": "noun",
+      "meaning": "turning",
+      "concept": 2713
+    },
+    "show": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "show",
+      "concept": 2714
+    },
+    "shows": {
+      "pos": "verb",
+      "meaning": "shows",
+      "concept": 2714,
+      "person": "third",
+      "number": "singular"
+    },
+    "shown": {
+      "pos": "verb",
+      "meaning": "shown",
+      "concept": 2714,
+      "when": "past"
+    },
+    "showed": {
+      "pos": "verb",
+      "meaning": "showed",
+      "concept": 2714,
+      "when": "past"
+    },
+    "showing": {
+      "pos": "noun",
+      "meaning": "showing",
+      "concept": 2714
+    },
+    "put": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "put",
+      "concept": 2715
+    },
+    "puts": {
+      "pos": "verb",
+      "meaning": "puts",
+      "concept": 2715,
+      "person": "third",
+      "number": "singular"
+    },
+    "puting": {
+      "pos": "noun",
+      "meaning": "puting",
+      "concept": 2715
+    },
+    "let": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "let",
+      "concept": 2716
+    },
+    "live": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "live",
+      "concept": 2720
+    },
+    "lives": {
+      "pos": "verb",
+      "meaning": "lives",
+      "concept": 2720,
+      "person": "third",
+      "number": "singular"
+    },
+    "living": {
+      "pos": "noun",
+      "meaning": "living",
+      "concept": 2720
+    },
+    "lets": {
+      "pos": "verb",
+      "meaning": "lets",
+      "concept": 2716,
+      "person": "third",
+      "number": "singular"
+    },
+    "leting": {
+      "pos": "noun",
+      "meaning": "leting",
+      "concept": 2716
+    },
+    "loves": {
+      "pos": "verb",
+      "meaning": "loves",
+      "concept": 2717,
+      "person": "third",
+      "number": "singular"
+    },
+    "loving": {
+      "pos": "noun",
+      "meaning": "loving",
+      "concept": 2717
+    },
+    "changes": {
+      "pos": "verb",
+      "meaning": "changes",
+      "concept": 2718,
+      "person": "third",
+      "number": "singular"
+    },
+    "changing": {
+      "pos": "noun",
+      "meaning": "changing",
+      "concept": 2718
+    },
+    "leads": {
+      "pos": "verb",
+      "meaning": "leads",
+      "concept": 2719,
+      "person": "third",
+      "number": "singular"
+    },
+    "leading": {
+      "pos": "noun",
+      "meaning": "leading",
+      "concept": 2719
+    },
     "wash": {
       "pos": [
         "noun",
@@ -11117,11 +12084,18 @@
       "meaning": "copper",
       "concept": 1012
     },
-    "lead": {
-      "pos": "noun",
-      "meaning": "lead",
-      "concept": 1013
-    },
+    "lead": [
+      {
+        "pos": "noun",
+        "meaning": "lead",
+        "concept": 1013
+      },
+      {
+        "pos": "verb",
+        "meaning": "lead",
+        "concept": 2719
+      }
+    ],
     "zinc": {
       "pos": "noun",
       "meaning": "zinc",
@@ -13731,11 +14705,18 @@
       "meaning": "bill",
       "concept": 1214
     },
-    "change": {
-      "pos": "noun",
-      "meaning": "change",
-      "concept": 1215
-    },
+    "change": [
+      {
+        "pos": "noun",
+        "meaning": "change",
+        "concept": 1215
+      },
+      {
+        "pos": "verb",
+        "meaning": "change",
+        "concept": 2718
+      }
+    ],
     "bowl": {
       "pos": "noun",
       "meaning": "bowl",
