@@ -239,7 +239,7 @@ function think(roots, langs, at, world) {
       pos: word ? word.pos : read ? lang.figuresPos : 'noun',
       meaning: word ? word.meaning : read || called != null ? String(n.state.identity) : null,
       concept: word
-        ? oneMeant(pointedAt(word, at), world) ?? word.concept
+        ? focusedSpoken(word, oneMeant(pointedAt(word, at), world) ?? word.concept, at, world)
         : read && world
           ? world.termFor(value)
           : called,
@@ -376,6 +376,26 @@ function pointedAt(word, at) {
 function oneMeant(concept, world) {
   if (concept == null || !world || world.isIndividual(concept)) return concept;
   return world.oneOf(concept) ?? concept;
+}
+
+// A bare third-person pointer on speaker-side focus stands for what is held,
+// not who holds it — the same shift judge applies to bare identity questions,
+// but here at the word, so actions (`wash them`) reach the held kind too.
+function focusedSpoken(word, resolved, at, world) {
+  if (!word || word.marks !== 'spoken' || word.person !== 'third') return resolved;
+  if (resolved == null || !world || !at) return resolved;
+  if (at.from == null && at.to == null) return resolved;
+  const speakerSide =
+    (at.from != null && (resolved === at.from || world.isA(resolved, at.from))) ||
+    (at.to != null && (resolved === at.to || world.isA(resolved, at.to)));
+  if (!speakerSide) return resolved;
+  const a = world.anchors || {};
+  const held = [];
+  for (const rel of [a.has, a.hold]) {
+    if (rel == null) continue;
+    for (const of of world.linked(resolved, rel)) if (!held.includes(of)) held.push(of);
+  }
+  return held.length === 1 ? held[0] : resolved;
 }
 
 function given(word, at) {

@@ -28,3 +28,13 @@ test("what am i asks kind, who am i asks name", async () => {
   assertEquals((await brain("who am i?", { from: 26 })).expression.state.says, "none");
   await forget();
 });
+
+test("them on speaker-side focus stands for what is held", async () => {
+  await forget();
+  const told = await brain("i have 3 compasses", { from: 26 });
+  const r = await brain("wash them", { from: 26 });
+  assertEquals(typeof told.spoken, "number");
+  assertEquals(typeof r.spoken, "number");
+  assertEquals(r.spoken !== told.spoken, true);
+  await forget();
+});

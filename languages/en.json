@@ -16334,7 +16334,9 @@
     "them": {
       "pos": "pronoun",
       "meaning": "them",
-      "marks": "spoken"
+      "marks": "spoken",
+      "person": "third",
+      "number": "plural"
     },
     "people": {
       "pos": "noun",
@@ -16954,7 +16956,9 @@
         "pronoun"
       ],
       "meaning": "these",
-      "marks": "spoken"
+      "marks": "spoken",
+      "person": "third",
+      "number": "plural"
     },
     "those": {
       "pos": [
@@ -16962,7 +16966,9 @@
         "pronoun"
       ],
       "meaning": "those",
-      "marks": "spoken"
+      "marks": "spoken",
+      "person": "third",
+      "number": "plural"
     },
     "movie": {
       "pos": "noun",

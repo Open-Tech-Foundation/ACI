@@ -16,6 +16,13 @@ All notable changes to this project are documented in this file.
   still asks name (`none` where unnamed) while `what am i?` asks kind
   (`human`).
 
+- **Plural pointers join speaker-side focus.** `them`/`these`/`those` now
+  carry `person: third, number: plural` in `en.json`, and the speaker-side
+  shift applies at the word (so `wash them` reaches the held kind, with the
+  event's `spoken` following the held thing) as well as in bare identity
+  questions. `one`/`ones` ellipsis, verb anaphora (`do`/`does`/`did`),
+  clause `so`, `neither`, and `this`/`that` proximity remain open.
+
 - **The demo ran without anything under `knowledge/`.** Its permission list
   granted `../languages` and `../data` and not `../knowledge`, so the one file
   that says what this instance is called was never read — *what is your name?*
