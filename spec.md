@@ -1200,8 +1200,12 @@ it says so rather than reaching for one.
 | `anchors.same` | works out each side and compares what they came to | `standing` |
 
 A result the world has no term for is **not invented**: the `sum` node is
-`beyond` and the brain says it does not know. `"nine plus four?"` computes 13 and
-then has nothing to call it.
+`beyond`. The world once had no term for 13 and `"nine plus four"` stopped
+there; it has one now, and the same signal answers *thirteen* — what the brain
+can say grows with the world and never with the engine. Where the result is a
+number the language can write in its own figures it is written, since writing a
+number is not naming it: `"0 - 5"` is `beyond` and still says *-5*. Where it is
+neither — `"9 / 0"`, `"2 ^ 4000"` — the brain says it does not know.
 
 **An action → something that happened**, unless the signal is *about* it. A
 relation named between two things is the signal's joint, and the joint is never
