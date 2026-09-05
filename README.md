@@ -49,6 +49,23 @@ fishes apart, so the claim is not unknown, it is denied.
 The world it has been given so far: 2616 terms, 2858 links between them, 2876
 words, 135 grammar rules.
 
+
+## Potential Use Cases
+
+| Use case                                      | Why ACI fits                                                                 |
+| --------------------------------------------- | ---------------------------------------------------------------------------- |
+| 🏭 **Industrial rules & automation**          | Deterministic decisions over explicit machine state, rules, and constraints  |
+| 🤖 **AI agent safety layer**                  | Constrains LLM agents with deterministic, auditable reasoning                |
+| 🧾 **Compliance & policy checking**           | Applies explicit policies consistently and produces inspectable reasoning    |
+| 🏦 **Financial eligibility & rules**          | Same inputs and knowledge produce the same decision                          |
+| 🏥 **Clinical & protocol decision support**   | Reasons only from explicitly available knowledge and avoids invented facts   |
+| 🧑‍💻 **Software configuration & operations** | Reasons over known dependencies, system state, and deployment constraints    |
+| 🎓 **Educational tutoring**                   | Provides explainable answers derived from a defined knowledge model          |
+| 🎮 **Game & NPC world logic**                 | Maintains consistent world state and deterministic rules                     |
+| 🌐 **Multilingual knowledge systems**         | Separates language from knowledge and reasoning                              |
+| 📦 **Product & configuration engines**        | Applies constraints to determine valid products, options, and configurations |
+
+
 ## Try it
 
 ```sh
