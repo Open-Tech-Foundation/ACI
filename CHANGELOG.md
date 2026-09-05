@@ -128,6 +128,11 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Ten more doings, statives filed like the rest.** talk, like, want, help,
+  start, play, move, believe, bring and sit go under work, said both ways —
+  what was wanted is on the record as what happened. Regular pasts derive and
+  are not written; brought and sat, being irregular, are.
+
 - **Every doing in all its forms.** Third-person forms for thirty doings —
   brushes, combs, fishes, forms, gives, hands, heads, irons, knows, lights,
   marks, milks, names, orders, parts, pens, phones, pictures, places, plants,

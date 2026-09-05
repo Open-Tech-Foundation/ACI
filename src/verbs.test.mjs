@@ -96,6 +96,32 @@ test("using a tool is said with the verb, and taken in like having", async () =>
   await forget();
 });
 
+test("wanting, liking and the rest happen like any doing", async () => {
+  await forget();
+  // Statives file the same way: what was wanted is on the record as what
+  // happened, and the question of what wanting is stays untouched.
+  for (const said of ["i talk", "i like an apple", "i want an apple", "i help an apple", "i start", "i play an apple", "i move an apple", "i believe an apple", "i bring an apple", "i sit"]) {
+    const r = await brain(said, { from: PERSON });
+    const event = (r.roots[0].branch || []).find((b) => b.kind === "event");
+    assert(event != null, `${said} happened`);
+  }
+  assertEquals((await brain("talking is work?")).expression.name, "affirm");
+  assertEquals((await brain("wanting is work?")).expression.name, "affirm");
+  await forget();
+});
+
+test("derived and irregular pasts put the doing before now", async () => {
+  await forget();
+  // talked and helped were never written down: -ed derives. brought and sat
+  // were, being irregular.
+  for (const said of ["i talked", "i helped an apple", "i brought an apple", "i sat"]) {
+    const r = await brain(said, { from: PERSON });
+    const event = (r.roots[0].branch || []).find((b) => b.kind === "event");
+    assert(event != null && event.state.when != null, `${said} happened before now`);
+  }
+  await forget();
+});
+
 test("a doing already done is the same doing, reached by its ending", async () => {
   await forget();
   // No language writes down every form of every verb. `cleaned` is not listed

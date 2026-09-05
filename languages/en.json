@@ -7848,6 +7848,218 @@
       "meaning": "fixing",
       "concept": 1539
     },
+    "talk": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "talk",
+      "concept": 2666
+    },
+    "talks": {
+      "pos": "verb",
+      "meaning": "talks",
+      "concept": 2666,
+      "person": "third",
+      "number": "singular"
+    },
+    "talking": {
+      "pos": "noun",
+      "meaning": "talking",
+      "concept": 2666
+    },
+    "like": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "like",
+      "concept": 2667
+    },
+    "likes": {
+      "pos": "verb",
+      "meaning": "likes",
+      "concept": 2667,
+      "person": "third",
+      "number": "singular"
+    },
+    "liking": {
+      "pos": "noun",
+      "meaning": "liking",
+      "concept": 2667
+    },
+    "want": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "want",
+      "concept": 2668
+    },
+    "wants": {
+      "pos": "verb",
+      "meaning": "wants",
+      "concept": 2668,
+      "person": "third",
+      "number": "singular"
+    },
+    "wanting": {
+      "pos": "noun",
+      "meaning": "wanting",
+      "concept": 2668
+    },
+    "help": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "help",
+      "concept": 2669
+    },
+    "helps": {
+      "pos": "verb",
+      "meaning": "helps",
+      "concept": 2669,
+      "person": "third",
+      "number": "singular"
+    },
+    "helping": {
+      "pos": "noun",
+      "meaning": "helping",
+      "concept": 2669
+    },
+    "start": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "start",
+      "concept": 2670
+    },
+    "starts": {
+      "pos": "verb",
+      "meaning": "starts",
+      "concept": 2670,
+      "person": "third",
+      "number": "singular"
+    },
+    "starting": {
+      "pos": "noun",
+      "meaning": "starting",
+      "concept": 2670
+    },
+    "play": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "play",
+      "concept": 2671
+    },
+    "plays": {
+      "pos": "verb",
+      "meaning": "plays",
+      "concept": 2671,
+      "person": "third",
+      "number": "singular"
+    },
+    "playing": {
+      "pos": "noun",
+      "meaning": "playing",
+      "concept": 2671
+    },
+    "move": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "move",
+      "concept": 2672
+    },
+    "moves": {
+      "pos": "verb",
+      "meaning": "moves",
+      "concept": 2672,
+      "person": "third",
+      "number": "singular"
+    },
+    "moving": {
+      "pos": "noun",
+      "meaning": "moving",
+      "concept": 2672
+    },
+    "believe": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "believe",
+      "concept": 2673
+    },
+    "believes": {
+      "pos": "verb",
+      "meaning": "believes",
+      "concept": 2673,
+      "person": "third",
+      "number": "singular"
+    },
+    "believing": {
+      "pos": "noun",
+      "meaning": "believing",
+      "concept": 2673
+    },
+    "bring": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "bring",
+      "concept": 2674
+    },
+    "brings": {
+      "pos": "verb",
+      "meaning": "brings",
+      "concept": 2674,
+      "person": "third",
+      "number": "singular"
+    },
+    "brought": {
+      "pos": "verb",
+      "meaning": "brought",
+      "concept": 2674,
+      "when": "past"
+    },
+    "bringing": {
+      "pos": "noun",
+      "meaning": "bringing",
+      "concept": 2674
+    },
+    "sit": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "sit",
+      "concept": 2675
+    },
+    "sits": {
+      "pos": "verb",
+      "meaning": "sits",
+      "concept": 2675,
+      "person": "third",
+      "number": "singular"
+    },
+    "sat": {
+      "pos": "verb",
+      "meaning": "sat",
+      "concept": 2675,
+      "when": "past"
+    },
+    "sitting": {
+      "pos": "noun",
+      "meaning": "sitting",
+      "concept": 2675
+    },
     "wash": {
       "pos": [
         "noun",
