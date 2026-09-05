@@ -1,6 +1,14 @@
+<div align="center">
+
 # ACI
 
-A deterministic brain: it perceives a signal, reasons about it over explicit
+A brain that can't make things up
+
+*An [Open Tech Foundation](https://opentechf.org/) project*
+
+</div>
+
+> A deterministic brain: it perceives a signal, reasons about it over explicit
 knowledge, and replies. Signals move it between states, and it expresses the
 state it is in.
 
