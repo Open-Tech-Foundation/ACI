@@ -96,6 +96,30 @@ test("using a tool is said with the verb, and taken in like having", async () =>
   await forget();
 });
 
+test("telling, watching, putting and standing happen", async () => {
+  await forget();
+  for (const said of ["i tell a story", "i watch a bird", "i put an apple", "i stand"]) {
+    const r = await brain(said, { from: PERSON });
+    assert((r.roots[0].branch || []).some((b) => b.kind === "event"), `${said} happened`);
+  }
+  for (const said of ["i told a story", "i stood"]) {
+    const r = await brain(said, { from: PERSON });
+    const event = (r.roots[0].branch || []).find((b) => b.kind === "event");
+    assert(event != null && event.state.when != null, `${said} happened before now`);
+  }
+  await forget();
+});
+
+test("participles stand as the doing done", async () => {
+  await forget();
+  // Statives have no participle to stand on: known names a state, and no
+  // machinery reads a state done to something.
+  for (const said of ["i taken an apple", "i given an apple", "i thrown an apple", "i sung a song", "i driven a van"]) {
+    const r = await brain(said, { from: PERSON });
+    assert((r.roots[0].branch || []).some((b) => b.kind === "event"), `${said} happened`);
+  }
+  await forget();
+});
 test("wanting, liking and the rest happen like any doing", async () => {
   await forget();
   // Statives file the same way: what was wanted is on the record as what

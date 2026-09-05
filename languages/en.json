@@ -2038,6 +2038,171 @@
       "meaning": "house",
       "concept": 50
     },
+    "home": {
+      "pos": "noun",
+      "meaning": "home",
+      "concept": 2785
+    },
+    "area": {
+      "pos": "noun",
+      "meaning": "area",
+      "concept": 2786
+    },
+    "job": {
+      "pos": "noun",
+      "meaning": "job",
+      "concept": 2787
+    },
+    "service": {
+      "pos": "noun",
+      "meaning": "service",
+      "concept": 2788
+    },
+    "member": {
+      "pos": "noun",
+      "meaning": "member",
+      "concept": 2789
+    },
+    "community": {
+      "pos": "noun",
+      "meaning": "community",
+      "concept": 2790
+    },
+    "team": {
+      "pos": "noun",
+      "meaning": "team",
+      "concept": 2791
+    },
+    "kid": {
+      "pos": "noun",
+      "meaning": "kid",
+      "concept": 2792
+    },
+    "parent": {
+      "pos": "noun",
+      "meaning": "parent",
+      "concept": 2793
+    },
+    "guy": {
+      "pos": "noun",
+      "meaning": "guy",
+      "concept": 2794
+    },
+    "neighbor": {
+      "pos": "noun",
+      "meaning": "neighbor",
+      "concept": 2795
+    },
+    "boss": {
+      "pos": "noun",
+      "meaning": "boss",
+      "concept": 2796
+    },
+    "history": {
+      "pos": "noun",
+      "meaning": "history",
+      "concept": 2797
+    },
+    "education": {
+      "pos": "noun",
+      "meaning": "education",
+      "concept": 2798
+    },
+    "news": {
+      "pos": "noun",
+      "meaning": "news",
+      "concept": 2799
+    },
+    "afternoon": {
+      "pos": "noun",
+      "meaning": "afternoon",
+      "concept": 2800
+    },
+    "weekend": {
+      "pos": "noun",
+      "meaning": "weekend",
+      "concept": 2801
+    },
+    "holiday": {
+      "pos": "noun",
+      "meaning": "holiday",
+      "concept": 2802
+    },
+    "birthday": {
+      "pos": "noun",
+      "meaning": "birthday",
+      "concept": 2803
+    },
+    "medicine": {
+      "pos": "noun",
+      "meaning": "medicine",
+      "concept": 2804
+    },
+    "headache": {
+      "pos": "noun",
+      "meaning": "headache",
+      "concept": 2805
+    },
+    "appointment": {
+      "pos": "noun",
+      "meaning": "appointment",
+      "concept": 2806
+    },
+    "message": {
+      "pos": "noun",
+      "meaning": "message",
+      "concept": 2807
+    },
+    "email": {
+      "pos": "noun",
+      "meaning": "email",
+      "concept": 2808
+    },
+    "photo": {
+      "pos": "noun",
+      "meaning": "photo",
+      "concept": 2809
+    },
+    "score": {
+      "pos": "noun",
+      "meaning": "score",
+      "concept": 2810
+    },
+    "clothes": {
+      "pos": "noun",
+      "meaning": "clothes",
+      "concept": 2811
+    },
+    "shoes": {
+      "pos": "noun",
+      "meaning": "shoes",
+      "concept": 2812
+    },
+    "bike": {
+      "pos": "noun",
+      "meaning": "bike",
+      "concept": 2813
+    },
+    "government": {
+      "pos": "noun",
+      "meaning": "government",
+      "concept": 2814
+    },
+    "test": {
+      "pos": "noun",
+      "meaning": "test",
+      "concept": 2815
+    },
+    "flu": {
+      "pos": "noun",
+      "meaning": "flu",
+      "concept": 2816
+    },
+    "face": {
+      "pos": "noun",
+      "meaning": "face",
+      "concept": 2817
+    },
     "abbey": {
       "pos": "noun",
       "meaning": "abbey",
@@ -4068,6 +4233,36 @@
       "meaning": "big",
       "concept": 195
     },
+    "soft": {
+      "pos": "adjective",
+      "meaning": "soft",
+      "concept": 2779
+    },
+    "clear": {
+      "pos": "adjective",
+      "meaning": "clear",
+      "concept": 2780
+    },
+    "fine": {
+      "pos": "adjective",
+      "meaning": "fine",
+      "concept": 2781
+    },
+    "ready": {
+      "pos": "adjective",
+      "meaning": "ready",
+      "concept": 2782
+    },
+    "wrong": {
+      "pos": "adjective",
+      "meaning": "wrong",
+      "concept": 2783
+    },
+    "alone": {
+      "pos": "adjective",
+      "meaning": "alone",
+      "concept": 2784
+    },
     "large": {
       "pos": "adjective",
       "meaning": "large",
@@ -4637,6 +4832,11 @@
       "pos": "adjective",
       "meaning": "happy",
       "concept": 238
+    },
+    "alive": {
+      "pos": "adjective",
+      "meaning": "alive",
+      "concept": 225
     },
     "glad": {
       "pos": "adjective",
@@ -7724,6 +7924,119 @@
       ],
       "meaning": "cook",
       "concept": 534
+    },
+    "tell": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "tell",
+      "concept": 2775
+    },
+    "told": {
+      "pos": "verb",
+      "meaning": "told",
+      "concept": 2775,
+      "when": "past"
+    },
+    "tells": {
+      "pos": "verb",
+      "meaning": "tells",
+      "concept": 2775,
+      "person": "third",
+      "number": "singular"
+    },
+    "telling": {
+      "pos": "noun",
+      "meaning": "telling",
+      "concept": 2775
+    },
+    "watch": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "watch",
+      "concept": 2776
+    },
+    "watches": {
+      "pos": "verb",
+      "meaning": "watches",
+      "concept": 2776,
+      "person": "third",
+      "number": "singular"
+    },
+    "watching": {
+      "pos": "noun",
+      "meaning": "watching",
+      "concept": 2776
+    },
+    "stand": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "stand",
+      "concept": 2777
+    },
+    "stands": {
+      "pos": "verb",
+      "meaning": "stands",
+      "concept": 2777,
+      "person": "third",
+      "number": "singular"
+    },
+    "stood": {
+      "pos": "verb",
+      "meaning": "stood",
+      "concept": 2777,
+      "when": "past"
+    },
+    "standing": {
+      "pos": "noun",
+      "meaning": "standing",
+      "concept": 2777
+    },
+    "putting": {
+      "pos": "noun",
+      "meaning": "putting",
+      "concept": 2778
+    },
+    "taken": {
+      "pos": "verb",
+      "meaning": "taken",
+      "concept": 283,
+      "when": "past"
+    },
+    "given": {
+      "pos": "verb",
+      "meaning": "given",
+      "concept": 282,
+      "when": "past"
+    },
+    "thrown": {
+      "pos": "verb",
+      "meaning": "thrown",
+      "concept": 537,
+      "when": "past"
+    },
+    "sung": {
+      "pos": "verb",
+      "meaning": "sung",
+      "concept": 1568,
+      "when": "past"
+    },
+    "driven": {
+      "pos": "verb",
+      "meaning": "driven",
+      "concept": 1537,
+      "when": "past"
+    },
+    "closed": {
+      "pos": "verb",
+      "meaning": "closed",
+      "concept": 540,
+      "when": "past"
     },
     "cooking": {
       "pos": "noun",

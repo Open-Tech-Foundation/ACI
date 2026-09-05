@@ -42,6 +42,22 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **The residue, where it fits.** tell, watch, put and stand happen, with
+  told and stood before now; taken, given, thrown, sung and driven stand as
+  the doing done (known names a state, and no machinery reads a state done to
+  something); closed is the past of closing; soft, clear, fine, ready, wrong
+  and alone tell and ask back; alive names life the way afraid names fear. New
+  kinds where they are true: home and area are places; job, service, research
+  and test are work and happenings; member, kid, parent, guy, neighbor and
+  boss are persons; community, team, party and government are groups; history
+  is a story, education a process, news communication; afternoon, weekend,
+  holiday and birthday are periods; medicine is a substance, headache is pain;
+  appointment is an event, email a message; photo is an object, score a
+  result; clothes, shoes and bike join clothing, clothing and vehicles; flu is
+  a state. Left out: multi-word kind names no sentence can say (`body part`),
+  doubling plurals, superlatives, high, low, early, late, real, whole, own,
+  best, better, worse, worst and much.
+
 - **Sixty states and qualities, said as adjectives.** Size takes large,
   little, huge, tiny, vast, wide, narrow, deep, shallow, thick and thin; age
   takes new, old, young, modern and ancient; temperature takes chilly and

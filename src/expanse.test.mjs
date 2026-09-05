@@ -80,6 +80,13 @@ test("new landforms, sky, colours, fabrics, gems and stones", async () => {
   await forget();
 });
 
+test("the residue kinds are what and where they are", async () => {
+  await forget();
+  for (const [q, want] of [["a parent is a person?", "affirm"], ["a team is a group?", "affirm"], ["a kid is a person?", "affirm"], ["a history is a story?", "affirm"], ["education is a process?", "affirm"], ["news is communication?", "affirm"], ["an afternoon is a period?", "affirm"], ["medicine is a substance?", "affirm"], ["a headache is pain?", "affirm"], ["an appointment is an event?", "affirm"], ["an email is a message?", "affirm"], ["a photo is an object?", "affirm"], ["a score is a result?", "affirm"], ["clothes are clothing?", "affirm"], ["a bike is a vehicle?", "affirm"], ["a government is a group?", "affirm"], ["a test is an event?", "affirm"], ["flu is a state?", "affirm"]]) {
+    assertEquals((await brain(q)).expression.name, want, q);
+  }
+  await forget();
+});
 test("the new doings happen", async () => {
   await forget();
   for (const said of ["i sip water", "i pour water", "i yawn", "i whisper an apple"]) {

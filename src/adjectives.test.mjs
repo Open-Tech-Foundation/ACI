@@ -52,3 +52,21 @@ test("larger and wider read the size scale, newer the time", async () => {
   assertEquals((await brain("tom is newer than sam?")).expression.name, "deny");
   await forget();
 });
+
+test("the residue states tell and ask back", async () => {
+  await forget();
+  for (const [said, asked] of [["cotton is soft", "cotton is soft?"], ["water is clear", "water is clear?"], ["a test is fine", "a test is fine?"], ["a shop is ready", "a shop is ready?"], ["a crow is wrong", "a crow is wrong?"], ["a pond is alone", "a pond is alone?"]]) {
+    await brain(said);
+    assertEquals((await brain(asked)).expression.name, "affirm", asked);
+  }
+  assertEquals((await brain("i am alive", { from: PERSON })).expression.name, "learn");
+  await forget();
+});
+
+test("closed is the past of closing", async () => {
+  await forget();
+  const r = await brain("i closed a door", { from: PERSON });
+  const event = (r.roots[0].branch || []).find((b) => b.kind === "event");
+  assert(event != null && event.state.when != null, "closed before now");
+  await forget();
+});
