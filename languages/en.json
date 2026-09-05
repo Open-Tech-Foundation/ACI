@@ -463,6 +463,61 @@
       "meaning": "machine",
       "concept": 560
     },
+    "radio": {
+      "pos": "noun",
+      "meaning": "radio",
+      "concept": 1540
+    },
+    "television": {
+      "pos": "noun",
+      "meaning": "television",
+      "concept": 1541
+    },
+    "camera": {
+      "pos": "noun",
+      "meaning": "camera",
+      "concept": 1542
+    },
+    "speaker": {
+      "pos": "noun",
+      "meaning": "speaker",
+      "concept": 1543
+    },
+    "headphones": {
+      "pos": "noun",
+      "meaning": "headphones",
+      "concept": 1544
+    },
+    "charger": {
+      "pos": "noun",
+      "meaning": "charger",
+      "concept": 1545
+    },
+    "battery": {
+      "pos": "noun",
+      "meaning": "battery",
+      "concept": 1546
+    },
+    "printer": {
+      "pos": "noun",
+      "meaning": "printer",
+      "concept": 1547
+    },
+    "microwave": {
+      "pos": "noun",
+      "meaning": "microwave",
+      "concept": 1548
+    },
+    "freezer": {
+      "pos": "noun",
+      "meaning": "freezer",
+      "concept": 1549
+    },
+    "fan": {
+      "pos": "noun",
+      "meaning": "fan",
+      "concept": 1550
+    },
     "memory": {
       "pos": "noun",
       "meaning": "memory",
@@ -1306,6 +1361,52 @@
       "meaning": "art",
       "concept": 105
     },
+    "music": {
+      "pos": "noun",
+      "meaning": "music",
+      "concept": 110,
+      "bare": true
+    },
+    "song": {
+      "pos": "noun",
+      "meaning": "song",
+      "concept": 1551
+    },
+    "tune": {
+      "pos": "noun",
+      "meaning": "tune",
+      "concept": 1552
+    },
+    "drum": {
+      "pos": "noun",
+      "meaning": "drum",
+      "concept": 1553
+    },
+    "guitar": {
+      "pos": "noun",
+      "meaning": "guitar",
+      "concept": 1554
+    },
+    "piano": {
+      "pos": "noun",
+      "meaning": "piano",
+      "concept": 1555
+    },
+    "violin": {
+      "pos": "noun",
+      "meaning": "violin",
+      "concept": 1556
+    },
+    "flute": {
+      "pos": "noun",
+      "meaning": "flute",
+      "concept": 1557
+    },
+    "trumpet": {
+      "pos": "noun",
+      "meaning": "trumpet",
+      "concept": 1558
+    },
     "law": {
       "pos": "noun",
       "meaning": "law",
@@ -1325,11 +1426,6 @@
       "pos": "noun",
       "meaning": "answer",
       "concept": 109
-    },
-    "music": {
-      "pos": "noun",
-      "meaning": "music",
-      "concept": 110
     },
     "poem": {
       "pos": "noun",
@@ -1838,6 +1934,31 @@
       "pos": "noun",
       "meaning": "comfort",
       "concept": 237
+    },
+    "shame": {
+      "pos": "noun",
+      "meaning": "shame",
+      "concept": 1559
+    },
+    "pride": {
+      "pos": "noun",
+      "meaning": "pride",
+      "concept": 1560
+    },
+    "envy": {
+      "pos": "noun",
+      "meaning": "envy",
+      "concept": 1561
+    },
+    "pity": {
+      "pos": "noun",
+      "meaning": "pity",
+      "concept": 1562
+    },
+    "guilt": {
+      "pos": "noun",
+      "meaning": "guilt",
+      "concept": 1563
     },
     "good": {
       "pos": "noun",
@@ -3226,6 +3347,26 @@
       "meaning": "frost",
       "concept": 498
     },
+    "hail": {
+      "pos": "noun",
+      "meaning": "hail",
+      "concept": 1564
+    },
+    "drizzle": {
+      "pos": "noun",
+      "meaning": "drizzle",
+      "concept": 1565
+    },
+    "rainbow": {
+      "pos": "noun",
+      "meaning": "rainbow",
+      "concept": 1566
+    },
+    "sunshine": {
+      "pos": "noun",
+      "meaning": "sunshine",
+      "concept": 1567
+    },
     "baby": {
       "pos": "noun",
       "meaning": "baby",
@@ -3418,6 +3559,32 @@
       "pos": "noun",
       "meaning": "cooking",
       "concept": 1536
+    },
+    "sing": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "sing",
+      "concept": 1568
+    },
+    "sings": {
+      "pos": "verb",
+      "meaning": "sings",
+      "concept": 1568,
+      "person": "third",
+      "number": "singular"
+    },
+    "sang": {
+      "pos": "verb",
+      "meaning": "sang",
+      "concept": 1568,
+      "when": "past"
+    },
+    "singing": {
+      "pos": "noun",
+      "meaning": "singing",
+      "concept": 1568
     },
     "drive": {
       "pos": [
@@ -7977,9 +8144,25 @@
       "concept": 1367
     },
     "dance": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "verb"
+      ],
       "meaning": "dance",
       "concept": 1369
+    },
+    "dances": {
+      "pos": "verb",
+      "meaning": "dances",
+      "concept": 1369,
+      "person": "third",
+      "number": "singular"
+    },
+    "danced": {
+      "pos": "verb",
+      "meaning": "danced",
+      "concept": 1369,
+      "when": "past"
     },
     "line": {
       "pos": "noun",

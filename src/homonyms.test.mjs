@@ -87,7 +87,7 @@ test("a doing already in the signal leaves the word as the thing", async () => {
 
 test("the past of a doing is the doing, on the other side of now", async () => {
   await forget();
-  for (const [word, doing] of [["plant", "planted"], ["water", "watered"], ["light", "lit"], ["bear", "bore"], ["cook", "cooked"], ["drive", "drove"], ["clean", "cleaned"], ["fix", "fixed"]]) {
+  for (const [word, doing] of [["plant", "planted"], ["water", "watered"], ["light", "lit"], ["bear", "bore"], ["cook", "cooked"], ["drive", "drove"], ["clean", "cleaned"], ["fix", "fixed"], ["sing", "sang"], ["dance", "danced"]]) {
     const event = branch(await brain(`i ${doing} an apple`, { from: PERSON }), "event");
     assert(event != null, `"i ${doing} an apple"`);
     assert(event.state.when != null, `"i ${doing} an apple" was not put in the past`);
@@ -119,5 +119,6 @@ test("what the doing reading names is a doing", async () => {
   assertEquals((await brain("driving is a work?")).expression.name, "affirm");
   assertEquals((await brain("cleaning is a work?")).expression.name, "affirm");
   assertEquals((await brain("fixing is a work?")).expression.name, "affirm");
+  assertEquals((await brain("singing is a work?")).expression.name, "affirm");
   await forget();
 });

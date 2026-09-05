@@ -30,6 +30,16 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Devices, music, more feelings and weather, singing and dancing.** `device`
+  holds its first kinds — radio, television, camera, speaker, headphones,
+  charger, battery, printer, microwave, freezer and fan — and `screen` and
+  `keyboard` move there from object, still objects either way. `music` holds
+  song, tune, drum, guitar, piano, violin, flute and trumpet, and stands bare
+  the way gravity does. Shame, pride, envy, pity and guilt join feeling; hail,
+  drizzle, rainbow and sunshine join weather. `singing` goes under work with
+  sing said both ways and `sang` written out; `dance` stood unsaid and is now
+  said both ways with `danced`. The world holds 1519 terms.
+
 - **Meals, beverages, rooms, more furniture, four more doings.** `meal` under
   food holds breakfast, lunch, dinner, supper, snack and brunch; `beverage`
   under liquid holds lemonade, cocoa, milkshake and smoothie; nursery, study
