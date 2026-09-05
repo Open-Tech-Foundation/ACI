@@ -42,6 +42,17 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Sixty states and qualities, said as adjectives.** Size takes large,
+  little, huge, tiny, vast, wide, narrow, deep, shallow, thick and thin; age
+  takes new, old, young, modern and ancient; temperature takes chilly and
+  freezing; speed takes fast, slow and quick; quality takes ugly, easy, hard,
+  difficult, simple, rich, poor, sweet, sour, bitter, salty, safe and
+  dangerous; glad and sorry name the poles they already answered with, afraid
+  names fear, proud names pride, and clean is said a third way for the
+  cleanliness being washed leaves. Larger, newer and wider compare on their
+  scales. Left out where nothing holds them: superlatives, and high, low,
+  early, late, real, whole, own, alive and dead.
+
 - **A word may carry when, or that a signal is asking, without naming
   anything.** English writes `do`, `does` and `did` that way, and the brain had
   none of them — *how many cookies do i have?* died on a word. An auxiliary

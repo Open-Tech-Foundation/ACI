@@ -4068,6 +4068,206 @@
       "meaning": "big",
       "concept": 195
     },
+    "large": {
+      "pos": "adjective",
+      "meaning": "large",
+      "concept": 2722
+    },
+    "little": {
+      "pos": "adjective",
+      "meaning": "little",
+      "concept": 2723
+    },
+    "huge": {
+      "pos": "adjective",
+      "meaning": "huge",
+      "concept": 2724
+    },
+    "tiny": {
+      "pos": "adjective",
+      "meaning": "tiny",
+      "concept": 2725
+    },
+    "vast": {
+      "pos": "adjective",
+      "meaning": "vast",
+      "concept": 2726
+    },
+    "wide": {
+      "pos": "adjective",
+      "meaning": "wide",
+      "concept": 2727
+    },
+    "narrow": {
+      "pos": "adjective",
+      "meaning": "narrow",
+      "concept": 2728
+    },
+    "deep": {
+      "pos": "adjective",
+      "meaning": "deep",
+      "concept": 2729
+    },
+    "shallow": {
+      "pos": "adjective",
+      "meaning": "shallow",
+      "concept": 2730
+    },
+    "thick": {
+      "pos": "adjective",
+      "meaning": "thick",
+      "concept": 2731
+    },
+    "thin": {
+      "pos": "adjective",
+      "meaning": "thin",
+      "concept": 2732
+    },
+    "new": {
+      "pos": "adjective",
+      "meaning": "new",
+      "concept": 2733
+    },
+    "old": {
+      "pos": "adjective",
+      "meaning": "old",
+      "concept": 2734
+    },
+    "young": {
+      "pos": "adjective",
+      "meaning": "young",
+      "concept": 2735
+    },
+    "modern": {
+      "pos": "adjective",
+      "meaning": "modern",
+      "concept": 2736
+    },
+    "ancient": {
+      "pos": "adjective",
+      "meaning": "ancient",
+      "concept": 2737
+    },
+    "chilly": {
+      "pos": "adjective",
+      "meaning": "chilly",
+      "concept": 2738
+    },
+    "freezing": {
+      "pos": "adjective",
+      "meaning": "freezing",
+      "concept": 2739
+    },
+    "fast": {
+      "pos": "adjective",
+      "meaning": "fast",
+      "concept": 2740
+    },
+    "slow": {
+      "pos": "adjective",
+      "meaning": "slow",
+      "concept": 2741
+    },
+    "quick": {
+      "pos": "adjective",
+      "meaning": "quick",
+      "concept": 2742
+    },
+    "loud": {
+      "pos": "adjective",
+      "meaning": "loud",
+      "concept": 2743
+    },
+    "quiet": {
+      "pos": "adjective",
+      "meaning": "quiet",
+      "concept": 2744
+    },
+    "bright": {
+      "pos": "adjective",
+      "meaning": "bright",
+      "concept": 2745
+    },
+    "fresh": {
+      "pos": "adjective",
+      "meaning": "fresh",
+      "concept": 2746
+    },
+    "dark": {
+      "pos": "adjective",
+      "meaning": "dark",
+      "concept": 2747
+    },
+    "strong": {
+      "pos": "adjective",
+      "meaning": "strong",
+      "concept": 2748
+    },
+    "weak": {
+      "pos": "adjective",
+      "meaning": "weak",
+      "concept": 2749
+    },
+    "free": {
+      "pos": "adjective",
+      "meaning": "free",
+      "concept": 2750
+    },
+    "busy": {
+      "pos": "adjective",
+      "meaning": "busy",
+      "concept": 2751
+    },
+    "full": {
+      "pos": "adjective",
+      "meaning": "full",
+      "concept": 2752
+    },
+    "empty": {
+      "pos": "adjective",
+      "meaning": "empty",
+      "concept": 2753
+    },
+    "dirty": {
+      "pos": "adjective",
+      "meaning": "dirty",
+      "concept": 2754
+    },
+    "sure": {
+      "pos": "adjective",
+      "meaning": "sure",
+      "concept": 2755
+    },
+    "certain": {
+      "pos": "adjective",
+      "meaning": "certain",
+      "concept": 2756
+    },
+    "hungry": {
+      "pos": "adjective",
+      "meaning": "hungry",
+      "concept": 2757
+    },
+    "thirsty": {
+      "pos": "adjective",
+      "meaning": "thirsty",
+      "concept": 2758
+    },
+    "tired": {
+      "pos": "adjective",
+      "meaning": "tired",
+      "concept": 2759
+    },
+    "sick": {
+      "pos": "adjective",
+      "meaning": "sick",
+      "concept": 2760
+    },
+    "ill": {
+      "pos": "adjective",
+      "meaning": "ill",
+      "concept": 2761
+    },
     "small": {
       "pos": "noun",
       "meaning": "small",
@@ -4334,6 +4534,71 @@
       "meaning": "good",
       "concept": 238
     },
+    "ugly": {
+      "pos": "adjective",
+      "meaning": "ugly",
+      "concept": 2762
+    },
+    "easy": {
+      "pos": "adjective",
+      "meaning": "easy",
+      "concept": 2763
+    },
+    "hard": {
+      "pos": "adjective",
+      "meaning": "hard",
+      "concept": 2764
+    },
+    "difficult": {
+      "pos": "adjective",
+      "meaning": "difficult",
+      "concept": 2765
+    },
+    "simple": {
+      "pos": "adjective",
+      "meaning": "simple",
+      "concept": 2766
+    },
+    "rich": {
+      "pos": "adjective",
+      "meaning": "rich",
+      "concept": 2767
+    },
+    "poor": {
+      "pos": "adjective",
+      "meaning": "poor",
+      "concept": 2768
+    },
+    "sweet": {
+      "pos": "adjective",
+      "meaning": "sweet",
+      "concept": 2769
+    },
+    "sour": {
+      "pos": "adjective",
+      "meaning": "sour",
+      "concept": 2770
+    },
+    "bitter": {
+      "pos": "adjective",
+      "meaning": "bitter",
+      "concept": 2771
+    },
+    "salty": {
+      "pos": "adjective",
+      "meaning": "salty",
+      "concept": 2772
+    },
+    "safe": {
+      "pos": "adjective",
+      "meaning": "safe",
+      "concept": 2773
+    },
+    "dangerous": {
+      "pos": "adjective",
+      "meaning": "dangerous",
+      "concept": 2774
+    },
     "nice": {
       "pos": "noun",
       "meaning": "nice",
@@ -4372,6 +4637,26 @@
       "pos": "adjective",
       "meaning": "happy",
       "concept": 238
+    },
+    "glad": {
+      "pos": "adjective",
+      "meaning": "glad",
+      "concept": 238
+    },
+    "sorry": {
+      "pos": "adjective",
+      "meaning": "sorry",
+      "concept": 239
+    },
+    "afraid": {
+      "pos": "adjective",
+      "meaning": "afraid",
+      "concept": 232
+    },
+    "proud": {
+      "pos": "adjective",
+      "meaning": "proud",
+      "concept": 1560
     },
     "sad": {
       "pos": "adjective",
@@ -7497,14 +7782,21 @@
       "meaning": "driving",
       "concept": 1537
     },
-    "clean": {
-      "pos": [
-        "noun",
-        "verb"
-      ],
-      "meaning": "clean",
-      "concept": 1538
-    },
+    "clean": [
+      {
+        "pos": [
+          "noun",
+          "verb"
+        ],
+        "meaning": "clean",
+        "concept": 1538
+      },
+      {
+        "pos": "adjective",
+        "meaning": "clean",
+        "concept": 2721
+      }
+    ],
     "cleans": {
       "pos": "verb",
       "meaning": "cleans",
@@ -15514,6 +15806,27 @@
     "bigger": {
       "pos": "verb",
       "meaning": "bigger",
+      "concept": 305,
+      "names": false,
+      "on": 183
+    },
+    "larger": {
+      "pos": "verb",
+      "meaning": "larger",
+      "concept": 305,
+      "names": false,
+      "on": 183
+    },
+    "newer": {
+      "pos": "verb",
+      "meaning": "newer",
+      "concept": 306,
+      "names": false,
+      "on": 187
+    },
+    "wider": {
+      "pos": "verb",
+      "meaning": "wider",
       "concept": 305,
       "names": false,
       "on": 183
