@@ -1258,9 +1258,17 @@ function judge(roots, world, mood, langs, sent) {
       // Where the hole said what kind of answer it wants, only that kind is an
       // answer. Everything else the thing is remains true and is not the reply.
       const of = asking.size === 1 ? [...asking][0] : null;
-      const found = reached(subject, relation, world).filter(
+      let found = reached(subject, relation, world).filter(
         (t) => of == null || world.isA(t, of),
       );
+      // The walk came back with nothing but the most generic kind: say the
+      // thing itself instead — `chocolates`, known only as a thing, is answered
+      // with its own name rather than `thing`. Specific answers (`animal` for a
+      // cat) and kind-restricted or empty walks are untouched.
+      const anchors = world.anchors || {};
+      if (of == null && found.length > 0 && found.every((t) => t === anchors.thing)) {
+        found = [subject];
+      }
       const mine = [node('answer', 'link', [], { subject, relation, found })];
       // The brain looked, and what it found stays on the tree. Saying it is
       // another act, and one it will not perform where any of the answer harms.

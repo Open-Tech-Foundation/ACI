@@ -43,8 +43,15 @@ All notable changes to this project are documented in this file.
   (`sana is a nurse / is she tall?` resolves, answering `unsure` where the
   property is unknown rather than guessing). Plural `they`, verb anaphora
   (`did`), clause `so` and `neither` need multi-entity focus memory and stay
-  open — documented red cases: `did`-for-prior-action, `is that so?`,
-  `they`-for-a-pair.
+  open.
+
+- **A `what-is` walk ending at bare `thing` names the thing itself.**
+  `I have 3 chocolates / what is it?` resolved to the held kind but answered
+  `thing`, its only known parent. Where the walk finds nothing but the
+  generic `thing` anchor, the brain now answers with the subject term itself
+  (said by its symbol where the language has no word), so it says
+  `chocolates`. Specific answers, kind-restricted questions and empty walks
+  are unchanged.
 
 - **The demo ran without anything under `knowledge/`.** Its permission list
   granted `../languages` and `../data` and not `../knowledge`, so the one file

@@ -10,7 +10,7 @@ test("it on speaker-side focus stands for what is held", async () => {
   assertEquals(typeof told.spoken, "number");
   assertEquals(typeof r.spoken, "number");
   assertEquals(r.spoken !== told.spoken, true);
-  assertEquals(r.expression.state.says, "thing");
+  assertEquals(r.expression.state.says, "chocolates");
   await forget();
 });
 
