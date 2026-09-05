@@ -14,7 +14,7 @@
 // brain(input) takes ONLY the input. The brain's own signature never grows to
 // admit a new source; a new source is a new file in one of those directories.
 import { brainFrom } from './brain.js';
-import { fromSources } from './knowledge.js';
+import { fromSources, speaking } from './knowledge.js';
 import { openStore, seed, readWorld, write, forgetLearned } from './store.js';
 
 const LANGUAGES = 'languages';
@@ -49,6 +49,9 @@ export function openBrain(url) {
   // The store keeps the world; the shape check reads it back the same way it
   // reads any other source. Where it came from is not the brain's business,
   // and it is validated all the same.
+  // Only the world moves. The languages were read once and checked once, and
+  // are handed back as they are: a world that has grown is no reason to merge
+  // and check every word of every language again.
   const build = () =>
     inTurn(async () => fromSources({ ...sources, world: await readWorld(store) }));
 
@@ -66,7 +69,7 @@ export function openBrain(url) {
 
     sources = {
       knowledge: await readAll(root, KNOWLEDGE),
-      languages: await readAll(root, LANGUAGES),
+      spoken: speaking(await readAll(root, LANGUAGES)),
     };
     return build();
   }

@@ -4,6 +4,24 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- **A world is put in whole, not a row at a time.** Seeding an authored world
+  cost one trip to the driver per row — 5562 of them, about 530 ms, on every
+  open. Every statement costs the same trip whether it writes one row or five
+  thousand, so each kind of row is now written in one statement handed all of
+  them. The same writes, in the same order: 530 ms becomes about 40 ms. This is
+  not durability — the store under a test is in memory and never touches disk.
+
+- **A language is checked once, not on every rebuild.** The brain is rebuilt
+  from source whenever it learns something and whenever it forgets, and each
+  rebuild merged and re-checked every word of every language to find out that
+  nothing about them had moved. Only the world moves; the languages are made
+  ready once and handed back. A learn or a forget costs 15 ms instead of 23.
+
+  Together: the suite runs in 24 s where it took 57 s. Understanding a signal
+  was never the cost — that is about 2 ms, and is unchanged.
+
 ### Added
 
 - **A word may carry when, or that a signal is asking, without naming

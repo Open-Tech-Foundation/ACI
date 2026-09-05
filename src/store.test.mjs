@@ -108,3 +108,13 @@ test("a world that has grown since reaches a store written before it", async () 
   assert(back.terms.some((t) => t.id === 30), "what was learned is left where it is");
   assertEquals(back.terms.find((t) => t.id === 30).links.length, 1, "links and all");
 });
+
+test("a world with nothing in it seeds without complaint", async () => {
+  // Every kind of row is written in one statement handed all of them, and a
+  // world may have none of a kind — no links, no anchors, nothing at all.
+  const db = await openStore("sqlite::memory:");
+  await seed(db, { anchors: {}, relations: {}, terms: [] });
+  assert(await isEmpty(db));
+  await seed(db, { terms: [{ id: 1, name: "thing", links: [] }] });
+  assertEquals((await readWorld(db)).terms.length, 1, "a world of one term and no links");
+});

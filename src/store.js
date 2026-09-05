@@ -82,31 +82,54 @@ export async function isEmpty(db) {
 // when empty. So what was seeded is laid down again each time, and what was
 // learned is left exactly where it is: a memory that survived a restart is not
 // thrown away to get the new world in.
+//
+// A whole world at once, and not a row at a time: every statement costs the
+// same trip to the driver whether it writes one row or five thousand, and an
+// authored world is thousands. One statement per kind of row, handed all of
+// them, is the same writes in the same order.
 export async function seed(db, world) {
   const learned = 0;
   await db.query(sql`delete from link where learned = 0`);
-  for (const t of world.terms) {
-    await db.query(sql`insert into term (id, name, value, symbol, individual, disjoint, learned)
-                       values (${t.id}, ${t.name}, ${t.value ?? null}, ${t.symbol ?? null},
-                               ${t.individual ? 1 : 0}, ${t.disjoint ? 1 : 0}, ${learned})
-                       on conflict (id) do update set
-                         name = excluded.name,
-                         value = excluded.value,
-                         symbol = excluded.symbol,
-                         individual = excluded.individual,
-                         disjoint = excluded.disjoint
-                       where term.learned = 0`);
-  }
-  for (const t of world.terms) {
-    for (const l of t.links || []) await putLink(db, t.id, l, learned);
-  }
-  for (const [name, id] of Object.entries(world.anchors || {})) {
-    await db.query(sql`insert into anchor (name, term) values (${name}, ${id})
-                       on conflict (name) do update set term = excluded.term`);
-  }
-  for (const [name, id] of Object.entries(world.relations || {})) {
-    await db.query(sql`insert into relation (name, term) values (${name}, ${id})
-                       on conflict (name) do update set term = excluded.term`);
+
+  await db.executeMany(
+    sql`insert into term (id, name, value, symbol, individual, disjoint, learned)
+        values (?, ?, ?, ?, ?, ?, ?)
+        on conflict (id) do update set
+          name = excluded.name,
+          value = excluded.value,
+          symbol = excluded.symbol,
+          individual = excluded.individual,
+          disjoint = excluded.disjoint
+        where term.learned = 0`,
+    world.terms.map((t) => [
+      t.id,
+      t.name,
+      t.value ?? null,
+      t.symbol ?? null,
+      t.individual ? 1 : 0,
+      t.disjoint ? 1 : 0,
+      learned,
+    ]),
+  );
+
+  await putLinks(
+    db,
+    world.terms.flatMap((t) => (t.links || []).map((l) => [t.id, l])),
+    learned,
+  );
+
+  for (const [table, named] of [
+    ['anchor', world.anchors || {}],
+    ['relation', world.relations || {}],
+  ]) {
+    await db.executeMany(
+      table === 'anchor'
+        ? sql`insert into anchor (name, term) values (?, ?)
+              on conflict (name) do update set term = excluded.term`
+        : sql`insert into relation (name, term) values (?, ?)
+              on conflict (name) do update set term = excluded.term`,
+      Object.entries(named),
+    );
   }
 }
 
@@ -174,8 +197,24 @@ export async function forgetLearned(db) {
 }
 
 async function putLink(db, term, l, learned) {
-  await db.query(sql`insert or ignore into link
-                       (term, rel, target, quantity, moment, denied, learned)
-                     values (${term}, ${l.rel}, ${l.to}, ${l.quantity ?? null},
-                             ${l.at ?? -1}, ${l.not ? 1 : 0}, ${learned})`);
+  await putLinks(db, [[term, l]], learned);
+}
+
+// Every link in one statement. A link a term already has is left as it is.
+async function putLinks(db, links, learned) {
+  if (links.length === 0) return;
+  await db.executeMany(
+    sql`insert or ignore into link
+          (term, rel, target, quantity, moment, denied, learned)
+        values (?, ?, ?, ?, ?, ?, ?)`,
+    links.map(([term, l]) => [
+      term,
+      l.rel,
+      l.to,
+      l.quantity ?? null,
+      l.at ?? -1,
+      l.not ? 1 : 0,
+      learned,
+    ]),
+  );
 }

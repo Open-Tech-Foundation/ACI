@@ -11,19 +11,30 @@ import { fromData } from './languages.js';
 
 const NO_WORLD = { anchors: {}, relations: {}, terms: [] };
 
-export function fromSources({ world = NO_WORLD, knowledge = [], languages = [] } = {}) {
+// The languages, checked and made ready to speak. A language is read once and
+// does not move after that — only the world does — so a caller rebuilding for a
+// world that has grown may hand these back rather than have them checked and
+// merged again for no change.
+export function speaking(languages = []) {
+  languages.forEach((l, i) => checkLanguage(l, `language[${i}]`));
+  return mergeLanguages(languages).map((l) => fromData(checkWholeLanguage(l, 'language')));
+}
+
+export function fromSources({
+  world = NO_WORLD,
+  knowledge = [],
+  languages = [],
+  spoken = null,
+} = {}) {
   checkWorld(world, 'world');
   knowledge.forEach((k, i) => checkWorld(k, `knowledge[${i}]`));
 
   const { whole, origin } = merge(world, knowledge);
   checkWhole(whole, origin);
 
-  languages.forEach((l, i) => checkLanguage(l, `language[${i}]`));
-  const spoken = mergeLanguages(languages);
-
   return {
     world: fromWorldData(whole),
-    languages: spoken.map((l) => fromData(checkWholeLanguage(l, 'language'))),
+    languages: spoken ?? speaking(languages),
   };
 }
 
