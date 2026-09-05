@@ -156,6 +156,7 @@ function recognizeLanguage(roots, langs) {
         concept: word.concept ?? null,
         marks: word.marks ?? null,
         negates: word.negates ?? false,
+        choice: word.choice ?? null,
         role: word.role ?? null,
         when: word.when ?? null,
         names: word.names ?? null,
@@ -243,6 +244,7 @@ function think(roots, langs, at, world) {
       value: word && word.marks === 'named' ? givenValue(word, at) : value,
       marks: word ? word.marks : null,
       negates: word ? word.negates : false,
+      choice: word ? word.choice === true : false,
       role: word ? word.role : null,
       when: word ? word.when : null,
       names: word ? word.names : read ? false : null,
@@ -1030,6 +1032,31 @@ function judge(roots, world, mood, langs, sent) {
   const worked = calculate(said, at, relation, world);
   if (worked) return [withBranch(root, [...root.branch, worked])];
   const terms = said.filter((n, i) => i !== at && claims(n));
+
+  // A choice between things joined as one or the other: `which is smaller, 8
+  // or 0` asks for the one the comparison comes out for, not for each. Every
+  // pairing is worked the way any comparison is; where one of them holds
+  // against all the rest, that one is the answer, and the brain takes nothing
+  // in. Where none does — a tie, or nothing worked out — the parts are
+  // answered one apiece, as before.
+  if (holes.length > 0 && terms.length >= 2 && said.some(choiceOn) && !said.some(negatesOn)) {
+    if (relation === a.more || relation === a.less) {
+      const op = said[at];
+      const beats = (x, y) => {
+        const stood = calculate([x, op, y], 1, relation, world);
+        return stood != null && stood.name === 'held';
+      };
+      const winner = terms.find((x) => terms.every((y) => x === y || beats(x, y)));
+      if (winner != null) {
+        return [
+          withBranch(root, [
+            ...root.branch,
+            node('answer', 'link', [], { subject: null, relation, found: [conceptOf(winner)] }),
+          ]),
+        ];
+      }
+    }
+  }
 
   // A question with a hole answers every term it was given, each in full — a
   // togetherness of things asked about is not one blurred question, it is one
@@ -2105,6 +2132,14 @@ function whenIn(said, world) {
 function negatesOn(n) {
   const t = n ? findBranch(n, 'thought') : null;
   return Boolean(t && t.state.thought && t.state.thought.negates);
+}
+
+// Whether this word joins what it joins as a choice rather than a
+// togetherness: one of them is the answer, not each. Which word does it is the
+// language's; that joining can be either is the brain's.
+function choiceOn(n) {
+  const t = n ? findBranch(n, 'thought') : null;
+  return Boolean(t && t.state.thought && t.state.thought.choice);
 }
 
 // What a word says about the thing beside it, or about itself.

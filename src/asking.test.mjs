@@ -51,6 +51,26 @@ test("asking names nothing, with or without a question mark", async () => {
   await forget();
 });
 
+test("a choice joined by or is answered with the one it comes out for", async () => {
+  // `or` joins as a choice, not a togetherness: one of them is the answer.
+  // Each pairing is worked the way any comparison is.
+  assertEquals((await fresh("which is smaller 8 or 0")).expression.state.says, "zero");
+  assertEquals((await fresh("which is bigger 8 or 0")).expression.state.says, "eight");
+  assertEquals((await fresh("what is smaller 8 or 0")).expression.state.says, "zero");
+  const tied = await fresh("which is smaller 8 or 8");
+  assertEquals(tied.learned, null, "a tie teaches nothing either");
+  assertEquals(tied.expression.name, "answer", "a tie falls back to answering apiece");
+  await forget();
+});
+
+test("a choice may be measured things, not only numbers", async () => {
+  await forget();
+  await brain("alice measures 2 metre", { from: PERSON });
+  await brain("bob measures 1 metre", { from: PERSON });
+  assertEquals((await brain("which is bigger alice or bob", { from: PERSON })).expression.state.says, "alice");
+  await forget();
+});
+
 test("what was told of one doing is not told of another", async () => {
   const r = await fresh("a boy kicked the ball", "a man kicked the stone", "who kicked the stone");
   assertEquals(r.expression.state.says, "man");

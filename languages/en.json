@@ -711,6 +711,11 @@
       "pos": "conjunction",
       "meaning": "and"
     },
+    "or": {
+      "pos": "conjunction",
+      "meaning": "or",
+      "choice": true
+    },
     "hold": {
       "pos": "verb",
       "meaning": "hold",
@@ -3720,6 +3725,11 @@
     "what": {
       "pos": "interrogative",
       "meaning": "what",
+      "marks": "unknown"
+    },
+    "which": {
+      "pos": "interrogative",
+      "meaning": "which",
       "marks": "unknown"
     },
     "who": {

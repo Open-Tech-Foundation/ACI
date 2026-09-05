@@ -333,7 +333,7 @@ function checkWord(info, w) {
   if (!info || typeof info !== 'object' || Array.isArray(info)) fail(w, 'must be an object');
   onlyKeys(
     info,
-    ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'person', 'number', 'on', 'bare'],
+    ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'person', 'number', 'on', 'bare', 'choice'],
     w,
   );
   // A word may be more than one part of speech — English says a walk and
@@ -374,6 +374,10 @@ function checkWord(info, w) {
   }
   if (info.negates !== undefined && info.negates !== true) {
     fail(w, 'negates, where present, must be true');
+  }
+  // A word may join what it joins as a choice rather than a togetherness.
+  if (info.choice !== undefined && info.choice !== true) {
+    fail(w, 'choice, where present, must be true');
   }
   // A word may stand bare, with no article: what it names is not one of a
   // kind. That a language may do without is the brain's; which of its words do

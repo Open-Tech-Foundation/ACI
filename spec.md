@@ -176,7 +176,8 @@ the id of the world term it names. It may also carry `marks` (what it points at
 or says of its neighbour), `negates`, `role` (which part its neighbour plays),
 `when`, `names`, `groups`, `person` and `number`. A word may say its term
 stands bare, with no article (`bare`), the way a mass of water is not one
-water. There is **no** `type`,
+water. A word may join what it joins as a choice rather than a togetherness
+(`choice`): one of them is the answer, not each. There is **no** `type`,
 `emotion`, or `reply` — the brain derives those.
 
 **A word may be more than one part of speech.** `pos` may be a list, and which
@@ -967,6 +968,13 @@ part of it**, since no part of it was offered on its own.
 The join is read at its **widest** — `"1+8 and 5+9"` is two workings-out, not
 one sentence with a joined complement — and it is found **wherever it stands**:
 a signal laid over a join reaches it, so `"what is 1+8 and 5+9"` answers both.
+
+A join may be a **choice** rather than a togetherness: which word joins them
+that way is the language's, and English says `or`. Asked across a comparison,
+each pairing is worked the way any comparison is, and where one of them holds
+against all the rest, that one is the answer — `"which is smaller, 8 or 0"`
+answers `"zero"`, and takes nothing in. Where none does, a tie or nothing
+worked out, the parts are answered one apiece, as before.
 
 **Judging and saying are separate acts.** Every verdict stays on the tree, but
 saying one twice says nothing the first did not: two that came out differently

@@ -30,6 +30,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Which of two, joined by `or`.** `which` is a hole like `what`, and `or`
+  joins as a choice rather than a togetherness — one of them is the answer,
+  not each. Asked across a comparison, every pairing is worked the way any
+  comparison is: `which is smaller 8 or 0` answers `zero`, measured things
+  answer the same way, and a tie falls back to answering apiece. Nothing is
+  taken in either way.
+
 - **Devices, music, more feelings and weather, singing and dancing.** `device`
   holds its first kinds — radio, television, camera, speaker, headphones,
   charger, battery, printer, microwave, freezer and fan — and `screen` and
