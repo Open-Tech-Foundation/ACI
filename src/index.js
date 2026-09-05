@@ -164,13 +164,20 @@ async function projectRoot(file) {
 }
 
 // Files are read in name order so the brain is assembled the same way on every
-// machine. A directory that is not there contributes nothing.
+// machine. A directory that is not there contributes nothing; one that is there
+// and unreadable says so, rather than going missing in silence.
 async function readAll(root, dir) {
   const { readDir, file } = await import('runtime:fs');
   let entries;
   try {
     entries = await readDir(`${root}${dir}`);
-  } catch {
+  } catch (why) {
+    // A directory that is not there contributes nothing, and that is ordinary.
+    // Being told it may not be read is not: the brain would answer from less
+    // than it was given and never say so, and a brain whose every answer is
+    // meant to trace back to something readable must not do that quietly.
+    if (why && why.code === 'ERR_NOT_FOUND') return [];
+    console.warn(`cannot read ${dir} — the brain runs without what is in it: ${why.message}`);
     return [];
   }
   const names = entries

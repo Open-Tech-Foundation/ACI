@@ -16,7 +16,8 @@
       "read": [
         ".",
         "../languages",
-        "../data"
+        "../data",
+        "../knowledge"
       ],
       "listen": [
         "4199"

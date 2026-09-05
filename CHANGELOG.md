@@ -4,6 +4,19 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- **The demo ran without anything under `knowledge/`.** Its permission list
+  granted `../languages` and `../data` and not `../knowledge`, so the one file
+  that says what this instance is called was never read — *what is your name?*
+  answered *none* through `tsr dev` and *ACI* everywhere else.
+
+- **A source that cannot be read says so.** A directory that is not there
+  contributes nothing, and that is ordinary; being told it may not be read is
+  not, and both were swallowed alike. The brain would answer from less than it
+  was given and never mention it, which is the one thing a brain whose answers
+  are meant to trace back to readable data must not do quietly.
+
 ### Changed
 
 - **A write is executed, not queried.** Every insert and delete went through
