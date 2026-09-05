@@ -979,19 +979,17 @@ function judge(roots, world, mood, langs, sent) {
       }
     }
 
-    // Asked how many of a kind there are, it counts what it knows.
+    // Asked how many of a kind there are, with nothing being spoken of, the
+    // world is not counted out. The world is for understanding — what a kind
+    // is, and how it stands — not an inventory to read back in public. What a
+    // thing holds is another matter, and is read above; a kind on its own is
+    // not counted, and the brain says it does not know.
     if (things.length === 1) {
       const kind = conceptOf(things[0]);
-      const members = world.members(kind, world.baseRelation);
-      const total = world.termFor(members.length);
       return [
         withBranch(root, [
           ...root.branch,
-          node('count', total == null ? 'beyond' : 'counted', [], {
-            of: kind,
-            members: members.length,
-            total,
-          }),
+          node('count', 'beyond', [], { of: kind, members: null, total: null }),
         ]),
       ];
     }

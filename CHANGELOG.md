@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A kind on its own is not counted out in public.** Asked how many of a kind
+  cold, the brain counted its own shelves — *how many mammal* answered with
+  what the world holds terms for. The world is for understanding, not
+  inventory: a kind with nothing spoken of is not counted, and the brain says
+  it does not know. What a thing holds is another matter and is read as
+  before — *the crate holds how many lamps* still answers, and so does *a week
+  has how many days*.
+
 - **Asking names nothing.** A hole stands for what the signal does not say, so
   a signal carrying one is asking, not giving — `who has the telescope` named
   a telescope and answered *I understand.* It names nothing now, answers what

@@ -672,34 +672,42 @@ test("only a thing carries a count, never a relation", async () => {
   assertEquals(kind(leaves.find((n) => n.state.identity === "is"), "quantity"), null);
 });
 
-test("the brain counts what the world holds, and says the number", async () => {
+test("a kind on its own is not counted out in public", async () => {
   forget();  // asked cold, with nothing being spoken of
-  assertEquals((await brain("how many season?")).expression.state.says, "four");
-  assertEquals((await brain("how many weather?")).expression.state.says, "eight");
-  assertEquals((await brain("how many colour?")).expression.state.says, "ten");
+  // The world is for understanding, not an inventory to read back: how many
+  // of a kind it holds terms for is nobody's question but an inventory's.
+  for (const q of ["how many season?", "how many weather?", "how many colour?"]) {
+    const r = await brain(q);
+    assertEquals(r.expression.name, "unsure", q);
+    assertEquals(r.expression.state.says, "I don't know.", q);
+    assertEquals(r.learned, null, "and nothing is taken in either");
+  }
 });
 
-test("nothing to count is zero, not silence", async () => {
+test("nothing held is nothing known, not a number", async () => {
   forget();
   const r = await brain("how many chameleon?");
-  assertEquals(kind(r.roots[0], "count").state.members, 0);
-  assertEquals(r.expression.state.says, "zero");
+  assertEquals(kind(r.roots[0], "count").state.members, null);
+  assertEquals(r.expression.name, "unsure");
+  assertEquals(r.expression.state.says, "I don't know.");
 });
 
-test("counting past what the world names invents no term, and still answers", async () => {
+test("a world-sized count is not answered, whatever it comes to", async () => {
   forget();
-  // Seventy-six mammals, and no single word in English for seventy-six.
+  // Seventy-six mammals, and no single word in English for seventy-six. The
+  // count is not reached for, so no term is invented and none is written.
   const r = await brain("how many mammal?");
-  assertEquals(kind(r.roots[0], "count").name, "beyond", "no term was invented for it");
-  assertEquals(r.expression.state.says, "76", "and the language can still write it");
+  assertEquals(kind(r.roots[0], "count").name, "beyond");
+  assertEquals(kind(r.roots[0], "count").state.members, null);
+  assertEquals(r.expression.name, "unsure");
 });
 
-test("the count is the terms the world holds, not a fact stored anywhere", async () => {
+test("what a thing holds is counted; a kind is not", async () => {
   forget();
-  const r = await brain("how many season?");
-  const counted = kind(r.roots[0], "count");
-  assertEquals(counted.state.members, 4);
-  assertEquals(counted.state.total, 117, "the term for four");
+  await brain("a pond has 1000 stones");
+  assertEquals((await brain("how many stones?")).expression.state.says, "1000");
+  await forget();
+  assertEquals((await brain("how many season?")).expression.name, "unsure");
 });
 
 test("the brain adds and subtracts, and the world only names the numbers", async () => {
@@ -755,7 +763,7 @@ test("no plural is written down anywhere", async () => {
   assertEquals(
     (await brain("how many seasons?")).expression.state.says,
     (await brain("how many season?")).expression.state.says,
-    "the plural counts what the singular counts",
+    "the plural derives to what the singular derives to",
   );
 });
 
@@ -786,11 +794,13 @@ test("a hole is a word the language marks as one, not any word without a term", 
   assert(kind(asked.roots[0], "answer") !== null);
 });
 
-test("the world can be counted by any of its shelves", async () => {
+test("no shelf of the world is counted out in public", async () => {
   forget();
-  assertEquals((await brain("how many colour?")).expression.state.says, "ten");
-  assertEquals((await brain("how many feeling?")).expression.state.says, "seven");
-  assertEquals((await brain("how many amphibian?")).expression.state.says, "four");
+  // Colour, feeling, amphibian — no shelf answers for itself, however it is
+  // asked after.
+  for (const q of ["how many colour?", "how many feeling?", "how many amphibian?"]) {
+    assertEquals((await brain(q)).expression.name, "unsure", q);
+  }
 });
 
 test("a denial is knowledge, where not finding a path is only ignorance", async () => {

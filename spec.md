@@ -621,8 +621,10 @@ two moments. Nothing is remembered on purpose; the record was never erased.
 Asked how many of a kind, with **something being spoken of**, the question is
 about that thing — and where it holds none of what was asked after, the brain
 does not know. It does not go and count what it holds of its own instead:
-whoever is talking to it knows nothing of its shelves and never asked. Only
-where **nothing** is being spoken of is it the world being counted.
+whoever is talking to it knows nothing of its shelves and never asked. Where
+**nothing** is being spoken of, it still does not count them: the world is for
+understanding what a kind is, not an inventory to read back in public, so a
+kind on its own is not counted and the brain says it does not know.
 
 What a thing holds is counted across the kinds it holds — nothing says a shop
 holds *things*, it holds bats and balls, and those are things. Asked after
