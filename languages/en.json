@@ -17297,7 +17297,9 @@
           "item conjunction subject",
           "noun preposition subject",
           "article noun preposition subject",
-          "article pronoun"
+          "article pronoun",
+          "article adjective pronoun",
+          "article noun pronoun"
         ]
       },
       "item": {
@@ -17317,7 +17319,9 @@
           "function subject",
           "noun preposition subject",
           "article noun preposition subject",
-          "article pronoun"
+          "article pronoun",
+          "article adjective pronoun",
+          "article noun pronoun"
         ]
       },
       "predicate": {

@@ -36,7 +36,16 @@ All notable changes to this project are documented in this file.
   determiner the pronoun reading is taken (`the one is warm` after a clarinet
   is introduced learns it of the clarinet), otherwise the numeral stands (`one
   plus one` still counts). Grammar gains `article pronoun` for the binding.
-  Description filtering (`the blue one` = the blue kind) is still open.
+
+- **A description before `one` restricts, claims nothing.** Nouns,
+  adjectives and degrees between a determiner and an ellipsis head (`the
+  sweet one`, `the brass one`) never offer their own fact: grammar binds
+  `article adjective/noun pronoun`, ellipsis settles across the modifier
+  chain, and judging drops restrictors from claims (conjunctions untouched,
+  so togetherness still offers every side). `the sweet one is hot` takes in
+  one fact, not two. Presupposition (`the sweet one` also saying the head is
+  sweet) is not taken in — constitution is not kind, and that distinction is
+  open.
 
 - **Person pointers `she`/`he`.** They were absent from the language data
   entirely (unheard). They now point like any spoken pointer

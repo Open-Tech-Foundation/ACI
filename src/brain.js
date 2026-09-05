@@ -620,9 +620,11 @@ function calling(roots, world, mood) {
 
 // A word that may be a number or an elliptical NP (`one` is both) is settled
 // by what stands before it: after a determiner it stands for a focused kind,
-// otherwise it stays a number — `one plus one` still counts. Which determiners
-// exist is the language's (`article` here); that ellipsis needs one is the
-// brain's. Runs before anything is named, like `settle`.
+// otherwise it stays a number — `one plus one` still counts. A description
+// may stand between (`the blue one`, `the very sweet one`), so the scan walks
+// left over nouns, adjectives and degrees to the determiner. Which determiners
+// and descriptions exist is the language's; that ellipsis needs a determiner
+// is the brain's. Runs before anything is named, like `settle`.
 function elliptical(roots) {
   return roots.map((n, i) => {
     const t = findBranch(n, 'thought');
@@ -630,8 +632,9 @@ function elliptical(roots) {
     if (!ways || ways.length < 2) return n;
     const anaphora = ways.find((w) => w && w.marks === 'spoken' && (Array.isArray(w.pos) ? w.pos : [w.pos]).includes('pronoun'));
     if (!anaphora) return n;
-    const prev = i > 0 ? posOf(roots[i - 1]) : [];
-    if (!prev.includes('article')) return n;
+    let j = i - 1;
+    while (j >= 0 && posOf(roots[j]).some((p) => p === 'noun' || p === 'adjective' || p === 'degree')) j -= 1;
+    if (j < 0 || !posOf(roots[j]).includes('article')) return n;
     return withBranch(
       n,
       n.branch.map((b) =>
@@ -997,9 +1000,16 @@ function judge(roots, world, mood, langs, sent) {
     ];
   }
 
+  // A description before an ellipsis head restricts which one is meant; it
+  // never offers a fact of its own — `the blue one is warm` says the kind is
+  // warm, not blueness. Determiner-headed phrases only; togetherness (`a cow
+  // and a dog`) still offers every side.
+  const restricted = restrictedIn(root);
+
   // A claim may be about anything that exists, not only about a thing: gravity
   // is a force, and neither of them is a thing.
   const claims = (n) =>
+    !restricted.has(n) &&
     (conceptOf(n) != null || numberOf(n, world) != null) &&
     // The weakest relation is the signal's joint, never one of the things being
     // joined: "what is your name" is about a name, not about `is`.
@@ -2292,6 +2302,35 @@ function nearest(said, from, step, wanted) {
     if (wanted(said[i])) return said[i];
   }
   return null;
+}
+
+// Which leaves of a determiner-headed phrase only restrict its ellipsis head
+// (`the`, `blue` in `the blue one is warm`). The head is a pronoun settled
+// from several readings; conjunctions are untouched, so each joined side
+// still claims on its own.
+function restrictedIn(root) {
+  const restricted = new Set();
+  const walk = (n) => {
+    if (n.kind === 'subject' || n.kind === 'item') {
+      const kids = (n.branch || []).filter((b) => b.kind === 'thing');
+      if (kids.length > 2 && posOf(kids[0]).includes('article')) {
+        const head = kids[kids.length - 1];
+        const t = head ? findBranch(head, 'thought') : null;
+        const thought = t ? t.state.thought : null;
+        const pos = thought ? thought.pos : null;
+        const isEllipsis =
+          thought &&
+          thought.marks === 'spoken' &&
+          (Array.isArray(pos) ? pos : [pos]).includes('pronoun') &&
+          t.state.ways &&
+          t.state.ways.length > 1;
+        if (isEllipsis) kids.slice(1, -1).forEach((k) => restricted.add(k));
+      }
+    }
+    (n.branch || []).forEach(walk);
+  };
+  walk(root);
+  return restricted;
 }
 
 // Whether something a signal names ever happened. Every part it names must be
