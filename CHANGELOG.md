@@ -6,6 +6,10 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A day has twenty-four hours.** A week already held seven days and a year
+  twelve months; a day now holds twenty-four hours, so asking how many hours it
+  has answers with what was counted.
+
 - **`hurt` as a doing.** `hurt` named only the feeling at the bad pole, so `"i
   hurt myself"` was not understood. The world gains `hurting` under work, and
   the word names both — the feeling and the doing it also is — settled the way

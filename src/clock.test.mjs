@@ -35,3 +35,9 @@ test("a number beside a unit says how much, not how many", async () => {
   assertEquals((await brain("an apple has three weight")).expression.name, "unsure");
   await forget();
 });
+
+test("a day is counted in hours", async () => {
+  await forget();
+  assertEquals(await says("a day has how many hours?"), "24");
+  await forget();
+});
