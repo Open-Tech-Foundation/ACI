@@ -31,6 +31,13 @@ All notable changes to this project are documented in this file.
   reaching across signals (`into it`), so role-marked cross-signal uses are
   unchanged.
 
+- **Elliptical `one`/`ones` stand for the focused kind.** `one` holds two
+  readings (numeral, pronoun) and `ones` is a plural pronoun; after a
+  determiner the pronoun reading is taken (`the one is warm` after a clarinet
+  is introduced learns it of the clarinet), otherwise the numeral stands (`one
+  plus one` still counts). Grammar gains `article pronoun` for the binding.
+  Description filtering (`the blue one` = the blue kind) is still open.
+
 - **The demo ran without anything under `knowledge/`.** Its permission list
   granted `../languages` and `../data` and not `../knowledge`, so the one file
   that says what this instance is called was never read — *what is your name?*

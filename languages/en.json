@@ -95,10 +95,26 @@
       "concept": 294,
       "when": "future"
     },
-    "one": {
-      "pos": "numeral",
-      "meaning": "1",
-      "concept": 114
+    "one": [
+      {
+        "pos": "numeral",
+        "meaning": "1",
+        "concept": 114
+      },
+      {
+        "pos": "pronoun",
+        "meaning": "one",
+        "marks": "spoken",
+        "person": "third",
+        "number": "singular"
+      }
+    ],
+    "ones": {
+      "pos": "pronoun",
+      "meaning": "ones",
+      "marks": "spoken",
+      "person": "third",
+      "number": "plural"
     },
     "two": {
       "pos": "numeral",
@@ -17266,7 +17282,8 @@
           "function subject",
           "item conjunction subject",
           "noun preposition subject",
-          "article noun preposition subject"
+          "article noun preposition subject",
+          "article pronoun"
         ]
       },
       "item": {
@@ -17285,7 +17302,8 @@
           "open subject close",
           "function subject",
           "noun preposition subject",
-          "article noun preposition subject"
+          "article noun preposition subject",
+          "article pronoun"
         ]
       },
       "predicate": {

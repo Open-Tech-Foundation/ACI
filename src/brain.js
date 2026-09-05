@@ -449,7 +449,7 @@ function solve(roots, world, langs, mood) {
   // Whose a thing is settles what it names, and a word nothing knows is named
   // only where it stands in a claim — so whose comes first, or a claim resting
   // on a pointer that landed on nothing would still name something.
-  const settled = calling(whose(settle(roots, world), world, langs, mood), world, mood);
+  const settled = calling(whose(settle(elliptical(roots), world), world, langs, mood), world, mood);
   return settled.map((n, at) => {
     if (!n.state.exists) {
       return withBranch(n, [...n.branch, node('response', 'nothing', [])]);
@@ -615,6 +615,29 @@ function calling(roots, world, mood) {
       ),
       node('call', n.state.identity, [], { name: n.state.identity, id, of: kind, many }),
     ]);
+  });
+}
+
+// A word that may be a number or an elliptical NP (`one` is both) is settled
+// by what stands before it: after a determiner it stands for a focused kind,
+// otherwise it stays a number — `one plus one` still counts. Which determiners
+// exist is the language's (`article` here); that ellipsis needs one is the
+// brain's. Runs before anything is named, like `settle`.
+function elliptical(roots) {
+  return roots.map((n, i) => {
+    const t = findBranch(n, 'thought');
+    const ways = t && t.state.ways ? t.state.ways : null;
+    if (!ways || ways.length < 2) return n;
+    const anaphora = ways.find((w) => w && w.marks === 'spoken' && (Array.isArray(w.pos) ? w.pos : [w.pos]).includes('pronoun'));
+    if (!anaphora) return n;
+    const prev = i > 0 ? posOf(roots[i - 1]) : [];
+    if (!prev.includes('article')) return n;
+    return withBranch(
+      n,
+      n.branch.map((b) =>
+        b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: anaphora }) : b,
+      ),
+    );
   });
 }
 
