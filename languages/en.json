@@ -245,6 +245,351 @@
       "meaning": "feline animal",
       "concept": 83
     },
+    "aardvark": {
+      "pos": "noun",
+      "meaning": "aardvark",
+      "concept": 1757
+    },
+    "agouti": {
+      "pos": "noun",
+      "meaning": "agouti",
+      "concept": 1758
+    },
+    "bandicoot": {
+      "pos": "noun",
+      "meaning": "bandicoot",
+      "concept": 1759
+    },
+    "capybara": {
+      "pos": "noun",
+      "meaning": "capybara",
+      "concept": 1760
+    },
+    "caracal": {
+      "pos": "noun",
+      "meaning": "caracal",
+      "concept": 1761
+    },
+    "civet": {
+      "pos": "noun",
+      "meaning": "civet",
+      "concept": 1762
+    },
+    "echidna": {
+      "pos": "noun",
+      "meaning": "echidna",
+      "concept": 1763
+    },
+    "eland": {
+      "pos": "noun",
+      "meaning": "eland",
+      "concept": 1764
+    },
+    "genet": {
+      "pos": "noun",
+      "meaning": "genet",
+      "concept": 1765
+    },
+    "hamster": {
+      "pos": "noun",
+      "meaning": "hamster",
+      "concept": 1766
+    },
+    "jerboa": {
+      "pos": "noun",
+      "meaning": "jerboa",
+      "concept": 1767
+    },
+    "langur": {
+      "pos": "noun",
+      "meaning": "langur",
+      "concept": 1768
+    },
+    "loris": {
+      "pos": "noun",
+      "meaning": "loris",
+      "concept": 1769
+    },
+    "manatee": {
+      "pos": "noun",
+      "meaning": "manatee",
+      "concept": 1770
+    },
+    "marmot": {
+      "pos": "noun",
+      "meaning": "marmot",
+      "concept": 1771
+    },
+    "meerkat": {
+      "pos": "noun",
+      "meaning": "meerkat",
+      "concept": 1772
+    },
+    "mongoose": {
+      "pos": "noun",
+      "meaning": "mongoose",
+      "concept": 1773
+    },
+    "ocelot": {
+      "pos": "noun",
+      "meaning": "ocelot",
+      "concept": 1774
+    },
+    "okapi": {
+      "pos": "noun",
+      "meaning": "okapi",
+      "concept": 1775
+    },
+    "oryx": {
+      "pos": "noun",
+      "meaning": "oryx",
+      "concept": 1776
+    },
+    "pangolin": {
+      "pos": "noun",
+      "meaning": "pangolin",
+      "concept": 1777
+    },
+    "platypus": {
+      "pos": "noun",
+      "meaning": "platypus",
+      "concept": 1778
+    },
+    "quokka": {
+      "pos": "noun",
+      "meaning": "quokka",
+      "concept": 1779
+    },
+    "serval": {
+      "pos": "noun",
+      "meaning": "serval",
+      "concept": 1780
+    },
+    "shrew": {
+      "pos": "noun",
+      "meaning": "shrew",
+      "concept": 1781
+    },
+    "stoat": {
+      "pos": "noun",
+      "meaning": "stoat",
+      "concept": 1782
+    },
+    "tapir": {
+      "pos": "noun",
+      "meaning": "tapir",
+      "concept": 1783
+    },
+    "tarsier": {
+      "pos": "noun",
+      "meaning": "tarsier",
+      "concept": 1784
+    },
+    "vole": {
+      "pos": "noun",
+      "meaning": "vole",
+      "concept": 1785
+    },
+    "wallaby": {
+      "pos": "noun",
+      "meaning": "wallaby",
+      "concept": 1786
+    },
+    "wombat": {
+      "pos": "noun",
+      "meaning": "wombat",
+      "concept": 1787
+    },
+    "bonobo": {
+      "pos": "noun",
+      "meaning": "bonobo",
+      "concept": 1788
+    },
+    "bushbaby": {
+      "pos": "noun",
+      "meaning": "bushbaby",
+      "concept": 1789
+    },
+    "bushbuck": {
+      "pos": "noun",
+      "meaning": "bushbuck",
+      "concept": 1790
+    },
+    "capuchin": {
+      "pos": "noun",
+      "meaning": "capuchin",
+      "concept": 1791
+    },
+    "chamois": {
+      "pos": "noun",
+      "meaning": "chamois",
+      "concept": 1792
+    },
+    "chevrotain": {
+      "pos": "noun",
+      "meaning": "chevrotain",
+      "concept": 1793
+    },
+    "chinchilla": {
+      "pos": "noun",
+      "meaning": "chinchilla",
+      "concept": 1794
+    },
+    "coati": {
+      "pos": "noun",
+      "meaning": "coati",
+      "concept": 1795
+    },
+    "colobus": {
+      "pos": "noun",
+      "meaning": "colobus",
+      "concept": 1796
+    },
+    "degu": {
+      "pos": "noun",
+      "meaning": "degu",
+      "concept": 1797
+    },
+    "dormouse": {
+      "pos": "noun",
+      "meaning": "dormouse",
+      "concept": 1798
+    },
+    "dugong": {
+      "pos": "noun",
+      "meaning": "dugong",
+      "concept": 1799
+    },
+    "fisher": {
+      "pos": "noun",
+      "meaning": "fisher",
+      "concept": 1800
+    },
+    "fossa": {
+      "pos": "noun",
+      "meaning": "fossa",
+      "concept": 1801
+    },
+    "gerbil": {
+      "pos": "noun",
+      "meaning": "gerbil",
+      "concept": 1802
+    },
+    "goral": {
+      "pos": "noun",
+      "meaning": "goral",
+      "concept": 1803
+    },
+    "guanaco": {
+      "pos": "noun",
+      "meaning": "guanaco",
+      "concept": 1804
+    },
+    "hyrax": {
+      "pos": "noun",
+      "meaning": "hyrax",
+      "concept": 1805
+    },
+    "ibex": {
+      "pos": "noun",
+      "meaning": "ibex",
+      "concept": 1806
+    },
+    "impala": {
+      "pos": "noun",
+      "meaning": "impala",
+      "concept": 1807
+    },
+    "indri": {
+      "pos": "noun",
+      "meaning": "indri",
+      "concept": 1808
+    },
+    "kinkajou": {
+      "pos": "noun",
+      "meaning": "kinkajou",
+      "concept": 1809
+    },
+    "klipspringer": {
+      "pos": "noun",
+      "meaning": "klipspringer",
+      "concept": 1810
+    },
+    "kudu": {
+      "pos": "noun",
+      "meaning": "kudu",
+      "concept": 1811
+    },
+    "marmoset": {
+      "pos": "noun",
+      "meaning": "marmoset",
+      "concept": 1812
+    },
+    "muskox": {
+      "pos": "noun",
+      "meaning": "muskox",
+      "concept": 1813
+    },
+    "paca": {
+      "pos": "noun",
+      "meaning": "paca",
+      "concept": 1814
+    },
+    "quoll": {
+      "pos": "noun",
+      "meaning": "quoll",
+      "concept": 1815
+    },
+    "ringtail": {
+      "pos": "noun",
+      "meaning": "ringtail",
+      "concept": 1816
+    },
+    "saiga": {
+      "pos": "noun",
+      "meaning": "saiga",
+      "concept": 1817
+    },
+    "saki": {
+      "pos": "noun",
+      "meaning": "saki",
+      "concept": 1818
+    },
+    "sifaka": {
+      "pos": "noun",
+      "meaning": "sifaka",
+      "concept": 1819
+    },
+    "springbok": {
+      "pos": "noun",
+      "meaning": "springbok",
+      "concept": 1820
+    },
+    "tamandua": {
+      "pos": "noun",
+      "meaning": "tamandua",
+      "concept": 1821
+    },
+    "tamarin": {
+      "pos": "noun",
+      "meaning": "tamarin",
+      "concept": 1822
+    },
+    "vicuna": {
+      "pos": "noun",
+      "meaning": "vicuna",
+      "concept": 1823
+    },
+    "waterbuck": {
+      "pos": "noun",
+      "meaning": "waterbuck",
+      "concept": 1824
+    },
+    "wolverine": {
+      "pos": "noun",
+      "meaning": "wolverine",
+      "concept": 1825
+    },
     "dog": {
       "pos": "noun",
       "meaning": "canine animal",
@@ -254,6 +599,86 @@
       "pos": "noun",
       "meaning": "fruit",
       "concept": 79
+    },
+    "blackcurrant": {
+      "pos": "noun",
+      "meaning": "blackcurrant",
+      "concept": 1912
+    },
+    "redcurrant": {
+      "pos": "noun",
+      "meaning": "redcurrant",
+      "concept": 1913
+    },
+    "boysenberry": {
+      "pos": "noun",
+      "meaning": "boysenberry",
+      "concept": 1914
+    },
+    "loganberry": {
+      "pos": "noun",
+      "meaning": "loganberry",
+      "concept": 1915
+    },
+    "elderberry": {
+      "pos": "noun",
+      "meaning": "elderberry",
+      "concept": 1916
+    },
+    "damson": {
+      "pos": "noun",
+      "meaning": "damson",
+      "concept": 1917
+    },
+    "greengage": {
+      "pos": "noun",
+      "meaning": "greengage",
+      "concept": 1918
+    },
+    "medlar": {
+      "pos": "noun",
+      "meaning": "medlar",
+      "concept": 1919
+    },
+    "durian": {
+      "pos": "noun",
+      "meaning": "durian",
+      "concept": 1920
+    },
+    "feijoa": {
+      "pos": "noun",
+      "meaning": "feijoa",
+      "concept": 1921
+    },
+    "jackfruit": {
+      "pos": "noun",
+      "meaning": "jackfruit",
+      "concept": 1922
+    },
+    "kumquat": {
+      "pos": "noun",
+      "meaning": "kumquat",
+      "concept": 1923
+    },
+    "loquat": {
+      "pos": "noun",
+      "meaning": "loquat",
+      "concept": 1924
+    },
+    "plantain": {
+      "pos": "noun",
+      "meaning": "plantain",
+      "concept": 1925
+    },
+    "pomelo": {
+      "pos": "noun",
+      "meaning": "pomelo",
+      "concept": 1926
+    },
+    "rambutan": {
+      "pos": "noun",
+      "meaning": "rambutan",
+      "concept": 1927
     },
     "bird": {
       "pos": "noun",
@@ -429,6 +854,201 @@
       "meaning": "hammer",
       "concept": 42
     },
+    "adze": {
+      "pos": "noun",
+      "meaning": "adze",
+      "concept": 2124
+    },
+    "auger": {
+      "pos": "noun",
+      "meaning": "auger",
+      "concept": 2125
+    },
+    "awl": {
+      "pos": "noun",
+      "meaning": "awl",
+      "concept": 2126
+    },
+    "file": {
+      "pos": "noun",
+      "meaning": "file",
+      "concept": 2127
+    },
+    "gimlet": {
+      "pos": "noun",
+      "meaning": "gimlet",
+      "concept": 2128
+    },
+    "grinder": {
+      "pos": "noun",
+      "meaning": "grinder",
+      "concept": 2129
+    },
+    "jack": {
+      "pos": "noun",
+      "meaning": "jack",
+      "concept": 2130
+    },
+    "lathe": {
+      "pos": "noun",
+      "meaning": "lathe",
+      "concept": 2131
+    },
+    "pestle": {
+      "pos": "noun",
+      "meaning": "pestle",
+      "concept": 2132
+    },
+    "pickaxe": {
+      "pos": "noun",
+      "meaning": "pickaxe",
+      "concept": 2133
+    },
+    "pitchfork": {
+      "pos": "noun",
+      "meaning": "pitchfork",
+      "concept": 2134
+    },
+    "rasp": {
+      "pos": "noun",
+      "meaning": "rasp",
+      "concept": 2135
+    },
+    "sander": {
+      "pos": "noun",
+      "meaning": "sander",
+      "concept": 2136
+    },
+    "shears": {
+      "pos": "noun",
+      "meaning": "shears",
+      "concept": 2137
+    },
+    "trowel": {
+      "pos": "noun",
+      "meaning": "trowel",
+      "concept": 2138
+    },
+    "vise": {
+      "pos": "noun",
+      "meaning": "vise",
+      "concept": 2139
+    },
+    "dibber": {
+      "pos": "noun",
+      "meaning": "dibber",
+      "concept": 2140
+    },
+    "emery": {
+      "pos": "noun",
+      "meaning": "emery",
+      "concept": 2141
+    },
+    "float": {
+      "pos": "noun",
+      "meaning": "float",
+      "concept": 2142
+    },
+    "billhook": {
+      "pos": "noun",
+      "meaning": "billhook",
+      "concept": 2143
+    },
+    "brace": {
+      "pos": "noun",
+      "meaning": "brace",
+      "concept": 2144
+    },
+    "broach": {
+      "pos": "noun",
+      "meaning": "broach",
+      "concept": 2145
+    },
+    "countersink": {
+      "pos": "noun",
+      "meaning": "countersink",
+      "concept": 2146
+    },
+    "drift": {
+      "pos": "noun",
+      "meaning": "drift",
+      "concept": 2147
+    },
+    "edger": {
+      "pos": "noun",
+      "meaning": "edger",
+      "concept": 2148
+    },
+    "jigsaw": {
+      "pos": "noun",
+      "meaning": "jigsaw",
+      "concept": 2149
+    },
+    "jointer": {
+      "pos": "noun",
+      "meaning": "jointer",
+      "concept": 2150
+    },
+    "level": {
+      "pos": "noun",
+      "meaning": "level",
+      "concept": 2151
+    },
+    "mandrel": {
+      "pos": "noun",
+      "meaning": "mandrel",
+      "concept": 2152
+    },
+    "maul": {
+      "pos": "noun",
+      "meaning": "maul",
+      "concept": 2153
+    },
+    "miter": {
+      "pos": "noun",
+      "meaning": "miter",
+      "concept": 2154
+    },
+    "oilstone": {
+      "pos": "noun",
+      "meaning": "oilstone",
+      "concept": 2155
+    },
+    "pincer": {
+      "pos": "noun",
+      "meaning": "pincer",
+      "concept": 2156
+    },
+    "punch": {
+      "pos": "noun",
+      "meaning": "punch",
+      "concept": 2157
+    },
+    "rivet": {
+      "pos": "noun",
+      "meaning": "rivet",
+      "concept": 2158
+    },
+    "router": {
+      "pos": "noun",
+      "meaning": "router",
+      "concept": 2159
+    },
+    "scraper": {
+      "pos": "noun",
+      "meaning": "scraper",
+      "concept": 2160
+    },
+    "tap": {
+      "pos": "noun",
+      "meaning": "tap",
+      "concept": 2161
+    },
+    "tweezers": {
+      "pos": "noun",
+      "meaning": "tweezers",
+      "concept": 2162
+    },
     "pen": [
       {
         "pos": "noun",
@@ -503,6 +1123,101 @@
       "meaning": "printer",
       "concept": 1547
     },
+    "blender": {
+      "pos": "noun",
+      "meaning": "blender",
+      "concept": 2569
+    },
+    "dishwasher": {
+      "pos": "noun",
+      "meaning": "dishwasher",
+      "concept": 2570
+    },
+    "dryer": {
+      "pos": "noun",
+      "meaning": "dryer",
+      "concept": 2571
+    },
+    "heater": {
+      "pos": "noun",
+      "meaning": "heater",
+      "concept": 2572
+    },
+    "mixer": {
+      "pos": "noun",
+      "meaning": "mixer",
+      "concept": 2573
+    },
+    "toaster": {
+      "pos": "noun",
+      "meaning": "toaster",
+      "concept": 2574
+    },
+    "vacuum": {
+      "pos": "noun",
+      "meaning": "vacuum",
+      "concept": 2575
+    },
+    "washer": {
+      "pos": "noun",
+      "meaning": "washer",
+      "concept": 2576
+    },
+    "shaver": {
+      "pos": "noun",
+      "meaning": "shaver",
+      "concept": 2577
+    },
+    "hairdryer": {
+      "pos": "noun",
+      "meaning": "hairdryer",
+      "concept": 2578
+    },
+    "camcorder": {
+      "pos": "noun",
+      "meaning": "camcorder",
+      "concept": 2579
+    },
+    "drone": {
+      "pos": "noun",
+      "meaning": "drone",
+      "concept": 2580
+    },
+    "intercom": {
+      "pos": "noun",
+      "meaning": "intercom",
+      "concept": 2581
+    },
+    "modem": {
+      "pos": "noun",
+      "meaning": "modem",
+      "concept": 2582
+    },
+    "projector": {
+      "pos": "noun",
+      "meaning": "projector",
+      "concept": 2583
+    },
+    "scanner": {
+      "pos": "noun",
+      "meaning": "scanner",
+      "concept": 2584
+    },
+    "server": {
+      "pos": "noun",
+      "meaning": "server",
+      "concept": 2585
+    },
+    "tablet": {
+      "pos": "noun",
+      "meaning": "tablet",
+      "concept": 2586
+    },
+    "webcam": {
+      "pos": "noun",
+      "meaning": "webcam",
+      "concept": 2587
+    },
     "microwave": {
       "pos": "noun",
       "meaning": "microwave",
@@ -532,6 +1247,26 @@
       "pos": "noun",
       "meaning": "moon",
       "concept": 289
+    },
+    "nebula": {
+      "pos": "noun",
+      "meaning": "nebula",
+      "concept": 2602
+    },
+    "nova": {
+      "pos": "noun",
+      "meaning": "nova",
+      "concept": 2603
+    },
+    "constellation": {
+      "pos": "noun",
+      "meaning": "constellation",
+      "concept": 2604
+    },
+    "zodiac": {
+      "pos": "noun",
+      "meaning": "zodiac",
+      "concept": 2605
     },
     "star": {
       "pos": "noun",
@@ -1016,6 +1751,116 @@
       "meaning": "car",
       "concept": 46
     },
+    "airship": {
+      "pos": "noun",
+      "meaning": "airship",
+      "concept": 2275
+    },
+    "bulldozer": {
+      "pos": "noun",
+      "meaning": "bulldozer",
+      "concept": 2276
+    },
+    "camper": {
+      "pos": "noun",
+      "meaning": "camper",
+      "concept": 2277
+    },
+    "caravan": {
+      "pos": "noun",
+      "meaning": "caravan",
+      "concept": 2278
+    },
+    "forklift": {
+      "pos": "noun",
+      "meaning": "forklift",
+      "concept": 2279
+    },
+    "glider": {
+      "pos": "noun",
+      "meaning": "glider",
+      "concept": 2280
+    },
+    "hovercraft": {
+      "pos": "noun",
+      "meaning": "hovercraft",
+      "concept": 2281
+    },
+    "moped": {
+      "pos": "noun",
+      "meaning": "moped",
+      "concept": 2282
+    },
+    "rickshaw": {
+      "pos": "noun",
+      "meaning": "rickshaw",
+      "concept": 2283
+    },
+    "snowmobile": {
+      "pos": "noun",
+      "meaning": "snowmobile",
+      "concept": 2284
+    },
+    "stagecoach": {
+      "pos": "noun",
+      "meaning": "stagecoach",
+      "concept": 2285
+    },
+    "steamroller": {
+      "pos": "noun",
+      "meaning": "steamroller",
+      "concept": 2286
+    },
+    "buggy": {
+      "pos": "noun",
+      "meaning": "buggy",
+      "concept": 2287
+    },
+    "chariot": {
+      "pos": "noun",
+      "meaning": "chariot",
+      "concept": 2288
+    },
+    "coach": {
+      "pos": "noun",
+      "meaning": "coach",
+      "concept": 2289
+    },
+    "gondola": {
+      "pos": "noun",
+      "meaning": "gondola",
+      "concept": 2290
+    },
+    "hearse": {
+      "pos": "noun",
+      "meaning": "hearse",
+      "concept": 2291
+    },
+    "palanquin": {
+      "pos": "noun",
+      "meaning": "palanquin",
+      "concept": 2292
+    },
+    "sedan": {
+      "pos": "noun",
+      "meaning": "sedan",
+      "concept": 2293
+    },
+    "surrey": {
+      "pos": "noun",
+      "meaning": "surrey",
+      "concept": 2294
+    },
+    "trolley": {
+      "pos": "noun",
+      "meaning": "trolley",
+      "concept": 2295
+    },
+    "velocipede": {
+      "pos": "noun",
+      "meaning": "velocipede",
+      "concept": 2296
+    },
     "bus": {
       "pos": "noun",
       "meaning": "bus",
@@ -1042,6 +1887,226 @@
       "pos": "noun",
       "meaning": "house",
       "concept": 50
+    },
+    "abbey": {
+      "pos": "noun",
+      "meaning": "abbey",
+      "concept": 2231
+    },
+    "arcade": {
+      "pos": "noun",
+      "meaning": "arcade",
+      "concept": 2232
+    },
+    "bakery": {
+      "pos": "noun",
+      "meaning": "bakery",
+      "concept": 2233
+    },
+    "boutique": {
+      "pos": "noun",
+      "meaning": "boutique",
+      "concept": 2234
+    },
+    "bungalow": {
+      "pos": "noun",
+      "meaning": "bungalow",
+      "concept": 2235
+    },
+    "casino": {
+      "pos": "noun",
+      "meaning": "casino",
+      "concept": 2236
+    },
+    "chalet": {
+      "pos": "noun",
+      "meaning": "chalet",
+      "concept": 2237
+    },
+    "chapel": {
+      "pos": "noun",
+      "meaning": "chapel",
+      "concept": 2238
+    },
+    "dormitory": {
+      "pos": "noun",
+      "meaning": "dormitory",
+      "concept": 2239
+    },
+    "forge": {
+      "pos": "noun",
+      "meaning": "forge",
+      "concept": 2240
+    },
+    "gazebo": {
+      "pos": "noun",
+      "meaning": "gazebo",
+      "concept": 2241
+    },
+    "greenhouse": {
+      "pos": "noun",
+      "meaning": "greenhouse",
+      "concept": 2242
+    },
+    "hangar": {
+      "pos": "noun",
+      "meaning": "hangar",
+      "concept": 2243
+    },
+    "inn": {
+      "pos": "noun",
+      "meaning": "inn",
+      "concept": 2244
+    },
+    "kiosk": {
+      "pos": "noun",
+      "meaning": "kiosk",
+      "concept": 2245
+    },
+    "lodge": {
+      "pos": "noun",
+      "meaning": "lodge",
+      "concept": 2246
+    },
+    "mill": {
+      "pos": "noun",
+      "meaning": "mill",
+      "concept": 2247
+    },
+    "observatory": {
+      "pos": "noun",
+      "meaning": "observatory",
+      "concept": 2248
+    },
+    "pagoda": {
+      "pos": "noun",
+      "meaning": "pagoda",
+      "concept": 2249
+    },
+    "pavilion": {
+      "pos": "noun",
+      "meaning": "pavilion",
+      "concept": 2250
+    },
+    "pharmacy": {
+      "pos": "noun",
+      "meaning": "pharmacy",
+      "concept": 2251
+    },
+    "pier": {
+      "pos": "noun",
+      "meaning": "pier",
+      "concept": 2252
+    },
+    "sauna": {
+      "pos": "noun",
+      "meaning": "sauna",
+      "concept": 2253
+    },
+    "silo": {
+      "pos": "noun",
+      "meaning": "silo",
+      "concept": 2254
+    },
+    "stable": {
+      "pos": "noun",
+      "meaning": "stable",
+      "concept": 2255
+    },
+    "synagogue": {
+      "pos": "noun",
+      "meaning": "synagogue",
+      "concept": 2256
+    },
+    "tavern": {
+      "pos": "noun",
+      "meaning": "tavern",
+      "concept": 2257
+    },
+    "terminal": {
+      "pos": "noun",
+      "meaning": "terminal",
+      "concept": 2258
+    },
+    "villa": {
+      "pos": "noun",
+      "meaning": "villa",
+      "concept": 2259
+    },
+    "windmill": {
+      "pos": "noun",
+      "meaning": "windmill",
+      "concept": 2260
+    },
+    "arena": {
+      "pos": "noun",
+      "meaning": "arena",
+      "concept": 2261
+    },
+    "belfry": {
+      "pos": "noun",
+      "meaning": "belfry",
+      "concept": 2262
+    },
+    "cloister": {
+      "pos": "noun",
+      "meaning": "cloister",
+      "concept": 2263
+    },
+    "conservatory": {
+      "pos": "noun",
+      "meaning": "conservatory",
+      "concept": 2264
+    },
+    "crematorium": {
+      "pos": "noun",
+      "meaning": "crematorium",
+      "concept": 2265
+    },
+    "depot": {
+      "pos": "noun",
+      "meaning": "depot",
+      "concept": 2266
+    },
+    "dispensary": {
+      "pos": "noun",
+      "meaning": "dispensary",
+      "concept": 2267
+    },
+    "granary": {
+      "pos": "noun",
+      "meaning": "granary",
+      "concept": 2268
+    },
+    "hospice": {
+      "pos": "noun",
+      "meaning": "hospice",
+      "concept": 2269
+    },
+    "manse": {
+      "pos": "noun",
+      "meaning": "manse",
+      "concept": 2270
+    },
+    "outhouse": {
+      "pos": "noun",
+      "meaning": "outhouse",
+      "concept": 2271
+    },
+    "rectory": {
+      "pos": "noun",
+      "meaning": "rectory",
+      "concept": 2272
+    },
+    "tollbooth": {
+      "pos": "noun",
+      "meaning": "tollbooth",
+      "concept": 2273
+    },
+    "vicarage": {
+      "pos": "noun",
+      "meaning": "vicarage",
+      "concept": 2274
     },
     "school": {
       "pos": "noun",
@@ -1070,6 +2135,226 @@
         "concept": 601
       }
     ],
+    "biceps": {
+      "pos": "noun",
+      "meaning": "biceps",
+      "concept": 2187
+    },
+    "calf": {
+      "pos": "noun",
+      "meaning": "calf",
+      "concept": 2188
+    },
+    "cuticle": {
+      "pos": "noun",
+      "meaning": "cuticle",
+      "concept": 2189
+    },
+    "diaphragm": {
+      "pos": "noun",
+      "meaning": "diaphragm",
+      "concept": 2190
+    },
+    "femur": {
+      "pos": "noun",
+      "meaning": "femur",
+      "concept": 2191
+    },
+    "gallbladder": {
+      "pos": "noun",
+      "meaning": "gallbladder",
+      "concept": 2192
+    },
+    "gullet": {
+      "pos": "noun",
+      "meaning": "gullet",
+      "concept": 2193
+    },
+    "humerus": {
+      "pos": "noun",
+      "meaning": "humerus",
+      "concept": 2194
+    },
+    "knuckle": {
+      "pos": "noun",
+      "meaning": "knuckle",
+      "concept": 2195
+    },
+    "larynx": {
+      "pos": "noun",
+      "meaning": "larynx",
+      "concept": 2196
+    },
+    "ligament": {
+      "pos": "noun",
+      "meaning": "ligament",
+      "concept": 2197
+    },
+    "molar": {
+      "pos": "noun",
+      "meaning": "molar",
+      "concept": 2198
+    },
+    "navel": {
+      "pos": "noun",
+      "meaning": "navel",
+      "concept": 2199
+    },
+    "palate": {
+      "pos": "noun",
+      "meaning": "palate",
+      "concept": 2200
+    },
+    "patella": {
+      "pos": "noun",
+      "meaning": "patella",
+      "concept": 2201
+    },
+    "pelvis": {
+      "pos": "noun",
+      "meaning": "pelvis",
+      "concept": 2202
+    },
+    "phalanx": {
+      "pos": "noun",
+      "meaning": "phalanx",
+      "concept": 2203
+    },
+    "pupil": {
+      "pos": "noun",
+      "meaning": "pupil",
+      "concept": 2204
+    },
+    "retina": {
+      "pos": "noun",
+      "meaning": "retina",
+      "concept": 2205
+    },
+    "scapula": {
+      "pos": "noun",
+      "meaning": "scapula",
+      "concept": 2206
+    },
+    "abdomen": {
+      "pos": "noun",
+      "meaning": "abdomen",
+      "concept": 2207
+    },
+    "aorta": {
+      "pos": "noun",
+      "meaning": "aorta",
+      "concept": 2208
+    },
+    "appendix": {
+      "pos": "noun",
+      "meaning": "appendix",
+      "concept": 2209
+    },
+    "bladder": {
+      "pos": "noun",
+      "meaning": "bladder",
+      "concept": 2210
+    },
+    "bowel": {
+      "pos": "noun",
+      "meaning": "bowel",
+      "concept": 2211
+    },
+    "cerebellum": {
+      "pos": "noun",
+      "meaning": "cerebellum",
+      "concept": 2212
+    },
+    "cerebrum": {
+      "pos": "noun",
+      "meaning": "cerebrum",
+      "concept": 2213
+    },
+    "colon": {
+      "pos": "noun",
+      "meaning": "colon",
+      "concept": 2214
+    },
+    "cornea": {
+      "pos": "noun",
+      "meaning": "cornea",
+      "concept": 2215
+    },
+    "eardrum": {
+      "pos": "noun",
+      "meaning": "eardrum",
+      "concept": 2216
+    },
+    "esophagus": {
+      "pos": "noun",
+      "meaning": "esophagus",
+      "concept": 2217
+    },
+    "fibula": {
+      "pos": "noun",
+      "meaning": "fibula",
+      "concept": 2218
+    },
+    "follicle": {
+      "pos": "noun",
+      "meaning": "follicle",
+      "concept": 2219
+    },
+    "ovary": {
+      "pos": "noun",
+      "meaning": "ovary",
+      "concept": 2220
+    },
+    "pancreas": {
+      "pos": "noun",
+      "meaning": "pancreas",
+      "concept": 2221
+    },
+    "pharynx": {
+      "pos": "noun",
+      "meaning": "pharynx",
+      "concept": 2222
+    },
+    "radius": {
+      "pos": "noun",
+      "meaning": "radius",
+      "concept": 2223
+    },
+    "sternum": {
+      "pos": "noun",
+      "meaning": "sternum",
+      "concept": 2224
+    },
+    "tibia": {
+      "pos": "noun",
+      "meaning": "tibia",
+      "concept": 2225
+    },
+    "trachea": {
+      "pos": "noun",
+      "meaning": "trachea",
+      "concept": 2226
+    },
+    "ulna": {
+      "pos": "noun",
+      "meaning": "ulna",
+      "concept": 2227
+    },
+    "uvula": {
+      "pos": "noun",
+      "meaning": "uvula",
+      "concept": 2228
+    },
+    "ventricle": {
+      "pos": "noun",
+      "meaning": "ventricle",
+      "concept": 2229
+    },
+    "vertebra": {
+      "pos": "noun",
+      "meaning": "vertebra",
+      "concept": 2230
+    },
     "head": [
       {
         "pos": "noun",
@@ -1142,6 +2427,26 @@
         "concept": 608
       }
     ],
+    "cider": {
+      "pos": "noun",
+      "meaning": "cider",
+      "concept": 2065
+    },
+    "mead": {
+      "pos": "noun",
+      "meaning": "mead",
+      "concept": 2066
+    },
+    "seltzer": {
+      "pos": "noun",
+      "meaning": "seltzer",
+      "concept": 2067
+    },
+    "tonic": {
+      "pos": "noun",
+      "meaning": "tonic",
+      "concept": 2068
+    },
     "oil": {
       "pos": "noun",
       "meaning": "oil",
@@ -1217,6 +2522,496 @@
       "meaning": "bread",
       "concept": 75
     },
+    "bagel": {
+      "pos": "noun",
+      "meaning": "bagel",
+      "concept": 1928
+    },
+    "brownie": {
+      "pos": "noun",
+      "meaning": "brownie",
+      "concept": 1929
+    },
+    "chapati": {
+      "pos": "noun",
+      "meaning": "chapati",
+      "concept": 1930
+    },
+    "chutney": {
+      "pos": "noun",
+      "meaning": "chutney",
+      "concept": 1931
+    },
+    "crepe": {
+      "pos": "noun",
+      "meaning": "crepe",
+      "concept": 1932
+    },
+    "croissant": {
+      "pos": "noun",
+      "meaning": "croissant",
+      "concept": 1933
+    },
+    "falafel": {
+      "pos": "noun",
+      "meaning": "falafel",
+      "concept": 1934
+    },
+    "flapjack": {
+      "pos": "noun",
+      "meaning": "flapjack",
+      "concept": 1935
+    },
+    "fudge": {
+      "pos": "noun",
+      "meaning": "fudge",
+      "concept": 1936
+    },
+    "granola": {
+      "pos": "noun",
+      "meaning": "granola",
+      "concept": 1937
+    },
+    "kebab": {
+      "pos": "noun",
+      "meaning": "kebab",
+      "concept": 1938
+    },
+    "lasagne": {
+      "pos": "noun",
+      "meaning": "lasagne",
+      "concept": 1939
+    },
+    "muffin": {
+      "pos": "noun",
+      "meaning": "muffin",
+      "concept": 1940
+    },
+    "omelette": {
+      "pos": "noun",
+      "meaning": "omelette",
+      "concept": 1941
+    },
+    "pasta": {
+      "pos": "noun",
+      "meaning": "pasta",
+      "concept": 1942
+    },
+    "pickle": {
+      "pos": "noun",
+      "meaning": "pickle",
+      "concept": 1943
+    },
+    "pizza": {
+      "pos": "noun",
+      "meaning": "pizza",
+      "concept": 1944
+    },
+    "quiche": {
+      "pos": "noun",
+      "meaning": "quiche",
+      "concept": 1945
+    },
+    "risotto": {
+      "pos": "noun",
+      "meaning": "risotto",
+      "concept": 1946
+    },
+    "sandwich": {
+      "pos": "noun",
+      "meaning": "sandwich",
+      "concept": 1947
+    },
+    "scone": {
+      "pos": "noun",
+      "meaning": "scone",
+      "concept": 1948
+    },
+    "spaghetti": {
+      "pos": "noun",
+      "meaning": "spaghetti",
+      "concept": 1949
+    },
+    "sushi": {
+      "pos": "noun",
+      "meaning": "sushi",
+      "concept": 1950
+    },
+    "taco": {
+      "pos": "noun",
+      "meaning": "taco",
+      "concept": 1951
+    },
+    "toast": {
+      "pos": "noun",
+      "meaning": "toast",
+      "concept": 1952
+    },
+    "trifle": {
+      "pos": "noun",
+      "meaning": "trifle",
+      "concept": 1953
+    },
+    "waffle": {
+      "pos": "noun",
+      "meaning": "waffle",
+      "concept": 1954
+    },
+    "burger": {
+      "pos": "noun",
+      "meaning": "burger",
+      "concept": 1955
+    },
+    "donut": {
+      "pos": "noun",
+      "meaning": "donut",
+      "concept": 1956
+    },
+    "pretzel": {
+      "pos": "noun",
+      "meaning": "pretzel",
+      "concept": 1957
+    },
+    "baguette": {
+      "pos": "noun",
+      "meaning": "baguette",
+      "concept": 1958
+    },
+    "baklava": {
+      "pos": "noun",
+      "meaning": "baklava",
+      "concept": 1959
+    },
+    "blini": {
+      "pos": "noun",
+      "meaning": "blini",
+      "concept": 1960
+    },
+    "borscht": {
+      "pos": "noun",
+      "meaning": "borscht",
+      "concept": 1961
+    },
+    "brioche": {
+      "pos": "noun",
+      "meaning": "brioche",
+      "concept": 1962
+    },
+    "burrito": {
+      "pos": "noun",
+      "meaning": "burrito",
+      "concept": 1963
+    },
+    "calamari": {
+      "pos": "noun",
+      "meaning": "calamari",
+      "concept": 1964
+    },
+    "cannoli": {
+      "pos": "noun",
+      "meaning": "cannoli",
+      "concept": 1965
+    },
+    "ceviche": {
+      "pos": "noun",
+      "meaning": "ceviche",
+      "concept": 1966
+    },
+    "chowder": {
+      "pos": "noun",
+      "meaning": "chowder",
+      "concept": 1967
+    },
+    "churro": {
+      "pos": "noun",
+      "meaning": "churro",
+      "concept": 1968
+    },
+    "cobbler": {
+      "pos": "noun",
+      "meaning": "cobbler",
+      "concept": 1969
+    },
+    "coleslaw": {
+      "pos": "noun",
+      "meaning": "coleslaw",
+      "concept": 1970
+    },
+    "cornbread": {
+      "pos": "noun",
+      "meaning": "cornbread",
+      "concept": 1971
+    },
+    "couscous": {
+      "pos": "noun",
+      "meaning": "couscous",
+      "concept": 1972
+    },
+    "enchilada": {
+      "pos": "noun",
+      "meaning": "enchilada",
+      "concept": 1973
+    },
+    "fondue": {
+      "pos": "noun",
+      "meaning": "fondue",
+      "concept": 1974
+    },
+    "gazpacho": {
+      "pos": "noun",
+      "meaning": "gazpacho",
+      "concept": 1975
+    },
+    "gnocchi": {
+      "pos": "noun",
+      "meaning": "gnocchi",
+      "concept": 1976
+    },
+    "gumbo": {
+      "pos": "noun",
+      "meaning": "gumbo",
+      "concept": 1977
+    },
+    "gyros": {
+      "pos": "noun",
+      "meaning": "gyros",
+      "concept": 1978
+    },
+    "halva": {
+      "pos": "noun",
+      "meaning": "halva",
+      "concept": 1979
+    },
+    "hummus": {
+      "pos": "noun",
+      "meaning": "hummus",
+      "concept": 1980
+    },
+    "jambalaya": {
+      "pos": "noun",
+      "meaning": "jambalaya",
+      "concept": 1981
+    },
+    "korma": {
+      "pos": "noun",
+      "meaning": "korma",
+      "concept": 1982
+    },
+    "latke": {
+      "pos": "noun",
+      "meaning": "latke",
+      "concept": 1983
+    },
+    "macaroon": {
+      "pos": "noun",
+      "meaning": "macaroon",
+      "concept": 1984
+    },
+    "meringue": {
+      "pos": "noun",
+      "meaning": "meringue",
+      "concept": 1985
+    },
+    "miso": {
+      "pos": "noun",
+      "meaning": "miso",
+      "concept": 1986
+    },
+    "moussaka": {
+      "pos": "noun",
+      "meaning": "moussaka",
+      "concept": 1987
+    },
+    "naan": {
+      "pos": "noun",
+      "meaning": "naan",
+      "concept": 1988
+    },
+    "paella": {
+      "pos": "noun",
+      "meaning": "paella",
+      "concept": 1989
+    },
+    "pakora": {
+      "pos": "noun",
+      "meaning": "pakora",
+      "concept": 1990
+    },
+    "pita": {
+      "pos": "noun",
+      "meaning": "pita",
+      "concept": 1991
+    },
+    "polenta": {
+      "pos": "noun",
+      "meaning": "polenta",
+      "concept": 1992
+    },
+    "ramen": {
+      "pos": "noun",
+      "meaning": "ramen",
+      "concept": 1993
+    },
+    "ratatouille": {
+      "pos": "noun",
+      "meaning": "ratatouille",
+      "concept": 1994
+    },
+    "roti": {
+      "pos": "noun",
+      "meaning": "roti",
+      "concept": 1995
+    },
+    "salsa": {
+      "pos": "noun",
+      "meaning": "salsa",
+      "concept": 1996
+    },
+    "satay": {
+      "pos": "noun",
+      "meaning": "satay",
+      "concept": 1997
+    },
+    "schnitzel": {
+      "pos": "noun",
+      "meaning": "schnitzel",
+      "concept": 1998
+    },
+    "sherbet": {
+      "pos": "noun",
+      "meaning": "sherbet",
+      "concept": 1999
+    },
+    "souffle": {
+      "pos": "noun",
+      "meaning": "souffle",
+      "concept": 2000
+    },
+    "strudel": {
+      "pos": "noun",
+      "meaning": "strudel",
+      "concept": 2001
+    },
+    "tabbouleh": {
+      "pos": "noun",
+      "meaning": "tabbouleh",
+      "concept": 2002
+    },
+    "tamale": {
+      "pos": "noun",
+      "meaning": "tamale",
+      "concept": 2003
+    },
+    "tapas": {
+      "pos": "noun",
+      "meaning": "tapas",
+      "concept": 2004
+    },
+    "tempura": {
+      "pos": "noun",
+      "meaning": "tempura",
+      "concept": 2005
+    },
+    "vindaloo": {
+      "pos": "noun",
+      "meaning": "vindaloo",
+      "concept": 2006
+    },
+    "haggis": {
+      "pos": "noun",
+      "meaning": "haggis",
+      "concept": 2007
+    },
+    "kipper": {
+      "pos": "noun",
+      "meaning": "kipper",
+      "concept": 2008
+    },
+    "lassi": {
+      "pos": "noun",
+      "meaning": "lassi",
+      "concept": 2009
+    },
+    "matzo": {
+      "pos": "noun",
+      "meaning": "matzo",
+      "concept": 2010
+    },
+    "muesli": {
+      "pos": "noun",
+      "meaning": "muesli",
+      "concept": 2011
+    },
+    "paratha": {
+      "pos": "noun",
+      "meaning": "paratha",
+      "concept": 2012
+    },
+    "pavlova": {
+      "pos": "noun",
+      "meaning": "pavlova",
+      "concept": 2013
+    },
+    "pesto": {
+      "pos": "noun",
+      "meaning": "pesto",
+      "concept": 2014
+    },
+    "pilaf": {
+      "pos": "noun",
+      "meaning": "pilaf",
+      "concept": 2015
+    },
+    "shortbread": {
+      "pos": "noun",
+      "meaning": "shortbread",
+      "concept": 2016
+    },
+    "tapioca": {
+      "pos": "noun",
+      "meaning": "tapioca",
+      "concept": 2017
+    },
+    "tiramisu": {
+      "pos": "noun",
+      "meaning": "tiramisu",
+      "concept": 2018
+    },
+    "tzatziki": {
+      "pos": "noun",
+      "meaning": "tzatziki",
+      "concept": 2019
+    },
+    "injera": {
+      "pos": "noun",
+      "meaning": "injera",
+      "concept": 2020
+    },
+    "lutefisk": {
+      "pos": "noun",
+      "meaning": "lutefisk",
+      "concept": 2021
+    },
+    "scrapple": {
+      "pos": "noun",
+      "meaning": "scrapple",
+      "concept": 2022
+    },
+    "succotash": {
+      "pos": "noun",
+      "meaning": "succotash",
+      "concept": 2023
+    },
+    "pemmican": {
+      "pos": "noun",
+      "meaning": "pemmican",
+      "concept": 2024
+    },
+    "hardtack": {
+      "pos": "noun",
+      "meaning": "hardtack",
+      "concept": 2025
+    },
     "meat": {
       "pos": "noun",
       "meaning": "meat",
@@ -1226,6 +3021,111 @@
       "pos": "noun",
       "meaning": "salt",
       "concept": 77
+    },
+    "basil": {
+      "pos": "noun",
+      "meaning": "basil",
+      "concept": 2026
+    },
+    "cardamom": {
+      "pos": "noun",
+      "meaning": "cardamom",
+      "concept": 2027
+    },
+    "cayenne": {
+      "pos": "noun",
+      "meaning": "cayenne",
+      "concept": 2028
+    },
+    "cilantro": {
+      "pos": "noun",
+      "meaning": "cilantro",
+      "concept": 2029
+    },
+    "cinnamon": {
+      "pos": "noun",
+      "meaning": "cinnamon",
+      "concept": 2030
+    },
+    "clove": {
+      "pos": "noun",
+      "meaning": "clove",
+      "concept": 2031
+    },
+    "coriander": {
+      "pos": "noun",
+      "meaning": "coriander",
+      "concept": 2032
+    },
+    "cumin": {
+      "pos": "noun",
+      "meaning": "cumin",
+      "concept": 2033
+    },
+    "dill": {
+      "pos": "noun",
+      "meaning": "dill",
+      "concept": 2034
+    },
+    "nutmeg": {
+      "pos": "noun",
+      "meaning": "nutmeg",
+      "concept": 2035
+    },
+    "oregano": {
+      "pos": "noun",
+      "meaning": "oregano",
+      "concept": 2036
+    },
+    "paprika": {
+      "pos": "noun",
+      "meaning": "paprika",
+      "concept": 2037
+    },
+    "parsley": {
+      "pos": "noun",
+      "meaning": "parsley",
+      "concept": 2038
+    },
+    "pepper": {
+      "pos": "noun",
+      "meaning": "pepper",
+      "concept": 2039
+    },
+    "rosemary": {
+      "pos": "noun",
+      "meaning": "rosemary",
+      "concept": 2040
+    },
+    "saffron": {
+      "pos": "noun",
+      "meaning": "saffron",
+      "concept": 2041
+    },
+    "sage": {
+      "pos": "noun",
+      "meaning": "sage",
+      "concept": 2042
+    },
+    "tarragon": {
+      "pos": "noun",
+      "meaning": "tarragon",
+      "concept": 2043
+    },
+    "thyme": {
+      "pos": "noun",
+      "meaning": "thyme",
+      "concept": 2044
+    },
+    "turmeric": {
+      "pos": "noun",
+      "meaning": "turmeric",
+      "concept": 2045
+    },
+    "vanilla": {
+      "pos": "noun",
+      "meaning": "vanilla",
+      "concept": 2046
     },
     "sugar": {
       "pos": "noun",
@@ -1386,6 +3286,166 @@
       "pos": "noun",
       "meaning": "drum",
       "concept": 1553
+    },
+    "accordion": {
+      "pos": "noun",
+      "meaning": "accordion",
+      "concept": 2537
+    },
+    "bagpipes": {
+      "pos": "noun",
+      "meaning": "bagpipes",
+      "concept": 2538
+    },
+    "banjo": {
+      "pos": "noun",
+      "meaning": "banjo",
+      "concept": 2539
+    },
+    "bassoon": {
+      "pos": "noun",
+      "meaning": "bassoon",
+      "concept": 2540
+    },
+    "cello": {
+      "pos": "noun",
+      "meaning": "cello",
+      "concept": 2541
+    },
+    "clarinet": {
+      "pos": "noun",
+      "meaning": "clarinet",
+      "concept": 2542
+    },
+    "cymbal": {
+      "pos": "noun",
+      "meaning": "cymbal",
+      "concept": 2543
+    },
+    "harmonica": {
+      "pos": "noun",
+      "meaning": "harmonica",
+      "concept": 2544
+    },
+    "harp": {
+      "pos": "noun",
+      "meaning": "harp",
+      "concept": 2545
+    },
+    "oboe": {
+      "pos": "noun",
+      "meaning": "oboe",
+      "concept": 2546
+    },
+    "organ": {
+      "pos": "noun",
+      "meaning": "organ",
+      "concept": 2547
+    },
+    "saxophone": {
+      "pos": "noun",
+      "meaning": "saxophone",
+      "concept": 2548
+    },
+    "sitar": {
+      "pos": "noun",
+      "meaning": "sitar",
+      "concept": 2549
+    },
+    "tambourine": {
+      "pos": "noun",
+      "meaning": "tambourine",
+      "concept": 2550
+    },
+    "trombone": {
+      "pos": "noun",
+      "meaning": "trombone",
+      "concept": 2551
+    },
+    "tuba": {
+      "pos": "noun",
+      "meaning": "tuba",
+      "concept": 2552
+    },
+    "ukulele": {
+      "pos": "noun",
+      "meaning": "ukulele",
+      "concept": 2553
+    },
+    "xylophone": {
+      "pos": "noun",
+      "meaning": "xylophone",
+      "concept": 2554
+    },
+    "cornet": {
+      "pos": "noun",
+      "meaning": "cornet",
+      "concept": 2555
+    },
+    "fife": {
+      "pos": "noun",
+      "meaning": "fife",
+      "concept": 2556
+    },
+    "kazoo": {
+      "pos": "noun",
+      "meaning": "kazoo",
+      "concept": 2557
+    },
+    "lyre": {
+      "pos": "noun",
+      "meaning": "lyre",
+      "concept": 2558
+    },
+    "mandolin": {
+      "pos": "noun",
+      "meaning": "mandolin",
+      "concept": 2559
+    },
+    "maraca": {
+      "pos": "noun",
+      "meaning": "maraca",
+      "concept": 2560
+    },
+    "ocarina": {
+      "pos": "noun",
+      "meaning": "ocarina",
+      "concept": 2561
+    },
+    "piccolo": {
+      "pos": "noun",
+      "meaning": "piccolo",
+      "concept": 2562
+    },
+    "recorder": {
+      "pos": "noun",
+      "meaning": "recorder",
+      "concept": 2563
+    },
+    "timpani": {
+      "pos": "noun",
+      "meaning": "timpani",
+      "concept": 2564
+    },
+    "vibraphone": {
+      "pos": "noun",
+      "meaning": "vibraphone",
+      "concept": 2565
+    },
+    "zither": {
+      "pos": "noun",
+      "meaning": "zither",
+      "concept": 2566
+    },
+    "dulcimer": {
+      "pos": "noun",
+      "meaning": "dulcimer",
+      "concept": 2567
+    },
+    "didgeridoo": {
+      "pos": "noun",
+      "meaning": "didgeridoo",
+      "concept": 2568
     },
     "guitar": {
       "pos": "noun",
@@ -1760,6 +3820,26 @@
       "pos": "noun",
       "meaning": "red",
       "concept": 202
+    },
+    "maroon": {
+      "pos": "noun",
+      "meaning": "maroon",
+      "concept": 2606
+    },
+    "navy": {
+      "pos": "noun",
+      "meaning": "navy",
+      "concept": 2607
+    },
+    "ochre": {
+      "pos": "noun",
+      "meaning": "ochre",
+      "concept": 2608
+    },
+    "mauve": {
+      "pos": "noun",
+      "meaning": "mauve",
+      "concept": 2609
     },
     "blue": {
       "pos": "noun",
@@ -2581,6 +4661,336 @@
       "meaning": "eagle",
       "concept": 356
     },
+    "avocet": {
+      "pos": "noun",
+      "meaning": "avocet",
+      "concept": 1570
+    },
+    "bittern": {
+      "pos": "noun",
+      "meaning": "bittern",
+      "concept": 1571
+    },
+    "budgerigar": {
+      "pos": "noun",
+      "meaning": "budgerigar",
+      "concept": 1572
+    },
+    "bunting": {
+      "pos": "noun",
+      "meaning": "bunting",
+      "concept": 1573
+    },
+    "buzzard": {
+      "pos": "noun",
+      "meaning": "buzzard",
+      "concept": 1574
+    },
+    "chaffinch": {
+      "pos": "noun",
+      "meaning": "chaffinch",
+      "concept": 1575
+    },
+    "condor": {
+      "pos": "noun",
+      "meaning": "condor",
+      "concept": 1576
+    },
+    "coot": {
+      "pos": "noun",
+      "meaning": "coot",
+      "concept": 1577
+    },
+    "dunlin": {
+      "pos": "noun",
+      "meaning": "dunlin",
+      "concept": 1578
+    },
+    "egret": {
+      "pos": "noun",
+      "meaning": "egret",
+      "concept": 1579
+    },
+    "fulmar": {
+      "pos": "noun",
+      "meaning": "fulmar",
+      "concept": 1580
+    },
+    "godwit": {
+      "pos": "noun",
+      "meaning": "godwit",
+      "concept": 1581
+    },
+    "goldcrest": {
+      "pos": "noun",
+      "meaning": "goldcrest",
+      "concept": 1582
+    },
+    "greenshank": {
+      "pos": "noun",
+      "meaning": "greenshank",
+      "concept": 1583
+    },
+    "harrier": {
+      "pos": "noun",
+      "meaning": "harrier",
+      "concept": 1584
+    },
+    "hoopoe": {
+      "pos": "noun",
+      "meaning": "hoopoe",
+      "concept": 1585
+    },
+    "jackdaw": {
+      "pos": "noun",
+      "meaning": "jackdaw",
+      "concept": 1586
+    },
+    "jay": {
+      "pos": "noun",
+      "meaning": "jay",
+      "concept": 1587
+    },
+    "kestrel": {
+      "pos": "noun",
+      "meaning": "kestrel",
+      "concept": 1588
+    },
+    "lapwing": {
+      "pos": "noun",
+      "meaning": "lapwing",
+      "concept": 1589
+    },
+    "linnet": {
+      "pos": "noun",
+      "meaning": "linnet",
+      "concept": 1590
+    },
+    "martin": {
+      "pos": "noun",
+      "meaning": "martin",
+      "concept": 1591
+    },
+    "merlin": {
+      "pos": "noun",
+      "meaning": "merlin",
+      "concept": 1592
+    },
+    "nuthatch": {
+      "pos": "noun",
+      "meaning": "nuthatch",
+      "concept": 1593
+    },
+    "osprey": {
+      "pos": "noun",
+      "meaning": "osprey",
+      "concept": 1594
+    },
+    "petrel": {
+      "pos": "noun",
+      "meaning": "petrel",
+      "concept": 1595
+    },
+    "pipit": {
+      "pos": "noun",
+      "meaning": "pipit",
+      "concept": 1596
+    },
+    "plover": {
+      "pos": "noun",
+      "meaning": "plover",
+      "concept": 1597
+    },
+    "snipe": {
+      "pos": "noun",
+      "meaning": "snipe",
+      "concept": 1598
+    },
+    "sparrowhawk": {
+      "pos": "noun",
+      "meaning": "sparrowhawk",
+      "concept": 1599
+    },
+    "spoonbill": {
+      "pos": "noun",
+      "meaning": "spoonbill",
+      "concept": 1600
+    },
+    "stonechat": {
+      "pos": "noun",
+      "meaning": "stonechat",
+      "concept": 1601
+    },
+    "teal": {
+      "pos": "noun",
+      "meaning": "teal",
+      "concept": 1602
+    },
+    "tern": {
+      "pos": "noun",
+      "meaning": "tern",
+      "concept": 1603
+    },
+    "wheatear": {
+      "pos": "noun",
+      "meaning": "wheatear",
+      "concept": 1604
+    },
+    "wigeon": {
+      "pos": "noun",
+      "meaning": "wigeon",
+      "concept": 1605
+    },
+    "yellowhammer": {
+      "pos": "noun",
+      "meaning": "yellowhammer",
+      "concept": 1606
+    },
+    "anhinga": {
+      "pos": "noun",
+      "meaning": "anhinga",
+      "concept": 1607
+    },
+    "babbler": {
+      "pos": "noun",
+      "meaning": "babbler",
+      "concept": 1608
+    },
+    "blackcap": {
+      "pos": "noun",
+      "meaning": "blackcap",
+      "concept": 1609
+    },
+    "broadbill": {
+      "pos": "noun",
+      "meaning": "broadbill",
+      "concept": 1610
+    },
+    "buttonquail": {
+      "pos": "noun",
+      "meaning": "buttonquail",
+      "concept": 1611
+    },
+    "cassowary": {
+      "pos": "noun",
+      "meaning": "cassowary",
+      "concept": 1612
+    },
+    "chough": {
+      "pos": "noun",
+      "meaning": "chough",
+      "concept": 1613
+    },
+    "dodo": {
+      "pos": "noun",
+      "meaning": "dodo",
+      "concept": 1614
+    },
+    "flowerpecker": {
+      "pos": "noun",
+      "meaning": "flowerpecker",
+      "concept": 1615
+    },
+    "friarbird": {
+      "pos": "noun",
+      "meaning": "friarbird",
+      "concept": 1616
+    },
+    "galah": {
+      "pos": "noun",
+      "meaning": "galah",
+      "concept": 1617
+    },
+    "grosbeak": {
+      "pos": "noun",
+      "meaning": "grosbeak",
+      "concept": 1618
+    },
+    "guan": {
+      "pos": "noun",
+      "meaning": "guan",
+      "concept": 1619
+    },
+    "honeycreeper": {
+      "pos": "noun",
+      "meaning": "honeycreeper",
+      "concept": 1620
+    },
+    "jacamar": {
+      "pos": "noun",
+      "meaning": "jacamar",
+      "concept": 1621
+    },
+    "kea": {
+      "pos": "noun",
+      "meaning": "kea",
+      "concept": 1622
+    },
+    "kookaburra": {
+      "pos": "noun",
+      "meaning": "kookaburra",
+      "concept": 1623
+    },
+    "motmot": {
+      "pos": "noun",
+      "meaning": "motmot",
+      "concept": 1624
+    },
+    "oilbird": {
+      "pos": "noun",
+      "meaning": "oilbird",
+      "concept": 1625
+    },
+    "peafowl": {
+      "pos": "noun",
+      "meaning": "peafowl",
+      "concept": 1626
+    },
+    "potoo": {
+      "pos": "noun",
+      "meaning": "potoo",
+      "concept": 1627
+    },
+    "quetzal": {
+      "pos": "noun",
+      "meaning": "quetzal",
+      "concept": 1628
+    },
+    "roadrunner": {
+      "pos": "noun",
+      "meaning": "roadrunner",
+      "concept": 1629
+    },
+    "seriema": {
+      "pos": "noun",
+      "meaning": "seriema",
+      "concept": 1630
+    },
+    "shoebill": {
+      "pos": "noun",
+      "meaning": "shoebill",
+      "concept": 1631
+    },
+    "sunbittern": {
+      "pos": "noun",
+      "meaning": "sunbittern",
+      "concept": 1632
+    },
+    "tody": {
+      "pos": "noun",
+      "meaning": "tody",
+      "concept": 1633
+    },
+    "woodswallow": {
+      "pos": "noun",
+      "meaning": "woodswallow",
+      "concept": 1634
+    },
+    "xenops": {
+      "pos": "noun",
+      "meaning": "xenops",
+      "concept": 1635
+    },
     "owl": {
       "pos": "noun",
       "meaning": "owl",
@@ -2626,6 +5036,281 @@
       "meaning": "shark",
       "concept": 365
     },
+    "bream": {
+      "pos": "noun",
+      "meaning": "bream",
+      "concept": 1636
+    },
+    "brill": {
+      "pos": "noun",
+      "meaning": "brill",
+      "concept": 1637
+    },
+    "chub": {
+      "pos": "noun",
+      "meaning": "chub",
+      "concept": 1638
+    },
+    "dace": {
+      "pos": "noun",
+      "meaning": "dace",
+      "concept": 1639
+    },
+    "dab": {
+      "pos": "noun",
+      "meaning": "dab",
+      "concept": 1640
+    },
+    "grayling": {
+      "pos": "noun",
+      "meaning": "grayling",
+      "concept": 1641
+    },
+    "gudgeon": {
+      "pos": "noun",
+      "meaning": "gudgeon",
+      "concept": 1642
+    },
+    "haddock": {
+      "pos": "noun",
+      "meaning": "haddock",
+      "concept": 1643
+    },
+    "hake": {
+      "pos": "noun",
+      "meaning": "hake",
+      "concept": 1644
+    },
+    "ling": {
+      "pos": "noun",
+      "meaning": "ling",
+      "concept": 1645
+    },
+    "loach": {
+      "pos": "noun",
+      "meaning": "loach",
+      "concept": 1646
+    },
+    "monkfish": {
+      "pos": "noun",
+      "meaning": "monkfish",
+      "concept": 1647
+    },
+    "mullet": {
+      "pos": "noun",
+      "meaning": "mullet",
+      "concept": 1648
+    },
+    "pollock": {
+      "pos": "noun",
+      "meaning": "pollock",
+      "concept": 1649
+    },
+    "roach": {
+      "pos": "noun",
+      "meaning": "roach",
+      "concept": 1650
+    },
+    "rudd": {
+      "pos": "noun",
+      "meaning": "rudd",
+      "concept": 1651
+    },
+    "smelt": {
+      "pos": "noun",
+      "meaning": "smelt",
+      "concept": 1652
+    },
+    "sprat": {
+      "pos": "noun",
+      "meaning": "sprat",
+      "concept": 1653
+    },
+    "turbot": {
+      "pos": "noun",
+      "meaning": "turbot",
+      "concept": 1654
+    },
+    "whiting": {
+      "pos": "noun",
+      "meaning": "whiting",
+      "concept": 1655
+    },
+    "wrasse": {
+      "pos": "noun",
+      "meaning": "wrasse",
+      "concept": 1656
+    },
+    "zander": {
+      "pos": "noun",
+      "meaning": "zander",
+      "concept": 1657
+    },
+    "amberjack": {
+      "pos": "noun",
+      "meaning": "amberjack",
+      "concept": 1658
+    },
+    "angelfish": {
+      "pos": "noun",
+      "meaning": "angelfish",
+      "concept": 1659
+    },
+    "jewfish": {
+      "pos": "noun",
+      "meaning": "jewfish",
+      "concept": 1660
+    },
+    "kingfish": {
+      "pos": "noun",
+      "meaning": "kingfish",
+      "concept": 1661
+    },
+    "ladyfish": {
+      "pos": "noun",
+      "meaning": "ladyfish",
+      "concept": 1662
+    },
+    "menhaden": {
+      "pos": "noun",
+      "meaning": "menhaden",
+      "concept": 1663
+    },
+    "needlefish": {
+      "pos": "noun",
+      "meaning": "needlefish",
+      "concept": 1664
+    },
+    "oarfish": {
+      "pos": "noun",
+      "meaning": "oarfish",
+      "concept": 1665
+    },
+    "paddlefish": {
+      "pos": "noun",
+      "meaning": "paddlefish",
+      "concept": 1666
+    },
+    "pomfret": {
+      "pos": "noun",
+      "meaning": "pomfret",
+      "concept": 1667
+    },
+    "redfish": {
+      "pos": "noun",
+      "meaning": "redfish",
+      "concept": 1668
+    },
+    "remora": {
+      "pos": "noun",
+      "meaning": "remora",
+      "concept": 1669
+    },
+    "sailfish": {
+      "pos": "noun",
+      "meaning": "sailfish",
+      "concept": 1670
+    },
+    "shad": {
+      "pos": "noun",
+      "meaning": "shad",
+      "concept": 1671
+    },
+    "snook": {
+      "pos": "noun",
+      "meaning": "snook",
+      "concept": 1672
+    },
+    "tarpon": {
+      "pos": "noun",
+      "meaning": "tarpon",
+      "concept": 1673
+    },
+    "tilefish": {
+      "pos": "noun",
+      "meaning": "tilefish",
+      "concept": 1674
+    },
+    "triggerfish": {
+      "pos": "noun",
+      "meaning": "triggerfish",
+      "concept": 1675
+    },
+    "walleye": {
+      "pos": "noun",
+      "meaning": "walleye",
+      "concept": 1676
+    },
+    "weakfish": {
+      "pos": "noun",
+      "meaning": "weakfish",
+      "concept": 1677
+    },
+    "bluefish": {
+      "pos": "noun",
+      "meaning": "bluefish",
+      "concept": 1678
+    },
+    "bonefish": {
+      "pos": "noun",
+      "meaning": "bonefish",
+      "concept": 1679
+    },
+    "bowfin": {
+      "pos": "noun",
+      "meaning": "bowfin",
+      "concept": 1680
+    },
+    "burbot": {
+      "pos": "noun",
+      "meaning": "burbot",
+      "concept": 1681
+    },
+    "cobia": {
+      "pos": "noun",
+      "meaning": "cobia",
+      "concept": 1682
+    },
+    "croaker": {
+      "pos": "noun",
+      "meaning": "croaker",
+      "concept": 1683
+    },
+    "gar": {
+      "pos": "noun",
+      "meaning": "gar",
+      "concept": 1684
+    },
+    "goatfish": {
+      "pos": "noun",
+      "meaning": "goatfish",
+      "concept": 1685
+    },
+    "grunt": {
+      "pos": "noun",
+      "meaning": "grunt",
+      "concept": 1686
+    },
+    "lizardfish": {
+      "pos": "noun",
+      "meaning": "lizardfish",
+      "concept": 1687
+    },
+    "moonfish": {
+      "pos": "noun",
+      "meaning": "moonfish",
+      "concept": 1688
+    },
+    "pompano": {
+      "pos": "noun",
+      "meaning": "pompano",
+      "concept": 1689
+    },
+    "porgy": {
+      "pos": "noun",
+      "meaning": "porgy",
+      "concept": 1690
+    },
     "tuna": {
       "pos": "noun",
       "meaning": "tuna",
@@ -2645,6 +5330,176 @@
       "pos": "noun",
       "meaning": "ant",
       "concept": 369
+    },
+    "earwig": {
+      "pos": "noun",
+      "meaning": "earwig",
+      "concept": 1691
+    },
+    "silverfish": {
+      "pos": "noun",
+      "meaning": "silverfish",
+      "concept": 1692
+    },
+    "woodlouse": {
+      "pos": "noun",
+      "meaning": "woodlouse",
+      "concept": 1693
+    },
+    "centipede": {
+      "pos": "noun",
+      "meaning": "centipede",
+      "concept": 1694
+    },
+    "millipede": {
+      "pos": "noun",
+      "meaning": "millipede",
+      "concept": 1695
+    },
+    "tick": {
+      "pos": "noun",
+      "meaning": "tick",
+      "concept": 1696
+    },
+    "mite": {
+      "pos": "noun",
+      "meaning": "mite",
+      "concept": 1697
+    },
+    "lacewing": {
+      "pos": "noun",
+      "meaning": "lacewing",
+      "concept": 1698
+    },
+    "mayfly": {
+      "pos": "noun",
+      "meaning": "mayfly",
+      "concept": 1699
+    },
+    "stonefly": {
+      "pos": "noun",
+      "meaning": "stonefly",
+      "concept": 1700
+    },
+    "caddisfly": {
+      "pos": "noun",
+      "meaning": "caddisfly",
+      "concept": 1701
+    },
+    "springtail": {
+      "pos": "noun",
+      "meaning": "springtail",
+      "concept": 1702
+    },
+    "thrips": {
+      "pos": "noun",
+      "meaning": "thrips",
+      "concept": 1703
+    },
+    "antlion": {
+      "pos": "noun",
+      "meaning": "antlion",
+      "concept": 1704
+    },
+    "dobsonfly": {
+      "pos": "noun",
+      "meaning": "dobsonfly",
+      "concept": 1705
+    },
+    "alderfly": {
+      "pos": "noun",
+      "meaning": "alderfly",
+      "concept": 1706
+    },
+    "snakefly": {
+      "pos": "noun",
+      "meaning": "snakefly",
+      "concept": 1707
+    },
+    "scorpionfly": {
+      "pos": "noun",
+      "meaning": "scorpionfly",
+      "concept": 1708
+    },
+    "mantispid": {
+      "pos": "noun",
+      "meaning": "mantispid",
+      "concept": 1709
+    },
+    "robberfly": {
+      "pos": "noun",
+      "meaning": "robberfly",
+      "concept": 1710
+    },
+    "owlfly": {
+      "pos": "noun",
+      "meaning": "owlfly",
+      "concept": 1711
+    },
+    "dancefly": {
+      "pos": "noun",
+      "meaning": "dancefly",
+      "concept": 1712
+    },
+    "firebrat": {
+      "pos": "noun",
+      "meaning": "firebrat",
+      "concept": 1713
+    },
+    "bookworm": {
+      "pos": "noun",
+      "meaning": "bookworm",
+      "concept": 1714
+    },
+    "backswimmer": {
+      "pos": "noun",
+      "meaning": "backswimmer",
+      "concept": 1715
+    },
+    "boatman": {
+      "pos": "noun",
+      "meaning": "boatman",
+      "concept": 1716
+    },
+    "glowworm": {
+      "pos": "noun",
+      "meaning": "glowworm",
+      "concept": 1717
+    },
+    "hellgrammite": {
+      "pos": "noun",
+      "meaning": "hellgrammite",
+      "concept": 1718
+    },
+    "horntail": {
+      "pos": "noun",
+      "meaning": "horntail",
+      "concept": 1719
+    },
+    "ichneumon": {
+      "pos": "noun",
+      "meaning": "ichneumon",
+      "concept": 1720
+    },
+    "lanternfly": {
+      "pos": "noun",
+      "meaning": "lanternfly",
+      "concept": 1721
+    },
+    "leafhopper": {
+      "pos": "noun",
+      "meaning": "leafhopper",
+      "concept": 1722
+    },
+    "casebearer": {
+      "pos": "noun",
+      "meaning": "casebearer",
+      "concept": 1723
+    },
+    "gallfly": {
+      "pos": "noun",
+      "meaning": "gallfly",
+      "concept": 1724
     },
     "bee": {
       "pos": "noun",
@@ -2696,6 +5551,41 @@
       "meaning": "frog",
       "concept": 379
     },
+    "caecilian": {
+      "pos": "noun",
+      "meaning": "caecilian",
+      "concept": 1750
+    },
+    "mudpuppy": {
+      "pos": "noun",
+      "meaning": "mudpuppy",
+      "concept": 1751
+    },
+    "axolotl": {
+      "pos": "noun",
+      "meaning": "axolotl",
+      "concept": 1752
+    },
+    "siren": {
+      "pos": "noun",
+      "meaning": "siren",
+      "concept": 1753
+    },
+    "olm": {
+      "pos": "noun",
+      "meaning": "olm",
+      "concept": 1754
+    },
+    "eft": {
+      "pos": "noun",
+      "meaning": "eft",
+      "concept": 1755
+    },
+    "hellbender": {
+      "pos": "noun",
+      "meaning": "hellbender",
+      "concept": 1756
+    },
     "toad": {
       "pos": "noun",
       "meaning": "toad",
@@ -2730,6 +5620,146 @@
       "pos": "noun",
       "meaning": "oak",
       "concept": 386
+    },
+    "aspen": {
+      "pos": "noun",
+      "meaning": "aspen",
+      "concept": 1826
+    },
+    "baobab": {
+      "pos": "noun",
+      "meaning": "baobab",
+      "concept": 1827
+    },
+    "blackthorn": {
+      "pos": "noun",
+      "meaning": "blackthorn",
+      "concept": 1828
+    },
+    "buckeye": {
+      "pos": "noun",
+      "meaning": "buckeye",
+      "concept": 1829
+    },
+    "catalpa": {
+      "pos": "noun",
+      "meaning": "catalpa",
+      "concept": 1830
+    },
+    "dogwood": {
+      "pos": "noun",
+      "meaning": "dogwood",
+      "concept": 1831
+    },
+    "elder": {
+      "pos": "noun",
+      "meaning": "elder",
+      "concept": 1832
+    },
+    "hawthorn": {
+      "pos": "noun",
+      "meaning": "hawthorn",
+      "concept": 1833
+    },
+    "hemlock": {
+      "pos": "noun",
+      "meaning": "hemlock",
+      "concept": 1834
+    },
+    "holly": {
+      "pos": "noun",
+      "meaning": "holly",
+      "concept": 1835
+    },
+    "hornbeam": {
+      "pos": "noun",
+      "meaning": "hornbeam",
+      "concept": 1836
+    },
+    "larch": {
+      "pos": "noun",
+      "meaning": "larch",
+      "concept": 1837
+    },
+    "laurel": {
+      "pos": "noun",
+      "meaning": "laurel",
+      "concept": 1838
+    },
+    "linden": {
+      "pos": "noun",
+      "meaning": "linden",
+      "concept": 1839
+    },
+    "olive": {
+      "pos": "noun",
+      "meaning": "olive",
+      "concept": 1840
+    },
+    "rowan": {
+      "pos": "noun",
+      "meaning": "rowan",
+      "concept": 1841
+    },
+    "sequoia": {
+      "pos": "noun",
+      "meaning": "sequoia",
+      "concept": 1842
+    },
+    "yew": {
+      "pos": "noun",
+      "meaning": "yew",
+      "concept": 1843
+    },
+    "tamarind": {
+      "pos": "noun",
+      "meaning": "tamarind",
+      "concept": 1844
+    },
+    "yellowwood": {
+      "pos": "noun",
+      "meaning": "yellowwood",
+      "concept": 1845
+    },
+    "zelkova": {
+      "pos": "noun",
+      "meaning": "zelkova",
+      "concept": 1846
+    },
+    "snowbell": {
+      "pos": "noun",
+      "meaning": "snowbell",
+      "concept": 1847
+    },
+    "silverbell": {
+      "pos": "noun",
+      "meaning": "silverbell",
+      "concept": 1848
+    },
+    "franklinia": {
+      "pos": "noun",
+      "meaning": "franklinia",
+      "concept": 1849
+    },
+    "stewartia": {
+      "pos": "noun",
+      "meaning": "stewartia",
+      "concept": 1850
+    },
+    "bluegum": {
+      "pos": "noun",
+      "meaning": "bluegum",
+      "concept": 1851
+    },
+    "karri": {
+      "pos": "noun",
+      "meaning": "karri",
+      "concept": 1852
+    },
+    "quandong": {
+      "pos": "noun",
+      "meaning": "quandong",
+      "concept": 1853
     },
     "pine": {
       "pos": "noun",
@@ -2806,10 +5836,100 @@
       "meaning": "honey",
       "concept": 401
     },
+    "peanut": {
+      "pos": "noun",
+      "meaning": "peanut",
+      "concept": 2060
+    },
+    "pistachio": {
+      "pos": "noun",
+      "meaning": "pistachio",
+      "concept": 2061
+    },
+    "pecan": {
+      "pos": "noun",
+      "meaning": "pecan",
+      "concept": 2062
+    },
+    "macadamia": {
+      "pos": "noun",
+      "meaning": "macadamia",
+      "concept": 2063
+    },
+    "hazelnut": {
+      "pos": "noun",
+      "meaning": "hazelnut",
+      "concept": 2064
+    },
     "cheese": {
       "pos": "noun",
       "meaning": "cheese",
       "concept": 402
+    },
+    "cheddar": {
+      "pos": "noun",
+      "meaning": "cheddar",
+      "concept": 2047
+    },
+    "brie": {
+      "pos": "noun",
+      "meaning": "brie",
+      "concept": 2048
+    },
+    "gouda": {
+      "pos": "noun",
+      "meaning": "gouda",
+      "concept": 2049
+    },
+    "mozzarella": {
+      "pos": "noun",
+      "meaning": "mozzarella",
+      "concept": 2050
+    },
+    "parmesan": {
+      "pos": "noun",
+      "meaning": "parmesan",
+      "concept": 2051
+    },
+    "roquefort": {
+      "pos": "noun",
+      "meaning": "roquefort",
+      "concept": 2052
+    },
+    "stilton": {
+      "pos": "noun",
+      "meaning": "stilton",
+      "concept": 2053
+    },
+    "feta": {
+      "pos": "noun",
+      "meaning": "feta",
+      "concept": 2054
+    },
+    "ricotta": {
+      "pos": "noun",
+      "meaning": "ricotta",
+      "concept": 2055
+    },
+    "camembert": {
+      "pos": "noun",
+      "meaning": "camembert",
+      "concept": 2056
+    },
+    "edam": {
+      "pos": "noun",
+      "meaning": "edam",
+      "concept": 2057
+    },
+    "gruyere": {
+      "pos": "noun",
+      "meaning": "gruyere",
+      "concept": 2058
+    },
+    "provolone": {
+      "pos": "noun",
+      "meaning": "provolone",
+      "concept": 2059
     },
     "butter": {
       "pos": "noun",
@@ -2850,6 +5970,131 @@
       "pos": "noun",
       "meaning": "carrot",
       "concept": 410
+    },
+    "endive": {
+      "pos": "noun",
+      "meaning": "endive",
+      "concept": 1887
+    },
+    "fennel": {
+      "pos": "noun",
+      "meaning": "fennel",
+      "concept": 1888
+    },
+    "kale": {
+      "pos": "noun",
+      "meaning": "kale",
+      "concept": 1889
+    },
+    "kohlrabi": {
+      "pos": "noun",
+      "meaning": "kohlrabi",
+      "concept": 1890
+    },
+    "marrow": {
+      "pos": "noun",
+      "meaning": "marrow",
+      "concept": 1891
+    },
+    "parsnip": {
+      "pos": "noun",
+      "meaning": "parsnip",
+      "concept": 1892
+    },
+    "shallot": {
+      "pos": "noun",
+      "meaning": "shallot",
+      "concept": 1893
+    },
+    "swede": {
+      "pos": "noun",
+      "meaning": "swede",
+      "concept": 1894
+    },
+    "watercress": {
+      "pos": "noun",
+      "meaning": "watercress",
+      "concept": 1895
+    },
+    "yam": {
+      "pos": "noun",
+      "meaning": "yam",
+      "concept": 1896
+    },
+    "sorrel": {
+      "pos": "noun",
+      "meaning": "sorrel",
+      "concept": 1897
+    },
+    "salsify": {
+      "pos": "noun",
+      "meaning": "salsify",
+      "concept": 1898
+    },
+    "celeriac": {
+      "pos": "noun",
+      "meaning": "celeriac",
+      "concept": 1899
+    },
+    "chayote": {
+      "pos": "noun",
+      "meaning": "chayote",
+      "concept": 1900
+    },
+    "chicory": {
+      "pos": "noun",
+      "meaning": "chicory",
+      "concept": 1901
+    },
+    "collards": {
+      "pos": "noun",
+      "meaning": "collards",
+      "concept": 1902
+    },
+    "daikon": {
+      "pos": "noun",
+      "meaning": "daikon",
+      "concept": 1903
+    },
+    "jicama": {
+      "pos": "noun",
+      "meaning": "jicama",
+      "concept": 1904
+    },
+    "purslane": {
+      "pos": "noun",
+      "meaning": "purslane",
+      "concept": 1905
+    },
+    "radicchio": {
+      "pos": "noun",
+      "meaning": "radicchio",
+      "concept": 1906
+    },
+    "rhubarb": {
+      "pos": "noun",
+      "meaning": "rhubarb",
+      "concept": 1907
+    },
+    "rutabaga": {
+      "pos": "noun",
+      "meaning": "rutabaga",
+      "concept": 1908
+    },
+    "mizuna": {
+      "pos": "noun",
+      "meaning": "mizuna",
+      "concept": 1909
+    },
+    "samphire": {
+      "pos": "noun",
+      "meaning": "samphire",
+      "concept": 1910
+    },
+    "tatsoi": {
+      "pos": "noun",
+      "meaning": "tatsoi",
+      "concept": 1911
     },
     "pea": {
       "pos": "noun",
@@ -2975,6 +6220,126 @@
       "pos": "noun",
       "meaning": "chair",
       "concept": 436
+    },
+    "armchair": {
+      "pos": "noun",
+      "meaning": "armchair",
+      "concept": 2163
+    },
+    "bureau": {
+      "pos": "noun",
+      "meaning": "bureau",
+      "concept": 2164
+    },
+    "divan": {
+      "pos": "noun",
+      "meaning": "divan",
+      "concept": 2165
+    },
+    "futon": {
+      "pos": "noun",
+      "meaning": "futon",
+      "concept": 2166
+    },
+    "hassock": {
+      "pos": "noun",
+      "meaning": "hassock",
+      "concept": 2167
+    },
+    "headboard": {
+      "pos": "noun",
+      "meaning": "headboard",
+      "concept": 2168
+    },
+    "hutch": {
+      "pos": "noun",
+      "meaning": "hutch",
+      "concept": 2169
+    },
+    "nightstand": {
+      "pos": "noun",
+      "meaning": "nightstand",
+      "concept": 2170
+    },
+    "ottoman": {
+      "pos": "noun",
+      "meaning": "ottoman",
+      "concept": 2171
+    },
+    "pew": {
+      "pos": "noun",
+      "meaning": "pew",
+      "concept": 2172
+    },
+    "recliner": {
+      "pos": "noun",
+      "meaning": "recliner",
+      "concept": 2173
+    },
+    "settee": {
+      "pos": "noun",
+      "meaning": "settee",
+      "concept": 2174
+    },
+    "settle": {
+      "pos": "noun",
+      "meaning": "settle",
+      "concept": 2175
+    },
+    "commode": {
+      "pos": "noun",
+      "meaning": "commode",
+      "concept": 2176
+    },
+    "vanity": {
+      "pos": "noun",
+      "meaning": "vanity",
+      "concept": 2177
+    },
+    "washstand": {
+      "pos": "noun",
+      "meaning": "washstand",
+      "concept": 2178
+    },
+    "chiffonier": {
+      "pos": "noun",
+      "meaning": "chiffonier",
+      "concept": 2179
+    },
+    "whatnot": {
+      "pos": "noun",
+      "meaning": "whatnot",
+      "concept": 2180
+    },
+    "truckle": {
+      "pos": "noun",
+      "meaning": "truckle",
+      "concept": 2181
+    },
+    "etagere": {
+      "pos": "noun",
+      "meaning": "etagere",
+      "concept": 2182
+    },
+    "console": {
+      "pos": "noun",
+      "meaning": "console",
+      "concept": 2183
+    },
+    "credenza": {
+      "pos": "noun",
+      "meaning": "credenza",
+      "concept": 2184
+    },
+    "daybed": {
+      "pos": "noun",
+      "meaning": "daybed",
+      "concept": 2185
+    },
+    "davenport": {
+      "pos": "noun",
+      "meaning": "davenport",
+      "concept": 2186
     },
     "pillow": {
       "pos": "noun",
@@ -3212,6 +6577,16 @@
         "concept": 596
       }
     ],
+    "aluminum": {
+      "pos": "noun",
+      "meaning": "aluminum",
+      "concept": 2641
+    },
+    "titanium": {
+      "pos": "noun",
+      "meaning": "titanium",
+      "concept": 2642
+    },
     "gold": {
       "pos": "noun",
       "meaning": "gold",
@@ -3266,6 +6641,76 @@
       "pos": "noun",
       "meaning": "hill",
       "concept": 480
+    },
+    "atoll": {
+      "pos": "noun",
+      "meaning": "atoll",
+      "concept": 2588
+    },
+    "bluff": {
+      "pos": "noun",
+      "meaning": "bluff",
+      "concept": 2589
+    },
+    "butte": {
+      "pos": "noun",
+      "meaning": "butte",
+      "concept": 2590
+    },
+    "caldera": {
+      "pos": "noun",
+      "meaning": "caldera",
+      "concept": 2591
+    },
+    "cove": {
+      "pos": "noun",
+      "meaning": "cove",
+      "concept": 2592
+    },
+    "fjord": {
+      "pos": "noun",
+      "meaning": "fjord",
+      "concept": 2593
+    },
+    "geyser": {
+      "pos": "noun",
+      "meaning": "geyser",
+      "concept": 2594
+    },
+    "isthmus": {
+      "pos": "noun",
+      "meaning": "isthmus",
+      "concept": 2595
+    },
+    "lagoon": {
+      "pos": "noun",
+      "meaning": "lagoon",
+      "concept": 2596
+    },
+    "mesa": {
+      "pos": "noun",
+      "meaning": "mesa",
+      "concept": 2597
+    },
+    "rapids": {
+      "pos": "noun",
+      "meaning": "rapids",
+      "concept": 2598
+    },
+    "reef": {
+      "pos": "noun",
+      "meaning": "reef",
+      "concept": 2599
+    },
+    "savanna": {
+      "pos": "noun",
+      "meaning": "savanna",
+      "concept": 2600
+    },
+    "shoal": {
+      "pos": "noun",
+      "meaning": "shoal",
+      "concept": 2601
     },
     "valley": {
       "pos": "noun",
@@ -3655,6 +7100,396 @@
       ],
       "meaning": "fix",
       "concept": 1539
+    },
+    "ache": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "ache",
+      "concept": 2651
+    },
+    "aches": {
+      "pos": "verb",
+      "meaning": "aches",
+      "concept": 2651,
+      "person": "third",
+      "number": "singular"
+    },
+    "ached": {
+      "pos": "verb",
+      "meaning": "ached",
+      "concept": 2651,
+      "when": "past"
+    },
+    "aching": {
+      "pos": "noun",
+      "meaning": "aching",
+      "concept": 2651
+    },
+    "boil": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "boil",
+      "concept": 2652
+    },
+    "boils": {
+      "pos": "verb",
+      "meaning": "boils",
+      "concept": 2652,
+      "person": "third",
+      "number": "singular"
+    },
+    "boiled": {
+      "pos": "verb",
+      "meaning": "boiled",
+      "concept": 2652,
+      "when": "past"
+    },
+    "boiling": {
+      "pos": "noun",
+      "meaning": "boiling",
+      "concept": 2652
+    },
+    "nod": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "nod",
+      "concept": 2653
+    },
+    "nods": {
+      "pos": "verb",
+      "meaning": "nods",
+      "concept": 2653,
+      "person": "third",
+      "number": "singular"
+    },
+    "nodded": {
+      "pos": "verb",
+      "meaning": "nodded",
+      "concept": 2653,
+      "when": "past"
+    },
+    "nodding": {
+      "pos": "noun",
+      "meaning": "nodding",
+      "concept": 2653
+    },
+    "pour": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "pour",
+      "concept": 2654
+    },
+    "pours": {
+      "pos": "verb",
+      "meaning": "pours",
+      "concept": 2654,
+      "person": "third",
+      "number": "singular"
+    },
+    "poured": {
+      "pos": "verb",
+      "meaning": "poured",
+      "concept": 2654,
+      "when": "past"
+    },
+    "pouring": {
+      "pos": "noun",
+      "meaning": "pouring",
+      "concept": 2654
+    },
+    "rinse": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "rinse",
+      "concept": 2655
+    },
+    "rinses": {
+      "pos": "verb",
+      "meaning": "rinses",
+      "concept": 2655,
+      "person": "third",
+      "number": "singular"
+    },
+    "rinsed": {
+      "pos": "verb",
+      "meaning": "rinsed",
+      "concept": 2655,
+      "when": "past"
+    },
+    "rinsing": {
+      "pos": "noun",
+      "meaning": "rinsing",
+      "concept": 2655
+    },
+    "roast": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "roast",
+      "concept": 2656
+    },
+    "roasts": {
+      "pos": "verb",
+      "meaning": "roasts",
+      "concept": 2656,
+      "person": "third",
+      "number": "singular"
+    },
+    "roasted": {
+      "pos": "verb",
+      "meaning": "roasted",
+      "concept": 2656,
+      "when": "past"
+    },
+    "roasting": {
+      "pos": "noun",
+      "meaning": "roasting",
+      "concept": 2656
+    },
+    "scrub": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "scrub",
+      "concept": 2657
+    },
+    "scrubs": {
+      "pos": "verb",
+      "meaning": "scrubs",
+      "concept": 2657,
+      "person": "third",
+      "number": "singular"
+    },
+    "scrubbed": {
+      "pos": "verb",
+      "meaning": "scrubbed",
+      "concept": 2657,
+      "when": "past"
+    },
+    "scrubbing": {
+      "pos": "noun",
+      "meaning": "scrubbing",
+      "concept": 2657
+    },
+    "sip": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "sip",
+      "concept": 2658
+    },
+    "sips": {
+      "pos": "verb",
+      "meaning": "sips",
+      "concept": 2658,
+      "person": "third",
+      "number": "singular"
+    },
+    "sipped": {
+      "pos": "verb",
+      "meaning": "sipped",
+      "concept": 2658,
+      "when": "past"
+    },
+    "sipping": {
+      "pos": "noun",
+      "meaning": "sipping",
+      "concept": 2658
+    },
+    "sneeze": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "sneeze",
+      "concept": 2659
+    },
+    "sneezes": {
+      "pos": "verb",
+      "meaning": "sneezes",
+      "concept": 2659,
+      "person": "third",
+      "number": "singular"
+    },
+    "sneezed": {
+      "pos": "verb",
+      "meaning": "sneezed",
+      "concept": 2659,
+      "when": "past"
+    },
+    "sneezing": {
+      "pos": "noun",
+      "meaning": "sneezing",
+      "concept": 2659
+    },
+    "snore": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "snore",
+      "concept": 2660
+    },
+    "snores": {
+      "pos": "verb",
+      "meaning": "snores",
+      "concept": 2660,
+      "person": "third",
+      "number": "singular"
+    },
+    "snored": {
+      "pos": "verb",
+      "meaning": "snored",
+      "concept": 2660,
+      "when": "past"
+    },
+    "snoring": {
+      "pos": "noun",
+      "meaning": "snoring",
+      "concept": 2660
+    },
+    "whisper": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "whisper",
+      "concept": 2661
+    },
+    "whispers": {
+      "pos": "verb",
+      "meaning": "whispers",
+      "concept": 2661,
+      "person": "third",
+      "number": "singular"
+    },
+    "whispered": {
+      "pos": "verb",
+      "meaning": "whispered",
+      "concept": 2661,
+      "when": "past"
+    },
+    "whispering": {
+      "pos": "noun",
+      "meaning": "whispering",
+      "concept": 2661
+    },
+    "yawn": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "yawn",
+      "concept": 2662
+    },
+    "yawns": {
+      "pos": "verb",
+      "meaning": "yawns",
+      "concept": 2662,
+      "person": "third",
+      "number": "singular"
+    },
+    "yawned": {
+      "pos": "verb",
+      "meaning": "yawned",
+      "concept": 2662,
+      "when": "past"
+    },
+    "yawning": {
+      "pos": "noun",
+      "meaning": "yawning",
+      "concept": 2662
+    },
+    "shiver": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "shiver",
+      "concept": 2663
+    },
+    "shivers": {
+      "pos": "verb",
+      "meaning": "shivers",
+      "concept": 2663,
+      "person": "third",
+      "number": "singular"
+    },
+    "shivered": {
+      "pos": "verb",
+      "meaning": "shivered",
+      "concept": 2663,
+      "when": "past"
+    },
+    "shivering": {
+      "pos": "noun",
+      "meaning": "shivering",
+      "concept": 2663
+    },
+    "stagger": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "stagger",
+      "concept": 2664
+    },
+    "staggers": {
+      "pos": "verb",
+      "meaning": "staggers",
+      "concept": 2664,
+      "person": "third",
+      "number": "singular"
+    },
+    "staggered": {
+      "pos": "verb",
+      "meaning": "staggered",
+      "concept": 2664,
+      "when": "past"
+    },
+    "staggering": {
+      "pos": "noun",
+      "meaning": "staggering",
+      "concept": 2664
+    },
+    "tickle": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "tickle",
+      "concept": 2665
+    },
+    "tickles": {
+      "pos": "verb",
+      "meaning": "tickles",
+      "concept": 2665,
+      "person": "third",
+      "number": "singular"
+    },
+    "tickled": {
+      "pos": "verb",
+      "meaning": "tickled",
+      "concept": 2665,
+      "when": "past"
+    },
+    "tickling": {
+      "pos": "noun",
+      "meaning": "tickling",
+      "concept": 2665
     },
     "fixes": {
       "pos": "verb",
@@ -4067,6 +7902,171 @@
       "meaning": "rose",
       "concept": 325,
       "when": "past"
+    },
+    "anemone": {
+      "pos": "noun",
+      "meaning": "anemone",
+      "concept": 1854
+    },
+    "aster": {
+      "pos": "noun",
+      "meaning": "aster",
+      "concept": 1855
+    },
+    "bluebell": {
+      "pos": "noun",
+      "meaning": "bluebell",
+      "concept": 1856
+    },
+    "buttercup": {
+      "pos": "noun",
+      "meaning": "buttercup",
+      "concept": 1857
+    },
+    "clematis": {
+      "pos": "noun",
+      "meaning": "clematis",
+      "concept": 1858
+    },
+    "crocus": {
+      "pos": "noun",
+      "meaning": "crocus",
+      "concept": 1859
+    },
+    "cyclamen": {
+      "pos": "noun",
+      "meaning": "cyclamen",
+      "concept": 1860
+    },
+    "delphinium": {
+      "pos": "noun",
+      "meaning": "delphinium",
+      "concept": 1861
+    },
+    "foxglove": {
+      "pos": "noun",
+      "meaning": "foxglove",
+      "concept": 1862
+    },
+    "freesia": {
+      "pos": "noun",
+      "meaning": "freesia",
+      "concept": 1863
+    },
+    "gardenia": {
+      "pos": "noun",
+      "meaning": "gardenia",
+      "concept": 1864
+    },
+    "gladiolus": {
+      "pos": "noun",
+      "meaning": "gladiolus",
+      "concept": 1865
+    },
+    "heather": {
+      "pos": "noun",
+      "meaning": "heather",
+      "concept": 1866
+    },
+    "hyacinth": {
+      "pos": "noun",
+      "meaning": "hyacinth",
+      "concept": 1867
+    },
+    "lilac": {
+      "pos": "noun",
+      "meaning": "lilac",
+      "concept": 1868
+    },
+    "lupin": {
+      "pos": "noun",
+      "meaning": "lupin",
+      "concept": 1869
+    },
+    "nasturtium": {
+      "pos": "noun",
+      "meaning": "nasturtium",
+      "concept": 1870
+    },
+    "pansy": {
+      "pos": "noun",
+      "meaning": "pansy",
+      "concept": 1871
+    },
+    "phlox": {
+      "pos": "noun",
+      "meaning": "phlox",
+      "concept": 1872
+    },
+    "primrose": {
+      "pos": "noun",
+      "meaning": "primrose",
+      "concept": 1873
+    },
+    "snapdragon": {
+      "pos": "noun",
+      "meaning": "snapdragon",
+      "concept": 1874
+    },
+    "thistle": {
+      "pos": "noun",
+      "meaning": "thistle",
+      "concept": 1875
+    },
+    "trillium": {
+      "pos": "noun",
+      "meaning": "trillium",
+      "concept": 1876
+    },
+    "wallflower": {
+      "pos": "noun",
+      "meaning": "wallflower",
+      "concept": 1877
+    },
+    "wisteria": {
+      "pos": "noun",
+      "meaning": "wisteria",
+      "concept": 1878
+    },
+    "yarrow": {
+      "pos": "noun",
+      "meaning": "yarrow",
+      "concept": 1879
+    },
+    "zinnia": {
+      "pos": "noun",
+      "meaning": "zinnia",
+      "concept": 1880
+    },
+    "protea": {
+      "pos": "noun",
+      "meaning": "protea",
+      "concept": 1881
+    },
+    "scabiosa": {
+      "pos": "noun",
+      "meaning": "scabiosa",
+      "concept": 1882
+    },
+    "statice": {
+      "pos": "noun",
+      "meaning": "statice",
+      "concept": 1883
+    },
+    "stock": {
+      "pos": "noun",
+      "meaning": "stock",
+      "concept": 1884
+    },
+    "verbena": {
+      "pos": "noun",
+      "meaning": "verbena",
+      "concept": 1885
+    },
+    "vinca": {
+      "pos": "noun",
+      "meaning": "vinca",
+      "concept": 1886
     },
     "stops": {
       "pos": "verb",
@@ -5224,6 +9224,131 @@
       "pos": "noun",
       "meaning": "cobra",
       "concept": 756
+    },
+    "skink": {
+      "pos": "noun",
+      "meaning": "skink",
+      "concept": 1725
+    },
+    "agama": {
+      "pos": "noun",
+      "meaning": "agama",
+      "concept": 1726
+    },
+    "anole": {
+      "pos": "noun",
+      "meaning": "anole",
+      "concept": 1727
+    },
+    "boa": {
+      "pos": "noun",
+      "meaning": "boa",
+      "concept": 1728
+    },
+    "mamba": {
+      "pos": "noun",
+      "meaning": "mamba",
+      "concept": 1729
+    },
+    "krait": {
+      "pos": "noun",
+      "meaning": "krait",
+      "concept": 1730
+    },
+    "monitor": {
+      "pos": "noun",
+      "meaning": "monitor",
+      "concept": 1731
+    },
+    "caiman": {
+      "pos": "noun",
+      "meaning": "caiman",
+      "concept": 1732
+    },
+    "gharial": {
+      "pos": "noun",
+      "meaning": "gharial",
+      "concept": 1733
+    },
+    "tuatara": {
+      "pos": "noun",
+      "meaning": "tuatara",
+      "concept": 1734
+    },
+    "terrapin": {
+      "pos": "noun",
+      "meaning": "terrapin",
+      "concept": 1735
+    },
+    "kingsnake": {
+      "pos": "noun",
+      "meaning": "kingsnake",
+      "concept": 1736
+    },
+    "milksnake": {
+      "pos": "noun",
+      "meaning": "milksnake",
+      "concept": 1737
+    },
+    "racer": {
+      "pos": "noun",
+      "meaning": "racer",
+      "concept": 1738
+    },
+    "ratsnake": {
+      "pos": "noun",
+      "meaning": "ratsnake",
+      "concept": 1739
+    },
+    "seasnake": {
+      "pos": "noun",
+      "meaning": "seasnake",
+      "concept": 1740
+    },
+    "whiptail": {
+      "pos": "noun",
+      "meaning": "whiptail",
+      "concept": 1741
+    },
+    "basilisk": {
+      "pos": "noun",
+      "meaning": "basilisk",
+      "concept": 1742
+    },
+    "chuckwalla": {
+      "pos": "noun",
+      "meaning": "chuckwalla",
+      "concept": 1743
+    },
+    "keelback": {
+      "pos": "noun",
+      "meaning": "keelback",
+      "concept": 1744
+    },
+    "blindsnake": {
+      "pos": "noun",
+      "meaning": "blindsnake",
+      "concept": 1745
+    },
+    "threadsnake": {
+      "pos": "noun",
+      "meaning": "threadsnake",
+      "concept": 1746
+    },
+    "kukri": {
+      "pos": "noun",
+      "meaning": "kukri",
+      "concept": 1747
+    },
+    "bronzeback": {
+      "pos": "noun",
+      "meaning": "bronzeback",
+      "concept": 1748
+    },
+    "pipesnake": {
+      "pos": "noun",
+      "meaning": "pipesnake",
+      "concept": 1749
     },
     "python": {
       "pos": "noun",
@@ -6405,6 +10530,136 @@
       "meaning": "box",
       "concept": 993
     },
+    "amphora": {
+      "pos": "noun",
+      "meaning": "amphora",
+      "concept": 2458
+    },
+    "caddy": {
+      "pos": "noun",
+      "meaning": "caddy",
+      "concept": 2459
+    },
+    "canister": {
+      "pos": "noun",
+      "meaning": "canister",
+      "concept": 2460
+    },
+    "carafe": {
+      "pos": "noun",
+      "meaning": "carafe",
+      "concept": 2461
+    },
+    "cask": {
+      "pos": "noun",
+      "meaning": "cask",
+      "concept": 2462
+    },
+    "cooler": {
+      "pos": "noun",
+      "meaning": "cooler",
+      "concept": 2463
+    },
+    "decanter": {
+      "pos": "noun",
+      "meaning": "decanter",
+      "concept": 2464
+    },
+    "hamper": {
+      "pos": "noun",
+      "meaning": "hamper",
+      "concept": 2465
+    },
+    "pannier": {
+      "pos": "noun",
+      "meaning": "pannier",
+      "concept": 2466
+    },
+    "pitcher": {
+      "pos": "noun",
+      "meaning": "pitcher",
+      "concept": 2467
+    },
+    "tureen": {
+      "pos": "noun",
+      "meaning": "tureen",
+      "concept": 2468
+    },
+    "urn": {
+      "pos": "noun",
+      "meaning": "urn",
+      "concept": 2469
+    },
+    "vat": {
+      "pos": "noun",
+      "meaning": "vat",
+      "concept": 2470
+    },
+    "vial": {
+      "pos": "noun",
+      "meaning": "vial",
+      "concept": 2471
+    },
+    "coffin": {
+      "pos": "noun",
+      "meaning": "coffin",
+      "concept": 2472
+    },
+    "casket": {
+      "pos": "noun",
+      "meaning": "casket",
+      "concept": 2473
+    },
+    "creel": {
+      "pos": "noun",
+      "meaning": "creel",
+      "concept": 2474
+    },
+    "crock": {
+      "pos": "noun",
+      "meaning": "crock",
+      "concept": 2475
+    },
+    "flagon": {
+      "pos": "noun",
+      "meaning": "flagon",
+      "concept": 2476
+    },
+    "growler": {
+      "pos": "noun",
+      "meaning": "growler",
+      "concept": 2477
+    },
+    "hopper": {
+      "pos": "noun",
+      "meaning": "hopper",
+      "concept": 2478
+    },
+    "punnet": {
+      "pos": "noun",
+      "meaning": "punnet",
+      "concept": 2479
+    },
+    "stein": {
+      "pos": "noun",
+      "meaning": "stein",
+      "concept": 2480
+    },
+    "hatbox": {
+      "pos": "noun",
+      "meaning": "hatbox",
+      "concept": 2481
+    },
+    "lunchbox": {
+      "pos": "noun",
+      "meaning": "lunchbox",
+      "concept": 2482
+    },
+    "pillbox": {
+      "pos": "noun",
+      "meaning": "pillbox",
+      "concept": 2483
+    },
     "jar": {
       "pos": "noun",
       "meaning": "jar",
@@ -6645,6 +10900,46 @@
       "meaning": "rock",
       "concept": 1041
     },
+    "basalt": {
+      "pos": "noun",
+      "meaning": "basalt",
+      "concept": 2643
+    },
+    "flint": {
+      "pos": "noun",
+      "meaning": "flint",
+      "concept": 2644
+    },
+    "obsidian": {
+      "pos": "noun",
+      "meaning": "obsidian",
+      "concept": 2645
+    },
+    "pumice": {
+      "pos": "noun",
+      "meaning": "pumice",
+      "concept": 2646
+    },
+    "sandstone": {
+      "pos": "noun",
+      "meaning": "sandstone",
+      "concept": 2647
+    },
+    "shale": {
+      "pos": "noun",
+      "meaning": "shale",
+      "concept": 2648
+    },
+    "slate": {
+      "pos": "noun",
+      "meaning": "slate",
+      "concept": 2649
+    },
+    "gypsum": {
+      "pos": "noun",
+      "meaning": "gypsum",
+      "concept": 2650
+    },
     "marble": {
       "pos": "noun",
       "meaning": "marble",
@@ -6674,6 +10969,71 @@
       "pos": "noun",
       "meaning": "diamond",
       "concept": 1047
+    },
+    "amber": {
+      "pos": "noun",
+      "meaning": "amber",
+      "concept": 2628
+    },
+    "amethyst": {
+      "pos": "noun",
+      "meaning": "amethyst",
+      "concept": 2629
+    },
+    "beryl": {
+      "pos": "noun",
+      "meaning": "beryl",
+      "concept": 2630
+    },
+    "carnelian": {
+      "pos": "noun",
+      "meaning": "carnelian",
+      "concept": 2631
+    },
+    "garnet": {
+      "pos": "noun",
+      "meaning": "garnet",
+      "concept": 2632
+    },
+    "jade": {
+      "pos": "noun",
+      "meaning": "jade",
+      "concept": 2633
+    },
+    "jasper": {
+      "pos": "noun",
+      "meaning": "jasper",
+      "concept": 2634
+    },
+    "malachite": {
+      "pos": "noun",
+      "meaning": "malachite",
+      "concept": 2635
+    },
+    "moonstone": {
+      "pos": "noun",
+      "meaning": "moonstone",
+      "concept": 2636
+    },
+    "onyx": {
+      "pos": "noun",
+      "meaning": "onyx",
+      "concept": 2637
+    },
+    "opal": {
+      "pos": "noun",
+      "meaning": "opal",
+      "concept": 2638
+    },
+    "peridot": {
+      "pos": "noun",
+      "meaning": "peridot",
+      "concept": 2639
+    },
+    "topaz": {
+      "pos": "noun",
+      "meaning": "topaz",
+      "concept": 2640
     },
     "ruby": {
       "pos": "noun",
@@ -6739,6 +11099,96 @@
       "pos": "noun",
       "meaning": "silk",
       "concept": 1060
+    },
+    "brocade": {
+      "pos": "noun",
+      "meaning": "brocade",
+      "concept": 2610
+    },
+    "calico": {
+      "pos": "noun",
+      "meaning": "calico",
+      "concept": 2611
+    },
+    "canvas": {
+      "pos": "noun",
+      "meaning": "canvas",
+      "concept": 2612
+    },
+    "cashmere": {
+      "pos": "noun",
+      "meaning": "cashmere",
+      "concept": 2613
+    },
+    "chiffon": {
+      "pos": "noun",
+      "meaning": "chiffon",
+      "concept": 2614
+    },
+    "corduroy": {
+      "pos": "noun",
+      "meaning": "corduroy",
+      "concept": 2615
+    },
+    "damask": {
+      "pos": "noun",
+      "meaning": "damask",
+      "concept": 2616
+    },
+    "denim": {
+      "pos": "noun",
+      "meaning": "denim",
+      "concept": 2617
+    },
+    "flannel": {
+      "pos": "noun",
+      "meaning": "flannel",
+      "concept": 2618
+    },
+    "gabardine": {
+      "pos": "noun",
+      "meaning": "gabardine",
+      "concept": 2619
+    },
+    "gingham": {
+      "pos": "noun",
+      "meaning": "gingham",
+      "concept": 2620
+    },
+    "lace": {
+      "pos": "noun",
+      "meaning": "lace",
+      "concept": 2621
+    },
+    "muslin": {
+      "pos": "noun",
+      "meaning": "muslin",
+      "concept": 2622
+    },
+    "poplin": {
+      "pos": "noun",
+      "meaning": "poplin",
+      "concept": 2623
+    },
+    "taffeta": {
+      "pos": "noun",
+      "meaning": "taffeta",
+      "concept": 2624
+    },
+    "tweed": {
+      "pos": "noun",
+      "meaning": "tweed",
+      "concept": 2625
+    },
+    "velvet": {
+      "pos": "noun",
+      "meaning": "velvet",
+      "concept": 2626
+    },
+    "voile": {
+      "pos": "noun",
+      "meaning": "voile",
+      "concept": 2627
     },
     "linen": {
       "pos": "noun",
@@ -6859,6 +11309,811 @@
       "pos": "noun",
       "meaning": "pilot",
       "concept": 1084
+    },
+    "accountant": {
+      "pos": "noun",
+      "meaning": "accountant",
+      "concept": 2297
+    },
+    "actor": {
+      "pos": "noun",
+      "meaning": "actor",
+      "concept": 2298
+    },
+    "architect": {
+      "pos": "noun",
+      "meaning": "architect",
+      "concept": 2299
+    },
+    "astronaut": {
+      "pos": "noun",
+      "meaning": "astronaut",
+      "concept": 2300
+    },
+    "athlete": {
+      "pos": "noun",
+      "meaning": "athlete",
+      "concept": 2301
+    },
+    "author": {
+      "pos": "noun",
+      "meaning": "author",
+      "concept": 2302
+    },
+    "banker": {
+      "pos": "noun",
+      "meaning": "banker",
+      "concept": 2303
+    },
+    "barista": {
+      "pos": "noun",
+      "meaning": "barista",
+      "concept": 2304
+    },
+    "bouncer": {
+      "pos": "noun",
+      "meaning": "bouncer",
+      "concept": 2305
+    },
+    "butler": {
+      "pos": "noun",
+      "meaning": "butler",
+      "concept": 2306
+    },
+    "chauffeur": {
+      "pos": "noun",
+      "meaning": "chauffeur",
+      "concept": 2307
+    },
+    "chef": {
+      "pos": "noun",
+      "meaning": "chef",
+      "concept": 2308
+    },
+    "comedian": {
+      "pos": "noun",
+      "meaning": "comedian",
+      "concept": 2309
+    },
+    "courier": {
+      "pos": "noun",
+      "meaning": "courier",
+      "concept": 2310
+    },
+    "detective": {
+      "pos": "noun",
+      "meaning": "detective",
+      "concept": 2311
+    },
+    "director": {
+      "pos": "noun",
+      "meaning": "director",
+      "concept": 2312
+    },
+    "editor": {
+      "pos": "noun",
+      "meaning": "editor",
+      "concept": 2313
+    },
+    "firefighter": {
+      "pos": "noun",
+      "meaning": "firefighter",
+      "concept": 2314
+    },
+    "florist": {
+      "pos": "noun",
+      "meaning": "florist",
+      "concept": 2315
+    },
+    "hairdresser": {
+      "pos": "noun",
+      "meaning": "hairdresser",
+      "concept": 2316
+    },
+    "inspector": {
+      "pos": "noun",
+      "meaning": "inspector",
+      "concept": 2317
+    },
+    "janitor": {
+      "pos": "noun",
+      "meaning": "janitor",
+      "concept": 2318
+    },
+    "judge": {
+      "pos": "noun",
+      "meaning": "judge",
+      "concept": 2319
+    },
+    "librarian": {
+      "pos": "noun",
+      "meaning": "librarian",
+      "concept": 2320
+    },
+    "lifeguard": {
+      "pos": "noun",
+      "meaning": "lifeguard",
+      "concept": 2321
+    },
+    "manager": {
+      "pos": "noun",
+      "meaning": "manager",
+      "concept": 2322
+    },
+    "mayor": {
+      "pos": "noun",
+      "meaning": "mayor",
+      "concept": 2323
+    },
+    "musician": {
+      "pos": "noun",
+      "meaning": "musician",
+      "concept": 2324
+    },
+    "officer": {
+      "pos": "noun",
+      "meaning": "officer",
+      "concept": 2325
+    },
+    "optician": {
+      "pos": "noun",
+      "meaning": "optician",
+      "concept": 2326
+    },
+    "paramedic": {
+      "pos": "noun",
+      "meaning": "paramedic",
+      "concept": 2327
+    },
+    "pharmacist": {
+      "pos": "noun",
+      "meaning": "pharmacist",
+      "concept": 2328
+    },
+    "photographer": {
+      "pos": "noun",
+      "meaning": "photographer",
+      "concept": 2329
+    },
+    "postman": {
+      "pos": "noun",
+      "meaning": "postman",
+      "concept": 2330
+    },
+    "programmer": {
+      "pos": "noun",
+      "meaning": "programmer",
+      "concept": 2331
+    },
+    "reporter": {
+      "pos": "noun",
+      "meaning": "reporter",
+      "concept": 2332
+    },
+    "scholar": {
+      "pos": "noun",
+      "meaning": "scholar",
+      "concept": 2333
+    },
+    "secretary": {
+      "pos": "noun",
+      "meaning": "secretary",
+      "concept": 2334
+    },
+    "senator": {
+      "pos": "noun",
+      "meaning": "senator",
+      "concept": 2335
+    },
+    "sheriff": {
+      "pos": "noun",
+      "meaning": "sheriff",
+      "concept": 2336
+    },
+    "tutor": {
+      "pos": "noun",
+      "meaning": "tutor",
+      "concept": 2337
+    },
+    "umpire": {
+      "pos": "noun",
+      "meaning": "umpire",
+      "concept": 2338
+    },
+    "vet": {
+      "pos": "noun",
+      "meaning": "vet",
+      "concept": 2339
+    },
+    "warden": {
+      "pos": "noun",
+      "meaning": "warden",
+      "concept": 2340
+    },
+    "zookeeper": {
+      "pos": "noun",
+      "meaning": "zookeeper",
+      "concept": 2341
+    },
+    "abbot": {
+      "pos": "noun",
+      "meaning": "abbot",
+      "concept": 2342
+    },
+    "admiral": {
+      "pos": "noun",
+      "meaning": "admiral",
+      "concept": 2343
+    },
+    "ambassador": {
+      "pos": "noun",
+      "meaning": "ambassador",
+      "concept": 2344
+    },
+    "apothecary": {
+      "pos": "noun",
+      "meaning": "apothecary",
+      "concept": 2345
+    },
+    "artisan": {
+      "pos": "noun",
+      "meaning": "artisan",
+      "concept": 2346
+    },
+    "assassin": {
+      "pos": "noun",
+      "meaning": "assassin",
+      "concept": 2347
+    },
+    "astronomer": {
+      "pos": "noun",
+      "meaning": "astronomer",
+      "concept": 2348
+    },
+    "auditor": {
+      "pos": "noun",
+      "meaning": "auditor",
+      "concept": 2349
+    },
+    "aviator": {
+      "pos": "noun",
+      "meaning": "aviator",
+      "concept": 2350
+    },
+    "bailiff": {
+      "pos": "noun",
+      "meaning": "bailiff",
+      "concept": 2351
+    },
+    "barman": {
+      "pos": "noun",
+      "meaning": "barman",
+      "concept": 2352
+    },
+    "baron": {
+      "pos": "noun",
+      "meaning": "baron",
+      "concept": 2353
+    },
+    "bishop": {
+      "pos": "noun",
+      "meaning": "bishop",
+      "concept": 2354
+    },
+    "burglar": {
+      "pos": "noun",
+      "meaning": "burglar",
+      "concept": 2355
+    },
+    "caretaker": {
+      "pos": "noun",
+      "meaning": "caretaker",
+      "concept": 2356
+    },
+    "chancellor": {
+      "pos": "noun",
+      "meaning": "chancellor",
+      "concept": 2357
+    },
+    "chaplain": {
+      "pos": "noun",
+      "meaning": "chaplain",
+      "concept": 2358
+    },
+    "clown": {
+      "pos": "noun",
+      "meaning": "clown",
+      "concept": 2359
+    },
+    "conductor": {
+      "pos": "noun",
+      "meaning": "conductor",
+      "concept": 2360
+    },
+    "convict": {
+      "pos": "noun",
+      "meaning": "convict",
+      "concept": 2361
+    },
+    "corporal": {
+      "pos": "noun",
+      "meaning": "corporal",
+      "concept": 2362
+    },
+    "councillor": {
+      "pos": "noun",
+      "meaning": "councillor",
+      "concept": 2363
+    },
+    "courtier": {
+      "pos": "noun",
+      "meaning": "courtier",
+      "concept": 2364
+    },
+    "curator": {
+      "pos": "noun",
+      "meaning": "curator",
+      "concept": 2365
+    },
+    "deacon": {
+      "pos": "noun",
+      "meaning": "deacon",
+      "concept": 2366
+    },
+    "docker": {
+      "pos": "noun",
+      "meaning": "docker",
+      "concept": 2367
+    },
+    "doorman": {
+      "pos": "noun",
+      "meaning": "doorman",
+      "concept": 2368
+    },
+    "drummer": {
+      "pos": "noun",
+      "meaning": "drummer",
+      "concept": 2369
+    },
+    "duke": {
+      "pos": "noun",
+      "meaning": "duke",
+      "concept": 2370
+    },
+    "earl": {
+      "pos": "noun",
+      "meaning": "earl",
+      "concept": 2371
+    },
+    "explorer": {
+      "pos": "noun",
+      "meaning": "explorer",
+      "concept": 2372
+    },
+    "footman": {
+      "pos": "noun",
+      "meaning": "footman",
+      "concept": 2373
+    },
+    "foreman": {
+      "pos": "noun",
+      "meaning": "foreman",
+      "concept": 2374
+    },
+    "forester": {
+      "pos": "noun",
+      "meaning": "forester",
+      "concept": 2375
+    },
+    "friar": {
+      "pos": "noun",
+      "meaning": "friar",
+      "concept": 2376
+    },
+    "gaoler": {
+      "pos": "noun",
+      "meaning": "gaoler",
+      "concept": 2377
+    },
+    "general": {
+      "pos": "noun",
+      "meaning": "general",
+      "concept": 2378
+    },
+    "governor": {
+      "pos": "noun",
+      "meaning": "governor",
+      "concept": 2379
+    },
+    "herald": {
+      "pos": "noun",
+      "meaning": "herald",
+      "concept": 2380
+    },
+    "hermit": {
+      "pos": "noun",
+      "meaning": "hermit",
+      "concept": 2381
+    },
+    "innkeeper": {
+      "pos": "noun",
+      "meaning": "innkeeper",
+      "concept": 2382
+    },
+    "inventor": {
+      "pos": "noun",
+      "meaning": "inventor",
+      "concept": 2383
+    },
+    "jailer": {
+      "pos": "noun",
+      "meaning": "jailer",
+      "concept": 2384
+    },
+    "juggler": {
+      "pos": "noun",
+      "meaning": "juggler",
+      "concept": 2385
+    },
+    "knight": {
+      "pos": "noun",
+      "meaning": "knight",
+      "concept": 2386
+    },
+    "lady": {
+      "pos": "noun",
+      "meaning": "lady",
+      "concept": 2387
+    },
+    "lieutenant": {
+      "pos": "noun",
+      "meaning": "lieutenant",
+      "concept": 2388
+    },
+    "lord": {
+      "pos": "noun",
+      "meaning": "lord",
+      "concept": 2389
+    },
+    "lumberjack": {
+      "pos": "noun",
+      "meaning": "lumberjack",
+      "concept": 2390
+    },
+    "matador": {
+      "pos": "noun",
+      "meaning": "matador",
+      "concept": 2391
+    },
+    "mercenary": {
+      "pos": "noun",
+      "meaning": "mercenary",
+      "concept": 2392
+    },
+    "messenger": {
+      "pos": "noun",
+      "meaning": "messenger",
+      "concept": 2393
+    },
+    "midwife": {
+      "pos": "noun",
+      "meaning": "midwife",
+      "concept": 2394
+    },
+    "millionaire": {
+      "pos": "noun",
+      "meaning": "millionaire",
+      "concept": 2395
+    },
+    "minstrel": {
+      "pos": "noun",
+      "meaning": "minstrel",
+      "concept": 2396
+    },
+    "missionary": {
+      "pos": "noun",
+      "meaning": "missionary",
+      "concept": 2397
+    },
+    "monarch": {
+      "pos": "noun",
+      "meaning": "monarch",
+      "concept": 2398
+    },
+    "novice": {
+      "pos": "noun",
+      "meaning": "novice",
+      "concept": 2399
+    },
+    "orator": {
+      "pos": "noun",
+      "meaning": "orator",
+      "concept": 2400
+    },
+    "peddler": {
+      "pos": "noun",
+      "meaning": "peddler",
+      "concept": 2401
+    },
+    "philosopher": {
+      "pos": "noun",
+      "meaning": "philosopher",
+      "concept": 2402
+    },
+    "physician": {
+      "pos": "noun",
+      "meaning": "physician",
+      "concept": 2403
+    },
+    "pilgrim": {
+      "pos": "noun",
+      "meaning": "pilgrim",
+      "concept": 2404
+    },
+    "pirate": {
+      "pos": "noun",
+      "meaning": "pirate",
+      "concept": 2405
+    },
+    "playwright": {
+      "pos": "noun",
+      "meaning": "playwright",
+      "concept": 2406
+    },
+    "poacher": {
+      "pos": "noun",
+      "meaning": "poacher",
+      "concept": 2407
+    },
+    "policeman": {
+      "pos": "noun",
+      "meaning": "policeman",
+      "concept": 2408
+    },
+    "politician": {
+      "pos": "noun",
+      "meaning": "politician",
+      "concept": 2409
+    },
+    "professor": {
+      "pos": "noun",
+      "meaning": "professor",
+      "concept": 2410
+    },
+    "prophet": {
+      "pos": "noun",
+      "meaning": "prophet",
+      "concept": 2411
+    },
+    "rabbi": {
+      "pos": "noun",
+      "meaning": "rabbi",
+      "concept": 2412
+    },
+    "rancher": {
+      "pos": "noun",
+      "meaning": "rancher",
+      "concept": 2413
+    },
+    "ranger": {
+      "pos": "noun",
+      "meaning": "ranger",
+      "concept": 2414
+    },
+    "regent": {
+      "pos": "noun",
+      "meaning": "regent",
+      "concept": 2415
+    },
+    "rider": {
+      "pos": "noun",
+      "meaning": "rider",
+      "concept": 2416
+    },
+    "scout": {
+      "pos": "noun",
+      "meaning": "scout",
+      "concept": 2417
+    },
+    "scribe": {
+      "pos": "noun",
+      "meaning": "scribe",
+      "concept": 2418
+    },
+    "sentry": {
+      "pos": "noun",
+      "meaning": "sentry",
+      "concept": 2419
+    },
+    "serf": {
+      "pos": "noun",
+      "meaning": "serf",
+      "concept": 2420
+    },
+    "sexton": {
+      "pos": "noun",
+      "meaning": "sexton",
+      "concept": 2421
+    },
+    "shaman": {
+      "pos": "noun",
+      "meaning": "shaman",
+      "concept": 2422
+    },
+    "smuggler": {
+      "pos": "noun",
+      "meaning": "smuggler",
+      "concept": 2423
+    },
+    "sommelier": {
+      "pos": "noun",
+      "meaning": "sommelier",
+      "concept": 2424
+    },
+    "squire": {
+      "pos": "noun",
+      "meaning": "squire",
+      "concept": 2425
+    },
+    "statesman": {
+      "pos": "noun",
+      "meaning": "statesman",
+      "concept": 2426
+    },
+    "stevedore": {
+      "pos": "noun",
+      "meaning": "stevedore",
+      "concept": 2427
+    },
+    "steward": {
+      "pos": "noun",
+      "meaning": "steward",
+      "concept": 2428
+    },
+    "stockbroker": {
+      "pos": "noun",
+      "meaning": "stockbroker",
+      "concept": 2429
+    },
+    "stowaway": {
+      "pos": "noun",
+      "meaning": "stowaway",
+      "concept": 2430
+    },
+    "sultan": {
+      "pos": "noun",
+      "meaning": "sultan",
+      "concept": 2431
+    },
+    "swordsman": {
+      "pos": "noun",
+      "meaning": "swordsman",
+      "concept": 2432
+    },
+    "tenant": {
+      "pos": "noun",
+      "meaning": "tenant",
+      "concept": 2433
+    },
+    "tinker": {
+      "pos": "noun",
+      "meaning": "tinker",
+      "concept": 2434
+    },
+    "tramp": {
+      "pos": "noun",
+      "meaning": "tramp",
+      "concept": 2435
+    },
+    "treasurer": {
+      "pos": "noun",
+      "meaning": "treasurer",
+      "concept": 2436
+    },
+    "troubadour": {
+      "pos": "noun",
+      "meaning": "troubadour",
+      "concept": 2437
+    },
+    "trucker": {
+      "pos": "noun",
+      "meaning": "trucker",
+      "concept": 2438
+    },
+    "tycoon": {
+      "pos": "noun",
+      "meaning": "tycoon",
+      "concept": 2439
+    },
+    "tyrant": {
+      "pos": "noun",
+      "meaning": "tyrant",
+      "concept": 2440
+    },
+    "usher": {
+      "pos": "noun",
+      "meaning": "usher",
+      "concept": 2441
+    },
+    "vagrant": {
+      "pos": "noun",
+      "meaning": "vagrant",
+      "concept": 2442
+    },
+    "valet": {
+      "pos": "noun",
+      "meaning": "valet",
+      "concept": 2443
+    },
+    "vassal": {
+      "pos": "noun",
+      "meaning": "vassal",
+      "concept": 2444
+    },
+    "vendor": {
+      "pos": "noun",
+      "meaning": "vendor",
+      "concept": 2445
+    },
+    "veteran": {
+      "pos": "noun",
+      "meaning": "veteran",
+      "concept": 2446
+    },
+    "vicar": {
+      "pos": "noun",
+      "meaning": "vicar",
+      "concept": 2447
+    },
+    "villain": {
+      "pos": "noun",
+      "meaning": "villain",
+      "concept": 2448
+    },
+    "vintner": {
+      "pos": "noun",
+      "meaning": "vintner",
+      "concept": 2449
+    },
+    "virtuoso": {
+      "pos": "noun",
+      "meaning": "virtuoso",
+      "concept": 2450
+    },
+    "vizier": {
+      "pos": "noun",
+      "meaning": "vizier",
+      "concept": 2451
+    },
+    "warlord": {
+      "pos": "noun",
+      "meaning": "warlord",
+      "concept": 2452
+    },
+    "watchman": {
+      "pos": "noun",
+      "meaning": "watchman",
+      "concept": 2453
+    },
+    "wheelwright": {
+      "pos": "noun",
+      "meaning": "wheelwright",
+      "concept": 2454
+    },
+    "witness": {
+      "pos": "noun",
+      "meaning": "witness",
+      "concept": 2455
+    },
+    "yeoman": {
+      "pos": "noun",
+      "meaning": "yeoman",
+      "concept": 2456
+    },
+    "zealot": {
+      "pos": "noun",
+      "meaning": "zealot",
+      "concept": 2457
     },
     "engineer": {
       "pos": "noun",
@@ -7166,6 +12421,61 @@
       "meaning": "doll",
       "concept": 1138
     },
+    "teddy": {
+      "pos": "noun",
+      "meaning": "teddy",
+      "concept": 2526
+    },
+    "blocks": {
+      "pos": "noun",
+      "meaning": "blocks",
+      "concept": 2527
+    },
+    "robot": {
+      "pos": "noun",
+      "meaning": "robot",
+      "concept": 2528
+    },
+    "yoyo": {
+      "pos": "noun",
+      "meaning": "yoyo",
+      "concept": 2529
+    },
+    "frisbee": {
+      "pos": "noun",
+      "meaning": "frisbee",
+      "concept": 2530
+    },
+    "skateboard": {
+      "pos": "noun",
+      "meaning": "skateboard",
+      "concept": 2531
+    },
+    "pogo": {
+      "pos": "noun",
+      "meaning": "pogo",
+      "concept": 2532
+    },
+    "puppet": {
+      "pos": "noun",
+      "meaning": "puppet",
+      "concept": 2533
+    },
+    "mobile": {
+      "pos": "noun",
+      "meaning": "mobile",
+      "concept": 2534
+    },
+    "slinky": {
+      "pos": "noun",
+      "meaning": "slinky",
+      "concept": 2535
+    },
+    "dollhouse": {
+      "pos": "noun",
+      "meaning": "dollhouse",
+      "concept": 2536
+    },
     "kite": {
       "pos": "noun",
       "meaning": "kite",
@@ -7195,6 +12505,96 @@
       "pos": "noun",
       "meaning": "chess",
       "concept": 1144
+    },
+    "backgammon": {
+      "pos": "noun",
+      "meaning": "backgammon",
+      "concept": 2508
+    },
+    "bingo": {
+      "pos": "noun",
+      "meaning": "bingo",
+      "concept": 2509
+    },
+    "charades": {
+      "pos": "noun",
+      "meaning": "charades",
+      "concept": 2510
+    },
+    "dominoes": {
+      "pos": "noun",
+      "meaning": "dominoes",
+      "concept": 2511
+    },
+    "marbles": {
+      "pos": "noun",
+      "meaning": "marbles",
+      "concept": 2512
+    },
+    "poker": {
+      "pos": "noun",
+      "meaning": "poker",
+      "concept": 2513
+    },
+    "rummy": {
+      "pos": "noun",
+      "meaning": "rummy",
+      "concept": 2514
+    },
+    "scrabble": {
+      "pos": "noun",
+      "meaning": "scrabble",
+      "concept": 2515
+    },
+    "solitaire": {
+      "pos": "noun",
+      "meaning": "solitaire",
+      "concept": 2516
+    },
+    "canasta": {
+      "pos": "noun",
+      "meaning": "canasta",
+      "concept": 2517
+    },
+    "checkers": {
+      "pos": "noun",
+      "meaning": "checkers",
+      "concept": 2518
+    },
+    "craps": {
+      "pos": "noun",
+      "meaning": "craps",
+      "concept": 2519
+    },
+    "gin": {
+      "pos": "noun",
+      "meaning": "gin",
+      "concept": 2520
+    },
+    "hearts": {
+      "pos": "noun",
+      "meaning": "hearts",
+      "concept": 2521
+    },
+    "mahjong": {
+      "pos": "noun",
+      "meaning": "mahjong",
+      "concept": 2522
+    },
+    "pinball": {
+      "pos": "noun",
+      "meaning": "pinball",
+      "concept": 2523
+    },
+    "roulette": {
+      "pos": "noun",
+      "meaning": "roulette",
+      "concept": 2524
+    },
+    "war": {
+      "pos": "noun",
+      "meaning": "war",
+      "concept": 2525
     },
     "draughts": {
       "pos": "noun",
@@ -7230,6 +12630,126 @@
       "pos": "noun",
       "meaning": "tennis",
       "concept": 1152
+    },
+    "rugby": {
+      "pos": "noun",
+      "meaning": "rugby",
+      "concept": 2484
+    },
+    "baseball": {
+      "pos": "noun",
+      "meaning": "baseball",
+      "concept": 2485
+    },
+    "basketball": {
+      "pos": "noun",
+      "meaning": "basketball",
+      "concept": 2486
+    },
+    "volleyball": {
+      "pos": "noun",
+      "meaning": "volleyball",
+      "concept": 2487
+    },
+    "badminton": {
+      "pos": "noun",
+      "meaning": "badminton",
+      "concept": 2488
+    },
+    "skating": {
+      "pos": "noun",
+      "meaning": "skating",
+      "concept": 2489
+    },
+    "skiing": {
+      "pos": "noun",
+      "meaning": "skiing",
+      "concept": 2490
+    },
+    "surfing": {
+      "pos": "noun",
+      "meaning": "surfing",
+      "concept": 2491
+    },
+    "yoga": {
+      "pos": "noun",
+      "meaning": "yoga",
+      "concept": 2492
+    },
+    "squash": {
+      "pos": "noun",
+      "meaning": "squash",
+      "concept": 2493
+    },
+    "polo": {
+      "pos": "noun",
+      "meaning": "polo",
+      "concept": 2494
+    },
+    "rowing": {
+      "pos": "noun",
+      "meaning": "rowing",
+      "concept": 2495
+    },
+    "sailing": {
+      "pos": "noun",
+      "meaning": "sailing",
+      "concept": 2496
+    },
+    "fencing": {
+      "pos": "noun",
+      "meaning": "fencing",
+      "concept": 2497
+    },
+    "archery": {
+      "pos": "noun",
+      "meaning": "archery",
+      "concept": 2498
+    },
+    "bowling": {
+      "pos": "noun",
+      "meaning": "bowling",
+      "concept": 2499
+    },
+    "snooker": {
+      "pos": "noun",
+      "meaning": "snooker",
+      "concept": 2500
+    },
+    "karate": {
+      "pos": "noun",
+      "meaning": "karate",
+      "concept": 2501
+    },
+    "judo": {
+      "pos": "noun",
+      "meaning": "judo",
+      "concept": 2502
+    },
+    "billiards": {
+      "pos": "noun",
+      "meaning": "billiards",
+      "concept": 2503
+    },
+    "curling": {
+      "pos": "noun",
+      "meaning": "curling",
+      "concept": 2504
+    },
+    "lacrosse": {
+      "pos": "noun",
+      "meaning": "lacrosse",
+      "concept": 2505
+    },
+    "softball": {
+      "pos": "noun",
+      "meaning": "softball",
+      "concept": 2506
+    },
+    "handball": {
+      "pos": "noun",
+      "meaning": "handball",
+      "concept": 2507
     },
     "hockey": {
       "pos": "noun",
@@ -7290,6 +12810,281 @@
       "pos": "noun",
       "meaning": "coat",
       "concept": 1164
+    },
+    "anorak": {
+      "pos": "noun",
+      "meaning": "anorak",
+      "concept": 2069
+    },
+    "beret": {
+      "pos": "noun",
+      "meaning": "beret",
+      "concept": 2070
+    },
+    "blazer": {
+      "pos": "noun",
+      "meaning": "blazer",
+      "concept": 2071
+    },
+    "bonnet": {
+      "pos": "noun",
+      "meaning": "bonnet",
+      "concept": 2072
+    },
+    "cardigan": {
+      "pos": "noun",
+      "meaning": "cardigan",
+      "concept": 2073
+    },
+    "cloak": {
+      "pos": "noun",
+      "meaning": "cloak",
+      "concept": 2074
+    },
+    "dungarees": {
+      "pos": "noun",
+      "meaning": "dungarees",
+      "concept": 2075
+    },
+    "fedora": {
+      "pos": "noun",
+      "meaning": "fedora",
+      "concept": 2076
+    },
+    "frock": {
+      "pos": "noun",
+      "meaning": "frock",
+      "concept": 2077
+    },
+    "hoodie": {
+      "pos": "noun",
+      "meaning": "hoodie",
+      "concept": 2078
+    },
+    "kilt": {
+      "pos": "noun",
+      "meaning": "kilt",
+      "concept": 2079
+    },
+    "kimono": {
+      "pos": "noun",
+      "meaning": "kimono",
+      "concept": 2080
+    },
+    "leggings": {
+      "pos": "noun",
+      "meaning": "leggings",
+      "concept": 2081
+    },
+    "mittens": {
+      "pos": "noun",
+      "meaning": "mittens",
+      "concept": 2082
+    },
+    "moccasin": {
+      "pos": "noun",
+      "meaning": "moccasin",
+      "concept": 2083
+    },
+    "overalls": {
+      "pos": "noun",
+      "meaning": "overalls",
+      "concept": 2084
+    },
+    "parka": {
+      "pos": "noun",
+      "meaning": "parka",
+      "concept": 2085
+    },
+    "petticoat": {
+      "pos": "noun",
+      "meaning": "petticoat",
+      "concept": 2086
+    },
+    "poncho": {
+      "pos": "noun",
+      "meaning": "poncho",
+      "concept": 2087
+    },
+    "sari": {
+      "pos": "noun",
+      "meaning": "sari",
+      "concept": 2088
+    },
+    "sarong": {
+      "pos": "noun",
+      "meaning": "sarong",
+      "concept": 2089
+    },
+    "smock": {
+      "pos": "noun",
+      "meaning": "smock",
+      "concept": 2090
+    },
+    "turban": {
+      "pos": "noun",
+      "meaning": "turban",
+      "concept": 2091
+    },
+    "tuxedo": {
+      "pos": "noun",
+      "meaning": "tuxedo",
+      "concept": 2092
+    },
+    "waistcoat": {
+      "pos": "noun",
+      "meaning": "waistcoat",
+      "concept": 2093
+    },
+    "balaclava": {
+      "pos": "noun",
+      "meaning": "balaclava",
+      "concept": 2094
+    },
+    "bodice": {
+      "pos": "noun",
+      "meaning": "bodice",
+      "concept": 2095
+    },
+    "bolero": {
+      "pos": "noun",
+      "meaning": "bolero",
+      "concept": 2096
+    },
+    "caftan": {
+      "pos": "noun",
+      "meaning": "caftan",
+      "concept": 2097
+    },
+    "chaps": {
+      "pos": "noun",
+      "meaning": "chaps",
+      "concept": 2098
+    },
+    "chemise": {
+      "pos": "noun",
+      "meaning": "chemise",
+      "concept": 2099
+    },
+    "clogs": {
+      "pos": "noun",
+      "meaning": "clogs",
+      "concept": 2100
+    },
+    "corset": {
+      "pos": "noun",
+      "meaning": "corset",
+      "concept": 2101
+    },
+    "cravat": {
+      "pos": "noun",
+      "meaning": "cravat",
+      "concept": 2102
+    },
+    "dirndl": {
+      "pos": "noun",
+      "meaning": "dirndl",
+      "concept": 2103
+    },
+    "doublet": {
+      "pos": "noun",
+      "meaning": "doublet",
+      "concept": 2104
+    },
+    "earmuffs": {
+      "pos": "noun",
+      "meaning": "earmuffs",
+      "concept": 2105
+    },
+    "gaiters": {
+      "pos": "noun",
+      "meaning": "gaiters",
+      "concept": 2106
+    },
+    "galoshes": {
+      "pos": "noun",
+      "meaning": "galoshes",
+      "concept": 2107
+    },
+    "girdle": {
+      "pos": "noun",
+      "meaning": "girdle",
+      "concept": 2108
+    },
+    "halter": {
+      "pos": "noun",
+      "meaning": "halter",
+      "concept": 2109
+    },
+    "hosiery": {
+      "pos": "noun",
+      "meaning": "hosiery",
+      "concept": 2110
+    },
+    "jerkin": {
+      "pos": "noun",
+      "meaning": "jerkin",
+      "concept": 2111
+    },
+    "jodhpurs": {
+      "pos": "noun",
+      "meaning": "jodhpurs",
+      "concept": 2112
+    },
+    "knickers": {
+      "pos": "noun",
+      "meaning": "knickers",
+      "concept": 2113
+    },
+    "legwarmers": {
+      "pos": "noun",
+      "meaning": "legwarmers",
+      "concept": 2114
+    },
+    "pinafore": {
+      "pos": "noun",
+      "meaning": "pinafore",
+      "concept": 2115
+    },
+    "romper": {
+      "pos": "noun",
+      "meaning": "romper",
+      "concept": 2116
+    },
+    "spats": {
+      "pos": "noun",
+      "meaning": "spats",
+      "concept": 2117
+    },
+    "sundress": {
+      "pos": "noun",
+      "meaning": "sundress",
+      "concept": 2118
+    },
+    "sweatband": {
+      "pos": "noun",
+      "meaning": "sweatband",
+      "concept": 2119
+    },
+    "sweatpants": {
+      "pos": "noun",
+      "meaning": "sweatpants",
+      "concept": 2120
+    },
+    "trunks": {
+      "pos": "noun",
+      "meaning": "trunks",
+      "concept": 2121
+    },
+    "tutu": {
+      "pos": "noun",
+      "meaning": "tutu",
+      "concept": 2122
+    },
+    "waders": {
+      "pos": "noun",
+      "meaning": "waders",
+      "concept": 2123
     },
     "jacket": {
       "pos": "noun",

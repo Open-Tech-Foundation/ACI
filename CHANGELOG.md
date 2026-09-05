@@ -30,6 +30,16 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A thousand new everyday things, and words for all of them.** Birds, fish,
+  insects, mammals, trees, flowers, foods and clothing roughly double;
+  reptiles, tools, buildings, persons, sports, music, devices, body parts and
+  containers grow by the dozen; games, toys, landforms, sky, colours, fabrics,
+  gems, cheeses, spices and drinks fill out; fifteen more doings — ache, boil,
+  nod, pour, rinse, roast, scrub, sip, sneeze, snore, whisper, yawn, shiver,
+  stagger, tickle — go under work, said both ways with their pasts written
+  out. Every new term is sayable, and no plural is written down anywhere: the
+  three derivation rules reach them all. The world holds 2616 terms.
+
 - **Which of two, joined by `or`.** `which` is a hole like `what`, and `or`
   joins as a choice rather than a togetherness — one of them is the answer,
   not each. Asked across a comparison, every pairing is worked the way any
