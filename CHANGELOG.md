@@ -71,6 +71,15 @@ All notable changes to this project are documented in this file.
   both together. Single-topic and speaker-side behavior is unchanged, and
   events still take one target each.
 
+- **Named givings and worked sums join focus.** `x is 5` now puts five in
+  mind (naming feeds the topic, not just the conversation record), so a
+  following `what is it?` resolves instead of landing nowhere. Worked sums
+  go back latest-first — as their term where named, as their bare value
+  where the world names nothing — so each `add` works from the last result
+  (`5, 11, 71, 72…`) and a value-pointer is never stolen back by neighbours
+  in its own signal. Kind-questions still answer kinds (`what is x?` →
+  `number`, per spec).
+
 - **A `what-is` walk ending at bare `thing` names the thing itself.**
   `I have 3 chocolates / what is it?` resolved to the held kind but answered
   `thing`, its only known parent. Where the walk finds nothing but the

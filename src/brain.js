@@ -230,7 +230,11 @@ function think(roots, langs, at, world) {
     // conversation and held in the world since. Nothing about a name is
     // special to the brain: it is a term, met by what it is called.
     const called = first.word || read || !world ? null : world.termNamed(n.state.identity);
-    const readOf = (word) => ({
+    const readOf = (word) => {
+      // A bare result value in focus holds no term: the pointer stands for the
+      // amount itself, so it names no term and the value below is what counts.
+      const result = word ? focusValue(word, at) : null;
+      return {
       language: first.lang,
       wordKnown: Boolean(word) || read || called != null,
       // A word nothing knows still stands where it stands. Standing where a
@@ -238,12 +242,12 @@ function think(roots, langs, at, world) {
       // and `wordKnown` stays false, because nothing knows it yet.
       pos: word ? word.pos : read ? lang.figuresPos : 'noun',
       meaning: word ? word.meaning : read || called != null ? String(n.state.identity) : null,
-      concept: word
+      concept: result != null ? null : word
         ? focusedSpoken(word, oneMeant(pointedAt(word, at), world) ?? word.concept, at, world)
         : read && world
           ? world.termFor(value)
           : called,
-      value: word && word.marks === 'named' ? givenValue(word, at) : value,
+      value: word && word.marks === 'named' ? givenValue(word, at) : result ?? value,
       marks: word ? word.marks : null,
       negates: word ? word.negates : false,
       choice: word ? word.choice === true : false,
@@ -261,7 +265,8 @@ function think(roots, langs, at, world) {
       // reads third-person pointers as not the speaker nor who was spoken to.
       person: word ? word.person ?? null : null,
       number: word ? word.number ?? null : null,
-    });
+      };
+    };
     // A word that names more than one thing is thought of every way it may be
     // meant. The brain does not pick here: it has one word and not yet a
     // signal, and picking now would be guessing.
@@ -306,6 +311,9 @@ function intraSignal(roots, world) {
       if (t && t.concept != null && world.isA(t.concept, a.thing)) seen.push(t.concept);
       return n;
     }
+    // A pointer already holding a result value is resolved; the current tree
+    // must not steal it back to a neighbour.
+    if (t.concept == null && t.value != null) return n;
     if (seen.length === 0) return n;
     if (t.concept != null) {
       const prev = i > 0 ? posOf(roots[i - 1]) : [];
@@ -405,7 +413,14 @@ function below(sign, number, world) {
 function pointedAt(word, at) {
   if (word.marks === 'from') return (at && at.from) ?? null;
   if (word.marks === 'to') return (at && at.to) ?? null;
-  if (word.marks === 'spoken') return (at && at.spoken) ?? null;
+  if (word.marks === 'spoken') {
+    // The focus head first: a worked result or held kind outranks the older
+    // topic. Non-id heads (bare values) carry no term and are read for value
+    // separately; the topic id stays the fallback.
+    const head = at && Array.isArray(at.focus) ? at.focus[0] : undefined;
+    if (typeof head === 'number') return head;
+    return (at && at.spoken) ?? null;
+  }
   // A word given a name in this conversation stands for whatever it was given.
   // Which word was given what is the circumstance's, the same as the rest.
   if (word.marks === 'named') return given(word, at).of ?? null;
@@ -419,6 +434,15 @@ function pointedAt(word, at) {
 function oneMeant(concept, world) {
   if (concept == null || !world || world.isIndividual(concept)) return concept;
   return world.oneOf(concept) ?? concept;
+}
+
+// The bare value a focus head holds where it holds no term: a worked sum the
+// world never named (`beyond`) stays in mind as its value, so a later number
+// beside it still counts.
+function focusValue(word, at) {
+  if (!word || word.marks !== 'spoken' || word.person !== 'third') return null;
+  const head = at && Array.isArray(at.focus) ? at.focus[0] : undefined;
+  return head && typeof head === 'object' && typeof head.value === 'number' ? head.value : null;
 }
 
 // A bare third-person pointer on speaker-side focus stands for what is held,
@@ -2515,8 +2539,10 @@ function membersFor(term, world, sent) {
     return [term];
   }
   const focus = sent && Array.isArray(sent.focus) ? sent.focus : [];
+  // Bare result values hold no term and join no claim as topics; plural
+  // expansion is over things spoken of.
   const members = focus.filter((id) => {
-    if (id == null) return false;
+    if (typeof id !== 'number') return false;
     if (sent.from != null && (id === sent.from || (world && world.isA(id, sent.from)))) return false;
     return !(sent.to != null && (id === sent.to || (world && world.isA(id, sent.to))));
   });
@@ -3258,6 +3284,11 @@ function spokenOf(roots, at, world) {
       for (const part of n.state.parts || []) if (part.role === target) keep(took, part.of);
     }
     if (n.kind === 'standing' || n.kind === 'answer') keep(stood, n.state.subject);
+    // Giving a name speaks of what was stood for: `x is 5` puts five in mind
+    // even though nothing is taken into the world for it.
+    if (n.kind === 'named') {
+      for (const g of n.state.gave || []) keep(took, g.of);
+    }
     (n.branch || []).forEach(walk);
   };
   roots.forEach(walk);
@@ -3271,12 +3302,22 @@ function keep(found, of) {
 }
 
 // The ranked focus list this signal leaves behind, latest first: what was
-// spoken of, what it directly holds, then earlier topics still in mind. What
+// worked out, what was spoken of, what it directly holds, then earlier topics
+// still in mind. A result the world named goes back as its term; one it did
+// not goes back as its bare value, so counting beside it still works. What
 // was spoken of before and untouched stays on; several spoken of at once leave
 // no primary, but all stay in focus. Capped so the same signals always give
 // the same list.
 function focusOf(roots, at, world) {
   const primary = spokenOf(roots, at, world);
+  const sum = [];
+  const gather = (n) => {
+    if (n.kind === 'sum' && n.name === 'worked') {
+      sum.push(n.state.term ?? { value: n.state.value });
+    }
+    (n.branch || []).forEach(gather);
+  };
+  roots.forEach(gather);
   const held = [];
   if (primary != null && world) {
     const a = world.anchors || {};
@@ -3287,8 +3328,12 @@ function focusOf(roots, at, world) {
   }
   const prior = at && Array.isArray(at.focus) ? at.focus : [];
   const out = [];
-  for (const id of [primary, ...held, ...prior]) {
-    if (id != null && !out.includes(id)) out.push(id);
+  const same = (x, y) =>
+    typeof x === 'number' || typeof y === 'number'
+      ? x === y
+      : (x && x.value) === (y && y.value);
+  for (const id of [...sum, primary, ...held, ...prior]) {
+    if (id != null && !out.some((had) => same(had, id))) out.push(id);
   }
   return out.slice(0, 8);
 }
