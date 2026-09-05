@@ -278,29 +278,40 @@ function think(roots, langs, at, world) {
 // is what is meant; with nothing to the left there is no forward reference,
 // and the word keeps naming nothing. Relations, properties and numbers never
 // join: joints are what is said, not what is spoken of. Where a previous
-// topic already resolved the pointer, that stands: role-marked pointers
-// (`into it`) keep reaching across signals, and re-ranking those is later work.
+// topic already resolved the pointer, that stands — except where the pointer
+// opens a new clause after a conjunction: a clause subject speaks of its own
+// signal first (`a bassoon is loud and it is old` is about the bassoon even
+// with a topic set), while a role-marked pointer (`from it`) keeps reaching
+// across signals. That a clause is a fresh start is the brain's; which words
+// join clauses is the language's.
 function intraSignal(roots, world) {
   if (!world) return roots;
   const a = world.anchors || {};
   if (a.thing == null) return roots;
   const seen = [];
-  return roots.map((n) => {
+  const rewrite = (n, concept) => {
+    seen.push(concept);
+    return withBranch(
+      n,
+      (n.branch || []).map((b) =>
+        b.kind === 'thought'
+          ? withBranch(b, b.branch, { ...b.state, thought: { ...b.state.thought, concept } })
+          : b,
+      ),
+    );
+  };
+  return roots.map((n, i) => {
     const t = thoughtOf(n);
-    if (t && t.marks === 'spoken' && t.person === 'third' && t.concept == null && seen.length > 0) {
-      const antecedent = seen[seen.length - 1];
-      seen.push(antecedent);
-      return withBranch(
-        n,
-        (n.branch || []).map((b) =>
-          b.kind === 'thought'
-            ? withBranch(b, b.branch, { ...b.state, thought: { ...b.state.thought, concept: antecedent } })
-            : b,
-        ),
-      );
+    if (!t || t.marks !== 'spoken' || t.person !== 'third') {
+      if (t && t.concept != null && world.isA(t.concept, a.thing)) seen.push(t.concept);
+      return n;
     }
-    if (t && t.concept != null && world.isA(t.concept, a.thing)) seen.push(t.concept);
-    return n;
+    if (seen.length === 0) return n;
+    if (t.concept != null) {
+      const prev = i > 0 ? posOf(roots[i - 1]) : [];
+      if (!prev.includes('conjunction')) return n;
+    }
+    return rewrite(n, seen[seen.length - 1]);
   });
 }
 

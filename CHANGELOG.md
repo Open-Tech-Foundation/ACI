@@ -54,6 +54,14 @@ All notable changes to this project are documented in this file.
   (`did`), clause `so` and `neither` need multi-entity focus memory and stay
   open.
 
+- **A clause subject prefers its own signal over a prior topic.** A
+  third-person pointer opening a new clause after a conjunction (`a bassoon
+  is loud and it is old` with a topic set) now resolves to the current
+  signal's nearest thing, leaving the prior topic untouched. Pointers
+  elsewhere keep their previous resolution, so role-marked uses (`take one
+  lamp from it`) still reach across signals. That a clause is a fresh start
+  is the brain's; which words join clauses is the language's (`conjunction`).
+
 - **A `what-is` walk ending at bare `thing` names the thing itself.**
   `I have 3 chocolates / what is it?` resolved to the held kind but answered
   `thing`, its only known parent. Where the walk finds nothing but the
