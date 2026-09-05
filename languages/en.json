@@ -707,6 +707,20 @@
         "concept": 593
       }
     ],
+    "plants": [
+      {
+        "pos": "noun",
+        "meaning": "plants",
+        "concept": 25
+      },
+      {
+        "pos": "verb",
+        "meaning": "plants",
+        "concept": 593,
+        "person": "third",
+        "number": "singular"
+      }
+    ],
     "organism": {
       "pos": "noun",
       "meaning": "organism",
@@ -827,6 +841,20 @@
         "pos": "verb",
         "meaning": "fish",
         "concept": 597
+      }
+    ],
+    "fishes": [
+      {
+        "pos": "noun",
+        "meaning": "fishes",
+        "concept": 28
+      },
+      {
+        "pos": "verb",
+        "meaning": "fishes",
+        "concept": 597,
+        "person": "third",
+        "number": "singular"
       }
     ],
     "insect": {
@@ -1061,6 +1089,20 @@
         "concept": 613
       }
     ],
+    "pens": [
+      {
+        "pos": "noun",
+        "meaning": "pens",
+        "concept": 43
+      },
+      {
+        "pos": "verb",
+        "meaning": "pens",
+        "concept": 613,
+        "person": "third",
+        "number": "singular"
+      }
+    ],
     "phone": [
       {
         "pos": "noun",
@@ -1071,6 +1113,20 @@
         "pos": "verb",
         "meaning": "phone",
         "concept": 612
+      }
+    ],
+    "phones": [
+      {
+        "pos": "noun",
+        "meaning": "phones",
+        "concept": 44
+      },
+      {
+        "pos": "verb",
+        "meaning": "phones",
+        "concept": 612,
+        "person": "third",
+        "number": "singular"
       }
     ],
     "computer": {
@@ -1283,6 +1339,18 @@
       "meaning": "tool",
       "concept": 13
     },
+    "use": {
+      "pos": "verb",
+      "meaning": "use",
+      "concept": 591
+    },
+    "uses": {
+      "pos": "verb",
+      "meaning": "uses",
+      "concept": 591,
+      "person": "third",
+      "number": "singular"
+    },
     "vehicle": {
       "pos": "noun",
       "meaning": "vehicle",
@@ -1317,6 +1385,13 @@
       "pos": "verb",
       "meaning": "know",
       "concept": 285
+    },
+    "knows": {
+      "pos": "verb",
+      "meaning": "knows",
+      "concept": 285,
+      "person": "third",
+      "number": "singular"
     },
     "plus": {
       "pos": "verb",
@@ -1588,6 +1663,13 @@
       "meaning": "take",
       "concept": 283
     },
+    "takes": {
+      "pos": "verb",
+      "meaning": "takes",
+      "concept": 283,
+      "person": "third",
+      "number": "singular"
+    },
     "took": {
       "pos": "verb",
       "meaning": "took",
@@ -1641,6 +1723,13 @@
       "meaning": "give",
       "concept": 282
     },
+    "gives": {
+      "pos": "verb",
+      "meaning": "gives",
+      "concept": 282,
+      "person": "third",
+      "number": "singular"
+    },
     "from": {
       "pos": "preposition",
       "meaning": "from",
@@ -1661,6 +1750,20 @@
         "pos": "verb",
         "meaning": "name",
         "concept": 610
+      }
+    ],
+    "names": [
+      {
+        "pos": "noun",
+        "meaning": "names",
+        "concept": 138
+      },
+      {
+        "pos": "verb",
+        "meaning": "names",
+        "concept": 610,
+        "person": "third",
+        "number": "singular"
       }
     ],
     "existence": {
@@ -1688,6 +1791,20 @@
         "pos": "verb",
         "meaning": "place",
         "concept": 600
+      }
+    ],
+    "places": [
+      {
+        "pos": "noun",
+        "meaning": "places",
+        "concept": 11
+      },
+      {
+        "pos": "verb",
+        "meaning": "places",
+        "concept": 600,
+        "person": "third",
+        "number": "singular"
       }
     ],
     "energy": {
@@ -1895,6 +2012,20 @@
         "pos": "verb",
         "meaning": "train",
         "concept": 602
+      }
+    ],
+    "trains": [
+      {
+        "pos": "noun",
+        "meaning": "trains",
+        "concept": 48
+      },
+      {
+        "pos": "verb",
+        "meaning": "trains",
+        "concept": 602,
+        "person": "third",
+        "number": "singular"
       }
     ],
     "boat": {
@@ -2154,6 +2285,20 @@
         "concept": 601
       }
     ],
+    "hands": [
+      {
+        "pos": "noun",
+        "meaning": "hands",
+        "concept": 54
+      },
+      {
+        "pos": "verb",
+        "meaning": "hands",
+        "concept": 601,
+        "person": "third",
+        "number": "singular"
+      }
+    ],
     "biceps": {
       "pos": "noun",
       "meaning": "biceps",
@@ -2386,6 +2531,20 @@
         "concept": 615
       }
     ],
+    "heads": [
+      {
+        "pos": "noun",
+        "meaning": "heads",
+        "concept": 55
+      },
+      {
+        "pos": "verb",
+        "meaning": "heads",
+        "concept": 615,
+        "person": "third",
+        "number": "singular"
+      }
+    ],
     "eye": {
       "pos": "noun",
       "meaning": "eye",
@@ -2434,6 +2593,21 @@
         "concept": 594
       }
     ],
+    "waters": [
+      {
+        "pos": "noun",
+        "meaning": "waters",
+        "concept": 63,
+        "bare": true
+      },
+      {
+        "pos": "verb",
+        "meaning": "waters",
+        "concept": 594,
+        "person": "third",
+        "number": "singular"
+      }
+    ],
     "milk": [
       {
         "pos": "noun",
@@ -2444,6 +2618,20 @@
         "pos": "verb",
         "meaning": "milk",
         "concept": 608
+      }
+    ],
+    "milks": [
+      {
+        "pos": "noun",
+        "meaning": "milks",
+        "concept": 64
+      },
+      {
+        "pos": "verb",
+        "meaning": "milks",
+        "concept": 608,
+        "person": "third",
+        "number": "singular"
       }
     ],
     "cider": {
@@ -3233,6 +3421,20 @@
         "concept": 595
       }
     ],
+    "lights": [
+      {
+        "pos": "noun",
+        "meaning": "lights",
+        "concept": 95
+      },
+      {
+        "pos": "verb",
+        "meaning": "lights",
+        "concept": 595,
+        "person": "third",
+        "number": "singular"
+      }
+    ],
     "sound": {
       "pos": "noun",
       "meaning": "sound",
@@ -3268,6 +3470,20 @@
         "pos": "verb",
         "meaning": "sign",
         "concept": 609
+      }
+    ],
+    "signs": [
+      {
+        "pos": "noun",
+        "meaning": "signs",
+        "concept": 102
+      },
+      {
+        "pos": "verb",
+        "meaning": "signs",
+        "concept": 609,
+        "person": "third",
+        "number": "singular"
       }
     ],
     "meaning": {
@@ -3528,6 +3744,20 @@
         "concept": 614
       }
     ],
+    "pictures": [
+      {
+        "pos": "noun",
+        "meaning": "pictures",
+        "concept": 112
+      },
+      {
+        "pos": "verb",
+        "meaning": "pictures",
+        "concept": 614,
+        "person": "third",
+        "number": "singular"
+      }
+    ],
     "language": {
       "pos": "noun",
       "meaning": "language",
@@ -3588,6 +3818,20 @@
         "pos": "verb",
         "meaning": "mark",
         "concept": 598
+      }
+    ],
+    "marks": [
+      {
+        "pos": "noun",
+        "meaning": "marks",
+        "concept": 135
+      },
+      {
+        "pos": "verb",
+        "meaning": "marks",
+        "concept": 598,
+        "person": "third",
+        "number": "singular"
       }
     ],
     "yes": {
@@ -3743,6 +3987,20 @@
         "pos": "verb",
         "meaning": "form",
         "concept": 599
+      }
+    ],
+    "forms": [
+      {
+        "pos": "noun",
+        "meaning": "forms",
+        "concept": 182
+      },
+      {
+        "pos": "verb",
+        "meaning": "forms",
+        "concept": 599,
+        "person": "third",
+        "number": "singular"
       }
     ],
     "size": {
@@ -4168,6 +4426,20 @@
         "concept": 604
       }
     ],
+    "parts": [
+      {
+        "pos": "noun",
+        "meaning": "parts",
+        "concept": 248
+      },
+      {
+        "pos": "verb",
+        "meaning": "parts",
+        "concept": 604,
+        "person": "third",
+        "number": "singular"
+      }
+    ],
     "order": [
       {
         "pos": "noun",
@@ -4178,6 +4450,20 @@
         "pos": "verb",
         "meaning": "order",
         "concept": 611
+      }
+    ],
+    "orders": [
+      {
+        "pos": "noun",
+        "meaning": "orders",
+        "concept": 249
+      },
+      {
+        "pos": "verb",
+        "meaning": "orders",
+        "concept": 611,
+        "person": "third",
+        "number": "singular"
       }
     ],
     "same": {
@@ -4260,6 +4546,12 @@
       "meaning": "fall",
       "concept": 262
     },
+    "fallen": {
+      "pos": "verb",
+      "meaning": "fallen",
+      "concept": 262,
+      "when": "past"
+    },
     "come": {
       "pos": [
         "noun",
@@ -4275,6 +4567,12 @@
       ],
       "meaning": "go",
       "concept": 264
+    },
+    "gone": {
+      "pos": "verb",
+      "meaning": "gone",
+      "concept": 264,
+      "when": "past"
     },
     "birth": {
       "pos": "noun",
@@ -4322,6 +4620,12 @@
         "names": false
       }
     ],
+    "spoken": {
+      "pos": "verb",
+      "meaning": "spoken",
+      "concept": 271,
+      "when": "past"
+    },
     "write": {
       "pos": [
         "noun",
@@ -4329,6 +4633,12 @@
       ],
       "meaning": "write",
       "concept": 272
+    },
+    "written": {
+      "pos": "verb",
+      "meaning": "written",
+      "concept": 272,
+      "when": "past"
     },
     "read": {
       "pos": [
@@ -4362,6 +4672,12 @@
       "meaning": "eat",
       "concept": 278
     },
+    "eaten": {
+      "pos": "verb",
+      "meaning": "eaten",
+      "concept": 278,
+      "when": "past"
+    },
     "drink": {
       "pos": [
         "noun",
@@ -4369,6 +4685,12 @@
       ],
       "meaning": "drink",
       "concept": 279
+    },
+    "drunk": {
+      "pos": "verb",
+      "meaning": "drunk",
+      "concept": 279,
+      "when": "past"
     },
     "make": {
       "pos": [
@@ -4401,6 +4723,12 @@
       ],
       "meaning": "see",
       "concept": 286
+    },
+    "seen": {
+      "pos": "verb",
+      "meaning": "seen",
+      "concept": 286,
+      "when": "past"
     },
     "hear": {
       "pos": [
@@ -4645,6 +4973,26 @@
         "concept": 605
       }
     ],
+    "bears": [
+      {
+        "pos": "noun",
+        "meaning": "bears",
+        "concept": 349
+      },
+      {
+        "pos": "verb",
+        "meaning": "bears",
+        "concept": 605,
+        "person": "third",
+        "number": "singular"
+      }
+    ],
+    "born": {
+      "pos": "verb",
+      "meaning": "born",
+      "concept": 605,
+      "when": "past"
+    },
     "wolf": {
       "pos": "noun",
       "meaning": "wolf",
@@ -6492,6 +6840,20 @@
         "concept": 607
       }
     ],
+    "brushes": [
+      {
+        "pos": "noun",
+        "meaning": "brushes",
+        "concept": 454
+      },
+      {
+        "pos": "verb",
+        "meaning": "brushes",
+        "concept": 607,
+        "person": "third",
+        "number": "singular"
+      }
+    ],
     "comb": [
       {
         "pos": "noun",
@@ -6502,6 +6864,20 @@
         "pos": "verb",
         "meaning": "comb",
         "concept": 606
+      }
+    ],
+    "combes": [
+      {
+        "pos": "noun",
+        "meaning": "combes",
+        "concept": 455
+      },
+      {
+        "pos": "verb",
+        "meaning": "combes",
+        "concept": 606,
+        "person": "third",
+        "number": "singular"
       }
     ],
     "axe": {
@@ -6542,6 +6918,20 @@
         "pos": "verb",
         "meaning": "ship",
         "concept": 603
+      }
+    ],
+    "ships": [
+      {
+        "pos": "noun",
+        "meaning": "ships",
+        "concept": 460
+      },
+      {
+        "pos": "verb",
+        "meaning": "ships",
+        "concept": 603,
+        "person": "third",
+        "number": "singular"
       }
     ],
     "plane": {
@@ -6594,6 +6984,20 @@
         "pos": "verb",
         "meaning": "iron",
         "concept": 596
+      }
+    ],
+    "irons": [
+      {
+        "pos": "noun",
+        "meaning": "irons",
+        "concept": 469
+      },
+      {
+        "pos": "verb",
+        "meaning": "irons",
+        "concept": 596,
+        "person": "third",
+        "number": "singular"
       }
     ],
     "aluminum": {
@@ -12092,6 +12496,20 @@
       "meaning": "say",
       "concept": 271,
       "names": false
+    },
+    "says": {
+      "pos": "verb",
+      "meaning": "says",
+      "concept": 271,
+      "names": false,
+      "person": "third",
+      "number": "singular"
+    },
+    "said": {
+      "pos": "verb",
+      "meaning": "said",
+      "concept": 271,
+      "when": "past"
     },
     "follow": {
       "pos": "verb",

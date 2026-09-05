@@ -92,6 +92,15 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Every doing in all its forms.** Third-person forms for thirty doings —
+  brushes, combs, fishes, forms, gives, hands, heads, irons, knows, lights,
+  marks, milks, names, orders, parts, pens, phones, pictures, places, plants,
+  reads, says, ships, signs, speaks, takes, trains, waters — each keeping the
+  noun it shares a spelling with, so `bears are mammals` still reads as bears.
+  Past participles said, fallen, eaten, drunk, gone, seen, spoken, written and
+  born, for what auxiliaries ask. `use` and `uses` name the use relation the
+  way `have` names having, and `used` derives.
+
 - **Everyday function words.** `but`, `nor` and `yet` join the way `and`
   does, and `so` goes with a state the way `very` does. Ten bare
   prepositions — at, about, over, after, before, between, through, during,

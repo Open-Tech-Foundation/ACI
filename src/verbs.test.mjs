@@ -64,6 +64,38 @@ test("what happened is recorded whether or not it could be worked out", async ()
   await forget();
 });
 
+test("third-person and past forms stand as the doing", async () => {
+  await forget();
+  // A third person doing it is someone doing it: the doer reads off the order.
+  const third = await brain("a boy brushes", { from: PERSON });
+  assertEquals(third.expression.name, "learn");
+  assert((third.roots[0].branch || []).some((b) => b.kind === "event"), "someone brushed");
+  // A past or participle puts it on the other side of now.
+  for (const said of ["i brushed an apple", "i said an apple", "i gave an apple"]) {
+    const r = await brain(said, { from: PERSON });
+    const event = (r.roots[0].branch || []).find((b) => b.kind === "event");
+    assert(event != null, `${said} happened`);
+  }
+  await forget();
+});
+
+test("a third-person form keeps the noun it shares a spelling with", async () => {
+  await forget();
+  assertEquals((await brain("bears are mammals?")).expression.name, "affirm");
+  assertEquals((await brain("trains are vehicles?")).expression.name, "affirm");
+  assertEquals((await brain("plants are organisms?")).expression.name, "affirm");
+  await forget();
+});
+
+test("using a tool is said with the verb, and taken in like having", async () => {
+  await forget();
+  const r = await brain("i use a saw", { from: PERSON });
+  assertEquals(r.expression.name, "learn");
+  assert(r.learned != null, "what was used is kept");
+  assertEquals((await brain("a saw is a tool?")).expression.name, "affirm", "and nothing else moved");
+  await forget();
+});
+
 test("a doing already done is the same doing, reached by its ending", async () => {
   await forget();
   // No language writes down every form of every verb. `cleaned` is not listed
