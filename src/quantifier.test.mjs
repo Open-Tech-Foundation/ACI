@@ -16,6 +16,14 @@ test("a claim may be about every one of a kind", async () => {
   await forget();
 });
 
+test("each and both say every one, either and any say some", async () => {
+  assertEquals(await ask("each crow is a bird?"), "affirm");
+  assertEquals(await ask("both crows are birds?"), "affirm");
+  assertEquals(await ask("either crow is a bird?"), "affirm");
+  assertEquals(await ask("any crow is a bird?"), "affirm");
+  await forget();
+});
+
 test("none of a kind denies the claim of every one of it", async () => {
   assertEquals(await ask("no crow is a fish?"), "affirm");
   assertEquals(await ask("no crow is a bird?"), "deny");

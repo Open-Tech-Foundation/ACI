@@ -87,6 +87,12 @@ test("joined clauses are two offerings, not one — each answered on its own", a
   assertEquals(r.expression.state.says, "I know. No. ❌");
 });
 
+test("but joins the way and does — a togetherness, not a choice", async () => {
+  const r = await brain("a cat is an animal but a dog is an animal");
+  assertEquals(all(r.roots[0], "standing").map((t) => t.name), ["held", "held"]);
+  assertEquals(r.expression.state.says, "I know.");
+});
+
 test("clauses join as many deep as they are written", async () => {
   const r = await brain("a sparrow is an animal and a snake is an animal and a cow is an animal");
   assertEquals(all(r.roots[0], "standing").length, 3);

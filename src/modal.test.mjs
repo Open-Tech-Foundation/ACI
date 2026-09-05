@@ -25,6 +25,13 @@ test("it is still checked, and the brain says what it found", async () => {
   await forget();
 });
 
+test("shall holds a claim at arm's length the way might does", async () => {
+  assertEquals((await fresh("a cat shall be an animal")).expression.name, "understood");
+  assertEquals((await fresh("a cat shall be a fish")).expression.name, "deny");
+  assertEquals((await fresh("a cat shall be an animal")).learned, null);
+  await forget();
+});
+
 test("the brain cannot tell might from does-not-know", async () => {
   // It has no notion of what could be, only of what it holds, so what it says
   // is what it found.

@@ -21,6 +21,14 @@ test("a thing is measured on a scale, and the amount is what is kept", async () 
   await forget();
 });
 
+test("so goes with a state the way very does", async () => {
+  await forget();
+  const r = await brain("a cat is so big");
+  assertEquals(r.roots[0].kind, "sentence", "the degree does not break the sentence");
+  assertEquals(r.expression.name, "learn", "a state told is taken in, measured or not");
+  await forget();
+});
+
 test("which is further along the scale is what the amounts say", async () => {
   assertEquals((await fresh(...WEIGHED, "an apple more a stone?")).expression.name, "affirm");
   assertEquals((await fresh(...WEIGHED, "a stone more an apple?")).expression.name, "deny");

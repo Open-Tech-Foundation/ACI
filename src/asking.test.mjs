@@ -101,6 +101,12 @@ test("how asks after the way a thing is, not what it is", async () => {
   await forget();
 });
 
+test("when and why ask like what does", async () => {
+  assertEquals((await fresh("when is dinner")).expression.state.says, "meal");
+  assertEquals((await fresh("why is a cat")).expression.state.says, "mammal");
+  await forget();
+});
+
 test("a signal may turn its joint to the front", async () => {
   await forget();
   assertEquals((await brain("is a cat an animal?")).expression.name, "affirm");

@@ -11,6 +11,16 @@ test("a thing may be said to stand somewhere relative to another", async () => {
   await forget();
 });
 
+test("a word that says no placement joins no placement", async () => {
+  await forget();
+  // `at` is a preposition with no term behind it: the claim is what the apple
+  // is, and an apple is not a table.
+  const r = await brain("an apple is at a table");
+  assertEquals(r.expression.name, "deny");
+  assertEquals(r.learned, null);
+  await forget();
+});
+
 test("where a thing stands is asked the same way anything else is", async () => {
   await forget();
   await brain("an apple is on a table");

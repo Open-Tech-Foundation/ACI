@@ -1451,6 +1451,25 @@
       "meaning": "or",
       "choice": true
     },
+    "but": {
+      "pos": "conjunction",
+      "meaning": "but"
+    },
+    "nor": {
+      "pos": "conjunction",
+      "meaning": "nor"
+    },
+    "yet": {
+      "pos": "conjunction",
+      "meaning": "yet"
+    },
+    "so": {
+      "pos": [
+        "conjunction",
+        "degree"
+      ],
+      "meaning": "so"
+    },
     "hold": {
       "pos": "verb",
       "meaning": "hold",
@@ -7572,6 +7591,16 @@
       "meaning": "which",
       "marks": "unknown"
     },
+    "when": {
+      "pos": "interrogative",
+      "meaning": "when",
+      "marks": "unknown"
+    },
+    "why": {
+      "pos": "interrogative",
+      "meaning": "why",
+      "marks": "unknown"
+    },
     "who": {
       "pos": "interrogative",
       "meaning": "who",
@@ -12376,6 +12405,30 @@
       "meaning": "some",
       "concept": 1129
     },
+    "each": {
+      "pos": "quantifier",
+      "meaning": "each",
+      "concept": 245,
+      "names": false
+    },
+    "both": {
+      "pos": "quantifier",
+      "meaning": "both",
+      "concept": 245,
+      "names": false
+    },
+    "either": {
+      "pos": "quantifier",
+      "meaning": "either",
+      "concept": 1129,
+      "names": false
+    },
+    "any": {
+      "pos": "quantifier",
+      "meaning": "any",
+      "concept": 1129,
+      "names": false
+    },
     "clothing": {
       "pos": "noun",
       "meaning": "clothing",
@@ -14211,6 +14264,46 @@
       "pos": "preposition",
       "meaning": "than"
     },
+    "at": {
+      "pos": "preposition",
+      "meaning": "at"
+    },
+    "about": {
+      "pos": "preposition",
+      "meaning": "about"
+    },
+    "over": {
+      "pos": "preposition",
+      "meaning": "over"
+    },
+    "after": {
+      "pos": "preposition",
+      "meaning": "after"
+    },
+    "before": {
+      "pos": "preposition",
+      "meaning": "before"
+    },
+    "between": {
+      "pos": "preposition",
+      "meaning": "between"
+    },
+    "through": {
+      "pos": "preposition",
+      "meaning": "through"
+    },
+    "during": {
+      "pos": "preposition",
+      "meaning": "during"
+    },
+    "above": {
+      "pos": "preposition",
+      "meaning": "above"
+    },
+    "off": {
+      "pos": "preposition",
+      "meaning": "off"
+    },
     "his": {
       "pos": "possessive",
       "meaning": "his",
@@ -15017,6 +15110,10 @@
     "must": {
       "pos": "modal",
       "meaning": "must"
+    },
+    "shall": {
+      "pos": "modal",
+      "meaning": "shall"
     },
     "be": {
       "pos": "verb",

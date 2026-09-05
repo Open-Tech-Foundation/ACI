@@ -70,6 +70,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Everyday function words.** `but`, `nor` and `yet` join the way `and`
+  does, and `so` goes with a state the way `very` does. Ten bare
+  prepositions — at, about, over, after, before, between, through, during,
+  above, off — stand where `than` does, naming nothing. `when` and `why` ask
+  like `what`; `shall` holds a claim at arm's length like `might`; `each` and
+  `both` say every one, `either` and `any` say some.
+
 - **A thousand new everyday things, and words for all of them.** Birds, fish,
   insects, mammals, trees, flowers, foods and clothing roughly double;
   reptiles, tools, buildings, persons, sports, music, devices, body parts and
