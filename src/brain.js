@@ -943,10 +943,23 @@ function judge(roots, world, mood, langs, sent) {
   const asked = holes.length > 0 ? partAsked(said, world, claims, markingSide(world, langs), partsSide(langs)) : null;
   if (asked) return [withBranch(root, [...root.branch, asked])];
 
-  // An action the world says causes an operation, worked on what a thing holds.
-  // What taking does is the world's to say; the arithmetic is the brain's.
-  const done = joint >= 0 && joined >= 2 ? null : act(said, claims, world, markingSide(world, langs), partsSide(langs));
-  if (done) return [withBranch(root, [...root.branch, ...done])];
+  // A relation already joining two things is what the signal is about, and a
+  // word that could also be read as a doing is not one here.
+  if (!(joint >= 0 && joined >= 2)) {
+    // Asked whether something happened, the brain looks through what it was
+    // told happened. It does not put another one on the record: being asked is
+    // not being told, and answering is not doing.
+    if (mood === 'ask') {
+      const ever = happened(said, world, claims, markingSide(world, langs), partsSide(langs));
+      if (ever) return [withBranch(root, [...root.branch, ever])];
+    }
+
+    // An action the world says causes an operation, worked on what a thing
+    // holds. What taking does is the world's to say; the arithmetic is the
+    // brain's.
+    const done = act(said, claims, world, markingSide(world, langs), partsSide(langs));
+    if (done) return [withBranch(root, [...root.branch, ...done])];
+  }
 
   const quantity = said.find((n) => reaches(n, a.quantity, world));
   if (quantity && holes.length > 0) {
@@ -964,13 +977,19 @@ function judge(roots, world, mood, langs, sent) {
       const named = conceptOf(said[rel]);
       const ways = [
         { bearer: one(subject), of: object, relation: named },
+        // Which end was said first is the language's word order and not the
+        // fact: `how many crayons do i have` puts the counted thing first and
+        // the one holding them last, and it is the same question either way.
+        { bearer: one(object), of: subject, relation: named },
         ...bothWays(named, world).map((back) => ({
           bearer: one(object),
           of: subject,
           relation: back,
         })),
       ];
-      const way = ways.find((w) => world.held(w.bearer, w.relation, w.of) != null) ?? ways[0];
+      const counts = (w) =>
+        world.held(w.bearer, w.relation, w.of) != null || heldUnder(w.bearer, w.of, world) != null;
+      const way = ways.find(counts) ?? ways[0];
       // Asked after a kind it holds none of by name, but several kinds under
       // it, the count is all of those together: a shop of five bats and two
       // balls holds seven things.
@@ -2179,6 +2198,35 @@ function nearest(said, from, step, wanted) {
     if (wanted(said[i])) return said[i];
   }
   return null;
+}
+
+// Whether something a signal names ever happened. Every part it names must be
+// played by the same one occurrence — one played by a thing of a kind answers
+// to the kind, the same way a hole's does. A signal naming no part at all asks
+// nothing the brain can look for.
+function happened(said, world, claims, side, sides) {
+  const a = world.anchors || {};
+  const acting = said.findIndex((n) => reaches(n, a.action, world));
+  if (acting < 0) return null;
+  const parts = rolesIn(said, acting, claims, world, side, sides).filter((p) => p.of != null);
+  if (parts.length === 0) return null;
+
+  const action = conceptOf(said[acting]);
+  const plays = (one, p) =>
+    world.linked(one, p.role).some((t) => t === p.of || world.isA(t, p.of));
+  const found = world
+    .members(action, world.baseRelation)
+    .some((one) => world.isIndividual(one) && parts.every((p) => plays(one, p)));
+  // The standing is what was found, and nothing is said back: the claim frame
+  // joins two things by a relation, and what happened is not that shape — it
+  // is a doing with parts. Answering it is yes or no until there is a frame
+  // that says a doing back.
+  return node('standing', found ? 'held' : 'absent', [], {
+    subject: null,
+    relation: null,
+    object: null,
+    negated: false,
+  });
 }
 
 // What played the part a hole stands in. Everything the signal names has a

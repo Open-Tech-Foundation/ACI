@@ -7101,12 +7101,6 @@
       "person": "third",
       "number": "singular"
     },
-    "cleaned": {
-      "pos": "verb",
-      "meaning": "cleaned",
-      "concept": 1538,
-      "when": "past"
-    },
     "cleaning": {
       "pos": "noun",
       "meaning": "cleaning",
@@ -7135,12 +7129,6 @@
       "person": "third",
       "number": "singular"
     },
-    "ached": {
-      "pos": "verb",
-      "meaning": "ached",
-      "concept": 2651,
-      "when": "past"
-    },
     "aching": {
       "pos": "noun",
       "meaning": "aching",
@@ -7160,12 +7148,6 @@
       "concept": 2652,
       "person": "third",
       "number": "singular"
-    },
-    "boiled": {
-      "pos": "verb",
-      "meaning": "boiled",
-      "concept": 2652,
-      "when": "past"
     },
     "boiling": {
       "pos": "noun",
@@ -7213,12 +7195,6 @@
       "person": "third",
       "number": "singular"
     },
-    "poured": {
-      "pos": "verb",
-      "meaning": "poured",
-      "concept": 2654,
-      "when": "past"
-    },
     "pouring": {
       "pos": "noun",
       "meaning": "pouring",
@@ -7239,12 +7215,6 @@
       "person": "third",
       "number": "singular"
     },
-    "rinsed": {
-      "pos": "verb",
-      "meaning": "rinsed",
-      "concept": 2655,
-      "when": "past"
-    },
     "rinsing": {
       "pos": "noun",
       "meaning": "rinsing",
@@ -7264,12 +7234,6 @@
       "concept": 2656,
       "person": "third",
       "number": "singular"
-    },
-    "roasted": {
-      "pos": "verb",
-      "meaning": "roasted",
-      "concept": 2656,
-      "when": "past"
     },
     "roasting": {
       "pos": "noun",
@@ -7343,12 +7307,6 @@
       "person": "third",
       "number": "singular"
     },
-    "sneezed": {
-      "pos": "verb",
-      "meaning": "sneezed",
-      "concept": 2659,
-      "when": "past"
-    },
     "sneezing": {
       "pos": "noun",
       "meaning": "sneezing",
@@ -7368,12 +7326,6 @@
       "concept": 2660,
       "person": "third",
       "number": "singular"
-    },
-    "snored": {
-      "pos": "verb",
-      "meaning": "snored",
-      "concept": 2660,
-      "when": "past"
     },
     "snoring": {
       "pos": "noun",
@@ -7395,12 +7347,6 @@
       "person": "third",
       "number": "singular"
     },
-    "whispered": {
-      "pos": "verb",
-      "meaning": "whispered",
-      "concept": 2661,
-      "when": "past"
-    },
     "whispering": {
       "pos": "noun",
       "meaning": "whispering",
@@ -7420,12 +7366,6 @@
       "concept": 2662,
       "person": "third",
       "number": "singular"
-    },
-    "yawned": {
-      "pos": "verb",
-      "meaning": "yawned",
-      "concept": 2662,
-      "when": "past"
     },
     "yawning": {
       "pos": "noun",
@@ -7447,12 +7387,6 @@
       "person": "third",
       "number": "singular"
     },
-    "shivered": {
-      "pos": "verb",
-      "meaning": "shivered",
-      "concept": 2663,
-      "when": "past"
-    },
     "shivering": {
       "pos": "noun",
       "meaning": "shivering",
@@ -7472,12 +7406,6 @@
       "concept": 2664,
       "person": "third",
       "number": "singular"
-    },
-    "staggered": {
-      "pos": "verb",
-      "meaning": "staggered",
-      "concept": 2664,
-      "when": "past"
     },
     "staggering": {
       "pos": "noun",
@@ -7499,12 +7427,6 @@
       "person": "third",
       "number": "singular"
     },
-    "tickled": {
-      "pos": "verb",
-      "meaning": "tickled",
-      "concept": 2665,
-      "when": "past"
-    },
     "tickling": {
       "pos": "noun",
       "meaning": "tickling",
@@ -7516,12 +7438,6 @@
       "concept": 1539,
       "person": "third",
       "number": "singular"
-    },
-    "fixed": {
-      "pos": "verb",
-      "meaning": "fixed",
-      "concept": 1539,
-      "when": "past"
     },
     "fixing": {
       "pos": "noun",
@@ -7677,12 +7593,6 @@
       "person": "third",
       "number": "singular"
     },
-    "walked": {
-      "pos": "verb",
-      "meaning": "walked",
-      "concept": 259,
-      "when": "past"
-    },
     "flies": {
       "pos": "verb",
       "meaning": "flies",
@@ -7789,24 +7699,12 @@
       "person": "third",
       "number": "singular"
     },
-    "listened": {
-      "pos": "verb",
-      "meaning": "listened",
-      "concept": 274,
-      "when": "past"
-    },
     "asks": {
       "pos": "verb",
       "meaning": "asks",
       "concept": 275,
       "person": "third",
       "number": "singular"
-    },
-    "asked": {
-      "pos": "verb",
-      "meaning": "asked",
-      "concept": 275,
-      "when": "past"
     },
     "eats": {
       "pos": "verb",
@@ -7887,12 +7785,6 @@
       "person": "third",
       "number": "singular"
     },
-    "heard": {
-      "pos": "verb",
-      "meaning": "heard",
-      "concept": 287,
-      "when": "past"
-    },
     "pushes": {
       "pos": "verb",
       "meaning": "pushes",
@@ -7900,24 +7792,12 @@
       "person": "third",
       "number": "singular"
     },
-    "pushed": {
-      "pos": "verb",
-      "meaning": "pushed",
-      "concept": 310,
-      "when": "past"
-    },
     "pulls": {
       "pos": "verb",
       "meaning": "pulls",
       "concept": 311,
       "person": "third",
       "number": "singular"
-    },
-    "pulled": {
-      "pos": "verb",
-      "meaning": "pulled",
-      "concept": 311,
-      "when": "past"
     },
     "rises": {
       "pos": "verb",
@@ -8117,24 +7997,12 @@
       "person": "third",
       "number": "singular"
     },
-    "jumped": {
-      "pos": "verb",
-      "meaning": "jumped",
-      "concept": 528,
-      "when": "past"
-    },
     "crawls": {
       "pos": "verb",
       "meaning": "crawls",
       "concept": 529,
       "person": "third",
       "number": "singular"
-    },
-    "crawled": {
-      "pos": "verb",
-      "meaning": "crawled",
-      "concept": 529,
-      "when": "past"
     },
     "slides": {
       "pos": "verb",
@@ -8176,12 +8044,6 @@
       "person": "third",
       "number": "singular"
     },
-    "cooked": {
-      "pos": "verb",
-      "meaning": "cooked",
-      "concept": 534,
-      "when": "past"
-    },
     "washes": {
       "pos": "verb",
       "meaning": "washes",
@@ -8189,24 +8051,12 @@
       "person": "third",
       "number": "singular"
     },
-    "washed": {
-      "pos": "verb",
-      "meaning": "washed",
-      "concept": 535,
-      "when": "past"
-    },
     "carries": {
       "pos": "verb",
       "meaning": "carries",
       "concept": 536,
       "person": "third",
       "number": "singular"
-    },
-    "carried": {
-      "pos": "verb",
-      "meaning": "carried",
-      "concept": 536,
-      "when": "past"
     },
     "throws": {
       "pos": "verb",
@@ -8241,12 +8091,6 @@
       "person": "third",
       "number": "singular"
     },
-    "opened": {
-      "pos": "verb",
-      "meaning": "opened",
-      "concept": 539,
-      "when": "past"
-    },
     "closes": {
       "pos": "verb",
       "meaning": "closes",
@@ -8254,75 +8098,15 @@
       "person": "third",
       "number": "singular"
     },
-    "closed": {
-      "pos": "verb",
-      "meaning": "closed",
-      "concept": 540,
-      "when": "past"
-    },
     "for": {
       "pos": "preposition",
       "meaning": "for",
       "concept": 591
     },
-    "planted": {
-      "pos": "verb",
-      "meaning": "planted",
-      "concept": 593,
-      "when": "past"
-    },
-    "watered": {
-      "pos": "verb",
-      "meaning": "watered",
-      "concept": 594,
-      "when": "past"
-    },
     "lit": {
       "pos": "verb",
       "meaning": "lit",
       "concept": 595,
-      "when": "past"
-    },
-    "ironed": {
-      "pos": "verb",
-      "meaning": "ironed",
-      "concept": 596,
-      "when": "past"
-    },
-    "fished": {
-      "pos": "verb",
-      "meaning": "fished",
-      "concept": 597,
-      "when": "past"
-    },
-    "marked": {
-      "pos": "verb",
-      "meaning": "marked",
-      "concept": 598,
-      "when": "past"
-    },
-    "formed": {
-      "pos": "verb",
-      "meaning": "formed",
-      "concept": 599,
-      "when": "past"
-    },
-    "placed": {
-      "pos": "verb",
-      "meaning": "placed",
-      "concept": 600,
-      "when": "past"
-    },
-    "handed": {
-      "pos": "verb",
-      "meaning": "handed",
-      "concept": 601,
-      "when": "past"
-    },
-    "trained": {
-      "pos": "verb",
-      "meaning": "trained",
-      "concept": 602,
       "when": "past"
     },
     "shipped": {
@@ -8331,76 +8115,16 @@
       "concept": 603,
       "when": "past"
     },
-    "parted": {
-      "pos": "verb",
-      "meaning": "parted",
-      "concept": 604,
-      "when": "past"
-    },
     "bore": {
       "pos": "verb",
       "meaning": "bore",
       "concept": 605,
       "when": "past"
     },
-    "combed": {
-      "pos": "verb",
-      "meaning": "combed",
-      "concept": 606,
-      "when": "past"
-    },
-    "brushed": {
-      "pos": "verb",
-      "meaning": "brushed",
-      "concept": 607,
-      "when": "past"
-    },
-    "milked": {
-      "pos": "verb",
-      "meaning": "milked",
-      "concept": 608,
-      "when": "past"
-    },
-    "signed": {
-      "pos": "verb",
-      "meaning": "signed",
-      "concept": 609,
-      "when": "past"
-    },
-    "named": {
-      "pos": "verb",
-      "meaning": "named",
-      "concept": 610,
-      "when": "past"
-    },
-    "ordered": {
-      "pos": "verb",
-      "meaning": "ordered",
-      "concept": 611,
-      "when": "past"
-    },
-    "phoned": {
-      "pos": "verb",
-      "meaning": "phoned",
-      "concept": 612,
-      "when": "past"
-    },
     "penned": {
       "pos": "verb",
       "meaning": "penned",
       "concept": 613,
-      "when": "past"
-    },
-    "pictured": {
-      "pos": "verb",
-      "meaning": "pictured",
-      "concept": 614,
-      "when": "past"
-    },
-    "headed": {
-      "pos": "verb",
-      "meaning": "headed",
-      "concept": 615,
       "when": "past"
     },
     "planting": {
@@ -8540,13 +8264,6 @@
       "pos": "verb",
       "meaning": "weigh",
       "concept": 617,
-      "names": false
-    },
-    "weighed": {
-      "pos": "verb",
-      "meaning": "weighed",
-      "concept": 617,
-      "when": "past",
       "names": false
     },
     "gram": {
@@ -13394,6 +13111,19 @@
       "meaning": "bowl",
       "concept": 1216
     },
+    "do": {
+      "pos": "auxiliary",
+      "meaning": "do"
+    },
+    "does": {
+      "pos": "auxiliary",
+      "meaning": "does"
+    },
+    "did": {
+      "pos": "auxiliary",
+      "meaning": "did",
+      "when": "past"
+    },
     "can": {
       "pos": "modal",
       "meaning": "can"
@@ -14020,12 +13750,6 @@
       "concept": 1369,
       "person": "third",
       "number": "singular"
-    },
-    "danced": {
-      "pos": "verb",
-      "meaning": "danced",
-      "concept": 1369,
-      "when": "past"
     },
     "line": {
       "pos": "noun",
@@ -14967,12 +14691,6 @@
       "person": "third",
       "number": "singular"
     },
-    "kicked": {
-      "pos": "verb",
-      "meaning": "kicked",
-      "concept": 1510,
-      "when": "past"
-    },
     "greater": {
       "pos": "verb",
       "meaning": "greater",
@@ -15155,6 +14873,39 @@
       "ending": "s",
       "becomes": "",
       "of": "noun"
+    },
+    {
+      "ending": "ing",
+      "becomes": "",
+      "of": "verb",
+      "pos": "verb"
+    },
+    {
+      "ending": "ing",
+      "becomes": "e",
+      "of": "verb",
+      "pos": "verb"
+    },
+    {
+      "ending": "ied",
+      "becomes": "y",
+      "of": "verb",
+      "pos": "verb",
+      "when": "past"
+    },
+    {
+      "ending": "ed",
+      "becomes": "",
+      "of": "verb",
+      "pos": "verb",
+      "when": "past"
+    },
+    {
+      "ending": "d",
+      "becomes": "",
+      "of": "verb",
+      "pos": "verb",
+      "when": "past"
     }
   ],
   "speech": {
@@ -15215,6 +14966,9 @@
           "function sentence",
           "function subject preposition subject",
           "interrogative quantifier subject",
+          "interrogative quantifier subject auxiliary sentence",
+          "interrogative auxiliary sentence",
+          "auxiliary sentence",
           "verb subject preposition subject",
           "subject verb subject preposition subject",
           "subject verb subject"
@@ -15244,6 +14998,9 @@
           "function sentence",
           "function subject preposition subject",
           "interrogative quantifier subject",
+          "interrogative quantifier subject auxiliary sentence",
+          "interrogative auxiliary sentence",
+          "auxiliary sentence",
           "verb subject preposition subject",
           "subject verb subject preposition subject",
           "subject verb subject"
@@ -15293,7 +15050,10 @@
           "modal predicate",
           "modal verb verbComplement",
           "verb verbComplement",
-          "verb negation verbComplement"
+          "verb negation verbComplement",
+          "auxiliary verb verbComplement",
+          "auxiliary negation verb verbComplement",
+          "auxiliary verb"
         ]
       },
       "verbComplement": {

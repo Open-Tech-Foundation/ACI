@@ -63,3 +63,32 @@ test("what happened is recorded whether or not it could be worked out", async ()
   assert(/^get#\d+$/.test(event.name), "it was told a get happened");
   await forget();
 });
+
+test("a doing already done is the same doing, reached by its ending", async () => {
+  await forget();
+  // No language writes down every form of every verb. `cleaned` is not listed
+  // anywhere — the ending reaches `clean`, and says the doing is behind.
+  await brain("i cleaned a room", { from: PERSON });
+  assertEquals((await brain("did i clean a room?", { from: PERSON })).expression.name, "affirm");
+  await forget();
+});
+
+test("an ending that puts a doing behind says so of any verb it reaches", async () => {
+  await forget();
+  for (const [said, asked] of [
+    ["i whispered", "did i whisper?"],
+    ["i heard a bird", "did i hear a bird?"],
+    ["i carried a box", "did i carry a box?"],
+  ]) {
+    await brain(said, { from: PERSON });
+    assertEquals((await brain(asked, { from: PERSON })).expression.name, "affirm", said);
+  }
+  await forget();
+});
+
+test("an ending is exact, and reaches nothing it does not fit", async () => {
+  await forget();
+  // Nothing is guessed: `wandered` reaches `wander`, which no language lists.
+  assertEquals((await brain("i wandered", { from: PERSON })).expression.name, "unheard");
+  await forget();
+});

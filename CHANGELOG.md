@@ -6,6 +6,28 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A word may carry when, or that a signal is asking, without naming
+  anything.** English writes `do`, `does` and `did` that way, and the brain had
+  none of them — *how many cookies do i have?* died on a word. An auxiliary
+  names nothing, is never the joint, and the claim under it is read exactly as
+  it would be without it. Which end of a count was said first is word order, so
+  the brain tries both: *how many crayons do i have* and *i have how many
+  crayons* are the same question.
+
+- **Asked whether something happened, the brain looks rather than records.**
+  *did i see a film?* answered *I understand* and put another seeing on the
+  record. Being asked is not being told: it looks through what it was told
+  happened, where every part the signal names is played by the same one
+  occurrence, and answers yes or no. Finding none is not finding it did not
+  happen — it says it does not know.
+
+- **No regular past is written down.** The rule against enumeration reached
+  nouns and not verbs: 87 past forms were listed by hand. An ending may now say
+  what part of speech it makes and when it puts the doing, English derives
+  `-ing`, `-ed`, `-d` and `-ied`, and 49 forms a rule already reached are gone
+  from the lexicon. The irregulars stay listed, which is what listed is for —
+  a listed word always wins.
+
 - **A thing's name may be told with `'s`.** *the film's name is arrival* was
   not understood: possessive was something only a pronoun could be. An ending
   may now say what part of speech it makes, English derives `'s` into one, and

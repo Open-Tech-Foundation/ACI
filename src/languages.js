@@ -182,10 +182,14 @@ function lookUp(words, derivations, w) {
     if (!found) continue;
     const fits = found.filter((info) => rule.of === undefined || partsOf(info).includes(rule.of));
     if (fits.length === 0) continue;
-    // An ending may change what part of speech the word is: what a noun means
-    // is one thing, and what that noun's own is, is another. Which endings do
-    // that is the language's to say.
-    const reads = rule.pos === undefined ? {} : { pos: rule.pos };
+    // An ending may change what part of speech the word is, and may say when
+    // the doing was: what a noun means is one thing, what that noun's own is
+    // is another, and a doing already done is the same doing behind. Which
+    // endings do that is the language's to say.
+    const reads = {
+      ...(rule.pos === undefined ? {} : { pos: rule.pos }),
+      ...(rule.when === undefined ? {} : { when: rule.when }),
+    };
     return fits.map((info) => ({
       ...info,
       ...reads,

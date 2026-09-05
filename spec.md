@@ -285,20 +285,34 @@ take the ending off, put back what it replaced, look again.
 
 ```jsonc
 "derivations": [
+  { "ending": "'s",  "becomes": "",  "of": "noun", "pos": "possessive" },
   { "ending": "ies", "becomes": "y", "of": "noun" },
   { "ending": "es",  "becomes": "",  "of": "noun" },
-  { "ending": "s",   "becomes": "",  "of": "noun" }
+  { "ending": "s",   "becomes": "",  "of": "noun" },
+  { "ending": "ing", "becomes": "",  "of": "verb", "pos": "verb" },
+  { "ending": "ing", "becomes": "e", "of": "verb", "pos": "verb" },
+  { "ending": "ied", "becomes": "y", "of": "verb", "pos": "verb", "when": "past" },
+  { "ending": "ed",  "becomes": "",  "of": "verb", "pos": "verb", "when": "past" },
+  { "ending": "d",   "becomes": "",  "of": "verb", "pos": "verb", "when": "past" }
 ]
 ```
 
 This is the rule against enumeration applied to the lexicon: **no plural is
-written down anywhere.** Rules are grammar and there are three of them; the words
-they reach are every noun in the language.
+written down anywhere, and no regular past.** Rules are grammar and there are
+a handful of them; the words they reach are every noun and every verb in the
+language.
 
-- a **listed** word always wins over a derived one
+- a **listed** word always wins over a derived one, which is where the
+  irregulars live: `saw`, `ate`, `sang` are written down, `cleaned` is not
 - `of` keeps a rule to one part of speech, so `as` does not become the article `a`
+- `pos` says what part of speech the ending **makes**, where that is not what
+  the stem was: `'s` turns a noun into a possessive, so `the film's name` is
+  the name of the film and not a film called name
+- `when` says where the ending puts the doing, so a past read off an ending is
+  the same past a listed word carries
 - derivation is exact — an ending either applies or it does not, and nothing is
-  guessed
+  guessed. `wandered` reaches `wander`, and no language listing `wander` means
+  the word is unheard, not approximated
 - the word carries `derived: { from, ending }`, so what happened is visible
 
 ### Speech and expressions
@@ -764,6 +778,13 @@ it also is. Where something already joins them — `i cut an apple with a saw` �
 every word stands as it was first thought, and the saw is the tool. A word
 still to be settled cannot itself be what joins the signal.
 
+**Whose a thing is comes first.** A possessive is a pointer: `my`, `your`,
+`its`, and any noun the language derives one from. Whom it points at is the
+circumstance's, and told nothing to point at it names nobody — so what it marks
+is nobody's, and the brain does not read past it to the word alone. This is
+settled before anything is named, or a claim resting on a pointer that landed
+on nothing would still leave a name behind.
+
 **Naming a thing.** A word no language lists and no world holds, standing where
 a thing stands and spoken of as though it were one, is a name being given. The
 thing is made here, before anything is judged, so what else the signal says of
@@ -1211,6 +1232,25 @@ other. Which thing plays which:
   and stops at the next thing. A marker never reaches past one.
 - **which side** a marker governs is word order, so the language declares it:
   `"marking": "after"`.
+- a thing spoken of as **one of its kind** is one of them: `a film` in
+  something that happened is one film, made here, so what happened happened to
+  that one and the signal after this one has something to point back at. A
+  thing made this way was never called anything, so it is said by what it
+  **is** — a `boy#12` is said back as *boy*.
+
+**Asked whether something happened → the brain looks, and records nothing.**
+Being asked is not being told, and answering is not doing. Every part the
+signal names must be played by the same one occurrence, and a part played by a
+thing of a kind answers to the kind — `did i rinse a cup` is answered by any
+rinsing of any cup. Finding none is not finding it did not happen: the standing
+is `absent`, and the brain says it does not know.
+
+**A word may carry when, or that a signal is asking, without naming anything.**
+English writes `do`, `does` and `did` that way. Such a word names nothing, is
+never the joint, and the claim under it is read exactly as it would be without
+it — which is why `how many crayons do i have` and `i have how many crayons`
+are the same question. Which end of a count was said first is word order, and
+the brain tries both.
 
 **An action the world says causes an operation → the brain carries it out.**
 The world links an action term to an operation term by `cause` — `take` causes

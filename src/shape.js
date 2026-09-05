@@ -234,7 +234,7 @@ export function checkLanguage(data, where = 'language') {
     for (const rule of data.derivations) {
       const r = `${at} derivation`;
       if (!rule || typeof rule !== 'object') fail(r, 'must be an object');
-      onlyKeys(rule, ['ending', 'becomes', 'of', 'pos'], r);
+      onlyKeys(rule, ['ending', 'becomes', 'of', 'pos', 'when'], r);
       if (typeof rule.ending !== 'string' || rule.ending === '') {
         fail(r, 'ending must be a non-empty string');
       }
@@ -244,6 +244,9 @@ export function checkLanguage(data, where = 'language') {
       }
       if (rule.pos !== undefined && (typeof rule.pos !== 'string' || rule.pos === '')) {
         fail(r, 'pos, where present, must name the part of speech the ending makes');
+      }
+      if (rule.when !== undefined && (typeof rule.when !== 'string' || rule.when === '')) {
+        fail(r, 'when, where present, must name when the ending puts the doing');
       }
     }
   }
