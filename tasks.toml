@@ -23,4 +23,4 @@ run = "esdev build --lib src --out=dist"
 run = "esdev build --config=demo/esdev.json --minify"
 
 [tasks.ci]
-deps = ["test", "build", "site"]
+deps = ["test", "build"]
