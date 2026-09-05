@@ -269,7 +269,39 @@ function think(roots, langs, at, world) {
     const state = ways.length > 1 ? { thought: ways[0], ways } : { thought: ways[0] };
     return withBranch(n, [...n.branch, node('thought', 'understood', [], state)]);
   });
-  return reshaped(thought, world);
+  return intraSignal(reshaped(thought, world), world);
+}
+
+// Focus tracked from the current tree: a third-person pointer (`it`, `them`)
+// with nowhere to land — no previous topic — looks at entities already
+// understood earlier in the SAME signal first. The nearest thing to the left
+// is what is meant; with nothing to the left there is no forward reference,
+// and the word keeps naming nothing. Relations, properties and numbers never
+// join: joints are what is said, not what is spoken of. Where a previous
+// topic already resolved the pointer, that stands: role-marked pointers
+// (`into it`) keep reaching across signals, and re-ranking those is later work.
+function intraSignal(roots, world) {
+  if (!world) return roots;
+  const a = world.anchors || {};
+  if (a.thing == null) return roots;
+  const seen = [];
+  return roots.map((n) => {
+    const t = thoughtOf(n);
+    if (t && t.marks === 'spoken' && t.person === 'third' && t.concept == null && seen.length > 0) {
+      const antecedent = seen[seen.length - 1];
+      seen.push(antecedent);
+      return withBranch(
+        n,
+        (n.branch || []).map((b) =>
+          b.kind === 'thought'
+            ? withBranch(b, b.branch, { ...b.state, thought: { ...b.state.thought, concept: antecedent } })
+            : b,
+        ),
+      );
+    }
+    if (t && t.concept != null && world.isA(t.concept, a.thing)) seen.push(t.concept);
+    return n;
+  });
 }
 
 // What one word came to may not be what the words come to together. Having

@@ -23,6 +23,14 @@ All notable changes to this project are documented in this file.
   questions. `one`/`ones` ellipsis, verb anaphora (`do`/`does`/`did`),
   clause `so`, `neither`, and `this`/`that` proximity remain open.
 
+- **A pointer with no previous topic looks left in its own signal.** `it`
+  naming nothing (fresh thread) takes the nearest thing already understood
+  earlier in the same signal — `a violin is loud and it is old` learns the
+  violin is old — while forward reference (`it is heavy and a drum is cold`)
+  still names nothing. Pointers already resolved from a previous topic keep
+  reaching across signals (`into it`), so role-marked cross-signal uses are
+  unchanged.
+
 - **The demo ran without anything under `knowledge/`.** Its permission list
   granted `../languages` and `../data` and not `../knowledge`, so the one file
   that says what this instance is called was never read — *what is your name?*
