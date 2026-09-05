@@ -1046,7 +1046,8 @@
       {
         "pos": "noun",
         "meaning": "water",
-        "concept": 63
+        "concept": 63,
+        "bare": true
       },
       {
         "pos": "verb",
@@ -2127,7 +2128,8 @@
     "gravity": {
       "pos": "noun",
       "meaning": "gravity",
-      "concept": 309
+      "concept": 309,
+      "bare": true
     },
     "push": {
       "pos": [
@@ -8884,7 +8886,8 @@
     "recognise": "I recognise \"{meaning}\".",
     "learn": "I understand.",
     "understood": "{self} {relation}.",
-    "claim": " {one} {subject} {relation} {one} {object}.",
+    "claim": " {subject} {relation} {object}.",
+    "compare": " {subject} is {relation} than {object}.",
     "affirm": "Yes. ✅{meaning}",
     "deny": "No. ❌",
     "answer": "{meaning}",

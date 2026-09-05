@@ -99,6 +99,11 @@ test("what the thing reading names is still what it always named", async () => {
   await forget();
   assertEquals((await brain("a plant is an organism?")).expression.name, "affirm");
   assertEquals((await brain("water is a liquid?")).expression.name, "affirm");
+  assertEquals(
+    (await brain("water is a liquid?")).expression.state.says,
+    "Yes. ✅ water is a liquid.",
+    "what is not one of a kind takes no article",
+  );
   assertEquals((await brain("a saw is a tool?")).expression.name, "affirm");
   await forget();
 });

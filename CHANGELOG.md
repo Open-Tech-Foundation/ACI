@@ -4,6 +4,22 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Asking names nothing.** A hole stands for what the signal does not say, so
+  a signal carrying one is asking, not giving — `who has the telescope` named
+  a telescope and answered *I understand.* It names nothing now, answers what
+  it found and takes nothing in, with or without a question mark.
+- **A comparison is said back as the comparing.** The standing joins the things
+  by more-or-less, and the claim was said back that way — *an alice more a
+  bob*. The standing carries the scale the signal compared on, the language
+  gives the word that compares on it, and a `compare` frame says it: *alice is
+  bigger than bob*.
+- **What is not one of a kind takes no article.** The claim frame gave every
+  side one — *a gravity is a force*, *a water is a liquid*. A name takes none,
+  and a word may say its term stands bare (`bare`); which form one of a kind
+  takes against what follows stays the language's.
+
 ### Added
 
 - **A day has twenty-four hours.** A week already held seven days and a year

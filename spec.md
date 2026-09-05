@@ -151,7 +151,8 @@ runtime — never the brain — does the reading.
     "greet":      "Hello!",
     "count":      "It is {meaning}.",
     "confirm":    "Yes, it {meaning}.",
-    "claim":      " {one} {subject} {relation} {one} {object}.",
+    "claim":      " {subject} {relation} {object}.",
+    "compare":    " {subject} is {relation} than {object}.",
     "recognise":  "I recognise \"{meaning}\".",
     "understood": "I understand.",
     "affirm":     "Yes.",
@@ -173,7 +174,9 @@ runtime — never the brain — does the reading.
 Each word carries `pos` (part of speech), `meaning`, and optionally `concept` —
 the id of the world term it names. It may also carry `marks` (what it points at
 or says of its neighbour), `negates`, `role` (which part its neighbour plays),
-`when`, `names`, `groups`, `person` and `number`. There is **no** `type`,
+`when`, `names`, `groups`, `person` and `number`. A word may say its term
+stands bare, with no article (`bare`), the way a mass of water is not one
+water. There is **no** `type`,
 `emotion`, or `reply` — the brain derives those.
 
 **A word may be more than one part of speech.** `pos` may be a list, and which
@@ -318,9 +321,18 @@ symbol sets calls for which form is the language's, and it names them itself.
 
 Not every frame is an act. **`claim`** is the claim said back: the brain hands
 over the three terms it joined and the language orders and words them, so
-`"a hyena is a mammal?"` answers *Yes. ✅ a hyena is a mammal.* Where the brain
+`"a hyena is a mammal?"` answers *Yes. ✅ a hyena is a mammal.* What is one of
+a kind takes its article, said against what follows it; what is not — a name
+the brain knows, or a word the language says stands bare — does not, so
+`"gravity is a force?"` is answered without one. Where the brain
 cannot say all three — a term this language has no word for — there is no claim
 to restate and it says none of it, rather than a sentence with a hole in it.
+
+A comparing said on one scale is said back as the comparing, not as the
+more-or-less it was worked through: the standing carries the scale, the
+language gives the word that compares on it, and the **`compare`** frame says
+it, so `"alice is bigger than bob?"` answers *Yes. ✅ alice is bigger than
+bob.*
 
 So `"I don't know."` is written **nowhere**. It is the speaker word, the frame's
 own negation, and whatever this language calls term 285 (`know`). Rename that
@@ -757,6 +769,9 @@ gives him the apples in one breath. Said to be of a kind, that is the kind it
 is; said anything else, a thing is what it is. A name for a thing is the
 world's — it goes on being there after the talking stops — and it is met again
 by what it is **called**, the world being asked for a term of that name.
+Asking is not giving: a signal carrying a hole names nothing, with or without
+a question mark, so `who has the telescope` leaves no telescope behind — a
+question answers what it found and takes nothing in.
 
 A name given a **number** is the conversation's instead: `x is 5` gives x five,
 and giving is done with the weakest joint there is, so `x > 10` asks rather

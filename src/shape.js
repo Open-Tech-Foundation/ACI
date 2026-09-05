@@ -333,7 +333,7 @@ function checkWord(info, w) {
   if (!info || typeof info !== 'object' || Array.isArray(info)) fail(w, 'must be an object');
   onlyKeys(
     info,
-    ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'person', 'number', 'on'],
+    ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'person', 'number', 'on', 'bare'],
     w,
   );
   // A word may be more than one part of speech — English says a walk and
@@ -374,6 +374,12 @@ function checkWord(info, w) {
   }
   if (info.negates !== undefined && info.negates !== true) {
     fail(w, 'negates, where present, must be true');
+  }
+  // A word may stand bare, with no article: what it names is not one of a
+  // kind. That a language may do without is the brain's; which of its words do
+  // is the language's.
+  if (info.bare !== undefined && info.bare !== true) {
+    fail(w, 'bare, where present, must be true');
   }
   if (info.marks !== undefined && !MARKS.includes(info.marks)) {
     fail(w, `marks must be one of ${MARKS.map((m) => `"${m}"`).join(', ')}`);

@@ -43,6 +43,28 @@ test("a thing nothing has measured cannot be compared", async () => {
   await forget();
 });
 
+test("a comparison is said back as the comparing, not as more-or-less", async () => {
+  // The standing joins the things by more, but what the signal said was
+  // bigger — and a name takes no article.
+  await forget();
+  await brain("alice measures 2 metre");
+  await brain("bob measures 1 metre");
+  assertEquals(
+    (await brain("alice is bigger than bob?")).expression.state.says,
+    "Yes. ✅ alice is bigger than bob.",
+  );
+  await forget();
+  assertEquals(
+    (await fresh(...MEASURED, "a cow is heavier than a goat?")).expression.state.says,
+    "Yes. ✅ a cow is heavier than a goat.",
+  );
+  assertEquals(
+    (await fresh(...MEASURED, "a cow is smaller than a goat?")).expression.state.says,
+    "Yes. ✅ a cow is smaller than a goat.",
+  );
+  await forget();
+});
+
 test("the things compared are the things, not the words joining them", async () => {
   // `a cow is heavier than a goat` names two relations, and neither of them
   // is one of the things being compared.

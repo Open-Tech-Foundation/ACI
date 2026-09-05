@@ -465,6 +465,10 @@ function whose(roots, world, langs, mood) {
 // breath.
 function calling(roots, world, mood) {
   if (!world || mood !== 'tell') return roots;
+  // Asking is not giving: a hole stands for what the signal does not say, so
+  // a signal carrying one names nothing — `who has the telescope` leaves no
+  // telescope behind, with or without a question mark.
+  if (roots.some((n) => markOn(n) === 'unknown')) return roots;
   const a = world.anchors || {};
   let next = world.nextId();
   // A word stands in a claim where the signal has something to join it to
@@ -1468,6 +1472,7 @@ function alongScale(left, right, relation, world, on) {
     relation,
     object: conceptOf(right),
     worked: true,
+    on,
   });
 }
 
@@ -2481,19 +2486,44 @@ function listing(langName, langs) {
 // and the language puts them in an order and gives them their words; where it
 // cannot say all three there is no claim to restate, and it says none of it
 // rather than a sentence with a hole in it.
+//
+// What is one of a kind takes its article, and what is not — a name, or a
+// word the language says stands bare — does not. Which things are names the
+// brain knows; which words stand bare is the language's, and which form one
+// of a kind takes against what follows is the language's too.
+//
+// A comparing said on one scale is said back as the comparing, not as the
+// more-or-less it was worked through: asked bigger, the brain says bigger,
+// in the frame the language gives for saying so.
 function claimSaid(stood, langName, langs, world) {
   const lang = (langs || []).find((l) => l.data.name === langName);
   if (!lang || !stood) return null;
-  const { subject, relation, object, negated } = stood.state;
+  const { subject, relation, object, negated, on } = stood.state;
   // A claim that was denied cannot be said back in a frame with no room for
   // the denial: saying it without would say the opposite of what was asked.
   if (negated) return '';
   // A number is not one of a kind, and does not go in a frame built for one.
   const a = world && world.anchors ? world.anchors : {};
   if (world && (world.isA(subject, a.number) || world.isA(object, a.number))) return '';
-  const words = [subject, relation, object].map((t) => termWord(t, langName, langs, world));
-  if (words.some((w) => w == null)) return '';
-  return lang.express('claim', { subject: words[0], relation: words[1], object: words[2] }) ?? '';
+  const said = (term) => {
+    const word = termWord(term, langName, langs, world);
+    if (word == null) return null;
+    const bare = (world && world.isIndividual(term)) || lang.isBare(term);
+    return bare ? word : `${lang.oneFor(word)} ${word}`;
+  };
+  const one = said(subject);
+  const other = said(object);
+  if (one == null || other == null) return '';
+  const comparing =
+    on != null && (relation === a.more || relation === a.less)
+      ? lang.comparativeFor(relation, on)
+      : null;
+  if (comparing != null) {
+    return lang.express('compare', { subject: one, relation: comparing, object: other }) ?? '';
+  }
+  const words = termWord(relation, langName, langs, world);
+  if (words == null) return '';
+  return lang.express('claim', { subject: one, relation: words, object: other }) ?? '';
 }
 
 // A number the brain worked out. The world may have no term for it — nothing

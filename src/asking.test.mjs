@@ -41,6 +41,16 @@ test("nothing was told to have happened, so nothing played the part", async () =
   await forget();
 });
 
+test("asking names nothing, with or without a question mark", async () => {
+  // `telescope` is no word and no term. Asked, it is not a name being given:
+  // the brain answers what it found and takes nothing in.
+  const r = await fresh("the man saw the boy with the telescope", "who has the telescope");
+  assertEquals(r.expression.state.says, "none");
+  assertEquals(r.learned, null, "a question teaches nothing");
+  assertEquals((await fresh("who has the telescope?")).expression.state.says, "none");
+  await forget();
+});
+
 test("what was told of one doing is not told of another", async () => {
   const r = await fresh("a boy kicked the ball", "a man kicked the stone", "who kicked the stone");
   assertEquals(r.expression.state.says, "man");

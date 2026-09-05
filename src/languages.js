@@ -48,8 +48,7 @@ function buildLanguage(data) {
   return {
     data,
     express: (intent, vars) => voice(data, intent, vars, named),
-    isLetterSymbol: (ch) => letters.has(ch),
-    isVowelSymbol: (ch) => vowels.has(ch),
+    isLetterSymbol: (ch) => letters.has(ch),    isVowelSymbol: (ch) => vowels.has(ch),
     isQuestionSymbol: (ch) => asking.has(ch),
     // A mark is whatever this language's own words are not made of. Nothing
     // needs to declare them: `?` ends no English word, and `+` would end one
@@ -73,6 +72,39 @@ function buildLanguage(data) {
     // Another way this language writes a term, where it has one that is not
     // what the term is called.
     otherWordFor: (concept) => (concept == null ? null : written.get(concept) ?? null),
+    // The word that compares on one scale, where the language has one that is
+    // not what the comparing is called: bigger is more, on size. First word
+    // wins, the way a name does.
+    comparativeFor: (relation, on) => {
+      if (relation == null || on == null) return null;
+      for (const [word, entry] of Object.entries(data.words || {})) {
+        const readings = Array.isArray(entry) ? entry : [entry];
+        if (readings.some((info) => info && info.concept === relation && info.on === on)) {
+          return word;
+        }
+      }
+      return null;
+    },
+    // Whether the language ever says one of the term: a word may stand bare,
+    // with no article — gravity is a force, not a gravity.
+    isBare: (concept) => {
+      if (concept == null) return false;
+      for (const entry of Object.values(data.words || {})) {
+        const readings = Array.isArray(entry) ? entry : [entry];
+        if (readings.some((info) => info && info.concept === concept && info.bare === true)) {
+          return true;
+        }
+      }
+      return false;
+    },
+    // The article for one of a kind, said against what follows it — `a`
+    // against `an`. Which symbols call for which is the language's own.
+    oneFor: (word) => {
+      const forms = (data.speech || {}).one;
+      if (!forms || typeof forms !== 'object') return '';
+      const next = String(word || '').trim().replace(/^\s+/, '')[0] ?? '';
+      return agreeWith(forms, symbols, next);
+    },
     lookupWord: (w) => lookUp(words, data.derivations, w),
     wordFor: (concept) => (concept == null ? null : named.get(concept) ?? null),
     grammar: data.grammar || {},
@@ -118,12 +150,18 @@ function voice(data, intent, vars, named) {
     const forms = speech[key];
     if (!forms || typeof forms !== 'object') return '';
     const rest = filled.slice(at + whole.length).replace(/^\s+/, '');
-    const next = rest ? rest[0] : '';
-    for (const [type, form] of Object.entries(forms.before || {})) {
-      if (charSet((data.symbols || {})[type]).has(next)) return form;
-    }
-    return forms.otherwise ?? '';
+    return agreeWith(forms, data.symbols || {}, rest ? rest[0] : '');
   });
+}
+
+// The form a word takes against what follows it, from the forms its language
+// gives for that word and the symbol sets it names. Shared by voicing a frame
+// and by saying one of a kind on its own.
+function agreeWith(forms, symbols, next) {
+  for (const [type, form] of Object.entries(forms.before || {})) {
+    if (charSet(symbols[type]).has(next)) return form;
+  }
+  return forms.otherwise ?? '';
 }
 
 // A word not listed may still be one this language derives from a word that is:

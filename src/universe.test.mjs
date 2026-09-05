@@ -9,6 +9,11 @@ test("everything that is, is inside the universe", async () => {
   assertEquals((await brain("the universe has an existence?")).expression.name, "affirm");
   assertEquals((await brain("the universe has a force?")).expression.name, "affirm");
   assertEquals((await brain("gravity is a force?")).expression.name, "affirm");
+  assertEquals(
+    (await brain("gravity is a force?")).expression.state.says,
+    "Yes. ✅ gravity is a force.",
+    "what is not one of a kind takes no article",
+  );
   await forget();
 });
 
