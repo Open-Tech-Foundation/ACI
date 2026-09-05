@@ -17,6 +17,21 @@ answer is a term the world holds, said with a frame the language gives. Where
 it has not been told, it has nothing to say, and says that instead. The same
 signals in the same order give the same answer on every machine.
 
+Nothing above was taught to it beforehand. Name a thing and it is met again by
+what it is called, and what its kind reaches, it reaches:
+
+```
+> tilly is a heron        I understand.
+> tilly is an animal?     Yes. ✅ tilly is an animal.
+> tilly is a fish?        No. ❌
+> what is tilly           heron
+```
+
+`tilly` is a term now, made when the signal named it. Nobody wrote *heron is an
+animal* for this: the world says a heron is a bird and a bird is an animal, and
+the brain walked it. The *no* is the same walk — the world holds birds and
+fishes apart, so the claim is not unknown, it is denied.
+
 > [!WARNING]
 > **Experimental — a research preview, not a product.** Early stage and moving:
 > the engine, the data shapes and the public API all change without notice, and
