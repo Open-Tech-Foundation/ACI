@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **`hurt` as a doing.** `hurt` named only the feeling at the bad pole, so `"i
+  hurt myself"` was not understood. The world gains `hurting` under work, and
+  the word names both — the feeling and the doing it also is — settled the way
+  `saw` is. `hurts` says it of one other, and the past needs no writing: it is
+  spelled `hurt`, the way `cut` is.
+
 - **A thing may be whose.** `my cat` is not cats — it is the one cat the sender
   has, and what is said of it is said of that one. Which word says whose is the
   language's; whom it points at is the circumstance's. Where the world holds

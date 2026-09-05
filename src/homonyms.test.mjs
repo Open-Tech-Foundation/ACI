@@ -17,6 +17,7 @@ const BOTH = [
   ["milk", "milking"], ["sign", "signing"], ["name", "naming"],
   ["order", "ordering"], ["phone", "phoning"], ["pen", "penning"],
   ["picture", "picturing"], ["head", "heading"], ["saw", "see"],
+  ["hurt", "hurting"],
 ];
 
 function branch(r, kind) {
@@ -108,5 +109,6 @@ test("what the doing reading names is a doing", async () => {
   assertEquals((await brain("signing is a communication?")).expression.name, "affirm");
   assertEquals((await brain("picturing is a perception?")).expression.name, "affirm");
   assertEquals((await brain("heading is a motion?")).expression.name, "affirm");
+  assertEquals((await brain("hurting is a work?")).expression.name, "affirm");
   await forget();
 });

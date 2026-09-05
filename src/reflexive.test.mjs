@@ -30,6 +30,18 @@ test("a doing to something else is unchanged", async () => {
   await forget();
 });
 
+test("hurting oneself is one thing playing two parts", async () => {
+  await forget();
+  // `hurt` names the feeling and the doing alike; here it is the doing.
+  const played = parts(await brain("i hurt myself", { from: PERSON }));
+  assert(played != null, "something happened");
+  assertEquals(played.length, 2, "a doer and something it was done to");
+  assertEquals(played[0].of, PERSON);
+  assertEquals(played[1].of, PERSON, "and they are the same one");
+  assert(played[0].role !== played[1].role, "playing two parts, not one");
+  await forget();
+});
+
 test("told nothing about who is speaking, a reflexive points nowhere", async () => {
   await forget();
   assertEquals(parts(await brain("i cut myself")), null,

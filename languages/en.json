@@ -1773,10 +1773,29 @@
       "meaning": "nice",
       "concept": 563
     },
-    "hurt": {
+    "hurt": [
+      {
+        "pos": "noun",
+        "meaning": "hurt",
+        "concept": 564
+      },
+      {
+        "pos": "verb",
+        "meaning": "hurt",
+        "concept": 1513
+      }
+    ],
+    "hurting": {
       "pos": "noun",
-      "meaning": "hurt",
-      "concept": 564
+      "meaning": "hurting",
+      "concept": 1513
+    },
+    "hurts": {
+      "pos": "verb",
+      "meaning": "hurts",
+      "concept": 1513,
+      "person": "third",
+      "number": "singular"
     },
     "bad": {
       "pos": "noun",
