@@ -48,17 +48,20 @@ const SCHEMA = [
 
 export async function openStore(url) {
   const db = await connect(url, { driver: sqlite });
-  await db.query(sql`pragma foreign_keys = on`);
-  for (const statement of SCHEMA) await db.query(statement);
+  await db.execute(sql`pragma foreign_keys = on`);
+  for (const statement of SCHEMA) await db.execute(statement);
   // A store written before a column existed keeps its rows: `create table if
   // not exists` adds nothing to a table that is already there.
   const columns = await rows(db, sql`pragma table_info(term)`);
   if (!columns.some((c) => c.name === 'symbol')) {
-    await db.query(sql`alter table term add column symbol text`);
+    await db.execute(sql`alter table term add column symbol text`);
   }
   return db;
 }
 
+// A write says what it did and hands back no rows, so it is executed rather
+// than queried: a cursor allocated for an insert is one nothing ever reads.
+//
 // Every read is drained and closed before the next statement runs: a cursor
 // left open blocks the next write.
 async function rows(db, statement) {
@@ -89,7 +92,7 @@ export async function isEmpty(db) {
 // them, is the same writes in the same order.
 export async function seed(db, world) {
   const learned = 0;
-  await db.query(sql`delete from link where learned = 0`);
+  await db.execute(sql`delete from link where learned = 0`);
 
   await db.executeMany(
     sql`insert into term (id, name, value, symbol, individual, disjoint, learned)
@@ -179,7 +182,7 @@ export async function write(db, learned) {
   for (const t of learned.terms || []) {
     const seen = await rows(db, sql`select id from term where id = ${t.id}`);
     if (seen.length === 0) {
-      await db.query(sql`insert into term (id, name, value, symbol, individual, disjoint, learned)
+      await db.execute(sql`insert into term (id, name, value, symbol, individual, disjoint, learned)
                          values (${t.id}, ${t.name}, ${t.value ?? null}, ${t.symbol ?? null},
                                  ${t.individual ? 1 : 0}, ${t.disjoint ? 1 : 0}, 1)`);
     }
@@ -192,8 +195,8 @@ export async function write(db, learned) {
 // Put the world back as it was born and taught, dropping everything learned
 // since. What was seeded is not touched.
 export async function forgetLearned(db) {
-  await db.query(sql`delete from link where learned = 1`);
-  await db.query(sql`delete from term where learned = 1`);
+  await db.execute(sql`delete from link where learned = 1`);
+  await db.execute(sql`delete from term where learned = 1`);
 }
 
 async function putLink(db, term, l, learned) {

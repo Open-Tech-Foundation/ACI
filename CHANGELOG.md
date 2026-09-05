@@ -6,6 +6,11 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
+- **A write is executed, not queried.** Every insert and delete went through
+  `query`, which allocates a cursor to read rows back from — and a write hands
+  back none. Nothing measurable now that the seed goes in whole, since few
+  single writes are left; it is the right shape all the same.
+
 - **A world is put in whole, not a row at a time.** Seeding an authored world
   cost one trip to the driver per row — 5562 of them, about 530 ms, on every
   open. Every statement costs the same trip whether it writes one row or five
