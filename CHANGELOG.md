@@ -22,6 +22,10 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **An hour has sixty minutes, a minute sixty seconds.** A day already held its
+  hours; the chain runs down the same way, so asking what an hour or a minute
+  holds answers with what was counted.
+
 - **A day has twenty-four hours.** A week already held seven days and a year
   twelve months; a day now holds twenty-four hours, so asking how many hours it
   has answers with what was counted.

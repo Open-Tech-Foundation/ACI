@@ -41,3 +41,10 @@ test("a day is counted in hours", async () => {
   assertEquals(await says("a day has how many hours?"), "24");
   await forget();
 });
+
+test("an hour is counted in minutes, a minute in seconds", async () => {
+  await forget();
+  assertEquals(await says("an hour has how many minutes?"), "sixty");
+  assertEquals(await says("a minute has how many seconds?"), "sixty");
+  await forget();
+});
