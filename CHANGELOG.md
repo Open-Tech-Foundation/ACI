@@ -4,7 +4,47 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **A thing's name may be told with `'s`.** *the film's name is arrival* was
+  not understood: possessive was something only a pronoun could be. An ending
+  may now say what part of speech it makes, English derives `'s` into one, and
+  the grammar takes an article before it. A bare noun before a noun is still
+  not a possession — *apple tree* is not the tree's apple.
+
 ### Fixed
+
+- **Something that happened says what was spoken of.** Only a fact taken in, a
+  standing or an answer named what a signal was about, so *i saw a film* left
+  nothing for the next signal to point back at and *its name is arrival* landed
+  on nobody. What was done to is what was spoken of.
+
+- **A thing spoken of as one of its kind is one of them.** *a film* in
+  something that happened was the kind itself, so what was seen was films and
+  there was no one film to name. The `new` mark already made one where a count
+  needed a bearer; a doing makes one the same way. A thing made this way was
+  never called anything, so it is said by what it is — *who kicked the ball*
+  answers *boy*, not *boy#12*.
+
+- **A possessive landing on nothing names nothing.** Told nothing to point at,
+  `its` was dropped and the word it marked stood alone — *its name is arrival*
+  made a claim about the name relation itself. The signal names nothing there
+  now, and nothing is named on the back of it.
+
+- **A number beside a word nothing knows counts it.** *i have 3 crayons* kept
+  the having and threw the three away, because the count is read off a term the
+  world holds and the word was only being named in that same breath. Counted, a
+  word nothing knows names a kind — there are three of them, so they are not
+  one thing.
+
+- **A pointer lands on one thing, never on a kind.** Where the runtime says a
+  signal came from a kind, the one of it is who is meant, so what a sender was
+  told to have is what they are found to have.
+
+- **The demo says who is talking to it.** It passed only the conversation, so
+  `i` landed on nobody and everything a sender said of themselves was dropped
+  under *I understand.* It now says the signal came from a person, which is the
+  runtime's to say and never the brain's to assume.
 
 - **A kind on its own is not counted out in public.** Asked how many of a kind
   cold, the brain counted its own shelves — *how many mammal* answered with

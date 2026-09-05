@@ -234,13 +234,16 @@ export function checkLanguage(data, where = 'language') {
     for (const rule of data.derivations) {
       const r = `${at} derivation`;
       if (!rule || typeof rule !== 'object') fail(r, 'must be an object');
-      onlyKeys(rule, ['ending', 'becomes', 'of'], r);
+      onlyKeys(rule, ['ending', 'becomes', 'of', 'pos'], r);
       if (typeof rule.ending !== 'string' || rule.ending === '') {
         fail(r, 'ending must be a non-empty string');
       }
       if (typeof rule.becomes !== 'string') fail(r, 'becomes must be a string');
       if (rule.of !== undefined && (typeof rule.of !== 'string' || rule.of === '')) {
         fail(r, 'of, where present, must name a part of speech');
+      }
+      if (rule.pos !== undefined && (typeof rule.pos !== 'string' || rule.pos === '')) {
+        fail(r, 'pos, where present, must name the part of speech the ending makes');
       }
     }
   }

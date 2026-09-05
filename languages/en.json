@@ -15039,6 +15039,12 @@
   },
   "derivations": [
     {
+      "ending": "'s",
+      "becomes": "",
+      "of": "noun",
+      "pos": "possessive"
+    },
+    {
       "ending": "ies",
       "becomes": "y",
       "of": "noun"
@@ -15157,6 +15163,7 @@
           "numeral noun",
           "pronoun",
           "possessive noun",
+          "article possessive noun",
           "open sentence close",
           "open subject close",
           "function subject",
@@ -15176,6 +15183,7 @@
           "numeral noun",
           "pronoun",
           "possessive noun",
+          "article possessive noun",
           "open sentence close",
           "open subject close",
           "function subject",
@@ -15208,6 +15216,7 @@
           "open subject close",
           "open subject close predicate",
           "article noun",
+          "article possessive noun",
           "numeral noun",
           "interrogative",
           "interrogative quantifier noun",
@@ -15232,6 +15241,7 @@
           "open subject close",
           "open subject close predicate",
           "article noun",
+          "article possessive noun",
           "numeral noun",
           "interrogative",
           "interrogative quantifier noun"

@@ -24,6 +24,13 @@ function branch(r, kind) {
   return (r.roots[0].branch || []).find((b) => b.kind === kind) || null;
 }
 
+// The kind a made thing is one of, read off what the signal learned. `an
+// apple` is one apple, so the part it played is that one and not the kind.
+function oneOf(r, id) {
+  const made = ((r.learned || { terms: [] }).terms || []).find((t) => t.id === id);
+  return made ? made.links[0].to : id;
+}
+
 function waysOf(r) {
   for (const root of r.phases.think) {
     const t = (root.branch || []).find((b) => b.kind === "thought");
@@ -55,8 +62,13 @@ test("with nothing joining the signal, the word is the doing", async () => {
 test("the doer and what it was done to are the parts of it", async () => {
   await forget();
   for (const [word] of BOTH) {
-    const event = branch(await brain(`i ${word} an apple`, { from: PERSON }), "event");
-    assertEquals(event.state.parts.map((p) => p.of), [PERSON, 79], `"i ${word} an apple"`);
+    const r = await brain(`i ${word} an apple`, { from: PERSON });
+    const event = branch(r, "event");
+    const [doer, done] = event.state.parts.map((p) => p.of);
+    assertEquals(doer, PERSON, `"i ${word} an apple"`);
+    // `an apple` is one apple, made for this doing. What was done was done to
+    // that one and not to every apple there is.
+    assertEquals(oneOf(r, done), 79, `"i ${word} an apple"`);
   }
   await forget();
 });
@@ -79,9 +91,13 @@ test("with something already joining the signal, the word is the thing", async (
 test("a doing already in the signal leaves the word as the thing", async () => {
   await forget();
   // `cut` is the doing here, so the saw is the tool it was done with.
-  const cutting = branch(await brain("i cut an apple with a saw", { from: PERSON }), "event");
+  const r = await brain("i cut an apple with a saw", { from: PERSON });
+  const cutting = branch(r, "event");
   assertEquals(cutting.name.split("#")[0], "cut");
-  assert(cutting.state.parts.some((p) => p.of === 457), "the saw played its part as a tool");
+  assert(
+    cutting.state.parts.some((p) => oneOf(r, p.of) === 457),
+    "the saw played its part as a tool",
+  );
   await forget();
 });
 

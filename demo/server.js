@@ -26,7 +26,30 @@ import { brain } from "../src/index.js";
 
 // Port from PORT env (esdev start moves it and tells us via PORT), else default.
 const PORT = Number(env.PORT) || 4199;
+
 const MODULE_DIR = new URL(".", import.meta.url).pathname;
+
+// Who is talking to it. The brain assumes nothing about this and cannot: `i`
+// lands on whatever the runtime says the signal came from, and told nothing it
+// lands on nobody, so everything a sender says of themselves is dropped. This
+// demo has one sender — whoever has the page open — and says so as a person.
+// The brain makes one of those and keeps it, so the second signal reaches the
+// same sender as the first. Which term a person is comes from the world and
+// not from a number written here: the world may be renumbered and this holds.
+// The module sits in demo/ run raw and in demo/dist/ once built, so the world
+// is one or two directories up. The same walk src/index.js makes to find it.
+async function anchorsOf() {
+  for (const up of ["../", "../../"]) {
+    const path = `${MODULE_DIR}${up}data/world.json`;
+    try {
+      if (await file(path).exists()) return (await file(path).json()).anchors;
+    } catch {
+      // not readable from here; try the next
+    }
+  }
+  throw new Error("cannot find data/world.json — the demo cannot say who is talking");
+}
+const SENDER = (await anchorsOf()).person;
 
 // The built site lives beside the server bundle: with esdev start the server
 // target and the web target share demo/dist, so index.html sits next to
@@ -108,7 +131,7 @@ const server = serve({ port: PORT }, async (request) => {
       return new Response("expected a JSON body of { q, conversation }", { status: 400 });
     }
     const thread = conversation == null ? null : String(conversation);
-    const result = await brain(String(q ?? ""), thread ? { conversation: thread } : undefined);
+    const result = await brain(String(q ?? ""), { ...(thread ? { conversation: thread } : {}), from: SENDER });
     return Response.json({ ...result, conversation: thread });
   }
 

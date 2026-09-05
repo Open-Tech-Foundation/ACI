@@ -237,7 +237,7 @@ function think(roots, langs, at, world) {
       pos: word ? word.pos : read ? lang.figuresPos : 'noun',
       meaning: word ? word.meaning : read || called != null ? String(n.state.identity) : null,
       concept: word
-        ? pointedAt(word, at) ?? word.concept
+        ? oneMeant(pointedAt(word, at), world) ?? word.concept
         : read && world
           ? world.termFor(value)
           : called,
@@ -363,6 +363,15 @@ function pointedAt(word, at) {
   return null;
 }
 
+// A pointer lands on one thing, never on a kind: `i` is whoever sent this, not
+// people. Where the circumstance names a kind and the world holds one of it,
+// that one is who is meant; where it holds none, the kind stands until
+// something is said that makes one.
+function oneMeant(concept, world) {
+  if (concept == null || !world || world.isIndividual(concept)) return concept;
+  return world.oneOf(concept) ?? concept;
+}
+
 function given(word, at) {
   return (at && at.names && at.names[word.text]) || {};
 }
@@ -379,7 +388,10 @@ function givenValue(word, at) {
 // gets no category — the brain does not guess from the part of speech.
 // ---------------------------------------------------------------------------
 function solve(roots, world, langs, mood) {
-  const settled = whose(calling(settle(roots, world), world, mood), world, langs, mood);
+  // Whose a thing is settles what it names, and a word nothing knows is named
+  // only where it stands in a claim — so whose comes first, or a claim resting
+  // on a pointer that landed on nothing would still name something.
+  const settled = calling(whose(settle(roots, world), world, langs, mood), world, mood);
   return settled.map((n, at) => {
     if (!n.state.exists) {
       return withBranch(n, [...n.branch, node('response', 'nothing', [])]);
@@ -430,6 +442,7 @@ function whose(roots, world, langs, mood) {
   const a = world.anchors || {};
   if (a.has == null) return roots;
   const side = markingSide(world, langs);
+  const possessive = (n) => (n && posOf(n).includes('possessive') ? n : null);
   const owning = (n) => {
     const t = n ? thoughtOf(n) : null;
     return t && posOf(n).includes('possessive') && t.concept != null ? t.concept : null;
@@ -437,7 +450,20 @@ function whose(roots, world, langs, mood) {
   let next = world.nextId() + roots.length;
   return roots.map((n, i) => {
     const kind = conceptOf(n);
-    if (kind == null || !world.isA(kind, a.thing) || world.isIndividual(kind)) return n;
+    if (kind == null) return n;
+    // A possessive is a pointer like any other: told nothing for it to land
+    // on, it is nobody, and what it marks is nobody's. The brain does not read
+    // past it to the word alone — `its name` with nothing spoken of is not the
+    // name relation standing on its own, it is nothing at all.
+    const marked = markerFor(roots, i, side, possessive);
+    if (marked && owning(marked) == null) return unnamed(n);
+    // A possessive names one thing that owns, never a kind: `the movie's name`
+    // is the name of the one movie there is, not of movies.
+    if (posOf(n).includes('possessive')) {
+      const one = oneMeant(kind, world);
+      return one === kind ? n : standingFor(n, one);
+    }
+    if (!world.isA(kind, a.thing) || world.isIndividual(kind)) return n;
     const owner = owning(markerFor(roots, i, side, owning));
     if (owner == null) return n;
     const held = world
@@ -450,7 +476,7 @@ function whose(roots, world, langs, mood) {
     const made =
       held.length === 1
         ? []
-        : [node('call', `${world.term(kind).name}#${id}`, [], { name: `${world.term(kind).name}#${id}`, id, of: kind, whose: owner })];
+        : [node('call', `${world.term(kind).name}#${id}`, [], { name: `${world.term(kind).name}#${id}`, id, of: kind, whose: owner, made: true })];
     return withBranch(n, [
       ...n.branch.map((b) =>
         b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought }) : b,
@@ -458,6 +484,28 @@ function whose(roots, world, langs, mood) {
       ...made,
     ]);
   });
+}
+
+// A word that stands for nothing. What it was thought to be is kept — the word
+// was still heard and still recognised — but it names nothing, so nothing is
+// said of it and it joins no claim.
+function unnamed(n) {
+  return thoughtOf(n) && thoughtOf(n).concept != null ? standingFor(n, null) : n;
+}
+
+// The same word, thought to stand for something else. What it was heard and
+// recognised as is kept; only what it names changes.
+function standingFor(n, concept) {
+  const thought = thoughtOf(n);
+  if (!thought) return n;
+  return withBranch(
+    n,
+    n.branch.map((b) =>
+      b.kind === 'thought'
+        ? withBranch(b, b.branch, { ...b.state, thought: { ...thought, concept } })
+        : b,
+    ),
+  );
 }
 
 // A word nothing knows, standing where a thing stands and spoken of as though
@@ -498,12 +546,16 @@ function calling(roots, world, mood) {
         : a.thing;
     const id = next;
     next += 1;
+    // A word nothing knows with a number beside it names many and not one:
+    // there are three of whatever a cookie is, so it is a kind. Nothing counts
+    // one thing three times.
+    const many = numberBeside(roots, i, world);
     const given = { ...thought, concept: id, wordKnown: true };
     return withBranch(n, [
       ...n.branch.map((b) =>
         b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: given }) : b,
       ),
-      node('call', n.state.identity, [], { name: n.state.identity, id, of: kind }),
+      node('call', n.state.identity, [], { name: n.state.identity, id, of: kind, many }),
     ]);
   });
 }
@@ -625,8 +677,13 @@ function quantityOf(roots, at, world) {
   if (!world) return null;
   const a = world.anchors || {};
   const mine = conceptOf(roots[at]);
+  // A thing being named in this very signal is not in the world yet, so there
+  // is nothing to look up. What it is being made as says whether a number
+  // beside it counts it, and that is on the tree already.
+  const made = findBranch(roots[at], 'call');
+  const of = made ? made.state.of : mine;
   // A number is not a count of itself.
-  if (mine == null || world.isA(mine, a.number) || !world.isA(mine, a.thing)) return null;
+  if (of == null || world.isA(of, a.number) || !world.isA(of, a.thing)) return null;
 
   // A number is a number whether or not the world ever named it: no world
   // names every one, and a thousand stones is still a thousand.
@@ -634,6 +691,16 @@ function quantityOf(roots, at, world) {
     n && n.state.exists && (world.isA(conceptOf(n), a.number) || numberOf(n, world) != null);
   const found = nearestOver(roots, at, -1, isNumber) || nearestOver(roots, at, 1, isNumber);
   return found ? { concept: conceptOf(found), value: numberOf(found, world), said: found } : null;
+}
+
+// Whether a number stands beside this word. Read off the order the same way a
+// count is, and for the same reason: a language may put the number on either
+// side, and the brain does not need to know which.
+function numberBeside(roots, at, world) {
+  const a = world.anchors || {};
+  const isNumber = (n) =>
+    n && n.state.exists && (world.isA(conceptOf(n), a.number) || numberOf(n, world) != null);
+  return Boolean(nearestOver(roots, at, -1, isNumber) || nearestOver(roots, at, 1, isNumber));
 }
 
 // Read off the order, like a count: a marker beside a thing marks that thing.
@@ -1124,16 +1191,27 @@ function judge(roots, world, mood, langs, sent) {
     // spoken of, not once per fact — otherwise a cupboard told it has cups and
     // plates would be two cupboards, one of each.
     const bearers = new Map();
+    // Ids handed out earlier in this signal are not the world's yet, so the
+    // world cannot say they are taken. A thing made here must not be given one
+    // another thing here already has.
+    const taken = new Set();
+    const gatherTaken = (n) => {
+      if (n.kind === 'call') taken.add(n.state.id);
+      (n.branch || []).forEach(gatherTaken);
+    };
+    gatherTaken(root);
     const bearerFor = (left, subject) => {
       if (!bearers.has(left)) {
         // A thing named in this very signal is the one that bears what is said
         // of it. The world does not know it yet — it is being made — so there
         // is nothing to look up and nothing to make twice.
-        const made = findBranch(left, 'call');
-        bearers.set(
-          left,
-          made ? { id: made.state.id, made: false } : bearerOf(subject, world, markAt(left)),
-        );
+        const named = findBranch(left, 'call');
+        let made = named
+          ? { id: named.state.id, made: false }
+          : bearerOf(subject, world, markAt(left));
+        while (made && made.made && taken.has(made.id)) made = { ...made, id: made.id + 1 };
+        if (made && made.made) taken.add(made.id);
+        bearers.set(left, made);
       }
       return bearers.get(left);
     };
@@ -1867,8 +1945,30 @@ function act(said, claims, world, side, sides) {
   const named = acting >= 0 ? acting : said.findIndex((n) => operated(conceptOf(n), world));
   if (named < 0) return null;
 
-  const parts = rolesIn(said, named, claims, world, side, sides);
-  if (parts.length === 0) return null;
+  const stood = rolesIn(said, named, claims, world, side, sides);
+  if (stood.length === 0) return null;
+
+  // A thing spoken of as one of its kind — `a movie` — is one movie and not
+  // movies. Where someone did something to it, that one is made: what happened
+  // happened to it and not to the kind, and the signal after this one has
+  // something to point back at. Told only that an operation was worked, nobody
+  // did anything to anyone, and nothing is made.
+  let next = world.nextId();
+  const called = [];
+  const parts = (acting < 0
+    ? stood
+    : stood.map((p) => {
+        if (p.mark !== 'new' || p.of == null) return p;
+        if (!world.isA(p.of, a.thing) || world.isIndividual(p.of)) return p;
+        const id = next;
+        next += 1;
+        const name = `${world.term(p.of).name}#${id}`;
+        called.push(node('call', name, [], { name, id, of: p.of, made: true }));
+        return { ...p, of: id };
+      })
+  // How a thing was marked is a fact about the word, not about the part it
+  // played: what is kept is the role, the thing, and how much of it.
+  ).map(({ role, of, amount }) => ({ role, of, amount }));
 
   const action = conceptOf(said[named]);
   // Refused before anything is worked out: what harms did not happen, and it
@@ -1892,7 +1992,8 @@ function act(said, claims, world, side, sides) {
   // nothing that happened to put on the record.
   if (acting < 0) return worked;
 
-  const happened = world.nextId();
+  const happened = next;
+  next += 1;
 
   // What happened is a thing that happened once: it is of its kind, it has the
   // parts things played in it, and it has a moment. Nothing new was needed to
@@ -1909,7 +2010,7 @@ function act(said, claims, world, side, sides) {
   // having happened. Where it simply cannot tell what followed, the event
   // stands: it was told something occurred, and that much is so.
   if (worked && worked.some((n) => n.kind === 'refuse')) return worked;
-  return worked ? [event, ...worked] : [event];
+  return worked ? [...called, event, ...worked] : [...called, event];
 }
 
 // The operation a term is, where it is one at all. The world says which
@@ -1933,7 +2034,7 @@ function rolesIn(said, acting, claims, world, side, sides) {
     if (i === acting || !claims(n)) return;
     const named = roleOn(of(i));
     if (!named || a[named] == null) return;
-    parts.push({ role: a[named], of: conceptOf(n), amount: amountOf(n, world), at: i });
+    parts.push({ role: a[named], of: conceptOf(n), amount: amountOf(n, world), mark: markAt(n), at: i });
     taken.add(i);
   });
 
@@ -1943,10 +2044,10 @@ function rolesIn(said, acting, claims, world, side, sides) {
   said.forEach((n, i) => {
     if (i === acting || taken.has(i) || !claims(n) || !sides) return;
     const role = a[i < acting ? sides.before : sides.after];
-    if (role != null) parts.push({ role, of: conceptOf(n), amount: amountOf(n, world), at: i });
+    if (role != null) parts.push({ role, of: conceptOf(n), amount: amountOf(n, world), mark: markAt(n), at: i });
   });
 
-  return parts.sort((x, y) => x.at - y.at).map(({ role, of, amount }) => ({ role, of, amount }));
+  return parts.sort((x, y) => x.at - y.at).map(({ role, of, amount, mark }) => ({ role, of, amount, mark }));
 }
 
 // How many of this thing the signal counted, as a number.
@@ -2115,7 +2216,11 @@ function partAsked(said, world, claims, side, sides) {
   const found = [];
   for (const one of world.members(action, world.baseRelation)) {
     if (!world.isIndividual(one)) continue;
-    if (!known.every((p) => world.linked(one, p.role).includes(p.of))) continue;
+    // A part played by one of a kind answers to the kind: what the boy kicked
+    // is what one boy kicked, and the signal need not say which one.
+    const plays = (p) =>
+      world.linked(one, p.role).some((t) => t === p.of || world.isA(t, p.of));
+    if (!known.every(plays)) continue;
     for (const t of world.linked(one, hole.role)) if (!found.includes(t)) found.push(t);
   }
   return node('answer', 'link', [], { subject: action, relation: hole.role, found });
@@ -2599,7 +2704,16 @@ function termWord(term, langName, langs, world, written) {
   const lang = (langs || []).find((l) => l.data.name === langName);
   const other = lang && written ? lang.otherWordFor(term) : null;
   const word = other ?? (lang ? lang.wordFor(term) : null);
-  return word ?? (world ? world.symbolOf(term) : null);
+  const said = word ?? (world ? world.symbolOf(term) : null);
+  if (said != null || !world) return said;
+  // A thing nothing was ever called is said by what it is: one apple, spoken
+  // of once and never named, is an apple. The walk stops at the first kind
+  // there is a word for, and a thing of nothing is unsayable.
+  for (const kind of world.linked(term, world.baseRelation)) {
+    const named = termWord(kind, langName, langs, world, written);
+    if (named != null) return named;
+  }
+  return null;
 }
 
 // ---------------------------------------------------------------------------
@@ -2756,7 +2870,7 @@ export function brainFrom(input, knowledge, circumstance) {
     roots: expressedRoots,
     expression: expression(expressedRoots, langs, mood, world, at),
     learned: learnedFrom(judgedRoots, world),
-    spoken: spokenOf(judgedRoots, at),
+    spoken: spokenOf(judgedRoots, at, world),
     names: namedIn(solvedRoots, { ...at, world, mood }),
     // An instruction the brain agreed to follow and could not act on yet. It
     // keeps none of it: it hands it back, and the runtime brings it round again
@@ -2857,8 +2971,9 @@ function givings(roots, world, mood) {
 // point back at: where there is none or more than one, the brain does not
 // pick. A signal it could make nothing of says nothing about what was spoken
 // of, and what was spoken of before it still stands.
-function spokenOf(roots, at) {
+function spokenOf(roots, at, world) {
   if (roots.length !== 1) return at.spoken;
+  const target = world && world.anchors ? world.anchors.target : null;
   const took = [];
   const stood = [];
   const walk = (n) => {
@@ -2866,6 +2981,12 @@ function spokenOf(roots, at) {
     // the fact stood on: a state was taken in for the one thing bearing it,
     // and that one, not its kind, is what was spoken of.
     if (n.kind === 'learn') keep(took, n.state.subject);
+    // Something that happened was about the thing it was done to. Told a thing
+    // was seen, the next signal may point back at what was seen — a signal
+    // that offers no fact still speaks of something.
+    if (n.kind === 'event' && target != null) {
+      for (const part of n.state.parts || []) if (part.role === target) keep(took, part.of);
+    }
     if (n.kind === 'standing' || n.kind === 'answer') keep(stood, n.state.subject);
     (n.branch || []).forEach(walk);
   };
@@ -2916,10 +3037,14 @@ function learnedFrom(roots, world) {
     ...called.map((c) => ({
       id: c.state.id,
       name: c.state.name,
+      // Counted, a word names a kind there may be many of; uncounted, it names
+      // one thing. A thing there are three of is not one thing.
+      individual: !c.state.many,
       // A name is not translated: it is the same in every language, so it is
       // held as what the thing is written as rather than looked for in one.
-      symbol: c.state.name,
-      individual: true,
+      // A thing made because a signal spoke of one was never called anything,
+      // so it is written as nothing and said by what it is.
+      ...(c.state.made ? {} : { symbol: c.state.name }),
       links: [{ rel: world.baseRelation, to: c.state.of }],
     })),
     // And whoever it belongs to has it.

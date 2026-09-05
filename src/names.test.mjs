@@ -3,7 +3,8 @@ import { openBrain } from "./index.js";
 
 // A store of its own, that nothing else can reach.
 const { brain, forget } = openBrain("sqlite::memory:");
-const says = async (said) => (await brain(said)).expression.state.says;
+const PERSON = 29;
+const says = async (said) => (await brain(said, { from: PERSON })).expression.state.says;
 
 test("a word nothing knows, said to be of a kind, is a thing being named", async () => {
   await forget();
@@ -83,5 +84,53 @@ test("a named thing is said by its name", async () => {
   // translated: it is what the thing is written as.
   await brain("bruno is in dublin");
   assertEquals(await says("where is bruno"), "dublin");
+  await forget();
+});
+
+test("a thing's name may be told with the ending that says whose it is", async () => {
+  await forget();
+  await brain("i saw a film", { from: PERSON });
+  assertEquals((await brain("the film's name is arrival", { from: PERSON })).expression.name, "learn");
+  assertEquals(await says("what is the film's name?"), "arrival");
+  await forget();
+});
+
+test("what was spoken of last is what a pointer lands on next", async () => {
+  await forget();
+  // Nothing was learned by `i saw a film` about a film's name — but something
+  // happened to one film, and that one is what `its` means in the next signal.
+  await brain("i saw a film", { from: PERSON });
+  await brain("its name is arrival", { from: PERSON });
+  assertEquals(await says("what is its name?"), "arrival");
+  await forget();
+});
+
+test("a possessive landing on nothing names nothing", async () => {
+  await forget();
+  // Nothing has been spoken of, so `its` is nobody's. The brain does not read
+  // past it and take the name relation itself for the thing being spoken of.
+  const r = await brain("its name is arrival", { from: PERSON });
+  assertEquals(r.expression.name, "unknown");
+  assertEquals(r.learned, null);
+  await forget();
+});
+
+test("a thing spoken of as one of its kind is one of them, not the kind", async () => {
+  await forget();
+  const r = await brain("i saw a film", { from: PERSON });
+  const made = r.learned.terms.find((t) => t.name.startsWith("film#"));
+  assert(made != null, "one film was made for the seeing");
+  assertEquals(made.individual, true);
+  // And it is said by what it is, having never been called anything.
+  assertEquals(await says("i saw what?"), "film");
+  await forget();
+});
+
+test("a number beside a word nothing knows counts it, and it names a kind", async () => {
+  await forget();
+  const r = await brain("i have 3 crayons", { from: PERSON });
+  const named = r.learned.terms.find((t) => t.name === "crayons");
+  assertEquals(named.individual, false, "there are three of them, so they are a kind");
+  assertEquals(await says("i have how many crayons?"), "three");
   await forget();
 });
