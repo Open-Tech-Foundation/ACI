@@ -34,7 +34,7 @@ All notable changes to this project are documented in this file.
   joins as a choice rather than a togetherness — one of them is the answer,
   not each. Asked across a comparison, every pairing is worked the way any
   comparison is: `which is smaller 8 or 0` answers `zero`, measured things
-  answer the same way, and a tie falls back to answering apiece. Nothing is
+  answer the same way, and a worked tie answers `neither`. Nothing is
   taken in either way.
 
 - **Devices, music, more feelings and weather, singing and dancing.** `device`

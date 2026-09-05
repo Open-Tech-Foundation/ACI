@@ -1037,14 +1037,16 @@ function judge(roots, world, mood, langs, sent) {
   // or 0` asks for the one the comparison comes out for, not for each. Every
   // pairing is worked the way any comparison is; where one of them holds
   // against all the rest, that one is the answer, and the brain takes nothing
-  // in. Where none does — a tie, or nothing worked out — the parts are
-  // answered one apiece, as before.
+  // in. Where every pairing works out and none does, it is a tie — neither of
+  // them. Told nothing it could not work, the parts are answered one apiece,
+  // as before.
   if (holes.length > 0 && terms.length >= 2 && said.some(choiceOn) && !said.some(negatesOn)) {
     if (relation === a.more || relation === a.less) {
       const op = said[at];
+      const stood = (x, y) => calculate([x, op, y], 1, relation, world);
       const beats = (x, y) => {
-        const stood = calculate([x, op, y], 1, relation, world);
-        return stood != null && stood.name === 'held';
+        const s = stood(x, y);
+        return s != null && s.name === 'held';
       };
       const winner = terms.find((x) => terms.every((y) => x === y || beats(x, y)));
       if (winner != null) {
@@ -1052,6 +1054,18 @@ function judge(roots, world, mood, langs, sent) {
           withBranch(root, [
             ...root.branch,
             node('answer', 'link', [], { subject: null, relation, found: [conceptOf(winner)] }),
+          ]),
+        ];
+      }
+      const all = [];
+      for (const x of terms) for (const y of terms) {
+        if (x !== y) all.push(stood(x, y));
+      }
+      if (all.every((s) => s != null)) {
+        return [
+          withBranch(root, [
+            ...root.branch,
+            node('answer', 'link', [], { subject: null, relation, found: [a.neither] }),
           ]),
         ];
       }

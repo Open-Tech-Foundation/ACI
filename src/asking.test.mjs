@@ -59,7 +59,7 @@ test("a choice joined by or is answered with the one it comes out for", async ()
   assertEquals((await fresh("what is smaller 8 or 0")).expression.state.says, "zero");
   const tied = await fresh("which is smaller 8 or 8");
   assertEquals(tied.learned, null, "a tie teaches nothing either");
-  assertEquals(tied.expression.name, "answer", "a tie falls back to answering apiece");
+  assertEquals(tied.expression.state.says, "neither", "a worked tie is neither of them");
   await forget();
 });
 

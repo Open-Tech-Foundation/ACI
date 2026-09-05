@@ -60,7 +60,8 @@
     "instruction": 1128,
     "all": 245,
     "some": 1129,
-    "capital": 1397
+    "capital": 1397,
+    "neither": 1569
   },
   "relations": {
     "is": 294,
@@ -16320,6 +16321,16 @@
         {
           "rel": 294,
           "to": 257
+        }
+      ]
+    },
+    {
+      "id": 1569,
+      "name": "neither",
+      "links": [
+        {
+          "rel": 294,
+          "to": 190
         }
       ]
     }

@@ -973,8 +973,9 @@ A join may be a **choice** rather than a togetherness: which word joins them
 that way is the language's, and English says `or`. Asked across a comparison,
 each pairing is worked the way any comparison is, and where one of them holds
 against all the rest, that one is the answer — `"which is smaller, 8 or 0"`
-answers `"zero"`, and takes nothing in. Where none does, a tie or nothing
-worked out, the parts are answered one apiece, as before.
+answers `"zero"`, and takes nothing in. Where every pairing works out and none
+does, it is a tie, and the answer is neither of them. Told nothing it could
+not work, the parts are answered one apiece, as before.
 
 **Judging and saying are separate acts.** Every verdict stays on the tree, but
 saying one twice says nothing the first did not: two that came out differently

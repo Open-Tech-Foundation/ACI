@@ -2047,6 +2047,11 @@
       "meaning": "none",
       "concept": 246
     },
+    "neither": {
+      "pos": "noun",
+      "meaning": "neither",
+      "concept": 1569
+    },
     "cause": {
       "pos": "noun",
       "meaning": "cause",
