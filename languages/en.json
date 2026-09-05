@@ -931,6 +931,21 @@
       "meaning": "room",
       "concept": 39
     },
+    "nursery": {
+      "pos": "noun",
+      "meaning": "nursery",
+      "concept": 1526
+    },
+    "study": {
+      "pos": "noun",
+      "meaning": "study",
+      "concept": 1527
+    },
+    "pantry": {
+      "pos": "noun",
+      "meaning": "pantry",
+      "concept": 1528
+    },
     "sky": {
       "pos": "noun",
       "meaning": "sky",
@@ -1072,6 +1087,31 @@
       "meaning": "oil",
       "concept": 65
     },
+    "beverage": {
+      "pos": "noun",
+      "meaning": "beverage",
+      "concept": 1521
+    },
+    "lemonade": {
+      "pos": "noun",
+      "meaning": "lemonade",
+      "concept": 1522
+    },
+    "cocoa": {
+      "pos": "noun",
+      "meaning": "cocoa",
+      "concept": 1523
+    },
+    "milkshake": {
+      "pos": "noun",
+      "meaning": "milkshake",
+      "concept": 1524
+    },
+    "smoothie": {
+      "pos": "noun",
+      "meaning": "smoothie",
+      "concept": 1525
+    },
     "blood": {
       "pos": "noun",
       "meaning": "blood",
@@ -1131,6 +1171,41 @@
       "pos": "noun",
       "meaning": "sugar",
       "concept": 78
+    },
+    "meal": {
+      "pos": "noun",
+      "meaning": "meal",
+      "concept": 1514
+    },
+    "breakfast": {
+      "pos": "noun",
+      "meaning": "breakfast",
+      "concept": 1515
+    },
+    "lunch": {
+      "pos": "noun",
+      "meaning": "lunch",
+      "concept": 1516
+    },
+    "dinner": {
+      "pos": "noun",
+      "meaning": "dinner",
+      "concept": 1517
+    },
+    "supper": {
+      "pos": "noun",
+      "meaning": "supper",
+      "concept": 1518
+    },
+    "snack": {
+      "pos": "noun",
+      "meaning": "snack",
+      "concept": 1519
+    },
+    "brunch": {
+      "pos": "noun",
+      "meaning": "brunch",
+      "concept": 1520
     },
     "earth": {
       "pos": "noun",
@@ -2770,6 +2845,41 @@
       "meaning": "chair",
       "concept": 436
     },
+    "pillow": {
+      "pos": "noun",
+      "meaning": "pillow",
+      "concept": 1529
+    },
+    "rug": {
+      "pos": "noun",
+      "meaning": "rug",
+      "concept": 1530
+    },
+    "stove": {
+      "pos": "noun",
+      "meaning": "stove",
+      "concept": 1531
+    },
+    "oven": {
+      "pos": "noun",
+      "meaning": "oven",
+      "concept": 1532
+    },
+    "fridge": {
+      "pos": "noun",
+      "meaning": "fridge",
+      "concept": 1533
+    },
+    "curtain": {
+      "pos": "noun",
+      "meaning": "curtain",
+      "concept": 1534
+    },
+    "blanket": {
+      "pos": "noun",
+      "meaning": "blanket",
+      "concept": 1535
+    },
     "table": {
       "pos": "noun",
       "meaning": "table",
@@ -3303,6 +3413,89 @@
       ],
       "meaning": "cook",
       "concept": 534
+    },
+    "cooking": {
+      "pos": "noun",
+      "meaning": "cooking",
+      "concept": 1536
+    },
+    "drive": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "drive",
+      "concept": 1537
+    },
+    "drives": {
+      "pos": "verb",
+      "meaning": "drives",
+      "concept": 1537,
+      "person": "third",
+      "number": "singular"
+    },
+    "drove": {
+      "pos": "verb",
+      "meaning": "drove",
+      "concept": 1537,
+      "when": "past"
+    },
+    "driving": {
+      "pos": "noun",
+      "meaning": "driving",
+      "concept": 1537
+    },
+    "clean": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "clean",
+      "concept": 1538
+    },
+    "cleans": {
+      "pos": "verb",
+      "meaning": "cleans",
+      "concept": 1538,
+      "person": "third",
+      "number": "singular"
+    },
+    "cleaned": {
+      "pos": "verb",
+      "meaning": "cleaned",
+      "concept": 1538,
+      "when": "past"
+    },
+    "cleaning": {
+      "pos": "noun",
+      "meaning": "cleaning",
+      "concept": 1538
+    },
+    "fix": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "fix",
+      "concept": 1539
+    },
+    "fixes": {
+      "pos": "verb",
+      "meaning": "fixes",
+      "concept": 1539,
+      "person": "third",
+      "number": "singular"
+    },
+    "fixed": {
+      "pos": "verb",
+      "meaning": "fixed",
+      "concept": 1539,
+      "when": "past"
+    },
+    "fixing": {
+      "pos": "noun",
+      "meaning": "fixing",
+      "concept": 1539
     },
     "wash": {
       "pos": [

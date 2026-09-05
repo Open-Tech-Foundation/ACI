@@ -22,6 +22,16 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Meals, beverages, rooms, more furniture, four more doings.** `meal` under
+  food holds breakfast, lunch, dinner, supper, snack and brunch; `beverage`
+  under liquid holds lemonade, cocoa, milkshake and smoothie; nursery, study
+  and pantry are the first kinds of room, which now says its children apart;
+  pillow, rug, stove, oven, fridge, curtain and blanket join furniture, and
+  `shelf` moves there from object — still an object either way. `cooking`,
+  `driving`, `cleaning` and `fixing` go under work, said both ways with their
+  pasts written out (`cook` already was; `build` stays out, the building is
+  already a place). The world holds 1490 terms.
+
 - **An hour has sixty minutes, a minute sixty seconds.** A day already held its
   hours; the chain runs down the same way, so asking what an hour or a minute
   holds answers with what was counted.
