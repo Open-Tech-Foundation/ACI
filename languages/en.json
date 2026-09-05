@@ -16354,6 +16354,20 @@
       "person": "third",
       "number": "plural"
     },
+    "she": {
+      "pos": "pronoun",
+      "meaning": "she",
+      "marks": "spoken",
+      "person": "third",
+      "number": "singular"
+    },
+    "he": {
+      "pos": "pronoun",
+      "meaning": "he",
+      "marks": "spoken",
+      "person": "third",
+      "number": "singular"
+    },
     "people": {
       "pos": "noun",
       "meaning": "people",

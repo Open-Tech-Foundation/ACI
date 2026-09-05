@@ -38,6 +38,14 @@ All notable changes to this project are documented in this file.
   plus one` still counts). Grammar gains `article pronoun` for the binding.
   Description filtering (`the blue one` = the blue kind) is still open.
 
+- **Person pointers `she`/`he`.** They were absent from the language data
+  entirely (unheard). They now point like any spoken pointer
+  (`sana is a nurse / is she tall?` resolves, answering `unsure` where the
+  property is unknown rather than guessing). Plural `they`, verb anaphora
+  (`did`), clause `so` and `neither` need multi-entity focus memory and stay
+  open — documented red cases: `did`-for-prior-action, `is that so?`,
+  `they`-for-a-pair.
+
 - **The demo ran without anything under `knowledge/`.** Its permission list
   granted `../languages` and `../data` and not `../knowledge`, so the one file
   that says what this instance is called was never read — *what is your name?*
