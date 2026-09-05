@@ -62,6 +62,15 @@ All notable changes to this project are documented in this file.
   lamp from it`) still reach across signals. That a clause is a fresh start
   is the brain's; which words join clauses is the language's (`conjunction`).
 
+- **Focus is a ranked list, and plural `they` reaches all of it.** The
+  runtime holds focus per conversation (latest first: what was spoken of,
+  what it holds, earlier topics; capped at eight) and hands it back each
+  turn; the brain reads it and returns the new one. `they`/`them` in claims
+  and questions expand to every non-speaker topic — `lara is a doctor /
+  nina is a teacher / are they strong?` lays one fact apiece and answers
+  both together. Single-topic and speaker-side behavior is unchanged, and
+  events still take one target each.
+
 - **A `what-is` walk ending at bare `thing` names the thing itself.**
   `I have 3 chocolates / what is it?` resolved to the held kind but answered
   `thing`, its only known parent. Where the walk finds nothing but the

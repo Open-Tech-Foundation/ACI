@@ -107,12 +107,17 @@ export function openBrain(url) {
   async function brain(input, circumstance) {
     const thread = (circumstance && circumstance.conversation) ?? ALONE;
     const held = threads.get(thread) || {};
-    const said = { spoken: held.spoken ?? null, names: held.names || {}, ...(circumstance || {}) };
+    const said = {
+      spoken: held.spoken ?? null,
+      focus: held.focus ?? (held.spoken != null ? [held.spoken] : []),
+      names: held.names || {},
+      ...(circumstance || {}),
+    };
     const knowledge = await loaded();
     const result = brainFrom(input, knowledge, said);
     const standing = [...(held.told || [])];
     if (result.told && !standing.includes(result.told)) standing.push(result.told);
-    threads.set(thread, { spoken: result.spoken, names: result.names, told: standing });
+    threads.set(thread, { spoken: result.spoken, focus: result.focus, names: result.names, told: standing });
 
     // What it agreed to follow, brought round again now something has moved.
     // The brain holds no instruction; it is asked afresh, and where it can act
@@ -121,6 +126,7 @@ export function openBrain(url) {
       if (instruction === String(input)) continue;
       const again = brainFrom(instruction, knowledge, {
         spoken: result.spoken,
+        focus: result.focus,
         names: result.names,
         from: said.from,
         to: said.to,

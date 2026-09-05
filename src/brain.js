@@ -1267,7 +1267,8 @@ function judge(roots, world, mood, langs, sent) {
   // question puts its hole wherever its language likes.
   if (holes.length > 0 && terms.length >= 1) {
     const nodes = [];
-    for (const [i, term] of terms.entries()) {
+    const asked = terms.flatMap((t) => membersFor(t, world, sent));
+    for (const [i, term] of asked.entries()) {
       let subject = conceptOf(term);
       // A bare third-person pointer on speaker-side focus stands for what is
       // held, not who holds it: `I have 3 chocolates / what is it?` is about
@@ -1295,7 +1296,7 @@ function judge(roots, world, mood, langs, sent) {
       // another act, and one it will not perform where any of the answer harms.
       const harmed = found.find((t) => harms(t, world));
       if (harmed != null) mine.push(node('refuse', 'harm', [], { said: harmed }));
-      nodes.push(...among(mine, i, terms.length > 1));
+      nodes.push(...among(mine, i, asked.length > 1));
     }
     return [withBranch(root, [...root.branch, ...nodes])];
   }
@@ -1315,6 +1316,9 @@ function judge(roots, world, mood, langs, sent) {
       lefts = rights.slice(0, 1);
       rights = rights.slice(1);
     }
+    // A plural pointer stands for every topic in focus, one apiece.
+    lefts = lefts.flatMap((n) => membersFor(n, world, sent));
+    rights = rights.flatMap((n) => membersFor(n, world, sent));
     if (lefts.length === 0 || rights.length === 0) return roots;
     // What the signal offered — the other fact, where the signal denies. Read
     // once: every fact in one offering was denied alike.
@@ -2471,6 +2475,12 @@ function personOf(n) {
   return t && t.state.thought ? t.state.thought.person ?? null : null;
 }
 
+// How many a word is said of (singular/plural), where the language says so.
+function personNumber(n) {
+  const t = n ? findBranch(n, 'thought') : null;
+  return t && t.state.thought ? t.state.thought.number ?? null : null;
+}
+
 // Focus: what a bare third-person pointer (`it`) may stand for. The bearer the
 // pointer landed on is speaker-side (an individual of who spoke) and it
 // directly holds exactly one kind: `it` is that kind, not who holds it.
@@ -2494,6 +2504,33 @@ function focusFor(term, world, sent) {
   }
   if (held.length === 1) return held[0];
   return undefined;
+}
+
+// A plural third-person pointer (`they`, `them`) stands for every topic in
+// focus, not only the latest — one apiece, the way joined questions answer
+// each. Speaker-side topics (who spoke, who was spoken to) never join: `they`
+// is third person. One member or none falls back to the word as thought.
+function membersFor(term, world, sent) {
+  if (markOn(term) !== 'spoken' || personOf(term) !== 'third' || personNumber(term) !== 'plural') {
+    return [term];
+  }
+  const focus = sent && Array.isArray(sent.focus) ? sent.focus : [];
+  const members = focus.filter((id) => {
+    if (id == null) return false;
+    if (sent.from != null && (id === sent.from || (world && world.isA(id, sent.from)))) return false;
+    return !(sent.to != null && (id === sent.to || (world && world.isA(id, sent.to))));
+  });
+  if (members.length < 2) return [term];
+  return members.map((id) =>
+    withBranch(
+      term,
+      (term.branch || []).map((b) =>
+        b.kind === 'thought'
+          ? withBranch(b, b.branch, { ...b.state, thought: { ...b.state.thought, concept: id } })
+          : b,
+      ),
+    ),
+  );
 }
 
 // The number term saying how many of this thing there are, if any.
@@ -3076,6 +3113,15 @@ export function brainFrom(input, knowledge, circumstance) {
     // who is speaking: it was handed back after the signal before this one, and
     // it comes back the same way, or it does not come back at all.
     spoken: circumstance && circumstance.spoken != null ? circumstance.spoken : null,
+    // The ranked focus list, latest first — what was spoken of, what it holds,
+    // and earlier topics still in mind. The runtime holds it per conversation;
+    // the brain only reads it and hands back the new one.
+    focus:
+      circumstance && Array.isArray(circumstance.focus)
+        ? [...circumstance.focus]
+        : circumstance && circumstance.spoken != null
+          ? [circumstance.spoken]
+          : [],
     // What this conversation has given a name to. No more the brain's to keep
     // than who is speaking: it was handed back and comes back the same way.
     names: (circumstance && circumstance.names) || {},
@@ -3094,6 +3140,7 @@ export function brainFrom(input, knowledge, circumstance) {
     expression: expression(expressedRoots, langs, mood, world, at),
     learned: learnedFrom(judgedRoots, world),
     spoken: spokenOf(judgedRoots, at, world),
+    focus: focusOf(judgedRoots, at, world),
     names: namedIn(solvedRoots, { ...at, world, mood }),
     // An instruction the brain agreed to follow and could not act on yet. It
     // keeps none of it: it hands it back, and the runtime brings it round again
@@ -3221,6 +3268,29 @@ function spokenOf(roots, at, world) {
 
 function keep(found, of) {
   if (of != null && !found.includes(of)) found.push(of);
+}
+
+// The ranked focus list this signal leaves behind, latest first: what was
+// spoken of, what it directly holds, then earlier topics still in mind. What
+// was spoken of before and untouched stays on; several spoken of at once leave
+// no primary, but all stay in focus. Capped so the same signals always give
+// the same list.
+function focusOf(roots, at, world) {
+  const primary = spokenOf(roots, at, world);
+  const held = [];
+  if (primary != null && world) {
+    const a = world.anchors || {};
+    for (const rel of [a.has, a.hold]) {
+      if (rel == null) continue;
+      for (const of of world.linked(primary, rel)) if (!held.includes(of)) held.push(of);
+    }
+  }
+  const prior = at && Array.isArray(at.focus) ? at.focus : [];
+  const out = [];
+  for (const id of [primary, ...held, ...prior]) {
+    if (id != null && !out.includes(id)) out.push(id);
+  }
+  return out.slice(0, 8);
 }
 
 // What the brain accepted, in the one shape all knowledge takes. The brain does
