@@ -78,6 +78,13 @@ All notable changes to this project are documented in this file.
   against, absent — answering like any question and asserting nothing.
   Telling an idea, or asking with none in mind, stays unanswered.
 
+- **Action counts read occurrences.** Event part amounts persist on the
+  record, `how many dates am i carrying?` parses, and the amount comes off
+  the matching occurrence — individuals pin it down, the kind beside the
+  quantity word says what was carried, latest stamped wins. Full
+  action-questions answer counts or nothing, never kinds; denied occurrences
+  never count.
+
 - **Partitive counts read state against the thread's bearer.** `how many of
   them` parses (`preposition pronoun` subjects) and counts the one kind its
   bearer holds — the first individual in focus, else whoever was spoken of.

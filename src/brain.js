@@ -1360,8 +1360,48 @@ function judge(roots, world, mood, langs, sent) {
       return roots;
     }
 
+  // Counting what was done (`how many dates am i carrying?`): a quantity
+  // word with an action and a kind reads the amount off the matching
+  // occurrence — same agent, kind carried — latest stamped first. The kind is
+  // what stands beside the quantity word; whoever else stands before the
+  // doing is the agent. No agent, no kind, or no occurrence: nothing to
+  // count, and the normal paths below say so.
+  if (holes.length > 0 && said.some((n) => reaches(n, a.quantity, world))) {
+    const acting = said.findIndex((n) => reaches(n, a.action, world));
+    if (acting >= 0) {
+      const action = conceptOf(said[acting]);
+      const parts = rolesIn(said, acting, claims, world, markingSide(world, langs), partsSide(langs));
+      const qIdx = said.findIndex((n) => reaches(n, a.quantity, world));
+      const thingClaim = (n) =>
+        claims(n) && world.isA(conceptOf(n), a.thing) && !world.isA(conceptOf(n), a.action);
+      const kindNode = nearestOver(said, qIdx, 1, thingClaim) ?? nearestOver(said, qIdx, -1, thingClaim);
+      const agents = parts.filter(
+        (p) => p.role === a.agent && p.of != null && (kindNode == null || conceptOf(kindNode) !== p.of),
+      );
+      // A full action-question answers a count or nothing: asked after what
+      // was carried, kind answers would misread the question.
+      if (agents.length > 0 && kindNode != null) {
+        const kind = conceptOf(kindNode);
+        const amount = occurrenceAmount(world, action, parts, kind);
+        const total = amount == null ? null : world.termFor(amount);
+        return [
+          withBranch(root, [
+            ...root.branch,
+            node('count', total == null ? 'beyond' : 'counted', [], {
+              of: kind,
+              held: agents[0].of,
+              members: amount,
+              total,
+              when: a.now,
+            }),
+          ]),
+        ];
+      }
+    }
+  }
+
   // An action can be spoken about as much as it can be carried out. A relation
-  // named between two things is the signal's joint, and the joint is never one
+  // named between two things is what the signal is about, and the joint is never one
   // of the things joined — so this is a claim about the action, not one of it
   // happening.
   const joint = namedRelation(said, world, claims, holes.length > 0);
@@ -2706,6 +2746,33 @@ function restrictedIn(root) {
   return restricted;
 }
 
+// How much of a kind one occurrence carried: the latest stamped amount on a
+// matching target link. Individuals pin the occurrence down (who did it must
+// have done it); kinds only say what was carried. Only whole numbers count;
+// anything else is nothing to count.
+function occurrenceAmount(world, action, parts, kind) {
+  if (action == null || !world) return null;
+  const a = world.anchors || {};
+  const pins = parts.filter((p) => p.of != null && world.isIndividual(p.of));
+  const plays = (one, p) =>
+    world.linked(one, p.role).some((t) => t === p.of || world.isA(t, p.of));
+  let amount = null;
+  for (const one of world.members(action, world.baseRelation)) {
+    if (!world.isIndividual(one)) continue;
+    if (world.denies(one, action, world.baseRelation)) continue;
+    if (!pins.every((p) => plays(one, p))) continue;
+    for (const t of world.linked(one, a.target)) {
+      if (!world.isA(t, kind)) continue;
+      const over = world
+        .heldOver(one, a.target, t)
+        .filter((h) => Number.isInteger(h.quantity))
+        .map((h) => h.quantity);
+      if (over.length > 0) amount = over[over.length - 1];
+    }
+  }
+  return amount;
+}
+
 // Whether something a signal names ever happened. Every part it names must be
 // played by the same one occurrence — one played by a thing of a kind answers
 // to the kind, the same way a hole's does. A signal naming no part at all asks
@@ -3780,7 +3847,9 @@ function learnedFrom(roots, world) {
   return terms.length ? { terms } : null;
 }
 
-// Something that happened, in the one shape all knowledge takes.
+// Something that happened, in the one shape all knowledge takes. How much of
+// each part goes on the record with it: amounts are state of the occurrence,
+// so a later count reads them rather than guessing.
 function tookPlace(event, world) {
   const { id, action, at, parts, not, when } = event.state;
   const of = { rel: world.baseRelation, to: action, at };
@@ -3791,7 +3860,16 @@ function tookPlace(event, world) {
       id,
       name: event.name,
       individual: true,
-      links: [of, ...stood, ...parts.map((p) => ({ rel: p.role, to: p.of, at }))],
+      links: [
+        of,
+        ...stood,
+        ...parts.map((p) => ({
+          rel: p.role,
+          to: p.of,
+          at,
+          ...(Number.isInteger(p.amount) ? { quantity: p.amount } : {}),
+        })),
+      ],
     },
   ];
 }

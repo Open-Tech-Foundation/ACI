@@ -17279,7 +17279,8 @@
           "auxiliary sentence",
           "verb subject preposition subject",
           "subject verb subject preposition subject",
-          "subject verb subject"
+          "subject verb subject",
+          "interrogative quantifier subject verb sentence"
         ]
       },
       "clause": {
@@ -17311,7 +17312,8 @@
           "auxiliary sentence",
           "verb subject preposition subject",
           "subject verb subject preposition subject",
-          "subject verb subject"
+          "subject verb subject",
+          "interrogative quantifier subject verb sentence"
         ]
       },
       "subject": {
