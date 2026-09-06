@@ -3026,6 +3026,11 @@ function intentOf(n, world) {
   // A word that marks rather than names — a hole, or which one is meant —
   // stands for nothing by itself, and there is nothing in it to recognise.
   if (concept == null && ts.marks) return 'unknown';
+  // A pointer voicing on its own voices only its dictionary meaning — `I
+  // recognise "the one it came from"` — which is nonsense, not recognition.
+  // Counts and confirms of what one lands on still speak (above); a bare
+  // pointer to an ordinary thing says nothing by itself.
+  if (ts.marks === 'from' || ts.marks === 'to' || ts.marks === 'spoken') return 'unknown';
   return 'recognise';
 }
 

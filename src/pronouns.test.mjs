@@ -29,3 +29,17 @@ test("he reaches the focused person, unknown stays unknown", async () => {
   assertEquals(r.expression.name, "unsure");
   await forget();
 });
+
+test("a bare pointer voices nothing, even resolved", async () => {
+  await forget();
+  assertEquals((await brain("i", { from: 508 })).expression.name, "unknown");
+  assertEquals((await brain("you", { from: 508 })).expression.name, "unknown");
+  await forget();
+});
+
+test("a pointer landing on a number still counts it", async () => {
+  await forget();
+  await brain("x is 5");
+  assertEquals((await brain("it", { from: 508 })).expression.name, "count");
+  await forget();
+});

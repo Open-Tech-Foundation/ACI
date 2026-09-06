@@ -78,6 +78,11 @@ All notable changes to this project are documented in this file.
   against, absent — answering like any question and asserting nothing.
   Telling an idea, or asking with none in mind, stays unanswered.
 
+- **A bare pointer voices nothing.** `i`/`you`/`it` standing alone no longer
+  recite dictionary meanings (`I recognise "the one it came from"`).
+  Counts and confirms of where one lands still speak; a pointer to an
+  ordinary thing says nothing by itself.
+
 - **Action counts read occurrences.** Event part amounts persist on the
   record, `how many dates am i carrying?` parses, and the amount comes off
   the matching occurrence — individuals pin it down, the kind beside the
