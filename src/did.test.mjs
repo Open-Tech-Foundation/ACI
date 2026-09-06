@@ -1,4 +1,4 @@
-import { test, assertEquals } from "runtime:test";
+import { test, assert, assertEquals } from "runtime:test";
 import { openBrain } from "./index.js";
 
 // Verb anaphora: `did` after its subject stands for the last action, copying
@@ -33,5 +33,14 @@ test("sentence-initial did stays an auxiliary", async () => {
     (await brain("did pippa wash a pot?")).expression.state.says,
     "Yes. ✅",
   );
+  await forget();
+});
+
+test("did with not stays an auxiliary", async () => {
+  await forget();
+  await brain("pippa is a sailor");
+  const r = await brain("pippa did not wash a pot");
+  assertEquals(r.expression.name, "learn");
+  assert(r.learned != null, "the denied doing goes on the record");
   await forget();
 });

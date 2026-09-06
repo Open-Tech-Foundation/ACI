@@ -92,6 +92,10 @@ All notable changes to this project are documented in this file.
   did too` records miro washing it). Grammar voices `did too` via a bare
   `degree` complement.
 
+- **`did` with `not` stays an auxiliary.** Denial forces the listed reading
+  (`pippa did not wash a pot` never repeats anything), closing a hole where
+  position alone would have read prior-action into a denial.
+
 - **Named givings and worked sums join focus.** `x is 5` now puts five in
   mind (naming feeds the topic, not just the conversation record), so a
   following `what is it?` resolves instead of landing nowhere. Worked sums

@@ -719,18 +719,21 @@ function anaphora(roots) {
 }
 
 // Sentence-initial `did` asks about the past; after its subject it repeats
-// it. Which slot `did` takes is word order — the language puts the auxiliary
-// first — so the first word keeps its listed reading and later ones take the
-// prior-action one. The decided reading replaces the rest, keeping `settle`
-// from re-reading a word already settled by position.
+// it — unless the signal denies, where `did` can only be the auxiliary
+// (`pippa did not wash a pot` never repeats anything). Which slot `did` takes
+// is word order — the language puts the auxiliary first — so the first word
+// keeps its listed reading and later ones take the prior-action one. The
+// decided reading replaces the rest, keeping `settle` from re-reading a word
+// already settled by position.
 function auxiliary(roots) {
+  const denies = roots.some((n) => negatesOn(n));
   return roots.map((n, i) => {
     const t = findBranch(n, 'thought');
     const ways = t && t.state.ways ? t.state.ways : null;
     if (!ways || ways.length < 2) return n;
     const prior = ways.findIndex((w) => w && w.marks === 'prior');
     if (prior < 0) return n;
-    const thought = ways[i === 0 ? 0 : prior];
+    const thought = ways[i === 0 || denies ? 0 : prior];
     return withBranch(
       n,
       n.branch.map((b) => (b.kind === 'thought' ? withBranch(b, b.branch, { thought }) : b)),
