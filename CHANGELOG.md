@@ -78,6 +78,12 @@ All notable changes to this project are documented in this file.
   against, absent — answering like any question and asserting nothing.
   Telling an idea, or asking with none in mind, stays unanswered.
 
+- **Told agreement re-offers the last idea as fact.** `i think so` lays the
+  focused triple back through the fact machinery with its own denial —
+  nothing new where it holds, contradiction refused where denied — and the
+  think-doing itself goes unrecorded. Fact helpers now live at judge scope
+  so agreement runs before the action path takes the signal.
+
 - **Agreement with a denial: `neither` copies it onto a new agent.**
   The `neither` term is never a doer — it drops from the parts, and a lone
   target left agentless by inversion becomes the agent. Combined with the

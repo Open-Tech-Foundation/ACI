@@ -1117,6 +1117,179 @@ function judge(roots, world, mood, langs, sent) {
     // A number the world never named is spent all the same.
     !(conceptOf(n) == null && spentSaying.has(numberOf(n, world)));
 
+    // What the signal offered — the other fact, where the signal denies. Read
+    // once: every fact in one offering was denied alike.
+    const negated = said.some(negatesOn);
+
+    // One thing spoken of is one thing, however many facts are offered about
+    // it. The one that bears a state is made once for the thing that was
+    // spoken of, not once per fact — otherwise a cupboard told it has cups and
+    // plates would be two cupboards, one of each.
+    const bearers = new Map();
+    // Ids handed out earlier in this signal are not the world's yet, so the
+    // world cannot say they are taken. A thing made here must not be given one
+    // another thing here already has.
+    const takenIds = new Set();
+    const gatherTaken = (n) => {
+      if (n.kind === 'call') takenIds.add(n.state.id);
+      (n.branch || []).forEach(gatherTaken);
+    };
+    gatherTaken(root);
+    const bearerFor = (left, subject) => {
+      if (!bearers.has(left)) {
+        // A thing named in this very signal is the one that bears what is said
+        // of it. The world does not know it yet — it is being made — so there
+        // is nothing to look up and nothing to make twice.
+        const named = findBranch(left, 'call');
+        let made = named
+          ? { id: named.state.id, made: false }
+          : bearerOf(subject, world, markAt(left));
+        while (made && made.made && takenIds.has(made.id)) made = { ...made, id: made.id + 1 };
+        if (made && made.made) takenIds.add(made.id);
+        bearers.set(left, made);
+      }
+      return bearers.get(left);
+    };
+
+    const factFor = (left, right, denied, rel) => {
+      const subject = conceptOf(left);
+      const object = conceptOf(right);
+      if (subject == null) return [];
+      // How many of the kind the claim is about. Told nothing, a claim is
+      // about the kind itself, which is every one of it.
+      const howMany = manyOf(said, said.indexOf(left), world);
+      const counted = quantityAmount(right, world);
+      // A fact about how many is about the thing that bears it, not about its
+      // kind.
+      const bearer = counted == null ? null : bearerFor(left, subject);
+      if (counted != null && bearer == null) return [];
+      const holder = bearer ? bearer.id : subject;
+
+      // A claim whose object stands at a pole — good or bad — is not the
+      // world's to hold: it is what one sender says of one thing. It is kept
+      // as an individual, of what was said, by whoever sent it, about what
+      // they said it of, so that no one's verdict becomes everyone's fact.
+      // With nobody to hold it there is nobody whose it is, and the brain
+      // does not take it.
+      if (mood === 'tell' && valenced(object, world)) {
+        const from = sent ? sent.from : null;
+        if (from == null) return [node('refuse', 'unheld', [], { subject, object })];
+        // Criticism of the one holding this conversation is not taken at its
+        // word: told it is bad, the brain looks for something it is on record
+        // as ever having done at all. Finding nothing, there is no fault of
+        // its own to own, and it says so rather than accepting one it cannot
+        // find; finding something, the claim stands the same as any other.
+        if (object === a.bad && subject === a.self && world.members(subject, a.agent).length === 0) {
+          return [node('refuse', 'unwarranted', [], { subject, object })];
+        }
+        return [held(from, subject, object, negated, whenIn(said, world), world)];
+      }
+
+      // A thing holds what its kinds hold: the fact is among what the brain
+      // holds if any rung the thing stands on reaches the object by the
+      // rel named — or by the other end of it, where the world says one
+      // rel is another the other way round. Being in a thing and its
+      // holding you are one fact, and the brain has it either way it is told.
+      const joins = (from, to, rel) =>
+        rel === world.baseRelation
+          ? world.isA(from, to, rel)
+          : upward(from, world).some((rung) => world.isA(rung, to, rel));
+      const holds =
+        joins(holder, object, rel) ||
+        bothWays(rel, world).some((back) => joins(object, holder, back)) ||
+        forced(holder, object, rel, world);
+      // Something the brain holds stands against the fact where it says the
+      // two are not so joined, where the two terms exclude each other and the
+      // fact is about kind, or where it holds them joined by a rel it
+      // says is a different one — a thing on a table is not under it. Failing
+      // to find a path is none of those: not having reached a thing is not
+      // holding anything against it.
+      const kindFact = rel === world.baseRelation;
+      const opposed =
+        world.denies(holder, object, rel) ||
+        (kindFact && world.excludes(subject, object)) ||
+        apartFrom(rel, world).some((other) => joins(holder, object, other));
+      // Some of a kind is not the kind. What the kind reaches, some of it
+      // reaches; what it does not, some of it may still — one crow being
+      // white is not crows being white, and nothing about crows says no.
+      const found =
+        howMany === a.some
+          ? holds || world.members(subject, world.baseRelation).some((one) => joins(one, object, rel))
+            ? 'held'
+            : 'absent'
+          : holds
+            ? 'held'
+            : opposed
+              ? 'against'
+              : 'absent';
+      // None of a kind denies the claim of every one of it: `no crow is a fish`
+      // says of crows what `a crow is not a fish` says.
+      const isDenied = denied || howMany === a.none;
+      // Denied, the fact offered is the other one: what the brain holds stands
+      // against a denial of it, and what it holds against, a denial is among.
+      const stands = !isDenied
+        ? found
+        : found === 'held'
+          ? 'against'
+          : found === 'against'
+            ? 'held'
+            : 'absent';
+      const added = [node('standing', stands, [], { subject, relation: rel, object, negated: isDenied })];
+
+      // Offered a fact nothing it holds bears on, the brain takes it in —
+      // unless something stands against it, or taking it would close a loop. A
+      // rel already running from the object to the subject cannot also
+      // run back.
+      // How many is state: telling the brain a different count is not standing
+      // against what it holds, it is saying the world has moved on.
+      const revises = counted != null && world.held(holder, rel, object) !== counted;
+
+      if (mood === 'tell') {
+        const loops = !isDenied && subject !== object && world.isA(object, subject, rel);
+        if (!revises && (stands === 'against' || loops)) {
+          added.push(
+            node('refuse', stands === 'against' ? 'contradiction' : 'loop', [], {
+              subject,
+              relation: rel,
+              object,
+            }),
+          );
+        } else if (stands === 'absent' || revises) {
+          added.push(
+            node('learn', 'link', [], {
+              subject: holder,
+              relation: rel,
+              object,
+              quantity: counted,
+              made: bearer && bearer.made ? bearer : null,
+              not: isDenied,
+            }),
+          );
+        }
+      }
+      return added;
+    };
+
+    // Told agreement (`i think so`): the last idea goes back in as fact, with
+    // the denial it was denied with rather than this signal's (which has
+    // none). Nothing new where it holds; contradiction is refused, never
+    // picked. The think-doing itself goes unrecorded: agreeing says what was
+    // said, not that thinking happened.
+    if (mood === 'tell' && said.some((n) => markOn(n) === 'idea') && said.some((n) => reaches(n, a.action, world))) {
+      const prior = sent && Array.isArray(sent.focus) ? sent.focus : [];
+      const idea = prior.find((e) => e && typeof e === 'object' && e.standing);
+      const triple = idea ? idea.standing : null;
+      if (triple && triple.subject != null && triple.relation != null) {
+        const offered = [
+          factFor(pseudoTerm(triple.subject, world), pseudoTerm(triple.object, world), triple.negated ?? false, triple.relation),
+        ].filter((ns) => ns.length > 0);
+        if (offered.length > 0) {
+          return [withBranch(root, [...root.branch, ...asOneOffering(offered)])];
+        }
+      }
+      return roots;
+    }
+
   // An action can be spoken about as much as it can be carried out. A relation
   // named between two things is the signal's joint, and the joint is never one
   // of the things joined — so this is a claim about the action, not one of it
@@ -1446,158 +1619,9 @@ function judge(roots, world, mood, langs, sent) {
     // once: every fact in one offering was denied alike.
     const negated = said.some(negatesOn);
 
-    // One thing spoken of is one thing, however many facts are offered about
-    // it. The one that bears a state is made once for the thing that was
-    // spoken of, not once per fact — otherwise a cupboard told it has cups and
-    // plates would be two cupboards, one of each.
-    const bearers = new Map();
-    // Ids handed out earlier in this signal are not the world's yet, so the
-    // world cannot say they are taken. A thing made here must not be given one
-    // another thing here already has.
-    const taken = new Set();
-    const gatherTaken = (n) => {
-      if (n.kind === 'call') taken.add(n.state.id);
-      (n.branch || []).forEach(gatherTaken);
-    };
-    gatherTaken(root);
-    const bearerFor = (left, subject) => {
-      if (!bearers.has(left)) {
-        // A thing named in this very signal is the one that bears what is said
-        // of it. The world does not know it yet — it is being made — so there
-        // is nothing to look up and nothing to make twice.
-        const named = findBranch(left, 'call');
-        let made = named
-          ? { id: named.state.id, made: false }
-          : bearerOf(subject, world, markAt(left));
-        while (made && made.made && taken.has(made.id)) made = { ...made, id: made.id + 1 };
-        if (made && made.made) taken.add(made.id);
-        bearers.set(left, made);
-      }
-      return bearers.get(left);
-    };
-
-    const factFor = (left, right) => {
-      const subject = conceptOf(left);
-      const object = conceptOf(right);
-      if (subject == null) return [];
-      // How many of the kind the claim is about. Told nothing, a claim is
-      // about the kind itself, which is every one of it.
-      const howMany = manyOf(said, said.indexOf(left), world);
-      const counted = quantityAmount(right, world);
-      // A fact about how many is about the thing that bears it, not about its
-      // kind.
-      const bearer = counted == null ? null : bearerFor(left, subject);
-      if (counted != null && bearer == null) return [];
-      const holder = bearer ? bearer.id : subject;
-
-      // A claim whose object stands at a pole — good or bad — is not the
-      // world's to hold: it is what one sender says of one thing. It is kept
-      // as an individual, of what was said, by whoever sent it, about what
-      // they said it of, so that no one's verdict becomes everyone's fact.
-      // With nobody to hold it there is nobody whose it is, and the brain
-      // does not take it.
-      if (mood === 'tell' && valenced(object, world)) {
-        const from = sent ? sent.from : null;
-        if (from == null) return [node('refuse', 'unheld', [], { subject, object })];
-        // Criticism of the one holding this conversation is not taken at its
-        // word: told it is bad, the brain looks for something it is on record
-        // as ever having done at all. Finding nothing, there is no fault of
-        // its own to own, and it says so rather than accepting one it cannot
-        // find; finding something, the claim stands the same as any other.
-        if (object === a.bad && subject === a.self && world.members(subject, a.agent).length === 0) {
-          return [node('refuse', 'unwarranted', [], { subject, object })];
-        }
-        return [held(from, subject, object, negated, whenIn(said, world), world)];
-      }
-
-      // A thing holds what its kinds hold: the fact is among what the brain
-      // holds if any rung the thing stands on reaches the object by the
-      // relation named — or by the other end of it, where the world says one
-      // relation is another the other way round. Being in a thing and its
-      // holding you are one fact, and the brain has it either way it is told.
-      const joins = (from, to, rel) =>
-        rel === world.baseRelation
-          ? world.isA(from, to, rel)
-          : upward(from, world).some((rung) => world.isA(rung, to, rel));
-      const holds =
-        joins(holder, object, relation) ||
-        bothWays(relation, world).some((back) => joins(object, holder, back)) ||
-        forced(holder, object, relation, world);
-      // Something the brain holds stands against the fact where it says the
-      // two are not so joined, where the two terms exclude each other and the
-      // fact is about kind, or where it holds them joined by a relation it
-      // says is a different one — a thing on a table is not under it. Failing
-      // to find a path is none of those: not having reached a thing is not
-      // holding anything against it.
-      const kindFact = relation === world.baseRelation;
-      const opposed =
-        world.denies(holder, object, relation) ||
-        (kindFact && world.excludes(subject, object)) ||
-        apartFrom(relation, world).some((other) => joins(holder, object, other));
-      // Some of a kind is not the kind. What the kind reaches, some of it
-      // reaches; what it does not, some of it may still — one crow being
-      // white is not crows being white, and nothing about crows says no.
-      const found =
-        howMany === a.some
-          ? holds || world.members(subject, world.baseRelation).some((one) => joins(one, object, relation))
-            ? 'held'
-            : 'absent'
-          : holds
-            ? 'held'
-            : opposed
-              ? 'against'
-              : 'absent';
-      // None of a kind denies the claim of every one of it: `no crow is a fish`
-      // says of crows what `a crow is not a fish` says.
-      const denied = negated || howMany === a.none;
-      // Denied, the fact offered is the other one: what the brain holds stands
-      // against a denial of it, and what it holds against, a denial is among.
-      const stands = !denied
-        ? found
-        : found === 'held'
-          ? 'against'
-          : found === 'against'
-            ? 'held'
-            : 'absent';
-      const added = [node('standing', stands, [], { subject, relation, object, negated: denied })];
-
-      // Offered a fact nothing it holds bears on, the brain takes it in —
-      // unless something stands against it, or taking it would close a loop. A
-      // relation already running from the object to the subject cannot also
-      // run back.
-      // How many is state: telling the brain a different count is not standing
-      // against what it holds, it is saying the world has moved on.
-      const revises = counted != null && world.held(holder, relation, object) !== counted;
-
-      if (mood === 'tell') {
-        const loops = !denied && subject !== object && world.isA(object, subject, relation);
-        if (!revises && (stands === 'against' || loops)) {
-          added.push(
-            node('refuse', stands === 'against' ? 'contradiction' : 'loop', [], {
-              subject,
-              relation,
-              object,
-            }),
-          );
-        } else if (stands === 'absent' || revises) {
-          added.push(
-            node('learn', 'link', [], {
-              subject: holder,
-              relation,
-              object,
-              quantity: counted,
-              made: bearer && bearer.made ? bearer : null,
-              not: denied,
-            }),
-          );
-        }
-      }
-      return added;
-    };
-
     // Every fact the signal offered, in the order it offered them.
     const pairs = lefts.flatMap((left) => rights.map((right) => [left, right]));
-    const offered = pairs.map(([left, right]) => factFor(left, right)).filter((ns) => ns.length > 0);
+    const offered = pairs.map(([left, right]) => factFor(left, right, negated, relation)).filter((ns) => ns.length > 0);
     if (offered.length === 0) return roots;
     return [withBranch(root, [...root.branch, ...asOneOffering(offered)])];
   }
@@ -2492,6 +2516,35 @@ function nearest(said, from, step, wanted) {
     if (wanted(said[i])) return said[i];
   }
   return null;
+}
+
+// A stand-in thing for re-offering a focused idea as fact: what the idea was
+// about, thinking-shaped, so the fact machinery reads it exactly as told.
+function pseudoTerm(concept) {
+  const n = node('thing', 'ellipsis', [], { exists: true });
+  return withBranch(n, [
+    node('thought', 'understood', [], {
+      thought: {
+        language: null,
+        wordKnown: true,
+        pos: 'noun',
+        meaning: null,
+        concept,
+        value: null,
+        marks: null,
+        negates: false,
+        choice: false,
+        role: null,
+        when: null,
+        names: null,
+        figures: false,
+        on: null,
+        groups: null,
+        person: null,
+        number: null,
+      },
+    }),
+  ]);
 }
 
 // Which leaves of a determiner-headed phrase only restrict its ellipsis head
