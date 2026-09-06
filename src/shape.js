@@ -14,8 +14,9 @@ function fail(where, why) {
 
 // What a word may mark: which one is meant, which side of the conversation, or
 // the thing the conversation was last about. `prior` stands for the last
-// action — what was just done, repeated.
-const MARKS = ['new', 'known', 'unknown', 'from', 'to', 'spoken', 'named', 'prior'];
+// action — what was just done, repeated. `idea` stands for the last thing
+// said and checked — an idea, asked about again but never asserted.
+const MARKS = ['new', 'known', 'unknown', 'from', 'to', 'spoken', 'named', 'prior', 'idea'];
 const PERSONS = ['first', 'second', 'third'];
 const NUMBERS = ['singular', 'plural'];
 

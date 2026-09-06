@@ -71,6 +71,13 @@ All notable changes to this project are documented in this file.
   both together. Single-topic and speaker-side behavior is unchanged, and
   events still take one target each.
 
+- **Clause anaphora: `so` asks the last idea again.** `so` holds two
+  readings (listed, idea-pointer to a new `idea` mark), settled by position
+  after a pronoun or a doing. Every verdict joins focus as a triple, and an
+  asked `so` lays the latest triple against the world afresh — held,
+  against, absent — answering like any question and asserting nothing.
+  Telling an idea, or asking with none in mind, stays unanswered.
+
 - **Verb anaphora: `did` repeats the last action.** `did` holds two
   readings (sentence-initial auxiliary, post-subject prior-action pointer to
   a new `prior` mark); position settles which, and settling drops the other

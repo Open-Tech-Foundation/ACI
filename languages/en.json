@@ -1554,13 +1554,20 @@
       "pos": "conjunction",
       "meaning": "yet"
     },
-    "so": {
-      "pos": [
-        "conjunction",
-        "degree"
-      ],
-      "meaning": "so"
-    },
+    "so": [
+      {
+        "pos": [
+          "conjunction",
+          "degree"
+        ],
+        "meaning": "so"
+      },
+      {
+        "pos": "degree",
+        "meaning": "so",
+        "marks": "idea"
+      }
+    ],
     "hold": {
       "pos": "verb",
       "meaning": "hold",

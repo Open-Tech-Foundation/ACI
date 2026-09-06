@@ -501,7 +501,7 @@ function solve(roots, world, langs, mood) {
   // Whose a thing is settles what it names, and a word nothing knows is named
   // only where it stands in a claim — so whose comes first, or a claim resting
   // on a pointer that landed on nothing would still name something.
-  const settled = calling(whose(settle(auxiliary(elliptical(roots)), world), world, langs, mood), world, mood);
+  const settled = calling(whose(settle(anaphora(auxiliary(elliptical(roots))), world), world, langs, mood), world, mood);
   return settled.map((n, at) => {
     if (!n.state.exists) {
       return withBranch(n, [...n.branch, node('response', 'nothing', [])]);
@@ -691,6 +691,28 @@ function elliptical(roots) {
       n,
       n.branch.map((b) =>
         b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: anaphora }) : b,
+      ),
+    );
+  });
+}
+
+// A word standing for the last idea (`so` after what it repeats) is settled
+// by what stands before it: after a pronoun or a doing it asks about the
+// idea again, otherwise it stays whatever it was listed as. Runs with the
+// other positional readings, before anything is named.
+function anaphora(roots) {
+  return roots.map((n, i) => {
+    const t = findBranch(n, 'thought');
+    const ways = t && t.state.ways ? t.state.ways : null;
+    if (!ways || ways.length < 2) return n;
+    const repeat = ways.find((w) => w && w.marks === 'idea');
+    if (!repeat) return n;
+    const prev = i > 0 ? posOf(roots[i - 1]) : [];
+    if (!prev.some((p) => p === 'pronoun' || p === 'verb')) return n;
+    return withBranch(
+      n,
+      n.branch.map((b) =>
+        b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: repeat }) : b,
       ),
     );
   });
@@ -1105,6 +1127,42 @@ function judge(roots, world, mood, langs, sent) {
   // whatever played the part the hole stands in.
   const asked = holes.length > 0 ? partAsked(said, world, claims, markingSide(world, langs), partsSide(langs)) : null;
   if (asked) return [withBranch(root, [...root.branch, asked])];
+
+  // An idea asked about again (`is it so?`): the last verdict is laid against
+  // the world afresh — the world may have moved since — and answered like any
+  // other question. Asking only; telling an idea says nothing new. Where no
+  // idea is in mind, there is nothing to check. Runs before joint logic: an
+  // idea-word joins nothing, so a fronted joint with one claim beside it
+  // would otherwise exit as jointless before ever reaching the check below.
+  if (mood === 'ask' && said.some((n) => markOn(n) === 'idea')) {
+    const prior = sent && Array.isArray(sent.focus) ? sent.focus : [];
+    const idea = prior.find((e) => e && typeof e === 'object' && e.standing);
+    const triple = idea ? idea.standing : null;
+    if (triple && triple.subject != null && triple.relation != null) {
+      const { subject, relation: rel, object } = triple;
+      const joins = (from, to, r) =>
+        r === world.baseRelation
+          ? world.isA(from, to, r)
+          : upward(from, world).some((rung) => world.isA(rung, to, r));
+      const holds =
+        joins(subject, object, rel) ||
+        bothWays(rel, world).some((back) => joins(object, subject, back)) ||
+        forced(subject, object, rel, world);
+      const kindFact = rel === world.baseRelation;
+      const opposed =
+        world.denies(subject, object, rel) ||
+        (kindFact && world.excludes(subject, object)) ||
+        apartFrom(rel, world).some((other) => joins(subject, object, other));
+      const name = holds ? 'held' : opposed ? 'against' : 'absent';
+      return [
+        withBranch(root, [
+          ...root.branch,
+          node('standing', name, [], { subject, relation: rel, object, negated: false }),
+        ]),
+      ];
+    }
+    return roots;
+  }
 
   // A relation already joining two things is what the signal is about, and a
   // word that could also be read as a doing is not one here.
@@ -3376,16 +3434,17 @@ function keep(found, of) {
 }
 
 // The ranked focus list this signal leaves behind, latest first: what was
-// worked out, what was spoken of, what it directly holds, then earlier topics
-// still in mind. A result the world named goes back as its term; one it did
-// not goes back as its bare value, so counting beside it still works. What
-// was spoken of before and untouched stays on; several spoken of at once leave
-// no primary, but all stay in focus. Capped so the same signals always give
-// the same list.
+// worked out, what was spoken of, what it directly holds, what was done,
+// what was said and checked, then earlier topics still in mind. A result the
+// world named goes back as its term; one it did not goes back as its bare
+// value, so counting beside it still works. What was spoken of before and
+// untouched stays on; several spoken of at once leave no primary, but all
+// stay in focus. Capped so the same signals always give the same list.
 function focusOf(roots, at, world) {
   const primary = spokenOf(roots, at, world);
   const sum = [];
   const actions = [];
+  const ideas = [];
   const gather = (n) => {
     if (n.kind === 'sum' && n.name === 'worked') {
       sum.push(n.state.term ?? { value: n.state.value });
@@ -3394,6 +3453,19 @@ function focusOf(roots, at, world) {
     // later `did` means the latest one. Individuals, not kinds.
     if (n.kind === 'event' && typeof n.state.action === 'number') {
       if (!actions.includes(n.state.action)) actions.push(n.state.action);
+    }
+    // What was said and checked stays askable: every verdict, so a later
+    // `so` asks about the latest one again. The triple, not the name — the
+    // world may have moved since.
+    if (n.kind === 'standing' && n.state.relation != null && n.state.subject != null) {
+      ideas.push({
+        standing: {
+          subject: n.state.subject,
+          relation: n.state.relation,
+          object: n.state.object,
+          negated: n.state.negated,
+        },
+      });
     }
     (n.branch || []).forEach(gather);
   };
@@ -3408,12 +3480,20 @@ function focusOf(roots, at, world) {
   }
   const prior = at && Array.isArray(at.focus) ? at.focus : [];
   const out = [];
-  const same = (x, y) =>
-    typeof x === 'number' || typeof y === 'number'
-      ? x === y
-      : (x && x.value) === (y && y.value);
-  for (const id of [...sum, primary, ...held, ...actions, ...prior]) {
-    if (id != null && !out.some((had) => same(had, id))) out.push(id);
+  const key = (e) => {
+    if (typeof e === 'number') return `id:${e}`;
+    if (e && e.value !== undefined) return `value:${e.value}`;
+    if (e && e.standing) {
+      const s = e.standing;
+      return `idea:${s.subject}:${s.relation}:${s.object}:${s.negated}`;
+    }
+    return null;
+  };
+  for (const id of [...sum, primary, ...held, ...actions, ...ideas, ...prior]) {
+    if (id == null) continue;
+    const k = key(id);
+    if (k != null && out.some((had) => key(had) === k)) continue;
+    out.push(id);
   }
   return out.slice(0, 8);
 }
