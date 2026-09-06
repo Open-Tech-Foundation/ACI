@@ -17249,6 +17249,11 @@
       "ending": "est",
       "becomes": "",
       "of": "adjective"
+    },
+    {
+      "ending": "n't",
+      "becomes": "",
+      "negates": true
     }
   ],
   "speech": {
@@ -17318,7 +17323,8 @@
           "interrogative quantifier subject verb sentence",
           "modal subject verb",
           "interrogative verb article noun verbComplement",
-          "function preposition subject"
+          "function preposition subject",
+          "subject auxiliary verb subject"
         ]
       },
       "clause": {
@@ -17353,7 +17359,8 @@
           "subject verb subject",
           "interrogative quantifier subject verb sentence",
           "modal subject verb",
-          "function preposition subject"
+          "function preposition subject",
+          "subject auxiliary verb subject"
         ]
       },
       "subject": {

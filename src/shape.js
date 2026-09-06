@@ -236,7 +236,7 @@ export function checkLanguage(data, where = 'language') {
     for (const rule of data.derivations) {
       const r = `${at} derivation`;
       if (!rule || typeof rule !== 'object') fail(r, 'must be an object');
-      onlyKeys(rule, ['ending', 'becomes', 'of', 'pos', 'when'], r);
+      onlyKeys(rule, ['ending', 'becomes', 'of', 'pos', 'when', 'negates'], r);
       if (typeof rule.ending !== 'string' || rule.ending === '') {
         fail(r, 'ending must be a non-empty string');
       }
@@ -249,6 +249,10 @@ export function checkLanguage(data, where = 'language') {
       }
       if (rule.when !== undefined && (typeof rule.when !== 'string' || rule.when === '')) {
         fail(r, 'when, where present, must name when the ending puts the doing');
+      }
+      // A contraction may deny what its stem says: `don't` is `do` denied.
+      if (rule.negates !== undefined && rule.negates !== true) {
+        fail(r, 'negates, where present, must be true');
       }
     }
   }
