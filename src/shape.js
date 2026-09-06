@@ -22,7 +22,6 @@ const NUMBERS = ['singular', 'plural'];
 const COGNITIVE_FUNCTIONS = [
   'condition',
   'determiner',
-  'ellipsis',
   'encloses',
   'join',
   'modal',
@@ -283,6 +282,13 @@ export function checkLanguage(data, where = 'language') {
     const readings = Array.isArray(entry) ? entry : [entry];
     if (readings.length === 0) fail(w, 'must hold at least one reading');
     for (const info of readings) checkWord(info, w);
+    const selected = readings.filter((info) => info.select !== undefined);
+    if (selected.length > 0) {
+      if (readings.length < 2) fail(w, 'select requires more than one reading');
+      if (readings.length - selected.length !== 1) {
+        fail(w, 'select requires exactly one unconstrained fallback reading');
+      }
+    }
   }
 
   if (data.marking !== undefined && data.marking !== 'before' && data.marking !== 'after') {
@@ -431,7 +437,7 @@ function checkWord(info, w) {
   if (!info || typeof info !== 'object' || Array.isArray(info)) fail(w, 'must be an object');
   onlyKeys(
     info,
-    ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'person', 'number', 'on', 'bare', 'choice', 'proximity', 'where', 'functions'],
+    ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'person', 'number', 'on', 'bare', 'choice', 'proximity', 'select', 'functions'],
     w,
   );
   // A word may be more than one part of speech — English says a walk and
@@ -444,13 +450,7 @@ function checkWord(info, w) {
   if (typeof info.meaning !== 'string') fail(w, 'meaning must be a string');
   checkFunctions(info.functions, w);
   if (info.concept !== undefined && !isId(info.concept)) fail(w, 'concept must be a term id');
-  if (info.where !== undefined) {
-    const positions = Array.isArray(info.where) ? info.where : [info.where];
-    const allowed = ['initial', 'before-negation'];
-    if (positions.length === 0 || positions.some((p) => !allowed.includes(p))) {
-      fail(w, 'where must be initial, before-negation, or a list of them');
-    }
-  }
+  checkSelection(info.select, w);
   // Which scale a word compares on: heavier is more, on weight. The word names
   // the comparing; the scale says what is being compared.
   if (info.on !== undefined && !isId(info.on)) fail(w, 'on must be a term id');
@@ -505,6 +505,58 @@ function checkWord(info, w) {
   // action lives in the record, not in any file.
   if ((info.marks === 'from' || info.marks === 'to' || info.marks === 'prior') && info.concept !== undefined) {
     fail(w, 'a word that points names no term of its own');
+  }
+}
+
+function checkSelection(value, where, nested = false) {
+  if (value === undefined) return;
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    fail(where, 'select must be a context constraint object');
+  }
+  onlyKeys(
+    value,
+    nested ? ['position', 'before', 'after', 'across'] : ['any', 'position', 'before', 'after', 'across'],
+    where,
+  );
+  if (value.any !== undefined) {
+    if (nested || !Array.isArray(value.any) || value.any.length === 0) {
+      fail(where, 'select.any must be a non-empty list of context constraints');
+    }
+    if (Object.keys(value).length !== 1) {
+      fail(where, 'select.any cannot be combined with another constraint');
+    }
+    value.any.forEach((condition) => checkSelection(condition, where, true));
+  }
+  if (value.position !== undefined && value.position !== 'first') {
+    fail(where, 'select.position must be "first"');
+  }
+  checkContextKinds(value.before, ['denial', 'proposition'], `${where} select.before`);
+  checkContextKinds(value.after, ['pointer', 'predicate', 'determiner'], `${where} select.after`);
+  if (value.across !== undefined && value.across !== 'modifier') {
+    fail(where, 'select.across must be "modifier"');
+  }
+  if (value.across !== undefined && value.after === undefined) {
+    fail(where, 'select.across requires select.after');
+  }
+  if (
+    value.any === undefined &&
+    value.position === undefined &&
+    value.before === undefined &&
+    value.after === undefined
+  ) {
+    fail(where, 'select must contain a context constraint');
+  }
+}
+
+function checkContextKinds(value, allowed, where) {
+  if (value === undefined) return;
+  const kinds = Array.isArray(value) ? value : [value];
+  if (
+    kinds.length === 0 ||
+    kinds.some((kind) => !allowed.includes(kind)) ||
+    new Set(kinds).size !== kinds.length
+  ) {
+    fail(where, `must contain distinct context kinds: ${allowed.join(', ')}`);
   }
 }
 

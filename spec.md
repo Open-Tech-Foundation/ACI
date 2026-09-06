@@ -185,6 +185,11 @@ runtime — never the brain — does the reading.
     "my":    { "pos": "possessive",   "meaning": "from",         "marks": "from", "functions": "possessor" },
     "you":   { "pos": "pronoun",      "meaning": "to",           "marks": "to" },
     "it":    { "pos": "pronoun",      "meaning": "it",           "marks": "spoken" },
+    "one": [
+      { "pos": "numeral", "meaning": "1", "concept": 114 },
+      { "pos": "pronoun", "meaning": "one", "marks": "spoken",
+        "select": { "after": "determiner", "across": "modifier" } }
+    ],
     "who":   { "pos": "interrogative","meaning": "who",  "marks": "unknown", "concept": 138 }
   },
   "expressions": {                   // how this language voices each brain act
@@ -214,10 +219,17 @@ runtime — never the brain — does the reading.
 Each word carries `pos` (part of speech), `meaning`, and optionally `concept` —
 the id of the world term it names. It may also carry `marks` (what it points at
 or says of its neighbour), `negates`, `role` (which part its neighbour plays),
-`when`, `where`, `functions`, `names`, `groups`, `person` and `number`. `where` selects a
-reading by structural position (`initial` or `before-negation`) without teaching
-the engine a particular auxiliary word. `functions` names a closed cognitive
-role—condition, determiner, ellipsis, enclosure, joining, modality, modifier or
+`when`, `select`, `functions`, `names`, `groups`, `person` and `number`.
+`select` chooses one reading from universal context constraints: `position`
+may be `first`; `before` may be `denial` or `proposition`; `after` may be
+`pointer`, `predicate` or `determiner`; and `across: "modifier"` permits a
+backward search across descriptions. `any` gives alternatives. The
+first constrained reading that matches wins; with none, the first unconstrained
+reading is the deterministic fallback. A selecting entry must have multiple
+readings and exactly one such fallback, or the source is refused. Thus language
+data describes the context without teaching the engine a particular auxiliary, pronoun,
+complementizer or idea-reference word. `functions` names a closed cognitive
+role—condition, determiner, enclosure, joining, modality, modifier or
 possession—that affects inference independently of the word's parser position.
 A word may say its term
 stands bare, with no article (`bare`), the way a mass of water is not one
@@ -854,6 +866,13 @@ a person and a fruit and nothing between them until `saw` is read as the seeing
 it also is. Where something already joins them — `i cut an apple with a saw` —
 every word stands as it was first thought, and the saw is the tool. A word
 still to be settled cannot itself be what joins the signal.
+
+Before that general relation/action fallback, `solve` applies each ambiguous
+reading's declarative `select` constraint to the complete signal. One generic
+matcher handles first position, context before or after, alternatives, and a
+modifier-crossing search. It compares only cognitive/world categories; it does
+not inspect a word's spelling or parser symbol. The selected reading is final,
+so the later fallback cannot reinterpret it.
 
 **Whose a thing is comes first.** A possessive is a pointer: `my`, `your`,
 `its`, and any noun the language derives one from. Whom it points at is the

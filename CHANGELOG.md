@@ -6,6 +6,17 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Context chooses word readings through one language-neutral primitive.**
+  Four separate paths for English `did`, elliptical `one`, dual-use `that` and
+  idea-reference `so` are replaced by declarative `select` constraints in the
+  language. The core now matches only universal context—first position,
+  denial/proposition before, pointer/predicate/determiner after, and modifiers
+  crossed—then takes the first matching reading or the declared fallback.
+  The old `where` field and `ellipsis` cognitive function are removed. Tests
+  rename all four words and prove identical selection, including arithmetic,
+  modifier-crossing reference, embedded claims, standalone pointers, idea
+  recall, past questions, denial and prior-action fallback.
+
 - **Parts of speech and grammar names are opaque to reasoning.** The core no
   longer branches on English parser labels such as noun, article, pronoun,
   possessive, conjunction, interjection, complementizer, modal, subject or

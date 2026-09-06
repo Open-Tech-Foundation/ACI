@@ -165,7 +165,7 @@ function recognizeLanguage(roots, langs) {
         person: word.person ?? null,
         number: word.number ?? null,
         proximity: word.proximity ?? null,
-        where: word.where ?? null,
+        select: word.select ?? null,
         functions: lang.functionsFor(word),
       }));
       matching.push({
@@ -274,7 +274,7 @@ function think(roots, langs, at, world) {
       number: word ? word.number ?? null : null,
       // How near what the pointer points at stands. The language's to say.
       proximity: word ? word.proximity ?? null : null,
-      where: word ? word.where ?? null : null,
+      select: word ? word.select ?? null : null,
       functions: word ? word.functions ?? null : null,
       };
     };
@@ -529,7 +529,7 @@ function solve(roots, world, langs, mood, allocate) {
   // Whose a thing is settles what it names, and a word nothing knows is named
   // only where it stands in a claim — so whose comes first, or a claim resting
   // on a pointer that landed on nothing would still name something.
-  const positioned = anaphora(auxiliary(elliptical(subordinate(roots, world), world)), world);
+  const positioned = contextual(roots, world);
   const settled = calling(
     whose(settle(positioned, world), world, langs, mood, allocate),
     world,
@@ -695,136 +695,79 @@ function calling(roots, world, mood, allocate) {
   });
 }
 
-// A word that may be a number or an elliptical NP (`one` is both) is settled
-// by what stands before it: after a determiner it stands for a focused kind,
-// otherwise it stays a number — `one plus one` still counts. A description
-// may stand between (`the blue one`, `the very sweet one`), so the scan walks
-// left over potential descriptions to the determiner. Which readings carry
-// those cognitive functions is the language's; that ellipsis needs a
-// determiner is the brain's. Runs before anything is named, like `settle`.
-function elliptical(roots, world) {
+// A language may distinguish readings through context without teaching the
+// brain any of its words. Each constrained reading says what may stand before
+// or after it; the first matching reading wins, otherwise the first reading
+// without a constraint is the deterministic fallback. These are relations
+// among understood things — pointer, predicate, determiner, modifier, denial
+// and proposition — rather than parts of speech or English spellings.
+function contextual(roots, world) {
   return roots.map((n, i) => {
     const t = findBranch(n, 'thought');
     const ways = t && t.state.ways ? t.state.ways : null;
     if (!ways || ways.length < 2) return n;
-    const anaphora = ways.find((w) => w && w.marks === 'spoken' && functionList(w).includes('ellipsis'));
-    if (!anaphora) return n;
-    let j = i - 1;
-    while (j >= 0 && !functionsOf(roots[j]).includes('determiner')) {
-      const concept = conceptOf(roots[j]);
-      if (
-        functionsOf(roots[j]).includes('join') ||
-        (concept != null && world && (world.isA(concept, world.anchors.relation) || world.isA(concept, world.anchors.action)))
-      ) break;
-      j -= 1;
-    }
-    if (j < 0 || !functionsOf(roots[j]).includes('determiner')) return n;
-    return withBranch(
-      n,
-      n.branch.map((b) =>
-        b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: anaphora }) : b,
-      ),
-    );
-  });
-}
-
-// A word that subordinates or points (`that` does both) is settled by what
-// follows it: a claim after it — two things with something joining them —
-// keeps the complementizer, otherwise it points. Which words subordinate is
-// the language's; that a claim follows one is the brain's. Runs with the
-// other positional readings, before anything is named.
-function subordinate(roots, world) {
-  if (!world) return roots;
-  const a = world.anchors || {};
-  return roots.map((n, i) => {
-    const t = findBranch(n, 'thought');
-    const ways = t && t.state.ways ? t.state.ways : null;
-    if (!ways || ways.length < 2) return n;
-    const pro = ways.find((w) => w && w.marks === 'spoken');
-    if (!pro) return n;
-    if (!ways.some((w) => w && functionList(w).includes('encloses'))) {
-      return n;
-    }
-    const rest = roots.slice(i + 1);
-    const things = rest.filter(
-      (r) => {
-        const th = findBranch(r, 'thought');
-        const c = th && th.state.thought ? th.state.thought.concept : null;
-        return c != null && world.isA(c, a.thing);
-      },
-    ).length;
-    const joint = rest.some((r) => {
-      const th = findBranch(r, 'thought');
-      const c = th && th.state.thought ? th.state.thought.concept : null;
-      return c != null && world.isA(c, a.relation);
-    });
-    if (things >= 2 && joint) return n;
-    return withBranch(
-      n,
-      n.branch.map((b) =>
-        b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: pro }) : b,
-      ),
-    );
-  });
-}
-
-// A word standing for the last idea (`so` after what it repeats) is settled
-// by what stands before it: after a pronoun or a doing it asks about the
-// idea again, otherwise it stays whatever it was listed as. Runs with the
-// other positional readings, before anything is named.
-function anaphora(roots, world) {
-  return roots.map((n, i) => {
-    const t = findBranch(n, 'thought');
-    const ways = t && t.state.ways ? t.state.ways : null;
-    if (!ways || ways.length < 2) return n;
-    const repeat = ways.find((w) => w && w.marks === 'idea');
-    if (!repeat) return n;
-    const before = i > 0 ? roots[i - 1] : null;
-    const prior = before ? thoughtOf(before) : null;
-    const concept = before ? conceptOf(before) : null;
-    const points = prior && prior.marks != null;
-    const predicates = concept != null && world && (
-      world.isA(concept, world.anchors.relation) || world.isA(concept, world.anchors.action)
-    );
-    if (!points && !predicates) return n;
-    return withBranch(
-      n,
-      n.branch.map((b) =>
-        b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: repeat }) : b,
-      ),
-    );
-  });
-}
-
-// Sentence-initial `did` asks about the past; after its subject it repeats
-// it — unless the signal denies, where `did` can only be the auxiliary
-// (`pippa did not wash a pot` never repeats anything). Which slot `did` takes
-// is word order — the language puts the auxiliary first — so the first word
-// keeps its listed reading and later ones take the prior-action one. The
-// decided reading replaces the rest, keeping `settle` from re-reading a word
-// already settled by position.
-function auxiliary(roots) {
-  return roots.map((n, i) => {
-    const t = findBranch(n, 'thought');
-    const ways = t && t.state.ways ? t.state.ways : null;
-    if (!ways || ways.length < 2) return n;
-    if (!ways.some((word) => word && word.where != null)) return n;
-    const applies = (word) => {
-      const where = word && word.where != null
-        ? (Array.isArray(word.where) ? word.where : [word.where])
-        : [];
-      return (
-        (where.includes('initial') && i === 0) ||
-        (where.includes('before-negation') && roots.slice(i + 1).some(negatesOn))
-      );
-    };
-    const thought = ways.find(applies) ?? ways.find((word) => word && word.where == null);
+    if (!ways.some((word) => word && word.select != null)) return n;
+    const thought = ways.find((word) => selectionMatches(word && word.select, roots, i, world))
+      ?? ways.find((word) => word && word.select == null);
     if (!thought) return n;
     return withBranch(
       n,
-      n.branch.map((b) => (b.kind === 'thought' ? withBranch(b, b.branch, { thought }) : b)),
+      n.branch.map((b) => (
+        b.kind === 'thought' ? withBranch(b, b.branch, { thought, contextual: true }) : b
+      )),
     );
   });
+}
+
+function selectionMatches(selection, roots, at, world) {
+  if (!selection) return false;
+  if (selection.any) {
+    return selection.any.some((condition) => selectionMatches(condition, roots, at, world));
+  }
+  if (selection.position === 'first' && at !== 0) return false;
+  if (selection.before && !contextBefore(selection.before, roots, at, world)) return false;
+  if (selection.after && !contextAfter(selection.after, selection.across, roots, at, world)) return false;
+  return true;
+}
+
+function contextBefore(wanted, roots, at, world) {
+  const kinds = Array.isArray(wanted) ? wanted : [wanted];
+  return kinds.some((kind) => {
+    const rest = roots.slice(at + 1);
+    if (kind === 'denial') return rest.some(negatesOn);
+    if (kind !== 'proposition' || !world) return false;
+    const a = world.anchors || {};
+    const things = rest.filter((n) => {
+      const concept = conceptOf(n);
+      return concept != null && world.isA(concept, a.thing);
+    }).length;
+    const joins = rest.some((n) => {
+      const concept = conceptOf(n);
+      return concept != null && world.isA(concept, a.relation);
+    });
+    return things >= 2 && joins;
+  });
+}
+
+function contextAfter(wanted, across, roots, at, world) {
+  const kinds = Array.isArray(wanted) ? wanted : [wanted];
+  for (let i = at - 1; i >= 0; i -= 1) {
+    if (kinds.some((kind) => contextKind(roots[i], kind, world))) return true;
+    if (across !== 'modifier' || !functionsOf(roots[i]).includes('modifier')) return false;
+  }
+  return false;
+}
+
+function contextKind(n, kind, world) {
+  const thought = thoughtOf(n);
+  if (kind === 'pointer') return thought && thought.marks != null;
+  if (kind === 'determiner') return functionsOf(n).includes('determiner');
+  if (kind !== 'predicate' || !world) return false;
+  const concept = conceptOf(n);
+  const a = world.anchors || {};
+  return concept != null && (
+    world.isA(concept, a.relation) || world.isA(concept, a.action)
+  );
 }
 
 // A word that may be meant more than one way is settled here, where the brain
@@ -2850,17 +2793,15 @@ function restrictedIn(root) {
         const head = kids[kids.length - 1];
         const t = head ? findBranch(head, 'thought') : null;
         const thought = t ? t.state.thought : null;
-        const isEllipsis =
+        const isContextualPointer =
           thought &&
           thought.marks === 'spoken' &&
-          functionList(thought).includes('ellipsis') &&
-          t.state.ways &&
-          t.state.ways.length > 1;
+          t.state.contextual === true;
         const middles = kids.slice(1, -1);
         const headConcept = conceptOf(head);
         const isReferent = headConcept != null || findBranch(head, 'call') != null;
         const describing = middles.every((k) => functionsOf(k).includes('modifier'));
-        if ((isEllipsis || isReferent) && describing) {
+        if ((isContextualPointer || isReferent) && describing) {
           middles.forEach((k) => restricted.add(k));
         }
       }

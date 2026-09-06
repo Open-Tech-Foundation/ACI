@@ -108,7 +108,7 @@
         "pos": "pronoun",
         "meaning": "one",
         "marks": "spoken",
-        "functions": "ellipsis",
+        "select": { "after": "determiner", "across": "modifier" },
         "person": "third",
         "number": "singular"
       }
@@ -117,7 +117,6 @@
       "pos": "pronoun",
       "meaning": "ones",
       "marks": "spoken",
-      "functions": "ellipsis",
       "person": "third",
       "number": "plural"
     },
@@ -1576,7 +1575,8 @@
       {
         "pos": "degree",
         "meaning": "so",
-        "marks": "idea"
+        "marks": "idea",
+        "select": { "after": ["pointer", "predicate"] }
       }
     ],
     "hold": {
@@ -10550,7 +10550,8 @@
       {
         "pos": "complementizer",
         "meaning": "that",
-        "functions": "encloses"
+        "functions": "encloses",
+        "select": { "before": "proposition" }
       },
       {
         "pos": "pronoun",
@@ -15412,7 +15413,12 @@
         "pos": "auxiliary",
         "meaning": "did",
         "when": "past",
-        "where": ["initial", "before-negation"]
+        "select": {
+          "any": [
+            { "position": "first" },
+            { "before": "denial" }
+          ]
+        }
       },
       {
         "pos": "verb",

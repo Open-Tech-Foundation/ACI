@@ -316,6 +316,48 @@ test("language semantic functions are closed and grammar roles cannot be false",
   assert(refuses("a false semantic grammar role", { languages: [badRole] }).includes("referent"));
 });
 
+test("contextual reading constraints are closed and unambiguous", () => {
+  const language = (select) => ({
+    name: "test",
+    words: { x: { pos: "anything", meaning: "x", select } },
+  });
+  assert(
+    refuses("an unknown context", { languages: [language({ after: "english-subject" })] })
+      .includes("context kinds"),
+  );
+  assert(
+    refuses("an empty alternative", { languages: [language({ any: [] })] })
+      .includes("non-empty"),
+  );
+  assert(
+    refuses("a mixed alternative", {
+      languages: [language({ any: [{ position: "first" }], before: "denial" })],
+    }).includes("cannot be combined"),
+  );
+  assert(
+    refuses("a directionless skip", { languages: [language({ across: "modifier" })] })
+      .includes("requires select.after"),
+  );
+  assert(
+    refuses("selection on one reading", {
+      languages: [language({ position: "first" })],
+    }).includes("requires more than one reading"),
+  );
+  const noFallback = {
+    name: "test",
+    words: {
+      x: [
+        { pos: "anything", meaning: "x", select: { position: "first" } },
+        { pos: "anything", meaning: "x", select: { before: "denial" } },
+      ],
+    },
+  };
+  assert(
+    refuses("selection without fallback", { languages: [noFallback] })
+      .includes("exactly one unconstrained fallback"),
+  );
+});
+
 test("classification cycles are refused at the knowledge door", () => {
   const msg = refuses("classification cycle", {
     world: {
