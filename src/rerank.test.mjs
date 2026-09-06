@@ -14,7 +14,7 @@ test("clause-subject it prefers its own signal over a prior topic", async () => 
   await brain("a bassoon is loud and it is old");
   assertEquals(
     (await brain("is a bassoon old?")).expression.state.says,
-    "Yes. ✅ a bassoon is an old.",
+    "Yes. ✅ a bassoon is old.",
   );
   assertEquals(
     (await brain("is a crate old?")).expression.name,

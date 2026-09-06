@@ -17,7 +17,7 @@ test("an adjective before one restricts, claims nothing", async () => {
   );
   assertEquals(
     (await brain("is a flute hot?")).expression.state.says,
-    "Yes. ✅ a flute is a hot.",
+    "Yes. ✅ a flute is hot.",
     "the head claim lands",
   );
   await forget();
@@ -29,7 +29,7 @@ test("a noun before one restricts, claims nothing", async () => {
   await brain("the brass one is sweet");
   assertEquals(
     (await brain("is a cello sweet?")).expression.state.says,
-    "Yes. ✅ a cello is a sweet.",
+    "Yes. ✅ a cello is sweet.",
   );
   assertEquals(
     (await brain("is brass sweet?")).expression.name,

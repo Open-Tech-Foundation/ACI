@@ -12,7 +12,7 @@ test("inline it reaches an entity earlier in the same signal", async () => {
   await brain("a violin is loud and it is old");
   assertEquals(
     (await brain("is a violin old?")).expression.state.says,
-    "Yes. ✅ a violin is an old.",
+    "Yes. ✅ a violin is old.",
   );
   await forget();
 });
@@ -22,7 +22,7 @@ test("no forward reference in the same signal", async () => {
   await brain("it is heavy and a drum is cold");
   assertEquals(
     (await brain("is a drum cold?")).expression.state.says,
-    "Yes. ✅ a drum is a cold.",
+    "Yes. ✅ a drum is cold.",
     "the second clause still lands",
   );
   assertEquals(
@@ -38,7 +38,7 @@ test("inline it with different entities", async () => {
   await brain("a trumpet is small and it is long");
   assertEquals(
     (await brain("is a trumpet long?")).expression.state.says,
-    "Yes. ✅ a trumpet is a long.",
+    "Yes. ✅ a trumpet is long.",
   );
   await forget();
 });

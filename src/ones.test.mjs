@@ -12,7 +12,7 @@ test("the one reaches the focused kind", async () => {
   await brain("the one is warm");
   assertEquals(
     (await brain("is a clarinet warm?")).expression.state.says,
-    "Yes. ✅ a clarinet is a warm.",
+    "Yes. ✅ a clarinet is warm.",
   );
   await forget();
 });
@@ -23,7 +23,7 @@ test("the ones reaches the focused kind in plural", async () => {
   await brain("the ones are soft");
   assertEquals(
     (await brain("is an oboe soft?")).expression.state.says,
-    "Yes. ✅ an oboe is a soft.",
+    "Yes. ✅ an oboe is soft.",
   );
   await forget();
 });

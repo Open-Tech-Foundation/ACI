@@ -12,7 +12,7 @@ test("is it so checks the last idea", async () => {
   await brain("a banjo is big");
   assertEquals(
     (await brain("is it so?")).expression.state.says,
-    "Yes. ✅ a banjo is a big.",
+    "Yes. ✅ a banjo is big.",
   );
   await forget();
 });

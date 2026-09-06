@@ -3075,14 +3075,22 @@ function claimSaid(stood, langName, langs, world) {
   // A number is not one of a kind, and does not go in a frame built for one.
   const a = world && world.anchors ? world.anchors : {};
   if (world && (world.isA(subject, a.number) || world.isA(object, a.number))) return '';
-  const said = (term) => {
+  const said = (term, isObject) => {
     const word = termWord(term, langName, langs, world);
     if (word == null) return null;
-    const bare = (world && world.isIndividual(term)) || lang.isBare(term);
+    // One of a kind takes its article; what is not one — a name, a word the
+    // language says stands bare, or a property in object place predicated
+    // rather than counted (`a tuba is loud`, never `a loud`) — does not.
+    // Object place only: what a thing has been called stays with the thing,
+    // and learned properties must never unkind their bearer.
+    const bare =
+      (world && world.isIndividual(term)) ||
+      lang.isBare(term) ||
+      (isObject && world && world.isA(term, a.property));
     return bare ? word : `${lang.oneFor(word)} ${word}`;
   };
-  const one = said(subject);
-  const other = said(object);
+  const one = said(subject, false);
+  const other = said(object, true);
   if (one == null || other == null) return '';
   const comparing =
     on != null && (relation === a.more || relation === a.less)
