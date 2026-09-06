@@ -47,3 +47,18 @@ test("every way of holding a claim at arm's length reads the same", async () => 
   }
   await forget();
 });
+
+test("a modal joins a doing without taking it in", async () => {
+  // Ability is checked, never taken in: the brain has no capability
+  // knowledge, so an unobserved doing is unknown rather than denied.
+  const r = await fresh("a cat can swim");
+  assertEquals(r.expression.name, "unsure");
+  assertEquals(r.learned, null);
+  await forget();
+});
+
+test("a fronted modal asks the same question", async () => {
+  assertEquals((await fresh("can a cat swim?")).expression.name, "unsure");
+  assertEquals((await fresh("can a cat swim?")).learned, null);
+  await forget();
+});

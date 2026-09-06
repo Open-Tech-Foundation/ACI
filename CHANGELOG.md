@@ -78,6 +78,11 @@ All notable changes to this project are documented in this file.
   against, absent — answering like any question and asserting nothing.
   Telling an idea, or asking with none in mind, stays unanswered.
 
+- **Modals join doings.** Grammar binds `modal verb` predicates and fronted
+  `modal subject verb` questions, so `a cat can swim` is checked
+  arm's-length like any modal claim — taken in never, unknown no longer.
+  Ability itself needs capability knowledge and stays open.
+
 - **Superlatives derive; descriptions restrict noun heads too.** `-er` and
   `-est` read off adjectives (`biggest` reaches `big` through doubled
   consonants, tried only on a miss — both lookups exact, listed words win),

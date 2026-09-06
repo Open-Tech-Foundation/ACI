@@ -17299,7 +17299,8 @@
           "verb subject preposition subject",
           "subject verb subject preposition subject",
           "subject verb subject",
-          "interrogative quantifier subject verb sentence"
+          "interrogative quantifier subject verb sentence",
+          "modal subject verb"
         ]
       },
       "clause": {
@@ -17332,7 +17333,8 @@
           "verb subject preposition subject",
           "subject verb subject preposition subject",
           "subject verb subject",
-          "interrogative quantifier subject verb sentence"
+          "interrogative quantifier subject verb sentence",
+          "modal subject verb"
         ]
       },
       "subject": {
@@ -17392,7 +17394,8 @@
           "verb negation verbComplement",
           "auxiliary verb verbComplement",
           "auxiliary negation verb verbComplement",
-          "auxiliary verb"
+          "auxiliary verb",
+          "modal verb"
         ]
       },
       "verbComplement": {
