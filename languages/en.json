@@ -17437,7 +17437,8 @@
           "auxiliary verb verbComplement",
           "auxiliary negation verb verbComplement",
           "auxiliary verb",
-          "modal verb"
+          "modal verb",
+          "auxiliary negation verb"
         ]
       },
       "verbComplement": {

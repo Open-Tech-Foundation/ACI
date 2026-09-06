@@ -85,7 +85,7 @@ All notable changes to this project are documented in this file.
 - **Contractions derive denied.** `n't` strips to its stem carrying denial
   (`don't` is `do` denied — `can't`/`won't` stay irregulars), and grammar
   binds subject-led auxiliary shapes (`i don't like it` records the denied
-  doing instead of going unheard).
+  doing instead of going unheard; intransitive `does not fly` likewise).
 
 - **Doubling and halving are worked.** New innate unary ops with world terms
   and anchors (`double 5` → ten, `halve 9` → 4.5, `half of 10` → five);

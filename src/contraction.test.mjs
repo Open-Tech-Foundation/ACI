@@ -22,3 +22,15 @@ test("don't denies instead of going unheard", async () => {
   assert(learned.includes('"not":true'), "kept as a denial: " + learned.slice(0, 200));
   await forget();
 });
+
+test("separate does not denies an intransitive doing", async () => {
+  await forget();
+  const r = await brain("a dog does not fly");
+  assertEquals(r.expression.name, "learn");
+  assert(r.learned != null, "the denial goes on the record");
+  assert(
+    JSON.stringify(r.learned).includes('"not":true'),
+    "kept as a denial",
+  );
+  await forget();
+});
