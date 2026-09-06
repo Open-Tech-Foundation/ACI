@@ -17334,7 +17334,8 @@
           "article noun preposition subject",
           "article pronoun",
           "article adjective pronoun",
-          "article noun pronoun"
+          "article noun pronoun",
+          "preposition pronoun"
         ]
       },
       "item": {
@@ -17356,7 +17357,8 @@
           "article noun preposition subject",
           "article pronoun",
           "article adjective pronoun",
-          "article noun pronoun"
+          "article noun pronoun",
+          "preposition pronoun"
         ]
       },
       "predicate": {

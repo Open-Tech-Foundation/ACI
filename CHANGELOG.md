@@ -78,6 +78,13 @@ All notable changes to this project are documented in this file.
   against, absent — answering like any question and asserting nothing.
   Telling an idea, or asking with none in mind, stays unanswered.
 
+- **Partitive counts read state against the thread's bearer.** `how many of
+  them` parses (`preposition pronoun` subjects) and counts the one kind its
+  bearer holds — the first individual in focus, else whoever was spoken of.
+  Taking all leaves zero; a kind nowhere held, and carrying without holding,
+  answer nothing. Counts voice in figures where the signal is written that
+  way (`of` is another way to write, not a name).
+
 - **Repair repeats the topic.** Asking what was said (`what did you say?`,
   however inflected) answers with the thing in mind — never its kind, never
   a guess — where any communication doing meets a hole. Nothing in mind

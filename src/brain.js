@@ -248,7 +248,7 @@ function think(roots, langs, at, world) {
       pos: word ? word.pos : read ? lang.figuresPos : 'noun',
       meaning: word ? word.meaning : read || called != null ? String(n.state.identity) : null,
       concept: result != null ? null : pointed != null ? pointed : word
-        ? focusedSpoken(word, oneMeant(pointedAt(word, at, world), world) ?? word.concept, at, world)
+        ? oneMeant(pointedAt(word, at, world), world) ?? word.concept
         : read && world
           ? world.termFor(value)
           : called,
@@ -281,7 +281,7 @@ function think(roots, langs, at, world) {
     const state = ways.length > 1 ? { thought: ways[0], ways } : { thought: ways[0] };
     return withBranch(n, [...n.branch, node('thought', 'understood', [], state)]);
   });
-  return intraSignal(reshaped(thought, world), world);
+  return intraSignal(reshaped(thought, world), world, langs, at);
 }
 
 // Focus tracked from the current tree: a third-person pointer (`it`, `them`)
@@ -291,12 +291,14 @@ function think(roots, langs, at, world) {
 // and the word keeps naming nothing. Relations, properties and numbers never
 // join: joints are what is said, not what is spoken of. Where a previous
 // topic already resolved the pointer, that stands — except where the pointer
-// opens a new clause after a conjunction: a clause subject speaks of its own
-// signal first (`a bassoon is loud and it is old` is about the bassoon even
-// with a topic set), while a role-marked pointer (`from it`) keeps reaching
-// across signals. That a clause is a fresh start is the brain's; which words
-// join clauses is the language's.
-function intraSignal(roots, world) {
+// opens a new clause after a conjunction (its own signal first), or where it
+// names nobody in particular but its bearer holds exactly one kind while the
+// speaker's own (a third person is neither who spoke nor who was spoken to).
+// A role-marked pointer (`from it`) always keeps reaching across signals:
+// what a word is marked for beats recency, in this signal or any other. That
+// a clause is a fresh start, and that marked words keep their mark, is the
+// brain's; which words join and which mark is the language's.
+function intraSignal(roots, world, langs, at) {
   if (!world) return roots;
   const a = world.anchors || {};
   if (a.thing == null) return roots;
@@ -312,6 +314,20 @@ function intraSignal(roots, world) {
       ),
     );
   };
+  const speakerSide = (id) =>
+    id != null &&
+    at != null &&
+    ((at.from != null && (id === at.from || world.isA(id, at.from))) ||
+      (at.to != null && (id === at.to || world.isA(id, at.to))));
+  const heldKinds = (id) => {
+    const held = [];
+    if (id == null) return held;
+    for (const rel of [a.has, a.hold]) {
+      if (rel == null) continue;
+      for (const of of world.linked(id, rel)) if (!held.includes(of)) held.push(of);
+    }
+    return held;
+  };
   return roots.map((n, i) => {
     const t = thoughtOf(n);
     if (!t || t.marks !== 'spoken' || t.person !== 'third') {
@@ -321,10 +337,18 @@ function intraSignal(roots, world) {
     // A pointer already holding a result value is resolved; the current tree
     // must not steal it back to a neighbour.
     if (t.concept == null && t.value != null) return n;
-    if (seen.length === 0) return n;
+    if (seen.length === 0 && t.concept == null) return n;
     if (t.concept != null) {
       const prev = i > 0 ? posOf(roots[i - 1]) : [];
-      if (!prev.includes('conjunction')) return n;
+      if (prev.includes('conjunction')) {
+        if (seen.length > 0) return rewrite(n, seen[seen.length - 1]);
+        return n;
+      }
+      // Role-marked first: `from it` is its source wherever it stands.
+      if (langs && markerFor(roots, i, markingSide(world, langs), roleOn)) return n;
+      const held = speakerSide(t.concept) ? heldKinds(t.concept) : [];
+      if (held.length === 1) return rewrite(n, held[0]);
+      return n;
     }
     return rewrite(n, seen[seen.length - 1]);
   });
@@ -432,10 +456,13 @@ function pointedAt(word, at, world) {
       if (topics.length > 0) return word.proximity === 'far' ? topics[topics.length - 1] : topics[0];
     }
     // The focus head first: a worked result or held kind outranks the older
-    // topic. Non-id heads (bare values) carry no term and are read for value
+    // topic — but never a doing. An action-kind head would resolve to one of
+    // its occurrences below, pointing at history instead of the topic.
+    // Non-id heads (bare values) carry no term and are read for value
     // separately; the topic id stays the fallback.
     const head = at && Array.isArray(at.focus) ? at.focus[0] : undefined;
-    if (typeof head === 'number') return head;
+    const action = world && world.anchors ? world.anchors.action : null;
+    if (typeof head === 'number' && !(action != null && world && world.isA(head, action))) return head;
     return (at && at.spoken) ?? null;
   }
   // A word standing for the last action: what was just done, repeated. The
@@ -478,23 +505,6 @@ function focusValue(word, at) {
 // A bare third-person pointer on speaker-side focus stands for what is held,
 // not who holds it — the same shift judge applies to bare identity questions,
 // but here at the word, so actions (`wash them`) reach the held kind too.
-function focusedSpoken(word, resolved, at, world) {
-  if (!word || word.marks !== 'spoken' || word.person !== 'third') return resolved;
-  if (resolved == null || !world || !at) return resolved;
-  if (at.from == null && at.to == null) return resolved;
-  const speakerSide =
-    (at.from != null && (resolved === at.from || world.isA(resolved, at.from))) ||
-    (at.to != null && (resolved === at.to || world.isA(resolved, at.to)));
-  if (!speakerSide) return resolved;
-  const a = world.anchors || {};
-  const held = [];
-  for (const rel of [a.has, a.hold]) {
-    if (rel == null) continue;
-    for (const of of world.linked(resolved, rel)) if (!held.includes(of)) held.push(of);
-  }
-  return held.length === 1 ? held[0] : resolved;
-}
-
 function given(word, at) {
   return (at && at.names && at.names[word.text]) || {};
 }
@@ -1495,6 +1505,46 @@ function judge(roots, world, mood, langs, sent) {
           }),
         ]),
       ];
+    }
+
+    // Partitive: `how many of them` counts the one kind named against whoever
+    // was spoken of holding it. The relation says possession (`of` is having);
+    // the bearer is the first individual in focus, else whoever was spoken
+    // of — never guessed. The kind is what its bearer holds where one, else
+    // what was named (a bare pointer names nothing on its own). Nothing held
+    // answers nothing, falling through to the kind-alone case below.
+    if (rel >= 0 && things.length <= 1 && sent && (sent.spoken != null || (sent.focus || []).length > 0)) {
+      const named = conceptOf(said[rel]);
+      if (named === a.has || named === a.hold) {
+        const pool = Array.isArray(sent.focus) ? sent.focus : [];
+        const inFocus = pool.find((id) => typeof id === 'number' && world.isIndividual(id));
+        const one = (term) => (world.isIndividual(term) ? term : (world.oneOf(term) ?? term));
+        const bearer = inFocus ?? (sent.spoken != null ? one(sent.spoken) : null);
+        const heldHere = [];
+        if (bearer != null) {
+          for (const r of [a.has, a.hold]) {
+            if (r == null) continue;
+            for (const of of world.linked(bearer, r)) if (!heldHere.includes(of)) heldHere.push(of);
+          }
+        }
+        const of = (heldHere.length === 1 ? heldHere[0] : null) ?? (things.length === 1 ? conceptOf(things[0]) : null);
+        const howMany = bearer == null || of == null ? null : (world.held(bearer, named, of) ?? heldUnder(bearer, of, world));
+        if (howMany != null) {
+          const total = world.termFor(howMany);
+          return [
+            withBranch(root, [
+              ...root.branch,
+              node('count', total == null ? 'beyond' : 'counted', [], {
+                of,
+                held: bearer,
+                members: howMany,
+                total,
+                when: a.now,
+              }),
+            ]),
+          ];
+        }
+      }
     }
 
     // Asked how many of a kind there are, with nothing said of whose, the

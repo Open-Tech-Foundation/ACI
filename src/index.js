@@ -107,6 +107,9 @@ export function openBrain(url) {
   async function brain(input, circumstance) {
     const thread = (circumstance && circumstance.conversation) ?? ALONE;
     const held = threads.get(thread) || {};
+    // Who spoke, and who was spoken to, arrive with each signal or not at
+    // all: the runtime never carries them across signals. What was spoken of,
+    // the names given, and the focus list are the thread's to keep.
     const said = {
       spoken: held.spoken ?? null,
       focus: held.focus ?? (held.spoken != null ? [held.spoken] : []),
@@ -117,7 +120,12 @@ export function openBrain(url) {
     const result = brainFrom(input, knowledge, said);
     const standing = [...(held.told || [])];
     if (result.told && !standing.includes(result.told)) standing.push(result.told);
-    threads.set(thread, { spoken: result.spoken, focus: result.focus, names: result.names, told: standing });
+    threads.set(thread, {
+      spoken: result.spoken,
+      focus: result.focus,
+      names: result.names,
+      told: standing,
+    });
 
     // What it agreed to follow, brought round again now something has moved.
     // The brain holds no instruction; it is asked afresh, and where it can act
