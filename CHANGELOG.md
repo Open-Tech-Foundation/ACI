@@ -78,6 +78,11 @@ All notable changes to this project are documented in this file.
   against, absent — answering like any question and asserting nothing.
   Telling an idea, or asking with none in mind, stays unanswered.
 
+- **Definite accommodation.** `the` with nothing to be the of yet makes one
+  where state is given (`the library has 12 books` learns) — making one is
+  not picking. Several, and there is no `the` (still unsure); `the` reuses
+  the one while `a` makes another. Spec example updated.
+
 - **A bare pointer voices nothing.** `i`/`you`/`it` standing alone no longer
   recite dictionary meanings (`I recognise "the one it came from"`).
   Counts and confirms of where one lands still speak; a pointer to an

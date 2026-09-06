@@ -478,11 +478,13 @@ and in `en.json` it is `a` / `an` against `the`. (`"unknown"` marks a hole, and
 > a basket has three apple          made basket#308
 > a basket has two apple            made basket#309 — another basket
 > the basket has how many apple?    I don't know.   two of them, and no way to pick
+> the library has 12 books          made library#310 — none to pick between
 ```
 
 Nothing exists once merely by being spoken of: a claim about kind
 (`"a basket is an object?"`) marks nothing and makes nothing. An individual is
-made only where state is given to it.
+made only where state is given to it. `the` accommodates where nothing is yet
+— making one is not picking — and refuses where several are.
 
 ### Pointing
 

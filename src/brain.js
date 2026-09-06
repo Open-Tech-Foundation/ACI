@@ -2336,13 +2336,17 @@ function valueBeside(said, from, step, world) {
 
 // The thing that bears the state: the one of this kind already spoken of, or a
 // new one. A kind holds nothing — only something that exists once does.
+// `the` accommodates where nothing is yet: making one is not picking, where
+// there is nothing to pick between. Several, and there is no *the* to mean.
 function bearerOf(kind, world, mark) {
   if (world.isIndividual(kind)) return { id: kind, made: false };
   if (mark === 'new') return { id: world.nextId(), of: kind, made: true };
   const one = world.oneOf(kind);
-  // Meaning the one already spoken of, where there is none or more than one,
-  // leaves nothing to mean. The brain does not pick.
-  if (mark === 'known') return one == null ? null : { id: one, made: false };
+  if (mark === 'known') {
+    if (one != null) return { id: one, made: false };
+    if (world.individualsOf(kind).length === 0) return { id: world.nextId(), of: kind, made: true };
+    return null;
+  }
   if (one != null) return { id: one, made: false };
   return { id: world.nextId(), of: kind, made: true };
 }
