@@ -78,6 +78,11 @@ All notable changes to this project are documented in this file.
   against, absent — answering like any question and asserting nothing.
   Telling an idea, or asking with none in mind, stays unanswered.
 
+- **Doubling and halving are worked.** New innate unary ops with world terms
+  and anchors (`double 5` → ten, `halve 9` → 4.5, `half of 10` → five);
+  grammar voices function-led partitives, and a bare operation's `of` reads
+  as syntax rather than a joint. Exact in whole parts like the other four.
+
 - **Modals join doings.** Grammar binds `modal verb` predicates and fronted
   `modal subject verb` questions, so `a cat can swim` is checked
   arm's-length like any modal claim — taken in never, unknown no longer.

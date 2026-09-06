@@ -9735,7 +9735,8 @@
     "why": {
       "pos": "interrogative",
       "meaning": "why",
-      "marks": "unknown"
+      "marks": "unknown",
+      "on": 247
     },
     "who": {
       "pos": "interrogative",
@@ -17162,6 +17163,21 @@
       "concept": 294,
       "names": false,
       "when": "past"
+    },
+    "double": {
+      "pos": "function",
+      "meaning": "double of",
+      "concept": 2818
+    },
+    "half": {
+      "pos": "function",
+      "meaning": "half of",
+      "concept": 2819
+    },
+    "halve": {
+      "pos": "function",
+      "meaning": "half of",
+      "concept": 2819
     }
   },
   "marking": "after",
@@ -17300,7 +17316,9 @@
           "subject verb subject preposition subject",
           "subject verb subject",
           "interrogative quantifier subject verb sentence",
-          "modal subject verb"
+          "modal subject verb",
+          "interrogative verb article noun verbComplement",
+          "function preposition subject"
         ]
       },
       "clause": {
@@ -17334,7 +17352,8 @@
           "subject verb subject preposition subject",
           "subject verb subject",
           "interrogative quantifier subject verb sentence",
-          "modal subject verb"
+          "modal subject verb",
+          "function preposition subject"
         ]
       },
       "subject": {

@@ -1730,6 +1730,20 @@ function judge(roots, world, mood, langs, sent) {
   // question asked of each, same as "1 and 2 and 3 are what" is three answers
   // held together, not one. The term nearest the hole is not privileged: a
   // question puts its hole wherever its language likes.
+  // A why-hole over a full predication asks across causes, and the brain
+  // keeps no causal memory: the signal is unanswered rather than answered
+  // about kinds. Bare `why is a cat` still asks like what does.
+  if (
+    holes.some((n) => onOf(n) != null && onOf(n) === a.cause) &&
+    (findBranch(root, 'verbComplement')?.branch || []).some((n) => conceptOf(n) != null)
+  ) {
+    return [
+      withBranch(root, [
+        ...root.branch,
+        node('standing', 'absent', [], { subject: null, relation: null, object: null, negated: false }),
+      ]),
+    ];
+  }
   if (holes.length > 0 && terms.length >= 1) {
     const nodes = [];
     const asked = terms.flatMap((t) => membersFor(t, world, sent));
@@ -1744,7 +1758,9 @@ function judge(roots, world, mood, langs, sent) {
       // relation, read out of memory. Nothing about it is special to the engine.
       // Where the hole said what kind of answer it wants, only that kind is an
       // answer. Everything else the thing is remains true and is not the reply.
-      const of = asking.size === 1 ? [...asking][0] : null;
+      // A cause sought (`why`) never filters kinds: full predications return
+      // earlier as unanswerable, and bare ones ask like what does.
+      const of = asking.size === 1 && ![...asking].includes(a.cause) ? [...asking][0] : null;
       let found = reached(subject, relation, world).filter(
         (t) => of == null || world.isA(t, of),
       );
@@ -2301,6 +2317,16 @@ const exactly = (work) => (x, y) => {
   }
 };
 
+// One arithmetic act on one number, worked in whole parts like the four with
+// exact answers: doubling and halving always terminate.
+const whole = (work, x) => {
+  try {
+    return work(new Decimal(x)).toNumber();
+  } catch {
+    return null;
+  }
+};
+
 const OPERATIONS = [
   ['plus', 2, exactly((x, y) => x.add(y))],
   ['minus', 2, exactly((x, y) => x.subtract(y))],
@@ -2315,6 +2341,8 @@ const OPERATIONS = [
   ['cosine', 1, (x) => Math.cos(x)],
   ['tangent', 1, (x) => finite(Math.tan(x))],
   ['magnitude', 1, (x) => Math.abs(x)],
+  ['double', 1, (x) => whole((d) => d.multiply(2), x)],
+  ['halve', 1, (x) => whole((d) => d.divide(2), x)],
 ];
 
 function finite(value) {
@@ -2651,6 +2679,15 @@ function namedRelation(said, world, claims, asking) {
     if (operates(conceptOf(said[i]), world) != null) {
       if (worked < 0 && nearest(said, i, -1, claims)) worked = i;
       continue;
+    }
+    // `of` after a bare operation is its syntax, not a joint: `half of 10`
+    // works the operation out rather than joining the operation to ten.
+    // Anything else standing before the `of` keeps it a joint.
+    if (conceptOf(said[i]) === a.has || conceptOf(said[i]) === a.hold) {
+      const back = nearest(said, i, -1, claims);
+      if (back && operates(conceptOf(back), world) != null && !nearest(said, said.indexOf(back), -1, claims)) {
+        continue;
+      }
     }
     // Something on each side for it to hold between — or, where a signal turns
     // its joint to the front, two things after it and none before, which is
