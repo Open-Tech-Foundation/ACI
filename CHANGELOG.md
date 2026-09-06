@@ -78,6 +78,11 @@ All notable changes to this project are documented in this file.
   against, absent — answering like any question and asserting nothing.
   Telling an idea, or asking with none in mind, stays unanswered.
 
+- **Repair repeats the topic.** Asking what was said (`what did you say?`,
+  however inflected) answers with the thing in mind — never its kind, never
+  a guess — where any communication doing meets a hole. Nothing in mind
+  answers nothing. Runs before holes are answered one apiece.
+
 - **`that` points as well as subordinates; `this`/`that` rank by proximity.**
   `that` holds two readings settled by what follows (a claim keeps the
   complementizer, otherwise it is a far pointer); `this`/`these` read near,

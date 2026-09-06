@@ -1361,6 +1361,26 @@ function judge(roots, world, mood, langs, sent) {
   // which thing played it: `who kicked the ball` asks after the one who did
   // it. The brain looks through what it was told happened, and answers with
   // whatever played the part the hole stands in.
+  // Repair (`what did you say?`): asking what was said repeats the topic in
+  // mind — never its kind, and never a guess. Any communication doing with a
+  // hole asks it, asked or told; with nothing in mind there is nothing to
+  // repeat. Runs before holes are answered one apiece, which would otherwise
+  // report on the words instead of repeating the topic.
+  if (holes.length > 0 && said.some((n) => reaches(n, a.communication, world))) {
+    const focus = sent && Array.isArray(sent.focus) ? sent.focus : [];
+    const thing = world ? (world.anchors || {}).thing : null;
+    const topic = focus.find(
+      (id) => typeof id === 'number' && (thing == null || world.isA(id, thing)),
+    );
+    if (topic == null) return roots;
+    return [
+      withBranch(root, [
+        ...root.branch,
+        node('answer', 'link', [], { subject: null, relation: null, found: [topic] }),
+      ]),
+    ];
+  }
+
   const asked = holes.length > 0 ? partAsked(said, world, claims, markingSide(world, langs), partsSide(langs)) : null;
   if (asked) return [withBranch(root, [...root.branch, asked])];
 
