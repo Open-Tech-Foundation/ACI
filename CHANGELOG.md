@@ -78,6 +78,13 @@ All notable changes to this project are documented in this file.
   against, absent — answering like any question and asserting nothing.
   Telling an idea, or asking with none in mind, stays unanswered.
 
+- **Agreement with a denial: `neither` copies it onto a new agent.**
+  The `neither` term is never a doer — it drops from the parts, and a lone
+  target left agentless by inversion becomes the agent. Combined with the
+  prior-action copy, `nora did not wash a pan / neither did theo` records
+  theo's denied doing. Denied occurrences go on the record as not having
+  happened, and never answer as if they did.
+
 - **Properties in object place take no article.** `a tuba is loud`, never
   `a loud`: the claim frame no longer counts a property as one of a kind.
   Subject place is untouched — what a thing has been called stays with it,

@@ -2194,6 +2194,16 @@ function held(holder, about, said, negated, when, world) {
   });
 }
 
+// The `neither` term is never a doer: it drops from the parts, and a lone
+// target left agentless by inversion (`neither did theo`) is the new agent.
+function demoteNeither(stood, a) {
+  const fallen = stood.filter((p) => p.of !== a.neither);
+  if (fallen.some((p) => p.role === a.agent)) return fallen;
+  const alone = fallen.filter((p) => p.role === a.target);
+  if (alone.length === 1) return [{ ...alone[0], role: a.agent }];
+  return fallen;
+}
+
 // The latest occurrence of an action: the highest id among its individuals —
 // ids grow as things are learned, so the same signals always pick the same
 // occurrence. Parts ride over by role; what the new signal names wins.
@@ -2232,14 +2242,19 @@ function act(said, claims, world, side, sides) {
   if (named < 0) return null;
 
   const stood = rolesIn(said, named, claims, world, side, sides);
-  if (stood.length === 0 && markOn(said[named]) !== 'prior') return null;
+  // Agreement with a denial (`neither did theo`): the `neither` term is never
+  // a doer — it drops out, and a lone target left without an agent is the new
+  // agent by inversion. Elsewhere the term claims like any other.
+  const echo = a.neither != null && said.some((n, i) => i !== named && conceptOf(n) === a.neither);
+  const parties = echo ? demoteNeither(stood, a) : stood;
+  if (parties.length === 0 && markOn(said[named]) !== 'prior') return null;
   // Doing again takes what the last doing took, all but who newly does it:
   // unspoken parts ride over from the latest occurrence of the same action,
   // and only what the signal names is its own.
   const stoodWith =
     markOn(said[named]) === 'prior'
-      ? [...stood, ...missingFrom(priorEvent(conceptOf(said[named]), world), stood, world)]
-      : stood;
+      ? [...parties, ...missingFrom(priorEvent(conceptOf(said[named]), world), parties, world)]
+      : parties;
   if (stoodWith.length === 0) return null;
 
   // A thing spoken of as one of its kind — `a movie` — is one movie and not
@@ -2291,12 +2306,16 @@ function act(said, claims, world, side, sides) {
 
   // What happened is a thing that happened once: it is of its kind, it has the
   // parts things played in it, and it has a moment. Nothing new was needed to
-  // hold it — an event is an individual like any other.
+  // hold it — an event is an individual like any other. Denied or echoed, it
+  // goes on the record as not having happened: agreement with a denial is a
+  // denial of its own.
+  const denied = said.some(negatesOn) || (a.neither != null && said.some((n, i) => i !== named && conceptOf(n) === a.neither));
   const event = node('event', `${world.term(action).name}#${happened}`, [], {
     id: happened,
     action,
     at,
     when: whenIn(said, world),
+    not: denied,
     parts,
   });
 
@@ -2518,9 +2537,16 @@ function happened(said, world, claims, side, sides) {
   const action = conceptOf(said[acting]);
   const plays = (one, p) =>
     world.linked(one, p.role).some((t) => t === p.of || world.isA(t, p.of));
+  // A denied occurrence never answers as if it happened: what was recorded
+  // as not having happened is skipped, and only what did counts.
   const found = world
     .members(action, world.baseRelation)
-    .some((one) => world.isIndividual(one) && parts.every((p) => plays(one, p)));
+    .some(
+      (one) =>
+        world.isIndividual(one) &&
+        !world.denies(one, action, world.baseRelation) &&
+        parts.every((p) => plays(one, p)),
+    );
   // The standing is what was found, and nothing is said back: the claim frame
   // joins two things by a relation, and what happened is not that shape — it
   // is a doing with parts. Answering it is yes or no until there is a frame
@@ -2568,6 +2594,7 @@ function partAsked(said, world, claims, side, sides) {
   const found = [];
   for (const one of world.members(action, world.baseRelation)) {
     if (!world.isIndividual(one)) continue;
+    if (world.denies(one, action, world.baseRelation)) continue;
     // A part played by one of a kind answers to the kind: what the boy kicked
     // is what one boy kicked, and the signal need not say which one.
     const plays = (p) =>
