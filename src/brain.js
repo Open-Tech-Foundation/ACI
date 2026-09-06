@@ -233,7 +233,11 @@ function think(roots, langs, at, world) {
     const readOf = (word) => {
       // A bare result value in focus holds no term: the pointer stands for the
       // amount itself, so it names no term and the value below is what counts.
+      // A prior action resolves to its kind, never to an occurrence of it:
+      // `did` means washing, not one washing.
       const result = word ? focusValue(word, at) : null;
+      const pointed =
+        word && word.marks === 'prior' ? (pointedAt(word, at, world) ?? word.concept ?? null) : null;
       return {
       language: first.lang,
       wordKnown: Boolean(word) || read || called != null,
@@ -242,8 +246,8 @@ function think(roots, langs, at, world) {
       // and `wordKnown` stays false, because nothing knows it yet.
       pos: word ? word.pos : read ? lang.figuresPos : 'noun',
       meaning: word ? word.meaning : read || called != null ? String(n.state.identity) : null,
-      concept: result != null ? null : word
-        ? focusedSpoken(word, oneMeant(pointedAt(word, at), world) ?? word.concept, at, world)
+      concept: result != null ? null : pointed != null ? pointed : word
+        ? focusedSpoken(word, oneMeant(pointedAt(word, at, world), world) ?? word.concept, at, world)
         : read && world
           ? world.termFor(value)
           : called,
@@ -410,7 +414,7 @@ function below(sign, number, world) {
 // it is the language's (`marks`); what they land on is the circumstance of this
 // one signal — where it came from, where it went, and what was last spoken of.
 // Told none of them, the brain does not guess, and the word names nothing.
-function pointedAt(word, at) {
+function pointedAt(word, at, world) {
   if (word.marks === 'from') return (at && at.from) ?? null;
   if (word.marks === 'to') return (at && at.to) ?? null;
   if (word.marks === 'spoken') {
@@ -420,6 +424,19 @@ function pointedAt(word, at) {
     const head = at && Array.isArray(at.focus) ? at.focus[0] : undefined;
     if (typeof head === 'number') return head;
     return (at && at.spoken) ?? null;
+  }
+  // A word standing for the last action: what was just done, repeated. The
+  // record holds every occurrence stamped; the latest one is what `did`
+  // means. That repetition exists is the brain's; which word says it is the
+  // language's.
+  if (word.marks === 'prior') {
+    const focus = at && Array.isArray(at.focus) ? at.focus : [];
+    const action = world && world.anchors ? world.anchors.action : null;
+    if (action != null && world) {
+      const found = focus.find((id) => typeof id === 'number' && world.isA(id, action));
+      if (found != null) return found;
+    }
+    return null;
   }
   // A word given a name in this conversation stands for whatever it was given.
   // Which word was given what is the circumstance's, the same as the rest.
@@ -484,7 +501,7 @@ function solve(roots, world, langs, mood) {
   // Whose a thing is settles what it names, and a word nothing knows is named
   // only where it stands in a claim — so whose comes first, or a claim resting
   // on a pointer that landed on nothing would still name something.
-  const settled = calling(whose(settle(elliptical(roots), world), world, langs, mood), world, mood);
+  const settled = calling(whose(settle(auxiliary(elliptical(roots)), world), world, langs, mood), world, mood);
   return settled.map((n, at) => {
     if (!n.state.exists) {
       return withBranch(n, [...n.branch, node('response', 'nothing', [])]);
@@ -675,6 +692,26 @@ function elliptical(roots) {
       n.branch.map((b) =>
         b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: anaphora }) : b,
       ),
+    );
+  });
+}
+
+// Sentence-initial `did` asks about the past; after its subject it repeats
+// it. Which slot `did` takes is word order — the language puts the auxiliary
+// first — so the first word keeps its listed reading and later ones take the
+// prior-action one. The decided reading replaces the rest, keeping `settle`
+// from re-reading a word already settled by position.
+function auxiliary(roots) {
+  return roots.map((n, i) => {
+    const t = findBranch(n, 'thought');
+    const ways = t && t.state.ways ? t.state.ways : null;
+    if (!ways || ways.length < 2) return n;
+    const prior = ways.findIndex((w) => w && w.marks === 'prior');
+    if (prior < 0) return n;
+    const thought = ways[i === 0 ? 0 : prior];
+    return withBranch(
+      n,
+      n.branch.map((b) => (b.kind === 'thought' ? withBranch(b, b.branch, { thought }) : b)),
     );
   });
 }
@@ -2096,6 +2133,32 @@ function held(holder, about, said, negated, when, world) {
   });
 }
 
+// The latest occurrence of an action: the highest id among its individuals —
+// ids grow as things are learned, so the same signals always pick the same
+// occurrence. Parts ride over by role; what the new signal names wins.
+function priorEvent(action, world) {
+  if (action == null || !world) return null;
+  let latest = null;
+  for (const one of world.members(action, world.baseRelation)) {
+    if (!world.isIndividual(one)) continue;
+    if (latest == null || one > latest) latest = one;
+  }
+  return latest;
+}
+
+function missingFrom(event, stood, world) {
+  if (event == null || !world) return [];
+  const a = world.anchors || {};
+  const has = new Set(stood.map((p) => p.role));
+  const out = [];
+  for (const role of [a.agent, a.target, a.source, a.destination, a.instrument]) {
+    if (role == null || has.has(role)) continue;
+    const [of] = world.linked(event, role);
+    if (of != null) out.push({ role, of, amount: null });
+  }
+  return out;
+}
+
 // Carrying out an action on what a thing holds. The world links an action to
 // the operation it causes; the brain works the operation and keeps the result.
 function act(said, claims, world, side, sides) {
@@ -2108,7 +2171,15 @@ function act(said, claims, world, side, sides) {
   if (named < 0) return null;
 
   const stood = rolesIn(said, named, claims, world, side, sides);
-  if (stood.length === 0) return null;
+  if (stood.length === 0 && markOn(said[named]) !== 'prior') return null;
+  // Doing again takes what the last doing took, all but who newly does it:
+  // unspoken parts ride over from the latest occurrence of the same action,
+  // and only what the signal names is its own.
+  const stoodWith =
+    markOn(said[named]) === 'prior'
+      ? [...stood, ...missingFrom(priorEvent(conceptOf(said[named]), world), stood, world)]
+      : stood;
+  if (stoodWith.length === 0) return null;
 
   // A thing spoken of as one of its kind — `a movie` — is one movie and not
   // movies. Where someone did something to it, that one is made: what happened
@@ -2118,8 +2189,8 @@ function act(said, claims, world, side, sides) {
   let next = world.nextId();
   const called = [];
   const parts = (acting < 0
-    ? stood
-    : stood.map((p) => {
+    ? stoodWith
+    : stoodWith.map((p) => {
         if (p.mark !== 'new' || p.of == null) return p;
         if (!world.isA(p.of, a.thing) || world.isIndividual(p.of)) return p;
         const id = next;
@@ -2539,10 +2610,13 @@ function membersFor(term, world, sent) {
     return [term];
   }
   const focus = sent && Array.isArray(sent.focus) ? sent.focus : [];
-  // Bare result values hold no term and join no claim as topics; plural
-  // expansion is over things spoken of.
+  // Bare result values hold no term and join no claim as topics; actions join
+  // no `they` — a doing is repeated, not pointed at. Plural expansion is over
+  // things spoken of.
   const members = focus.filter((id) => {
     if (typeof id !== 'number') return false;
+    const thing = world ? (world.anchors || {}).thing : null;
+    if (thing != null && world && !world.isA(id, thing)) return false;
     if (sent.from != null && (id === sent.from || (world && world.isA(id, sent.from)))) return false;
     return !(sent.to != null && (id === sent.to || (world && world.isA(id, sent.to))));
   });
@@ -3311,9 +3385,15 @@ function keep(found, of) {
 function focusOf(roots, at, world) {
   const primary = spokenOf(roots, at, world);
   const sum = [];
+  const actions = [];
   const gather = (n) => {
     if (n.kind === 'sum' && n.name === 'worked') {
       sum.push(n.state.term ?? { value: n.state.value });
+    }
+    // What was done stays repeatable: the action of every occurrence, so a
+    // later `did` means the latest one. Individuals, not kinds.
+    if (n.kind === 'event' && typeof n.state.action === 'number') {
+      if (!actions.includes(n.state.action)) actions.push(n.state.action);
     }
     (n.branch || []).forEach(gather);
   };
@@ -3332,7 +3412,7 @@ function focusOf(roots, at, world) {
     typeof x === 'number' || typeof y === 'number'
       ? x === y
       : (x && x.value) === (y && y.value);
-  for (const id of [...sum, primary, ...held, ...prior]) {
+  for (const id of [...sum, primary, ...held, ...actions, ...prior]) {
     if (id != null && !out.some((had) => same(had, id))) out.push(id);
   }
   return out.slice(0, 8);

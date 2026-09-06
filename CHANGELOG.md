@@ -71,6 +71,15 @@ All notable changes to this project are documented in this file.
   both together. Single-topic and speaker-side behavior is unchanged, and
   events still take one target each.
 
+- **Verb anaphora: `did` repeats the last action.** `did` holds two
+  readings (sentence-initial auxiliary, post-subject prior-action pointer to
+  a new `prior` mark); position settles which, and settling drops the other
+  so nothing re-reads it. The pointer resolves to the latest action-kind in
+  focus — kinds, never occurrences — and unspoken parts ride over from that
+  action's latest occurrence with the new agent (`pippa washed a pot / miro
+  did too` records miro washing it). Grammar voices `did too` via a bare
+  `degree` complement.
+
 - **Named givings and worked sums join focus.** `x is 5` now puts five in
   mind (naming feeds the topic, not just the conversation record), so a
   following `what is it?` resolves instead of landing nowhere. Worked sums

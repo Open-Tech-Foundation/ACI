@@ -13,8 +13,9 @@ function fail(where, why) {
 }
 
 // What a word may mark: which one is meant, which side of the conversation, or
-// the thing the conversation was last about.
-const MARKS = ['new', 'known', 'unknown', 'from', 'to', 'spoken', 'named'];
+// the thing the conversation was last about. `prior` stands for the last
+// action — what was just done, repeated.
+const MARKS = ['new', 'known', 'unknown', 'from', 'to', 'spoken', 'named', 'prior'];
 const PERSONS = ['first', 'second', 'third'];
 const NUMBERS = ['singular', 'plural'];
 
@@ -395,8 +396,9 @@ function checkWord(info, w) {
     fail(w, `marks must be one of ${MARKS.map((m) => `"${m}"`).join(', ')}`);
   }
   // A pointer names no term: what it points at is the circumstance of the
-  // signal it arrived in, and no world can hold that.
-  if ((info.marks === 'from' || info.marks === 'to') && info.concept !== undefined) {
+  // signal it arrived in, and no world can hold that. `prior` is one: the last
+  // action lives in the record, not in any file.
+  if ((info.marks === 'from' || info.marks === 'to' || info.marks === 'prior') && info.concept !== undefined) {
     fail(w, 'a word that points names no term of its own');
   }
 }

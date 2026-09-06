@@ -15351,11 +15351,19 @@
       "pos": "auxiliary",
       "meaning": "does"
     },
-    "did": {
-      "pos": "auxiliary",
-      "meaning": "did",
-      "when": "past"
-    },
+    "did": [
+      {
+        "pos": "auxiliary",
+        "meaning": "did",
+        "when": "past"
+      },
+      {
+        "pos": "verb",
+        "meaning": "did",
+        "marks": "prior",
+        "when": "past"
+      }
+    ],
     "can": {
       "pos": "modal",
       "meaning": "can"
@@ -17366,7 +17374,8 @@
           "preposition subject",
           "preposition interrogative",
           "complement conjunction verbComplement",
-          "complementizer sentence"
+          "complementizer sentence",
+          "degree"
         ]
       },
       "complement": {
