@@ -17178,6 +17178,22 @@
       "pos": "function",
       "meaning": "half of",
       "concept": 2819
+    },
+    "thank": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "thank",
+      "concept": 2820
+    },
+    "thanks": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "thank",
+      "concept": 2820
     }
   },
   "marking": "after",

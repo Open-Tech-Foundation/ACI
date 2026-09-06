@@ -78,6 +78,10 @@ All notable changes to this project are documented in this file.
   against, absent — answering like any question and asserting nothing.
   Telling an idea, or asking with none in mind, stays unanswered.
 
+- **Thanks is a doing.** `thank`/`thanks` name a plain action, so `thank you`
+  is heard and taken in as an occurrence instead of dying unheard. No new
+  reply frames: acknowledging thanks stays open.
+
 - **Contractions derive denied.** `n't` strips to its stem carrying denial
   (`don't` is `do` denied — `can't`/`won't` stay irregulars), and grammar
   binds subject-led auxiliary shapes (`i don't like it` records the denied
