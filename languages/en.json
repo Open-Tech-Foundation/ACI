@@ -10509,10 +10509,20 @@
       "person": "third",
       "number": "singular"
     },
-    "that": {
-      "pos": "complementizer",
-      "meaning": "that"
-    },
+    "that": [
+      {
+        "pos": "complementizer",
+        "meaning": "that"
+      },
+      {
+        "pos": "pronoun",
+        "meaning": "that",
+        "marks": "spoken",
+        "person": "third",
+        "number": "singular",
+        "proximity": "far"
+      }
+    ],
     "if": {
       "pos": "conditional",
       "meaning": "if"
@@ -17000,7 +17010,8 @@
         "pronoun"
       ],
       "meaning": "this",
-      "marks": "spoken"
+      "marks": "spoken",
+      "proximity": "near"
     },
     "these": {
       "pos": [
@@ -17010,7 +17021,8 @@
       "meaning": "these",
       "marks": "spoken",
       "person": "third",
-      "number": "plural"
+      "number": "plural",
+      "proximity": "near"
     },
     "those": {
       "pos": [
@@ -17020,7 +17032,8 @@
       "meaning": "those",
       "marks": "spoken",
       "person": "third",
-      "number": "plural"
+      "number": "plural",
+      "proximity": "far"
     },
     "movie": {
       "pos": "noun",

@@ -164,6 +164,7 @@ function recognizeLanguage(roots, langs) {
         on: word.on ?? null,
         person: word.person ?? null,
         number: word.number ?? null,
+        proximity: word.proximity ?? null,
       }));
       matching.push({
         lang: lang.data.name,
@@ -269,6 +270,8 @@ function think(roots, langs, at, world) {
       // reads third-person pointers as not the speaker nor who was spoken to.
       person: word ? word.person ?? null : null,
       number: word ? word.number ?? null : null,
+      // How near what the pointer points at stands. The language's to say.
+      proximity: word ? word.proximity ?? null : null,
       };
     };
     // A word that names more than one thing is thought of every way it may be
@@ -418,6 +421,16 @@ function pointedAt(word, at, world) {
   if (word.marks === 'from') return (at && at.from) ?? null;
   if (word.marks === 'to') return (at && at.to) ?? null;
   if (word.marks === 'spoken') {
+    // Nearer or farther topics first: `this` the nearest thing in mind,
+    // `that` the farthest. Ranks, never guesses: one topic answers either
+    // way. Words without proximity keep the head shortcut below.
+    if ((word.proximity === 'near' || word.proximity === 'far') && world) {
+      const thing = world.anchors ? world.anchors.thing : null;
+      const topics = (at && Array.isArray(at.focus) ? at.focus : []).filter(
+        (id) => typeof id === 'number' && (thing == null || world.isA(id, thing)),
+      );
+      if (topics.length > 0) return word.proximity === 'far' ? topics[topics.length - 1] : topics[0];
+    }
     // The focus head first: a worked result or held kind outranks the older
     // topic. Non-id heads (bare values) carry no term and are read for value
     // separately; the topic id stays the fallback.
@@ -501,7 +514,7 @@ function solve(roots, world, langs, mood) {
   // Whose a thing is settles what it names, and a word nothing knows is named
   // only where it stands in a claim — so whose comes first, or a claim resting
   // on a pointer that landed on nothing would still name something.
-  const settled = calling(whose(settle(anaphora(auxiliary(elliptical(roots))), world), world, langs, mood), world, mood);
+  const settled = calling(whose(settle(anaphora(auxiliary(elliptical(subordinate(roots, world)))), world), world, langs, mood), world, mood);
   return settled.map((n, at) => {
     if (!n.state.exists) {
       return withBranch(n, [...n.branch, node('response', 'nothing', [])]);
@@ -691,6 +704,53 @@ function elliptical(roots) {
       n,
       n.branch.map((b) =>
         b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: anaphora }) : b,
+      ),
+    );
+  });
+}
+
+// A word that subordinates or points (`that` does both) is settled by what
+// follows it: a claim after it — two things with something joining them —
+// keeps the complementizer, otherwise it points. Which words subordinate is
+// the language's; that a claim follows one is the brain's. Runs with the
+// other positional readings, before anything is named.
+function subordinate(roots, world) {
+  if (!world) return roots;
+  const a = world.anchors || {};
+  const pos = (n) => {
+    const t = findBranch(n, 'thought');
+    const p = t && t.state.thought ? t.state.thought.pos : null;
+    return p == null ? [] : Array.isArray(p) ? p : [p];
+  };
+  return roots.map((n, i) => {
+    const t = findBranch(n, 'thought');
+    const ways = t && t.state.ways ? t.state.ways : null;
+    if (!ways || ways.length < 2) return n;
+    const pro = ways.find(
+      (w) => w && w.marks === 'spoken' && (Array.isArray(w.pos) ? w.pos : [w.pos]).includes('pronoun'),
+    );
+    if (!pro) return n;
+    if (!ways.some((w) => w && (Array.isArray(w.pos) ? w.pos : [w.pos]).includes('complementizer'))) {
+      return n;
+    }
+    const rest = roots.slice(i + 1);
+    const things = rest.filter(
+      (r) => {
+        const th = findBranch(r, 'thought');
+        const c = th && th.state.thought ? th.state.thought.concept : null;
+        return c != null && world.isA(c, a.thing);
+      },
+    ).length;
+    const joint = rest.some((r) => {
+      const th = findBranch(r, 'thought');
+      const c = th && th.state.thought ? th.state.thought.concept : null;
+      return c != null && world.isA(c, a.relation);
+    });
+    if (things >= 2 && joint) return n;
+    return withBranch(
+      n,
+      n.branch.map((b) =>
+        b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: pro }) : b,
       ),
     );
   });

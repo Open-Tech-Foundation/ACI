@@ -78,6 +78,12 @@ All notable changes to this project are documented in this file.
   against, absent — answering like any question and asserting nothing.
   Telling an idea, or asking with none in mind, stays unanswered.
 
+- **`that` points as well as subordinates; `this`/`that` rank by proximity.**
+  `that` holds two readings settled by what follows (a claim keeps the
+  complementizer, otherwise it is a far pointer); `this`/`these` read near,
+  `those`/`that` far, over thing-topics in focus. `it`/`them` stay neutral.
+  Imperative pronoun objects (`put that…`) stay open.
+
 - **Told agreement re-offers the last idea as fact.** `i think so` lays the
   focused triple back through the fact machinery with its own denial —
   nothing new where it holds, contradiction refused where denied — and the

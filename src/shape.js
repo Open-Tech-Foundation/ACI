@@ -341,7 +341,7 @@ function checkWord(info, w) {
   if (!info || typeof info !== 'object' || Array.isArray(info)) fail(w, 'must be an object');
   onlyKeys(
     info,
-    ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'person', 'number', 'on', 'bare', 'choice'],
+    ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'person', 'number', 'on', 'bare', 'choice', 'proximity'],
     w,
   );
   // A word may be more than one part of speech — English says a walk and
@@ -371,6 +371,12 @@ function checkWord(info, w) {
   }
   if (info.number !== undefined && !NUMBERS.includes(info.number)) {
     fail(w, `number must be one of ${NUMBERS.map((n) => `"${n}"`).join(', ')}`);
+  }
+  // How near what a pointer points at stands: `this` the nearest topic,
+  // `that` the farthest. Near and far are the brain's to rank; which words
+  // stand where is the language's.
+  if (info.proximity !== undefined && info.proximity !== 'near' && info.proximity !== 'far') {
+    fail(w, 'proximity, where present, must be "near" or "far"');
   }
   // Another way to write a term is not what the term is called.
   if (info.names !== undefined && info.names !== false) {
