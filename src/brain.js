@@ -384,10 +384,9 @@ function reshaped(roots, world, langs) {
       continue;
     }
     out.push(here);
-    // Two number words side by side are one number: a round one and a smaller
-    // one after it are added, a smaller one before a round one multiplies it.
-    // Twenty five is twenty and five; two hundred is two of a hundred; and one
-    // hundred twenty five is all of that, taken as it is read.
+    // Two number words side by side are one number only where their language
+    // declares a matching reduction. The brain supplies adjacent values; the
+    // language supplies their order/divisibility constraints and operation.
     while (out.length > 1) {
       const joined = together(out[out.length - 2], out[out.length - 1], world, langs);
       if (!joined) break;
@@ -397,9 +396,8 @@ function reshaped(roots, world, langs) {
   return out;
 }
 
-// Two number words that are really one number, or nothing. Only words: a
-// language writes its numbers in words its own way, and figures are already
-// whole as written.
+// Two number words that their language reduces to one number, or nothing.
+// Only words: figures are already whole as written.
 function together(here, next, world, langs) {
   const left = inWords(here, world);
   const right = inWords(next, world);

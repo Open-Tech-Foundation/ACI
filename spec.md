@@ -41,7 +41,7 @@ What survives both is primitive, and only that may be written in code.
   double-counted, and event questions respect the event's stated time.
 - **Language independence:** grammar labels and particular words carry no hidden
   engine behavior; semantic metadata supplies whole-proposition boundaries,
-  positional readings and number-word composition.
+  contextual readings and number-word composition.
 - **Exact values:** exact arithmetic never crosses a lossy binary-number boundary.
 - **Immutable inputs:** assembly and reasoning never mutate authored or supplied
   source objects.
@@ -169,7 +169,12 @@ runtime — never the brain — does the reading.
     "vowel":       { "characters": "aeiou" },
     "punctuation": { "characters": ". , ! ? ; : ' \" - ( ) [ ]" }
   },
-  "numbers": { "composition": "multiplicative-additive" },
+  "numbers": {
+    "composition": [
+      { "order": "descending", "multipleOf": { "side": "left", "value": 10 }, "operation": "add" },
+      { "order": "ascending", "multipleOf": { "side": "right", "value": 10 }, "operation": "multiply" }
+    ]
+  },
   "unknown": { "pos": "noun" },    // parser position for a newly heard name
   "syntax": {                        // cognitive functions of parser positions
     "noun": "modifier",
@@ -250,10 +255,15 @@ each with its own `pos` and `concept` — a saw is a tool, and it is also what
 someone did with their eyes. Every reading is carried through `understand` and
 `think`; `solve` settles which.
 
-**Number-word composition belongs to the language.** Where `numbers.composition`
-is `multiplicative-additive`, adjacent number words compose in that language's
-declared way. The engine supplies the primitive act of composition but holds no
-English scale rule.
+**Number-word composition belongs to the language.** `numbers.composition` is
+an ordered list of rules over two adjacent word-values. A rule declares their
+`order` (`ascending`, `descending`, `equal` or `any`), may require one `side` to
+be `multipleOf` a positive exact value, and chooses the primitive `operation`
+(`add` or `multiply`). The first matching rule wins; none means the words remain
+separate. English declares descending multiples of ten as addition and
+ascending right-side multiples of ten as multiplication. The engine holds
+comparison, divisibility, exact addition and exact multiplication, but no
+English scale, base or named composition strategy.
 
 **A word may say which scale it compares on** (`on`): *heavier* is more, on
 weight.
@@ -843,8 +853,11 @@ sees it.
   takes and is not part of it, and the language already says which of its
   words are a thing's name and which are another way to write it.
 - **Two number words side by side may be one number.** The recognized language's
-  `numbers.composition` decides whether and how they compose; with
-  `multiplicative-additive`, `one hundred twenty five` is 125. Figures are whole
+  ordered `numbers.composition` rules decide whether and how they compose.
+  English declares that a descending multiple of ten adds and an ascending
+  right-side multiple of ten multiplies, so `one hundred twenty five` is 125.
+  Another language may declare another base, order and operation without a core
+  change. A composed result must remain an exact safe integer. Figures are whole
   as written and are never run together.
 
 A word may name **more than one thing** — a saw is a tool and it is also what

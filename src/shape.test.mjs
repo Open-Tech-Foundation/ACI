@@ -358,6 +358,34 @@ test("contextual reading constraints are closed and unambiguous", () => {
   );
 });
 
+test("number composition rules are closed and exact", () => {
+  const language = (composition) => ({
+    name: "test",
+    symbols: { letter: { characters: "x" } },
+    words: { x: { pos: "number", meaning: "x" } },
+    numbers: { composition },
+  });
+  const invalid = [
+    ["the former named strategy", "multiplicative-additive", "non-empty list"],
+    ["no rules", [], "non-empty list"],
+    ["unknown order", [{ order: "leftward", operation: "add" }], "order"],
+    ["unknown operation", [{ order: "any", operation: "subtract" }], "operation"],
+    ["zero divisor", [{
+      order: "any",
+      multipleOf: { side: "left", value: 0 },
+      operation: "add",
+    }], "positive safe integer"],
+    ["unknown side", [{
+      order: "any",
+      multipleOf: { side: "middle", value: 10 },
+      operation: "add",
+    }], "left or right"],
+  ];
+  for (const [name, composition, reason] of invalid) {
+    assert(refuses(name, { languages: [language(composition)] }).includes(reason), name);
+  }
+});
+
 test("classification cycles are refused at the knowledge door", () => {
   const msg = refuses("classification cycle", {
     world: {

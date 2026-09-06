@@ -140,3 +140,58 @@ test("nothing is derived from a word shorter than the ending", () => {
   });
   assertEquals(l.lookupWord("s")[0].meaning, "s");
 });
+
+test("number words compose by the language's ordered arithmetic rules", () => {
+  const l = fromData({
+    ...data,
+    numbers: {
+      composition: [
+        {
+          order: "descending",
+          multipleOf: { side: "left", value: 5 },
+          operation: "add",
+        },
+        {
+          order: "ascending",
+          multipleOf: { side: "right", value: 5 },
+          operation: "multiply",
+        },
+      ],
+    },
+  });
+  assertEquals(l.joinNumbers(15, 4), 19, "the declared base, not a built-in ten");
+  assertEquals(l.joinNumbers(3, 25), 75);
+  assertEquals(l.joinNumbers(14, 3), null, "no matching rule means two numbers remain two");
+});
+
+test("the first matching number rule is deterministic", () => {
+  const l = fromData({
+    ...data,
+    numbers: {
+      composition: [
+        { order: "equal", operation: "multiply" },
+        { order: "any", operation: "add" },
+        { order: "any", operation: "multiply" },
+      ],
+    },
+  });
+  assertEquals(l.joinNumbers(2, 3), 5);
+  assertEquals(l.joinNumbers(3, 3), 9);
+});
+
+test("number composition never returns an inexact integer", () => {
+  const l = fromData({
+    ...data,
+    numbers: { composition: [{ order: "any", operation: "multiply" }] },
+  });
+  assertEquals(l.joinNumbers(Number.MAX_SAFE_INTEGER, 2), null);
+  assertEquals(l.joinNumbers(2.5, 10), null);
+});
+
+test("the raw language adapter never interprets an invalid number rule", () => {
+  const l = fromData({
+    ...data,
+    numbers: { composition: [{ order: "sideways", operation: "subtract" }] },
+  });
+  assertEquals(l.joinNumbers(2, 2), null);
+});

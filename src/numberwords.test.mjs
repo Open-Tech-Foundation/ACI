@@ -1,5 +1,8 @@
 import { test, assert, assertEquals } from "runtime:test";
+import { file } from "runtime:fs";
 import { openBrain } from "./index.js";
+import { brainFrom } from "./brain.js";
+import { fromSources } from "./knowledge.js";
 
 // A store of its own, that nothing else can reach.
 const { brain, forget } = openBrain("sqlite::memory:");
@@ -47,4 +50,23 @@ test("figures are already whole as written, and are not run together", async () 
 test("a number the world never named is still a number", async () => {
   assertEquals((await fresh("twenty five")).expression.name, "count");
   await forget();
+});
+
+test("the complete brain follows another language's composition rules", async () => {
+  const world = await file(new URL('../data/world.json', import.meta.url).pathname).json();
+  const language = await file(new URL('../languages/en.json', import.meta.url).pathname).json();
+  language.words.quinz = language.words.fifteen;
+  language.words.quad = language.words.four;
+  delete language.words.fifteen;
+  delete language.words.four;
+  language.numbers.composition = [
+    {
+      order: "descending",
+      multipleOf: { side: "left", value: 5 },
+      operation: "add",
+    },
+  ];
+  const result = brainFrom("add quinz quad and one", fromSources({ world, languages: [language] }));
+  assertEquals(result.expression.name, "answer");
+  assertEquals(result.expression.state.says, "twenty");
 });

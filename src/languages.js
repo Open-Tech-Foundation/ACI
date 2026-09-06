@@ -132,16 +132,44 @@ function buildLanguage(data) {
     // English puts the doer first; a verb-final language does not.
     parts: data.parts || null,
     joinNumbers: (left, right) => {
-      if (!data.numbers || data.numbers.composition !== 'multiplicative-additive') return null;
-      const round = (value) => value >= 10 && value % 10 === 0;
-      return left > right && round(left)
-        ? left + right
-        : left < right && round(right)
-          ? left * right
-          : null;
+      if (
+        !Number.isSafeInteger(left) ||
+        !Number.isSafeInteger(right) ||
+        left < 1 ||
+        right < 1
+      ) return null;
+      const rules = data.numbers ? data.numbers.composition : null;
+      if (!Array.isArray(rules)) return null;
+      for (const rule of rules) {
+        if (!numberOrderMatches(rule.order, left, right)) continue;
+        if (rule.multipleOf) {
+          const { side, value: divisor } = rule.multipleOf;
+          if ((side !== 'left' && side !== 'right') || !Number.isSafeInteger(divisor) || divisor < 1) {
+            continue;
+          }
+          const value = side === 'left' ? left : right;
+          if (value % divisor !== 0) continue;
+        }
+        let value = null;
+        if (rule.operation === 'add') value = left + right;
+        else if (rule.operation === 'multiply') value = left * right;
+        else continue;
+        // Language rules may combine only exact whole values. A lossy result
+        // is no result, just as a lossy figure or world value is refused.
+        return Number.isSafeInteger(value) && value >= 0 ? value : null;
+      }
+      return null;
     },
     roles: symbolRoles(symbols),
   };
+}
+
+function numberOrderMatches(order, left, right) {
+  if (order === 'any') return true;
+  if (order === 'ascending') return left < right;
+  if (order === 'descending') return left > right;
+  if (order === 'equal') return left === right;
+  return false;
 }
 
 // How this language voices one of the brain's intents.

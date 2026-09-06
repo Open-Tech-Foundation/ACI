@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Number-word composition is a declarative reduction, not a named English
+  strategy.** The core no longer recognizes `multiplicative-additive` or
+  assumes that a round value is a multiple of ten. A language now supplies an
+  ordered list of rules over universal numeric primitives: relative order,
+  divisibility of either side, addition and multiplication. The first matching
+  rule wins and no match keeps the words separate. English declares its former
+  behavior in data; an end-to-end alternate vocabulary uses base-five grouping
+  without a core change. Invalid rules and inexact results are refused.
+
 - **Context chooses word readings through one language-neutral primitive.**
   Four separate paths for English `did`, elliptical `one`, dual-use `that` and
   idea-reference `so` are replaced by declarative `select` constraints in the

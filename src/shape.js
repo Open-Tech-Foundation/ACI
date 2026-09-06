@@ -311,8 +311,34 @@ export function checkLanguage(data, where = 'language') {
   if (data.numbers !== undefined) {
     if (!data.numbers || typeof data.numbers !== 'object') fail(at, 'numbers must be an object');
     onlyKeys(data.numbers, ['composition'], `${at} numbers`);
-    if (data.numbers.composition !== 'multiplicative-additive') {
-      fail(`${at} numbers`, 'composition must name a supported composition');
+    if (!Array.isArray(data.numbers.composition) || data.numbers.composition.length === 0) {
+      fail(`${at} numbers`, 'composition must be a non-empty list of rules');
+    }
+    for (const rule of data.numbers.composition) {
+      const r = `${at} numbers composition`;
+      if (!rule || typeof rule !== 'object' || Array.isArray(rule)) {
+        fail(r, 'every rule must be an object');
+      }
+      onlyKeys(rule, ['order', 'multipleOf', 'operation'], r);
+      if (!['ascending', 'descending', 'equal', 'any'].includes(rule.order)) {
+        fail(r, 'order must be ascending, descending, equal, or any');
+      }
+      if (!['add', 'multiply'].includes(rule.operation)) {
+        fail(r, 'operation must be add or multiply');
+      }
+      if (rule.multipleOf !== undefined) {
+        const multiple = rule.multipleOf;
+        if (!multiple || typeof multiple !== 'object' || Array.isArray(multiple)) {
+          fail(r, 'multipleOf must be an object');
+        }
+        onlyKeys(multiple, ['side', 'value'], `${r} multipleOf`);
+        if (multiple.side !== 'left' && multiple.side !== 'right') {
+          fail(r, 'multipleOf.side must be left or right');
+        }
+        if (!Number.isSafeInteger(multiple.value) || multiple.value < 1) {
+          fail(r, 'multipleOf.value must be a positive safe integer');
+        }
+      }
     }
   }
 
