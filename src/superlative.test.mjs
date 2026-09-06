@@ -27,3 +27,31 @@ test("an ending that reaches nothing is unheard, not neared", async () => {
   assertEquals((await brain("the xqest wren eats trout")).expression.name, "unheard");
   await forget();
 });
+
+test("tallest reaches tall", async () => {
+  await forget();
+  assertEquals((await brain("the tallest pig is quiet")).expression.name, "learn");
+  assertEquals((await brain("is a pig quiet?")).expression.name, "affirm");
+  await forget();
+});
+
+test("heaviest reaches heavy through iest", async () => {
+  await forget();
+  assertEquals((await brain("the heaviest pig is quiet")).expression.name, "learn");
+  assertEquals((await brain("is a pig quiet?")).expression.name, "affirm");
+  await forget();
+});
+
+test("warmest reaches warm", async () => {
+  await forget();
+  assertEquals((await brain("the warmest room is bright")).expression.name, "learn");
+  assertEquals((await brain("is a room bright?")).expression.name, "affirm");
+  await forget();
+});
+
+test("a noun filed red still restricts", async () => {
+  await forget();
+  assertEquals((await brain("the red pig is dirty")).expression.name, "learn");
+  assertEquals((await brain("is a pig dirty?")).expression.name, "affirm");
+  await forget();
+});

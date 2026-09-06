@@ -141,6 +141,32 @@ All notable changes to this project are documented in this file.
   `those`/`that` far, over thing-topics in focus. `it`/`them` stay neutral.
   Imperative pronoun objects (`put that…`) stay open.
 
+- **A possessive determining its head never offers, answers, or plays.**
+  `my` before `cat` marks whose and drops from facts, parties, and answers;
+  standing as head (`its`, `the film's` before the joint) it stays. Fresh
+  individuals read their kind off the call node, never the bare fallback.
+
+- **A tensed `be` yields to a doing after it.** `i will go` records going
+  with its future moment instead of learning `doctor is go`; plain `be`
+  still joins (`planting is a work`).
+
+- **Better/best/worse/worst are plain adjectives of their poles.** Heard and
+  restricting like any description — never phantom individuals, never
+  comparisons without a scale to stand them on.
+
+- **A hole seeking how or when takes no pointer for an answer.** `when is
+  it` is none, not the topic's kind; kinds answer as ever, and bare
+  `why is a cat` still asks like what does.
+
+- **More superlatives derive.** `tall`/`heavy`/`warm`/`red` read as
+  adjectives too, with `-ier`/`-iest` rules; noun–noun compounds stay open.
+
+- **`why` over a full predication stays unanswered.** `why` asks across
+  causes (new `on` link to the cause anchor) with grammar to bind it, and a
+  `why`-hole over a claimed complement returns absence instead of answering
+  about kinds. Bare `why is a cat` still asks like what does; causal memory
+  itself stays open.
+
 - **Told agreement re-offers the last idea as fact.** `i think so` lays the
   focused triple back through the fact machinery with its own denial —
   nothing new where it holds, contradiction refused where denied — and the

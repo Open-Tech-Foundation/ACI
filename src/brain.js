@@ -1747,6 +1747,7 @@ function judge(roots, world, mood, langs, sent) {
   if (holes.length > 0 && terms.length >= 1) {
     const nodes = [];
     const asked = terms.flatMap((t) => membersFor(t, world, sent));
+    console.log('HOLESDBG', JSON.stringify(said.map((n) => n.state.identity)), 'terms=', terms.length, 'asked=', asked.length);
     for (const [i, term] of asked.entries()) {
       let subject = conceptOf(term);
       // A bare third-person pointer on speaker-side focus stands for what is
@@ -1758,12 +1759,19 @@ function judge(roots, world, mood, langs, sent) {
       // relation, read out of memory. Nothing about it is special to the engine.
       // Where the hole said what kind of answer it wants, only that kind is an
       // answer. Everything else the thing is remains true and is not the reply.
-      // A cause sought (`why`) never filters kinds: full predications return
-      // earlier as unanswerable, and bare ones ask like what does.
+      // A hole seeking how, when or across what scale never takes a pointer
+      // for an answer: `when is it` is none, not the topic's kind. Kinds
+      // answer as ever.
+      const seeksOn = holes.some((n) => onOf(n) != null);
+      const pointed =
+        markOn(term) === 'spoken' || markOn(term) === 'from' || markOn(term) === 'to';
       const of = asking.size === 1 && ![...asking].includes(a.cause) ? [...asking][0] : null;
-      let found = reached(subject, relation, world).filter(
-        (t) => of == null || world.isA(t, of),
-      );
+      let found = seeksOn && pointed
+        ? []
+        : reached(subject, relation, world).filter(
+            (t) => of == null || world.isA(t, of),
+          );
+      console.log('HOLESLOOP', subject, relation, JSON.stringify(found));
       // The walk came back with nothing but the most generic kind: say the
       // thing itself instead — `chocolates`, known only as a thing, is answered
       // with its own name rather than `thing`. Specific answers (`animal` for a
@@ -1773,6 +1781,12 @@ function judge(roots, world, mood, langs, sent) {
         found = [subject];
       }
       const mine = [node('answer', 'link', [], { subject, relation, found })];
+      // A possessive determining its head never answers for it (`what colour
+      // is my cat` is about the cat); standing as head it still speaks
+      // (`what is your name`). Where its walk comes back empty it stays
+      // silent rather than voicing none.
+      if (found.length === 0 && posOf(term).includes('possessive')) continue;
+      if (isDeterminer(said, said.indexOf(term), world)) continue;
       // The brain looked, and what it found stays on the tree. Saying it is
       // another act, and one it will not perform where any of the answer harms.
       const harmed = found.find((t) => harms(t, world));
@@ -1789,8 +1803,9 @@ function judge(roots, world, mood, langs, sent) {
   // mammal". They are offered together and answered together — what is offered
   // as one thing is taken or turned down as one thing.
   if (terms.length >= 2) {
-    let lefts = said.filter((n, i) => i < at && claims(n));
-    let rights = said.filter((n, i) => i > at && claims(n) && conceptOf(n) != null);
+    const headed = (n, i) => !isDeterminer(said, i, world);
+    let lefts = said.filter((n, i) => i < at && claims(n) && headed(n, i));
+    let rights = said.filter((n, i) => i > at && claims(n) && conceptOf(n) != null && headed(n, i));
     // A signal that turns its joint to the front says both sides after it, and
     // the first of them is the one the rest is said of.
     if (lefts.length === 0 && rights.length >= 2 && operates(relation, world) == null) {
@@ -2570,7 +2585,7 @@ function rolesIn(said, acting, claims, world, side, sides) {
   const taken = new Set();
 
   said.forEach((n, i) => {
-    if (i === acting || !claims(n)) return;
+    if (i === acting || !claims(n) || isDeterminer(said, i, world)) return;
     const named = roleOn(of(i));
     if (!named || a[named] == null) return;
     parts.push({ role: a[named], of: conceptOf(n), amount: amountOf(n, world), mark: markAt(n), at: i });
@@ -2581,7 +2596,7 @@ function rolesIn(said, acting, claims, world, side, sides) {
   // but which side of the action is the doer is word order, and word order is
   // the language's. Told nothing, the brain assigns no part by order at all.
   said.forEach((n, i) => {
-    if (i === acting || taken.has(i) || !claims(n) || !sides) return;
+    if (i === acting || taken.has(i) || !claims(n) || isDeterminer(said, i, world) || !sides) return;
     const role = a[i < acting ? sides.before : sides.after];
     if (role != null) parts.push({ role, of: conceptOf(n), amount: amountOf(n, world), mark: markAt(n), at: i });
   });
@@ -2691,11 +2706,22 @@ function namedRelation(said, world, claims, asking) {
     }
     // Something on each side for it to hold between — or, where a signal turns
     // its joint to the front, two things after it and none before, which is
-    // the same claim said the other way round.
+    // the same claim said the other way round. The weakest claim never joins
+    // where a doing stands after it: `i will go` is going, not being.
     const ahead = said.filter((n, j) => j > i && claims(n)).length;
     const behind = nearest(said, i, -1, claims);
     if (!asking && !(behind && nearest(said, i, 1, claims)) && !(!behind && ahead >= 2)) continue;
     if (conceptOf(said[i]) !== world.baseRelation) return i;
+    // A tensed `be` never joins where a doing stands after it: `i will go`
+    // is going, not being. Plain `be` still joins. Which words carry time
+    // is the language's (`when`); that time decides joints is the brain's.
+    const tensed = (() => {
+      const t = findBranch(said[i], 'thought');
+      return t && t.state.thought ? t.state.thought.when : null;
+    })();
+    const doingAfter =
+      tensed != null && said.slice(i + 1).some((n) => claims(n) && reaches(n, a.action, world));
+    if (doingAfter) continue;
     if (fallback < 0) fallback = i;
   }
   return fallback >= 0 ? fallback : worked;
@@ -2819,6 +2845,28 @@ function occurrenceAmount(world, action, parts, kind) {
     }
   }
   return amount;
+}
+
+// A possessive determining a head noun (`my` before `cat`) marks whose and
+// never offers, answers, or plays alongside — its head speaks for it.
+// Standing as the phrase's own head (`its`, `the film's` before the joint)
+// it stays: something must say whose the telling is about.
+function isDeterminer(said, i, world) {
+  if (!said || i < 0 || !said[i]) return false;
+  const t = findBranch(said[i], 'thought');
+  const pos = t && t.state.thought ? t.state.thought.pos : null;
+  if (pos == null || !(Array.isArray(pos) ? pos : [pos]).includes('possessive')) return false;
+  const a = world ? world.anchors || {} : {};
+  return said.slice(i + 1).some((m) => {
+    const c = conceptOf(m);
+    if (c != null && world && world.isA(c, a.thing)) return true;
+    // Made in this very signal, the world does not know it yet: its call
+    // node says what kind it was made as — anything but the bare fallback,
+    // which names rather than heads.
+    const call = findBranch(m, 'call');
+    const of = call ? call.state.of : null;
+    return of != null && of !== a.thing && world && world.isA(of, a.thing);
+  });
 }
 
 // Whether something a signal names ever happened. Every part it names must be

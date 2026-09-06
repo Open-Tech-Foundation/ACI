@@ -4511,17 +4511,26 @@
       "concept": 198
     },
     "tall": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "tall",
       "concept": 199
     },
     "heavy": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "heavy",
       "concept": 200
     },
     "red": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "red",
       "concept": 202
     },
@@ -4581,7 +4590,10 @@
       "concept": 209
     },
     "warm": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "warm",
       "concept": 210
     },
@@ -9730,7 +9742,8 @@
     "when": {
       "pos": "interrogative",
       "meaning": "when",
-      "marks": "unknown"
+      "marks": "unknown",
+      "on": 247
     },
     "why": {
       "pos": "interrogative",
@@ -17194,6 +17207,26 @@
       ],
       "meaning": "thank",
       "concept": 2820
+    },
+    "better": {
+      "pos": "adjective",
+      "meaning": "better",
+      "concept": 238
+    },
+    "best": {
+      "pos": "adjective",
+      "meaning": "best",
+      "concept": 238
+    },
+    "worse": {
+      "pos": "adjective",
+      "meaning": "worse",
+      "concept": 239
+    },
+    "worst": {
+      "pos": "adjective",
+      "meaning": "worst",
+      "concept": 239
     }
   },
   "marking": "after",
@@ -17270,6 +17303,16 @@
       "ending": "n't",
       "becomes": "",
       "negates": true
+    },
+    {
+      "ending": "ier",
+      "becomes": "y",
+      "of": "adjective"
+    },
+    {
+      "ending": "iest",
+      "becomes": "y",
+      "of": "adjective"
     }
   ],
   "speech": {
@@ -17438,7 +17481,8 @@
           "auxiliary negation verb verbComplement",
           "auxiliary verb",
           "modal verb",
-          "auxiliary negation verb"
+          "auxiliary negation verb",
+          "verb verb"
         ]
       },
       "verbComplement": {

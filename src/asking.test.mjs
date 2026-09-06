@@ -107,6 +107,13 @@ test("when and why ask like what does", async () => {
   await forget();
 });
 
+test("when across time answers none where nothing does", async () => {
+  await forget();
+  await brain("a drum is cold");
+  assertEquals((await brain("when is it?")).expression.state.says, "none");
+  await forget();
+});
+
 test("a signal may turn its joint to the front", async () => {
   await forget();
   assertEquals((await brain("is a cat an animal?")).expression.name, "affirm");
