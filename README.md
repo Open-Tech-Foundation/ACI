@@ -46,8 +46,8 @@ fishes apart, so the claim is not unknown, it is denied.
 > what it understands today is a small closed set of basics. English only. Do
 > not build on it yet.
 
-The world it has been given so far: 2616 terms, 2858 links between them, 2876
-words, 135 grammar rules.
+The world it has been given so far: 2771 terms, 3017 links between them, 3185
+words, 158 grammar alternatives.
 
 
 ## Potential Use Cases
@@ -101,7 +101,7 @@ the brain hands back, and every term in it names a line of JSON you can open.
 ## Develop
 
 ```sh
-tsr test    # 562 tests across 53 files (esdev)
+tsr test    # 666 tests across 80 files (esdev)
 tsr build   # library build to dist/
 tsr ci      # test + build + site
 ```

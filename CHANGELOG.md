@@ -6,6 +6,38 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Turns and persistence are deterministic and atomic.** The runtime now
+  serialises the complete load/reason/allocate/write/thread transition, joined
+  and concurrent learnings share one collision-free allocator, and SQLite
+  commits a learned change as one transaction. A failed write is rolled back
+  and never acknowledged; supplied source objects are no longer mutated while
+  knowledge is assembled.
+
+- **A proposed world change is validated as one whole.** Joined clauses can no
+  longer evade cycle prevention or reuse an id, and merged knowledge refuses
+  classification cycles, opposite-polarity facts and incompatible same-moment
+  quantities. Positive and denied kind facts now inherit consistently.
+
+- **Mention, scope and truth are kept distinct.** Unknown names become only
+  generic candidate things until an accepted proposition gives them a kind;
+  modal, claim-about-claim, unmet conditional, denied and refused mentions do
+  not leak facts. `some` assertions create an existential witness instead of
+  universalising the kind. Empty answers remain unknown rather than becoming
+  `none`, asserted quantities participate in truth checks, and contradictory
+  polarity cannot enter a source.
+
+- **Relations and changing state have explicit semantics.** `is` remains
+  transitive while other relations follow one edge unless their term declares
+  `transitive: true` (now set for cause, part and order). Current quantities and
+  placements use the latest logical stamp without erasing history, and an event
+  must match the queried time—a future event no longer proves a past one.
+
+- **Language data controls language behavior without lossy arithmetic.** Whole
+  proposition boundaries are grammar metadata rather than the rule name
+  `clause`; positional auxiliary selection and number-word composition are also
+  declared by the language. Decimal and large-integer input, computation and
+  output remain exact rather than crossing JavaScript's unsafe `Number` range.
+
 - **A third-person `it` on speaker-side focus stands for what is held.**
   `I have 3 chocolates / what is it?` answered with the bearer (`person`)
   because a pointer lands on one `spoken` id and the bearer is that id.

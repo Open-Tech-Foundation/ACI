@@ -165,6 +165,7 @@ function recognizeLanguage(roots, langs) {
         person: word.person ?? null,
         number: word.number ?? null,
         proximity: word.proximity ?? null,
+        where: word.where ?? null,
       }));
       matching.push({
         lang: lang.data.name,
@@ -272,6 +273,7 @@ function think(roots, langs, at, world) {
       number: word ? word.number ?? null : null,
       // How near what the pointer points at stands. The language's to say.
       proximity: word ? word.proximity ?? null : null,
+      where: word ? word.where ?? null : null,
       };
     };
     // A word that names more than one thing is thought of every way it may be
@@ -281,7 +283,7 @@ function think(roots, langs, at, world) {
     const state = ways.length > 1 ? { thought: ways[0], ways } : { thought: ways[0] };
     return withBranch(n, [...n.branch, node('thought', 'understood', [], state)]);
   });
-  return intraSignal(reshaped(thought, world), world, langs, at);
+  return intraSignal(reshaped(thought, world, langs), world, langs, at);
 }
 
 // Focus tracked from the current tree: a third-person pointer (`it`, `them`)
@@ -359,7 +361,7 @@ function intraSignal(roots, world, langs, at) {
 // ones that are really one thing as one: a sign for taking away, standing
 // where there is nothing to take from, is not an operation but part of the
 // number after it — `-500` is five hundred below nothing.
-function reshaped(roots, world) {
+function reshaped(roots, world, langs) {
   if (!world) return roots;
   const a = world.anchors || {};
   const amount = (n) => (n ? numberOf(n, world) : null);
@@ -386,7 +388,7 @@ function reshaped(roots, world) {
     // Twenty five is twenty and five; two hundred is two of a hundred; and one
     // hundred twenty five is all of that, taken as it is read.
     while (out.length > 1) {
-      const joined = together(out[out.length - 2], out[out.length - 1], world);
+      const joined = together(out[out.length - 2], out[out.length - 1], world, langs);
       if (!joined) break;
       out.splice(out.length - 2, 2, joined);
     }
@@ -397,12 +399,14 @@ function reshaped(roots, world) {
 // Two number words that are really one number, or nothing. Only words: a
 // language writes its numbers in words its own way, and figures are already
 // whole as written.
-function together(here, next, world) {
+function together(here, next, world, langs) {
   const left = inWords(here, world);
   const right = inWords(next, world);
   if (left == null || right == null || left < 1 || right < 1) return null;
-  const round = (v) => v >= 10 && v % 10 === 0;
-  const value = left > right && round(left) ? left + right : left < right && round(right) ? left * right : null;
+  const firstThought = thoughtOf(here);
+  const language = firstThought ? firstThought.language : null;
+  const spoken = (langs || []).find((lang) => lang.data.name === language);
+  const value = spoken ? spoken.joinNumbers(left, right) : null;
   if (value == null) return null;
   const said = `${here.state.identity} ${next.state.identity}`;
   const thought = { ...thoughtOf(next), value, concept: world.termFor(value), meaning: said };
@@ -424,7 +428,7 @@ function inWords(n, world) {
 
 // One word standing for how far below nothing a number is.
 function below(sign, number, world) {
-  const value = -numberOf(number, world);
+  const value = numericNegate(numberOf(number, world));
   const thought = thoughtOf(number) || {};
   const said = `${sign.state.identity}${number.state.identity}`;
   const rebuilt = { ...thought, value, concept: world.termFor(value), meaning: said };
@@ -520,11 +524,16 @@ function givenValue(word, at) {
 // the categories, the world owns the membership. A word that names no term
 // gets no category — the brain does not guess from the part of speech.
 // ---------------------------------------------------------------------------
-function solve(roots, world, langs, mood) {
+function solve(roots, world, langs, mood, allocate) {
   // Whose a thing is settles what it names, and a word nothing knows is named
   // only where it stands in a claim — so whose comes first, or a claim resting
   // on a pointer that landed on nothing would still name something.
-  const settled = calling(whose(settle(anaphora(auxiliary(elliptical(subordinate(roots, world)))), world), world, langs, mood), world, mood);
+  const settled = calling(
+    whose(settle(anaphora(auxiliary(elliptical(subordinate(roots, world)))), world), world, langs, mood, allocate),
+    world,
+    mood,
+    allocate,
+  );
   return settled.map((n, at) => {
     if (!n.state.exists) {
       return withBranch(n, [...n.branch, node('response', 'nothing', [])]);
@@ -570,7 +579,7 @@ function solve(roots, world, langs, mood) {
 // holds none and the signal is telling, one is made and given to whoever it
 // belongs to. Where it holds more than one there is no *the* to resolve, and
 // the brain does not pick.
-function whose(roots, world, langs, mood) {
+function whose(roots, world, langs, mood, allocate) {
   if (!world) return roots;
   const a = world.anchors || {};
   if (a.has == null) return roots;
@@ -580,7 +589,6 @@ function whose(roots, world, langs, mood) {
     const t = n ? thoughtOf(n) : null;
     return t && posOf(n).includes('possessive') && t.concept != null ? t.concept : null;
   };
-  let next = world.nextId() + roots.length;
   return roots.map((n, i) => {
     const kind = conceptOf(n);
     if (kind == null) return n;
@@ -603,7 +611,7 @@ function whose(roots, world, langs, mood) {
       .individualsOf(kind)
       .filter((one) => world.linked(owner, a.has).includes(one));
     if (held.length > 1) return n;
-    const id = held.length === 1 ? held[0] : mood === 'tell' ? next++ : null;
+    const id = held.length === 1 ? held[0] : mood === 'tell' ? allocate() : null;
     if (id == null) return n;
     const thought = { ...thoughtOf(n), concept: id };
     const made =
@@ -646,14 +654,13 @@ function standingFor(n, concept) {
 // is judged, so that whatever else the signal says of it is said of it and not
 // of nothing: `john has 3 apples` names john and gives him the apples in one
 // breath.
-function calling(roots, world, mood) {
+function calling(roots, world, mood, allocate) {
   if (!world || mood !== 'tell') return roots;
   // Asking is not giving: a hole stands for what the signal does not say, so
   // a signal carrying one names nothing — `who has the telescope` leaves no
   // telescope behind, with or without a question mark.
   if (roots.some((n) => markOn(n) === 'unknown')) return roots;
   const a = world.anchors || {};
-  let next = world.nextId();
   // A word stands in a claim where the signal has something to join it to
   // something else. Only then is there anything to name.
   const joined = roots.some((n) => world.isA(conceptOf(n), a.relation));
@@ -670,15 +677,7 @@ function calling(roots, world, mood) {
     if (rest.length >= 2 && conceptOf(rest[0]) === world.baseRelation && numberOf(rest[1], world) != null) {
       return n;
     }
-    // Said to be of a kind, that is the kind it is; said anything else, there
-    // is still a thing being spoken of, and a thing is what it is.
-    const of = rest.length >= 2 ? conceptOf(rest[1]) : null;
-    const kind =
-      rest.length >= 2 && conceptOf(rest[0]) === world.baseRelation && of != null && world.isA(of, a.thing)
-        ? of
-        : a.thing;
-    const id = next;
-    next += 1;
+    const id = allocate();
     // A word nothing knows with a number beside it names many and not one:
     // there are three of whatever a cookie is, so it is a kind. Nothing counts
     // one thing three times.
@@ -688,7 +687,10 @@ function calling(roots, world, mood) {
       ...n.branch.map((b) =>
         b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: given }) : b,
       ),
-      node('call', n.state.identity, [], { name: n.state.identity, id, of: kind, many }),
+      // Recognising a referent is separate from accepting what was said of it.
+      // The call establishes only that it is a thing; the judged proposition
+      // supplies any more specific kind, polarity and scope.
+      node('call', n.state.identity, [], { name: n.state.identity, id, of: a.thing, many }),
     ]);
   });
 }
@@ -796,14 +798,22 @@ function anaphora(roots) {
 // decided reading replaces the rest, keeping `settle` from re-reading a word
 // already settled by position.
 function auxiliary(roots) {
-  const denies = roots.some((n) => negatesOn(n));
   return roots.map((n, i) => {
     const t = findBranch(n, 'thought');
     const ways = t && t.state.ways ? t.state.ways : null;
     if (!ways || ways.length < 2) return n;
-    const prior = ways.findIndex((w) => w && w.marks === 'prior');
-    if (prior < 0) return n;
-    const thought = ways[i === 0 || denies ? 0 : prior];
+    if (!ways.some((word) => word && word.where != null)) return n;
+    const applies = (word) => {
+      const where = word && word.where != null
+        ? (Array.isArray(word.where) ? word.where : [word.where])
+        : [];
+      return (
+        (where.includes('initial') && i === 0) ||
+        (where.includes('before-negation') && roots.slice(i + 1).some(negatesOn))
+      );
+    };
+    const thought = ways.find(applies) ?? ways.find((word) => word && word.where == null);
+    if (!thought) return n;
     return withBranch(
       n,
       n.branch.map((b) => (b.kind === 'thought' ? withBranch(b, b.branch, { thought }) : b)),
@@ -1213,7 +1223,7 @@ function judge(roots, world, mood, langs, sent) {
         const named = findBranch(left, 'call');
         let made = named
           ? { id: named.state.id, made: false }
-          : bearerOf(subject, world, markAt(left));
+          : bearerOf(subject, world, markAt(left), sent.allocate);
         while (made && made.made && takenIds.has(made.id)) made = { ...made, id: made.id + 1 };
         if (made && made.made) takenIds.add(made.id);
         bearers.set(left, made);
@@ -1231,7 +1241,12 @@ function judge(roots, world, mood, langs, sent) {
       const counted = quantityAmount(right, world);
       // A fact about how many is about the thing that bears it, not about its
       // kind.
-      const bearer = counted == null ? null : bearerFor(left, subject);
+      const existential = mood === 'tell' && howMany === a.some && !world.isIndividual(subject);
+      const bearer = counted == null && !existential
+        ? null
+        : existential
+          ? bearerOf(subject, world, 'new', sent.allocate)
+          : bearerFor(left, subject);
       if (counted != null && bearer == null) return [];
       const holder = bearer ? bearer.id : subject;
 
@@ -1252,7 +1267,7 @@ function judge(roots, world, mood, langs, sent) {
         if (object === a.bad && subject === a.self && world.members(subject, a.agent).length === 0) {
           return [node('refuse', 'unwarranted', [], { subject, object })];
         }
-        return [held(from, subject, object, negated, whenIn(said, world), world)];
+        return [held(from, subject, object, negated, whenIn(said, world), world, sent.allocate)];
       }
 
       // A thing holds what its kinds hold: the fact is among what the brain
@@ -1264,10 +1279,12 @@ function judge(roots, world, mood, langs, sent) {
         rel === world.baseRelation
           ? world.isA(from, to, rel)
           : upward(from, world).some((rung) => world.isA(rung, to, rel));
-      const holds =
-        joins(holder, object, rel) ||
-        bothWays(rel, world).some((back) => joins(object, holder, back)) ||
-        forced(holder, object, rel, world);
+      const knownCount = counted == null ? null : world.held(holder, rel, object);
+      const holds = counted != null
+        ? knownCount === counted
+        : joins(holder, object, rel) ||
+          bothWays(rel, world).some((back) => joins(object, holder, back)) ||
+          forced(holder, object, rel, world);
       // Something the brain holds stands against the fact where it says the
       // two are not so joined, where the two terms exclude each other and the
       // fact is about kind, or where it holds them joined by a rel it
@@ -1275,10 +1292,12 @@ function judge(roots, world, mood, langs, sent) {
       // to find a path is none of those: not having reached a thing is not
       // holding anything against it.
       const kindFact = rel === world.baseRelation;
-      const opposed =
-        world.denies(holder, object, rel) ||
-        (kindFact && world.excludes(subject, object)) ||
-        apartFrom(rel, world).some((other) => joins(holder, object, other));
+      const heldDenied = upward(holder, world).some((rung) => world.denies(rung, object, rel));
+      const opposed = counted != null
+        ? knownCount != null && knownCount !== counted
+        : heldDenied ||
+          (kindFact && world.excludes(subject, object)) ||
+          apartFrom(rel, world).some((other) => joins(holder, object, other));
       // Some of a kind is not the kind. What the kind reaches, some of it
       // reaches; what it does not, some of it may still — one crow being
       // white is not crows being white, and nothing about crows says no.
@@ -1484,7 +1503,7 @@ function judge(roots, world, mood, langs, sent) {
     // An action the world says causes an operation, worked on what a thing
     // holds. What taking does is the world's to say; the arithmetic is the
     // brain's.
-    const done = act(said, claims, world, markingSide(world, langs), partsSide(langs));
+    const done = act(said, claims, world, markingSide(world, langs), partsSide(langs), sent.allocate);
     if (done) return [withBranch(root, [...root.branch, ...done])];
   }
 
@@ -1747,7 +1766,6 @@ function judge(roots, world, mood, langs, sent) {
   if (holes.length > 0 && terms.length >= 1) {
     const nodes = [];
     const asked = terms.flatMap((t) => membersFor(t, world, sent));
-    console.log('HOLESDBG', JSON.stringify(said.map((n) => n.state.identity)), 'terms=', terms.length, 'asked=', asked.length);
     for (const [i, term] of asked.entries()) {
       let subject = conceptOf(term);
       // A bare third-person pointer on speaker-side focus stands for what is
@@ -1771,7 +1789,6 @@ function judge(roots, world, mood, langs, sent) {
         : reached(subject, relation, world).filter(
             (t) => of == null || world.isA(t, of),
           );
-      console.log('HOLESLOOP', subject, relation, JSON.stringify(found));
       // The walk came back with nothing but the most generic kind: say the
       // thing itself instead — `chocolates`, known only as a thing, is answered
       // with its own name rather than `thing`. Specific answers (`animal` for a
@@ -1834,7 +1851,7 @@ function judge(roots, world, mood, langs, sent) {
 // same size — a clause, or a signal the same shape as the one holding it. What
 // stands between them is a word like any other, and is not one of them.
 function joinedWhole(b, whole) {
-  return b.kind === 'clause' || b.kind === whole.kind;
+  return Boolean(b.state && b.state.whole) || b.kind === whole.kind;
 }
 
 // Whether the brain follows what it is told to do. It is the one being asked,
@@ -2031,7 +2048,11 @@ function among(nodes, which, many) {
 // itself and is not climbed for its own sake — asked what a thing is, the brain
 // answers the rung above it, not every rung to the top.
 function reached(subject, relation, world) {
-  if (relation === world.baseRelation) return world.linked(subject, relation);
+  if (relation === world.baseRelation) {
+    const found = world.linked(subject, relation);
+    const thing = world.anchors ? world.anchors.thing : null;
+    return found.length > 1 && thing != null ? found.filter((id) => id !== thing) : found;
+  }
   const out = [];
   for (const rung of upward(subject, world)) {
     for (const t of world.linked(rung, relation)) if (!out.includes(t)) out.push(t);
@@ -2162,7 +2183,7 @@ function calculate(said, at, relation, world) {
     const left = working(said.slice(0, between), world, true);
     const right = working(said.slice(between + 1), world, true);
     if (!left || !right) return null;
-    return node('standing', left.value === right.value ? 'held' : 'against', [], {
+    return node('standing', numericEqual(left.value, right.value) ? 'held' : 'against', [], {
       subject: world.termFor(left.value),
       relation: a.same,
       object: world.termFor(right.value),
@@ -2193,7 +2214,9 @@ function calculate(said, at, relation, world) {
         onOf(said[at]),
       );
     }
-    const holds = relation === a.more ? left > right : left < right;
+    const compared = numericCompare(left, right);
+    if (Number.isNaN(compared)) return null;
+    const holds = relation === a.more ? compared > 0 : compared < 0;
     // The terms compared, not the numbers they name: a standing joins terms
     // wherever it comes from, and what is said back is said in words.
     return node('standing', holds ? 'held' : 'against', [], {
@@ -2326,7 +2349,7 @@ function groupOn(n) {
 // closely as the machine can and no closer.
 const exactly = (work) => (x, y) => {
   try {
-    return work(new Decimal(x), new Decimal(y)).toNumber();
+    return exactValue(work(new Decimal(x), new Decimal(y)));
   } catch {
     return null;
   }
@@ -2336,7 +2359,7 @@ const exactly = (work) => (x, y) => {
 // exact answers: doubling and halving always terminate.
 const whole = (work, x) => {
   try {
-    return work(new Decimal(x)).toNumber();
+    return exactValue(work(new Decimal(x)));
   } catch {
     return null;
   }
@@ -2346,19 +2369,42 @@ const OPERATIONS = [
   ['plus', 2, exactly((x, y) => x.add(y))],
   ['minus', 2, exactly((x, y) => x.subtract(y))],
   ['times', 2, exactly((x, y) => x.multiply(y))],
-  ['divide', 2, (x, y) => (y === 0 ? null : exactly((a, b) => a.divide(b))(x, y))],
-  ['power', 2, (x, y) => finite(x ** y)],
-  ['remainder', 2, (x, y) => (y === 0 ? null : exactly((a, b) => a.modulo(b))(x, y))],
-  ['root', 1, (x) => (x < 0 ? null : Math.sqrt(x))],
-  ['logarithm', 1, (x) => (x > 0 ? Math.log10(x) : null)],
-  ['natural-logarithm', 1, (x) => (x > 0 ? Math.log(x) : null)],
-  ['sine', 1, (x) => Math.sin(x)],
-  ['cosine', 1, (x) => Math.cos(x)],
-  ['tangent', 1, (x) => finite(Math.tan(x))],
-  ['magnitude', 1, (x) => Math.abs(x)],
+  ['divide', 2, (x, y) => (numericEqual(y, 0) ? null : exactly((a, b) => a.divide(b))(x, y))],
+  ['power', 2, (x, y) => finite(Number(x) ** Number(y))],
+  ['remainder', 2, (x, y) => (numericEqual(y, 0) ? null : exactly((a, b) => a.modulo(b))(x, y))],
+  ['root', 1, (x) => (numericCompare(x, 0) < 0 ? null : Math.sqrt(Number(x)))],
+  ['logarithm', 1, (x) => (numericCompare(x, 0) > 0 ? Math.log10(Number(x)) : null)],
+  ['natural-logarithm', 1, (x) => (numericCompare(x, 0) > 0 ? Math.log(Number(x)) : null)],
+  ['sine', 1, (x) => Math.sin(Number(x))],
+  ['cosine', 1, (x) => Math.cos(Number(x))],
+  ['tangent', 1, (x) => finite(Math.tan(Number(x)))],
+  ['magnitude', 1, (x) => exactValue(new Decimal(x).abs())],
   ['double', 1, (x) => whole((d) => d.multiply(2), x)],
   ['halve', 1, (x) => whole((d) => d.divide(2), x)],
 ];
+
+function exactValue(value) {
+  const text = value.toString();
+  if (!text.includes('.')) {
+    const integer = BigInt(text);
+    if (integer >= BigInt(Number.MIN_SAFE_INTEGER) && integer <= BigInt(Number.MAX_SAFE_INTEGER)) {
+      return Number(integer);
+    }
+  }
+  return text;
+}
+
+function numericEqual(left, right) {
+  try { return new Decimal(left).equals(new Decimal(right)); } catch { return false; }
+}
+
+function numericCompare(left, right) {
+  try { return new Decimal(left).compareTo(new Decimal(right)); } catch { return NaN; }
+}
+
+function numericNegate(value) {
+  try { return exactValue(new Decimal(value).negate()); } catch { return null; }
+}
 
 function finite(value) {
   return Number.isFinite(value) ? value : null;
@@ -2381,17 +2427,17 @@ function valueBeside(said, from, step, world) {
 // new one. A kind holds nothing — only something that exists once does.
 // `the` accommodates where nothing is yet: making one is not picking, where
 // there is nothing to pick between. Several, and there is no *the* to mean.
-function bearerOf(kind, world, mark) {
+function bearerOf(kind, world, mark, allocate) {
   if (world.isIndividual(kind)) return { id: kind, made: false };
-  if (mark === 'new') return { id: world.nextId(), of: kind, made: true };
+  if (mark === 'new') return { id: allocate(), of: kind, made: true };
   const one = world.oneOf(kind);
   if (mark === 'known') {
     if (one != null) return { id: one, made: false };
-    if (world.individualsOf(kind).length === 0) return { id: world.nextId(), of: kind, made: true };
+    if (world.individualsOf(kind).length === 0) return { id: allocate(), of: kind, made: true };
     return null;
   }
   if (one != null) return { id: one, made: false };
-  return { id: world.nextId(), of: kind, made: true };
+  return { id: allocate(), of: kind, made: true };
 }
 
 // Whatever else fits, the brain does not hand back what the world calls bad.
@@ -2419,9 +2465,9 @@ function valenced(term, world) {
 // What one sender says of one thing: an individual of what was said, with the
 // parts they played in it and the moment it was said. An occurrence like any
 // other — nothing new was needed to hold it.
-function held(holder, about, said, negated, when, world) {
+function held(holder, about, said, negated, when, world, allocate) {
   const a = world.anchors || {};
-  const id = world.nextId();
+  const id = allocate();
   return node('event', `${world.term(said).name}#${id}`, [], {
     id,
     action: said,
@@ -2473,7 +2519,7 @@ function missingFrom(event, stood, world) {
 
 // Carrying out an action on what a thing holds. The world links an action to
 // the operation it causes; the brain works the operation and keeps the result.
-function act(said, claims, world, side, sides) {
+function act(said, claims, world, side, sides, allocate) {
   const a = world.anchors || {};
   const acting = said.findIndex((n) => reaches(n, a.action, world));
   // A signal may name what was done, or name the operation itself: `give one
@@ -2503,15 +2549,13 @@ function act(said, claims, world, side, sides) {
   // happened to it and not to the kind, and the signal after this one has
   // something to point back at. Told only that an operation was worked, nobody
   // did anything to anyone, and nothing is made.
-  let next = world.nextId();
   const called = [];
   const parts = (acting < 0
     ? stoodWith
     : stoodWith.map((p) => {
         if (p.mark !== 'new' || p.of == null) return p;
         if (!world.isA(p.of, a.thing) || world.isIndividual(p.of)) return p;
-        const id = next;
-        next += 1;
+        const id = allocate();
         const name = `${world.term(p.of).name}#${id}`;
         called.push(node('call', name, [], { name, id, of: p.of, made: true }));
         return { ...p, of: id };
@@ -2542,8 +2586,7 @@ function act(said, claims, world, side, sides) {
   // nothing that happened to put on the record.
   if (acting < 0) return worked;
 
-  const happened = next;
-  next += 1;
+  const happened = allocate();
 
   // What happened is a thing that happened once: it is of its kind, it has the
   // parts things played in it, and it has a moment. Nothing new was needed to
@@ -2881,6 +2924,7 @@ function happened(said, world, claims, side, sides) {
   if (parts.length === 0) return null;
 
   const action = conceptOf(said[acting]);
+  const expectedWhen = whenIn(said, world);
   const plays = (one, p) =>
     world.linked(one, p.role).some((t) => t === p.of || world.isA(t, p.of));
   // A denied occurrence never answers as if it happened: what was recorded
@@ -2891,6 +2935,7 @@ function happened(said, world, claims, side, sides) {
       (one) =>
         world.isIndividual(one) &&
         !world.denies(one, action, world.baseRelation) &&
+        (expectedWhen == null || world.linked(one, a.when).includes(expectedWhen)) &&
         parts.every((p) => plays(one, p)),
     );
   // The standing is what was found, and nothing is said back: the claim frame
@@ -3201,7 +3246,7 @@ function expression(roots, langs, mood, world, sent) {
   // one whole: each part already stands finished on its own. This is the one
   // new step — not perceiving several as one, but putting several already-
   // finished acts into a single one said back together.
-  const together = apart(roots);
+  const together = roots.length === 1 && findBranch(roots[0], 'refuse') ? null : apart(roots);
   if (together) {
     const parts = together.map((r) => expression([r], langs, mood, world, sent));
     const langName = parts.map((p) => p.state.language).find(Boolean) || null;
@@ -3372,7 +3417,8 @@ function feelingIn(felt, world, sent) {
 // Whether this language can write the number at all.
 function sayable(value, langName, langs) {
   const lang = (langs || []).find((l) => l.data.name === langName);
-  return Boolean(lang && lang.figuresFor(value < 0 ? -value : value) != null);
+  const negative = numericCompare(value, 0) < 0;
+  return Boolean(lang && lang.figuresFor(negative ? numericNegate(value) : value) != null);
 }
 
 // Whether the signal wrote its terms in words the language says do not name
@@ -3416,12 +3462,9 @@ function wholeMeaning(intent, parts) {
 function spoken(answer, langName, langs, world, written) {
   const { found } = answer.state;
   const words = found.map((t) => termWord(t, langName, langs, world, written)).filter(Boolean);
-  // A walk that came back empty is an answer: nothing is what it has, the way
-  // zero is what it counted. The node keeps its empty `found` either way.
-  if (words.length === 0) {
-    const none = world && world.anchors ? world.anchors.none : null;
-    return termWord(none, langName, langs, world, written);
-  }
+  // In an open world, finding no relation is lack of evidence rather than
+  // evidence of none. Explicit negative knowledge is judged separately.
+  if (words.length === 0) return null;
   return words.join(listing(langName, langs));
 }
 
@@ -3496,10 +3539,10 @@ function numberSaid(term, value, langName, langs, world, written) {
   const named = inFigures ?? termWord(term, langName, langs, world, written);
   if (named != null) return named;
   if (!lang) return null;
-  if (value >= 0) return lang.figuresFor(value);
+  if (numericCompare(value, 0) >= 0) return lang.figuresFor(value);
   // Below nothing is still a number. The brain takes the sign from the term
   // for taking away, since that is what this language writes it with.
-  const figures = lang.figuresFor(-value);
+  const figures = lang.figuresFor(numericNegate(value));
   const sign = termWord(world ? (world.anchors || {}).minus : null, langName, langs, world, true);
   return figures == null || sign == null ? null : `${sign}${figures}`;
 }
@@ -3543,10 +3586,11 @@ function structurePhrase(roots, langs) {
   const memo = new Map();
   for (const parse of parsesFrom(rules, start, tagged, 0, memo)) {
     if (parse.next !== tagged.length) continue;
-    const kids = (parse.tree.children || []).map(leafOrPhrase).filter(Boolean);
+    const kids = (parse.tree.children || []).map((c) => leafOrPhrase(c, rules)).filter(Boolean);
     return [
       node(start, start, kids, {
         text: tagged.map((t) => t.root.state.identity).join(' '),
+        ...(rules[start].whole ? { whole: true } : {}),
       }),
     ];
   }
@@ -3605,9 +3649,14 @@ function parseSequence(rules, seq, tagged, index, memo) {
 }
 
 // Convert a parse-node into a brain node (leaf = solved root; phrase = node).
-function leafOrPhrase(c) {
+function leafOrPhrase(c, rules) {
   if (c.root) return c.root;
-  return node(c.symbol, c.symbol, (c.children || []).map(leafOrPhrase).filter(Boolean));
+  return node(
+    c.symbol,
+    c.symbol,
+    (c.children || []).map((child) => leafOrPhrase(child, rules)).filter(Boolean),
+    rules[c.symbol] && rules[c.symbol].whole ? { whole: true } : {},
+  );
 }
 
 // What the brain made of the word, not what the language listed: a number read
@@ -3650,6 +3699,7 @@ export function brainFrom(input, knowledge, circumstance) {
   // Where the signal came from is the runtime's to say — a person, a device, a
   // service, or nothing said at all. Where it went is this brain, unless the
   // runtime says otherwise: having received it is not an assumption.
+  let nextId = world ? world.nextId() : 0;
   const at = {
     from: circumstance && circumstance.from != null ? circumstance.from : null,
     to:
@@ -3672,20 +3722,30 @@ export function brainFrom(input, knowledge, circumstance) {
     // What this conversation has given a name to. No more the brain's to keep
     // than who is speaking: it was handed back and comes back the same way.
     names: (circumstance && circumstance.names) || {},
+    allocate: () => nextId++,
   };
 
   const roots = understand(input, langs);
   const thoughtRoots = think(roots, langs, at, world);
   const mood = moodOf(input, langs);
-  const solvedRoots = solve(thoughtRoots, world, langs, mood);
+  const solvedRoots = solve(thoughtRoots, world, langs, mood, at.allocate);
   const structuredRoots = structurePhrase(solvedRoots, langs);
-  const judgedRoots = judge(structuredRoots, world, mood, langs, at);
+  let judgedRoots = judge(structuredRoots, world, mood, langs, at);
+  let learned = learnedFrom(judgedRoots, world);
+  const inconsistent = learningConflict(world, learned);
+  if (inconsistent && judgedRoots.length === 1) {
+    judgedRoots = [withBranch(judgedRoots[0], [
+      ...judgedRoots[0].branch,
+      node('refuse', 'inconsistent', [], { why: inconsistent }),
+    ])];
+    learned = null;
+  }
   const expressedRoots = express(judgedRoots, langs, world);
   return {
     input,
     roots: expressedRoots,
     expression: expression(expressedRoots, langs, mood, world, at),
-    learned: learnedFrom(judgedRoots, world),
+    learned,
     spoken: spokenOf(judgedRoots, at, world),
     focus: focusOf(judgedRoots, at, world),
     names: namedIn(solvedRoots, { ...at, world, mood }),
@@ -3702,6 +3762,63 @@ export function brainFrom(input, knowledge, circumstance) {
       express: expressedRoots,
     },
   };
+}
+
+// Validate a whole proposed change against one immutable world. Individual
+// clauses cannot approve facts independently when their combination creates
+// a contradiction, reuses an identity, or closes a classification cycle.
+function learningConflict(world, learned) {
+  if (!world || !learned) return null;
+  const terms = new Map(world.data.terms.map((t) => [t.id, {
+    ...t,
+    links: (t.links || []).map((l) => ({ ...l })),
+  }]));
+  const names = new Map(world.data.terms.map((t) => [t.name, t.id]));
+  for (const proposed of learned.terms || []) {
+    const named = names.get(proposed.name);
+    if (named != null && named !== proposed.id) return `name ${proposed.name} already belongs to ${named}`;
+    const held = terms.get(proposed.id);
+    if (held && held.name !== proposed.name) return `term ${proposed.id} already names ${held.name}`;
+    if (!held) {
+      terms.set(proposed.id, { ...proposed, links: [] });
+      names.set(proposed.name, proposed.id);
+    }
+    terms.get(proposed.id).links.push(...(proposed.links || []).map((l) => ({ ...l })));
+  }
+
+  for (const term of terms.values()) {
+    const facts = new Map();
+    for (const link of term.links || []) {
+      const key = `${link.rel}:${link.to}:${link.at ?? ''}`;
+      const fact = facts.get(key);
+      if (fact && Boolean(fact.not) !== Boolean(link.not)) return `term ${term.id} both holds and denies ${key}`;
+      if (
+        fact &&
+        link.quantity !== undefined &&
+        fact.quantity !== undefined &&
+        fact.quantity !== link.quantity
+      ) return `term ${term.id} gives ${key} two quantities`;
+      facts.set(key, link);
+    }
+  }
+
+  const is = world.baseRelation;
+  const visiting = new Set();
+  const visited = new Set();
+  const visit = (id) => {
+    if (visiting.has(id)) return true;
+    if (visited.has(id)) return false;
+    visiting.add(id);
+    const term = terms.get(id);
+    for (const link of (term && term.links) || []) {
+      if (!link.not && link.rel === is && visit(link.to)) return true;
+    }
+    visiting.delete(id);
+    visited.add(id);
+    return false;
+  };
+  for (const id of terms.keys()) if (visit(id)) return 'classification cycle';
+  return null;
 }
 
 // What this signal gave a name to. A word that stands for whatever it was
@@ -3917,11 +4034,26 @@ function learnedFrom(roots, world) {
   // What was named in this signal is not in the world yet, so its name is
   // known here and nowhere else.
   const naming = new Map(called.map((c) => [c.state.id, c.state.name]));
+  // A referent introduced inside a possibility, failed condition or quoted
+  // claim is represented while reasoning but is not thereby asserted to
+  // exist. Keep only calls used by a proposition or event the brain accepted.
+  const referenced = new Set();
+  const reference = (value) => {
+    if (typeof value === 'number') referenced.add(value);
+    else if (Array.isArray(value)) value.forEach(reference);
+    else if (value && typeof value === 'object') Object.values(value).forEach(reference);
+  };
+  const accepted = (n) => {
+    if (n.kind === 'learn' || n.kind === 'event') reference(n.state);
+    (n.branch || []).forEach(accepted);
+  };
+  accepted(roots[0]);
+  const keptCalls = called.filter((c) => referenced.has(c.state.id));
   const terms = asOne([
     // A thing given a name is a thing there is one of, called what it was
     // called. It comes first, because what else the signal said of it is said
     // of that thing.
-    ...called.map((c) => ({
+    ...keptCalls.map((c) => ({
       id: c.state.id,
       name: c.state.name,
       // Counted, a word names a kind there may be many of; uncounted, it names
@@ -3935,7 +4067,7 @@ function learnedFrom(roots, world) {
       links: [{ rel: world.baseRelation, to: c.state.of }],
     })),
     // And whoever it belongs to has it.
-    ...called
+    ...keptCalls
       .filter((c) => c.state.whose != null)
       .map((c) => ({
         id: c.state.whose,
@@ -3985,6 +4117,11 @@ function tookIn(learn, world, naming) {
     link.quantity = quantity;
     // What is so now is so from now: state is stamped, so what was so before
     // stays on the record instead of being written over.
+    link.at = world.now();
+  }
+  // Placement is state too: a new location succeeds the old one while both
+  // remain in history. Which relations are placements is world knowledge.
+  if (quantity == null && world.anchors.placement != null && world.isA(relation, world.anchors.placement)) {
     link.at = world.now();
   }
   if (made) {

@@ -578,14 +578,13 @@ test("two terms and a relation is still a claim, not a question", async () => {
   assertEquals(kind(r.roots[0], "answer"), null);
 });
 
-test("a walk that came back empty answers with nothing, and says so", async () => {
+test("a walk that came back empty remains unknown", async () => {
   forget();
   const r = await brain("a peacock has what?");
   const answer = kind(r.roots[0], "answer");
   assert(answer !== null, "the question the brain asked itself is on the tree");
   assertEquals(answer.state.found, [], "and it found nothing");
-  // Nothing is what it found, the way zero is what a count of nothing finds.
-  assertEquals(r.expression.state.says, "none");
+  assertEquals(r.expression.state.says, "I don't know.");
   forget();
 });
 
@@ -857,12 +856,12 @@ test("asking who a thing is, and asking its name, are one question", async () =>
   );
 });
 
-test("a thing with no name has none to give, and that is an answer", async () => {
-  assertEquals((await brain("who is a cat")).expression.state.says, "none");
+test("a thing with no known name leaves the question unanswered", async () => {
+  assertEquals((await brain("who is a cat")).expression.state.says, "I don't know.");
   assertEquals((await brain("what is a cat")).expression.state.says, "mammal");
 });
 
 test("a hole falls wherever its language puts it", async () => {
-  assertEquals((await brain("a cat is who")).expression.state.says, "none");
+  assertEquals((await brain("a cat is who")).expression.state.says, "I don't know.");
   assertEquals((await brain("a cat is what")).expression.state.says, "mammal");
 });

@@ -23,12 +23,12 @@ test("a thing may be whose", async () => {
 test("whose it is, is whom the word points at", async () => {
   // The sender's cat is not the one it went to.
   const r = await fresh("my cat is red", "what colour is your cat?");
-  assertEquals(r.expression.state.says, "none");
+  assertEquals(r.expression.state.says, "I don't know.");
   await forget();
 });
 
-test("asked after one nothing has, there is none", async () => {
-  assertEquals((await fresh("what colour is my cat?")).expression.state.says, "none");
+test("asked after one nothing is known of stays unknown", async () => {
+  assertEquals((await fresh("what colour is my cat?")).expression.state.says, "I don't know.");
   await forget();
 });
 

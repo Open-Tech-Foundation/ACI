@@ -226,15 +226,33 @@ export function fromWorldData(data) {
     linked: (id, rel) => {
       const t = terms.get(id);
       if (!t || rel == null) return [];
-      return (t.links || []).filter((l) => !l.not && l.rel === rel).map((l) => l.to);
+      let links = (t.links || []).filter((l) => !l.not && l.rel === rel);
+      // Quantity links retain history per object; only the latest value is a
+      // current link. Placement relations have one current target, while old
+      // targets remain available in the authored record.
+      if (links.some((l) => Number.isInteger(l.quantity))) {
+        const latest = new Map();
+        for (const l of links) {
+          const held = latest.get(l.to);
+          if (!held || (l.at ?? -1) >= (held.at ?? -1)) latest.set(l.to, l);
+        }
+        links = [...latest.values()];
+      } else if (anchors.placement != null && reaches(rel, isRel).has(anchors.placement)) {
+        const top = Math.max(...links.map((l) => l.at ?? -1));
+        links = links.filter((l) => (l.at ?? -1) === top);
+      }
+      return [...new Set(links.map((l) => l.to))];
     },
     // Does `id` reach `ancestorId` by following `rel` (the `is` relation by
     // default)? The relation is a term like any other, so a signal can name it.
-    isA: (id, ancestorId, rel = isRel) =>
-      ancestorId != null &&
-      id != null &&
-      rel != null &&
-      (rel === isRel ? reaches(id, rel) : reachedBy(id, rel)).has(ancestorId),
+    isA: (id, ancestorId, rel = isRel) => {
+      if (ancestorId == null || id == null || rel == null) return false;
+      if (rel === isRel) return reaches(id, rel).has(ancestorId);
+      const relation = terms.get(rel);
+      if (relation && relation.transitive) return reachedBy(id, rel).has(ancestorId);
+      const term = terms.get(id);
+      return Boolean(term && (term.links || []).some((l) => !l.not && l.rel === rel && l.to === ancestorId));
+    },
   };
 }
 

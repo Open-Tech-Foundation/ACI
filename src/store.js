@@ -20,6 +20,7 @@ const SCHEMA = [
         symbol text,
         individual integer not null default 0,
         disjoint integer not null default 0,
+        transitive integer not null default 0,
         learned integer not null default 0
       )`,
   sql`create table if not exists link (
@@ -55,6 +56,9 @@ export async function openStore(url) {
   const columns = await rows(db, sql`pragma table_info(term)`);
   if (!columns.some((c) => c.name === 'symbol')) {
     await db.execute(sql`alter table term add column symbol text`);
+  }
+  if (!columns.some((c) => c.name === 'transitive')) {
+    await db.execute(sql`alter table term add column transitive integer not null default 0`);
   }
   return db;
 }
@@ -95,14 +99,15 @@ export async function seed(db, world) {
   await db.execute(sql`delete from link where learned = 0`);
 
   await db.executeMany(
-    sql`insert into term (id, name, value, symbol, individual, disjoint, learned)
-        values (?, ?, ?, ?, ?, ?, ?)
+    sql`insert into term (id, name, value, symbol, individual, disjoint, transitive, learned)
+        values (?, ?, ?, ?, ?, ?, ?, ?)
         on conflict (id) do update set
           name = excluded.name,
           value = excluded.value,
           symbol = excluded.symbol,
           individual = excluded.individual,
-          disjoint = excluded.disjoint
+          disjoint = excluded.disjoint,
+          transitive = excluded.transitive
         where term.learned = 0`,
     world.terms.map((t) => [
       t.id,
@@ -111,6 +116,7 @@ export async function seed(db, world) {
       t.symbol ?? null,
       t.individual ? 1 : 0,
       t.disjoint ? 1 : 0,
+      t.transitive ? 1 : 0,
       learned,
     ]),
   );
@@ -140,7 +146,7 @@ export async function seed(db, world) {
 export async function readWorld(db) {
   const terms = await rows(
     db,
-    sql`select id, name, value, symbol, individual, disjoint from term order by id`,
+    sql`select id, name, value, symbol, individual, disjoint, transitive from term order by id`,
   );
   const links = await rows(
     db,
@@ -156,6 +162,7 @@ export async function readWorld(db) {
     if (t.symbol !== null) term.symbol = t.symbol;
     if (t.individual) term.individual = true;
     if (t.disjoint) term.disjoint = true;
+    if (t.transitive) term.transitive = true;
     byId.set(t.id, term);
     return term;
   });
@@ -177,18 +184,31 @@ export async function readWorld(db) {
 // one that is not is made. Nothing here decides whether to keep it — that was
 // settled before this was called.
 export async function write(db, learned) {
-  // Every term first, then every link. One signal may name two things and join
-  // them to each other, and a link cannot reach a term that is not there yet.
-  for (const t of learned.terms || []) {
-    const seen = await rows(db, sql`select id from term where id = ${t.id}`);
-    if (seen.length === 0) {
-      await db.execute(sql`insert into term (id, name, value, symbol, individual, disjoint, learned)
-                         values (${t.id}, ${t.name}, ${t.value ?? null}, ${t.symbol ?? null},
-                                 ${t.individual ? 1 : 0}, ${t.disjoint ? 1 : 0}, 1)`);
+  await db.execute(sql`begin immediate`);
+  try {
+    // Every term first, then every link. One signal may name two things and join
+    // them to each other, and a link cannot reach a term that is not there yet.
+    for (const t of learned.terms || []) {
+      const seen = await rows(db, sql`select id from term where id = ${t.id}`);
+      if (seen.length === 0) {
+        await db.execute(sql`insert into term (id, name, value, symbol, individual, disjoint, transitive, learned)
+                           values (${t.id}, ${t.name}, ${t.value ?? null}, ${t.symbol ?? null},
+                                   ${t.individual ? 1 : 0}, ${t.disjoint ? 1 : 0},
+                                   ${t.transitive ? 1 : 0}, 1)`);
+      }
     }
-  }
-  for (const t of learned.terms || []) {
-    for (const l of t.links || []) await putLink(db, t.id, l, 1);
+    for (const t of learned.terms || []) {
+      for (const l of t.links || []) {
+        await db.execute(sql`insert or ignore into link
+          (term, rel, target, quantity, moment, denied, learned)
+          values (${t.id}, ${l.rel}, ${l.to}, ${l.quantity ?? null}, ${l.at ?? -1},
+                  ${l.not ? 1 : 0}, 1)`);
+      }
+    }
+    await db.execute(sql`commit`);
+  } catch (why) {
+    await db.execute(sql`rollback`);
+    throw why;
   }
 }
 
@@ -197,10 +217,6 @@ export async function write(db, learned) {
 export async function forgetLearned(db) {
   await db.execute(sql`delete from link where learned = 1`);
   await db.execute(sql`delete from term where learned = 1`);
-}
-
-async function putLink(db, term, l, learned) {
-  await putLinks(db, [[term, l]], learned);
 }
 
 // Every link in one statement. A link a term already has is left as it is.

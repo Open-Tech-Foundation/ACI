@@ -15395,7 +15395,8 @@
       {
         "pos": "auxiliary",
         "meaning": "did",
-        "when": "past"
+        "when": "past",
+        "where": ["initial", "before-negation"]
       },
       {
         "pos": "verb",
@@ -17230,6 +17231,9 @@
     }
   },
   "marking": "after",
+  "numbers": {
+    "composition": "multiplicative-additive"
+  },
   "parts": {
     "before": "agent",
     "after": "target"
@@ -17349,6 +17353,7 @@
     "start": "sentence",
     "rules": {
       "sentence": {
+        "whole": true,
         "rules": [
           "verb subject verbComplement",
           "verb sentence",
@@ -17387,6 +17392,7 @@
         ]
       },
       "clause": {
+        "whole": true,
         "rules": [
           "verb subject verbComplement",
           "verb sentence",

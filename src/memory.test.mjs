@@ -21,7 +21,7 @@ test("a fact told is a fact kept", async () => {
 });
 
 test("what was learned can then be asked about", async () => {
-  assertEquals(await says("a crow has what?"), "none");
+  assertEquals(await says("a crow has what?"), "I don't know.");
   await brain("a crow has a feather");
   assertEquals(await says("a crow has what?"), "feather");
 });

@@ -21,7 +21,7 @@ const PERSONS = ['first', 'second', 'third'];
 const NUMBERS = ['singular', 'plural'];
 
 function isId(v) {
-  return Number.isInteger(v) && v >= 0;
+  return Number.isSafeInteger(v) && v >= 0;
 }
 
 function onlyKeys(data, allowed, where) {
@@ -45,7 +45,7 @@ export function checkWorld(data, where = 'world') {
   for (const t of data.terms) {
     const at = `${where} term ${JSON.stringify(t && t.id)}`;
     if (!t || typeof t !== 'object') fail(where, 'every term must be an object');
-    onlyKeys(t, ['id', 'name', 'links', 'value', 'individual', 'disjoint', 'symbol'], at);
+    onlyKeys(t, ['id', 'name', 'links', 'value', 'individual', 'disjoint', 'transitive', 'symbol'], at);
     if (!isId(t.id)) fail(at, 'id must be a non-negative integer');
     if (typeof t.name !== 'string' || t.name === '') fail(at, 'name must be a non-empty string');
     if (byId.has(t.id)) fail(at, 'duplicate id');
@@ -66,8 +66,11 @@ export function checkWorld(data, where = 'world') {
     if (t.individual !== undefined && t.individual !== true) {
       fail(at, 'individual, where present, must be true');
     }
-    if (t.value !== undefined && !Number.isInteger(t.value)) {
-      fail(at, 'value must be a whole number — it is what the term names, not a label');
+    if (t.transitive !== undefined && t.transitive !== true) {
+      fail(at, 'transitive, where present, must be true');
+    }
+    if (t.value !== undefined && !Number.isSafeInteger(t.value)) {
+      fail(at, 'value must be a safe whole number — it is what the term names, not a label');
     }
     if (!Array.isArray(t.links)) fail(at, 'links must be an array');
     byId.set(t.id, t);
@@ -77,16 +80,17 @@ export function checkWorld(data, where = 'world') {
   for (const t of data.terms) {
     const at = `${where} term ${t.id}`;
     const seen = new Set();
+    const polarities = new Map();
     for (const l of t.links) {
       if (!l || typeof l !== 'object') fail(at, 'every link must be an object');
       onlyKeys(l, ['rel', 'to', 'quantity', 'at', 'not'], at);
       if (!isId(l.rel)) fail(at, 'link rel must be a non-negative integer');
       if (!isId(l.to)) fail(at, 'link to must be a non-negative integer');
-      if (l.quantity !== undefined && !Number.isInteger(l.quantity)) {
-        fail(at, 'link quantity must be a whole number');
+      if (l.quantity !== undefined && !Number.isSafeInteger(l.quantity)) {
+        fail(at, 'link quantity must be a safe whole number');
       }
-      if (l.at !== undefined && !(Number.isInteger(l.at) && l.at >= 0)) {
-        fail(at, 'link at must be a whole number of ticks');
+      if (l.at !== undefined && !(Number.isSafeInteger(l.at) && l.at >= 0)) {
+        fail(at, 'link at must be a safe whole number of ticks');
       }
       if (l.not !== undefined && l.not !== true) {
         fail(at, 'link not, where present, must be true — it denies the link');
@@ -94,6 +98,12 @@ export function checkWorld(data, where = 'world') {
       const key = `${l.rel}:${l.to}:${l.at ?? ''}:${l.not ? 'not' : ''}`;
       if (seen.has(key)) fail(at, `duplicate link ${key}`);
       seen.add(key);
+      const proposition = `${l.rel}:${l.to}:${l.at ?? ''}`;
+      const polarity = l.not ? 'denied' : 'held';
+      if (polarities.has(proposition) && polarities.get(proposition) !== polarity) {
+        fail(at, `link ${proposition} is both held and denied`);
+      }
+      polarities.set(proposition, polarity);
     }
   }
 
@@ -138,9 +148,24 @@ export function checkWhole(data, origin = null, where = 'world') {
     named.set(t.name, t.id);
   }
   for (const t of data.terms) {
+    const propositions = new Map();
     for (const l of t.links) {
       if (!ids.has(l.to)) fail(`${from(t.id)} term ${t.id}`, `link to unknown term ${l.to}`);
       if (!ids.has(l.rel)) fail(`${from(t.id)} term ${t.id}`, `link by unknown term ${l.rel}`);
+      const key = `${l.rel}:${l.to}:${l.at ?? ''}`;
+      const held = propositions.get(key);
+      if (held && Boolean(held.not) !== Boolean(l.not)) {
+        fail(`${from(t.id)} term ${t.id}`, `link ${key} is both held and denied`);
+      }
+      if (
+        held &&
+        held.quantity !== undefined &&
+        l.quantity !== undefined &&
+        held.quantity !== l.quantity
+      ) {
+        fail(`${from(t.id)} term ${t.id}`, `link ${key} has conflicting quantities`);
+      }
+      propositions.set(key, l);
     }
   }
   for (const [name, id] of Object.entries(data.relations || {})) {
@@ -152,6 +177,27 @@ export function checkWhole(data, origin = null, where = 'world') {
   if (data.terms.length > 0 && relationIds.size === 0) {
     fail(where, 'terms but no relations declared — nothing could be walked');
   }
+
+  // Classification is a partial order. A cycle would make each kind an
+  // ancestor of itself through another kind and collapse distinct concepts.
+  const is = data.relations && data.relations.is;
+  if (is != null) {
+    const edges = new Map(data.terms.map((t) => [
+      t.id,
+      t.links.filter((l) => !l.not && l.rel === is).map((l) => l.to),
+    ]));
+    const visiting = new Set();
+    const visited = new Set();
+    const visit = (id) => {
+      if (visiting.has(id)) fail(`${from(id)} term ${id}`, 'classification cycle');
+      if (visited.has(id)) return;
+      visiting.add(id);
+      for (const next of edges.get(id) || []) visit(next);
+      visiting.delete(id);
+      visited.add(id);
+    };
+    for (const id of edges.keys()) visit(id);
+  }
   return data;
 }
 
@@ -162,7 +208,7 @@ export function checkLanguage(data, where = 'language') {
   if (!data || typeof data !== 'object') fail(where, 'must be an object');
   onlyKeys(
     data,
-    ['name', 'symbols', 'words', 'derivations', 'marking', 'parts', 'speech', 'expressions', 'grammar'],
+    ['name', 'symbols', 'words', 'derivations', 'marking', 'parts', 'numbers', 'speech', 'expressions', 'grammar'],
     where,
   );
 
@@ -228,6 +274,14 @@ export function checkLanguage(data, where = 'language') {
       if (typeof role !== 'string' || role === '') {
         fail(`${at} parts "${side}"`, 'must name the part a thing on that side plays');
       }
+    }
+  }
+
+  if (data.numbers !== undefined) {
+    if (!data.numbers || typeof data.numbers !== 'object') fail(at, 'numbers must be an object');
+    onlyKeys(data.numbers, ['composition'], `${at} numbers`);
+    if (data.numbers.composition !== 'multiplicative-additive') {
+      fail(`${at} numbers`, 'composition must name a supported composition');
     }
   }
 
@@ -327,9 +381,12 @@ function checkGrammar(grammar, at) {
   for (const [symbol, rule] of Object.entries(grammar.rules || {})) {
     const r = `${at} grammar rule "${symbol}"`;
     if (!rule || typeof rule !== 'object') fail(r, 'must be an object');
-    onlyKeys(rule, ['rules'], r);
+    onlyKeys(rule, ['rules', 'whole'], r);
     if (!Array.isArray(rule.rules) || rule.rules.length === 0) {
       fail(r, 'rules must be a non-empty array');
+    }
+    if (rule.whole !== undefined && rule.whole !== true) {
+      fail(r, 'whole, where present, must be true');
     }
     for (const alt of rule.rules) {
       if (typeof alt !== 'string' || alt.trim() === '') fail(r, 'every rule must be a non-empty string');
@@ -345,7 +402,7 @@ function checkWord(info, w) {
   if (!info || typeof info !== 'object' || Array.isArray(info)) fail(w, 'must be an object');
   onlyKeys(
     info,
-    ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'person', 'number', 'on', 'bare', 'choice', 'proximity'],
+    ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'person', 'number', 'on', 'bare', 'choice', 'proximity', 'where'],
     w,
   );
   // A word may be more than one part of speech — English says a walk and
@@ -357,6 +414,13 @@ function checkWord(info, w) {
   }
   if (typeof info.meaning !== 'string') fail(w, 'meaning must be a string');
   if (info.concept !== undefined && !isId(info.concept)) fail(w, 'concept must be a term id');
+  if (info.where !== undefined) {
+    const positions = Array.isArray(info.where) ? info.where : [info.where];
+    const allowed = ['initial', 'before-negation'];
+    if (positions.length === 0 || positions.some((p) => !allowed.includes(p))) {
+      fail(w, 'where must be initial, before-negation, or a list of them');
+    }
+  }
   // Which scale a word compares on: heavier is more, on weight. The word names
   // the comparing; the scale says what is being compared.
   if (info.on !== undefined && !isId(info.on)) fail(w, 'on must be a term id');

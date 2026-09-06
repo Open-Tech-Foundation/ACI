@@ -61,6 +61,16 @@ test("a link may not point at a term that is not there", async () => {
   assert(thrown !== null, "a dangling link was accepted");
 });
 
+test("a rejected write leaves no partial term behind", async () => {
+  const db = await fresh();
+  try {
+    await write(db, { terms: [{ id: 98, name: "van", links: [{ rel: IS, to: 777 }] }] });
+  } catch {
+    // expected
+  }
+  assertEquals((await readWorld(db)).terms.some((term) => term.id === 98), false);
+});
+
 test("what was learned can be dropped, and what was seeded stays", async () => {
   const db = await fresh();
   await write(db, {

@@ -276,3 +276,42 @@ test("files naming different languages stay apart", () => {
   });
   assertEquals(k.languages.length, 2);
 });
+
+test("one proposition cannot be both held and denied", () => {
+  const msg = refuses("opposing links", {
+    world: {
+      relations: { is: 1 },
+      terms: [
+        { id: 1, name: "is", links: [] },
+        { id: 2, name: "a", links: [{ rel: 1, to: 3 }, { rel: 1, to: 3, not: true }] },
+        { id: 3, name: "b", links: [] },
+      ],
+    },
+  });
+  assert(msg.includes("both held and denied"), msg);
+});
+
+test("world numeric fields reject values outside the exact JSON integer range", () => {
+  const bad = {
+    ...world,
+    terms: world.terms.map((term) => term.id === 1
+      ? { ...term, value: Number.MAX_SAFE_INTEGER + 1 }
+      : term),
+  };
+  const msg = refuses("an unsafe numeric value", { world: bad });
+  assert(msg.includes("safe whole number"), msg);
+});
+
+test("classification cycles are refused at the knowledge door", () => {
+  const msg = refuses("classification cycle", {
+    world: {
+      relations: { is: 1 },
+      terms: [
+        { id: 1, name: "is", links: [] },
+        { id: 2, name: "a", links: [{ rel: 1, to: 3 }] },
+        { id: 3, name: "b", links: [{ rel: 1, to: 2 }] },
+      ],
+    },
+  });
+  assert(msg.includes("classification cycle"), msg);
+});

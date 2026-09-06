@@ -52,8 +52,7 @@ export function openBrain(url) {
   // Only the world moves. The languages were read once and checked once, and
   // are handed back as they are: a world that has grown is no reason to merge
   // and check every word of every language again.
-  const build = () =>
-    inTurn(async () => fromSources({ ...sources, world: await readWorld(store) }));
+  const build = async () => fromSources({ ...sources, world: await readWorld(store) });
 
   async function assemble() {
     const { file } = await import('runtime:fs');
@@ -61,11 +60,13 @@ export function openBrain(url) {
     if (!root) throw new Error(`cannot find ${WORLD} — the brain has no world`);
 
     store = await open(root);
-    await inTurn(async () => {
-      // Every open, not only the first: the authored world may have grown since
-      // this store was written, and what was learned is kept through it.
-      await seed(store, await file(`${root}${WORLD}`).json());
-    });
+    const authored = await file(`${root}${WORLD}`).json();
+    // Validate before the authored source is allowed to change persistent
+    // state. The same door checks it again after memory is assembled.
+    fromSources({ world: authored });
+    // Every open, not only the first: the authored world may have grown since
+    // this store was written, and what was learned is kept through it.
+    await seed(store, authored);
 
     sources = {
       knowledge: await readAll(root, KNOWLEDGE),
@@ -104,7 +105,7 @@ export function openBrain(url) {
   // The circumstance of the signal — where it came from, where it went, what
   // was last spoken of — is the runtime's to supply, and it is optional: told
   // nothing, the brain does not guess who it is talking to.
-  async function brain(input, circumstance) {
+  async function turn(input, circumstance) {
     const thread = (circumstance && circumstance.conversation) ?? ALONE;
     const held = threads.get(thread) || {};
     // Who spoke, and who was spoken to, arrive with each signal or not at
@@ -120,47 +121,57 @@ export function openBrain(url) {
     const result = brainFrom(input, knowledge, said);
     const standing = [...(held.told || [])];
     if (result.told && !standing.includes(result.told)) standing.push(result.told);
-    threads.set(thread, {
-      spoken: result.spoken,
-      focus: result.focus,
-      names: result.names,
-      told: standing,
-    });
+    if (result.learned) {
+      // A turn is not acknowledged until the complete proposed change is
+      // committed. Persistence errors surface to the caller.
+      await write(store, result.learned);
+      knowledgePromise = build();
+      await knowledgePromise;
+    }
 
     // What it agreed to follow, brought round again now something has moved.
     // The brain holds no instruction; it is asked afresh, and where it can act
     // on one at last, that is its answer.
     for (const instruction of standing) {
       if (instruction === String(input)) continue;
-      const again = brainFrom(instruction, knowledge, {
+      const again = brainFrom(instruction, await loaded(), {
         spoken: result.spoken,
         focus: result.focus,
         names: result.names,
         from: said.from,
         to: said.to,
       });
-      if (again.told == null && again.expression.name !== "unsure") return again;
-    }
-    if (result.learned) {
-      try {
-        await inTurn(() => write(store, result.learned));
-      } catch {
-        // A fact that will not pass the store is not kept, and the brain's
-        // answer stands as given.
+      if (again.told == null && again.expression.name !== "unsure") {
+        threads.set(thread, {
+          spoken: result.spoken,
+          focus: result.focus,
+          names: result.names,
+          told: standing.filter((heldInstruction) => heldInstruction !== instruction),
+        });
+        return again;
       }
-      knowledgePromise = build();
-      await knowledgePromise;
     }
+    threads.set(thread, {
+      spoken: result.spoken,
+      focus: result.focus,
+      names: result.names,
+      told: standing,
+    });
     return result;
   }
 
-  async function forget() {
+  // Perception, reasoning, allocation and persistence are one serial turn.
+  // A second signal must reason over the world left by the first, rather than
+  // allocate from the same stale snapshot and overwrite its identity.
+  const brain = (input, circumstance) => inTurn(() => turn(input, circumstance));
+
+  const forget = () => inTurn(async () => {
     threads.clear();
     if (!store) return;
-    await inTurn(() => forgetLearned(store));
+    await forgetLearned(store);
     knowledgePromise = build();
     await knowledgePromise;
-  }
+  });
 
   return { brain, forget };
 }

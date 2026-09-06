@@ -42,3 +42,49 @@ test("a language handed back is still checked — once, on the way in", async ()
   }
   assert(threw != null, "a language that will not pass the shape check does not get through");
 });
+
+test("assembling knowledge does not mutate any source", () => {
+  const source = structuredClone(world);
+  const before = JSON.stringify(source);
+  fromSources({
+    world: source,
+    knowledge: [{ terms: [{ id: 1, name: "thing", links: [{ rel: 9, to: 2 }] }] }],
+  });
+  assertEquals(JSON.stringify(source), before);
+});
+
+test("two sources cannot assign different quantities to one fact", () => {
+  let threw = null;
+  try {
+    fromSources({
+      world: {
+        ...world,
+        terms: world.terms.map((term) => term.id === 1
+          ? { ...term, links: [{ rel: 9, to: 2, quantity: 1 }] }
+          : term),
+      },
+      knowledge: [{ terms: [{ id: 1, name: "thing", links: [{ rel: 9, to: 2, quantity: 2 }] }] }],
+    });
+  } catch (why) {
+    threw = why;
+  }
+  assert(threw != null, "conflicting quantities were silently merged");
+});
+
+test("two sources cannot give one proposition opposite polarities", () => {
+  let threw = null;
+  try {
+    fromSources({
+      world: {
+        ...world,
+        terms: world.terms.map((term) => term.id === 1
+          ? { ...term, links: [{ rel: 9, to: 2 }] }
+          : term),
+      },
+      knowledge: [{ terms: [{ id: 1, name: "thing", links: [{ rel: 9, to: 2, not: true }] }] }],
+    });
+  } catch (why) {
+    threw = why;
+  }
+  assert(threw != null, "opposite polarities crossed the source boundary");
+});

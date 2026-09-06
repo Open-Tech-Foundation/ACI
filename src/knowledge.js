@@ -73,6 +73,12 @@ function join(into, from, where) {
     }
     into.marking = from.marking;
   }
+  if (from.numbers !== undefined) {
+    if (into.numbers !== undefined && !same(into.numbers, from.numbers)) {
+      throw new Error(`${at}: numbers were already said differently`);
+    }
+    into.numbers = clone(from.numbers);
+  }
   for (const rule of from.derivations || []) {
     into.derivations = into.derivations || [];
     if (!into.derivations.some((held) => same(held, rule))) into.derivations.push(clone(rule));
@@ -93,6 +99,12 @@ function join(into, from, where) {
       if (!held) {
         into.grammar.rules[symbol] = clone(rule);
         continue;
+      }
+      if (rule.whole !== undefined) {
+        if (held.whole !== undefined && held.whole !== rule.whole) {
+          throw new Error(`${at}: grammar rule "${symbol}" was already marked differently`);
+        }
+        held.whole = rule.whole;
       }
       for (const alternative of rule.rules) {
         if (!held.rules.includes(alternative)) held.rules.push(alternative);
@@ -132,11 +144,12 @@ function merge(world, sources) {
     for (const t of data.terms) {
       const held = terms.get(t.id);
       if (!held) {
-        const kept = { id: t.id, name: t.name, links: [...t.links] };
+        const kept = { id: t.id, name: t.name, links: t.links.map(clone) };
         if (t.value !== undefined) kept.value = t.value;
         if (t.symbol !== undefined) kept.symbol = t.symbol;
         if (t.individual) kept.individual = true;
         if (t.disjoint) kept.disjoint = true;
+        if (t.transitive) kept.transitive = true;
         terms.set(t.id, kept);
         origin.set(t.id, where);
         continue;
@@ -162,6 +175,12 @@ function merge(world, sources) {
         }
         held.symbol = t.symbol;
       }
+      if (t.transitive !== undefined) {
+        if (held.transitive !== undefined && held.transitive !== t.transitive) {
+          throw new Error(`${where}: term ${t.id} was already marked differently for transitivity`);
+        }
+        held.transitive = t.transitive;
+      }
       for (const l of t.links) {
         // A link is the same one only if it was set at the same time. A later
         // count does not overwrite the earlier one — it comes after it, and
@@ -175,8 +194,9 @@ function merge(world, sources) {
         );
         if (same) {
           if (l.quantity !== undefined && same.quantity !== l.quantity) {
-            same.quantity = l.quantity;
-            origin.set(t.id, where);
+            throw new Error(
+              `${where}: term ${t.id} gives one link quantities ${same.quantity} and ${l.quantity}`,
+            );
           }
           continue;
         }

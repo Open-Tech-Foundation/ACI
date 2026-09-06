@@ -24,6 +24,28 @@ Two questions settle whether something belongs in the engine:
 
 What survives both is primitive, and only that may be written in code.
 
+### Foundational invariants
+
+- **Deterministic turns:** one admitted turn observes and commits one complete
+  predecessor state; ids and logical timestamps are allocated once in that turn.
+- **Atomic knowledge:** a multi-fact signal and its database write either enter
+  whole or not at all. Validation precedes acknowledgement.
+- **Scoped truth:** asserted, denied, hypothetical, modal, conditional and
+  existential propositions are distinct; mentioning a thing is not asserting it.
+- **Open-world judgement:** held, against and absent stay distinct. Unknown is
+  neither false nor the object `none`, and opposite polarities cannot coexist.
+- **Semantic graphs:** only declared transitive relations close over paths;
+  classification has no cycles, and inherited positive and negative facts follow
+  the same kind ladder.
+- **Temporal state:** current state is the latest logical fact, history is never
+  double-counted, and event questions respect the event's stated time.
+- **Language independence:** grammar labels and particular words carry no hidden
+  engine behavior; semantic metadata supplies whole-proposition boundaries,
+  positional readings and number-word composition.
+- **Exact values:** exact arithmetic never crosses a lossy binary-number boundary.
+- **Immutable inputs:** assembly and reasoning never mutate authored or supplied
+  source objects.
+
 | the brain owns | the data owns |
 |---|---|
 | the four ways to exist: thing / property / relation / action | which term is which |
@@ -82,6 +104,9 @@ Refused, not tolerated:
 - a word saying `names` anything but `false`
 - a word that points and also names a term of its own
 - a grammar naming a start symbol that has no rule
+- a positive and denied copy of the same fact
+- a classification cycle, including one formed only after sources are merged
+- two quantities for the same fact at the same moment
 
 Silently accepting half a source is how a brain ends up reasoning over knowledge
 it does not have. Errors name the file at fault, not the merged whole.
@@ -114,8 +139,15 @@ terms, and may add links to terms the world already has; it may **not** redefine
 a term, move an anchor, or reassign a relation — two sources disagreeing is a
 contradiction, and the brain refuses rather than picking a winner.
 
-Because a term may then hold several links of one relation, `isA` walks **all**
-of them. The world is a graph, not a tree.
+Because a term may then hold several links of one relation, a walk considers
+**all** of them. The world is a graph, not a tree. Classification (`is`) is a
+transitive ladder. Every other relation is direct unless its world term declares
+`"transitive": true`; cause, part and order do, while holding and placement do
+not acquire facts merely because two links happen to form a chain.
+
+Assembly is immutable: validating or merging a source never changes the object
+the caller supplied. A disagreement is reported rather than resolved by source
+order.
 
 ### The brain takes one argument for all of it
 
@@ -137,6 +169,7 @@ runtime — never the brain — does the reading.
     "vowel":       { "characters": "aeiou" },
     "punctuation": { "characters": ". , ! ? ; : ' \" - ( ) [ ]" }
   },
+  "numbers": { "composition": "multiplicative-additive" },
   "words": {
     "hi":    { "pos": "interjection", "meaning": "greeting",     "concept": 277 },
     "cat":   { "pos": "noun",         "meaning": "feline animal","concept": 83 },
@@ -162,7 +195,7 @@ runtime — never the brain — does the reading.
   "grammar": {                       // context-free grammar (all in data)
     "start": "sentence",             // the only symbol a whole signal may parse as
     "rules": {
-      "sentence":       { "rules": ["interjection", "interjection sentence", "subject predicate"] },
+      "sentence":       { "whole": true, "rules": ["interjection", "interjection sentence", "subject predicate"] },
       "subject":        { "rules": ["noun", "article noun", "numeral noun"] },
       "predicate":      { "rules": ["verb verbComplement"] },
       "verbComplement": { "rules": ["noun", "numeral", "article noun"] }
@@ -174,7 +207,9 @@ runtime — never the brain — does the reading.
 Each word carries `pos` (part of speech), `meaning`, and optionally `concept` —
 the id of the world term it names. It may also carry `marks` (what it points at
 or says of its neighbour), `negates`, `role` (which part its neighbour plays),
-`when`, `names`, `groups`, `person` and `number`. A word may say its term
+`when`, `where`, `names`, `groups`, `person` and `number`. `where` selects a
+reading by structural position (`initial` or `before-negation`) without teaching
+the engine a particular auxiliary word. A word may say its term
 stands bare, with no article (`bare`), the way a mass of water is not one
 water. A word may join what it joins as a choice rather than a togetherness
 (`choice`): one of them is the answer, not each. There is **no** `type`,
@@ -188,6 +223,11 @@ one a word is in a signal is what the parse settles — English says *a walk* an
 each with its own `pos` and `concept` — a saw is a tool, and it is also what
 someone did with their eyes. Every reading is carried through `understand` and
 `think`; `solve` settles which.
+
+**Number-word composition belongs to the language.** Where `numbers.composition`
+is `multiplicative-additive`, adjacent number words compose in that language's
+declared way. The engine supplies the primitive act of composition but holds no
+English scale rule.
 
 **A word may say which scale it compares on** (`on`): *heavier* is more, on
 weight.
@@ -226,7 +266,9 @@ given, and the language is what holds both.
 is a number whatever else it is — including a part below one, where the language
 declares where that part begins (`"point": "."`) and how many places it writes
 (`"places": 10`). **The brain holds the value exactly; the language says how far
-it is written**, so `log 2` comes back to ten places and nothing is rounded
+it is written**. Integers beyond JavaScript's safe-number range and exact decimal
+results remain decimal strings at the API boundary rather than passing through a
+binary `Number`, so `log 2` comes back to ten places and nothing is rounded
 before it has to be — no word lists `125` and no term names it, and
 `1+125` is still `126`. The language says which symbols it counts in and what
 they stand as in a sentence; reading them is the brain's own, and so is what
@@ -372,7 +414,8 @@ on, not even for not knowing.
   "relations": { "is": 294 },                   // the relation is itself a term
   "terms": [
     { "id": 10, "name": "organism", "links": [{ "rel": 294, "to": 6 }] },
-    { "id": 83, "name": "cat",      "links": [{ "rel": 294, "to": 24 }] }
+    { "id": 83, "name": "cat",      "links": [{ "rel": 294, "to": 24 }] },
+    { "id": 249, "name": "order", "transitive": true, "links": [{ "rel": 294, "to": 4 }] }
   ]
 }
 ```
@@ -381,6 +424,13 @@ on, not even for not knowing.
 compared only for equality — that is what keeps the world language-neutral.
 Two language files may point at the same term (`cat` / `chat` -> `83`) and the
 brain reasons identically over both.
+
+`transitive: true` is semantic world knowledge about a relation term, not a
+property inferred from its name. Ids, term values, quantities and logical times
+must be safe JSON integers; larger signal values remain exact strings rather
+than entering numeric world fields. Links may additionally carry `not`,
+`quantity` and deterministic logical time `at`; opposite polarities and
+same-time quantity disagreements are invalid knowledge.
 
 ### Grammar semantics
 
@@ -391,6 +441,9 @@ of `rules`; a rule is a whitespace-separated sequence of symbols.
 - A symbol is a **terminal** if it is not a key — it must match a token's `pos`.
 - Parsing starts at `grammar.start` only. The first parse that consumes **all**
   tokens wins; a fragment that parses as some other non-terminal is not a parse.
+- A non-terminal may declare `whole: true` when its children are independent
+  propositions. Judgement uses that semantic flag, never a rule label such as
+  `clause`; renaming a grammar symbol therefore cannot change reasoning.
 - The parser enumerates *every* way a symbol can match at a position, so an
   enclosing rule can reject a short match and take a longer one.
 - A left-recursive rule yields no parse rather than overflowing the stack.
@@ -572,7 +625,8 @@ shape everything else takes:
 
 `"what is your name?"` is then an ordinary question over the `name` relation —
 nothing in the engine treats it specially — and it answers `ACI`. Loaded
-nothing, the brain answers `none` rather than inventing a name.
+nothing, the brain answers with its `unknown` intent rather than treating absence
+as the known object `none`.
 
 A **`symbol`** on a term is the characters it is said as where no language has a
 word for it. A name is the same in every language, so it is held with the thing
@@ -687,8 +741,11 @@ $ ACI_STORE=data/aci.db  …
 ```
 
 `runtime:db` is asynchronous, so every statement is drained and closed before the
-next, and all store access is serialised: a cursor left open blocks the next
-write, and two answers at once would otherwise interleave.
+next. A complete turn—load, reason, allocate ids, persist, and update its
+conversation—is serialised. Concurrent calls therefore have the same result as
+the same calls made in their admitted order. Every learned change is one SQLite
+transaction: a failed term or link rolls the whole change back, and no reply
+acknowledges knowledge that was not committed.
 
 ## Memory
 
@@ -699,9 +756,10 @@ Two kinds, and they behave differently:
 | **kind** — *a cat is a mammal* | permanent | refused as a contradiction |
 | **state** — *the basket has three apples* | true now | **revised**; the world moved on |
 
-State is a `quantity` on a link. Telling the brain a different count is not
-disagreeing with it, so the merge replaces rather than refusing, and asking
-`"basket has how many apple?"` reads what is so now.
+State is a `quantity` on a stamped link. Telling the brain a different count at
+a later logical moment is not disagreeing with it: the earlier link remains as
+history and the latest is current. Two different quantities at one moment are a
+contradiction. Asking `"basket has how many apple?"` reads what is so now.
 
 ```
 > basket has how many apple?   I don't know.
@@ -755,10 +813,10 @@ sees it.
   below nothing. Only a sign — a word for taking away stands before what it
   takes and is not part of it, and the language already says which of its
   words are a thing's name and which are another way to write it.
-- **Two number words side by side are one number.** A round one with a smaller
-  one after it is added; a smaller one before a round one multiplies it; a run
-  is taken as it is read, so `one hundred twenty five` is 125. Figures are
-  whole as written and are never run together.
+- **Two number words side by side may be one number.** The recognized language's
+  `numbers.composition` decides whether and how they compose; with
+  `multiplicative-additive`, `one hundred twenty five` is 125. Figures are whole
+  as written and are never run together.
 
 A word may name **more than one thing** — a saw is a tool and it is also what
 someone did with their eyes. Every reading is carried out of `think`, because
@@ -789,15 +847,20 @@ on nothing would still leave a name behind.
 
 **Naming a thing.** A word no language lists and no world holds, standing where
 a thing stands and spoken of as though it were one, is a name being given. The
-thing is made here, before anything is judged, so what else the signal says of
-it is said of **it** and not of nothing: `john has 3 apples` names john and
-gives him the apples in one breath. Said to be of a kind, that is the kind it
-is; said anything else, a thing is what it is. A name for a thing is the
+candidate referent is made here as only a generic thing, before anything is
+judged, so what else the signal says of it is said of **it** and not of nothing:
+`john has 3 apples` names john and gives him the apples in one breath. Its more
+specific kind, polarity and quantity come only from the proposition the brain
+later accepts. A name for a thing is the
 world's — it goes on being there after the talking stops — and it is met again
 by what it is **called**, the world being asked for a term of that name.
 Asking is not giving: a signal carrying a hole names nothing, with or without
 a question mark, so `who has the telescope` leaves no telescope behind — a
 question answers what it found and takes nothing in.
+
+Names are committed only when an accepted fact or event refers to them. A name
+mentioned inside a modal, a claim-about-a-claim, an unmet conditional, or a
+refused/denied offering cannot leak an entity or kind into memory.
 
 A name given a **number** is the conversation's instead: `x is 5` gives x five,
 and giving is done with the weakest joint there is, so `x > 10` asks rather
@@ -959,7 +1022,9 @@ remembering is the runtime's act.
 
 A claim that would **close a loop** is refused instead — a relation already
 running from the object to the subject cannot also run back, so a `refuse` node
-is added and nothing is learned.
+is added and nothing is learned. The proposed learning is checked as one overlay
+on one immutable snapshot, so two individually harmless joined clauses cannot
+create a cycle, duplicate an id/name, or contradict one another when combined.
 
 A **contradicted** claim is refused the same way, with `refuse: contradiction`.
 So teaching the brain `"a cat is two"` no longer corrupts it: a cat is a kind of
@@ -1033,7 +1098,8 @@ language says a placement with a preposition, so a complement may be one.
 
 Two relations stand in `"an apple is on a table"`, and the more specific is the
 signal's joint: the claim is a placement, not what the apple is. **What a thing
-is does not change by moving it.**
+is does not change by moving it.** A new stamped placement becomes its current
+place while every earlier placement remains available as history.
 
 **What is put into a thing is what it comes to hold.** The world says which
 action causes which operation — a `give` causes a plus — and a signal may name
@@ -1058,6 +1124,10 @@ A word may say otherwise: **all** and **every** say so outright; **no** says of
 a kind what a denial says of it; and **some** is not the kind — what the kind
 reaches, some of it reaches, and some of it may reach what the kind does not,
 so it is never denied merely for a path the kind has not got.
+
+When an existential claim is learned, it creates one anonymous individual of
+the kind and records the fact on that witness. It never writes the fact onto the
+kind itself: `some birds are white` does not entail `all birds are white`.
 
 `nobody` is not a body: it is a person, and the word denies what is said of one.
 
@@ -1248,7 +1318,9 @@ other. Which thing plays which:
 Being asked is not being told, and answering is not doing. Every part the
 signal names must be played by the same one occurrence, and a part played by a
 thing of a kind answers to the kind — `did i rinse a cup` is answered by any
-rinsing of any cup. Finding none is not finding it did not happen: the standing
+rinsing of any cup. The occurrence must also match the side of now the question
+asks about; a future occurrence is not evidence that it happened in the past.
+Finding none is not finding it did not happen: the standing
 is `absent`, and the brain says it does not know.
 
 **A word may carry when, or that a signal is asking, without naming anything.**
@@ -1295,9 +1367,9 @@ the walk climbs the `is` chain and gathers every rung, so a computer's memory is
 this brain's memory without anyone writing the link twice. A thing that has
 three things has three; saying the first would be picking one, and the brain
 does not pick. What stands between them said one after another is the language's
-(`speech.list`). A walk that comes back empty answers with `anchors.none` —
-nothing is what it has, the way zero is what a count of nothing counts — while
-the node keeps its empty `found`.
+(`speech.list`). A walk that comes back empty keeps an empty `found` and is
+expressed as unknown. Absence of evidence is not the known term `anchors.none`,
+and neither is it a denial.
 
 A **name** is not a case of its own: `"what is your name?"` walks the `name`
 relation like any other, and answers with what memory holds. A term the language
@@ -1451,8 +1523,9 @@ it or answer with it.
   `loadLanguageDirectory(dir)` reads `*.json` **in name order**, so the brain sees
   the same languages in the same order on every machine.
 - `src/world.js` — `fromWorldData(data)` compiles the world into
-  `{ anchors, baseRelation, term, isA, linked, excludes }`. `isA` walks whichever relation
-  it is asked about (the `is` relation by default) and terminates on cycles.
+  `{ anchors, baseRelation, term, isA, linked, excludes }`. `isA` walks the base
+  classification relation transitively; another relation is direct unless its
+  term declares `transitive: true`. Every walk terminates defensively on cycles.
 - `src/index.js` — server-only bootstrap: `brain(input)` loads `languages/`,
   `data/world.json` and `knowledge/` via `runtime:fs` (probing relative candidates
   to work both raw and bundled), assembles them with `fromSources`, and calls
@@ -1477,8 +1550,10 @@ await brain("hi", { from, conversation })        // loads languages internally
 
 `isA(id, ancestor, rel)` follows the relation for real. A thing is itself, but
 it does not stand in **every** relation to itself: only the `is` ladder the
-world is built of counts a term as reaching itself, which is why *a stone is a
-stone* and *a stone holds a stone* are not the same answer.
+world is built of counts a term as reaching itself. That ladder and relations
+whose terms declare `transitive: true` follow full paths; every other relation
+checks one edge. This is why *a stone is a stone* and *a stone holds a stone* are
+not the same answer.
 
 `openBrain(url)` keeps the store and the conversation threads. `conversation`
 names a thread; told none, the signal is in the one unnamed thread.

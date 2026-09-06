@@ -25,8 +25,8 @@ test("the kind asked after is not one of the things asked about", async () => {
   await forget();
 });
 
-test("a kind nothing was said of is no answer", async () => {
-  assertEquals((await fresh("a car is red", "what size is the car")).expression.state.says, "none");
+test("a kind nothing was said of is unknown", async () => {
+  assertEquals((await fresh("a car is red", "what size is the car")).expression.state.says, "I don't know.");
   await forget();
 });
 
@@ -37,7 +37,7 @@ test("a hole standing where something played a part asks which thing played it",
 });
 
 test("nothing was told to have happened, so nothing played the part", async () => {
-  assertEquals((await fresh("who kicked the ball")).expression.state.says, "none");
+  assertEquals((await fresh("who kicked the ball")).expression.state.says, "I don't know.");
   await forget();
 });
 
@@ -45,9 +45,9 @@ test("asking names nothing, with or without a question mark", async () => {
   // `telescope` is no word and no term. Asked, it is not a name being given:
   // the brain answers what it found and takes nothing in.
   const r = await fresh("the man saw the boy with the telescope", "who has the telescope");
-  assertEquals(r.expression.state.says, "none");
+  assertEquals(r.expression.state.says, "I don't know.");
   assertEquals(r.learned, null, "a question teaches nothing");
-  assertEquals((await fresh("who has the telescope?")).expression.state.says, "none");
+  assertEquals((await fresh("who has the telescope?")).expression.state.says, "I don't know.");
   await forget();
 });
 
@@ -94,9 +94,8 @@ test("one greeting after another is two greetings, not a greeting and a signal",
 
 test("how asks after the way a thing is, not what it is", async () => {
   await forget();
-  // The brain holds no state of its own, so there is none to give — which is
-  // not the same as not knowing.
-  assertEquals((await brain("how are you?", { from: PERSON })).expression.state.says, "none");
+  // The brain holds no state of its own, so it has no evidence for an answer.
+  assertEquals((await brain("how are you?", { from: PERSON })).expression.state.says, "I don't know.");
   assertEquals((await brain("what are you")).expression.state.says, "computer");
   await forget();
 });
@@ -107,10 +106,10 @@ test("when and why ask like what does", async () => {
   await forget();
 });
 
-test("when across time answers none where nothing does", async () => {
+test("when across time stays unknown where nothing does", async () => {
   await forget();
   await brain("a drum is cold");
-  assertEquals((await brain("when is it?")).expression.state.says, "none");
+  assertEquals((await brain("when is it?")).expression.state.says, "I don't know.");
   await forget();
 });
 

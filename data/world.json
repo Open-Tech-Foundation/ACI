@@ -2876,6 +2876,7 @@
     {
       "id": 247,
       "name": "cause",
+      "transitive": true,
       "links": [
         {
           "rel": 294,
@@ -2886,6 +2887,7 @@
     {
       "id": 248,
       "name": "part",
+      "transitive": true,
       "links": [
         {
           "rel": 294,
@@ -2896,6 +2898,7 @@
     {
       "id": 249,
       "name": "order",
+      "transitive": true,
       "links": [
         {
           "rel": 294,

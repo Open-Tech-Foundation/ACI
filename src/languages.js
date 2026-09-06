@@ -114,6 +114,15 @@ function buildLanguage(data) {
     // Which side of an action the doer falls on, and which side the target.
     // English puts the doer first; a verb-final language does not.
     parts: data.parts || null,
+    joinNumbers: (left, right) => {
+      if (!data.numbers || data.numbers.composition !== 'multiplicative-additive') return null;
+      const round = (value) => value >= 10 && value % 10 === 0;
+      return left > right && round(left)
+        ? left + right
+        : left < right && round(right)
+          ? left * right
+          : null;
+    },
     roles: symbolRoles(symbols),
   };
 }
@@ -216,9 +225,20 @@ function partsOf(info) {
 // below one is written after the point the language declares, to as many places
 // as it says it writes — the brain holds the value exactly either way.
 function figures(counting, point, places, value) {
-  if (counting.length < 2 || typeof value !== 'number' || !Number.isFinite(value) || value < 0) {
+  if (counting.length < 2) {
     return null;
   }
+  // Decimal strings preserve values beyond Number's safe range. Translate
+  // them directly when this language uses ten figures.
+  if (typeof value === 'string' && counting.length === 10 && /^\d+(?:\.\d+)?$/.test(value)) {
+    const [whole, fraction = ''] = value.split('.');
+    const before = Array.from(whole, (digit) => counting[Number(digit)]).join('');
+    const after = fraction.slice(0, places).replace(/0+$/, '');
+    if (!after) return before;
+    if (!point) return null;
+    return `${before}${point}${Array.from(after, (digit) => counting[Number(digit)]).join('')}`;
+  }
+  if (typeof value !== 'number' || !Number.isFinite(value) || value < 0) return null;
   const base = counting.length;
   let whole = Math.floor(value);
   let out = '';
@@ -257,6 +277,20 @@ function valued(counting, point, text) {
   const digits = at < 0 ? whole : whole.slice(0, at) + whole.slice(at + 1);
   const chars = Array.from(digits);
   if (chars.length === 0) return null;
+  const indices = chars.map((ch) => counting.indexOf(ch));
+  if (indices.some((digit) => digit < 0)) return null;
+  // Base ten is kept as written until arithmetic consumes it. Whole values in
+  // the safe range retain the public numeric representation used by terms;
+  // decimals and large integers remain exact strings.
+  if (counting.length === 10) {
+    const decimal = indices.map(String).join('');
+    const written = at < 0
+      ? decimal
+      : `${decimal.slice(0, at) || '0'}.${decimal.slice(at)}`;
+    if (at >= 0) return written.replace(/^0+(?=\d)/, '').replace(/\.?0+$/, '') || '0';
+    const integer = BigInt(written || '0');
+    return integer <= BigInt(Number.MAX_SAFE_INTEGER) ? Number(integer) : integer.toString();
+  }
   let value = 0;
   for (const ch of chars) {
     const digit = counting.indexOf(ch);
