@@ -170,12 +170,19 @@ runtime — never the brain — does the reading.
     "punctuation": { "characters": ". , ! ? ; : ' \" - ( ) [ ]" }
   },
   "numbers": { "composition": "multiplicative-additive" },
+  "unknown": { "pos": "noun" },    // parser position for a newly heard name
+  "syntax": {                        // cognitive functions of parser positions
+    "noun": "modifier",
+    "adjective": "modifier",
+    "degree": "modifier"
+  },
   "words": {
     "hi":    { "pos": "interjection", "meaning": "greeting",     "concept": 277 },
     "cat":   { "pos": "noun",         "meaning": "feline animal","concept": 83 },
     "is":    { "pos": "verb",         "meaning": "to be",        "concept": 294 },
     "two":   { "pos": "numeral",      "meaning": "2",            "concept": 115 },
     "i":     { "pos": "pronoun",      "meaning": "from",         "marks": "from" },
+    "my":    { "pos": "possessive",   "meaning": "from",         "marks": "from", "functions": "possessor" },
     "you":   { "pos": "pronoun",      "meaning": "to",           "marks": "to" },
     "it":    { "pos": "pronoun",      "meaning": "it",           "marks": "spoken" },
     "who":   { "pos": "interrogative","meaning": "who",  "marks": "unknown", "concept": 138 }
@@ -196,7 +203,7 @@ runtime — never the brain — does the reading.
     "start": "sentence",             // the only symbol a whole signal may parse as
     "rules": {
       "sentence":       { "whole": true, "rules": ["interjection", "interjection sentence", "subject predicate"] },
-      "subject":        { "rules": ["noun", "article noun", "numeral noun"] },
+      "subject":        { "referent": true, "rules": ["noun", "article noun", "numeral noun"] },
       "predicate":      { "rules": ["verb verbComplement"] },
       "verbComplement": { "rules": ["noun", "numeral", "article noun"] }
     }
@@ -207,9 +214,12 @@ runtime — never the brain — does the reading.
 Each word carries `pos` (part of speech), `meaning`, and optionally `concept` —
 the id of the world term it names. It may also carry `marks` (what it points at
 or says of its neighbour), `negates`, `role` (which part its neighbour plays),
-`when`, `where`, `names`, `groups`, `person` and `number`. `where` selects a
+`when`, `where`, `functions`, `names`, `groups`, `person` and `number`. `where` selects a
 reading by structural position (`initial` or `before-negation`) without teaching
-the engine a particular auxiliary word. A word may say its term
+the engine a particular auxiliary word. `functions` names a closed cognitive
+role—condition, determiner, ellipsis, enclosure, joining, modality, modifier or
+possession—that affects inference independently of the word's parser position.
+A word may say its term
 stands bare, with no article (`bare`), the way a mass of water is not one
 water. A word may join what it joins as a choice rather than a togetherness
 (`choice`): one of them is the answer, not each. There is **no** `type`,
@@ -217,7 +227,11 @@ water. A word may join what it joins as a choice rather than a togetherness
 
 **A word may be more than one part of speech.** `pos` may be a list, and which
 one a word is in a signal is what the parse settles — English says *a walk* and
-*walks* with one word.
+*walks* with one word. POS and non-terminal values are opaque parser symbols:
+renaming every one of them cannot change a judgement. `unknown.pos` says where
+a newly heard possible name fits; the core supplies no implicit noun fallback.
+`syntax` maps parser positions to cognitive functions where every word in that
+position shares one.
 
 **A word may name more than one thing.** An entry may hold several readings,
 each with its own `pos` and `concept` — a saw is a tool, and it is also what
@@ -444,6 +458,9 @@ of `rules`; a rule is a whitespace-separated sequence of symbols.
 - A non-terminal may declare `whole: true` when its children are independent
   propositions. Judgement uses that semantic flag, never a rule label such as
   `clause`; renaming a grammar symbol therefore cannot change reasoning.
+- A non-terminal may declare `referent: true` when it binds one referential
+  phrase. Description restriction reads this role, never names such as
+  `subject` or `item`.
 - The parser enumerates *every* way a symbol can match at a position, so an
   enclosing rule can reject a short match and take a longer one.
 - A left-recursive rule yields no parse rather than overflowing the stack.

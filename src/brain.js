@@ -166,6 +166,7 @@ function recognizeLanguage(roots, langs) {
         number: word.number ?? null,
         proximity: word.proximity ?? null,
         where: word.where ?? null,
+        functions: lang.functionsFor(word),
       }));
       matching.push({
         lang: lang.data.name,
@@ -246,7 +247,7 @@ function think(roots, langs, at, world) {
       // A word nothing knows still stands where it stands. Standing where a
       // thing stands is what a name does, so that is what it is taken as —
       // and `wordKnown` stays false, because nothing knows it yet.
-      pos: word ? word.pos : read ? lang.figuresPos : 'noun',
+      pos: word ? word.pos : read ? lang.figuresPos : lang.unknownPos,
       meaning: word ? word.meaning : read || called != null ? String(n.state.identity) : null,
       concept: result != null ? null : pointed != null ? pointed : word
         ? oneMeant(pointedAt(word, at, world), world) ?? word.concept
@@ -274,6 +275,7 @@ function think(roots, langs, at, world) {
       // How near what the pointer points at stands. The language's to say.
       proximity: word ? word.proximity ?? null : null,
       where: word ? word.where ?? null : null,
+      functions: word ? word.functions ?? null : null,
       };
     };
     // A word that names more than one thing is thought of every way it may be
@@ -341,8 +343,7 @@ function intraSignal(roots, world, langs, at) {
     if (t.concept == null && t.value != null) return n;
     if (seen.length === 0 && t.concept == null) return n;
     if (t.concept != null) {
-      const prev = i > 0 ? posOf(roots[i - 1]) : [];
-      if (prev.includes('conjunction')) {
+      if (i > 0 && functionsOf(roots[i - 1]).includes('join')) {
         if (seen.length > 0) return rewrite(n, seen[seen.length - 1]);
         return n;
       }
@@ -528,8 +529,9 @@ function solve(roots, world, langs, mood, allocate) {
   // Whose a thing is settles what it names, and a word nothing knows is named
   // only where it stands in a claim — so whose comes first, or a claim resting
   // on a pointer that landed on nothing would still name something.
+  const positioned = anaphora(auxiliary(elliptical(subordinate(roots, world), world)), world);
   const settled = calling(
-    whose(settle(anaphora(auxiliary(elliptical(subordinate(roots, world)))), world), world, langs, mood, allocate),
+    whose(settle(positioned, world), world, langs, mood, allocate),
     world,
     mood,
     allocate,
@@ -542,16 +544,14 @@ function solve(roots, world, langs, mood, allocate) {
     const lang = findBranch(n, 'language');
     const thoughtState = thought ? thought.state.thought : null;
     const meaning = thoughtState ? thoughtState.meaning : null;
-    const pos = thoughtState ? thoughtState.pos : null;
     const language = lang && lang.state.matches && lang.state.matches[0]
       ? lang.state.matches[0].lang
       : null;
 
     const result = withBranch(n, [...n.branch, node('response', meaning || 'unrecognized', [], { language })]);
 
-    // Innate reasoning: interjections are social — they come from living
-    // entities (persons). The brain knows this from the part-of-speech
-    // category, not from the semantic meaning.
+    // Innate reasoning follows the world term the language supplied. Its POS
+    // remains an opaque token used only by the grammar parser.
     const known = worldNode(thoughtState ? thoughtState.concept : null, world);
     if (known) result.branch.push(known);
 
@@ -573,7 +573,7 @@ function solve(roots, world, langs, mood, allocate) {
 
 // A thing may be whose. `my cat` is not cats, it is the one cat the sender has,
 // and the brain reads it as that one thing: which word says whose is the
-// language's (`pos: "possessive"`), and whom it points at is the circumstance's.
+// language's (`functions: "possessor"`), and whom it points at is the circumstance's.
 //
 // Where the world already holds one such thing, that is the one meant. Where it
 // holds none and the signal is telling, one is made and given to whoever it
@@ -584,10 +584,10 @@ function whose(roots, world, langs, mood, allocate) {
   const a = world.anchors || {};
   if (a.has == null) return roots;
   const side = markingSide(world, langs);
-  const possessive = (n) => (n && posOf(n).includes('possessive') ? n : null);
+  const possessive = (n) => (n && functionsOf(n).includes('possessor') ? n : null);
   const owning = (n) => {
     const t = n ? thoughtOf(n) : null;
-    return t && posOf(n).includes('possessive') && t.concept != null ? t.concept : null;
+    return t && functionsOf(n).includes('possessor') && t.concept != null ? t.concept : null;
   };
   return roots.map((n, i) => {
     const kind = conceptOf(n);
@@ -600,7 +600,7 @@ function whose(roots, world, langs, mood, allocate) {
     if (marked && owning(marked) == null) return unnamed(n);
     // A possessive names one thing that owns, never a kind: `the movie's name`
     // is the name of the one movie there is, not of movies.
-    if (posOf(n).includes('possessive')) {
+    if (functionsOf(n).includes('possessor')) {
       const one = oneMeant(kind, world);
       return one === kind ? n : standingFor(n, one);
     }
@@ -699,19 +699,26 @@ function calling(roots, world, mood, allocate) {
 // by what stands before it: after a determiner it stands for a focused kind,
 // otherwise it stays a number — `one plus one` still counts. A description
 // may stand between (`the blue one`, `the very sweet one`), so the scan walks
-// left over nouns, adjectives and degrees to the determiner. Which determiners
-// and descriptions exist is the language's; that ellipsis needs a determiner
-// is the brain's. Runs before anything is named, like `settle`.
-function elliptical(roots) {
+// left over potential descriptions to the determiner. Which readings carry
+// those cognitive functions is the language's; that ellipsis needs a
+// determiner is the brain's. Runs before anything is named, like `settle`.
+function elliptical(roots, world) {
   return roots.map((n, i) => {
     const t = findBranch(n, 'thought');
     const ways = t && t.state.ways ? t.state.ways : null;
     if (!ways || ways.length < 2) return n;
-    const anaphora = ways.find((w) => w && w.marks === 'spoken' && (Array.isArray(w.pos) ? w.pos : [w.pos]).includes('pronoun'));
+    const anaphora = ways.find((w) => w && w.marks === 'spoken' && functionList(w).includes('ellipsis'));
     if (!anaphora) return n;
     let j = i - 1;
-    while (j >= 0 && posOf(roots[j]).some((p) => p === 'noun' || p === 'adjective' || p === 'degree')) j -= 1;
-    if (j < 0 || !posOf(roots[j]).includes('article')) return n;
+    while (j >= 0 && !functionsOf(roots[j]).includes('determiner')) {
+      const concept = conceptOf(roots[j]);
+      if (
+        functionsOf(roots[j]).includes('join') ||
+        (concept != null && world && (world.isA(concept, world.anchors.relation) || world.isA(concept, world.anchors.action)))
+      ) break;
+      j -= 1;
+    }
+    if (j < 0 || !functionsOf(roots[j]).includes('determiner')) return n;
     return withBranch(
       n,
       n.branch.map((b) =>
@@ -729,20 +736,13 @@ function elliptical(roots) {
 function subordinate(roots, world) {
   if (!world) return roots;
   const a = world.anchors || {};
-  const pos = (n) => {
-    const t = findBranch(n, 'thought');
-    const p = t && t.state.thought ? t.state.thought.pos : null;
-    return p == null ? [] : Array.isArray(p) ? p : [p];
-  };
   return roots.map((n, i) => {
     const t = findBranch(n, 'thought');
     const ways = t && t.state.ways ? t.state.ways : null;
     if (!ways || ways.length < 2) return n;
-    const pro = ways.find(
-      (w) => w && w.marks === 'spoken' && (Array.isArray(w.pos) ? w.pos : [w.pos]).includes('pronoun'),
-    );
+    const pro = ways.find((w) => w && w.marks === 'spoken');
     if (!pro) return n;
-    if (!ways.some((w) => w && (Array.isArray(w.pos) ? w.pos : [w.pos]).includes('complementizer'))) {
+    if (!ways.some((w) => w && functionList(w).includes('encloses'))) {
       return n;
     }
     const rest = roots.slice(i + 1);
@@ -772,15 +772,21 @@ function subordinate(roots, world) {
 // by what stands before it: after a pronoun or a doing it asks about the
 // idea again, otherwise it stays whatever it was listed as. Runs with the
 // other positional readings, before anything is named.
-function anaphora(roots) {
+function anaphora(roots, world) {
   return roots.map((n, i) => {
     const t = findBranch(n, 'thought');
     const ways = t && t.state.ways ? t.state.ways : null;
     if (!ways || ways.length < 2) return n;
     const repeat = ways.find((w) => w && w.marks === 'idea');
     if (!repeat) return n;
-    const prev = i > 0 ? posOf(roots[i - 1]) : [];
-    if (!prev.some((p) => p === 'pronoun' || p === 'verb')) return n;
+    const before = i > 0 ? roots[i - 1] : null;
+    const prior = before ? thoughtOf(before) : null;
+    const concept = before ? conceptOf(before) : null;
+    const points = prior && prior.marks != null;
+    const predicates = concept != null && world && (
+      world.isA(concept, world.anchors.relation) || world.isA(concept, world.anchors.action)
+    );
+    if (!points && !predicates) return n;
     return withBranch(
       n,
       n.branch.map((b) =>
@@ -1094,7 +1100,7 @@ function judge(roots, world, mood, langs, sent) {
   // it, which is what being asked does, and takes nothing in. It cannot tell
   // might from does-not-know — it has no notion of what could be, only of what
   // it holds — so what it says is what it found.
-  if (mood === 'tell' && marksAnywhere(root, 'modal')) {
+  if (mood === 'tell' && hasFunctionAnywhere(root, 'modal')) {
     const [asked] = judge([root], world, 'ask', langs, sent);
     return [asked];
   }
@@ -1116,7 +1122,7 @@ function judge(roots, world, mood, langs, sent) {
     return [instead(root, join, judged)];
   }
 
-  const greeted = greeting(root);
+  const greeted = greeting(root, world);
   if (greeted) {
     const [, rest] = greeted;
     return [instead(root, rest, judge([rest], world, mood, langs, sent)[0])];
@@ -1802,7 +1808,7 @@ function judge(roots, world, mood, langs, sent) {
       // is my cat` is about the cat); standing as head it still speaks
       // (`what is your name`). Where its walk comes back empty it stays
       // silent rather than voicing none.
-      if (found.length === 0 && posOf(term).includes('possessive')) continue;
+      if (found.length === 0 && functionsOf(term).includes('possessor')) continue;
       if (isDeterminer(said, said.indexOf(term), world)) continue;
       // The brain looked, and what it found stays on the tree. Saying it is
       // another act, and one it will not perform where any of the answer harms.
@@ -1905,7 +1911,7 @@ function named(part) {
 // as the condition, and what follows it. That a signal may do this is the
 // brain's; which words say so is the language's.
 function conditionIn(root) {
-  if (!marksWith(root, 'conditional')) return null;
+  if (!hasFunction(root, 'condition')) return null;
   // What stands on either side of the words that mark a condition. A whole
   // signal, or a thing on its own — a thing put where a claim would go is the
   // thing to say, which is what `else small` says.
@@ -1913,19 +1919,18 @@ function conditionIn(root) {
   return parts.length >= 2 && parts.length <= 3 ? parts : null;
 }
 
-// Whether a word of this part of speech stands anywhere in the signal.
-function marksAnywhere(n, part) {
-  if (n.kind === 'thing' && posOf(n).includes(part)) return true;
-  return (n.branch || []).some((b) => marksAnywhere(b, part));
+// Whether a word carrying one language-declared cognitive function stands
+// anywhere in the signal. Parts of speech remain parser symbols only.
+function hasFunctionAnywhere(n, wanted) {
+  if (n.kind === 'thing' && functionsOf(n).includes(wanted)) return true;
+  return (n.branch || []).some((b) => hasFunctionAnywhere(b, wanted));
 }
 
-// Whether one of the words standing here is of this part of speech.
-function marksWith(n, part) {
-  return (n.branch || []).some((b) => {
-    const t = b.kind === 'thing' ? thoughtOf(b) : null;
-    const pos = t ? t.pos : null;
-    return pos != null && (Array.isArray(pos) ? pos : [pos]).includes(part);
-  });
+// Whether one of the words standing directly here carries that function.
+function hasFunction(n, wanted) {
+  return (n.branch || []).some(
+    (b) => b.kind === 'thing' && functionsOf(b).includes(wanted),
+  );
 }
 
 // A claim the signal speaks of rather than makes. A word may say that what
@@ -1944,11 +1949,7 @@ function claimWithin(n, whole) {
 // Whether one of the words here says a claim follows. That a word may do that
 // is the brain's; which word does it is the language's.
 function encloses(n) {
-  return (n.branch || []).some((b) => {
-    const t = b.kind === 'thing' ? thoughtOf(b) : null;
-    const pos = t ? t.pos : null;
-    return pos != null && (Array.isArray(pos) ? pos : [pos]).includes('complementizer');
-  });
+  return hasFunction(n, 'encloses');
 }
 
 // What the brain came to, and not the walking it did to get there.
@@ -1960,16 +1961,22 @@ function taken(n) {
 // `hello, how are you` is a greeting and a question, and neither is part of
 // the other. Which words greet is the language's; that a greeting is its own
 // act is the brain's.
-function greeting(root) {
+function greeting(root, world) {
   const branch = root.branch || [];
   const said = branch.filter((b) => joinedWhole(b, root));
-  const greets = branch.filter((b) => b.kind === 'thing' && posOf(b).includes('interjection'));
+  const communication = world && world.anchors ? world.anchors.communication : null;
+  const greets = branch.filter(
+    (b) => b.kind === 'thing' && communication != null && world.isA(conceptOf(b), communication),
+  );
   if (greets.length === 0 || said.length !== 1) return null;
   // Only where what follows says something of its own. One greeting after
   // another is two greetings, not a greeting and a signal.
   let other = false;
   const walk = (n) => {
-    if (n.kind === 'thing' && !posOf(n).includes('interjection')) other = true;
+    if (
+      n.kind === 'thing' &&
+      !(communication != null && world.isA(conceptOf(n), communication))
+    ) other = true;
     (n.branch || []).forEach(walk);
   };
   walk(said[0]);
@@ -1988,7 +1995,7 @@ function joinIn(n) {
   // Two wholes standing together are not joined where one is put as the
   // condition of the other: what follows from a claim is not a second signal
   // said alongside it.
-  if (!marksWith(n, 'conditional') && n.branch.filter((b) => joinedWhole(b, n)).length > 1) return n;
+  if (!hasFunction(n, 'condition') && n.branch.filter((b) => joinedWhole(b, n)).length > 1) return n;
   for (const b of n.branch) {
     const found = joinIn(b);
     if (found) return found;
@@ -2807,7 +2814,7 @@ function pseudoTerm(concept) {
       thought: {
         language: null,
         wordKnown: true,
-        pos: 'noun',
+        pos: null,
         meaning: null,
         concept,
         value: null,
@@ -2822,6 +2829,7 @@ function pseudoTerm(concept) {
         groups: null,
         person: null,
         number: null,
+        functions: null,
       },
     }),
   ]);
@@ -2830,29 +2838,29 @@ function pseudoTerm(concept) {
 // Which leaves of a determiner-headed phrase only restrict its head (`the`
 // and `blue` in `the blue one is warm`, `the` and `biggest` in `the biggest
 // wren eats trout`). The head is an ellipsis pronoun settled from several
-// readings, or a plain noun. Middles must all describe (noun, adjective,
-// degree) — a conjunction between them is togetherness, and each joined side
-// still claims on its own.
+// readings, or a plain referent. Middles must all carry the language-declared
+// modifier function — a join between them is togetherness, and each joined
+// side still claims on its own.
 function restrictedIn(root) {
   const restricted = new Set();
   const walk = (n) => {
-    if (n.kind === 'subject' || n.kind === 'item') {
+    if (n.state && n.state.referent) {
       const kids = (n.branch || []).filter((b) => b.kind === 'thing');
-      if (kids.length > 2 && posOf(kids[0]).includes('article')) {
+      if (kids.length > 2 && functionsOf(kids[0]).includes('determiner')) {
         const head = kids[kids.length - 1];
         const t = head ? findBranch(head, 'thought') : null;
         const thought = t ? t.state.thought : null;
-        const pos = thought ? thought.pos : null;
-        const parts = pos == null ? [] : Array.isArray(pos) ? pos : [pos];
         const isEllipsis =
           thought &&
           thought.marks === 'spoken' &&
-          parts.includes('pronoun') &&
+          functionList(thought).includes('ellipsis') &&
           t.state.ways &&
           t.state.ways.length > 1;
         const middles = kids.slice(1, -1);
-        const describing = middles.every((k) => posOf(k).some((p) => p === 'noun' || p === 'adjective' || p === 'degree'));
-        if ((isEllipsis || parts.includes('noun')) && describing) {
+        const headConcept = conceptOf(head);
+        const isReferent = headConcept != null || findBranch(head, 'call') != null;
+        const describing = middles.every((k) => functionsOf(k).includes('modifier'));
+        if ((isEllipsis || isReferent) && describing) {
           middles.forEach((k) => restricted.add(k));
         }
       }
@@ -2896,9 +2904,7 @@ function occurrenceAmount(world, action, parts, kind) {
 // it stays: something must say whose the telling is about.
 function isDeterminer(said, i, world) {
   if (!said || i < 0 || !said[i]) return false;
-  const t = findBranch(said[i], 'thought');
-  const pos = t && t.state.thought ? t.state.thought.pos : null;
-  if (pos == null || !(Array.isArray(pos) ? pos : [pos]).includes('possessive')) return false;
+  if (!functionsOf(said[i]).includes('possessor')) return false;
   const a = world ? world.anchors || {} : {};
   return said.slice(i + 1).some((m) => {
     const c = conceptOf(m);
@@ -3220,9 +3226,9 @@ const VERDICT = ['standing', 'answer', 'learn', 'refuse'];
 // clauses joined by a word, and one act judged of several things at once.
 // Either way the words are the same words; only what was reached of them
 // differs, so each root keeps the whole signal and only its own verdict.
-function apart(roots) {
+function apart(roots, world) {
   if (roots.length !== 1) return null;
-  const greeted = greeting(roots[0]);
+  const greeted = greeting(roots[0], world);
   if (greeted) return greeted;
   const join = joinIn(roots[0]);
   if (join) return join.branch.filter((b) => joinedWhole(b, join));
@@ -3246,7 +3252,7 @@ function expression(roots, langs, mood, world, sent) {
   // one whole: each part already stands finished on its own. This is the one
   // new step — not perceiving several as one, but putting several already-
   // finished acts into a single one said back together.
-  const together = roots.length === 1 && findBranch(roots[0], 'refuse') ? null : apart(roots);
+  const together = roots.length === 1 && findBranch(roots[0], 'refuse') ? null : apart(roots, world);
   if (together) {
     const parts = together.map((r) => expression([r], langs, mood, world, sent));
     const langName = parts.map((p) => p.state.language).find(Boolean) || null;
@@ -3591,6 +3597,7 @@ function structurePhrase(roots, langs) {
       node(start, start, kids, {
         text: tagged.map((t) => t.root.state.identity).join(' '),
         ...(rules[start].whole ? { whole: true } : {}),
+        ...(rules[start].referent ? { referent: true } : {}),
       }),
     ];
   }
@@ -3655,7 +3662,10 @@ function leafOrPhrase(c, rules) {
     c.symbol,
     c.symbol,
     (c.children || []).map((child) => leafOrPhrase(child, rules)).filter(Boolean),
-    rules[c.symbol] && rules[c.symbol].whole ? { whole: true } : {},
+    {
+      ...(rules[c.symbol] && rules[c.symbol].whole ? { whole: true } : {}),
+      ...(rules[c.symbol] && rules[c.symbol].referent ? { referent: true } : {}),
+    },
   );
 }
 
@@ -3668,6 +3678,17 @@ function posOf(n) {
   const pos = thought ? thought.pos : null;
   if (pos == null) return [];
   return Array.isArray(pos) ? pos : [pos];
+}
+
+// Language-declared cognitive functions. POS values are opaque parser symbols;
+// none of them may decide reasoning behavior.
+function functionList(value) {
+  if (!value || value.functions == null) return [];
+  return Array.isArray(value.functions) ? value.functions : [value.functions];
+}
+
+function functionsOf(n) {
+  return functionList(thoughtOf(n));
 }
 
 function grammarOf(root, langs) {
@@ -4010,7 +4031,7 @@ function learnedFrom(roots, world) {
   if (!world || roots.length !== 1) return null;
   // A signal that came to several verdicts learned from every one of them,
   // held together — the second fact is as much a fact as the first.
-  const together = apart(roots);
+  const together = apart(roots, world);
   if (together) {
     const terms = asOne(
       together.flatMap((r) => (learnedFrom([r], world) || { terms: [] }).terms),

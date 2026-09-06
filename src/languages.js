@@ -16,6 +16,7 @@ function buildLanguage(data) {
   // Where the part below one begins, and how many places this language writes.
   const point = counted && counted.point ? counted.point : null;
   const places = counted && counted.places ? counted.places : 0;
+  const syntax = data.syntax || {};
 
   // Every character this language's words are made of.
   const inWords = new Set();
@@ -69,6 +70,9 @@ function buildLanguage(data) {
     valueOfFigures: (text) => valued(counting, point, text),
     // What a number written that way stands as, when it is put in a sentence.
     figuresPos: counted ? counted.pos ?? null : null,
+    // Where this language's grammar admits a previously unseen name. The
+    // parser symbol is language data; the brain does not invent a noun class.
+    unknownPos: data.unknown ? data.unknown.pos : null,
     // Another way this language writes a term, where it has one that is not
     // what the term is called.
     otherWordFor: (concept) => (concept == null ? null : written.get(concept) ?? null),
@@ -106,6 +110,19 @@ function buildLanguage(data) {
       return agreeWith(forms, symbols, next);
     },
     lookupWord: (w) => lookUp(words, data.derivations, w),
+    functionsFor: (word) => {
+      const held = new Set(word && word.functions != null
+        ? (Array.isArray(word.functions) ? word.functions : [word.functions])
+        : []);
+      const positions = word ? (Array.isArray(word.pos) ? word.pos : [word.pos]) : [];
+      for (const position of positions) {
+        const functions = syntax[position];
+        for (const fn of functions == null ? [] : (Array.isArray(functions) ? functions : [functions])) {
+          held.add(fn);
+        }
+      }
+      return [...held];
+    },
     wordFor: (concept) => (concept == null ? null : named.get(concept) ?? null),
     grammar: data.grammar || {},
     // Which side of a marking word the thing it marks falls on. English puts it
@@ -204,6 +221,7 @@ function lookUp(words, derivations, w) {
       ...(rule.pos === undefined ? {} : { pos: rule.pos }),
       ...(rule.when === undefined ? {} : { when: rule.when }),
       ...(rule.negates === undefined ? {} : { negates: rule.negates }),
+      ...(rule.functions === undefined ? {} : { functions: rule.functions }),
     };
       return fits.map((info) => ({
         ...info,

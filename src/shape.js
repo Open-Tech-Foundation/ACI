@@ -19,6 +19,16 @@ function fail(where, why) {
 const MARKS = ['new', 'known', 'unknown', 'from', 'to', 'spoken', 'named', 'prior', 'idea'];
 const PERSONS = ['first', 'second', 'third'];
 const NUMBERS = ['singular', 'plural'];
+const COGNITIVE_FUNCTIONS = [
+  'condition',
+  'determiner',
+  'ellipsis',
+  'encloses',
+  'join',
+  'modal',
+  'modifier',
+  'possessor',
+];
 
 function isId(v) {
   return Number.isSafeInteger(v) && v >= 0;
@@ -208,7 +218,7 @@ export function checkLanguage(data, where = 'language') {
   if (!data || typeof data !== 'object') fail(where, 'must be an object');
   onlyKeys(
     data,
-    ['name', 'symbols', 'words', 'derivations', 'marking', 'parts', 'numbers', 'speech', 'expressions', 'grammar'],
+    ['name', 'symbols', 'words', 'derivations', 'marking', 'parts', 'numbers', 'unknown', 'syntax', 'speech', 'expressions', 'grammar'],
     where,
   );
 
@@ -248,6 +258,21 @@ export function checkLanguage(data, where = 'language') {
 
   if (data.words !== undefined && (!data.words || typeof data.words !== 'object')) {
     fail(at, 'words must be an object');
+  }
+
+  if (data.unknown !== undefined) {
+    if (!data.unknown || typeof data.unknown !== 'object') fail(at, 'unknown must be an object');
+    onlyKeys(data.unknown, ['pos'], `${at} unknown`);
+    if (typeof data.unknown.pos !== 'string' || data.unknown.pos === '') {
+      fail(`${at} unknown`, 'pos must be a non-empty parser symbol');
+    }
+  }
+  if (data.syntax !== undefined) {
+    if (!data.syntax || typeof data.syntax !== 'object') fail(at, 'syntax must be an object');
+    for (const [position, functions] of Object.entries(data.syntax)) {
+      if (position === '') fail(`${at} syntax`, 'parser positions must be non-empty strings');
+      checkFunctions(functions, `${at} syntax "${position}"`);
+    }
   }
   for (const [word, entry] of Object.entries(data.words || {})) {
     const w = `${at} word "${word}"`;
@@ -290,7 +315,7 @@ export function checkLanguage(data, where = 'language') {
     for (const rule of data.derivations) {
       const r = `${at} derivation`;
       if (!rule || typeof rule !== 'object') fail(r, 'must be an object');
-      onlyKeys(rule, ['ending', 'becomes', 'of', 'pos', 'when', 'negates'], r);
+      onlyKeys(rule, ['ending', 'becomes', 'of', 'pos', 'when', 'negates', 'functions'], r);
       if (typeof rule.ending !== 'string' || rule.ending === '') {
         fail(r, 'ending must be a non-empty string');
       }
@@ -308,6 +333,7 @@ export function checkLanguage(data, where = 'language') {
       if (rule.negates !== undefined && rule.negates !== true) {
         fail(r, 'negates, where present, must be true');
       }
+      checkFunctions(rule.functions, r);
     }
   }
 
@@ -381,12 +407,15 @@ function checkGrammar(grammar, at) {
   for (const [symbol, rule] of Object.entries(grammar.rules || {})) {
     const r = `${at} grammar rule "${symbol}"`;
     if (!rule || typeof rule !== 'object') fail(r, 'must be an object');
-    onlyKeys(rule, ['rules', 'whole'], r);
+    onlyKeys(rule, ['rules', 'whole', 'referent'], r);
     if (!Array.isArray(rule.rules) || rule.rules.length === 0) {
       fail(r, 'rules must be a non-empty array');
     }
     if (rule.whole !== undefined && rule.whole !== true) {
       fail(r, 'whole, where present, must be true');
+    }
+    if (rule.referent !== undefined && rule.referent !== true) {
+      fail(r, 'referent, where present, must be true');
     }
     for (const alt of rule.rules) {
       if (typeof alt !== 'string' || alt.trim() === '') fail(r, 'every rule must be a non-empty string');
@@ -402,7 +431,7 @@ function checkWord(info, w) {
   if (!info || typeof info !== 'object' || Array.isArray(info)) fail(w, 'must be an object');
   onlyKeys(
     info,
-    ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'person', 'number', 'on', 'bare', 'choice', 'proximity', 'where'],
+    ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'person', 'number', 'on', 'bare', 'choice', 'proximity', 'where', 'functions'],
     w,
   );
   // A word may be more than one part of speech — English says a walk and
@@ -413,6 +442,7 @@ function checkWord(info, w) {
     fail(w, 'pos must be a non-empty string, or a list of them');
   }
   if (typeof info.meaning !== 'string') fail(w, 'meaning must be a string');
+  checkFunctions(info.functions, w);
   if (info.concept !== undefined && !isId(info.concept)) fail(w, 'concept must be a term id');
   if (info.where !== undefined) {
     const positions = Array.isArray(info.where) ? info.where : [info.where];
@@ -475,5 +505,17 @@ function checkWord(info, w) {
   // action lives in the record, not in any file.
   if ((info.marks === 'from' || info.marks === 'to' || info.marks === 'prior') && info.concept !== undefined) {
     fail(w, 'a word that points names no term of its own');
+  }
+}
+
+function checkFunctions(value, where) {
+  if (value === undefined) return;
+  const functions = Array.isArray(value) ? value : [value];
+  if (
+    functions.length === 0 ||
+    functions.some((fn) => !COGNITIVE_FUNCTIONS.includes(fn)) ||
+    new Set(functions).size !== functions.length
+  ) {
+    fail(where, `functions must contain distinct cognitive functions: ${COGNITIVE_FUNCTIONS.join(', ')}`);
   }
 }

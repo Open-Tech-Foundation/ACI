@@ -302,6 +302,20 @@ test("world numeric fields reject values outside the exact JSON integer range", 
   assert(msg.includes("safe whole number"), msg);
 });
 
+test("language semantic functions are closed and grammar roles cannot be false", () => {
+  const badFunction = {
+    name: "test",
+    words: { x: { pos: "anything", meaning: "x", functions: "english-noun" } },
+  };
+  assert(refuses("a language-specific function", { languages: [badFunction] }).includes("cognitive functions"));
+
+  const badRole = {
+    name: "test",
+    grammar: { start: "anything", rules: { anything: { referent: false, rules: ["word"] } } },
+  };
+  assert(refuses("a false semantic grammar role", { languages: [badRole] }).includes("referent"));
+});
+
 test("classification cycles are refused at the knowledge door", () => {
   const msg = refuses("classification cycle", {
     world: {

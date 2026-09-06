@@ -43,17 +43,20 @@
     "a": {
       "pos": "article",
       "meaning": "indefinite article",
-      "marks": "new"
+      "marks": "new",
+      "functions": "determiner"
     },
     "an": {
       "pos": "article",
       "meaning": "indefinite article",
-      "marks": "new"
+      "marks": "new",
+      "functions": "determiner"
     },
     "the": {
       "pos": "article",
       "meaning": "definite article",
-      "marks": "known"
+      "marks": "known",
+      "functions": "determiner"
     },
     "is": {
       "pos": "verb",
@@ -105,6 +108,7 @@
         "pos": "pronoun",
         "meaning": "one",
         "marks": "spoken",
+        "functions": "ellipsis",
         "person": "third",
         "number": "singular"
       }
@@ -113,6 +117,7 @@
       "pos": "pronoun",
       "meaning": "ones",
       "marks": "spoken",
+      "functions": "ellipsis",
       "person": "third",
       "number": "plural"
     },
@@ -1535,24 +1540,29 @@
     },
     "and": {
       "pos": "conjunction",
-      "meaning": "and"
+      "meaning": "and",
+      "functions": "join"
     },
     "or": {
       "pos": "conjunction",
       "meaning": "or",
-      "choice": true
+      "choice": true,
+      "functions": "join"
     },
     "but": {
       "pos": "conjunction",
-      "meaning": "but"
+      "meaning": "but",
+      "functions": "join"
     },
     "nor": {
       "pos": "conjunction",
-      "meaning": "nor"
+      "meaning": "nor",
+      "functions": "join"
     },
     "yet": {
       "pos": "conjunction",
-      "meaning": "yet"
+      "meaning": "yet",
+      "functions": "join"
     },
     "so": [
       {
@@ -1560,7 +1570,8 @@
           "conjunction",
           "degree"
         ],
-        "meaning": "so"
+        "meaning": "so",
+        "functions": "join"
       },
       {
         "pos": "degree",
@@ -9778,12 +9789,14 @@
       "pos": "possessive",
       "meaning": "the one it went to",
       "marks": "to",
+      "functions": "possessor",
       "person": "second"
     },
     "ur": {
       "pos": "possessive",
       "meaning": "the one it went to",
       "marks": "to",
+      "functions": "possessor",
       "person": "second"
     },
     "i": {
@@ -9804,6 +9817,7 @@
       "pos": "possessive",
       "meaning": "the one it came from",
       "marks": "from",
+      "functions": "possessor",
       "person": "first",
       "number": "singular"
     },
@@ -10535,7 +10549,8 @@
     "that": [
       {
         "pos": "complementizer",
-        "meaning": "that"
+        "meaning": "that",
+        "functions": "encloses"
       },
       {
         "pos": "pronoun",
@@ -10548,7 +10563,8 @@
     ],
     "if": {
       "pos": "conditional",
-      "meaning": "if"
+      "meaning": "if",
+      "functions": "condition"
     },
     "leopard": {
       "pos": "noun",
@@ -15407,7 +15423,8 @@
     ],
     "can": {
       "pos": "modal",
-      "meaning": "can"
+      "meaning": "can",
+      "functions": "modal"
     },
     "bin": {
       "pos": "noun",
@@ -16179,7 +16196,8 @@
     },
     "because": {
       "pos": "conjunction",
-      "meaning": "because"
+      "meaning": "because",
+      "functions": "join"
     },
     "bigger": {
       "pos": "verb",
@@ -16333,22 +16351,26 @@
     "his": {
       "pos": "possessive",
       "meaning": "his",
-      "marks": "spoken"
+      "marks": "spoken",
+      "functions": "possessor"
     },
     "her": {
       "pos": "possessive",
       "meaning": "her",
-      "marks": "spoken"
+      "marks": "spoken",
+      "functions": "possessor"
     },
     "its": {
       "pos": "possessive",
       "meaning": "its",
-      "marks": "spoken"
+      "marks": "spoken",
+      "functions": "possessor"
     },
     "their": {
       "pos": "possessive",
       "meaning": "their",
-      "marks": "spoken"
+      "marks": "spoken",
+      "functions": "possessor"
     },
     "nobody": {
       "pos": "pronoun",
@@ -16958,7 +16980,8 @@
     },
     "may": {
       "pos": "modal",
-      "meaning": "may"
+      "meaning": "may",
+      "functions": "modal"
     },
     "june": {
       "pos": "noun",
@@ -17143,27 +17166,33 @@
     },
     "might": {
       "pos": "modal",
-      "meaning": "might"
+      "meaning": "might",
+      "functions": "modal"
     },
     "could": {
       "pos": "modal",
-      "meaning": "could"
+      "meaning": "could",
+      "functions": "modal"
     },
     "would": {
       "pos": "modal",
-      "meaning": "would"
+      "meaning": "would",
+      "functions": "modal"
     },
     "should": {
       "pos": "modal",
-      "meaning": "should"
+      "meaning": "should",
+      "functions": "modal"
     },
     "must": {
       "pos": "modal",
-      "meaning": "must"
+      "meaning": "must",
+      "functions": "modal"
     },
     "shall": {
       "pos": "modal",
-      "meaning": "shall"
+      "meaning": "shall",
+      "functions": "modal"
     },
     "be": {
       "pos": "verb",
@@ -17230,6 +17259,14 @@
       "concept": 239
     }
   },
+  "unknown": {
+    "pos": "noun"
+  },
+  "syntax": {
+    "noun": "modifier",
+    "adjective": "modifier",
+    "degree": "modifier"
+  },
   "marking": "after",
   "numbers": {
     "composition": "multiplicative-additive"
@@ -17243,7 +17280,8 @@
       "ending": "'s",
       "becomes": "",
       "of": "noun",
-      "pos": "possessive"
+      "pos": "possessive",
+      "functions": "possessor"
     },
     {
       "ending": "ies",
@@ -17429,6 +17467,7 @@
         ]
       },
       "subject": {
+        "referent": true,
         "rules": [
           "interrogative noun",
           "degree noun",
@@ -17454,6 +17493,7 @@
         ]
       },
       "item": {
+        "referent": true,
         "rules": [
           "interrogative noun",
           "degree noun",

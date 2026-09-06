@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Parts of speech and grammar names are opaque to reasoning.** The core no
+  longer branches on English parser labels such as noun, article, pronoun,
+  possessive, conjunction, interjection, complementizer, modal, subject or
+  item. Language data now declares cognitive word functions, the parser
+  position of unknown names, shared syntax functions, and referent/whole phrase
+  roles. A regression suite renames every terminal and non-terminal symbol and
+  proves unchanged results across classification, denial, holding, modality,
+  quantification, embedded claims, descriptions, new names and several verbs.
+
 - **Turns and persistence are deterministic and atomic.** The runtime now
   serialises the complete load/reason/allocate/write/thread transition, joined
   and concurrent learnings share one collision-free allocator, and SQLite

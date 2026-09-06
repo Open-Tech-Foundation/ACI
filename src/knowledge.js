@@ -57,7 +57,7 @@ function mergeLanguages(sources) {
 
 function join(into, from, where) {
   const at = `${where} "${from.name}"`;
-  for (const part of ['symbols', 'words', 'speech', 'expressions', 'parts']) {
+  for (const part of ['symbols', 'words', 'speech', 'expressions', 'parts', 'unknown', 'syntax']) {
     for (const [key, value] of Object.entries(from[part] || {})) {
       const held = (into[part] || {})[key];
       if (held !== undefined && !same(held, value)) {
@@ -105,6 +105,12 @@ function join(into, from, where) {
           throw new Error(`${at}: grammar rule "${symbol}" was already marked differently`);
         }
         held.whole = rule.whole;
+      }
+      if (rule.referent !== undefined) {
+        if (held.referent !== undefined && held.referent !== rule.referent) {
+          throw new Error(`${at}: grammar rule "${symbol}" was already marked differently`);
+        }
+        held.referent = rule.referent;
       }
       for (const alternative of rule.rules) {
         if (!held.rules.includes(alternative)) held.rules.push(alternative);
