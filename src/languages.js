@@ -178,23 +178,30 @@ function lookUp(words, derivations, w) {
   for (const rule of derivations || []) {
     if (!surface.endsWith(rule.ending) || surface.length <= rule.ending.length) continue;
     const stem = surface.slice(0, -rule.ending.length) + rule.becomes;
-    const found = words.get(stem);
-    if (!found) continue;
-    const fits = found.filter((info) => rule.of === undefined || partsOf(info).includes(rule.of));
-    if (fits.length === 0) continue;
-    // An ending may change what part of speech the word is, and may say when
-    // the doing was: what a noun means is one thing, what that noun's own is
-    // is another, and a doing already done is the same doing behind. Which
-    // endings do that is the language's to say.
-    const reads = {
-      ...(rule.pos === undefined ? {} : { pos: rule.pos }),
-      ...(rule.when === undefined ? {} : { when: rule.when }),
-    };
-    return fits.map((info) => ({
-      ...info,
-      ...reads,
-      derived: { from: stem, ending: rule.ending },
-    }));
+    // Doubled consonants: taking `est` off `biggest` leaves `bigg`, and the
+    // word is `big`. The undoubled stem is tried only on a miss — both
+    // lookups are exact, and a listed word still wins over either.
+    const undid = stem.replace(/(.)\1$/, '$1');
+    const probes = undid === stem ? [stem] : [stem, undid];
+    for (const probe of probes) {
+      const found = words.get(probe);
+      if (!found) continue;
+      const fits = found.filter((info) => rule.of === undefined || partsOf(info).includes(rule.of));
+      if (fits.length === 0) continue;
+      // An ending may change what part of speech the word is, and may say when
+      // the doing was: what a noun means is one thing, what that noun's own is
+      // is another, and a doing already done is the same doing behind. Which
+      // endings do that is the language's to say.
+      const reads = {
+        ...(rule.pos === undefined ? {} : { pos: rule.pos }),
+        ...(rule.when === undefined ? {} : { when: rule.when }),
+      };
+      return fits.map((info) => ({
+        ...info,
+        ...reads,
+        derived: { from: probe, ending: rule.ending },
+      }));
+    }
   }
   return null;
 }

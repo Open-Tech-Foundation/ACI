@@ -2721,9 +2721,11 @@ function pseudoTerm(concept) {
   ]);
 }
 
-// Which leaves of a determiner-headed phrase only restrict its ellipsis head
-// (`the`, `blue` in `the blue one is warm`). The head is a pronoun settled
-// from several readings; conjunctions are untouched, so each joined side
+// Which leaves of a determiner-headed phrase only restrict its head (`the`
+// and `blue` in `the blue one is warm`, `the` and `biggest` in `the biggest
+// wren eats trout`). The head is an ellipsis pronoun settled from several
+// readings, or a plain noun. Middles must all describe (noun, adjective,
+// degree) — a conjunction between them is togetherness, and each joined side
 // still claims on its own.
 function restrictedIn(root) {
   const restricted = new Set();
@@ -2735,13 +2737,18 @@ function restrictedIn(root) {
         const t = head ? findBranch(head, 'thought') : null;
         const thought = t ? t.state.thought : null;
         const pos = thought ? thought.pos : null;
+        const parts = pos == null ? [] : Array.isArray(pos) ? pos : [pos];
         const isEllipsis =
           thought &&
           thought.marks === 'spoken' &&
-          (Array.isArray(pos) ? pos : [pos]).includes('pronoun') &&
+          parts.includes('pronoun') &&
           t.state.ways &&
           t.state.ways.length > 1;
-        if (isEllipsis) kids.slice(1, -1).forEach((k) => restricted.add(k));
+        const middles = kids.slice(1, -1);
+        const describing = middles.every((k) => posOf(k).some((p) => p === 'noun' || p === 'adjective' || p === 'degree'));
+        if ((isEllipsis || parts.includes('noun')) && describing) {
+          middles.forEach((k) => restricted.add(k));
+        }
       }
     }
     (n.branch || []).forEach(walk);

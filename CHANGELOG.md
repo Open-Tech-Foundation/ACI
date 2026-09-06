@@ -78,6 +78,15 @@ All notable changes to this project are documented in this file.
   against, absent — answering like any question and asserting nothing.
   Telling an idea, or asking with none in mind, stays unanswered.
 
+- **Superlatives derive; descriptions restrict noun heads too.** `-er` and
+  `-est` read off adjectives (`biggest` reaches `big` through doubled
+  consonants, tried only on a miss — both lookups exact, listed words win),
+  `big`/`small`/`long` read as adjectives as well as nouns, and grammar
+  binds `article adjective noun`. A description before a plain noun head
+  restricts it like an ellipsis head (`the biggest wren eats fish` puts the
+  wren, never bigness, on the record); conjunctions still join. Better/best
+  and noun–noun compounds stay open.
+
 - **Definite accommodation.** `the` with nothing to be the of yet makes one
   where state is given (`the library has 12 books` learns) — making one is
   not picking. Several, and there is no `the` (still unsure); `the` reuses

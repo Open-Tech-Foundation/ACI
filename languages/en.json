@@ -4252,7 +4252,10 @@
       "concept": 194
     },
     "big": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "big",
       "concept": 195
     },
@@ -4487,12 +4490,18 @@
       "concept": 2761
     },
     "small": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "small",
       "concept": 196
     },
     "long": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "long",
       "concept": 197
     },
@@ -17214,6 +17223,16 @@
       "of": "verb",
       "pos": "verb",
       "when": "past"
+    },
+    {
+      "ending": "er",
+      "becomes": "",
+      "of": "adjective"
+    },
+    {
+      "ending": "est",
+      "becomes": "",
+      "of": "adjective"
     }
   ],
   "speech": {
@@ -17337,7 +17356,8 @@
           "article pronoun",
           "article adjective pronoun",
           "article noun pronoun",
-          "preposition pronoun"
+          "preposition pronoun",
+          "article adjective noun"
         ]
       },
       "item": {
@@ -17360,7 +17380,8 @@
           "article pronoun",
           "article adjective pronoun",
           "article noun pronoun",
-          "preposition pronoun"
+          "preposition pronoun",
+          "article adjective noun"
         ]
       },
       "predicate": {
