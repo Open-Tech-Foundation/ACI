@@ -9677,6 +9677,14 @@
       "concept": 2720,
       "classifies": "living"
     },
+    "living-thing": {
+      "pos": [
+        "noun",
+        "classification"
+      ],
+      "meaning": "living thing",
+      "classifies": "living"
+    },
     "non-living": {
       "pos": "classification",
       "meaning": "non-living",
@@ -17622,6 +17630,7 @@
           "open subject close predicate",
           "article noun",
           "article possessive noun",
+          "article classification noun",
           "numeral noun",
           "interrogative",
           "interrogative quantifier noun",

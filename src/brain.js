@@ -1299,6 +1299,13 @@ function judge(roots, world, mood, langs, sent) {
   const classified = classificationChoice(said, world, sent);
   if (classified) return [withBranch(root, [...root.branch, classified])];
 
+  // A primitive entity refinement may also predicate a normal claim: `dog is
+  // a living thing`. Language data marks the refinement; the brain derives
+  // whether it holds from the same world node used by a classification choice.
+  // No word or grammar symbol is inspected here.
+  const classClaim = classificationClaim(said, world, mood);
+  if (classClaim) return [withBranch(root, [...root.branch, ...classClaim])];
+
   // A signal may give a name rather than make a claim: `x is 5` says what x
   // stands for from here on. A name belongs to the conversation, not to the
   // world, so nothing is written down — it is handed back like anything else.
@@ -3294,6 +3301,70 @@ function classificationChoice(said, world, sent) {
   });
 }
 
+// A claim whose predicate is one of the closed entity refinements. The
+// refinement is unary: a language may voice it with one word or a phrase, but
+// the proposition is always whether the subject reaches (or is excluded from)
+// the world's living anchor. Unknown stays absent in the open world.
+function classificationClaim(said, world, mood) {
+  const a = world.anchors || {};
+  if (a.living == null || world.baseRelation == null) return null;
+  const marked = said
+    .map((n, at) => ({ at, kind: classificationOn(n) }))
+    .filter(({ kind }) => kind != null);
+  const offered = [...new Set(marked.map(({ kind }) => kind))];
+  if (offered.length !== 1) return null;
+
+  const relation = said.findIndex((n) => conceptOf(n) === world.baseRelation);
+  if (relation < 0) return null;
+  const predicate = marked[0].at;
+  const isSubject = (n) => conceptOf(n) != null && classificationOn(n) == null;
+  // In an infix claim the subject precedes `is`; in a fronted question it
+  // follows it. Keep both word orders in language data and resolve only their
+  // semantic positions here. The mirrored case also permits languages that
+  // place the classifier before their base relation.
+  const subjectNode = relation < predicate
+    ? said.slice(0, relation).reverse().find(isSubject) ??
+      said.slice(relation + 1, predicate).find(isSubject)
+    : said.slice(relation + 1).find(isSubject) ??
+      said.slice(0, predicate).reverse().find(isSubject);
+  const subject = conceptOf(subjectNode);
+  if (subject == null) return null;
+
+  const entity = worldNode(subject, world);
+  if (!entity || entity.kind !== 'entity') return null;
+  const surfaceNot = said.some(negatesOn);
+  const wanted = (offered[0] === 'living') !== surfaceNot ? 'living' : 'nonliving';
+  const standing = entity.name === 'unknown'
+    ? 'absent'
+    : entity.name === wanted
+      ? 'held'
+      : 'against';
+  const semanticNot = wanted === 'nonliving';
+  const state = {
+    subject,
+    relation: world.baseRelation,
+    object: a.living,
+    negated: semanticNot,
+    classification: offered[0],
+    surfaceNot,
+  };
+  const out = [node('standing', standing, [], state)];
+  if (mood !== 'tell') return out;
+  if (standing === 'against') {
+    out.push(node('refuse', 'contradiction', [], state));
+  } else if (standing === 'absent') {
+    out.push(node('learn', 'link', [], {
+      subject,
+      relation: world.baseRelation,
+      object: a.living,
+      quantity: null,
+      made: null,
+      not: semanticNot,
+    }));
+  }
+  return out;
+}
+
 function classificationOn(n) {
   const thought = thoughtOf(n);
   return thought ? thought.classifies ?? null : null;
@@ -3766,10 +3837,11 @@ function listing(langName, langs) {
 function claimSaid(stood, langName, langs, world) {
   const lang = (langs || []).find((l) => l.data.name === langName);
   if (!lang || !stood) return null;
-  const { subject, relation, object, negated, on } = stood.state;
+  const { subject, relation, object, negated, on, classification, surfaceNot } = stood.state;
   // A claim that was denied cannot be said back in a frame with no room for
   // the denial: saying it without would say the opposite of what was asked.
-  if (negated) return '';
+  if (classification == null && negated) return '';
+  if (classification != null && surfaceNot) return '';
   // A number is not one of a kind, and does not go in a frame built for one.
   const a = world && world.anchors ? world.anchors : {};
   if (world && (world.isA(subject, a.number) || world.isA(object, a.number))) return '';
@@ -3788,7 +3860,7 @@ function claimSaid(stood, langName, langs, world) {
     return bare ? word : `${lang.oneFor(word)} ${word}`;
   };
   const one = said(subject, false);
-  const other = said(object, true);
+  const other = classification == null ? said(object, true) : lang.classificationFor(classification);
   if (one == null || other == null) return '';
   const comparing =
     on != null && (relation === a.more || relation === a.less)

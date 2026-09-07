@@ -230,11 +230,15 @@ Each word carries `pos` (part of speech), `meaning`, and optionally `concept` â€
 the id of the world term it names. It may also carry `marks` (what it points at
 or says of its neighbour), `negates`, `role` (which part its neighbour plays),
 `when`, `select`, `functions`, `names`, `groups`, `person`, `number` and
-`classifies`. The last maps an alternative phrase to exactly one closed entity
-refinement, `living` or `nonliving`; it does not state that anything has that
-refinement. A language may say those results through the corresponding
-`speech.classification` entries. The core owns the two categories and derives
-them from the world; the language owns only their input and output forms.
+`classifies`. The last marks a word or phrase as exactly one closed entity
+refinement, `living` or `nonliving`; the label alone does not state that
+anything has that refinement. A language may say those results through the
+corresponding `speech.classification` entries. The core owns the two categories
+and derives them from the world; the language owns only their input and output
+forms. A marked refinement may be one alternative in a choice or the predicate
+of an ordinary claim, so both `living thing or non-living thing?` and `is dog a
+living thing?` reach the same primitive without making either English phrase a
+core concept.
 `select` chooses one reading from universal context constraints: `position`
 may be `first`; `before` may be `denial` or `proposition`; `after` may be
 `pointer`, `predicate` or `determiner`; and `across: "modifier"` permits a
@@ -1241,6 +1245,17 @@ it through `speech.classification`. With no focused entity, a focused value
 that is not an entity, or an entity whose life status is not established, the
 choice stays understood but unanswered; it never falls through into claim
 learning. Renaming every word and parser symbol leaves the decision unchanged.
+
+One marked refinement may also predicate an explicit subject. The core resolves
+the subject on the semantic side of the base relation, then compares the
+requested refinement with the same three-valued `worldNode` result used by a
+choice. A matching status affirms, the established opposite denies, and an
+unestablished status remains unsure. Surface negation reverses which refinement
+is requested. Statements already supported by the world are understood, while
+an opposing statement is refused and cannot change memory. The language owns
+whether this appears as one token or a phrase and owns the words used to say it.
+Teaching life status to newly introduced individuals awaits the distinct
+instance-membership primitive; it must not be simulated as a subtype edge.
 
 **Judging and saying are separate acts.** Every verdict stays on the tree, but
 saying one twice says nothing the first did not: two that came out differently

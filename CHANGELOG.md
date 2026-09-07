@@ -6,6 +6,16 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Living and non-living refinements now work as ordinary predicates.** The
+  same closed, language-owned labels used by a focused classification choice
+  can now ask or state whether an explicit subject has either refinement.
+  `is dog a living thing?` and the declared compound `is dog a living-thing?`
+  affirm from the organism path; stones affirm non-living; the root `thing`
+  remains unknown; contradictions are refused; and explicit negation reverses
+  the requested refinement. The core inspects only semantic `classifies`
+  labels and the world model, with an opaque-vocabulary test proving that the
+  English phrase and parser symbols are not core primitives.
+
 - **A force affects physical things only when the universe holds it.** Physical
   inference previously activated every term classified as a force, even in a
   world whose universe held none. The core now requires the universe to hold

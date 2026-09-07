@@ -123,6 +123,8 @@ words a language uses to voice them.
 | unknown focused entity → living/non-living choice | `unsure`, not `nonliving` |
 | tree → living/non-living choice | `living` |
 | car → living/non-living choice | `nonliving` once its object classification proves exclusion from organism |
+| dog → `is … living` predicate | `affirm` through organism classification; no language phrase in core |
+| root thing → `is … living` predicate | `unsure`, preserving open-world status |
 | A connected-to B, with connected-to symmetric | B connected-to A → `affirm` |
 | A before B, then B before A | second fact → `deny`; memory unchanged |
 | wheel component-of car | car has-component wheel → `affirm` through its declared converse |

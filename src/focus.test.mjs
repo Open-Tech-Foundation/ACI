@@ -36,6 +36,49 @@ test("classification choice recomputes a living topic from the world", async () 
   await forget();
 });
 
+test("a living refinement predicates an ordinary entity question", async () => {
+  await forget();
+  for (const input of ["is dog a living thing?", "is dog a living-thing?"]) {
+    const result = await brain(input);
+    assertEquals(result.expression.name, "affirm", input);
+    assertEquals(result.expression.state.says, "Yes. ✅ a dog is living thing.", input);
+    assertEquals(result.learned, null, input);
+  }
+  await forget();
+});
+
+test("living and non-living predicates preserve all three truth states", async () => {
+  await forget();
+  assertEquals((await brain("is a stone a living thing?")).expression.name, "deny");
+  assertEquals((await brain("is a stone a non-living thing?")).expression.name, "affirm");
+  assertEquals((await brain("is thing a living thing?")).expression.name, "unsure");
+  assertEquals((await brain("is thing a non-living thing?")).expression.name, "unsure");
+  await forget();
+});
+
+test("refinement statements agree with established life status", async () => {
+  await forget();
+  assertEquals((await brain("a dog is a living thing")).expression.name, "understood");
+  assertEquals((await brain("a stone is a non-living thing")).expression.name, "understood");
+  await forget();
+});
+
+test("a refinement statement contradicting the world is refused", async () => {
+  await forget();
+  const result = await brain("a dog is a non-living thing");
+  assertEquals(result.expression.name, "deny");
+  assertEquals(result.learned, null);
+  assertEquals((await brain("is a dog a living thing?")).expression.name, "affirm");
+  await forget();
+});
+
+test("surface negation reverses a living refinement claim", async () => {
+  await forget();
+  assertEquals((await brain("a dog is not a living thing?")).expression.name, "deny");
+  assertEquals((await brain("a stone is not a living thing?")).expression.name, "affirm");
+  await forget();
+});
+
 test("classification choice stays unsure when life is not known either way", async () => {
   await forget();
   await brain("thing");
