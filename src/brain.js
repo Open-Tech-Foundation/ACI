@@ -3169,12 +3169,14 @@ function languageOf(n) {
 }
 
 // Asking or telling. That a signal can do either is the brain's; which mark
-// asks is the language's, and the brain reads it off the loaded symbol sets.
-function moodOf(input, langs) {
+// asks is the recognized language's. An unrelated loaded language cannot turn
+// this signal into a question.
+function moodOf(input, roots, langs) {
   const raw = toString(input).trim();
   if (raw === '') return 'tell';
   const last = Array.from(raw).pop();
-  return (langs || []).some((l) => l.isQuestionSymbol(last)) ? 'ask' : 'tell';
+  const lang = signalLanguage(roots, langs);
+  return lang && lang.isQuestionSymbol(last) ? 'ask' : 'tell';
 }
 
 // The acts that are about what the brain does or does not know, and so are
@@ -3712,7 +3714,7 @@ export function brainFrom(input, knowledge, circumstance) {
 
   const roots = understand(input, langs);
   const thoughtRoots = think(roots, langs, at, world);
-  const mood = moodOf(input, langs);
+  const mood = moodOf(input, thoughtRoots, langs);
   const solvedRoots = solve(thoughtRoots, world, langs, mood, at.allocate);
   const structuredRoots = structurePhrase(solvedRoots, langs);
   let judgedRoots = judge(structuredRoots, world, mood, langs, at);

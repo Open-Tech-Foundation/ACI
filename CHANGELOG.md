@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Question mood follows the recognized language, not every loaded one.** A
+  punctuation mark previously made a signal a question when any installed
+  language called it one. Mood now consults only the language carried by the
+  understood signal; mixed or unrecognized input receives no borrowed question
+  convention. With conflicting languages loaded, an E2E test proves `?` is a
+  statement and is learned while the recognizing language's `!` asks the same
+  fact and leaves memory unchanged.
+
 - **Word order comes from the signal's language with no implicit direction.**
   Marker and action-part inference previously consulted the first loaded
   language, while a missing `marking` declaration silently became English-like

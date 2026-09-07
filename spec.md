@@ -297,6 +297,13 @@ that words are made of letters.
 words wherever they fall, so `1+1` comes apart into three and `cat` does not
 come apart at all.
 
+**A language's `question` symbol set distinguishes asking from telling.** The
+brain reads the final raw symbol only against the language carried by the
+recognized signal. A question symbol belonging to some other loaded language
+cannot change the signal's mood, cause an answer, or prevent a statement from
+being learned. A mixed or unrecognized signal supplies no language-specific
+question mark and is conservatively treated as telling.
+
 **A word may say it does not name its term**: `"names": false`. `6` and `six`
 are one number and only one is what it is called. First word wins otherwise —
 but not by file order, which JavaScript does not keep for keys that look like
@@ -848,6 +855,9 @@ Climbs a fixed ladder:
   ```js
   { lang, word: { text, pos, meaning, concept } | null, roles: [...] }
   ```
+- `moodOf(input, roots, langs)` — asks only when the last raw symbol belongs to
+  the recognized language's `symbols.question` set; otherwise tells. Loaded
+  language order cannot lend another language's punctuation to this signal.
 
 ### 2. think — reason over the understood meaning, then read the words together
 

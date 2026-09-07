@@ -101,7 +101,7 @@ the brain hands back, and every term in it names a line of JSON you can open.
 ## Develop
 
 ```sh
-tsr test    # 680 tests across 83 files (esdev)
+tsr test    # 681 tests across 84 files (esdev)
 tsr build   # library build to dist/
 tsr ci      # test + build + site
 ```
