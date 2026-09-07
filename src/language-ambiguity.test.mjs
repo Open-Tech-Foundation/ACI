@@ -174,3 +174,41 @@ test("existing world concepts resolve an equal meaning tie", async () => {
     }
   }
 });
+
+test("established conversation language resolves a surviving tie", () => {
+  const alpha = grammatical("alpha", "one two");
+  const beta = grammatical("beta", "one two");
+
+  for (const languages of [[alpha, beta], [beta, alpha]]) {
+    const result = brainFrom(
+      "a b",
+      fromSources({ languages }),
+      { language: "beta" },
+    );
+    assertEquals(result.language, "beta");
+    assertEquals(result.roots.length, 1);
+    assertEquals(result.roots[0].kind, "sentence");
+    for (const root of result.phases.understand) {
+      const language = branch(root, "language");
+      assertEquals(language.name, "beta");
+      assertEquals(language.state.resolution.by, "context");
+    }
+  }
+});
+
+test("conversation context cannot revive a grammatically rejected candidate", () => {
+  const fits = grammatical("fits", "one two");
+  const misses = grammatical("misses", "two one");
+  const result = brainFrom(
+    "a b",
+    fromSources({ languages: [misses, fits] }),
+    { language: "misses" },
+  );
+
+  assertEquals(result.language, "fits");
+  assertEquals(result.roots[0].kind, "sentence");
+  assertEquals(
+    branch(result.phases.understand[0], "language").state.resolution.by,
+    "grammar",
+  );
+});

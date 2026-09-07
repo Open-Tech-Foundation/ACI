@@ -313,10 +313,12 @@ is tested: every token must be a declared word, readable figure or name already
 held in the world. If meanings still tie, a candidate is world-grounded only
 when every concept it references exists in the supplied world; words that do
 not refer to a concept need no world term. Each gate selects only one survivor,
-and no survivors proves nothing. A tie after every available gate remains
-ambiguous. A selected language node records whether `grammar`, `meaning` or
-`world` resolved it and retains all candidate token sequences, so the evidence
-is visible in the returned tree.
+and no survivors proves nothing. If those gates tie, a previously established
+language supplied as signal circumstance may select one surviving candidate,
+but cannot restore one already rejected by current evidence. A tie after every
+available gate remains ambiguous. A selected language node records whether
+`grammar`, `meaning`, `world` or `context` resolved it and retains all candidate
+token sequences, so the evidence is visible in the returned tree.
 
 **A symbol set may say its symbols stand alone**: `"alone": true`. Those are
 words wherever they fall, so `1+1` comes apart into three and `cat` does not
@@ -553,6 +555,7 @@ understand → think → solve → structure → judge → express
 ```js
 {
   input: string,
+  language: string | null,    // language established by this signal, if one
   roots: [node...],       // final output (structured signal, or per-word roots)
   expression: node,       // the one reply to the whole signal; its branch holds
                           // what was said about each thing
@@ -626,7 +629,7 @@ on is different every time they are said. They point at the **circumstance of
 the signal**, and the circumstance arrives with the signal:
 
 ```js
-brainFrom(input, knowledge, { from, to, spoken })
+brainFrom(input, knowledge, { from, to, spoken, language })
 ```
 
 Three owners, and none of them may be the other:
@@ -670,6 +673,14 @@ The brain keeps none of this. Holding the thread is the runtime's act, and
 holding **several** threads is how two conversations run over one world: what
 one was last about is nothing to the other, while what any of them taught, all
 of them know. A signal naming no conversation is in the one unnamed thread.
+
+The selected language follows the same ownership rule. The brain returns
+`result.language` for the current signal; the runtime may supply that opaque id
+as the next signal's `circumstance.language`. It is consulted only after current
+grammar, known meaning and world grounding leave a tie, and it can select only
+a surviving candidate. An ambiguous or unrecognized turn establishes no new
+language, so the runtime keeps the last one the brain actually selected. Each
+conversation thread carries its own language context.
 
 `this` / `that` and `now` / `then` are the same mechanism unfinished: more
 pointer names, more circumstance fields, no redesign. The clock is already there
@@ -875,9 +886,11 @@ Climbs a fixed ladder:
   thinks and grammar-parses every complete candidate without judging or
   learning. Ordered elimination gates test whole grammar, complete known meaning
   and then existing world concepts. A gate with one survivor selects it and
-  records `resolution: { by: "grammar" | "meaning" | "world", candidates }`; a
-  gate with no survivors proves nothing, while a tie advances to the next gate.
-  A final tie preserves the ambiguity.
+  records
+  `resolution: { by: "grammar" | "meaning" | "world" | "context", candidates }`;
+  a gate with no survivors proves nothing, while a tie advances to the next
+  gate. Established conversation language is the last gate and may choose only
+  a still-possible candidate. A final tie preserves the ambiguity.
 - `existence(signal)` — `void` if the signal is empty or nothing but space; else
   **one root per perceived token**. Whitespace separates tokens, and the chosen
   language alone may split its standalone symbols or remove its edge marks. A
@@ -1647,7 +1660,7 @@ it or answer with it.
 
 ```js
 import { brainFrom, node } from './brain.js';
-brainFrom(input, knowledge, { from, to, spoken })  // circumstance optional; pure
+brainFrom(input, knowledge, { from, to, spoken, language }) // circumstance optional; pure
 
 import { fromSources } from './knowledge.js';
 fromSources({ world, knowledge, languages })  // validates, merges

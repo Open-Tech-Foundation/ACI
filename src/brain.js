@@ -111,6 +111,14 @@ function resolveLanguageReading(input, reading, langs, at, world) {
   if (world) {
     const grounded = possible.filter((trial) => completeGrounding(trial.thought, world));
     if (grounded.length === 1) return resolvedReading(grounded[0], considered, 'world');
+    if (grounded.length > 1) possible = grounded;
+  }
+
+  if (at && at.language != null) {
+    const contextual = possible.filter((trial) => (
+      trial.candidate.language.data.name === at.language
+    ));
+    if (contextual.length === 1) return resolvedReading(contextual[0], considered, 'context');
   }
   return reading;
 }
@@ -3854,6 +3862,12 @@ export function brainFrom(input, knowledge, circumstance) {
     // What this conversation has given a name to. No more the brain's to keep
     // than who is speaking: it was handed back and comes back the same way.
     names: (circumstance && circumstance.names) || {},
+    // A language established by an earlier signal is circumstance like its
+    // topic, not knowledge held by the brain. It may settle a surviving tie,
+    // but it cannot revive a candidate disproved by this signal's evidence.
+    language: circumstance && circumstance.language != null
+      ? circumstance.language
+      : null,
     allocate: () => nextId++,
   };
 
@@ -3875,8 +3889,10 @@ export function brainFrom(input, knowledge, circumstance) {
     learned = null;
   }
   const expressedRoots = express(judgedRoots, langs, world);
+  const selectedLanguage = signalLanguage(thoughtRoots, langs);
   return {
     input,
+    language: selectedLanguage ? selectedLanguage.data.name : null,
     roots: expressedRoots,
     expression: expression(expressedRoots, langs, mood, world, at),
     learned,

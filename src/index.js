@@ -90,10 +90,11 @@ export function openBrain(url) {
     }
   }
 
-  // What the last signal was about, so a pointer in the next one has something
-  // to land on. The brain hands this back and keeps none of it; holding it
-  // across signals is what makes a run of signals one conversation, and that is
-  // the runtime's to decide.
+  // What the last signal was about, and which language it established, so a
+  // pointer or ambiguous reading in the next one has circumstance to land on.
+  // The brain hands these back and keeps none of them; holding them across
+  // signals is what makes a run of signals one conversation, and that is the
+  // runtime's to decide.
   //
   // Signals may be threaded several at a time — two people talking to the same
   // brain are two conversations over one world, and what was last spoken of in
@@ -110,11 +111,13 @@ export function openBrain(url) {
     const held = threads.get(thread) || {};
     // Who spoke, and who was spoken to, arrive with each signal or not at
     // all: the runtime never carries them across signals. What was spoken of,
-    // the names given, and the focus list are the thread's to keep.
+    // the names given, the focus list and the last language the brain actually
+    // selected are the thread's to keep.
     const said = {
       spoken: held.spoken ?? null,
       focus: held.focus ?? (held.spoken != null ? [held.spoken] : []),
       names: held.names || {},
+      language: held.language ?? null,
       ...(circumstance || {}),
     };
     const knowledge = await loaded();
@@ -138,6 +141,7 @@ export function openBrain(url) {
         spoken: result.spoken,
         focus: result.focus,
         names: result.names,
+        language: result.language ?? held.language ?? null,
         from: said.from,
         to: said.to,
       });
@@ -146,6 +150,7 @@ export function openBrain(url) {
           spoken: result.spoken,
           focus: result.focus,
           names: result.names,
+          language: again.language ?? result.language ?? held.language ?? null,
           told: standing.filter((heldInstruction) => heldInstruction !== instruction),
         });
         return again;
@@ -155,6 +160,7 @@ export function openBrain(url) {
       spoken: result.spoken,
       focus: result.focus,
       names: result.names,
+      language: result.language ?? held.language ?? null,
       told: standing,
     });
     return result;

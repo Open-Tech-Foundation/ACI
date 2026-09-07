@@ -11,6 +11,13 @@ const says = async (q) => (await brain(q)).expression.state.says;
 const act = async (q) => (await brain(q)).expression.name;
 const branch = (r, kind) => (r.roots[0].branch || []).find((b) => b.kind === kind) || null;
 
+test("a turn reports the language it established", async () => {
+  await forget();
+  const result = await brain("a dog is an animal?", { conversation: "language-report" });
+  assertEquals(result.language, "english");
+  await forget();
+});
+
 test("a thing can hold a number of something, and the brain remembers", async () => {
   assertEquals(await says("the cupboard has how many cups?"), "I don't know.");
   await brain("a cupboard has three cup");

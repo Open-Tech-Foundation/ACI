@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Conversation language resolves only surviving ambiguity.** `brainFrom()` now
+  returns the language selected for the current signal and accepts a previously
+  established language as circumstance. After grammar, meaning and world gates,
+  that opaque language id may select one remaining candidate; it cannot revive
+  a candidate rejected by current evidence. Runtime conversation threads carry
+  the last language the brain actually selected across ambiguous or unrecognized
+  turns, independently per conversation. Tests cover reversed source order,
+  stale context losing to grammar, and the public result field.
+
 - **Known meaning and world grounding can resolve a grammar tie.** After
   structural filtering, the brain now retains candidates whose every token is
   a declared word, readable figure or already known name; exactly one complete
