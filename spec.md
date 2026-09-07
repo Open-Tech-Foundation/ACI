@@ -504,7 +504,11 @@ on, not even for not knowing.
   "terms": [
     { "id": 10, "name": "organism", "links": [{ "rel": 294, "to": 6 }] },
     { "id": 83, "name": "cat",      "links": [{ "rel": 294, "to": 24 }] },
-    { "id": 249, "name": "order", "transitive": true, "links": [{ "rel": 294, "to": 4 }] }
+    { "id": 249, "name": "order", "transitive": true, "links": [{ "rel": 294, "to": 4 }] },
+    { "id": 2821, "name": "before", "transitive": true, "asymmetric": true,
+      "links": [{ "rel": 294, "to": 249 }, { "rel": 590, "to": 2822 }] },
+    { "id": 2822, "name": "after", "transitive": true, "asymmetric": true,
+      "links": [{ "rel": 294, "to": 249 }] }
   ]
 }
 ```
@@ -514,8 +518,10 @@ compared only for equality — that is what keeps the world language-neutral.
 Two language files may point at the same term (`cat` / `chat` -> `83`) and the
 brain reasons identically over both.
 
-`transitive: true` is semantic world knowledge about a relation term, not a
-property inferred from its name. Ids, term values, quantities and logical times
+`transitive: true` and `asymmetric: true` are semantic world knowledge about a
+relation term, not properties inferred from its name. An asymmetric relation
+may not relate a term to itself or hold in both directions; when also transitive,
+it may contain no cycle of any length. Ids, term values, quantities and logical times
 must be safe JSON integers; larger signal values remain exact strings rather
 than entering numeric world fields. Links may additionally carry `not`,
 `quantity` and deterministic logical time `at`; opposite polarities and
@@ -741,15 +747,29 @@ rather than in any of them, and `name` stays a label the engine never reads.
 ## Time
 
 ```
-past  ←——  now  ——→  future
+past  --before-->  now  --before-->  future
+past  <--after---  now  <--after---  future
 ```
 
 Three positions and nothing between them to weigh. **That there are sides** is
 the brain's; **which word puts a signal on one** is the language's — a word may
 carry `when: "past"` or `when: "future"`, and `was` / `were` / `will` do in
 English; **which term each side is** is the world's, through its anchors. The
-arrow itself is the world's too, written with the `order` relation it already
-had: `past order now`, `now order future`.
+relations themselves belong to the world too. `before` and `after` are
+refinements of its existing `order`, declared as each other's converse,
+transitive and asymmetric. The facts are `past before now` and `now before
+future`; their reverse and transitive forms follow without being repeated.
+Because `past`, `now` and `future` are already moments, and a moment is time,
+these relations extend the existing world/time model rather than forming an
+isolated clock vocabulary.
+
+The same relation walk handles every converse pair. A path may mix how its
+edges were stated: `morning before afternoon` and `evening after afternoon`
+entail `morning before evening`. Asymmetry makes the reverse stand against the
+world rather than merely absent. A reverse assertion is refused, and validation
+rejects a self-edge, opposing pair or transitive cycle before it can enter
+memory. These properties survive the store just like transitivity and
+disjointness.
 
 What is recorded stands where the signal put it, by the `when` relation:
 

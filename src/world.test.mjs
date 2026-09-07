@@ -174,3 +174,37 @@ test("a world where nothing has happened is at the beginning of its clock", () =
   assertEquals(w.now(), 0);
   assertEquals(w.heldOver(1, 5, 1), []);
 });
+
+test("relation asymmetry is world data, not a relation name", () => {
+  const w = fromWorldData({
+    relations: { is: IS },
+    terms: [
+      { id: 1, name: "is", links: [] },
+      { id: 2, name: "anything", asymmetric: true, links: [] },
+      { id: 3, name: "before", links: [] },
+    ],
+  });
+  assertEquals(w.asymmetric(2), true);
+  assertEquals(w.asymmetric(3), false);
+});
+
+test("transitive relations compose facts written through a converse", () => {
+  const BEFORE = 2;
+  const AFTER = 3;
+  const CONVERSE = 4;
+  const w = fromWorldData({
+    anchors: { converse: CONVERSE },
+    relations: { is: IS },
+    terms: [
+      { id: IS, name: "is", links: [] },
+      { id: BEFORE, name: "one direction", transitive: true, links: [{ rel: CONVERSE, to: AFTER }] },
+      { id: AFTER, name: "the other direction", transitive: true, links: [] },
+      { id: CONVERSE, name: "converse", links: [] },
+      { id: 5, name: "a", links: [{ rel: BEFORE, to: 6 }] },
+      { id: 6, name: "b", links: [] },
+      { id: 7, name: "c", links: [{ rel: AFTER, to: 6 }] },
+    ],
+  });
+  assertEquals(w.isA(5, 7, BEFORE), true, "a before b and c after b means a before c");
+  assertEquals(w.isA(7, 5, AFTER), true, "the same path is readable from its converse");
+});

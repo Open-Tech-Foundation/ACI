@@ -16336,12 +16336,20 @@
       "meaning": "over"
     },
     "after": {
-      "pos": "preposition",
-      "meaning": "after"
+      "pos": [
+        "preposition",
+        "noun"
+      ],
+      "meaning": "after",
+      "concept": 2822
     },
     "before": {
-      "pos": "preposition",
-      "meaning": "before"
+      "pos": [
+        "preposition",
+        "noun"
+      ],
+      "meaning": "before",
+      "concept": 2821
     },
     "between": {
       "pos": "preposition",

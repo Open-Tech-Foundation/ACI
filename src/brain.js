@@ -1447,6 +1447,9 @@ function judge(roots, world, mood, langs, sent) {
         : joins(holder, object, rel) ||
           bothWays(rel, world).some((back) => joins(object, holder, back)) ||
           forced(holder, object, rel, world);
+      const reverseHolds =
+        joins(object, holder, rel) ||
+        bothWays(rel, world).some((back) => joins(holder, object, back));
       // Something the brain holds stands against the fact where it says the
       // two are not so joined, where the two terms exclude each other and the
       // fact is about kind, or where it holds them joined by a rel it
@@ -1459,6 +1462,7 @@ function judge(roots, world, mood, langs, sent) {
         ? knownCount != null && knownCount !== counted
         : heldDenied ||
           (kindFact && world.excludes(subject, object)) ||
+          (world.asymmetric(rel) && reverseHolds) ||
           apartFrom(rel, world).some((other) => joins(holder, object, other));
       // Some of a kind is not the kind. What the kind reaches, some of it
       // reaches; what it does not, some of it may still — one crow being
@@ -1496,7 +1500,7 @@ function judge(roots, world, mood, langs, sent) {
       const revises = counted != null && world.held(holder, rel, object) !== counted;
 
       if (mood === 'tell') {
-        const loops = !isDenied && subject !== object && world.isA(object, subject, rel);
+        const loops = !isDenied && subject !== object && reverseHolds;
         if (!revises && (stands === 'against' || loops)) {
           added.push(
             node('refuse', stands === 'against' ? 'contradiction' : 'loop', [], {
@@ -4066,6 +4070,52 @@ function learningConflict(world, learned) {
     return false;
   };
   for (const id of terms.keys()) if (visit(id)) return 'classification cycle';
+
+  // Proposed links enter atomically, so asymmetric relations must be checked
+  // over the complete proposal as well as one clause at a time. A transitive
+  // asymmetric relation admits no cycle of any length.
+  for (const relation of terms.values()) {
+    if (!relation.asymmetric) continue;
+    const converse = world.anchors ? world.anchors.converse : null;
+    const converses = new Set();
+    if (converse != null) {
+      for (const link of relation.links || []) {
+        if (!link.not && link.rel === converse) converses.add(link.to);
+      }
+      for (const candidate of terms.values()) {
+        if ((candidate.links || []).some((link) => !link.not && link.rel === converse && link.to === relation.id)) {
+          converses.add(candidate.id);
+        }
+      }
+    }
+    const edges = new Map([...terms.values()].map((term) => [term.id, []]));
+    for (const term of terms.values()) {
+      for (const link of term.links || []) {
+        if (link.not) continue;
+        if (link.rel === relation.id) edges.get(term.id).push(link.to);
+        if (converses.has(link.rel)) edges.get(link.to).push(term.id);
+      }
+    }
+    for (const [subject, objects] of edges) {
+      if (objects.includes(subject)) return `asymmetric relation ${relation.id} relates ${subject} to itself`;
+      if (objects.some((object) => (edges.get(object) || []).includes(subject))) {
+        return `asymmetric relation ${relation.id} holds both ways`;
+      }
+    }
+    if (!relation.transitive) continue;
+    const visiting = new Set();
+    const visited = new Set();
+    const cyclic = (id) => {
+      if (visiting.has(id)) return true;
+      if (visited.has(id)) return false;
+      visiting.add(id);
+      for (const next of edges.get(id) || []) if (cyclic(next)) return true;
+      visiting.delete(id);
+      visited.add(id);
+      return false;
+    };
+    for (const id of edges.keys()) if (cyclic(id)) return `asymmetric relation ${relation.id} has a cycle`;
+  }
   return null;
 }
 

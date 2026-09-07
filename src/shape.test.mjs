@@ -456,3 +456,37 @@ test("classification cycles are refused at the knowledge door", () => {
   });
   assert(msg.includes("classification cycle"), msg);
 });
+
+test("asymmetric relations reject invalid declarations and cycles", () => {
+  const relation = (asymmetric, links = []) => ({
+    relations: { is: 1 },
+    terms: [
+      { id: 1, name: "is", links: [] },
+      { id: 2, name: "strict order", asymmetric, transitive: true, links: [] },
+      { id: 3, name: "a", links },
+      { id: 4, name: "b", links: [] },
+    ],
+  });
+  assert(refuses("false asymmetry", { world: relation(false) }).includes("asymmetric"));
+  assert(
+    refuses("an asymmetric self-link", { world: relation(true, [{ rel: 2, to: 3 }]) })
+      .includes("itself"),
+  );
+  const cycle = relation(true, [{ rel: 2, to: 4 }]);
+  cycle.terms[3].links.push({ rel: 2, to: 3 });
+  assert(refuses("an asymmetric cycle", { world: cycle }).includes("both ways"));
+
+  const longCycle = relation(true, [{ rel: 2, to: 4 }]);
+  longCycle.terms.push({ id: 5, name: "c", links: [{ rel: 2, to: 3 }] });
+  longCycle.terms[3].links.push({ rel: 2, to: 5 });
+  assert(refuses("a transitive asymmetric cycle", { world: longCycle }).includes("cycle"));
+
+  const converseCycle = relation(true, [{ rel: 2, to: 4 }]);
+  converseCycle.anchors = { converse: 6 };
+  converseCycle.terms.push(
+    { id: 5, name: "reverse order", links: [{ rel: 6, to: 2 }] },
+    { id: 6, name: "converse", links: [] },
+  );
+  converseCycle.terms[2].links.push({ rel: 5, to: 4 });
+  assert(refuses("a cycle stated through a converse", { world: converseCycle }).includes("both ways"));
+});

@@ -55,7 +55,7 @@ export function checkWorld(data, where = 'world') {
   for (const t of data.terms) {
     const at = `${where} term ${JSON.stringify(t && t.id)}`;
     if (!t || typeof t !== 'object') fail(where, 'every term must be an object');
-    onlyKeys(t, ['id', 'name', 'links', 'value', 'individual', 'disjoint', 'transitive', 'symbol'], at);
+    onlyKeys(t, ['id', 'name', 'links', 'value', 'individual', 'disjoint', 'transitive', 'asymmetric', 'symbol'], at);
     if (!isId(t.id)) fail(at, 'id must be a non-negative integer');
     if (typeof t.name !== 'string' || t.name === '') fail(at, 'name must be a non-empty string');
     if (byId.has(t.id)) fail(at, 'duplicate id');
@@ -78,6 +78,9 @@ export function checkWorld(data, where = 'world') {
     }
     if (t.transitive !== undefined && t.transitive !== true) {
       fail(at, 'transitive, where present, must be true');
+    }
+    if (t.asymmetric !== undefined && t.asymmetric !== true) {
+      fail(at, 'asymmetric, where present, must be true');
     }
     if (t.value !== undefined && !Number.isSafeInteger(t.value)) {
       fail(at, 'value must be a safe whole number — it is what the term names, not a label');
@@ -200,6 +203,52 @@ export function checkWhole(data, origin = null, where = 'world') {
     const visited = new Set();
     const visit = (id) => {
       if (visiting.has(id)) fail(`${from(id)} term ${id}`, 'classification cycle');
+      if (visited.has(id)) return;
+      visiting.add(id);
+      for (const next of edges.get(id) || []) visit(next);
+      visiting.delete(id);
+      visited.add(id);
+    };
+    for (const id of edges.keys()) visit(id);
+  }
+
+  // An asymmetric relation can never lead back to where it began. For a
+  // transitive relation every cycle implies the forbidden reverse; for any
+  // asymmetric relation a direct self-link or opposing pair already does.
+  for (const relation of data.terms.filter((term) => term.asymmetric)) {
+    const converse = data.anchors && data.anchors.converse;
+    const converses = new Set();
+    if (converse != null) {
+      for (const link of relation.links) {
+        if (!link.not && link.rel === converse) converses.add(link.to);
+      }
+      for (const candidate of data.terms) {
+        if (candidate.links.some((link) => !link.not && link.rel === converse && link.to === relation.id)) {
+          converses.add(candidate.id);
+        }
+      }
+    }
+    const edges = new Map(data.terms.map((term) => [term.id, []]));
+    for (const term of data.terms) {
+      for (const link of term.links) {
+        if (link.not) continue;
+        if (link.rel === relation.id) edges.get(term.id).push(link.to);
+        if (converses.has(link.rel)) edges.get(link.to).push(term.id);
+      }
+    }
+    for (const [subject, objects] of edges) {
+      if (objects.includes(subject)) fail(`${from(subject)} term ${subject}`, `asymmetric relation ${relation.id} relates a term to itself`);
+      for (const object of objects) {
+        if ((edges.get(object) || []).includes(subject)) {
+          fail(`${from(subject)} term ${subject}`, `asymmetric relation ${relation.id} holds both ways`);
+        }
+      }
+    }
+    if (!relation.transitive) continue;
+    const visiting = new Set();
+    const visited = new Set();
+    const visit = (id) => {
+      if (visiting.has(id)) fail(`${from(id)} term ${id}`, `asymmetric relation ${relation.id} has a cycle`);
       if (visited.has(id)) return;
       visiting.add(id);
       for (const next of edges.get(id) || []) visit(next);

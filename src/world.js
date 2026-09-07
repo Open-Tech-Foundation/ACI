@@ -13,6 +13,32 @@ export function fromWorldData(data) {
   const isRel = (data.relations && data.relations.is) ?? null;
   const differentRel = (data.relations && data.relations.different) ?? null;
   const anchors = data.anchors || {};
+  const outgoing = new Map();
+  const incoming = new Map();
+  for (const term of terms.values()) {
+    for (const link of term.links || []) {
+      if (link.not) continue;
+      if (!outgoing.has(link.rel)) outgoing.set(link.rel, new Map());
+      if (!incoming.has(link.rel)) incoming.set(link.rel, new Map());
+      const from = outgoing.get(link.rel);
+      const to = incoming.get(link.rel);
+      if (!from.has(term.id)) from.set(term.id, new Set());
+      if (!to.has(link.to)) to.set(link.to, new Set());
+      from.get(term.id).add(link.to);
+      to.get(link.to).add(term.id);
+    }
+  }
+  const converseBy = new Map();
+  if (anchors.converse != null) {
+    for (const relation of terms.values()) {
+      for (const other of outgoing.get(anchors.converse)?.get(relation.id) || []) {
+        if (!converseBy.has(relation.id)) converseBy.set(relation.id, new Set());
+        if (!converseBy.has(other)) converseBy.set(other, new Set());
+        converseBy.get(relation.id).add(other);
+        converseBy.get(other).add(relation.id);
+      }
+    }
+  }
 
   // Walk one relation from a term, collecting every id it reaches. A term may
   // hold several links of the same relation — the base world gives one, a
@@ -36,35 +62,41 @@ export function fromWorldData(data) {
     return seen;
   }
 
-  // What a term reaches by actually following a relation. A thing is itself,
-  // but it does not stand in every relation to itself: a stone is a stone, and
-  // that is no reason to say a stone holds a stone. Only the ladder the world
-  // is built of counts a term as reaching itself, which is why `reaches` seeds
-  // its walk and this does not.
-  function reachedBy(id, rel) {
-    const found = new Set();
-    const seen = new Set([id]);
-    const pending = [id];
-    while (pending.length) {
-      const at = pending.pop();
-      const cur = terms.get(at);
-      if (!cur) continue;
-      for (const l of cur.links || []) {
-        if (l.not || l.rel !== rel) continue;
-        found.add(l.to);
-        if (!seen.has(l.to)) {
-          seen.add(l.to);
-          pending.push(l.to);
-        }
-      }
-    }
-    return found;
-  }
-
   // What a term is a kind of, one step up.
   function up(id) {
     const t = terms.get(id);
     return t ? (t.links || []).filter((l) => !l.not && l.rel === isRel).map((l) => l.to) : [];
+  }
+
+  // One step through a relation includes links stated through its declared
+  // converse. This makes a fact written as `b after a` the same edge as `a
+  // before b`, including when a transitive walk contains facts written from
+  // both directions. The world supplies the converse relation and names none.
+  function related(id, rel) {
+    const out = new Set(outgoing.get(rel)?.get(id) || []);
+    for (const other of converseBy.get(rel) || []) {
+      for (const from of incoming.get(other)?.get(id) || []) out.add(from);
+    }
+    return out;
+  }
+
+  function relatedBy(id, rel) {
+    const relation = terms.get(rel);
+    if (!relation || !relation.transitive) return related(id, rel);
+    const found = new Set();
+    const pending = [id];
+    const seen = new Set([id]);
+    while (pending.length) {
+      const here = pending.pop();
+      for (const next of related(here, rel)) {
+        found.add(next);
+        if (!seen.has(next)) {
+          seen.add(next);
+          pending.push(next);
+        }
+      }
+    }
+    return found;
   }
 
   return {
@@ -163,6 +195,10 @@ export function fromWorldData(data) {
       const t = terms.get(id);
       return Boolean(t && t.individual);
     },
+    // Asymmetry is declared on the relation term. The engine reads the
+    // property, never the relation's name: temporal order and any other strict
+    // ordering receive the same contradiction semantics.
+    asymmetric: (rel) => Boolean(terms.get(rel)?.asymmetric),
     individualsOf: (kind) => {
       const out = [];
       for (const t of terms.values()) {
@@ -248,10 +284,7 @@ export function fromWorldData(data) {
     isA: (id, ancestorId, rel = isRel) => {
       if (ancestorId == null || id == null || rel == null) return false;
       if (rel === isRel) return reaches(id, rel).has(ancestorId);
-      const relation = terms.get(rel);
-      if (relation && relation.transitive) return reachedBy(id, rel).has(ancestorId);
-      const term = terms.get(id);
-      return Boolean(term && (term.links || []).some((l) => !l.not && l.rel === rel && l.to === ancestorId));
+      return relatedBy(id, rel).has(ancestorId);
     },
   };
 }

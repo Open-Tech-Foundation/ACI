@@ -396,6 +396,19 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Before and after now form strict temporal order in the existing world.**
+  Both are world relations classified under `order`, while `past`, `now` and
+  `future` remain moments under the existing `time` model. Their converse,
+  transitive and asymmetric properties are data, not relation-name branches in
+  the core. The generic world walk now composes edges stated from either
+  converse direction, so `morning before afternoon` plus `evening after
+  afternoon` entails `morning before evening`. Reverse questions deterministically
+  deny, reverse assertions and atomic multi-clause cycles are refused, and the
+  knowledge door rejects asymmetric self-links, opposing pairs and transitive
+  cycles. Store schema migration and round-trip support preserve asymmetry.
+  Ontology, conversation, mixed-direction inference, validation, persistence
+  and regression tests cover the complete path.
+
 - **Focused entities can answer primitive classification choices.** A language
   may mark alternative labels as the closed `living` and `nonliving` entity
   refinements and provide its own speech for each. The core derives the current
