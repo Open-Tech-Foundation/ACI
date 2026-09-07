@@ -634,3 +634,55 @@ test("subrelation declarations are acyclic and connect relations", () => {
       .includes("contradicts denied broader relation"),
   );
 });
+
+test("domain and range declarations constrain relations with kinds", () => {
+  const base = {
+    anchors: { relation: 2, domain: 3, range: 4 },
+    relations: { is: 1, different: 12 },
+    terms: [
+      { id: 1, name: "is", links: [{ rel: 1, to: 2 }] },
+      { id: 2, name: "relation", links: [] },
+      { id: 3, name: "domain", links: [{ rel: 1, to: 2 }] },
+      { id: 4, name: "range", links: [{ rel: 1, to: 2 }] },
+      { id: 5, name: "drives", links: [{ rel: 1, to: 2 }, { rel: 3, to: 6 }, { rel: 4, to: 7 }] },
+      { id: 6, name: "person", links: [{ rel: 1, to: 11 }] },
+      { id: 7, name: "vehicle", links: [{ rel: 1, to: 11 }] },
+      { id: 8, name: "alice", individual: true, links: [{ rel: 5, to: 9 }] },
+      { id: 9, name: "car", individual: true, links: [] },
+      { id: 10, name: "machine", links: [{ rel: 1, to: 11 }] },
+      { id: 11, name: "nature", disjoint: true, links: [] },
+      { id: 12, name: "different", links: [{ rel: 1, to: 2 }] },
+    ],
+  };
+  const valid = fromSources({ world: base });
+  assertEquals(valid.world.isA(8, 6), true);
+  assertEquals(valid.world.isA(9, 7), true);
+
+  const constrainedThing = structuredClone(base);
+  constrainedThing.terms[7].links.push({ rel: 3, to: 6 });
+  assert(
+    refuses("a non-relation declaring a domain", { world: constrainedThing })
+      .includes("only constrain relations"),
+  );
+
+  const individualKind = structuredClone(base);
+  individualKind.terms[4].links[1].to = 8;
+  assert(
+    refuses("an individual used as a domain", { world: individualKind })
+      .includes("must name kinds"),
+  );
+
+  const denied = structuredClone(base);
+  denied.terms[7].links.push({ rel: 1, to: 6, not: true });
+  assert(
+    refuses("a domain inference denied by its subject", { world: denied })
+      .includes("contradicts a denied classification"),
+  );
+
+  const exclusive = structuredClone(base);
+  exclusive.terms[7].links.push({ rel: 1, to: 10 });
+  assert(
+    refuses("a domain inference excluded by its subject kind", { world: exclusive })
+      .includes("contradicts an exclusive classification"),
+  );
+});

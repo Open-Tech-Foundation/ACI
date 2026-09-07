@@ -28,7 +28,7 @@ universe; the nature or essence of an entity may later be an ordinary relation.
 | Existence | Implemented | Four modes exist: thing, property, relation and action. `existence` is their root. | No higher answer is expected for `what is existence?`; adding another label only moves the root. |
 | Identity | Partial | Stable term ids, named individuals, deterministic id allocation, self and contextual pointers. Numeric equality is computed exactly. | General `same` is not an equivalence relation and cannot substitute identicals. `different` has bespoke exclusion behavior rather than one general algebra. |
 | Classification | Partial | Transitive kind walking, inherited positive and negative facts, disjoint kinds, cycle rejection, kind versus individual metadata, and open-world living/nonliving/unknown judgement. | One `is` edge carries subtype, instance membership and some predication duties. Those meanings need explicit separation or constraints. |
-| Relations | Partial | Direct, declared-transitive and subrelation walks; converse, symmetric, reflexive, irreflexive and functional relations; explicit denial, asymmetry and contradiction checks. | Inverse-functional, domain and range semantics. |
+| Relations | Partial | Direct, declared-transitive and subrelation walks; converse, symmetric, reflexive, irreflexive, functional, domain and range semantics; explicit denial, asymmetry and contradiction checks. | Inverse-functional semantics. |
 | Propositions and logic | Partial | Held, against and absent are distinct; negation is explicit; multi-fact learning is atomic; conjunction, immediate conditions and basic quantifier scope work. | A proposition cannot itself be the subject or object of knowledge. Stored rules, variables, implication chains, general disjunction, biconditionals and proof explanations are missing. |
 | Composition | Partial | Transitive strict `part` and converse `made-of`; atom, molecule, element and matter connect to the universe. | Component, material, member and portion are conflated. Direct part, cardinality, structural role and required versus optional parts are absent. |
 | Space | Partial | `in`, `on` and `under` facts; current placement with retained history; position labels such as left/right and near/far. | Binary spatial relations, containment topology, overlap/contact, distance values, reference frames and motion paths. `in` is currently also the converse of general holding. |
@@ -37,7 +37,7 @@ universe; the nature or essence of an entity may later be an ordinary relation.
 | Events and actions | Partial | Occurrence individuals with logical time and agent, target, source and destination roles; occurrence and participant questions. | Event identity, duration, event composition, goals, plans, capability, generic preconditions/results and multi-target effects. |
 | Causality | Partial | Generic transitive cause queries; selected actions map to arithmetic effects; physical force consequences are inferred. | Causes cannot relate proposition or event objects. Direct versus indirect cause, enabling, prevention, intervention, causal time and stored explanation are missing. |
 | Quantity | Partial | Exact arithmetic, order, comparisons, counts, all/some/none scope, integer state quantities and same-unit measurement comparison. | `many` and `few` have no relative semantics. Ranges, ratios, cardinality constraints, dimensions and unit conversion are missing. Thus the brain cannot infer “many parts.” |
-| Properties and measurement | Partial | Property/state/scale/unit terms and measured comparison on a shared unit. | A general attribute-value model, typed values, domain/range, single-valued properties and conversions. Current colour and measured-state modeling is inconsistent. |
+| Properties and measurement | Partial | Property/state/scale/unit terms, relation-level domain/range typing and measured comparison on a shared unit. | A general attribute-value model, typed values, single-valued properties and conversions. Current colour and measured-state modeling is inconsistent. |
 | Modality | Missing | Modal clauses are correctly held at arm's length and never asserted as facts. | Possible, impossible, necessary, actual and capable have no distinct semantics; all modal forms merely check current knowledge. |
 | Knowledge and evidence | Partial | Internal truth status, explicit denials, atomic checked memory, embedded-claim checking and sender-scoped opinions. | First-class claims, knower-specific knowledge/belief, evidence, source provenance, justification and reliability. |
 
@@ -67,7 +67,7 @@ more world vocabulary.
 - [x] Add declarative reflexive and irreflexive relation semantics.
 - [x] Add declarative functional relation semantics where justified.
 - [x] Add subrelation semantics and lift narrower facts into broader relations.
-- [ ] Add relation domain and range semantics.
+- [x] Add relation domain and range semantics.
 - [ ] Separate subtype, instance membership and property predication without
   losing the existing kind walk.
 - [ ] Give `same` equivalence semantics and `different` general symmetric,
@@ -134,6 +134,7 @@ words a language uses to voice them.
 | A has-value B, then A has-value C, with has-value functional | second timeless fact → `deny`; memory unchanged |
 | A has-value B at t1, then C at t2 | current query → C; B remains history |
 | A taps B, with taps a subrelation of touches | A touches B → `affirm`; no copied fact |
+| Alice drives car, with drives domain person and range vehicle | Alice is person; car is vehicle → `affirm`; no copied type facts |
 | A before B, then B before A | second fact → `deny`; memory unchanged |
 | wheel component-of car | car has-component wheel → `affirm` through its declared converse |
 | car made-of-material metal | wheel made-of-material metal → `unsure` unless a composition rule proves it |

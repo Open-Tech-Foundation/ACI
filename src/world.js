@@ -14,6 +14,9 @@ export function fromWorldData(data) {
   const differentRel = (data.relations && data.relations.different) ?? null;
   const anchors = data.anchors || {};
   const subrelationRel = anchors.subrelation ?? null;
+  const domainRel = anchors.domain ?? null;
+  const rangeRel = anchors.range ?? null;
+  const inferredTypes = new Map();
   const outgoing = new Map();
   const incoming = new Map();
   for (const term of terms.values()) {
@@ -58,6 +61,11 @@ export function fromWorldData(data) {
         // hold, and nothing can be reached across it.
         if (l.not) continue;
         if (l.rel === rel && !seen.has(l.to)) pending.push(l.to);
+      }
+      if (rel === isRel) {
+        for (const inferred of inferredTypes.get(at) || []) {
+          if (!seen.has(inferred)) pending.push(inferred);
+        }
       }
     }
     return seen;
@@ -107,6 +115,64 @@ export function fromWorldData(data) {
     return variantCache.get(rel);
   }
 
+  const domainCache = new Map();
+  const rangeCache = new Map();
+  function declaredKinds(rel, declaration) {
+    const out = new Set();
+    if (declaration == null) return out;
+    for (const broader of relationAncestors(rel)) {
+      for (const link of terms.get(broader)?.links || []) {
+        if (!link.not && link.rel === declaration) out.add(link.to);
+      }
+    }
+    return out;
+  }
+
+  // Converse relations exchange their subject and object constraints. A fact
+  // written as `vehicle belongs-to person` therefore carries the same typing
+  // as `person owns vehicle`, without duplicating schema declarations.
+  function constraintKinds(rel, side) {
+    const cache = side === 'domain' ? domainCache : rangeCache;
+    if (cache.has(rel)) return cache.get(rel);
+    const own = side === 'domain' ? domainRel : rangeRel;
+    const opposite = side === 'domain' ? rangeRel : domainRel;
+    const out = declaredKinds(rel, own);
+    for (const broader of relationAncestors(rel)) {
+      for (const converse of converseBy.get(broader) || []) {
+        for (const kind of declaredKinds(converse, opposite)) out.add(kind);
+      }
+    }
+    cache.set(rel, out);
+    return out;
+  }
+
+  // Domain and range are implications, not copied classification edges. They
+  // are compiled once so every later kind walk sees the same deterministic
+  // closure while the authored world remains unchanged.
+  if (domainRel != null || rangeRel != null) {
+    const infer = (id, kinds) => {
+      if (kinds.size === 0) return;
+      if (!inferredTypes.has(id)) inferredTypes.set(id, new Set());
+      for (const kind of kinds) inferredTypes.get(id).add(kind);
+    };
+    for (const term of terms.values()) {
+      for (const link of term.links || []) {
+        if (link.not) continue;
+        infer(term.id, constraintKinds(link.rel, 'domain'));
+        infer(link.to, constraintKinds(link.rel, 'range'));
+      }
+    }
+  }
+
+  function reflexiveAt(id, rel) {
+    if (!terms.get(rel)?.reflexive || !terms.has(id)) return false;
+    const required = [
+      ...constraintKinds(rel, 'domain'),
+      ...constraintKinds(rel, 'range'),
+    ];
+    return required.every((kind) => reaches(id, isRel).has(kind));
+  }
+
   // Edges stated in this direction, including facts using a narrower
   // relation, before any declared converse is normalized.
   function variantLinks(id, rel) {
@@ -115,6 +181,9 @@ export function fromWorldData(data) {
       for (const link of terms.get(id)?.links || []) {
         if (!link.not && link.rel === variant) links.push({ ...link });
       }
+    }
+    if (rel === isRel) {
+      for (const to of inferredTypes.get(id) || []) links.push({ rel, to });
     }
     return currentFunctional(links, rel);
   }
@@ -144,7 +213,7 @@ export function fromWorldData(data) {
   function related(id, rel) {
     const direct = directedLinks(id, rel);
     const out = new Set(direct.map((link) => link.to));
-    if (terms.get(rel)?.reflexive && terms.has(id)) out.add(id);
+    if (reflexiveAt(id, rel)) out.add(id);
     if (terms.get(rel)?.symmetric) {
       for (const term of terms.values()) {
         const links = directedLinks(term.id, rel);
@@ -239,7 +308,7 @@ export function fromWorldData(data) {
       if (terms.get(rel)?.symmetric) {
         for (const link of variantLinks(id, rel)) out.add(link.to);
       }
-      if (terms.get(rel)?.reflexive && terms.has(id)) out.add(id);
+      if (reflexiveAt(id, rel)) out.add(id);
       return [...out];
     },
     // The value a term names, and the term that names a value. This is the
@@ -300,6 +369,8 @@ export function fromWorldData(data) {
     // self-contradiction without imposing direction on distinct endpoints.
     irreflexive: (rel) => Boolean(terms.get(rel)?.irreflexive || terms.get(rel)?.asymmetric),
     functional: (rel) => Boolean(terms.get(rel)?.functional),
+    domains: (rel) => [...constraintKinds(rel, 'domain')],
+    ranges: (rel) => [...constraintKinds(rel, 'range')],
     subrelationOf: (relation, broader) => relationAncestors(relation).has(broader),
     related: (id, rel) => [...related(id, rel)],
     individualsOf: (kind) => {
@@ -389,7 +460,7 @@ export function fromWorldData(data) {
           if (incomingLinks.some((link) => link.to === id)) found.add(term.id);
         }
       }
-      if (terms.get(rel)?.reflexive && terms.has(id)) found.add(id);
+      if (reflexiveAt(id, rel)) found.add(id);
       return [...found];
     },
     // Does `id` reach `ancestorId` by following `rel` (the `is` relation by

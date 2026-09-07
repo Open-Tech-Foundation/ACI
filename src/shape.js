@@ -301,6 +301,155 @@ export function checkWhole(data, origin = null, where = 'world') {
     return relationVariantCache.get(id);
   };
 
+  const termsById = new Map(data.terms.map((term) => [term.id, term]));
+  const classificationAncestorCache = new Map();
+  const classificationAncestors = (id) => {
+    if (classificationAncestorCache.has(id)) return classificationAncestorCache.get(id);
+    const found = new Set();
+    const pending = [id];
+    while (pending.length) {
+      const here = pending.pop();
+      if (found.has(here)) continue;
+      found.add(here);
+      for (const link of termsById.get(here)?.links || []) {
+        if (!link.not && link.rel === is) pending.push(link.to);
+      }
+    }
+    classificationAncestorCache.set(id, found);
+    return found;
+  };
+
+  const domain = data.anchors && data.anchors.domain;
+  const range = data.anchors && data.anchors.range;
+  const relationKind = data.anchors && data.anchors.relation;
+  for (const [name, declaration] of [['domain', domain], ['range', range]]) {
+    if (
+      declaration != null &&
+      relationKind != null &&
+      !classificationAncestors(declaration).has(relationKind)
+    ) fail(`${from(declaration)} term ${declaration}`, `${name} anchor must be a relation`);
+  }
+  for (const term of data.terms) {
+    for (const link of term.links) {
+      if (link.not || (link.rel !== domain && link.rel !== range)) continue;
+      if (relationKind != null && !classificationAncestors(term.id).has(relationKind)) {
+        fail(`${from(term.id)} term ${term.id}`, 'domain and range may only constrain relations');
+      }
+      if (termsById.get(link.to)?.individual) {
+        fail(`${from(term.id)} term ${term.id}`, 'domain and range must name kinds, not individuals');
+      }
+    }
+  }
+
+  const converseRelation = data.anchors && data.anchors.converse;
+  const constraintCache = new Map();
+  const schemaConversesOf = (relation) => {
+    const out = new Set();
+    if (converseRelation == null) return out;
+    for (const candidate of data.terms) {
+      for (const link of candidate.links) {
+        if (link.not || link.rel !== converseRelation) continue;
+        if (candidate.id === relation) out.add(link.to);
+        if (link.to === relation) out.add(candidate.id);
+      }
+    }
+    return out;
+  };
+  const declaredKinds = (relation, declaration) => {
+    const out = new Set();
+    if (declaration == null) return out;
+    for (const broader of relationAncestors(relation)) {
+      for (const link of termsById.get(broader)?.links || []) {
+        if (!link.not && link.rel === declaration) out.add(link.to);
+      }
+    }
+    return out;
+  };
+  const constraintKinds = (relation, side) => {
+    const key = `${relation}:${side}`;
+    if (constraintCache.has(key)) return constraintCache.get(key);
+    const own = side === 'domain' ? domain : range;
+    const opposite = side === 'domain' ? range : domain;
+    const out = declaredKinds(relation, own);
+    if (converseRelation != null) {
+      for (const broader of relationAncestors(relation)) {
+        for (const other of schemaConversesOf(broader)) {
+          for (const kind of declaredKinds(other, opposite)) out.add(kind);
+        }
+      }
+    }
+    constraintCache.set(key, out);
+    return out;
+  };
+
+  const inferredTypes = new Map();
+  const infer = (id, kinds) => {
+    if (kinds.size === 0) return;
+    if (!inferredTypes.has(id)) inferredTypes.set(id, new Set());
+    for (const kind of kinds) inferredTypes.get(id).add(kind);
+  };
+  if (domain != null || range != null) {
+    for (const term of data.terms) {
+      for (const link of term.links) {
+        if (link.not) continue;
+        infer(term.id, constraintKinds(link.rel, 'domain'));
+        infer(link.to, constraintKinds(link.rel, 'range'));
+      }
+    }
+  }
+
+  const effectiveAncestors = (id) => {
+    const found = new Set();
+    const pending = [id, ...(inferredTypes.get(id) || [])];
+    while (pending.length) {
+      const here = pending.pop();
+      if (found.has(here)) continue;
+      found.add(here);
+      for (const link of termsById.get(here)?.links || []) {
+        if (!link.not && link.rel === is) pending.push(link.to);
+      }
+    }
+    return found;
+  };
+  const different = data.relations && data.relations.different;
+  const excluded = (left, right) => {
+    if (left === right) return false;
+    if (different != null) {
+      if ((termsById.get(left)?.links || []).some(
+        (link) => !link.not && link.rel === different && link.to === right,
+      )) return true;
+      if ((termsById.get(right)?.links || []).some(
+        (link) => !link.not && link.rel === different && link.to === left,
+      )) return true;
+    }
+    for (const parent of (termsById.get(left)?.links || [])
+      .filter((link) => !link.not && link.rel === is)
+      .map((link) => link.to)) {
+      if (
+        termsById.get(parent)?.disjoint &&
+        (termsById.get(right)?.links || []).some(
+          (link) => !link.not && link.rel === is && link.to === parent,
+        )
+      ) return true;
+    }
+    return false;
+  };
+  for (const [id] of inferredTypes) {
+    const effective = effectiveAncestors(id);
+    for (const rung of effective) {
+      for (const link of termsById.get(rung)?.links || []) {
+        if (link.not && link.rel === is && effective.has(link.to)) {
+          fail(`${from(id)} term ${id}`, 'domain or range inference contradicts a denied classification');
+        }
+      }
+      for (const other of effective) {
+        if (excluded(rung, other)) {
+          fail(`${from(id)} term ${id}`, 'domain or range inference contradicts an exclusive classification');
+        }
+      }
+    }
+  }
+
   // A narrower positive fact entails every broader one, so an explicit denial
   // of any broader proposition cannot coexist with it.
   const converse = data.anchors && data.anchors.converse;
@@ -379,7 +528,15 @@ export function checkWhole(data, origin = null, where = 'world') {
   }
 
   for (const relation of data.terms.filter((term) => term.reflexive)) {
+    const required = [
+      ...constraintKinds(relation.id, 'domain'),
+      ...constraintKinds(relation.id, 'range'),
+    ];
     for (const term of data.terms) {
+      const eligible = required.length === 0 || required.every(
+        (kind) => effectiveAncestors(term.id).has(kind),
+      );
+      if (!eligible) continue;
       if (term.links.some((link) => link.not && link.rel === relation.id && link.to === term.id)) {
         fail(`${from(term.id)} term ${term.id}`, `reflexive relation ${relation.id} denies its required self-link`);
       }

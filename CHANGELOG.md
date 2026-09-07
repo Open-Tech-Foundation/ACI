@@ -455,6 +455,15 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Relations can now imply subject and object kinds through domain and range.**
+  The language-neutral `domain` and `range` anchors let relation terms declare
+  their subject and object constraints. Positive facts contribute inferred
+  classifications without copying `is` links; negative facts contribute none.
+  Subrelations inherit their parents' constraints and declared converses swap
+  the two sides. Claims that conflict with denied or exclusive kinds are
+  refused, as are malformed declarations, individual constraint targets and
+  inconsistent authored or atomic learned knowledge.
+
 - **Relations can now specialize other relations.** The world anchors a strict,
   transitive `subrelation` primitive, and relation terms connect to broader
   relations through ordinary world links. A fact under a narrower relation is

@@ -64,7 +64,9 @@
     "neither": 1569,
     "double": 2818,
     "halve": 2819,
-    "subrelation": 2828
+    "subrelation": 2828,
+    "domain": 2867,
+    "range": 2868
   },
   "relations": {
     "is": 294,
@@ -29368,6 +29370,26 @@
       "name": "subrelation",
       "transitive": true,
       "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        }
+      ]
+    },
+    {
+      "id": 2867,
+      "name": "domain",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        }
+      ]
+    },
+    {
+      "id": 2868,
+      "name": "range",
       "links": [
         {
           "rel": 294,

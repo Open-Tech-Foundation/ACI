@@ -354,6 +354,122 @@ test("broader relation characteristics apply to narrower facts", () => {
   assertEquals(w.isA(4, 6, NARROW), false, "the child did not declare transitivity");
 });
 
+test("relation domains and ranges infer classifications without copied edges", () => {
+  const RELATION = 2;
+  const PERSON = 3;
+  const VEHICLE = 4;
+  const DRIVES = 5;
+  const DOMAIN = 6;
+  const RANGE = 7;
+  const w = fromWorldData({
+    anchors: { relation: RELATION, domain: DOMAIN, range: RANGE },
+    relations: { is: IS },
+    terms: [
+      { id: IS, name: "is", links: [{ rel: IS, to: RELATION }] },
+      { id: RELATION, name: "relation", links: [] },
+      { id: PERSON, name: "person", links: [] },
+      { id: VEHICLE, name: "vehicle", links: [] },
+      { id: DRIVES, name: "drives", links: [{ rel: IS, to: RELATION }, { rel: DOMAIN, to: PERSON }, { rel: RANGE, to: VEHICLE }] },
+      { id: DOMAIN, name: "domain", links: [{ rel: IS, to: RELATION }] },
+      { id: RANGE, name: "range", links: [{ rel: IS, to: RELATION }] },
+      { id: 8, name: "alice", individual: true, links: [{ rel: DRIVES, to: 9 }] },
+      { id: 9, name: "car", individual: true, links: [] },
+    ],
+  });
+  assertEquals(w.domains(DRIVES), [PERSON]);
+  assertEquals(w.ranges(DRIVES), [VEHICLE]);
+  assertEquals(w.isA(8, PERSON), true);
+  assertEquals(w.isA(9, VEHICLE), true);
+  assertEquals(w.linked(8, IS), [PERSON]);
+  assertEquals(w.members(VEHICLE, IS), [9]);
+  assertEquals(w.term(8).links.some((link) => link.rel === IS), false, "inference did not mutate data");
+});
+
+test("subrelations inherit constraints and converses exchange their sides", () => {
+  const RELATION = 2;
+  const PERSON = 3;
+  const VEHICLE = 4;
+  const OPERATES = 5;
+  const PILOTS = 6;
+  const OWNS = 7;
+  const BELONGS = 8;
+  const DOMAIN = 10;
+  const RANGE = 11;
+  const SUBRELATION = 12;
+  const CONVERSE = 13;
+  const w = fromWorldData({
+    anchors: { relation: RELATION, domain: DOMAIN, range: RANGE, subrelation: SUBRELATION, converse: CONVERSE },
+    relations: { is: IS },
+    terms: [
+      { id: IS, name: "is", links: [{ rel: IS, to: RELATION }] },
+      { id: RELATION, name: "relation", links: [] },
+      { id: PERSON, name: "person", links: [] },
+      { id: VEHICLE, name: "vehicle", links: [] },
+      { id: OPERATES, name: "operates", links: [{ rel: IS, to: RELATION }, { rel: DOMAIN, to: PERSON }, { rel: RANGE, to: VEHICLE }] },
+      { id: PILOTS, name: "pilots", links: [{ rel: IS, to: RELATION }, { rel: SUBRELATION, to: OPERATES }] },
+      { id: OWNS, name: "owns", links: [{ rel: IS, to: RELATION }, { rel: DOMAIN, to: PERSON }, { rel: RANGE, to: VEHICLE }, { rel: CONVERSE, to: BELONGS }] },
+      { id: BELONGS, name: "belongs", links: [{ rel: IS, to: RELATION }] },
+      { id: DOMAIN, name: "domain", links: [{ rel: IS, to: RELATION }] },
+      { id: RANGE, name: "range", links: [{ rel: IS, to: RELATION }] },
+      { id: SUBRELATION, name: "subrelation", links: [{ rel: IS, to: RELATION }] },
+      { id: CONVERSE, name: "converse", links: [{ rel: IS, to: RELATION }] },
+      { id: 14, name: "alice", individual: true, links: [{ rel: PILOTS, to: 15 }] },
+      { id: 15, name: "car", individual: true, links: [{ rel: BELONGS, to: 16 }] },
+      { id: 16, name: "bob", individual: true, links: [] },
+    ],
+  });
+  assertEquals(w.domains(PILOTS), [PERSON]);
+  assertEquals(w.ranges(PILOTS), [VEHICLE]);
+  assertEquals(w.domains(BELONGS), [VEHICLE]);
+  assertEquals(w.ranges(BELONGS), [PERSON]);
+  assertEquals(w.isA(14, PERSON), true);
+  assertEquals(w.isA(15, VEHICLE), true);
+  assertEquals(w.isA(16, PERSON), true);
+});
+
+test("denied relation facts imply no domain or range classifications", () => {
+  const DOMAIN = 5;
+  const RANGE = 6;
+  const w = fromWorldData({
+    anchors: { domain: DOMAIN, range: RANGE },
+    relations: { is: IS },
+    terms: [
+      { id: IS, name: "is", links: [] },
+      { id: 2, name: "person", links: [] },
+      { id: 3, name: "vehicle", links: [] },
+      { id: 4, name: "drives", links: [{ rel: DOMAIN, to: 2 }, { rel: RANGE, to: 3 }] },
+      { id: DOMAIN, name: "domain", links: [] },
+      { id: RANGE, name: "range", links: [] },
+      { id: 7, name: "alice", links: [{ rel: 4, to: 8, not: true }] },
+      { id: 8, name: "car", links: [] },
+    ],
+  });
+  assertEquals(w.isA(7, 2), false);
+  assertEquals(w.isA(8, 3), false);
+});
+
+test("domain and range bound the universe of a reflexive relation", () => {
+  const PERSON = 2;
+  const REFLECTS = 3;
+  const DOMAIN = 4;
+  const RANGE = 5;
+  const w = fromWorldData({
+    anchors: { domain: DOMAIN, range: RANGE },
+    relations: { is: IS },
+    terms: [
+      { id: IS, name: "is", links: [] },
+      { id: PERSON, name: "person", links: [] },
+      { id: REFLECTS, name: "reflects", reflexive: true, links: [{ rel: DOMAIN, to: PERSON }, { rel: RANGE, to: PERSON }] },
+      { id: DOMAIN, name: "domain", links: [] },
+      { id: RANGE, name: "range", links: [] },
+      { id: 6, name: "alice", links: [{ rel: IS, to: PERSON }] },
+      { id: 7, name: "stone", links: [] },
+    ],
+  });
+  assertEquals(w.isA(6, 6, REFLECTS), true);
+  assertEquals(w.isA(7, 7, REFLECTS), false);
+});
+
 test("transitive relations compose facts written through a converse", () => {
   const BEFORE = 2;
   const AFTER = 3;

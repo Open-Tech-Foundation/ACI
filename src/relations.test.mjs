@@ -14,8 +14,20 @@ const POINTS = 95;
 const TOUCHES = 96;
 const TAPS = 97;
 const SUBRELATION = 98;
+const DOMAIN = 99;
+const RANGE = 100;
+const CARES = 101;
+const ANIMAL = 102;
+const NONLIVING = 103;
+const NATURE = 104;
 const worldData = {
-  anchors: { thing: 1, relation: 2, subrelation: SUBRELATION },
+  anchors: {
+    thing: 1,
+    relation: 2,
+    subrelation: SUBRELATION,
+    domain: DOMAIN,
+    range: RANGE,
+  },
   relations: { is: IS },
   terms: [
     { id: 1, name: "thing", links: [] },
@@ -29,9 +41,15 @@ const worldData = {
     { id: 96, name: "touching", links: [{ rel: IS, to: 2 }] },
     { id: 97, name: "tapping", links: [{ rel: IS, to: 2 }, { rel: SUBRELATION, to: TOUCHES }] },
     { id: 98, name: "subrelation", asymmetric: true, transitive: true, links: [{ rel: IS, to: 2 }] },
-    { id: 10, name: "bird", links: [{ rel: IS, to: 1 }, { rel: MEETS, to: 12 }, { rel: POINTS, to: 12 }, { rel: TAPS, to: 12 }] },
+    { id: DOMAIN, name: "domain", links: [{ rel: IS, to: 2 }] },
+    { id: RANGE, name: "range", links: [{ rel: IS, to: 2 }] },
+    { id: CARES, name: "caring", links: [{ rel: IS, to: 2 }, { rel: DOMAIN, to: ANIMAL }, { rel: RANGE, to: ANIMAL }] },
+    { id: NATURE, name: "nature", disjoint: true, links: [{ rel: IS, to: 1 }] },
+    { id: ANIMAL, name: "animal", links: [{ rel: IS, to: NATURE }] },
+    { id: NONLIVING, name: "nonliving", links: [{ rel: IS, to: NATURE }] },
+    { id: 10, name: "bird", links: [{ rel: IS, to: ANIMAL }, { rel: MEETS, to: 12 }, { rel: POINTS, to: 12 }, { rel: TAPS, to: 12 }, { rel: CARES, to: 11 }] },
     { id: 11, name: "wing", links: [{ rel: IS, to: 1 }, { rel: PART, to: 10 }] },
-    { id: 12, name: "stone", links: [{ rel: IS, to: 1 }] },
+    { id: 12, name: "stone", links: [{ rel: IS, to: NONLIVING }] },
   ],
 };
 
@@ -51,6 +69,8 @@ const langData = {
     touches: { pos: "verb", meaning: "touches", concept: 96 },
     taps: { pos: "verb", meaning: "taps", concept: 97 },
     narrows: { pos: "verb", meaning: "subrelation", concept: 98 },
+    cares: { pos: "verb", meaning: "cares for", concept: CARES },
+    animal: { pos: "noun", meaning: "animal", concept: ANIMAL },
   },
   grammar: {
     start: "sentence",
@@ -135,6 +155,23 @@ test("only relations can participate in the relation hierarchy", () => {
   const result = brainFrom("bird narrows stone", knowledge);
   assertEquals(result.expression.name, "deny");
   assertEquals(result.learned, null);
+});
+
+test("domain and range implications are understood and incompatible claims are denied", () => {
+  assertEquals(truth("wing is animal").name, "held", "range infers the object's kind");
+  assertEquals(brainFrom("wing is animal", knowledge).expression.name, "understood");
+
+  const compatible = brainFrom("wing cares bird", knowledge);
+  assertEquals(compatible.expression.name, "learn");
+  assertEquals(compatible.learned.terms, [
+    { id: 11, name: "wing", links: [{ rel: CARES, to: 10 }] },
+  ]);
+
+  for (const input of ["stone cares bird", "bird cares stone"]) {
+    const result = brainFrom(input, knowledge);
+    assertEquals(result.expression.name, "deny", input);
+    assertEquals(result.learned, null, input);
+  }
 });
 
 test("a term reached by one relation is not reached by another", () => {

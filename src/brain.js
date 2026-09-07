@@ -1478,7 +1478,13 @@ function judge(roots, world, mood, langs, sent) {
         }
       }
       const functionalAgainst = [...functionalObjects].some((found) => found !== object);
-      const opposed = functionalAgainst || (counted != null
+      const typeAgainst = (candidate, required) => required.some((kind) =>
+        world.excludes(candidate, kind) ||
+        upward(candidate, world).some((rung) => world.denies(rung, kind, world.baseRelation))
+      );
+      const constrainedAgainst =
+        typeAgainst(holder, world.domains(rel)) || typeAgainst(object, world.ranges(rel));
+      const opposed = functionalAgainst || constrainedAgainst || (counted != null
         ? knownCount != null && knownCount !== counted
         : heldDenied ||
           (kindFact && world.excludes(subject, object)) ||
@@ -4234,6 +4240,59 @@ function learningConflict(world, learned) {
     }
     return out;
   };
+  const domain = world.anchors ? world.anchors.domain : null;
+  const range = world.anchors ? world.anchors.range : null;
+  const constraintCache = new Map();
+  const declaredKinds = (relation, declaration) => {
+    const out = new Set();
+    if (declaration == null) return out;
+    for (const broader of relationAncestors(relation)) {
+      for (const link of terms.get(broader)?.links || []) {
+        if (!link.not && link.rel === declaration) out.add(link.to);
+      }
+    }
+    return out;
+  };
+  const constraintKinds = (relation, side) => {
+    const key = `${relation}:${side}`;
+    if (constraintCache.has(key)) return constraintCache.get(key);
+    const own = side === 'domain' ? domain : range;
+    const opposite = side === 'domain' ? range : domain;
+    const out = declaredKinds(relation, own);
+    for (const broader of relationAncestors(relation)) {
+      for (const converse of conversesOf(broader)) {
+        for (const kind of declaredKinds(converse, opposite)) out.add(kind);
+      }
+    }
+    constraintCache.set(key, out);
+    return out;
+  };
+  const isA = (start, target) => {
+    const seen = new Set();
+    const pending = [start];
+    while (pending.length) {
+      const here = pending.pop();
+      if (here === target) return true;
+      if (seen.has(here)) continue;
+      seen.add(here);
+      for (const link of terms.get(here)?.links || []) {
+        if (!link.not && link.rel === world.baseRelation) pending.push(link.to);
+      }
+    }
+    return false;
+  };
+  const impliedKind = (id, kind) => {
+    for (const term of terms.values()) {
+      for (const link of term.links || []) {
+        if (link.not) continue;
+        const implied = [];
+        if (term.id === id) implied.push(...constraintKinds(link.rel, 'domain'));
+        if (link.to === id) implied.push(...constraintKinds(link.rel, 'range'));
+        for (const found of implied) if (isA(found, kind)) return true;
+      }
+    }
+    return false;
+  };
   for (const term of terms.values()) {
     for (const link of term.links || []) {
       if (link.not) continue;
@@ -4296,7 +4355,15 @@ function learningConflict(world, learned) {
 
   for (const relation of terms.values()) {
     if (!relation.reflexive) continue;
+    const required = [
+      ...constraintKinds(relation.id, 'domain'),
+      ...constraintKinds(relation.id, 'range'),
+    ];
     for (const term of terms.values()) {
+      const eligible = required.length === 0 || required.every(
+        (kind) => isA(term.id, kind) || impliedKind(term.id, kind),
+      );
+      if (!eligible) continue;
       if ((term.links || []).some(
         (link) => link.not && link.rel === relation.id && link.to === term.id,
       )) return `reflexive relation ${relation.id} denies its required self-link`;
@@ -4368,22 +4435,85 @@ function learningConflict(world, learned) {
   };
   for (const id of terms.keys()) if (visit(id)) return 'classification cycle';
 
-  if (subrelation != null) {
-    const relationKind = world.anchors ? world.anchors.relation : null;
-    const isA = (start, target) => {
-      const seen = new Set();
-      const pending = [start];
-      while (pending.length) {
-        const here = pending.pop();
-        if (here === target) return true;
-        if (seen.has(here)) continue;
-        seen.add(here);
-        for (const link of terms.get(here)?.links || []) {
-          if (!link.not && link.rel === is) pending.push(link.to);
+  const relationKind = world.anchors ? world.anchors.relation : null;
+  for (const term of terms.values()) {
+    for (const link of term.links || []) {
+      if (link.not || (link.rel !== domain && link.rel !== range)) continue;
+      if (relationKind != null && !isA(term.id, relationKind)) {
+        return 'domain and range may only constrain relations';
+      }
+      if (terms.get(link.to)?.individual) return 'domain and range must name kinds, not individuals';
+    }
+  }
+
+  const inferredTypes = new Map();
+  const infer = (id, kinds) => {
+    if (kinds.size === 0) return;
+    if (!inferredTypes.has(id)) inferredTypes.set(id, new Set());
+    for (const kind of kinds) inferredTypes.get(id).add(kind);
+  };
+  if (domain != null || range != null) {
+    for (const term of terms.values()) {
+      for (const link of term.links || []) {
+        if (link.not) continue;
+        infer(term.id, constraintKinds(link.rel, 'domain'));
+        infer(link.to, constraintKinds(link.rel, 'range'));
+      }
+    }
+  }
+  const effectiveAncestors = (id) => {
+    const found = new Set();
+    const pending = [id, ...(inferredTypes.get(id) || [])];
+    while (pending.length) {
+      const here = pending.pop();
+      if (found.has(here)) continue;
+      found.add(here);
+      for (const link of terms.get(here)?.links || []) {
+        if (!link.not && link.rel === is) pending.push(link.to);
+      }
+    }
+    return found;
+  };
+  const different = world.data.relations ? world.data.relations.different : null;
+  const excluded = (left, right) => {
+    if (left === right) return false;
+    if (different != null) {
+      if ((terms.get(left)?.links || []).some(
+        (link) => !link.not && link.rel === different && link.to === right,
+      )) return true;
+      if ((terms.get(right)?.links || []).some(
+        (link) => !link.not && link.rel === different && link.to === left,
+      )) return true;
+    }
+    for (const parent of (terms.get(left)?.links || [])
+      .filter((link) => !link.not && link.rel === is)
+      .map((link) => link.to)) {
+      if (
+        terms.get(parent)?.disjoint &&
+        (terms.get(right)?.links || []).some(
+          (link) => !link.not && link.rel === is && link.to === parent,
+        )
+      ) return true;
+    }
+    return false;
+  };
+  for (const [id] of inferredTypes) {
+    const effective = effectiveAncestors(id);
+    for (const rung of effective) {
+      for (const link of terms.get(rung)?.links || []) {
+        if (link.not && link.rel === is && effective.has(link.to)) {
+          return 'domain or range inference contradicts a denied classification';
         }
       }
-      return false;
-    };
+      for (const other of effective) {
+        if (excluded(rung, other)) {
+          return 'domain or range inference contradicts an exclusive classification';
+        }
+      }
+    }
+  }
+
+  if (subrelation != null) {
     if (relationKind != null) {
       for (const term of terms.values()) {
         for (const link of term.links || []) {

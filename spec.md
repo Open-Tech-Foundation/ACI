@@ -512,6 +512,8 @@ on, not even for not knowing.
       "links": [{ "rel": 294, "to": 4 }] },
     { "id": 2828, "name": "subrelation", "transitive": true, "asymmetric": true,
       "links": [{ "rel": 294, "to": 4 }] },
+    { "id": 2867, "name": "domain", "links": [{ "rel": 294, "to": 4 }] },
+    { "id": 2868, "name": "range", "links": [{ "rel": 294, "to": 4 }] },
     { "id": 249, "name": "order", "transitive": true, "links": [{ "rel": 294, "to": 4 }] },
     { "id": 2821, "name": "before", "transitive": true, "asymmetric": true,
       "links": [{ "rel": 294, "to": 249 }, { "rel": 590, "to": 2822 }] },
@@ -531,9 +533,10 @@ brain reasons identically over both.
 relation term, not properties inferred from its name. One edge of a symmetric
 relation is read from either endpoint, including an explicit denial; mirrored
 authored edges are one proposition and may not disagree in polarity or
-same-moment quantity. Until domain constraints exist, a reflexive relation
-entails a self-edge for every term in the supplied world. An irreflexive
-relation entails the opposite for every self-pair, and asymmetry implies
+same-moment quantity. A reflexive relation entails a self-edge for every term
+admitted by its domain and range constraints, or every supplied term when it
+has neither. An irreflexive relation entails the opposite for every self-pair,
+and asymmetry implies
 irreflexivity. A relation cannot be both symmetric and asymmetric, nor
 reflexive and irreflexive/asymmetric. Positive irreflexive self-links and
 denied required reflexive self-links are invalid. A functional relation has at
@@ -560,6 +563,17 @@ contribute, including facts written through declared converses. Both hierarchy
 endpoints must classify as relations. The loader caches hierarchy closure over
 only participating relation terms, so an ordinary query does not scan the
 whole ontology.
+
+The `anchors.domain` and `anchors.range` relations declare the kinds required
+on a relation's subject and object. If `drives domain person` and `drives range
+vehicle`, the positive fact `Alice drives car` entails `Alice is person` and
+`car is vehicle`; those classifications are computed and no duplicate `is`
+edges are stored. A negative relation fact implies neither kind. Constraints
+declared on a broader relation apply to its subrelations. A declared converse
+exchanges the constraints, so the range of `owns` is the domain of
+`belongs-to`. Constraint declarations must be made by relation terms and name
+kinds rather than individuals. A fact conflicting with an explicit denial or
+an exclusive kind is refused both in authored sources and atomic learning.
 
 ### Grammar semantics
 
@@ -1786,7 +1800,8 @@ it or answer with it.
   the same languages in the same order on every machine.
 - `src/world.js` — `fromWorldData(data)` compiles the world into
   `{ anchors, baseRelation, term, isA, linked, related, excludes,
-  subrelationOf }`. `isA` walks the base classification relation transitively;
+  subrelationOf, domains, ranges }`. `isA` walks explicit and domain/range
+  inferred classification transitively;
   another relation is direct unless its term declares `transitive: true`.
   Narrower relation edges participate in a broader walk. Every walk terminates
   defensively on cycles.
@@ -1806,7 +1821,7 @@ fromSources({ world, knowledge, languages })  // validates, merges
 node(kind, name, branch, state)
 
 import { fromWorldData } from './world.js';
-fromWorldData(data)      // compiled world queries, including related and subrelationOf
+fromWorldData(data)      // compiled queries, including related, subrelationOf, domains and ranges
 
 import { openBrain, brain } from './index.js';   // server-only convenience
 await brain("hi", { from, conversation })        // loads languages internally
