@@ -48,9 +48,9 @@ more world vocabulary.
 
 - [x] Make living classification open-world: `living`, `nonliving` or
   `unknown`. Absence of an organism path is not proof of non-life.
-- [ ] Require a force to be held by the universe before its effects propagate
-  to every physical thing. The current physical shortcut checks only that a
-  term is a force.
+- [x] Require a force to be held by the universe before its effects propagate
+  to every physical thing. A held force-kind admits its classified members;
+  classification by itself activates nothing.
 - [ ] Remove the generic reverse-edge-as-loop assumption. Reverse facts are
   contradictory only for relations whose algebra says so; symmetric relations
   must be learnable.

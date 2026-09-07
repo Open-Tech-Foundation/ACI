@@ -1,8 +1,24 @@
 import { test, assert, assertEquals } from "runtime:test";
+import { file } from "runtime:fs";
+import { brainFrom } from "./brain.js";
 import { openBrain } from "./index.js";
+import { fromSources } from "./knowledge.js";
 
 // A store of its own, that nothing else can reach.
 const { brain, forget } = openBrain("sqlite::memory:");
+
+async function sourcesWithoutHeldForce() {
+  const world = await file(new URL("../data/world.json", import.meta.url).pathname).json();
+  const english = await file(new URL("../languages/en.json", import.meta.url).pathname).json();
+  const universe = world.terms.find((term) => term.id === world.anchors.universe);
+  const force = world.terms.find((term) =>
+    term.links.some((link) => link.rel === world.relations.is && link.to === world.anchors.force)
+  );
+  universe.links = universe.links.filter(
+    (link) => !(link.rel === world.anchors.has && link.to === world.anchors.force),
+  );
+  return { world, english, universe, force };
+}
 
 test("everything that is, is inside the universe", async () => {
   await forget();
@@ -28,6 +44,23 @@ test("what a force does, everything physical has — and nobody said so", async 
     "told it, it already knew");
   assertEquals((await brain("a stone has weight")).learned, null, "so there was nothing to take in");
   await forget();
+});
+
+test("a force classification alone activates no physical consequence", async () => {
+  const { world, english } = await sourcesWithoutHeldForce();
+  const knowledge = fromSources({ world, languages: [english] });
+  assertEquals(
+    brainFrom("a stone has weight?", knowledge).expression.name,
+    "unsure",
+    "gravity exists as a force but this universe does not hold it",
+  );
+});
+
+test("the universe may hold one specific force instead of every force", async () => {
+  const { world, english, universe, force } = await sourcesWithoutHeldForce();
+  universe.links.push({ rel: world.anchors.has, to: force.id });
+  const knowledge = fromSources({ world, languages: [english] });
+  assertEquals(brainFrom("a stone has weight?", knowledge).expression.name, "affirm");
 });
 
 test("a force reaches the physical and nothing else", async () => {

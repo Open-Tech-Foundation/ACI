@@ -2316,20 +2316,45 @@ function valuesOn(term, world) {
 
 // What the universe's forces do, everything physical has. Nobody has to say a
 // stone is heavy for the brain to know a stone has weight: a stone is a
-// physical thing, the universe has gravity, gravity acts on everything
-// physical, and what gravity causes is weight. This does not come down the
-// ladder the way a kind's facts do — it comes from the universe inward.
+// physical thing, the universe holds the kind force, gravity is one, and what
+// gravity causes is weight. This does not come down the ladder the way a
+// kind's facts do — it comes from the universe inward.
 //
 // That a force reaches the physical and nothing else is the brain's: a number
 // has no weight, and no world has to say so. Which forces there are, and what
 // each one causes, is the world's.
 function forced(thing, had, relation, world) {
   const a = world.anchors || {};
-  if (relation !== a.has || a.force == null || a.physical == null || a.cause == null) return false;
+  if (
+    relation !== a.has ||
+    a.has == null ||
+    a.universe == null ||
+    a.force == null ||
+    a.physical == null ||
+    a.cause == null
+  ) return false;
   if (!world.isA(thing, a.physical)) return false;
-  return world
-    .members(a.force, world.baseRelation)
-    .some((force) => world.isA(force, had, a.cause));
+  // Classification alone activates nothing. The universe must hold either
+  // this force itself or a kind the force belongs to. Thus `universe has
+  // force` admits every declared force, while `universe has gravity` admits
+  // gravity alone. Removing both removes the physical consequence.
+  const held = reached(a.universe, a.has, world);
+  const forces = [];
+  const collect = (kind) => {
+    if (forces.includes(kind)) return;
+    forces.push(kind);
+    for (const member of world.members(kind, world.baseRelation)) collect(member);
+  };
+  collect(a.force);
+  return forces.some(
+    (force) =>
+      held.some(
+        (kind) =>
+          world.isA(kind, a.force, world.baseRelation) &&
+          world.isA(force, kind, world.baseRelation),
+      ) &&
+      world.isA(force, had, a.cause),
+  );
 }
 
 // The other end of a relation, where the world says one is another the other

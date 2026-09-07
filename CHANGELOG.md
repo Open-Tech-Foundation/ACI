@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A force affects physical things only when the universe holds it.** Physical
+  inference previously activated every term classified as a force, even in a
+  world whose universe held none. The core now requires the universe to hold
+  either the particular force or a kind containing it before any caused
+  property propagates. Tests remove the universe's force link to prove gravity
+  becomes inert, then admit gravity specifically to prove its weight effect
+  returns without admitting every possible force.
+
 - **Unknown life status is no longer classified as non-living.** The entity
   primitive now distinguishes world-proven life, world-proven exclusion from
   life, and an open-world unknown. Known organisms such as trees remain living;

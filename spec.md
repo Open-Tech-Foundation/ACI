@@ -1373,13 +1373,15 @@ its kind. Living/nonliving is a separate primitive classification derived from
 whether the entity reaches `organism`, so both a tree and an atom can traverse
 the material ladder while resolving to different living states.
 
-**What a force does, everything physical has.** This does not come down the
-ladder the way a kind's facts do; it comes from the universe inward. Nobody has
-to say a stone is heavy for the brain to know a stone **has weight**: a stone is
-physical, the universe has gravity, and what gravity causes is weight. That a
-force reaches the physical and nothing else is the brain's — no world has to say
-a number is weightless. Which forces there are, and what each causes, is the
-world's.
+**What a force held by the universe does, everything physical has.** This does
+not come down the ladder the way a kind's facts do; it comes from the universe
+inward. Nobody has to say a stone is heavy for the brain to know a stone **has
+weight**: a stone is physical, the universe holds the kind `force`, gravity is
+one, and gravity causes weight. Classification alone activates nothing: if the
+universe holds neither gravity nor a kind containing it, gravity has no global
+effect. That an admitted force reaches the physical and nothing else is the
+brain's — no world has to say a number is weightless. Which forces the universe
+holds, and what each causes, is the world's.
 
 Having a property is not being at one end of it. A stone has weight and is not
 thereby heavy.
