@@ -305,8 +305,12 @@ or thought may proceed. If several languages each read the whole signal, none
 receives an implicit priority from file or source order. Their names and their
 possibly different token sequences are retained, in canonical language-name
 order, on a `language` node named `ambiguous`. Such a signal supplies no
-language-specific sound, vocabulary, grammar, question convention, expression
-or learnable claim until later evidence can select one reading.
+shared language-specific sound, vocabulary, question convention, expression or
+learnable claim. Each candidate may be thought and parsed independently because
+those operations change no world. If exactly one candidate's grammar consumes
+the complete signal, it becomes the reading; zero parses or a tie remain
+ambiguous. A selected language node records the `grammar` resolution and all
+candidate token sequences, so the evidence is visible in the returned tree.
 
 **A symbol set may say its symbols stand alone**: `"alone": true`. Those are
 words wherever they fall, so `1+1` comes apart into three and `cat` does not
@@ -861,6 +865,11 @@ Climbs a fixed ladder:
   dropping a raw letter or number supplies the complete reading. No match means
   no language-specific tokenization or later borrowing. Several matches remain
   explicit candidates and none is selected merely because it was loaded first.
+- `resolveLanguageReading(input, reading, langs, at, world)` — independently
+  thinks and grammar-parses every complete candidate without judging or
+  learning. Exactly one whole parse selects its language and records
+  `resolution: { by: "grammar", candidates }`; no whole parse or several whole
+  parses preserve the ambiguity.
 - `existence(signal)` — `void` if the signal is empty or nothing but space; else
   **one root per perceived token**. Whitespace separates tokens, and the chosen
   language alone may split its standalone symbols or remove its edge marks. A

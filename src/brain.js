@@ -21,8 +21,7 @@ function node(kind, name, branch = [], state = {}) {
 // understand — perception: void -> thing -> quality -> form -> symbol
 // then language recognition against loaded language data.
 // ---------------------------------------------------------------------------
-function understand(input, langs) {
-  const reading = signalReading(input, langs);
+function understand(input, langs, reading) {
   const language = reading && reading.language ? [reading.language] : [];
   let roots = existence(input, reading && reading.language ? reading.tokens : null);
 
@@ -33,6 +32,7 @@ function understand(input, langs) {
 
   roots = recognizeLanguage(roots, language);
   roots = recordLanguageAmbiguity(roots, reading);
+  roots = recordLanguageResolution(roots, reading);
 
   return roots;
 }
@@ -81,6 +81,26 @@ function signalReading(input, langs) {
   return { candidates };
 }
 
+// Grammar is admissible disambiguating evidence because it belongs to each
+// candidate language and can be tested without judging or learning anything.
+// Only one candidate consuming the whole signal is a decision; no parse or a
+// tie preserves the original ambiguity.
+function resolveLanguageReading(input, reading, langs, at, world) {
+  if (!reading || !reading.candidates) return reading;
+  const coherent = reading.candidates.filter((candidate) => {
+    const perceived = understand(input, langs, candidate);
+    const thought = think(perceived, langs, at, world);
+    const structured = structurePhrase(thought, langs);
+    return structured.length === 1 && !['thing', 'void'].includes(structured[0].kind);
+  });
+  if (coherent.length !== 1) return reading;
+  return {
+    ...coherent[0],
+    candidates: reading.candidates,
+    resolvedBy: 'grammar',
+  };
+}
+
 function compareText(a, b) {
   return a < b ? -1 : a > b ? 1 : 0;
 }
@@ -89,7 +109,7 @@ function compareText(a, b) {
 // one tree. Until later evidence selects a candidate, an ambiguous signal has
 // no language-specific sounds, words, grammar, mood or learning behavior.
 function recordLanguageAmbiguity(roots, reading) {
-  if (!reading || !reading.candidates) return roots;
+  if (!reading || !reading.candidates || reading.language) return roots;
   const candidates = reading.candidates.map(({ language, tokens }) => ({
     lang: language.data.name,
     tokens: [...tokens],
@@ -98,6 +118,29 @@ function recordLanguageAmbiguity(roots, reading) {
     ...root.branch,
     node('language', 'ambiguous', [], { matches: [], candidates }),
   ]));
+}
+
+function readingCandidates(reading) {
+  return (reading && reading.candidates ? reading.candidates : []).map(({ language, tokens }) => ({
+    lang: language.data.name,
+    tokens: [...tokens],
+  }));
+}
+
+// A selected candidate carries the evidence that selected it. Keeping that
+// evidence on the perceived language makes the decision replayable from the
+// returned tree rather than hiding it in control flow.
+function recordLanguageResolution(roots, reading) {
+  if (!reading || !reading.resolvedBy) return roots;
+  const resolution = {
+    by: reading.resolvedBy,
+    candidates: readingCandidates(reading),
+  };
+  return roots.map((root) => withBranch(root, root.branch.map((part) => (
+    part.kind === 'language'
+      ? withBranch(part, part.branch, { ...part.state, resolution })
+      : part
+  ))));
 }
 
 function textualSymbols(value) {
@@ -3770,7 +3813,9 @@ export function brainFrom(input, knowledge, circumstance) {
     allocate: () => nextId++,
   };
 
-  const roots = understand(input, langs);
+  const perceived = signalReading(input, langs);
+  const reading = resolveLanguageReading(input, perceived, langs, at, world);
+  const roots = understand(input, langs, reading);
   const thoughtRoots = think(roots, langs, at, world);
   const mood = moodOf(input, thoughtRoots, langs);
   const solvedRoots = solve(thoughtRoots, world, langs, mood, at.allocate);
