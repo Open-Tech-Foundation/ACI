@@ -6,6 +6,16 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Word order comes from the signal's language with no implicit direction.**
+  Marker and action-part inference previously consulted the first loaded
+  language, while a missing `marking` declaration silently became English-like
+  `after`. Both leaks are removed: the core resolves order from the one language
+  carried by the signal and assigns none for mixed/unrecognized input. A whole
+  language using role markers, new/known markers, determiners or possessors must
+  declare `marking`; languages without neighbour markers need not. An E2E test
+  places a reversed-order language second behind conflicting order data and
+  verifies the correct agent/source event and response language.
+
 - **Number-word composition is a declarative reduction, not a named English
   strategy.** The core no longer recognizes `multiplicative-additive` or
   assumes that a round value is a multiple of ten. A language now supplies an

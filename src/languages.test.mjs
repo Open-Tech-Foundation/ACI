@@ -195,3 +195,9 @@ test("the raw language adapter never interprets an invalid number rule", () => {
   });
   assertEquals(l.joinNumbers(2, 2), null);
 });
+
+test("a language adapter invents no marking direction", () => {
+  assertEquals(fromData(data).marking, null);
+  assertEquals(fromData({ ...data, marking: "before" }).marking, "before");
+  assertEquals(fromData({ ...data, marking: "after" }).marking, "after");
+});

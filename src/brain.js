@@ -348,7 +348,7 @@ function intraSignal(roots, world, langs, at) {
         return n;
       }
       // Role-marked first: `from it` is its source wherever it stands.
-      if (langs && markerFor(roots, i, markingSide(world, langs), roleOn)) return n;
+      if (langs && markerFor(roots, i, markingSide(roots, langs), roleOn)) return n;
       const held = speakerSide(t.concept) ? heldKinds(t.concept) : [];
       if (held.length === 1) return rewrite(n, held[0]);
       return n;
@@ -581,7 +581,7 @@ function whose(roots, world, langs, mood, allocate) {
   if (!world) return roots;
   const a = world.anchors || {};
   if (a.has == null) return roots;
-  const side = markingSide(world, langs);
+  const side = markingSide(roots, langs);
   const possessive = (n) => (n && functionsOf(n).includes('possessor') ? n : null);
   const owning = (n) => {
     const t = n ? thoughtOf(n) : null;
@@ -915,7 +915,7 @@ function numberBeside(roots, at, world) {
 function markOf(roots, at, world, langs) {
   const mine = conceptOf(roots[at]);
   if (!world || mine == null || !world.isA(mine, (world.anchors || {}).thing)) return null;
-  const marker = markerFor(roots, at, markingSide(world, langs), markOn);
+  const marker = markerFor(roots, at, markingSide(roots, langs), markOn);
   const marks = markOn(marker);
   return marks === 'new' || marks === 'known' ? marks : null;
 }
@@ -925,21 +925,30 @@ function markOf(roots, at, world, langs) {
 // stop at the next thing: a marker never reaches past one. The walk itself is
 // `nearestOver` — a marker is simply a word with nothing else to find first.
 function markerFor(said, at, side, carries) {
+  if (side !== 'before' && side !== 'after') return null;
   const step = side === 'before' ? 1 : -1;
   return nearestOver(said, at, step, carries);
 }
 
-// Every loaded language marks on the same side or the brain cannot tell; where
-// they disagree it takes the first, since the signal is in one of them.
+// Word order comes from the language that recognized this signal, never from
+// whichever language happened to be loaded first. A signal with no one
+// recognized language has no order to infer from.
+function signalLanguage(said, langs) {
+  const names = new Set((said || []).map(languageOf).filter((name) => name != null));
+  if (names.size !== 1) return null;
+  const [name] = names;
+  return (langs || []).find((lang) => lang.data.name === name) ?? null;
+}
+
 // Which side of an action each part falls on, as this language declares it.
-function partsSide(langs) {
-  const lang = (langs || [])[0];
+function partsSide(said, langs) {
+  const lang = signalLanguage(said, langs);
   return lang && lang.parts ? lang.parts : null;
 }
 
-function markingSide(world, langs) {
-  const lang = (langs || [])[0];
-  return lang ? lang.marking : 'after';
+function markingSide(said, langs) {
+  const lang = signalLanguage(said, langs);
+  return lang ? lang.marking : null;
 }
 
 // The world says what a term is; the brain reads only its own categories out of
@@ -1336,7 +1345,14 @@ function judge(roots, world, mood, langs, sent) {
     const acting = said.findIndex((n) => reaches(n, a.action, world));
     if (acting >= 0) {
       const action = conceptOf(said[acting]);
-      const parts = rolesIn(said, acting, claims, world, markingSide(world, langs), partsSide(langs));
+      const parts = rolesIn(
+        said,
+        acting,
+        claims,
+        world,
+        markingSide(said, langs),
+        partsSide(said, langs),
+      );
       const qIdx = said.findIndex((n) => reaches(n, a.quantity, world));
       const thingClaim = (n) =>
         claims(n) && world.isA(conceptOf(n), a.thing) && !world.isA(conceptOf(n), a.action);
@@ -1397,7 +1413,9 @@ function judge(roots, world, mood, langs, sent) {
     ];
   }
 
-  const asked = holes.length > 0 ? partAsked(said, world, claims, markingSide(world, langs), partsSide(langs)) : null;
+  const asked = holes.length > 0
+    ? partAsked(said, world, claims, markingSide(said, langs), partsSide(said, langs))
+    : null;
   if (asked) return [withBranch(root, [...root.branch, asked])];
 
   // An idea asked about again (`is it so?`): the last verdict is laid against
@@ -1443,14 +1461,21 @@ function judge(roots, world, mood, langs, sent) {
     // told happened. It does not put another one on the record: being asked is
     // not being told, and answering is not doing.
     if (mood === 'ask') {
-      const ever = happened(said, world, claims, markingSide(world, langs), partsSide(langs));
+      const ever = happened(said, world, claims, markingSide(said, langs), partsSide(said, langs));
       if (ever) return [withBranch(root, [...root.branch, ever])];
     }
 
     // An action the world says causes an operation, worked on what a thing
     // holds. What taking does is the world's to say; the arithmetic is the
     // brain's.
-    const done = act(said, claims, world, markingSide(world, langs), partsSide(langs), sent.allocate);
+    const done = act(
+      said,
+      claims,
+      world,
+      markingSide(said, langs),
+      partsSide(said, langs),
+      sent.allocate,
+    );
     if (done) return [withBranch(root, [...root.branch, ...done])];
   }
 

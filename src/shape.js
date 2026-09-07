@@ -415,6 +415,28 @@ export function checkWholeLanguage(data, where = 'language') {
   if (!data.words || Object.keys(data.words).length === 0) {
     fail(at, 'words are required — a language with none recognizes nothing');
   }
+  const needsMarking = Object.values(data.words).some((entry) => {
+    const readings = Array.isArray(entry) ? entry : [entry];
+    return readings.some((info) => {
+      const own = info.functions == null
+        ? []
+        : (Array.isArray(info.functions) ? info.functions : [info.functions]);
+      const positions = Array.isArray(info.pos) ? info.pos : [info.pos];
+      const inherited = positions.flatMap((position) => {
+        const functions = (data.syntax || {})[position];
+        return functions == null ? [] : (Array.isArray(functions) ? functions : [functions]);
+      });
+      return (
+        info.role !== undefined ||
+        info.marks === 'new' ||
+        info.marks === 'known' ||
+        [...own, ...inherited].some((fn) => fn === 'determiner' || fn === 'possessor')
+      );
+    });
+  });
+  if (needsMarking && data.marking === undefined) {
+    fail(at, 'marking is required when words mark neighbouring referents');
+  }
   const grammar = data.grammar;
   if (grammar !== undefined) {
     if (typeof grammar.start !== 'string' || grammar.start === '') {

@@ -386,6 +386,33 @@ test("number composition rules are closed and exact", () => {
   }
 });
 
+test("a language must declare the direction of neighbouring markers", () => {
+  const language = (word) => ({
+    name: "test",
+    symbols: { letter: { characters: "x" } },
+    words: { x: { pos: "word", meaning: "x", ...word } },
+  });
+  for (const word of [
+    { role: "source" },
+    { marks: "new" },
+    { marks: "known" },
+    { functions: "determiner" },
+    { functions: "possessor" },
+  ]) {
+    assert(
+      refuses("an implicit marking direction", { languages: [language(word)] })
+        .includes("marking is required"),
+    );
+  }
+  const inherited = { ...language({}), syntax: { word: "determiner" } };
+  assert(
+    refuses("an inherited implicit marking direction", { languages: [inherited] })
+      .includes("marking is required"),
+  );
+  const plain = fromSources({ languages: [language({})] });
+  assertEquals(plain.languages[0].marking, null, "a language with no neighbour marker needs no direction");
+});
+
 test("classification cycles are refused at the knowledge door", () => {
   const msg = refuses("classification cycle", {
     world: {

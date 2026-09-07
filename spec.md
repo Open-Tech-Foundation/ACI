@@ -181,6 +181,8 @@ runtime — never the brain — does the reading.
     "adjective": "modifier",
     "degree": "modifier"
   },
+  "marking": "after",               // a marker is before the referent
+  "parts": { "before": "agent", "after": "target" },
   "words": {
     "hi":    { "pos": "interjection", "meaning": "greeting",     "concept": 277 },
     "cat":   { "pos": "noun",         "meaning": "feline animal","concept": 83 },
@@ -236,6 +238,12 @@ data describes the context without teaching the engine a particular auxiliary, p
 complementizer or idea-reference word. `functions` names a closed cognitive
 role—condition, determiner, enclosure, joining, modality, modifier or
 possession—that affects inference independently of the word's parser position.
+A language declares `marking` as the side of a marker on which its neighbouring
+referent appears: English `from the basket` places the referent `after` the
+marker. This field is required when a word assigns a role, marks a new/known
+referent, or acts as a determiner or possessor. Otherwise no direction is
+invented. `parts` separately maps each side of an action to the role an
+unmarked thing plays.
 A word may say its term
 stands bare, with no article (`bare`), the way a mass of water is not one
 water. A word may join what it joins as a choice rather than a togetherness
@@ -1356,7 +1364,10 @@ other. Which thing plays which:
   between — so the brain walks away from the thing over words that name nothing,
   and stops at the next thing. A marker never reaches past one.
 - **which side** a marker governs is word order, so the language declares it:
-  `"marking": "after"`.
+  `"marking": "after"`. A whole language containing neighbour-marking words is
+  invalid without this declaration. The direction is read from the language
+  that recognized the signal, not the first language loaded; mixed or
+  unrecognized signals provide no direction to guess from.
 - a thing spoken of as **one of its kind** is one of them: `a film` in
   something that happened is one film, made here, so what happened happened to
   that one and the signal after this one has something to point back at. A
