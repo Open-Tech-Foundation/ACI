@@ -2,7 +2,11 @@
 
 # ACI
 
-A brain that can't make things up
+***A brain that can't make things up***
+
+</div>
+
+<div align="right">
 
 *An [Open Tech Foundation](https://opentechf.org/) project*
 
