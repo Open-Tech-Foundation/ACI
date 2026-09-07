@@ -293,6 +293,13 @@ signs — and at least one is a symbol its words are made of, so a signal of
 nothing but marks is recognized as no language at all. The brain does not hold
 that words are made of letters.
 
+Token boundaries are tested independently under each language. A standalone
+symbol from one installed language cannot split another language's word, and a
+character used by one cannot prevent another from removing it as an edge mark.
+One language must recognize every resulting token while preserving every
+Unicode letter and number in the raw signal. Otherwise the signal is not pieced
+together from several partial languages; it remains language-unrecognized.
+
 **A symbol set may say its symbols stand alone**: `"alone": true`. Those are
 words wherever they fall, so `1+1` comes apart into three and `cat` does not
 come apart at all.
@@ -841,17 +848,23 @@ shape check is not kept.
 
 Climbs a fixed ladder:
 
+- `signalReading(input, langs)` — tries tokenization under each language in
+  stable load order. The first language that recognizes every token without
+  dropping a raw letter or number supplies the complete reading. No match means
+  no language-specific tokenization or later borrowing.
 - `existence(signal)` — `void` if the signal is empty or nothing but space; else
-  **one root per white-space token**. A signal of marks alone (`"?"`) still
-  exists — it simply holds no word.
+  **one root per perceived token**. Whitespace separates tokens, and the chosen
+  language alone may split its standalone symbols or remove its edge marks. A
+  signal of marks alone (`"?"`) still exists — it simply holds no word.
 - `thing` — names the thing by its identity; records `identity`, `charCount`.
-- `quality` — sensory branches `visual` and `sound`. `sound` appears only when a
-  loaded language recognizes a symbol; which symbols are vowels comes from that
-  language's `symbols.vowel`, never from a built-in alphabet.
+- `quality` — sensory branches `visual` and `sound`. `sound` appears only when
+  the complete signal language recognizes a symbol; which symbols are vowels
+  comes only from that language's `symbols.vowel`, never another installed
+  language or a built-in alphabet.
 - `form` → `symbol` — visual shape placeholder chain.
-- `recognizeLanguage(roots, langs)` — for each token, find every loaded language
-  whose letter set contains all of the token's letters, and look the word up in
-  its vocabulary. The letter set is the only gate; no alphabet is assumed. Records a `language` node with `matches`:
+- `recognizeLanguage(roots, langs)` — look up every token in the one language
+  selected for the whole signal. Its declared symbol sets are the only gate; no
+  alphabet is assumed. Records a `language` node with `matches`:
   ```js
   { lang, word: { text, pos, meaning, concept } | null, roles: [...] }
   ```

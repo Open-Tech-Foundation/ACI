@@ -22,29 +22,69 @@ function node(kind, name, branch = [], state = {}) {
 // then language recognition against loaded language data.
 // ---------------------------------------------------------------------------
 function understand(input, langs) {
-  let roots = existence(input, langs);
+  const reading = signalReading(input, langs);
+  const language = reading ? [reading.language] : [];
+  let roots = existence(input, reading ? reading.tokens : null);
 
   roots = thing(roots);
-  roots = quality(roots, langs);
+  roots = quality(roots, language);
   roots = form(roots);
   roots = symbol(roots);
 
-  roots = recognizeLanguage(roots, langs);
+  roots = recognizeLanguage(roots, language);
 
   return roots;
 }
 
-function existence(signal, langs) {
+function existence(signal, tokens) {
   const raw = toString(signal);
   // Nothing, or nothing but space, is nothing at all.
   if (raw.trim() === '') return [node('void', 'void', [], { exists: false })];
   // A multi-word signal is perceived as one thing per word, so each token
   // climbs the whole ladder on its own. Single-word input stays a single root.
-  let tokens = tokenize(raw, langs);
+  tokens = tokens ?? tokenize(raw, []);
   // A signal made only of marks still exists — it just holds no word.
   if (tokens.length === 0) tokens = [raw.trim()];
   return tokens.map((t) =>
     node('existence', 'something', [], { exists: true, raw: t }),
+  );
+}
+
+// Read a whole signal under one language's symbol conventions. Tokenization is
+// part of a language: a symbol that stands alone in one may be inside a word in
+// another, and one language's mark may be another's letter. Trying each loaded
+// language independently keeps those conventions from leaking across. File
+// order is stable, so an inherently ambiguous signal is resolved the same way
+// every time; no complete reading means no language is guessed token by token.
+function signalReading(input, langs) {
+  const raw = toString(input);
+  if (raw.trim() === '') return null;
+  for (const language of langs || []) {
+    const tokens = tokenize(raw, [language]);
+    // Edge marks may come away, but no language may obtain a complete reading
+    // by silently discarding letters or numbers belonging to the signal.
+    const kept = tokens.map(textualSymbols).join('');
+    if (
+      kept === textualSymbols(raw) &&
+      tokens.length > 0 &&
+      tokens.every((token) => recognizedBy(token, language))
+    ) {
+      return { language, tokens };
+    }
+  }
+  return null;
+}
+
+function textualSymbols(value) {
+  return Array.from(String(value)).filter((ch) => /[\p{L}\p{N}]/u.test(ch)).join('');
+}
+
+function recognizedBy(identity, lang) {
+  const symbols = Array.from(String(identity));
+  return (
+    symbols.length > 0 &&
+    symbols.every((ch) => lang.isOwnSymbol(ch)) &&
+    symbols.some((ch) => lang.isWordSymbol(ch))
   );
 }
 
@@ -122,9 +162,8 @@ function symbol(prev) {
 
 // ---------------------------------------------------------------------------
 // Language recognition — driven ONLY by the loaded language data.
-// The symbol is matched against each language's alphabet/words; the brain
-// "notices" a language when the signal's letters fall within its letter set
-// and the word resolves in its vocabulary.
+// Once one language can read the whole signal, each token is matched against
+// that language's declared symbols and vocabulary.
 // ---------------------------------------------------------------------------
 function recognizeLanguage(roots, langs) {
   if (!langs || langs.length === 0) return roots;
@@ -132,19 +171,13 @@ function recognizeLanguage(roots, langs) {
   return roots.map((n) => {
     if (!n.state.exists) return withBranch(n);
     const identity = n.state.identity;
-    const letters = Array.from(String(identity));
-
-    // Which loaded languages recognize every letter of this signal?
+    // The whole-signal reading supplies one language here.
     const matching = [];
     for (const lang of langs) {
       // Every symbol falls within something this language declares — its
       // letters, its digits, whatever else it says it is written in. The brain
       // does not hold that words are made of letters.
-      const allRecognized =
-        letters.length > 0 &&
-        letters.every((ch) => lang.isOwnSymbol(ch)) &&
-        letters.some((ch) => lang.isWordSymbol(ch));
-      if (!allRecognized) continue;
+      if (!recognizedBy(identity, lang)) continue;
       // Every reading this language has of the word. One is the usual case;
       // more than one is a word that names more than one thing, and which of
       // them the signal means is settled later, by the signal.
@@ -4191,8 +4224,8 @@ function tokenize(signal, langs) {
   const bare = (t) => {
     let from = 0;
     let to = t.length;
-    // Every language must call it a mark: one language's punctuation may be
-    // another's letter.
+    // The candidate language must call it a mark. Each language is tokenized
+    // independently before one whole-signal reading is selected.
     const marked = (ch) => marks.length > 0 && marks.every((is) => is(ch));
     while (from < to && marked(t[from])) from += 1;
     while (to > from && marked(t[to - 1])) to -= 1;

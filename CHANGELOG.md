@@ -6,6 +6,17 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Installed languages cannot alter another language's perception.**
+  Tokenization previously combined standalone-symbol rules from every loaded
+  language, while sound perception combined their vowel sets; one language
+  could therefore split or reclassify another's word before recognition. Each
+  language is now tried independently for a whole-signal reading in stable
+  order. The selected language alone supplies tokens, recognition and
+  phonetics, and a candidate may not gain a reading by discarding raw letters
+  or numbers. Incompatible symbol systems remain unrecognized rather than
+  forming a mixed signal. Tests protect edge marks, an embedded `+`, opposing
+  vowel declarations and mixed-language input.
+
 - **Question mood follows the recognized language, not every loaded one.** A
   punctuation mark previously made a signal a question when any installed
   language called it one. Mood now consults only the language carried by the
