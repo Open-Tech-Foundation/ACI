@@ -1471,13 +1471,20 @@ function judge(roots, world, mood, langs, sent) {
       // holding anything against it.
       const kindFact = rel === world.baseRelation;
       const heldDenied = upward(holder, world).some((rung) => world.denies(rung, object, rel));
-      const opposed = counted != null
+      const functionalObjects = new Set();
+      if (world.functional(rel)) {
+        for (const rung of upward(holder, world)) {
+          for (const found of world.linked(rung, rel)) functionalObjects.add(found);
+        }
+      }
+      const functionalAgainst = [...functionalObjects].some((found) => found !== object);
+      const opposed = functionalAgainst || (counted != null
         ? knownCount != null && knownCount !== counted
         : heldDenied ||
           (kindFact && world.excludes(subject, object)) ||
           (world.irreflexive(rel) && holder === object) ||
           (world.asymmetric(rel) && reverseHolds) ||
-          apartFrom(rel, world).some((other) => joins(holder, object, other));
+          apartFrom(rel, world).some((other) => joins(holder, object, other)));
       // Some of a kind is not the kind. What the kind reaches, some of it
       // reaches; what it does not, some of it may still — one crow being
       // white is not crows being white, and nothing about crows says no.
@@ -4219,6 +4226,54 @@ function learningConflict(world, learned) {
       if ((term.links || []).some(
         (link) => link.not && link.rel === relation.id && link.to === term.id,
       )) return `reflexive relation ${relation.id} denies its required self-link`;
+    }
+  }
+
+  for (const relation of terms.values()) {
+    if (!relation.functional) continue;
+    const bySubject = new Map([...terms.keys()].map((id) => [id, []]));
+    const converse = world.anchors ? world.anchors.converse : null;
+    const converses = new Set();
+    if (converse != null) {
+      for (const link of relation.links || []) {
+        if (!link.not && link.rel === converse) converses.add(link.to);
+      }
+      for (const candidate of terms.values()) {
+        if ((candidate.links || []).some(
+          (link) => !link.not && link.rel === converse && link.to === relation.id,
+        )) converses.add(candidate.id);
+      }
+    }
+    const add = (subject, link) => {
+      bySubject.get(subject).push(link);
+      if (relation.symmetric && subject !== link.to) {
+        bySubject.get(link.to).push({ ...link, to: subject });
+      }
+    };
+    for (const term of terms.values()) {
+      for (const link of term.links || []) {
+        if (link.not) continue;
+        if (link.rel === relation.id) add(term.id, link);
+        if (converses.has(link.rel)) add(link.to, { ...link, to: term.id });
+      }
+    }
+    for (const [subject, links] of bySubject) {
+      const timeless = new Set(links.filter((link) => link.at == null).map((link) => link.to));
+      const all = new Set(links.map((link) => link.to));
+      if (timeless.size > 1 || (timeless.size === 1 && all.size > 1)) {
+        return `functional relation ${relation.id} gives ${subject} competing objects`;
+      }
+      const byMoment = new Map();
+      for (const link of links) {
+        if (link.at == null) continue;
+        if (!byMoment.has(link.at)) byMoment.set(link.at, new Set());
+        byMoment.get(link.at).add(link.to);
+      }
+      for (const objects of byMoment.values()) {
+        if (objects.size > 1) {
+          return `functional relation ${relation.id} gives ${subject} competing objects at one moment`;
+        }
+      }
     }
   }
 

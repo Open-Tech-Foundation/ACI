@@ -25,6 +25,7 @@ const SCHEMA = [
         symmetric integer not null default 0,
         reflexive integer not null default 0,
         irreflexive integer not null default 0,
+        functional integer not null default 0,
         learned integer not null default 0
       )`,
   sql`create table if not exists link (
@@ -76,6 +77,9 @@ export async function openStore(url) {
   if (!columns.some((c) => c.name === 'irreflexive')) {
     await db.execute(sql`alter table term add column irreflexive integer not null default 0`);
   }
+  if (!columns.some((c) => c.name === 'functional')) {
+    await db.execute(sql`alter table term add column functional integer not null default 0`);
+  }
   return db;
 }
 
@@ -115,8 +119,8 @@ export async function seed(db, world) {
   await db.execute(sql`delete from link where learned = 0`);
 
   await db.executeMany(
-    sql`insert into term (id, name, value, symbol, individual, disjoint, transitive, asymmetric, symmetric, reflexive, irreflexive, learned)
-        values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    sql`insert into term (id, name, value, symbol, individual, disjoint, transitive, asymmetric, symmetric, reflexive, irreflexive, functional, learned)
+        values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         on conflict (id) do update set
           name = excluded.name,
           value = excluded.value,
@@ -127,7 +131,8 @@ export async function seed(db, world) {
           asymmetric = excluded.asymmetric,
           symmetric = excluded.symmetric,
           reflexive = excluded.reflexive,
-          irreflexive = excluded.irreflexive
+          irreflexive = excluded.irreflexive,
+          functional = excluded.functional
         where term.learned = 0`,
     world.terms.map((t) => [
       t.id,
@@ -141,6 +146,7 @@ export async function seed(db, world) {
       t.symmetric ? 1 : 0,
       t.reflexive ? 1 : 0,
       t.irreflexive ? 1 : 0,
+      t.functional ? 1 : 0,
       learned,
     ]),
   );
@@ -170,7 +176,7 @@ export async function seed(db, world) {
 export async function readWorld(db) {
   const terms = await rows(
     db,
-    sql`select id, name, value, symbol, individual, disjoint, transitive, asymmetric, symmetric, reflexive, irreflexive from term order by id`,
+    sql`select id, name, value, symbol, individual, disjoint, transitive, asymmetric, symmetric, reflexive, irreflexive, functional from term order by id`,
   );
   const links = await rows(
     db,
@@ -191,6 +197,7 @@ export async function readWorld(db) {
     if (t.symmetric) term.symmetric = true;
     if (t.reflexive) term.reflexive = true;
     if (t.irreflexive) term.irreflexive = true;
+    if (t.functional) term.functional = true;
     byId.set(t.id, term);
     return term;
   });
@@ -219,12 +226,12 @@ export async function write(db, learned) {
     for (const t of learned.terms || []) {
       const seen = await rows(db, sql`select id from term where id = ${t.id}`);
       if (seen.length === 0) {
-        await db.execute(sql`insert into term (id, name, value, symbol, individual, disjoint, transitive, asymmetric, symmetric, reflexive, irreflexive, learned)
+        await db.execute(sql`insert into term (id, name, value, symbol, individual, disjoint, transitive, asymmetric, symmetric, reflexive, irreflexive, functional, learned)
                            values (${t.id}, ${t.name}, ${t.value ?? null}, ${t.symbol ?? null},
                                    ${t.individual ? 1 : 0}, ${t.disjoint ? 1 : 0},
                                    ${t.transitive ? 1 : 0}, ${t.asymmetric ? 1 : 0},
                                    ${t.symmetric ? 1 : 0}, ${t.reflexive ? 1 : 0},
-                                   ${t.irreflexive ? 1 : 0}, 1)`);
+                                   ${t.irreflexive ? 1 : 0}, ${t.functional ? 1 : 0}, 1)`);
       }
     }
     for (const t of learned.terms || []) {

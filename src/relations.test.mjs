@@ -10,6 +10,7 @@ const PART = 91;
 const MEETS = 92;
 const MIRRORS = 93;
 const AVOIDS = 94;
+const POINTS = 95;
 const worldData = {
   anchors: { thing: 1, relation: 2 },
   relations: { is: IS },
@@ -21,7 +22,8 @@ const worldData = {
     { id: 92, name: "meeting", symmetric: true, links: [{ rel: IS, to: 2 }] },
     { id: 93, name: "mirroring", reflexive: true, links: [{ rel: IS, to: 2 }] },
     { id: 94, name: "avoiding", irreflexive: true, links: [{ rel: IS, to: 2 }] },
-    { id: 10, name: "bird", links: [{ rel: IS, to: 1 }, { rel: MEETS, to: 12 }] },
+    { id: 95, name: "pointing", functional: true, links: [{ rel: IS, to: 2 }] },
+    { id: 10, name: "bird", links: [{ rel: IS, to: 1 }, { rel: MEETS, to: 12 }, { rel: POINTS, to: 12 }] },
     { id: 11, name: "wing", links: [{ rel: IS, to: 1 }, { rel: PART, to: 10 }] },
     { id: 12, name: "stone", links: [{ rel: IS, to: 1 }] },
   ],
@@ -39,6 +41,7 @@ const langData = {
     meets: { pos: "verb", meaning: "meets", concept: 92 },
     mirrors: { pos: "verb", meaning: "mirrors", concept: 93 },
     avoids: { pos: "verb", meaning: "avoids", concept: 94 },
+    points: { pos: "verb", meaning: "points", concept: 95 },
   },
   grammar: {
     start: "sentence",
@@ -102,6 +105,14 @@ test("reflexive and irreflexive declarations decide self-relations", () => {
   assertEquals(avoided.expression.name, "deny");
   assertEquals(truth("bird avoids bird").name, "against");
   assertEquals(avoided.learned, null);
+});
+
+test("a functional relation refuses a competing object", () => {
+  assertEquals(truth("bird points stone").name, "held");
+  assertEquals(truth("bird points wing").name, "against");
+  const competing = brainFrom("bird points wing", knowledge);
+  assertEquals(competing.expression.name, "deny");
+  assertEquals(competing.learned, null);
 });
 
 test("a term reached by one relation is not reached by another", () => {

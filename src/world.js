@@ -68,18 +68,48 @@ export function fromWorldData(data) {
     return t ? (t.links || []).filter((l) => !l.not && l.rel === isRel).map((l) => l.to) : [];
   }
 
+  // A functional relation may retain stamped history while exposing one
+  // current value. Untimed links are static; validation ensures they cannot
+  // compete with a different stamped object.
+  function currentFunctional(links, rel) {
+    if (!terms.get(rel)?.functional) return links;
+    const stamped = links.filter((link) => Number.isInteger(link.at));
+    if (stamped.length === 0) return links;
+    const latest = Math.max(...stamped.map((link) => link.at));
+    return stamped.filter((link) => link.at === latest);
+  }
+
+  // Direct edges plus facts written through a declared converse, normalized
+  // into the requested direction before relation characteristics are applied.
+  function directedLinks(id, rel) {
+    const links = (terms.get(id)?.links || [])
+      .filter((link) => !link.not && link.rel === rel)
+      .map((link) => ({ ...link }));
+    for (const other of converseBy.get(rel) || []) {
+      for (const term of terms.values()) {
+        for (const link of term.links || []) {
+          if (!link.not && link.rel === other && link.to === id) {
+            links.push({ ...link, to: term.id });
+          }
+        }
+      }
+    }
+    return currentFunctional(links, rel);
+  }
+
   // One step through a relation includes links stated through its declared
   // converse. This makes a fact written as `b after a` the same edge as `a
   // before b`, including when a transitive walk contains facts written from
   // both directions. The world supplies the converse relation and names none.
   function related(id, rel) {
-    const out = new Set(outgoing.get(rel)?.get(id) || []);
+    const direct = directedLinks(id, rel);
+    const out = new Set(direct.map((link) => link.to));
     if (terms.get(rel)?.reflexive && terms.has(id)) out.add(id);
     if (terms.get(rel)?.symmetric) {
-      for (const from of incoming.get(rel)?.get(id) || []) out.add(from);
-    }
-    for (const other of converseBy.get(rel) || []) {
-      for (const from of incoming.get(other)?.get(id) || []) out.add(from);
+      for (const term of terms.values()) {
+        const links = directedLinks(term.id, rel);
+        if (links.some((link) => link.to === id)) out.add(term.id);
+      }
     }
     return out;
   }
@@ -163,10 +193,19 @@ export function fromWorldData(data) {
       if (id == null || rel == null) return [];
       const out = new Set();
       for (const t of terms.values()) {
-        if ((t.links || []).some((l) => !l.not && l.rel === rel && l.to === id)) out.add(t.id);
+        const links = terms.get(rel)?.functional
+          ? directedLinks(t.id, rel)
+          : currentFunctional(
+            (t.links || []).filter((link) => !link.not && link.rel === rel),
+            rel,
+          );
+        if (links.some((link) => link.to === id)) out.add(t.id);
       }
       if (terms.get(rel)?.symmetric) {
-        for (const target of outgoing.get(rel)?.get(id) || []) out.add(target);
+        for (const link of currentFunctional(
+          (terms.get(id)?.links || []).filter((item) => !item.not && item.rel === rel),
+          rel,
+        )) out.add(link.to);
       }
       if (terms.get(rel)?.reflexive && terms.has(id)) out.add(id);
       return [...out];
@@ -220,6 +259,7 @@ export function fromWorldData(data) {
     // Asymmetry entails irreflexivity; an explicit declaration gives the same
     // self-contradiction without imposing direction on distinct endpoints.
     irreflexive: (rel) => Boolean(terms.get(rel)?.irreflexive || terms.get(rel)?.asymmetric),
+    functional: (rel) => Boolean(terms.get(rel)?.functional),
     individualsOf: (kind) => {
       const out = [];
       for (const t of terms.values()) {
@@ -287,7 +327,9 @@ export function fromWorldData(data) {
       // Quantity links retain history per object; only the latest value is a
       // current link. Placement relations have one current target, while old
       // targets remain available in the authored record.
-      if (links.some((l) => Number.isInteger(l.quantity))) {
+      if (terms.get(rel)?.functional) {
+        links = directedLinks(id, rel);
+      } else if (links.some((l) => Number.isInteger(l.quantity))) {
         const latest = new Map();
         for (const l of links) {
           const held = latest.get(l.to);
@@ -300,7 +342,15 @@ export function fromWorldData(data) {
       }
       const found = new Set(links.map((l) => l.to));
       if (terms.get(rel)?.symmetric) {
-        for (const from of incoming.get(rel)?.get(id) || []) found.add(from);
+        for (const term of terms.values()) {
+          const incomingLinks = terms.get(rel)?.functional
+            ? directedLinks(term.id, rel)
+            : currentFunctional(
+              (term.links || []).filter((link) => !link.not && link.rel === rel),
+              rel,
+            );
+          if (incomingLinks.some((link) => link.to === id)) found.add(term.id);
+        }
       }
       if (terms.get(rel)?.reflexive && terms.has(id)) found.add(id);
       return [...found];

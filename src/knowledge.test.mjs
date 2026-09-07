@@ -88,3 +88,25 @@ test("two sources cannot give one proposition opposite polarities", () => {
   }
   assert(threw != null, "opposite polarities crossed the source boundary");
 });
+
+test("two sources cannot give a functional relation competing objects", () => {
+  let threw = null;
+  try {
+    fromSources({
+      world: {
+        relations: { is: 1 },
+        terms: [
+          { id: 1, name: "is", links: [] },
+          { id: 2, name: "single value", functional: true, links: [] },
+          { id: 3, name: "subject", links: [{ rel: 2, to: 4 }] },
+          { id: 4, name: "first", links: [] },
+          { id: 5, name: "second", links: [] },
+        ],
+      },
+      knowledge: [{ terms: [{ id: 3, name: "subject", links: [{ rel: 2, to: 5 }] }] }],
+    });
+  } catch (why) {
+    threw = why;
+  }
+  assert(threw != null, "functional competition crossed the source boundary");
+});

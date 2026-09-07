@@ -524,16 +524,22 @@ compared only for equality — that is what keeps the world language-neutral.
 Two language files may point at the same term (`cat` / `chat` -> `83`) and the
 brain reasons identically over both.
 
-`transitive: true`, `symmetric: true`, `reflexive: true`, `irreflexive: true`
-and `asymmetric: true` are semantic world knowledge about a relation term, not
-properties inferred from its name. One edge of a symmetric relation is read
-from either endpoint, including an explicit denial; mirrored authored edges are
-one proposition and may not disagree in polarity or same-moment quantity. Until
-domain constraints exist, a reflexive relation entails a self-edge for every
-term in the supplied world. An irreflexive relation entails the opposite for
-every self-pair, and asymmetry implies irreflexivity. A relation cannot be both
-symmetric and asymmetric, nor reflexive and irreflexive/asymmetric. Positive
-irreflexive self-links and denied required reflexive self-links are invalid.
+`transitive: true`, `symmetric: true`, `reflexive: true`, `irreflexive: true`,
+`functional: true` and `asymmetric: true` are semantic world knowledge about a
+relation term, not properties inferred from its name. One edge of a symmetric
+relation is read from either endpoint, including an explicit denial; mirrored
+authored edges are one proposition and may not disagree in polarity or
+same-moment quantity. Until domain constraints exist, a reflexive relation
+entails a self-edge for every term in the supplied world. An irreflexive
+relation entails the opposite for every self-pair, and asymmetry implies
+irreflexivity. A relation cannot be both symmetric and asymmetric, nor
+reflexive and irreflexive/asymmetric. Positive irreflexive self-links and
+denied required reflexive self-links are invalid. A functional relation has at
+most one object for each subject: a timeless edge is static, while edges at
+different logical times are retained history and only the latest is current.
+For a symmetric functional relation the constraint applies from both endpoints.
+Facts written through a declared converse are normalized into the functional
+relation's direction before competing objects or the latest moment are chosen.
 An asymmetric relation may not hold in both directions; when also transitive,
 it may contain no cycle of any length. Ids, term values, quantities and logical
 times must be safe JSON integers; larger signal values remain exact strings

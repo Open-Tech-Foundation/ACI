@@ -543,3 +543,48 @@ test("reflexive and irreflexive declarations reject impossible worlds", () => {
     }).includes("required self-link"),
   );
 });
+
+test("functional relations reject competing objects but retain history", () => {
+  const relation = (functional, links = []) => ({
+    relations: { is: 1 },
+    terms: [
+      { id: 1, name: "is", links: [] },
+      { id: 2, name: "single value", functional, links: [] },
+      { id: 3, name: "subject", links },
+      { id: 4, name: "a", links: [] },
+      { id: 5, name: "b", links: [] },
+    ],
+  });
+  assert(refuses("false functionality", { world: relation(false) }).includes("functional"));
+  assert(
+    refuses("two timeless values", {
+      world: relation(true, [{ rel: 2, to: 4 }, { rel: 2, to: 5 }]),
+    }).includes("competing objects"),
+  );
+  fromSources({
+    world: relation(true, [{ rel: 2, to: 4, at: 0 }, { rel: 2, to: 5, at: 1 }]),
+  });
+
+  const symmetric = relation(true, [{ rel: 2, to: 4 }]);
+  symmetric.terms[1].symmetric = true;
+  symmetric.terms[4].links.push({ rel: 2, to: 4 });
+  assert(refuses("symmetric competition", { world: symmetric }).includes("competing objects"));
+
+  assert(
+    refuses("competition written through a converse", {
+      world: {
+        anchors: { converse: 6 },
+        relations: { is: 1 },
+        terms: [
+          { id: 1, name: "is", links: [] },
+          { id: 2, name: "single value", functional: true, links: [{ rel: 6, to: 7 }] },
+          { id: 3, name: "subject", links: [] },
+          { id: 4, name: "a", links: [{ rel: 7, to: 3 }] },
+          { id: 5, name: "b", links: [{ rel: 7, to: 3 }] },
+          { id: 6, name: "converse", links: [] },
+          { id: 7, name: "reverse value", links: [] },
+        ],
+      },
+    }).includes("competing objects"),
+  );
+});

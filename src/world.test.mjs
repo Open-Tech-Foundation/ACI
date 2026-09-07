@@ -242,6 +242,49 @@ test("asymmetry entails irreflexivity", () => {
   assertEquals(w.irreflexive(STRICT), true);
 });
 
+test("a functional relation exposes only its latest stamped object", () => {
+  const VALUE = 2;
+  const w = fromWorldData({
+    relations: { is: IS },
+    terms: [
+      { id: IS, name: "is", links: [] },
+      { id: VALUE, name: "value relation", functional: true, links: [] },
+      { id: 3, name: "subject", links: [{ rel: VALUE, to: 4, at: 0 }, { rel: VALUE, to: 5, at: 1 }] },
+      { id: 4, name: "old", links: [] },
+      { id: 5, name: "current", links: [] },
+    ],
+  });
+  assertEquals(w.functional(VALUE), true);
+  assertEquals(w.linked(3, VALUE), [5]);
+  assertEquals(w.isA(3, 4, VALUE), false, "an earlier value is history, not current truth");
+  assertEquals(w.isA(3, 5, VALUE), true);
+  assertEquals(w.members(4, VALUE), []);
+  assertEquals(w.members(5, VALUE), [3]);
+  assertEquals(w.functional(IS), false);
+});
+
+test("functional state includes facts written through a converse", () => {
+  const VALUE = 2;
+  const BACK = 3;
+  const CONVERSE = 6;
+  const w = fromWorldData({
+    anchors: { converse: CONVERSE },
+    relations: { is: IS },
+    terms: [
+      { id: IS, name: "is", links: [] },
+      { id: VALUE, name: "value relation", functional: true, links: [{ rel: CONVERSE, to: BACK }] },
+      { id: BACK, name: "value converse", links: [] },
+      { id: 4, name: "subject", links: [] },
+      { id: 5, name: "old", links: [{ rel: BACK, to: 4, at: 0 }] },
+      { id: CONVERSE, name: "converse", links: [] },
+      { id: 7, name: "current", links: [{ rel: BACK, to: 4, at: 1 }] },
+    ],
+  });
+  assertEquals(w.linked(4, VALUE), [7]);
+  assertEquals(w.isA(4, 5, VALUE), false);
+  assertEquals(w.isA(4, 7, VALUE), true);
+});
+
 test("transitive relations compose facts written through a converse", () => {
   const BEFORE = 2;
   const AFTER = 3;

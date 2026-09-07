@@ -431,6 +431,18 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Relations can now declare a single current object per subject.** A relation
+  marked `functional: true` makes an established different object stand against
+  a competing claim, and atomic learning/source validation rejects competing
+  values. Untimed values are static; time-stamped values retain history while
+  truth and open answers expose only the latest moment. Symmetric functional
+  relations enforce the constraint at both endpoints, and facts stored through
+  a declared converse are normalized before the constraint and current-time
+  selection run. The characteristic is language-neutral, merges across
+  knowledge sources, migrates old SQLite stores, and survives round-trip
+  persistence. No existing world relation is marked functional without a
+  justified universal constraint.
+
 - **Relations can now declare reflexive and irreflexive self-semantics.** A
   `reflexive: true` relation entails one self-edge for every existing term
   without storing those edges; `irreflexive: true` makes a positive self-claim

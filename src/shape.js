@@ -55,7 +55,7 @@ export function checkWorld(data, where = 'world') {
   for (const t of data.terms) {
     const at = `${where} term ${JSON.stringify(t && t.id)}`;
     if (!t || typeof t !== 'object') fail(where, 'every term must be an object');
-    onlyKeys(t, ['id', 'name', 'links', 'value', 'individual', 'disjoint', 'transitive', 'asymmetric', 'symmetric', 'reflexive', 'irreflexive', 'symbol'], at);
+    onlyKeys(t, ['id', 'name', 'links', 'value', 'individual', 'disjoint', 'transitive', 'asymmetric', 'symmetric', 'reflexive', 'irreflexive', 'functional', 'symbol'], at);
     if (!isId(t.id)) fail(at, 'id must be a non-negative integer');
     if (typeof t.name !== 'string' || t.name === '') fail(at, 'name must be a non-empty string');
     if (byId.has(t.id)) fail(at, 'duplicate id');
@@ -90,6 +90,9 @@ export function checkWorld(data, where = 'world') {
     }
     if (t.irreflexive !== undefined && t.irreflexive !== true) {
       fail(at, 'irreflexive, where present, must be true');
+    }
+    if (t.functional !== undefined && t.functional !== true) {
+      fail(at, 'functional, where present, must be true');
     }
     if (t.symmetric && t.asymmetric) {
       fail(at, 'a relation cannot be both symmetric and asymmetric');
@@ -265,6 +268,53 @@ export function checkWhole(data, origin = null, where = 'world') {
     for (const term of data.terms) {
       if (term.links.some((link) => link.not && link.rel === relation.id && link.to === term.id)) {
         fail(`${from(term.id)} term ${term.id}`, `reflexive relation ${relation.id} denies its required self-link`);
+      }
+    }
+  }
+
+  for (const relation of data.terms.filter((term) => term.functional)) {
+    const bySubject = new Map(data.terms.map((term) => [term.id, []]));
+    const converse = data.anchors && data.anchors.converse;
+    const converses = new Set();
+    if (converse != null) {
+      for (const link of relation.links) {
+        if (!link.not && link.rel === converse) converses.add(link.to);
+      }
+      for (const candidate of data.terms) {
+        if (candidate.links.some((link) => !link.not && link.rel === converse && link.to === relation.id)) {
+          converses.add(candidate.id);
+        }
+      }
+    }
+    const add = (subject, link) => {
+      bySubject.get(subject).push(link);
+      if (relation.symmetric && subject !== link.to) {
+        bySubject.get(link.to).push({ ...link, to: subject });
+      }
+    };
+    for (const term of data.terms) {
+      for (const link of term.links) {
+        if (link.not) continue;
+        if (link.rel === relation.id) add(term.id, link);
+        if (converses.has(link.rel)) add(link.to, { ...link, to: term.id });
+      }
+    }
+    for (const [subject, links] of bySubject) {
+      const timeless = new Set(links.filter((link) => link.at == null).map((link) => link.to));
+      const all = new Set(links.map((link) => link.to));
+      if (timeless.size > 1 || (timeless.size === 1 && all.size > 1)) {
+        fail(`${from(subject)} term ${subject}`, `functional relation ${relation.id} has competing objects`);
+      }
+      const byMoment = new Map();
+      for (const link of links) {
+        if (link.at == null) continue;
+        if (!byMoment.has(link.at)) byMoment.set(link.at, new Set());
+        byMoment.get(link.at).add(link.to);
+      }
+      for (const objects of byMoment.values()) {
+        if (objects.size > 1) {
+          fail(`${from(subject)} term ${subject}`, `functional relation ${relation.id} has competing objects at one moment`);
+        }
       }
     }
   }

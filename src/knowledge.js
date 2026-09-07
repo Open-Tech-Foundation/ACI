@@ -160,6 +160,7 @@ function merge(world, sources) {
         if (t.symmetric) kept.symmetric = true;
         if (t.reflexive) kept.reflexive = true;
         if (t.irreflexive) kept.irreflexive = true;
+        if (t.functional) kept.functional = true;
         terms.set(t.id, kept);
         origin.set(t.id, where);
         continue;
@@ -214,6 +215,12 @@ function merge(world, sources) {
           throw new Error(`${where}: term ${t.id} was already marked differently for irreflexivity`);
         }
         held.irreflexive = t.irreflexive;
+      }
+      if (t.functional !== undefined) {
+        if (held.functional !== undefined && held.functional !== t.functional) {
+          throw new Error(`${where}: term ${t.id} was already marked differently for functionality`);
+        }
+        held.functional = t.functional;
       }
       for (const l of t.links) {
         // A link is the same one only if it was set at the same time. A later
