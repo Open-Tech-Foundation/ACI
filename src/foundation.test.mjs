@@ -62,6 +62,26 @@ test('negative kind knowledge is inherited consistently with positive knowledge'
   assertEquals((await brain('tilly has a bell?')).expression.name, 'deny');
 });
 
+test('learned classifications distinguish instances, subtypes and legacy property predication', async () => {
+  const schema = await file(new URL('../data/world.json', import.meta.url).pathname).json();
+
+  const named = openBrain('sqlite::memory:');
+  const tilly = await named.brain('tilly is a heron');
+  const tillyTerm = tilly.learned.terms.find((term) => term.name === 'tilly');
+  assert(tillyTerm.individual);
+  assert(tillyTerm.links.some((link) => link.rel === schema.anchors.instance));
+  assert(!tillyTerm.links.some((link) => link.rel === schema.relations.is));
+
+  const properties = openBrain('sqlite::memory:');
+  const predication = await properties.brain('a dog is red');
+  assert(
+    predication.learned.terms.some(
+      (term) => term.links.some((link) => link.rel === schema.relations.is),
+    ),
+    'property predication stays on the compatible broad relation until its dedicated primitive',
+  );
+});
+
 test('quantity participates in truth and history is not counted twice', async () => {
   const { brain } = openBrain('sqlite::memory:');
   await brain('a basket holds three apple');

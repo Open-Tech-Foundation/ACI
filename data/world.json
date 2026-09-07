@@ -66,7 +66,9 @@
     "halve": 2819,
     "subrelation": 2828,
     "domain": 2867,
-    "range": 2868
+    "range": 2868,
+    "subtype": 2869,
+    "instance": 2870
   },
   "relations": {
     "is": 294,
@@ -29394,6 +29396,37 @@
         {
           "rel": 294,
           "to": 4
+        }
+      ]
+    },
+    {
+      "id": 2869,
+      "name": "subtype",
+      "transitive": true,
+      "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2828,
+          "to": 294
+        }
+      ]
+    },
+    {
+      "id": 2870,
+      "name": "instance",
+      "irreflexive": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2828,
+          "to": 294
         }
       ]
     }

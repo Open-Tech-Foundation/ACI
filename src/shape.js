@@ -209,14 +209,34 @@ export function checkWhole(data, origin = null, where = 'world') {
     fail(where, 'terms but no relations declared — nothing could be walked');
   }
 
+  const subtype = data.anchors && data.anchors.subtype;
+  const instance = data.anchors && data.anchors.instance;
+  const classificationRelations = new Set(
+    [data.relations && data.relations.is, subtype, instance].filter((id) => id != null),
+  );
+
   // Classification is a partial order. A cycle would make each kind an
   // ancestor of itself through another kind and collapse distinct concepts.
   const is = data.relations && data.relations.is;
   if (is != null) {
     const edges = new Map(data.terms.map((t) => [
       t.id,
-      t.links.filter((l) => !l.not && l.rel === is).map((l) => l.to),
+      t.links.filter((l) => !l.not && classificationRelations.has(l.rel)).map((l) => l.to),
     ]));
+    if (subtype != null || instance != null) {
+      const byId = new Map(data.terms.map((term) => [term.id, term]));
+      for (const term of data.terms) {
+        for (const link of term.links) {
+          if (link.rel === subtype && (term.individual || byId.get(link.to)?.individual)) {
+            fail(`${from(term.id)} term ${term.id}`, 'subtype must connect kinds');
+          }
+          if (
+            link.rel === instance &&
+            (!term.individual || byId.get(link.to)?.individual)
+          ) fail(`${from(term.id)} term ${term.id}`, 'instance must connect an individual to a kind');
+        }
+      }
+    }
     const visiting = new Set();
     const visited = new Set();
     const visit = (id) => {
@@ -312,7 +332,7 @@ export function checkWhole(data, origin = null, where = 'world') {
       if (found.has(here)) continue;
       found.add(here);
       for (const link of termsById.get(here)?.links || []) {
-        if (!link.not && link.rel === is) pending.push(link.to);
+        if (!link.not && classificationRelations.has(link.rel)) pending.push(link.to);
       }
     }
     classificationAncestorCache.set(id, found);
@@ -406,7 +426,7 @@ export function checkWhole(data, origin = null, where = 'world') {
       if (found.has(here)) continue;
       found.add(here);
       for (const link of termsById.get(here)?.links || []) {
-        if (!link.not && link.rel === is) pending.push(link.to);
+        if (!link.not && classificationRelations.has(link.rel)) pending.push(link.to);
       }
     }
     return found;
@@ -423,12 +443,12 @@ export function checkWhole(data, origin = null, where = 'world') {
       )) return true;
     }
     for (const parent of (termsById.get(left)?.links || [])
-      .filter((link) => !link.not && link.rel === is)
+      .filter((link) => !link.not && classificationRelations.has(link.rel))
       .map((link) => link.to)) {
       if (
         termsById.get(parent)?.disjoint &&
         (termsById.get(right)?.links || []).some(
-          (link) => !link.not && link.rel === is && link.to === parent,
+          (link) => !link.not && classificationRelations.has(link.rel) && link.to === parent,
         )
       ) return true;
     }
@@ -438,7 +458,7 @@ export function checkWhole(data, origin = null, where = 'world') {
     const effective = effectiveAncestors(id);
     for (const rung of effective) {
       for (const link of termsById.get(rung)?.links || []) {
-        if (link.not && link.rel === is && effective.has(link.to)) {
+        if (link.not && classificationRelations.has(link.rel) && effective.has(link.to)) {
           fail(`${from(id)} term ${id}`, 'domain or range inference contradicts a denied classification');
         }
       }

@@ -686,3 +686,42 @@ test("domain and range declarations constrain relations with kinds", () => {
       .includes("contradicts an exclusive classification"),
   );
 });
+
+test("subtype connects kinds and instance connects an individual to a kind", () => {
+  const base = {
+    anchors: { relation: 2, subtype: 3, instance: 4 },
+    relations: { is: 1 },
+    terms: [
+      { id: 1, name: "is", links: [{ rel: 1, to: 2 }] },
+      { id: 2, name: "relation", links: [] },
+      { id: 3, name: "subtype", links: [{ rel: 1, to: 2 }] },
+      { id: 4, name: "instance", links: [{ rel: 1, to: 2 }] },
+      { id: 5, name: "animal", links: [] },
+      { id: 6, name: "dog", links: [{ rel: 3, to: 5 }] },
+      { id: 7, name: "fido", individual: true, links: [{ rel: 4, to: 6 }] },
+    ],
+  };
+  fromSources({ world: base });
+
+  const individualSubtype = structuredClone(base);
+  individualSubtype.terms[6].links = [{ rel: 3, to: 6 }];
+  assert(refuses("an individual subtype", { world: individualSubtype }).includes("connect kinds"));
+
+  const kindInstance = structuredClone(base);
+  kindInstance.terms[5].links = [{ rel: 4, to: 5 }];
+  assert(
+    refuses("a kind used as an instance", { world: kindInstance })
+      .includes("individual to a kind"),
+  );
+
+  const instanceTarget = structuredClone(base);
+  instanceTarget.terms[6].links[0].to = 7;
+  assert(
+    refuses("an individual used as an instance kind", { world: instanceTarget })
+      .includes("individual to a kind"),
+  );
+
+  const subtypeCycle = structuredClone(base);
+  subtypeCycle.terms[4].links.push({ rel: 3, to: 6 });
+  assert(refuses("a subtype cycle", { world: subtypeCycle }).includes("classification cycle"));
+});

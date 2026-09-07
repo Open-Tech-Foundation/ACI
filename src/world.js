@@ -16,6 +16,8 @@ export function fromWorldData(data) {
   const subrelationRel = anchors.subrelation ?? null;
   const domainRel = anchors.domain ?? null;
   const rangeRel = anchors.range ?? null;
+  const subtypeRel = anchors.subtype ?? null;
+  const instanceRel = anchors.instance ?? null;
   const inferredTypes = new Map();
   const outgoing = new Map();
   const incoming = new Map();
@@ -60,7 +62,8 @@ export function fromWorldData(data) {
         // A denied link joins nothing. It records that the relation does not
         // hold, and nothing can be reached across it.
         if (l.not) continue;
-        if (l.rel === rel && !seen.has(l.to)) pending.push(l.to);
+        const classifies = rel === isRel && (l.rel === subtypeRel || l.rel === instanceRel);
+        if ((l.rel === rel || classifies) && !seen.has(l.to)) pending.push(l.to);
       }
       if (rel === isRel) {
         for (const inferred of inferredTypes.get(at) || []) {
@@ -177,7 +180,12 @@ export function fromWorldData(data) {
   // relation, before any declared converse is normalized.
   function variantLinks(id, rel) {
     const links = [];
-    for (const variant of relationVariants(rel)) {
+    const variants = new Set(relationVariants(rel));
+    if (rel === isRel) {
+      if (subtypeRel != null) variants.add(subtypeRel);
+      if (instanceRel != null) variants.add(instanceRel);
+    }
+    for (const variant of variants) {
       for (const link of terms.get(id)?.links || []) {
         if (!link.not && link.rel === variant) links.push({ ...link });
       }
@@ -335,7 +343,12 @@ export function fromWorldData(data) {
     denies: (id, object, rel) => {
       const t = terms.get(id);
       if (!t || rel == null) return false;
-      for (const stated of relationAncestors(rel)) {
+      const statedRelations = new Set(relationAncestors(rel));
+      if (rel === isRel) {
+        if (subtypeRel != null) statedRelations.add(subtypeRel);
+        if (instanceRel != null) statedRelations.add(instanceRel);
+      }
+      for (const stated of statedRelations) {
         if ((t.links || []).some((l) => l.not && l.rel === stated && l.to === object)) return true;
         const other = terms.get(object);
         if (
@@ -373,11 +386,20 @@ export function fromWorldData(data) {
     ranges: (rel) => [...constraintKinds(rel, 'range')],
     subrelationOf: (relation, broader) => relationAncestors(relation).has(broader),
     related: (id, rel) => [...related(id, rel)],
+    classificationRelation: (subject, object, individual = terms.get(subject)?.individual) => {
+      const property = anchors.property ?? null;
+      if (property != null && reaches(object, isRel).has(property)) return isRel;
+      return individual && instanceRel != null
+        ? instanceRel
+        : subtypeRel ?? isRel;
+    },
     individualsOf: (kind) => {
       const out = [];
       for (const t of terms.values()) {
         if (!t.individual) continue;
-        if ((t.links || []).some((l) => l.rel === isRel && l.to === kind)) out.push(t.id);
+        if ((t.links || []).some(
+          (l) => !l.not && (l.rel === isRel || l.rel === instanceRel) && l.to === kind,
+        )) out.push(t.id);
       }
       return out;
     },
@@ -387,7 +409,9 @@ export function fromWorldData(data) {
       let found = null;
       for (const t of terms.values()) {
         if (!t.individual) continue;
-        if (!(t.links || []).some((l) => l.rel === isRel && l.to === kind)) continue;
+        if (!(t.links || []).some(
+          (l) => !l.not && (l.rel === isRel || l.rel === instanceRel) && l.to === kind,
+        )) continue;
         if (found != null) return null;
         found = t.id;
       }

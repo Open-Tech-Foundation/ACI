@@ -470,6 +470,52 @@ test("domain and range bound the universe of a reflexive relation", () => {
   assertEquals(w.isA(7, 7, REFLECTS), false);
 });
 
+test("subtype and instance are distinct while the broad kind walk composes them", () => {
+  const RELATION = 2;
+  const SUBTYPE = 3;
+  const INSTANCE = 4;
+  const SUBRELATION = 5;
+  const ANIMAL = 6;
+  const DOG = 7;
+  const FIDO = 8;
+  const w = fromWorldData({
+    anchors: { relation: RELATION, subtype: SUBTYPE, instance: INSTANCE, subrelation: SUBRELATION },
+    relations: { is: IS },
+    terms: [
+      { id: IS, name: "is", links: [{ rel: IS, to: RELATION }] },
+      { id: RELATION, name: "relation", links: [] },
+      { id: SUBTYPE, name: "subtype", transitive: true, asymmetric: true, links: [{ rel: IS, to: RELATION }, { rel: SUBRELATION, to: IS }] },
+      { id: INSTANCE, name: "instance", irreflexive: true, links: [{ rel: IS, to: RELATION }, { rel: SUBRELATION, to: IS }] },
+      { id: SUBRELATION, name: "subrelation", links: [{ rel: IS, to: RELATION }] },
+      { id: ANIMAL, name: "animal", links: [] },
+      { id: DOG, name: "dog", links: [{ rel: SUBTYPE, to: ANIMAL }] },
+      { id: FIDO, name: "fido", individual: true, links: [{ rel: INSTANCE, to: DOG }] },
+    ],
+  });
+  assertEquals(w.isA(DOG, ANIMAL, SUBTYPE), true);
+  assertEquals(w.isA(FIDO, DOG, INSTANCE), true);
+  assertEquals(w.isA(FIDO, ANIMAL, INSTANCE), false, "membership itself is not transitive");
+  assertEquals(w.isA(FIDO, ANIMAL), true, "the broad kind walk composes membership and subtype");
+  assertEquals(w.linked(FIDO, IS), [DOG]);
+  assertEquals(w.individualsOf(DOG), [FIDO]);
+  assertEquals(w.oneOf(DOG), FIDO);
+});
+
+test("classification denials remain visible through the broad is relation", () => {
+  const INSTANCE = 3;
+  const w = fromWorldData({
+    anchors: { instance: INSTANCE },
+    relations: { is: IS },
+    terms: [
+      { id: IS, name: "is", links: [] },
+      { id: 2, name: "animal", links: [] },
+      { id: INSTANCE, name: "instance", links: [] },
+      { id: 4, name: "stone", individual: true, links: [{ rel: INSTANCE, to: 2, not: true }] },
+    ],
+  });
+  assertEquals(w.denies(4, 2, IS), true);
+});
+
 test("transitive relations compose facts written through a converse", () => {
   const BEFORE = 2;
   const AFTER = 3;

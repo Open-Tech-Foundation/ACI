@@ -4242,6 +4242,11 @@ function learningConflict(world, learned) {
   };
   const domain = world.anchors ? world.anchors.domain : null;
   const range = world.anchors ? world.anchors.range : null;
+  const subtype = world.anchors ? world.anchors.subtype : null;
+  const instance = world.anchors ? world.anchors.instance : null;
+  const classificationRelations = new Set(
+    [world.baseRelation, subtype, instance].filter((id) => id != null),
+  );
   const constraintCache = new Map();
   const declaredKinds = (relation, declaration) => {
     const out = new Set();
@@ -4276,7 +4281,7 @@ function learningConflict(world, learned) {
       if (seen.has(here)) continue;
       seen.add(here);
       for (const link of terms.get(here)?.links || []) {
-        if (!link.not && link.rel === world.baseRelation) pending.push(link.to);
+        if (!link.not && classificationRelations.has(link.rel)) pending.push(link.to);
       }
     }
     return false;
@@ -4427,13 +4432,24 @@ function learningConflict(world, learned) {
     visiting.add(id);
     const term = terms.get(id);
     for (const link of (term && term.links) || []) {
-      if (!link.not && link.rel === is && visit(link.to)) return true;
+      if (!link.not && classificationRelations.has(link.rel) && visit(link.to)) return true;
     }
     visiting.delete(id);
     visited.add(id);
     return false;
   };
   for (const id of terms.keys()) if (visit(id)) return 'classification cycle';
+
+  for (const term of terms.values()) {
+    for (const link of term.links || []) {
+      if (link.rel === subtype && (term.individual || terms.get(link.to)?.individual)) {
+        return 'subtype must connect kinds';
+      }
+      if (link.rel === instance && (!term.individual || terms.get(link.to)?.individual)) {
+        return 'instance must connect an individual to a kind';
+      }
+    }
+  }
 
   const relationKind = world.anchors ? world.anchors.relation : null;
   for (const term of terms.values()) {
@@ -4469,7 +4485,7 @@ function learningConflict(world, learned) {
       if (found.has(here)) continue;
       found.add(here);
       for (const link of terms.get(here)?.links || []) {
-        if (!link.not && link.rel === is) pending.push(link.to);
+        if (!link.not && classificationRelations.has(link.rel)) pending.push(link.to);
       }
     }
     return found;
@@ -4486,12 +4502,12 @@ function learningConflict(world, learned) {
       )) return true;
     }
     for (const parent of (terms.get(left)?.links || [])
-      .filter((link) => !link.not && link.rel === is)
+      .filter((link) => !link.not && classificationRelations.has(link.rel))
       .map((link) => link.to)) {
       if (
         terms.get(parent)?.disjoint &&
         (terms.get(right)?.links || []).some(
-          (link) => !link.not && link.rel === is && link.to === parent,
+          (link) => !link.not && classificationRelations.has(link.rel) && link.to === parent,
         )
       ) return true;
     }
@@ -4501,7 +4517,7 @@ function learningConflict(world, learned) {
     const effective = effectiveAncestors(id);
     for (const rung of effective) {
       for (const link of terms.get(rung)?.links || []) {
-        if (link.not && link.rel === is && effective.has(link.to)) {
+        if (link.not && classificationRelations.has(link.rel) && effective.has(link.to)) {
           return 'domain or range inference contradicts a denied classification';
         }
       }
@@ -4854,6 +4870,20 @@ function learnedFrom(roots, world) {
     ...events.flatMap((e) => tookPlace(e, world)),
     ...learns.flatMap((l) => tookIn(l, world, naming)),
   ]);
+  // The surface copula names the broad classification question. Memory keeps
+  // the stronger primitive when it can: one existing entity belongs to a
+  // kind, while one kind specializes another. Property predication remains on
+  // the legacy broad relation until its own primitive is introduced.
+  for (const term of terms) {
+    for (const link of term.links) {
+      if (link.rel !== world.baseRelation) continue;
+      link.rel = world.classificationRelation(
+        term.id,
+        link.to,
+        term.individual || world.isIndividual(term.id),
+      );
+    }
+  }
   return terms.length ? { terms } : null;
 }
 

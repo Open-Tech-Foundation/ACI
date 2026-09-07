@@ -455,6 +455,16 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Classification now distinguishes kind specialization from individual
+  membership.** The world anchors `subtype` and `instance` as separate
+  language-neutral relations beneath the compatible broad `is` surface.
+  `subtype` is strict and transitive; `instance` is direct and irreflexive.
+  Their paths compose in the broad kind walk, but instance membership itself
+  never becomes transitive. New conversational learning stores the strongest
+  applicable relation, while legacy world links and property predication keep
+  their existing behavior. Invalid endpoints and mixed classification cycles
+  are rejected in sources and atomic learned overlays.
+
 - **Relations can now imply subject and object kinds through domain and range.**
   The language-neutral `domain` and `range` anchors let relation terms declare
   their subject and object constraints. Positive facts contribute inferred

@@ -20,6 +20,10 @@ const CARES = 101;
 const ANIMAL = 102;
 const NONLIVING = 103;
 const NATURE = 104;
+const CAT = 105;
+const PET = 106;
+const SUBTYPE = 107;
+const INSTANCE = 108;
 const worldData = {
   anchors: {
     thing: 1,
@@ -27,6 +31,8 @@ const worldData = {
     subrelation: SUBRELATION,
     domain: DOMAIN,
     range: RANGE,
+    subtype: SUBTYPE,
+    instance: INSTANCE,
   },
   relations: { is: IS },
   terms: [
@@ -47,6 +53,10 @@ const worldData = {
     { id: NATURE, name: "nature", disjoint: true, links: [{ rel: IS, to: 1 }] },
     { id: ANIMAL, name: "animal", links: [{ rel: IS, to: NATURE }] },
     { id: NONLIVING, name: "nonliving", links: [{ rel: IS, to: NATURE }] },
+    { id: CAT, name: "cat", links: [{ rel: IS, to: ANIMAL }] },
+    { id: PET, name: "pet", links: [{ rel: IS, to: ANIMAL }] },
+    { id: SUBTYPE, name: "subtype", transitive: true, asymmetric: true, links: [{ rel: IS, to: 2 }, { rel: SUBRELATION, to: IS }] },
+    { id: INSTANCE, name: "instance", irreflexive: true, links: [{ rel: IS, to: 2 }, { rel: SUBRELATION, to: IS }] },
     { id: 10, name: "bird", links: [{ rel: IS, to: ANIMAL }, { rel: MEETS, to: 12 }, { rel: POINTS, to: 12 }, { rel: TAPS, to: 12 }, { rel: CARES, to: 11 }] },
     { id: 11, name: "wing", links: [{ rel: IS, to: 1 }, { rel: PART, to: 10 }] },
     { id: 12, name: "stone", links: [{ rel: IS, to: NONLIVING }] },
@@ -71,6 +81,8 @@ const langData = {
     narrows: { pos: "verb", meaning: "subrelation", concept: 98 },
     cares: { pos: "verb", meaning: "cares for", concept: CARES },
     animal: { pos: "noun", meaning: "animal", concept: ANIMAL },
+    cat: { pos: "noun", meaning: "cat", concept: CAT },
+    pet: { pos: "noun", meaning: "pet", concept: PET },
   },
   grammar: {
     start: "sentence",
@@ -172,6 +184,14 @@ test("domain and range implications are understood and incompatible claims are d
     assertEquals(result.expression.name, "deny", input);
     assertEquals(result.learned, null, input);
   }
+});
+
+test("new kind classification is stored as a subtype", () => {
+  const result = brainFrom("cat is pet", knowledge);
+  assertEquals(result.expression.name, "learn");
+  assertEquals(result.learned.terms, [
+    { id: CAT, name: "cat", links: [{ rel: world.anchors.subtype, to: PET }] },
+  ]);
 });
 
 test("a term reached by one relation is not reached by another", () => {

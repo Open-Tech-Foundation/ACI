@@ -514,6 +514,10 @@ on, not even for not knowing.
       "links": [{ "rel": 294, "to": 4 }] },
     { "id": 2867, "name": "domain", "links": [{ "rel": 294, "to": 4 }] },
     { "id": 2868, "name": "range", "links": [{ "rel": 294, "to": 4 }] },
+    { "id": 2869, "name": "subtype", "transitive": true, "asymmetric": true,
+      "links": [{ "rel": 294, "to": 4 }, { "rel": 2828, "to": 294 }] },
+    { "id": 2870, "name": "instance", "irreflexive": true,
+      "links": [{ "rel": 294, "to": 4 }, { "rel": 2828, "to": 294 }] },
     { "id": 249, "name": "order", "transitive": true, "links": [{ "rel": 294, "to": 4 }] },
     { "id": 2821, "name": "before", "transitive": true, "asymmetric": true,
       "links": [{ "rel": 294, "to": 249 }, { "rel": 590, "to": 2822 }] },
@@ -574,6 +578,21 @@ exchanges the constraints, so the range of `owns` is the domain of
 `belongs-to`. Constraint declarations must be made by relation terms and name
 kinds rather than individuals. A fact conflicting with an explicit denial or
 an exclusive kind is refused both in authored sources and atomic learning.
+
+The broad classification relation remains the surface question expressed by
+forms such as English `is`, but memory can now preserve two stronger
+primitives. `anchors.subtype` relates one kind to a broader kind and is strict
+and transitive. `anchors.instance` relates one `individual: true` term directly
+to a kind and is irreflexive, not transitive. Thus `Fido instance dog` and `dog
+subtype animal` entail the broad answer `Fido is animal`; they do not entail
+`Fido instance animal`. Both primitives are subrelations of the compatible
+broad `is` relation, so existing queries and legacy data continue to work.
+Newly learned copular classifications are stored as `instance` when the
+subject is an individual and `subtype` when both sides are kinds. Links whose
+object is a property remain on broad `is` temporarily, preserving property
+predication until its dedicated primitive is introduced. Subtype endpoints
+must be kinds, instance must connect an individual to a kind, and cycles across
+legacy and explicit classification links are refused atomically.
 
 ### Grammar semantics
 
@@ -1800,8 +1819,9 @@ it or answer with it.
   the same languages in the same order on every machine.
 - `src/world.js` — `fromWorldData(data)` compiles the world into
   `{ anchors, baseRelation, term, isA, linked, related, excludes,
-  subrelationOf, domains, ranges }`. `isA` walks explicit and domain/range
-  inferred classification transitively;
+  subrelationOf, domains, ranges, classificationRelation }`. `isA` composes
+  legacy, subtype, instance and domain/range inferred classification
+  transitively;
   another relation is direct unless its term declares `transitive: true`.
   Narrower relation edges participate in a broader walk. Every walk terminates
   defensively on cycles.
@@ -1821,18 +1841,18 @@ fromSources({ world, knowledge, languages })  // validates, merges
 node(kind, name, branch, state)
 
 import { fromWorldData } from './world.js';
-fromWorldData(data)      // compiled queries, including related, subrelationOf, domains and ranges
+fromWorldData(data)      // compiled world queries, including explicit classification primitives
 
 import { openBrain, brain } from './index.js';   // server-only convenience
 await brain("hi", { from, conversation })        // loads languages internally
 ```
 
 `isA(id, ancestor, rel)` follows the relation for real. A thing is itself, but
-it does not stand in **every** relation to itself: only the `is` ladder the
-world is built of counts a term as reaching itself. That ladder and relations
-whose terms declare `transitive: true` follow full paths; every other relation
-checks one edge. This is why *a stone is a stone* and *a stone holds a stone* are
-not the same answer.
+it does not stand in **every** relation to itself: only the broad classification
+ladder—legacy `is`, `instance`, then `subtype`—counts a term as reaching itself.
+That ladder and relations whose terms declare `transitive: true` follow full
+paths; every other relation checks one edge. This is why *a stone is a stone*
+and *a stone holds a stone* are not the same answer.
 
 `openBrain(url)` keeps the store and the conversation threads. `conversation`
 names a thread; told none, the signal is in the one unnamed thread.
