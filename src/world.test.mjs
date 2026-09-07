@@ -209,6 +209,39 @@ test("a symmetric relation reads positive and negative facts from either end", (
   assertEquals(w.symmetric(IS), false);
 });
 
+test("reflexive and irreflexive characteristics decide self-reachability", () => {
+  const SELF = 2;
+  const DISTINCT = 3;
+  const w = fromWorldData({
+    relations: { is: IS },
+    terms: [
+      { id: IS, name: "is", links: [] },
+      { id: SELF, name: "self relation", reflexive: true, links: [] },
+      { id: DISTINCT, name: "strict relation", irreflexive: true, links: [] },
+      { id: 4, name: "a", links: [] },
+    ],
+  });
+  assertEquals(w.reflexive(SELF), true);
+  assertEquals(w.isA(4, 4, SELF), true);
+  assertEquals(w.linked(4, SELF), [4]);
+  assertEquals(w.members(4, SELF), [4]);
+  assertEquals(w.irreflexive(DISTINCT), true);
+  assertEquals(w.isA(4, 4, DISTINCT), false);
+  assertEquals(w.reflexive(DISTINCT), false);
+});
+
+test("asymmetry entails irreflexivity", () => {
+  const STRICT = 2;
+  const w = fromWorldData({
+    relations: { is: IS },
+    terms: [
+      { id: IS, name: "is", links: [] },
+      { id: STRICT, name: "strict", asymmetric: true, links: [] },
+    ],
+  });
+  assertEquals(w.irreflexive(STRICT), true);
+});
+
 test("transitive relations compose facts written through a converse", () => {
   const BEFORE = 2;
   const AFTER = 3;

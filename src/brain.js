@@ -1475,6 +1475,7 @@ function judge(roots, world, mood, langs, sent) {
         ? knownCount != null && knownCount !== counted
         : heldDenied ||
           (kindFact && world.excludes(subject, object)) ||
+          (world.irreflexive(rel) && holder === object) ||
           (world.asymmetric(rel) && reverseHolds) ||
           apartFrom(rel, world).some((other) => joins(holder, object, other));
       // Some of a kind is not the kind. What the kind reaches, some of it
@@ -1666,6 +1667,7 @@ function judge(roots, world, mood, langs, sent) {
       const opposed =
         world.denies(subject, object, rel) ||
         (kindFact && world.excludes(subject, object)) ||
+        (world.irreflexive(rel) && subject === object) ||
         apartFrom(rel, world).some((other) => joins(subject, object, other));
       const name = holds ? 'held' : opposed ? 'against' : 'absent';
       return [
@@ -4199,6 +4201,24 @@ function learningConflict(world, learned) {
         ) return `symmetric relation ${relation.id} gives ${key} two quantities`;
         facts.set(key, link);
       }
+    }
+  }
+
+  for (const relation of terms.values()) {
+    if (!relation.irreflexive && !relation.asymmetric) continue;
+    for (const term of terms.values()) {
+      if ((term.links || []).some(
+        (link) => !link.not && link.rel === relation.id && link.to === term.id,
+      )) return `irreflexive relation ${relation.id} relates ${term.id} to itself`;
+    }
+  }
+
+  for (const relation of terms.values()) {
+    if (!relation.reflexive) continue;
+    for (const term of terms.values()) {
+      if ((term.links || []).some(
+        (link) => link.not && link.rel === relation.id && link.to === term.id,
+      )) return `reflexive relation ${relation.id} denies its required self-link`;
     }
   }
 

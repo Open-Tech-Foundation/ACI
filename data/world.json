@@ -2917,6 +2917,7 @@
       "id": 250,
       "name": "same",
       "symmetric": true,
+      "reflexive": true,
       "links": [
         {
           "rel": 294,
@@ -2928,6 +2929,7 @@
       "id": 251,
       "name": "different",
       "symmetric": true,
+      "irreflexive": true,
       "links": [
         {
           "rel": 294,

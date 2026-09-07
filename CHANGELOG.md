@@ -431,6 +431,16 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Relations can now declare reflexive and irreflexive self-semantics.** A
+  `reflexive: true` relation entails one self-edge for every existing term
+  without storing those edges; `irreflexive: true` makes a positive self-claim
+  stand against the world. Asymmetry entails irreflexivity. Impossible mixed
+  declarations, positive irreflexive self-links and denied required reflexive
+  self-links are rejected in authored sources and atomic learned overlays.
+  `same` now declares reflexivity and `different` declares irreflexivity.
+  Query, open-answer, source-merge, SQLite migration and round-trip tests cover
+  the characteristics with opaque relation names.
+
 - **Relations can now declare symmetry as world knowledge.** A relation term
   marked `symmetric: true` makes one positive or negative edge readable from
   either endpoint without storing a duplicate mirror. Truth checks, open-ended

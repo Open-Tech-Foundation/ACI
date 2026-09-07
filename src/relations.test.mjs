@@ -8,6 +8,8 @@ import { fromSources } from "./knowledge.js";
 const IS = 90;
 const PART = 91;
 const MEETS = 92;
+const MIRRORS = 93;
+const AVOIDS = 94;
 const worldData = {
   anchors: { thing: 1, relation: 2 },
   relations: { is: IS },
@@ -17,6 +19,8 @@ const worldData = {
     { id: 90, name: "is", links: [{ rel: IS, to: 2 }] },
     { id: 91, name: "part", links: [{ rel: IS, to: 2 }] },
     { id: 92, name: "meeting", symmetric: true, links: [{ rel: IS, to: 2 }] },
+    { id: 93, name: "mirroring", reflexive: true, links: [{ rel: IS, to: 2 }] },
+    { id: 94, name: "avoiding", irreflexive: true, links: [{ rel: IS, to: 2 }] },
     { id: 10, name: "bird", links: [{ rel: IS, to: 1 }, { rel: MEETS, to: 12 }] },
     { id: 11, name: "wing", links: [{ rel: IS, to: 1 }, { rel: PART, to: 10 }] },
     { id: 12, name: "stone", links: [{ rel: IS, to: 1 }] },
@@ -33,6 +37,8 @@ const langData = {
     is: { pos: "verb", meaning: "is", concept: 90 },
     parts: { pos: "verb", meaning: "part of", concept: 91 },
     meets: { pos: "verb", meaning: "meets", concept: 92 },
+    mirrors: { pos: "verb", meaning: "mirrors", concept: 93 },
+    avoids: { pos: "verb", meaning: "avoids", concept: 94 },
   },
   grammar: {
     start: "sentence",
@@ -84,6 +90,18 @@ test("a declared symmetric relation entails its reverse without a duplicate fact
   assertEquals(result.expression.name, "understood");
   assertEquals(truth("stone meets bird").name, "held");
   assertEquals(result.learned, null);
+});
+
+test("reflexive and irreflexive declarations decide self-relations", () => {
+  const reflected = brainFrom("bird mirrors bird", knowledge);
+  assertEquals(reflected.expression.name, "understood");
+  assertEquals(truth("bird mirrors bird").name, "held");
+  assertEquals(reflected.learned, null);
+
+  const avoided = brainFrom("bird avoids bird", knowledge);
+  assertEquals(avoided.expression.name, "deny");
+  assertEquals(truth("bird avoids bird").name, "against");
+  assertEquals(avoided.learned, null);
 });
 
 test("a term reached by one relation is not reached by another", () => {

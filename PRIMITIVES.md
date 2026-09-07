@@ -28,7 +28,7 @@ universe; the nature or essence of an entity may later be an ordinary relation.
 | Existence | Implemented | Four modes exist: thing, property, relation and action. `existence` is their root. | No higher answer is expected for `what is existence?`; adding another label only moves the root. |
 | Identity | Partial | Stable term ids, named individuals, deterministic id allocation, self and contextual pointers. Numeric equality is computed exactly. | General `same` is not an equivalence relation and cannot substitute identicals. `different` has bespoke exclusion behavior rather than one general algebra. |
 | Classification | Partial | Transitive kind walking, inherited positive and negative facts, disjoint kinds, cycle rejection, kind versus individual metadata, and open-world living/nonliving/unknown judgement. | One `is` edge carries subtype, instance membership and some predication duties. Those meanings need explicit separation or constraints. |
-| Relations | Partial | Direct and declared-transitive walks, converse and symmetric relations, explicit denial, asymmetry and contradiction checks. | Reflexive, irreflexive, functional, inverse-functional, subrelation, domain and range semantics. Relation subtypes do not currently lift their facts. |
+| Relations | Partial | Direct and declared-transitive walks, converse, symmetric, reflexive and irreflexive relations, explicit denial, asymmetry and contradiction checks. | Functional, inverse-functional, subrelation, domain and range semantics. Relation subtypes do not currently lift their facts. |
 | Propositions and logic | Partial | Held, against and absent are distinct; negation is explicit; multi-fact learning is atomic; conjunction, immediate conditions and basic quantifier scope work. | A proposition cannot itself be the subject or object of knowledge. Stored rules, variables, implication chains, general disjunction, biconditionals and proof explanations are missing. |
 | Composition | Partial | Transitive strict `part` and converse `made-of`; atom, molecule, element and matter connect to the universe. | Component, material, member and portion are conflated. Direct part, cardinality, structural role and required versus optional parts are absent. |
 | Space | Partial | `in`, `on` and `under` facts; current placement with retained history; position labels such as left/right and near/far. | Binary spatial relations, containment topology, overlap/contact, distance values, reference frames and motion paths. `in` is currently also the converse of general holding. |
@@ -64,8 +64,8 @@ more world vocabulary.
 
 - [x] Repair three-valued living classification.
 - [x] Add declarative symmetric relation semantics.
-- [ ] Add declarative reflexive, irreflexive and functional relation semantics
-  where justified.
+- [x] Add declarative reflexive and irreflexive relation semantics.
+- [ ] Add declarative functional relation semantics where justified.
 - [ ] Add subrelation, domain and range semantics.
 - [ ] Separate subtype, instance membership and property predication without
   losing the existing kind walk.
@@ -128,6 +128,8 @@ words a language uses to voice them.
 | root thing → `is … living` predicate | `unsure`, preserving open-world status |
 | A relates-to B, then B relates-to A, with no strict characteristic | second fact → `learn` |
 | A connected-to B, with connected-to symmetric | B connected-to A → `affirm` |
+| A reflects A, with reflects reflexive | `affirm` without a stored self-edge |
+| A differs-from A, with differs-from irreflexive | `deny`; no learning |
 | A before B, then B before A | second fact → `deny`; memory unchanged |
 | wheel component-of car | car has-component wheel → `affirm` through its declared converse |
 | car made-of-material metal | wheel made-of-material metal → `unsure` unless a composition rule proves it |

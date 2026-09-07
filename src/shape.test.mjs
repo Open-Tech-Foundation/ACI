@@ -511,3 +511,35 @@ test("symmetric relations reject invalid declarations and mirrored contradiction
   both.terms[1].asymmetric = true;
   assert(refuses("symmetric and asymmetric", { world: both }).includes("cannot be both"));
 });
+
+test("reflexive and irreflexive declarations reject impossible worlds", () => {
+  const relation = (field, value = true, links = []) => ({
+    relations: { is: 1 },
+    terms: [
+      { id: 1, name: "is", links: [] },
+      { id: 2, name: "relation", [field]: value, links: [] },
+      { id: 3, name: "a", links },
+    ],
+  });
+  assert(refuses("false reflexivity", { world: relation("reflexive", false) }).includes("reflexive"));
+  assert(refuses("false irreflexivity", { world: relation("irreflexive", false) }).includes("irreflexive"));
+  assert(
+    refuses("both self characteristics", {
+      world: {
+        ...relation("reflexive"),
+        terms: relation("reflexive").terms.map((term) =>
+          term.id === 2 ? { ...term, irreflexive: true } : term),
+      },
+    }).includes("cannot be both"),
+  );
+  assert(
+    refuses("an irreflexive self-link", {
+      world: relation("irreflexive", true, [{ rel: 2, to: 3 }]),
+    }).includes("itself"),
+  );
+  assert(
+    refuses("a denied reflexive self-link", {
+      world: relation("reflexive", true, [{ rel: 2, to: 3, not: true }]),
+    }).includes("required self-link"),
+  );
+});

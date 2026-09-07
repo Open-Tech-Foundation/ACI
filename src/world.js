@@ -74,6 +74,7 @@ export function fromWorldData(data) {
   // both directions. The world supplies the converse relation and names none.
   function related(id, rel) {
     const out = new Set(outgoing.get(rel)?.get(id) || []);
+    if (terms.get(rel)?.reflexive && terms.has(id)) out.add(id);
     if (terms.get(rel)?.symmetric) {
       for (const from of incoming.get(rel)?.get(id) || []) out.add(from);
     }
@@ -167,6 +168,7 @@ export function fromWorldData(data) {
       if (terms.get(rel)?.symmetric) {
         for (const target of outgoing.get(rel)?.get(id) || []) out.add(target);
       }
+      if (terms.get(rel)?.reflexive && terms.has(id)) out.add(id);
       return [...out];
     },
     // The value a term names, and the term that names a value. This is the
@@ -214,6 +216,10 @@ export function fromWorldData(data) {
     // Symmetry is likewise a property of the relation term. One authored fact
     // can therefore be read from either endpoint without storing its mirror.
     symmetric: (rel) => Boolean(terms.get(rel)?.symmetric),
+    reflexive: (rel) => Boolean(terms.get(rel)?.reflexive),
+    // Asymmetry entails irreflexivity; an explicit declaration gives the same
+    // self-contradiction without imposing direction on distinct endpoints.
+    irreflexive: (rel) => Boolean(terms.get(rel)?.irreflexive || terms.get(rel)?.asymmetric),
     individualsOf: (kind) => {
       const out = [];
       for (const t of terms.values()) {
@@ -296,6 +302,7 @@ export function fromWorldData(data) {
       if (terms.get(rel)?.symmetric) {
         for (const from of incoming.get(rel)?.get(id) || []) found.add(from);
       }
+      if (terms.get(rel)?.reflexive && terms.has(id)) found.add(id);
       return [...found];
     },
     // Does `id` reach `ancestorId` by following `rel` (the `is` relation by

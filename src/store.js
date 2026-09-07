@@ -23,6 +23,8 @@ const SCHEMA = [
         transitive integer not null default 0,
         asymmetric integer not null default 0,
         symmetric integer not null default 0,
+        reflexive integer not null default 0,
+        irreflexive integer not null default 0,
         learned integer not null default 0
       )`,
   sql`create table if not exists link (
@@ -68,6 +70,12 @@ export async function openStore(url) {
   if (!columns.some((c) => c.name === 'symmetric')) {
     await db.execute(sql`alter table term add column symmetric integer not null default 0`);
   }
+  if (!columns.some((c) => c.name === 'reflexive')) {
+    await db.execute(sql`alter table term add column reflexive integer not null default 0`);
+  }
+  if (!columns.some((c) => c.name === 'irreflexive')) {
+    await db.execute(sql`alter table term add column irreflexive integer not null default 0`);
+  }
   return db;
 }
 
@@ -107,8 +115,8 @@ export async function seed(db, world) {
   await db.execute(sql`delete from link where learned = 0`);
 
   await db.executeMany(
-    sql`insert into term (id, name, value, symbol, individual, disjoint, transitive, asymmetric, symmetric, learned)
-        values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    sql`insert into term (id, name, value, symbol, individual, disjoint, transitive, asymmetric, symmetric, reflexive, irreflexive, learned)
+        values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         on conflict (id) do update set
           name = excluded.name,
           value = excluded.value,
@@ -117,7 +125,9 @@ export async function seed(db, world) {
           disjoint = excluded.disjoint,
           transitive = excluded.transitive,
           asymmetric = excluded.asymmetric,
-          symmetric = excluded.symmetric
+          symmetric = excluded.symmetric,
+          reflexive = excluded.reflexive,
+          irreflexive = excluded.irreflexive
         where term.learned = 0`,
     world.terms.map((t) => [
       t.id,
@@ -129,6 +139,8 @@ export async function seed(db, world) {
       t.transitive ? 1 : 0,
       t.asymmetric ? 1 : 0,
       t.symmetric ? 1 : 0,
+      t.reflexive ? 1 : 0,
+      t.irreflexive ? 1 : 0,
       learned,
     ]),
   );
@@ -158,7 +170,7 @@ export async function seed(db, world) {
 export async function readWorld(db) {
   const terms = await rows(
     db,
-    sql`select id, name, value, symbol, individual, disjoint, transitive, asymmetric, symmetric from term order by id`,
+    sql`select id, name, value, symbol, individual, disjoint, transitive, asymmetric, symmetric, reflexive, irreflexive from term order by id`,
   );
   const links = await rows(
     db,
@@ -177,6 +189,8 @@ export async function readWorld(db) {
     if (t.transitive) term.transitive = true;
     if (t.asymmetric) term.asymmetric = true;
     if (t.symmetric) term.symmetric = true;
+    if (t.reflexive) term.reflexive = true;
+    if (t.irreflexive) term.irreflexive = true;
     byId.set(t.id, term);
     return term;
   });
@@ -205,11 +219,12 @@ export async function write(db, learned) {
     for (const t of learned.terms || []) {
       const seen = await rows(db, sql`select id from term where id = ${t.id}`);
       if (seen.length === 0) {
-        await db.execute(sql`insert into term (id, name, value, symbol, individual, disjoint, transitive, asymmetric, symmetric, learned)
+        await db.execute(sql`insert into term (id, name, value, symbol, individual, disjoint, transitive, asymmetric, symmetric, reflexive, irreflexive, learned)
                            values (${t.id}, ${t.name}, ${t.value ?? null}, ${t.symbol ?? null},
                                    ${t.individual ? 1 : 0}, ${t.disjoint ? 1 : 0},
                                    ${t.transitive ? 1 : 0}, ${t.asymmetric ? 1 : 0},
-                                   ${t.symmetric ? 1 : 0}, 1)`);
+                                   ${t.symmetric ? 1 : 0}, ${t.reflexive ? 1 : 0},
+                                   ${t.irreflexive ? 1 : 0}, 1)`);
       }
     }
     for (const t of learned.terms || []) {

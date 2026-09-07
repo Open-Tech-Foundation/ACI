@@ -55,7 +55,7 @@ export function checkWorld(data, where = 'world') {
   for (const t of data.terms) {
     const at = `${where} term ${JSON.stringify(t && t.id)}`;
     if (!t || typeof t !== 'object') fail(where, 'every term must be an object');
-    onlyKeys(t, ['id', 'name', 'links', 'value', 'individual', 'disjoint', 'transitive', 'asymmetric', 'symmetric', 'symbol'], at);
+    onlyKeys(t, ['id', 'name', 'links', 'value', 'individual', 'disjoint', 'transitive', 'asymmetric', 'symmetric', 'reflexive', 'irreflexive', 'symbol'], at);
     if (!isId(t.id)) fail(at, 'id must be a non-negative integer');
     if (typeof t.name !== 'string' || t.name === '') fail(at, 'name must be a non-empty string');
     if (byId.has(t.id)) fail(at, 'duplicate id');
@@ -85,8 +85,17 @@ export function checkWorld(data, where = 'world') {
     if (t.symmetric !== undefined && t.symmetric !== true) {
       fail(at, 'symmetric, where present, must be true');
     }
+    if (t.reflexive !== undefined && t.reflexive !== true) {
+      fail(at, 'reflexive, where present, must be true');
+    }
+    if (t.irreflexive !== undefined && t.irreflexive !== true) {
+      fail(at, 'irreflexive, where present, must be true');
+    }
     if (t.symmetric && t.asymmetric) {
       fail(at, 'a relation cannot be both symmetric and asymmetric');
+    }
+    if (t.reflexive && (t.irreflexive || t.asymmetric)) {
+      fail(at, 'a relation cannot be both reflexive and irreflexive or asymmetric');
     }
     if (t.value !== undefined && !Number.isSafeInteger(t.value)) {
       fail(at, 'value must be a safe whole number — it is what the term names, not a label');
@@ -240,6 +249,22 @@ export function checkWhole(data, origin = null, where = 'world') {
           fail(`${from(term.id)} term ${term.id}`, `symmetric relation ${relation.id} gives ${key} two quantities`);
         }
         facts.set(key, link);
+      }
+    }
+  }
+
+  for (const relation of data.terms.filter((term) => term.irreflexive || term.asymmetric)) {
+    for (const term of data.terms) {
+      if (term.links.some((link) => !link.not && link.rel === relation.id && link.to === term.id)) {
+        fail(`${from(term.id)} term ${term.id}`, `irreflexive relation ${relation.id} relates a term to itself`);
+      }
+    }
+  }
+
+  for (const relation of data.terms.filter((term) => term.reflexive)) {
+    for (const term of data.terms) {
+      if (term.links.some((link) => link.not && link.rel === relation.id && link.to === term.id)) {
+        fail(`${from(term.id)} term ${term.id}`, `reflexive relation ${relation.id} denies its required self-link`);
       }
     }
   }
