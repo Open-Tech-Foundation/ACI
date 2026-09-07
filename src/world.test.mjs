@@ -280,9 +280,78 @@ test("functional state includes facts written through a converse", () => {
       { id: 7, name: "current", links: [{ rel: BACK, to: 4, at: 1 }] },
     ],
   });
-  assertEquals(w.linked(4, VALUE), [7]);
+  assertEquals(w.related(4, VALUE), [7]);
   assertEquals(w.isA(4, 5, VALUE), false);
   assertEquals(w.isA(4, 7, VALUE), true);
+});
+
+test("a subrelation fact entails every broader relation without copying edges", () => {
+  const BROAD = 2;
+  const MIDDLE = 3;
+  const NARROW = 4;
+  const SUBRELATION = 8;
+  const w = fromWorldData({
+    anchors: { subrelation: SUBRELATION },
+    relations: { is: IS },
+    terms: [
+      { id: IS, name: "is", links: [] },
+      { id: BROAD, name: "broad", links: [] },
+      { id: MIDDLE, name: "middle", links: [{ rel: SUBRELATION, to: BROAD }] },
+      { id: NARROW, name: "narrow", links: [{ rel: SUBRELATION, to: MIDDLE }] },
+      { id: 5, name: "a", links: [{ rel: NARROW, to: 6 }] },
+      { id: 6, name: "b", links: [] },
+      { id: SUBRELATION, name: "subrelation", links: [] },
+    ],
+  });
+  assertEquals(w.subrelationOf(NARROW, BROAD), true);
+  assertEquals(w.subrelationOf(BROAD, NARROW), false);
+  assertEquals(w.isA(5, 6, BROAD), true);
+  assertEquals(w.linked(5, BROAD), [6]);
+  assertEquals(w.members(6, BROAD), [5]);
+  assertEquals(w.isA(6, 5, BROAD), false, "subrelation does not reverse an edge");
+});
+
+test("denying a broader relation denies each narrower claim", () => {
+  const BROAD = 2;
+  const NARROW = 3;
+  const SUBRELATION = 8;
+  const w = fromWorldData({
+    anchors: { subrelation: SUBRELATION },
+    relations: { is: IS },
+    terms: [
+      { id: IS, name: "is", links: [] },
+      { id: BROAD, name: "broad", links: [] },
+      { id: NARROW, name: "narrow", links: [{ rel: SUBRELATION, to: BROAD }] },
+      { id: 4, name: "a", links: [{ rel: BROAD, to: 5, not: true }] },
+      { id: 5, name: "b", links: [] },
+      { id: SUBRELATION, name: "subrelation", links: [] },
+    ],
+  });
+  assertEquals(w.denies(4, 5, NARROW), true);
+  assertEquals(w.denies(4, 5, BROAD), true);
+});
+
+test("broader relation characteristics apply to narrower facts", () => {
+  const BROAD = 2;
+  const NARROW = 3;
+  const SUBRELATION = 8;
+  const w = fromWorldData({
+    anchors: { subrelation: SUBRELATION },
+    relations: { is: IS },
+    terms: [
+      { id: IS, name: "is", links: [] },
+      { id: BROAD, name: "broad", symmetric: true, transitive: true, links: [] },
+      { id: NARROW, name: "narrow", links: [{ rel: SUBRELATION, to: BROAD }] },
+      { id: 4, name: "a", links: [{ rel: NARROW, to: 5 }] },
+      { id: 5, name: "b", links: [{ rel: NARROW, to: 6 }] },
+      { id: 6, name: "c", links: [] },
+      { id: SUBRELATION, name: "subrelation", links: [] },
+    ],
+  });
+  assertEquals(w.isA(5, 4, BROAD), true, "parent symmetry applies to a child edge");
+  assertEquals(w.isA(4, 6, BROAD), true, "parent transitivity composes child edges");
+  assertEquals(w.isA(5, 4, NARROW), false, "the child did not declare symmetry");
+  assertEquals(w.isA(4, 6, NARROW), false, "the child did not declare transitivity");
 });
 
 test("transitive relations compose facts written through a converse", () => {

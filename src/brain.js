@@ -1474,7 +1474,7 @@ function judge(roots, world, mood, langs, sent) {
       const functionalObjects = new Set();
       if (world.functional(rel)) {
         for (const rung of upward(holder, world)) {
-          for (const found of world.linked(rung, rel)) functionalObjects.add(found);
+          for (const found of world.related(rung, rel)) functionalObjects.add(found);
         }
       }
       const functionalAgainst = [...functionalObjects].some((found) => found !== object);
@@ -4188,12 +4188,85 @@ function learningConflict(world, learned) {
     }
   }
 
+  const subrelation = world.anchors ? world.anchors.subrelation : null;
+  const relationParents = new Map([...terms.keys()].map((id) => [id, []]));
+  if (subrelation != null) {
+    for (const term of terms.values()) {
+      for (const link of term.links || []) {
+        if (!link.not && link.rel === subrelation) relationParents.get(term.id).push(link.to);
+      }
+    }
+  }
+  const relationAncestorCache = new Map();
+  const relationVariantCache = new Map();
+  const relationAncestors = (id) => {
+    if (relationAncestorCache.has(id)) return relationAncestorCache.get(id);
+    const found = new Set();
+    const pending = [id];
+    while (pending.length) {
+      const here = pending.pop();
+      if (found.has(here)) continue;
+      found.add(here);
+      pending.push(...(relationParents.get(here) || []));
+    }
+    relationAncestorCache.set(id, found);
+    return found;
+  };
+  const relationVariants = (id) => {
+    if (!relationVariantCache.has(id)) {
+      relationVariantCache.set(id, new Set(
+        [...terms.keys()].filter((candidate) => relationAncestors(candidate).has(id)),
+      ));
+    }
+    return relationVariantCache.get(id);
+  };
+
+  const converseRelation = world.anchors ? world.anchors.converse : null;
+  const conversesOf = (relation) => {
+    const out = new Set();
+    if (converseRelation == null) return out;
+    for (const candidate of terms.values()) {
+      for (const link of candidate.links || []) {
+        if (link.not || link.rel !== converseRelation) continue;
+        if (candidate.id === relation) out.add(link.to);
+        if (link.to === relation) out.add(candidate.id);
+      }
+    }
+    return out;
+  };
+  for (const term of terms.values()) {
+    for (const link of term.links || []) {
+      if (link.not) continue;
+      for (const broader of relationAncestors(link.rel)) {
+        if (broader === link.rel) continue;
+        const sameMoment = (other) => (other.at ?? null) === (link.at ?? null);
+        if ((term.links || []).some(
+          (other) => other.not && other.rel === broader && other.to === link.to && sameMoment(other),
+        )) return `narrower relation ${link.rel} contradicts denied broader relation ${broader}`;
+        const object = terms.get(link.to);
+        if (
+          terms.get(broader)?.symmetric &&
+          object &&
+          (object.links || []).some(
+            (other) => other.not && other.rel === broader && other.to === term.id && sameMoment(other),
+          )
+        ) return `narrower relation ${link.rel} contradicts denied broader relation ${broader}`;
+        for (const back of conversesOf(broader)) {
+          if (object && (object.links || []).some(
+            (other) => other.not && other.rel === back && other.to === term.id && sameMoment(other),
+          )) return `narrower relation ${link.rel} contradicts denied broader relation ${broader}`;
+        }
+      }
+    }
+  }
+
   for (const relation of terms.values()) {
     if (!relation.symmetric) continue;
+    const variants = relationVariants(relation.id);
     const facts = new Map();
     for (const term of terms.values()) {
       for (const link of term.links || []) {
-        if (link.rel !== relation.id) continue;
+        if (!variants.has(link.rel) || (link.not && link.rel !== relation.id)) continue;
         const ends = term.id <= link.to ? [term.id, link.to] : [link.to, term.id];
         const key = `${ends[0]}:${ends[1]}:${link.at ?? ''}`;
         const fact = facts.get(key);
@@ -4213,9 +4286,10 @@ function learningConflict(world, learned) {
 
   for (const relation of terms.values()) {
     if (!relation.irreflexive && !relation.asymmetric) continue;
+    const variants = relationVariants(relation.id);
     for (const term of terms.values()) {
       if ((term.links || []).some(
-        (link) => !link.not && link.rel === relation.id && link.to === term.id,
+        (link) => !link.not && variants.has(link.rel) && link.to === term.id,
       )) return `irreflexive relation ${relation.id} relates ${term.id} to itself`;
     }
   }
@@ -4232,16 +4306,16 @@ function learningConflict(world, learned) {
   for (const relation of terms.values()) {
     if (!relation.functional) continue;
     const bySubject = new Map([...terms.keys()].map((id) => [id, []]));
+    const variants = relationVariants(relation.id);
     const converse = world.anchors ? world.anchors.converse : null;
     const converses = new Set();
     if (converse != null) {
-      for (const link of relation.links || []) {
-        if (!link.not && link.rel === converse) converses.add(link.to);
-      }
       for (const candidate of terms.values()) {
-        if ((candidate.links || []).some(
-          (link) => !link.not && link.rel === converse && link.to === relation.id,
-        )) converses.add(candidate.id);
+        for (const link of candidate.links || []) {
+          if (link.not || link.rel !== converse) continue;
+          if (variants.has(candidate.id)) converses.add(link.to);
+          if (variants.has(link.to)) converses.add(candidate.id);
+        }
       }
     }
     const add = (subject, link) => {
@@ -4253,7 +4327,7 @@ function learningConflict(world, learned) {
     for (const term of terms.values()) {
       for (const link of term.links || []) {
         if (link.not) continue;
-        if (link.rel === relation.id) add(term.id, link);
+        if (variants.has(link.rel)) add(term.id, link);
         if (converses.has(link.rel)) add(link.to, { ...link, to: term.id });
       }
     }
@@ -4294,20 +4368,63 @@ function learningConflict(world, learned) {
   };
   for (const id of terms.keys()) if (visit(id)) return 'classification cycle';
 
+  if (subrelation != null) {
+    const relationKind = world.anchors ? world.anchors.relation : null;
+    const isA = (start, target) => {
+      const seen = new Set();
+      const pending = [start];
+      while (pending.length) {
+        const here = pending.pop();
+        if (here === target) return true;
+        if (seen.has(here)) continue;
+        seen.add(here);
+        for (const link of terms.get(here)?.links || []) {
+          if (!link.not && link.rel === is) pending.push(link.to);
+        }
+      }
+      return false;
+    };
+    if (relationKind != null) {
+      for (const term of terms.values()) {
+        for (const link of term.links || []) {
+          if (
+            !link.not &&
+            link.rel === subrelation &&
+            (!isA(term.id, relationKind) || !isA(link.to, relationKind))
+          ) return 'subrelation endpoints must both be relations';
+        }
+      }
+    }
+    const active = new Set();
+    const done = new Set();
+    const climb = (id) => {
+      if (active.has(id)) return true;
+      if (done.has(id)) return false;
+      active.add(id);
+      for (const link of terms.get(id)?.links || []) {
+        if (!link.not && link.rel === subrelation && climb(link.to)) return true;
+      }
+      active.delete(id);
+      done.add(id);
+      return false;
+    };
+    for (const id of terms.keys()) if (climb(id)) return 'subrelation cycle';
+  }
+
   // Proposed links enter atomically, so asymmetric relations must be checked
   // over the complete proposal as well as one clause at a time. A transitive
   // asymmetric relation admits no cycle of any length.
   for (const relation of terms.values()) {
     if (!relation.asymmetric) continue;
+    const variants = relationVariants(relation.id);
     const converse = world.anchors ? world.anchors.converse : null;
     const converses = new Set();
     if (converse != null) {
-      for (const link of relation.links || []) {
-        if (!link.not && link.rel === converse) converses.add(link.to);
-      }
       for (const candidate of terms.values()) {
-        if ((candidate.links || []).some((link) => !link.not && link.rel === converse && link.to === relation.id)) {
-          converses.add(candidate.id);
+        for (const link of candidate.links || []) {
+          if (link.not || link.rel !== converse) continue;
+          if (variants.has(candidate.id)) converses.add(link.to);
+          if (variants.has(link.to)) converses.add(candidate.id);
         }
       }
     }
@@ -4315,7 +4432,7 @@ function learningConflict(world, learned) {
     for (const term of terms.values()) {
       for (const link of term.links || []) {
         if (link.not) continue;
-        if (link.rel === relation.id) edges.get(term.id).push(link.to);
+        if (variants.has(link.rel)) edges.get(term.id).push(link.to);
         if (converses.has(link.rel)) edges.get(link.to).push(term.id);
       }
     }

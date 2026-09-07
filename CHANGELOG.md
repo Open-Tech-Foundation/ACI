@@ -455,6 +455,17 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Relations can now specialize other relations.** The world anchors a strict,
+  transitive `subrelation` primitive, and relation terms connect to broader
+  relations through ordinary world links. A fact under a narrower relation is
+  consequently readable under every broader relation without copying edges;
+  the reverse implication does not hold. Broader denials constrain narrower
+  claims, and broader symmetry, transitivity, asymmetry, irreflexivity and
+  functionality govern child facts. Declared converses are normalized at the
+  same semantic boundary. Cyclic hierarchies and hierarchy links whose
+  endpoints are not relations are rejected. Cached hierarchy closure keeps
+  ordinary relation queries independent of total ontology size.
+
 - **Relations can now declare a single current object per subject.** A relation
   marked `functional: true` makes an established different object stand against
   a competing claim, and atomic learning/source validation rejects competing

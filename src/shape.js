@@ -228,15 +228,128 @@ export function checkWhole(data, origin = null, where = 'world') {
       visited.add(id);
     };
     for (const id of edges.keys()) visit(id);
+
+    const subrelation = data.anchors && data.anchors.subrelation;
+    if (subrelation != null) {
+      const relationKind = data.anchors && data.anchors.relation;
+      const isA = (start, target) => {
+        const seen = new Set();
+        const pending = [start];
+        while (pending.length) {
+          const here = pending.pop();
+          if (here === target) return true;
+          if (seen.has(here)) continue;
+          seen.add(here);
+          pending.push(...(edges.get(here) || []));
+        }
+        return false;
+      };
+      const hierarchy = new Map(data.terms.map((term) => [term.id, []]));
+      for (const term of data.terms) {
+        for (const link of term.links) {
+          if (link.not || link.rel !== subrelation) continue;
+          if (relationKind != null && (!isA(term.id, relationKind) || !isA(link.to, relationKind))) {
+            fail(`${from(term.id)} term ${term.id}`, 'subrelation endpoints must both be relations');
+          }
+          hierarchy.get(term.id).push(link.to);
+        }
+      }
+      const active = new Set();
+      const done = new Set();
+      const climb = (id) => {
+        if (active.has(id)) fail(`${from(id)} term ${id}`, 'subrelation cycle');
+        if (done.has(id)) return;
+        active.add(id);
+        for (const next of hierarchy.get(id) || []) climb(next);
+        active.delete(id);
+        done.add(id);
+      };
+      for (const id of hierarchy.keys()) climb(id);
+    }
+  }
+
+  const subrelation = data.anchors && data.anchors.subrelation;
+  const relationParents = new Map(data.terms.map((term) => [term.id, []]));
+  if (subrelation != null) {
+    for (const term of data.terms) {
+      for (const link of term.links) {
+        if (!link.not && link.rel === subrelation) relationParents.get(term.id).push(link.to);
+      }
+    }
+  }
+  const relationAncestorCache = new Map();
+  const relationVariantCache = new Map();
+  const relationAncestors = (id) => {
+    if (relationAncestorCache.has(id)) return relationAncestorCache.get(id);
+    const found = new Set();
+    const pending = [id];
+    while (pending.length) {
+      const here = pending.pop();
+      if (found.has(here)) continue;
+      found.add(here);
+      pending.push(...(relationParents.get(here) || []));
+    }
+    relationAncestorCache.set(id, found);
+    return found;
+  };
+  const relationVariants = (id) => {
+    if (!relationVariantCache.has(id)) {
+      relationVariantCache.set(id, new Set(
+        data.terms.map((term) => term.id).filter((candidate) => relationAncestors(candidate).has(id)),
+      ));
+    }
+    return relationVariantCache.get(id);
+  };
+
+  // A narrower positive fact entails every broader one, so an explicit denial
+  // of any broader proposition cannot coexist with it.
+  const converse = data.anchors && data.anchors.converse;
+  const conversesOf = (relation) => {
+    const out = new Set();
+    if (converse == null) return out;
+    for (const candidate of data.terms) {
+      for (const link of candidate.links) {
+        if (link.not || link.rel !== converse) continue;
+        if (candidate.id === relation) out.add(link.to);
+        if (link.to === relation) out.add(candidate.id);
+      }
+    }
+    return out;
+  };
+  for (const term of data.terms) {
+    for (const link of term.links) {
+      if (link.not) continue;
+      for (const broader of relationAncestors(link.rel)) {
+        if (broader === link.rel) continue;
+        const sameMoment = (other) => (other.at ?? null) === (link.at ?? null);
+        if (term.links.some(
+          (other) => other.not && other.rel === broader && other.to === link.to && sameMoment(other),
+        )) fail(`${from(term.id)} term ${term.id}`, `narrower relation ${link.rel} contradicts denied broader relation ${broader}`);
+        const object = data.terms.find((candidate) => candidate.id === link.to);
+        if (
+          data.terms.find((candidate) => candidate.id === broader)?.symmetric &&
+          object &&
+          object.links.some(
+            (other) => other.not && other.rel === broader && other.to === term.id && sameMoment(other),
+          )
+        ) fail(`${from(term.id)} term ${term.id}`, `narrower relation ${link.rel} contradicts denied broader relation ${broader}`);
+        for (const back of conversesOf(broader)) {
+          if (object && object.links.some(
+            (other) => other.not && other.rel === back && other.to === term.id && sameMoment(other),
+          )) fail(`${from(term.id)} term ${term.id}`, `narrower relation ${link.rel} contradicts denied broader relation ${broader}`);
+        }
+      }
+    }
   }
 
   // A symmetric edge and its mirror are one proposition. If both are
   // authored, their polarity and same-moment quantity must agree.
   for (const relation of data.terms.filter((term) => term.symmetric)) {
+    const variants = relationVariants(relation.id);
     const facts = new Map();
     for (const term of data.terms) {
       for (const link of term.links) {
-        if (link.rel !== relation.id) continue;
+        if (!variants.has(link.rel) || (link.not && link.rel !== relation.id)) continue;
         const ends = term.id <= link.to ? [term.id, link.to] : [link.to, term.id];
         const key = `${ends[0]}:${ends[1]}:${link.at ?? ''}`;
         const held = facts.get(key);
@@ -257,8 +370,9 @@ export function checkWhole(data, origin = null, where = 'world') {
   }
 
   for (const relation of data.terms.filter((term) => term.irreflexive || term.asymmetric)) {
+    const variants = relationVariants(relation.id);
     for (const term of data.terms) {
-      if (term.links.some((link) => !link.not && link.rel === relation.id && link.to === term.id)) {
+      if (term.links.some((link) => !link.not && variants.has(link.rel) && link.to === term.id)) {
         fail(`${from(term.id)} term ${term.id}`, `irreflexive relation ${relation.id} relates a term to itself`);
       }
     }
@@ -274,15 +388,15 @@ export function checkWhole(data, origin = null, where = 'world') {
 
   for (const relation of data.terms.filter((term) => term.functional)) {
     const bySubject = new Map(data.terms.map((term) => [term.id, []]));
+    const variants = relationVariants(relation.id);
     const converse = data.anchors && data.anchors.converse;
     const converses = new Set();
     if (converse != null) {
-      for (const link of relation.links) {
-        if (!link.not && link.rel === converse) converses.add(link.to);
-      }
       for (const candidate of data.terms) {
-        if (candidate.links.some((link) => !link.not && link.rel === converse && link.to === relation.id)) {
-          converses.add(candidate.id);
+        for (const link of candidate.links) {
+          if (link.not || link.rel !== converse) continue;
+          if (variants.has(candidate.id)) converses.add(link.to);
+          if (variants.has(link.to)) converses.add(candidate.id);
         }
       }
     }
@@ -295,7 +409,7 @@ export function checkWhole(data, origin = null, where = 'world') {
     for (const term of data.terms) {
       for (const link of term.links) {
         if (link.not) continue;
-        if (link.rel === relation.id) add(term.id, link);
+        if (variants.has(link.rel)) add(term.id, link);
         if (converses.has(link.rel)) add(link.to, { ...link, to: term.id });
       }
     }
@@ -323,15 +437,15 @@ export function checkWhole(data, origin = null, where = 'world') {
   // transitive relation every cycle implies the forbidden reverse; for any
   // asymmetric relation a direct self-link or opposing pair already does.
   for (const relation of data.terms.filter((term) => term.asymmetric)) {
+    const variants = relationVariants(relation.id);
     const converse = data.anchors && data.anchors.converse;
     const converses = new Set();
     if (converse != null) {
-      for (const link of relation.links) {
-        if (!link.not && link.rel === converse) converses.add(link.to);
-      }
       for (const candidate of data.terms) {
-        if (candidate.links.some((link) => !link.not && link.rel === converse && link.to === relation.id)) {
-          converses.add(candidate.id);
+        for (const link of candidate.links) {
+          if (link.not || link.rel !== converse) continue;
+          if (variants.has(candidate.id)) converses.add(link.to);
+          if (variants.has(link.to)) converses.add(candidate.id);
         }
       }
     }
@@ -339,7 +453,7 @@ export function checkWhole(data, origin = null, where = 'world') {
     for (const term of data.terms) {
       for (const link of term.links) {
         if (link.not) continue;
-        if (link.rel === relation.id) edges.get(term.id).push(link.to);
+        if (variants.has(link.rel)) edges.get(term.id).push(link.to);
         if (converses.has(link.rel)) edges.get(link.to).push(term.id);
       }
     }

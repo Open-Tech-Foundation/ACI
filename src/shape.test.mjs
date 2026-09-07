@@ -588,3 +588,49 @@ test("functional relations reject competing objects but retain history", () => {
     }).includes("competing objects"),
   );
 });
+
+test("subrelation declarations are acyclic and connect relations", () => {
+  const base = {
+    anchors: { relation: 2, subrelation: 5 },
+    relations: { is: 1 },
+    terms: [
+      { id: 1, name: "is", links: [{ rel: 1, to: 2 }] },
+      { id: 2, name: "relation", links: [] },
+      { id: 3, name: "broad", links: [{ rel: 1, to: 2 }] },
+      { id: 4, name: "narrow", links: [{ rel: 1, to: 2 }, { rel: 5, to: 3 }] },
+      { id: 5, name: "subrelation", links: [{ rel: 1, to: 2 }] },
+      { id: 6, name: "thing", links: [] },
+    ],
+  };
+  fromSources({ world: base });
+
+  const cycle = structuredClone(base);
+  cycle.terms[2].links.push({ rel: 5, to: 4 });
+  assert(refuses("a subrelation cycle", { world: cycle }).includes("subrelation cycle"));
+
+  const wrong = structuredClone(base);
+  wrong.terms[3].links[1].to = 6;
+  assert(refuses("a non-relation superrelation", { world: wrong }).includes("both be relations"));
+
+  const constrained = structuredClone(base);
+  constrained.terms[2].functional = true;
+  constrained.terms.push(
+    { id: 7, name: "subject", links: [{ rel: 4, to: 8 }, { rel: 4, to: 9 }] },
+    { id: 8, name: "first", links: [] },
+    { id: 9, name: "second", links: [] },
+  );
+  assert(
+    refuses("child facts escaping parent functionality", { world: constrained })
+      .includes("competing objects"),
+  );
+
+  const contradicted = structuredClone(base);
+  contradicted.terms.push(
+    { id: 7, name: "subject", links: [{ rel: 4, to: 8 }, { rel: 3, to: 8, not: true }] },
+    { id: 8, name: "object", links: [] },
+  );
+  assert(
+    refuses("a child fact denied by its parent", { world: contradicted })
+      .includes("contradicts denied broader relation"),
+  );
+});

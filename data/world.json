@@ -28972,18 +28972,6 @@
       ]
     },
     {
-      "id": 2828,
-      "name": "subrelation",
-      "transitive": true,
-      "asymmetric": true,
-      "links": [
-        {
-          "rel": 294,
-          "to": 4
-        }
-      ]
-    },
-    {
       "id": 2827,
       "name": "made-of",
       "transitive": true,
@@ -29372,6 +29360,18 @@
         {
           "rel": 294,
           "to": 187
+        }
+      ]
+    },
+    {
+      "id": 2828,
+      "name": "subrelation",
+      "transitive": true,
+      "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
         }
       ]
     }

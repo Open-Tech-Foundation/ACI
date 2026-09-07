@@ -510,6 +510,8 @@ on, not even for not knowing.
     { "id": 83, "name": "cat",      "links": [{ "rel": 294, "to": 24 }] },
     { "id": 250, "name": "same", "symmetric": true, "reflexive": true,
       "links": [{ "rel": 294, "to": 4 }] },
+    { "id": 2828, "name": "subrelation", "transitive": true, "asymmetric": true,
+      "links": [{ "rel": 294, "to": 4 }] },
     { "id": 249, "name": "order", "transitive": true, "links": [{ "rel": 294, "to": 4 }] },
     { "id": 2821, "name": "before", "transitive": true, "asymmetric": true,
       "links": [{ "rel": 294, "to": 249 }, { "rel": 590, "to": 2822 }] },
@@ -546,6 +548,18 @@ times must be safe JSON integers; larger signal values remain exact strings
 rather than entering numeric world fields. Links may additionally carry `not`,
 `quantity` and deterministic logical time `at`; opposite polarities and
 same-time quantity disagreements are invalid knowledge.
+
+The `anchors.subrelation` term relates a narrower relation to a broader one.
+This hierarchy is strict and acyclic. If `taps subrelation touches`, every
+`taps(subject, object)` fact also holds as `touches(subject, object)`, through
+any number of hierarchy levels; a broader fact does not imply the narrower
+one. A denial of the broader relation stands against each narrower claim, but
+denying only the narrow relation does not deny the broader one. Characteristics
+declared by the broader relation govern the semantic facts its children
+contribute, including facts written through declared converses. Both hierarchy
+endpoints must classify as relations. The loader caches hierarchy closure over
+only participating relation terms, so an ordinary query does not scan the
+whole ontology.
 
 ### Grammar semantics
 
@@ -1771,9 +1785,11 @@ it or answer with it.
   `loadLanguageDirectory(dir)` reads `*.json` **in name order**, so the brain sees
   the same languages in the same order on every machine.
 - `src/world.js` — `fromWorldData(data)` compiles the world into
-  `{ anchors, baseRelation, term, isA, linked, excludes }`. `isA` walks the base
-  classification relation transitively; another relation is direct unless its
-  term declares `transitive: true`. Every walk terminates defensively on cycles.
+  `{ anchors, baseRelation, term, isA, linked, related, excludes,
+  subrelationOf }`. `isA` walks the base classification relation transitively;
+  another relation is direct unless its term declares `transitive: true`.
+  Narrower relation edges participate in a broader walk. Every walk terminates
+  defensively on cycles.
 - `src/index.js` — server-only bootstrap: `brain(input)` loads `languages/`,
   `data/world.json` and `knowledge/` via `runtime:fs` (probing relative candidates
   to work both raw and bundled), assembles them with `fromSources`, and calls
@@ -1790,7 +1806,7 @@ fromSources({ world, knowledge, languages })  // validates, merges
 node(kind, name, branch, state)
 
 import { fromWorldData } from './world.js';
-fromWorldData(data)      // { anchors, baseRelation, term, isA, linked, excludes }
+fromWorldData(data)      // compiled world queries, including related and subrelationOf
 
 import { openBrain, brain } from './index.js';   // server-only convenience
 await brain("hi", { from, conversation })        // loads languages internally

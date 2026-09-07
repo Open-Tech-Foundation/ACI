@@ -13,6 +13,7 @@ export function fromWorldData(data) {
   const isRel = (data.relations && data.relations.is) ?? null;
   const differentRel = (data.relations && data.relations.different) ?? null;
   const anchors = data.anchors || {};
+  const subrelationRel = anchors.subrelation ?? null;
   const outgoing = new Map();
   const incoming = new Map();
   for (const term of terms.values()) {
@@ -79,17 +80,56 @@ export function fromWorldData(data) {
     return stamped.filter((link) => link.at === latest);
   }
 
+  const hierarchyTerms = new Set();
+  if (subrelationRel != null) {
+    for (const [child, parents] of outgoing.get(subrelationRel) || []) {
+      hierarchyTerms.add(child);
+      for (const parent of parents) hierarchyTerms.add(parent);
+    }
+  }
+  const ancestorCache = new Map();
+  const variantCache = new Map();
+  function relationAncestors(rel) {
+    if (subrelationRel == null) return new Set([rel]);
+    if (!ancestorCache.has(rel)) ancestorCache.set(rel, reaches(rel, subrelationRel));
+    return ancestorCache.get(rel);
+  }
+
+  function relationVariants(rel) {
+    if (subrelationRel == null) return [rel];
+    if (!variantCache.has(rel)) {
+      const out = [rel];
+      for (const candidate of hierarchyTerms) {
+        if (candidate !== rel && relationAncestors(candidate).has(rel)) out.push(candidate);
+      }
+      variantCache.set(rel, out);
+    }
+    return variantCache.get(rel);
+  }
+
+  // Edges stated in this direction, including facts using a narrower
+  // relation, before any declared converse is normalized.
+  function variantLinks(id, rel) {
+    const links = [];
+    for (const variant of relationVariants(rel)) {
+      for (const link of terms.get(id)?.links || []) {
+        if (!link.not && link.rel === variant) links.push({ ...link });
+      }
+    }
+    return currentFunctional(links, rel);
+  }
+
   // Direct edges plus facts written through a declared converse, normalized
   // into the requested direction before relation characteristics are applied.
   function directedLinks(id, rel) {
-    const links = (terms.get(id)?.links || [])
-      .filter((link) => !link.not && link.rel === rel)
-      .map((link) => ({ ...link }));
-    for (const other of converseBy.get(rel) || []) {
-      for (const term of terms.values()) {
-        for (const link of term.links || []) {
-          if (!link.not && link.rel === other && link.to === id) {
-            links.push({ ...link, to: term.id });
+    const links = variantLinks(id, rel);
+    for (const variant of relationVariants(rel)) {
+      for (const other of converseBy.get(variant) || []) {
+        for (const term of terms.values()) {
+          for (const link of term.links || []) {
+            if (!link.not && link.rel === other && link.to === id) {
+              links.push({ ...link, to: term.id });
+            }
           }
         }
       }
@@ -193,19 +233,11 @@ export function fromWorldData(data) {
       if (id == null || rel == null) return [];
       const out = new Set();
       for (const t of terms.values()) {
-        const links = terms.get(rel)?.functional
-          ? directedLinks(t.id, rel)
-          : currentFunctional(
-            (t.links || []).filter((link) => !link.not && link.rel === rel),
-            rel,
-          );
+        const links = variantLinks(t.id, rel);
         if (links.some((link) => link.to === id)) out.add(t.id);
       }
       if (terms.get(rel)?.symmetric) {
-        for (const link of currentFunctional(
-          (terms.get(id)?.links || []).filter((item) => !item.not && item.rel === rel),
-          rel,
-        )) out.add(link.to);
+        for (const link of variantLinks(id, rel)) out.add(link.to);
       }
       if (terms.get(rel)?.reflexive && terms.has(id)) out.add(id);
       return [...out];
@@ -234,13 +266,21 @@ export function fromWorldData(data) {
     denies: (id, object, rel) => {
       const t = terms.get(id);
       if (!t || rel == null) return false;
-      if ((t.links || []).some((l) => l.not && l.rel === rel && l.to === object)) return true;
-      const other = terms.get(object);
-      return Boolean(
-        terms.get(rel)?.symmetric &&
-        other &&
-        (other.links || []).some((l) => l.not && l.rel === rel && l.to === id),
-      );
+      for (const stated of relationAncestors(rel)) {
+        if ((t.links || []).some((l) => l.not && l.rel === stated && l.to === object)) return true;
+        const other = terms.get(object);
+        if (
+          terms.get(stated)?.symmetric &&
+          other &&
+          (other.links || []).some((l) => l.not && l.rel === stated && l.to === id)
+        ) return true;
+        for (const back of converseBy.get(stated) || []) {
+          if (other && (other.links || []).some((l) => l.not && l.rel === back && l.to === id)) {
+            return true;
+          }
+        }
+      }
+      return false;
     },
     // A kind names many; an individual exists once. Everything else about a term
     // is the same either way — an individual simply `is` its kind.
@@ -260,6 +300,8 @@ export function fromWorldData(data) {
     // self-contradiction without imposing direction on distinct endpoints.
     irreflexive: (rel) => Boolean(terms.get(rel)?.irreflexive || terms.get(rel)?.asymmetric),
     functional: (rel) => Boolean(terms.get(rel)?.functional),
+    subrelationOf: (relation, broader) => relationAncestors(relation).has(broader),
+    related: (id, rel) => [...related(id, rel)],
     individualsOf: (kind) => {
       const out = [];
       for (const t of terms.values()) {
@@ -323,12 +365,12 @@ export function fromWorldData(data) {
     linked: (id, rel) => {
       const t = terms.get(id);
       if (!t || rel == null) return [];
-      let links = (t.links || []).filter((l) => !l.not && l.rel === rel);
+      let links = variantLinks(id, rel);
       // Quantity links retain history per object; only the latest value is a
       // current link. Placement relations have one current target, while old
       // targets remain available in the authored record.
       if (terms.get(rel)?.functional) {
-        links = directedLinks(id, rel);
+        links = currentFunctional(links, rel);
       } else if (links.some((l) => Number.isInteger(l.quantity))) {
         const latest = new Map();
         for (const l of links) {
@@ -343,12 +385,7 @@ export function fromWorldData(data) {
       const found = new Set(links.map((l) => l.to));
       if (terms.get(rel)?.symmetric) {
         for (const term of terms.values()) {
-          const incomingLinks = terms.get(rel)?.functional
-            ? directedLinks(term.id, rel)
-            : currentFunctional(
-              (term.links || []).filter((link) => !link.not && link.rel === rel),
-              rel,
-            );
+          const incomingLinks = variantLinks(term.id, rel);
           if (incomingLinks.some((link) => link.to === id)) found.add(term.id);
         }
       }

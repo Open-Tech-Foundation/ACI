@@ -11,8 +11,11 @@ const MEETS = 92;
 const MIRRORS = 93;
 const AVOIDS = 94;
 const POINTS = 95;
+const TOUCHES = 96;
+const TAPS = 97;
+const SUBRELATION = 98;
 const worldData = {
-  anchors: { thing: 1, relation: 2 },
+  anchors: { thing: 1, relation: 2, subrelation: SUBRELATION },
   relations: { is: IS },
   terms: [
     { id: 1, name: "thing", links: [] },
@@ -23,7 +26,10 @@ const worldData = {
     { id: 93, name: "mirroring", reflexive: true, links: [{ rel: IS, to: 2 }] },
     { id: 94, name: "avoiding", irreflexive: true, links: [{ rel: IS, to: 2 }] },
     { id: 95, name: "pointing", functional: true, links: [{ rel: IS, to: 2 }] },
-    { id: 10, name: "bird", links: [{ rel: IS, to: 1 }, { rel: MEETS, to: 12 }, { rel: POINTS, to: 12 }] },
+    { id: 96, name: "touching", links: [{ rel: IS, to: 2 }] },
+    { id: 97, name: "tapping", links: [{ rel: IS, to: 2 }, { rel: SUBRELATION, to: TOUCHES }] },
+    { id: 98, name: "subrelation", asymmetric: true, transitive: true, links: [{ rel: IS, to: 2 }] },
+    { id: 10, name: "bird", links: [{ rel: IS, to: 1 }, { rel: MEETS, to: 12 }, { rel: POINTS, to: 12 }, { rel: TAPS, to: 12 }] },
     { id: 11, name: "wing", links: [{ rel: IS, to: 1 }, { rel: PART, to: 10 }] },
     { id: 12, name: "stone", links: [{ rel: IS, to: 1 }] },
   ],
@@ -42,6 +48,9 @@ const langData = {
     mirrors: { pos: "verb", meaning: "mirrors", concept: 93 },
     avoids: { pos: "verb", meaning: "avoids", concept: 94 },
     points: { pos: "verb", meaning: "points", concept: 95 },
+    touches: { pos: "verb", meaning: "touches", concept: 96 },
+    taps: { pos: "verb", meaning: "taps", concept: 97 },
+    narrows: { pos: "verb", meaning: "subrelation", concept: 98 },
   },
   grammar: {
     start: "sentence",
@@ -113,6 +122,19 @@ test("a functional relation refuses a competing object", () => {
   const competing = brainFrom("bird points wing", knowledge);
   assertEquals(competing.expression.name, "deny");
   assertEquals(competing.learned, null);
+});
+
+test("a narrower relation entails its broader relation", () => {
+  assertEquals(truth("bird taps stone").name, "held");
+  assertEquals(truth("bird touches stone").name, "held");
+  assertEquals(brainFrom("bird touches stone", knowledge).expression.name, "understood");
+  assertEquals(truth("stone touches bird").name, "absent");
+});
+
+test("only relations can participate in the relation hierarchy", () => {
+  const result = brainFrom("bird narrows stone", knowledge);
+  assertEquals(result.expression.name, "deny");
+  assertEquals(result.learned, null);
 });
 
 test("a term reached by one relation is not reached by another", () => {
