@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Language ambiguity now exposes evidence elimination.** Resolution gates
+  previously narrowed candidates internally but an unresolved ambiguity still
+  reported every original reading, including ones current evidence had already
+  rejected. Each gate now records removed candidates with their language,
+  tokenization and eliminating primitive. Ambiguous nodes expose only survivors
+  in `candidates` plus an `eliminated` audit trail; resolved language nodes carry
+  the same trail inside `resolution`. A three-language test proves partial
+  grammar elimination remains visible without forcing a choice.
+
 - **Conversation language resolves only surviving ambiguity.** `brainFrom()` now
   returns the language selected for the current signal and accepts a previously
   established language as circumstance. After grammar, meaning and world gates,

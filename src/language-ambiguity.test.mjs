@@ -117,6 +117,9 @@ test("one whole grammar parse resolves competing complete readings", () => {
           { lang: "fits", tokens: ["a", "b"] },
           { lang: "misses", tokens: ["a", "b"] },
         ],
+        eliminated: [
+          { lang: "misses", tokens: ["a", "b"], by: "grammar" },
+        ],
       });
     }
   }
@@ -147,6 +150,9 @@ test("complete lexical meaning resolves an equal grammar tie", () => {
       const language = branch(root, "language");
       assertEquals(language.name, "known");
       assertEquals(language.state.resolution.by, "meaning");
+      assertEquals(language.state.resolution.eliminated, [
+        { lang: "unnamed", tokens: ["mira", "acts"], by: "meaning" },
+      ]);
     }
   }
 });
@@ -171,6 +177,9 @@ test("existing world concepts resolve an equal meaning tie", async () => {
       const language = branch(root, "language");
       assertEquals(language.name, "grounded");
       assertEquals(language.state.resolution.by, "world");
+      assertEquals(language.state.resolution.eliminated, [
+        { lang: "absent", tokens: ["a", "stone", "is", "warm"], by: "world" },
+      ]);
     }
   }
 });
@@ -192,6 +201,9 @@ test("established conversation language resolves a surviving tie", () => {
       const language = branch(root, "language");
       assertEquals(language.name, "beta");
       assertEquals(language.state.resolution.by, "context");
+      assertEquals(language.state.resolution.eliminated, [
+        { lang: "alpha", tokens: ["a", "b"], by: "context" },
+      ]);
     }
   }
 });
@@ -211,4 +223,27 @@ test("conversation context cannot revive a grammatically rejected candidate", ()
     branch(result.phases.understand[0], "language").state.resolution.by,
     "grammar",
   );
+});
+
+test("unresolved ambiguity exposes survivors and eliminated candidates", () => {
+  const alpha = grammatical("alpha", "one two");
+  const beta = grammatical("beta", "one two");
+  const gamma = grammatical("gamma", "two one");
+  const result = brainFrom(
+    "a b",
+    fromSources({ languages: [gamma, beta, alpha] }),
+  );
+
+  assertEquals(result.language, null);
+  for (const root of result.phases.understand) {
+    const language = branch(root, "language");
+    assertEquals(language.name, "ambiguous");
+    assertEquals(language.state.candidates, [
+      { lang: "alpha", tokens: ["a", "b"] },
+      { lang: "beta", tokens: ["a", "b"] },
+    ]);
+    assertEquals(language.state.eliminated, [
+      { lang: "gamma", tokens: ["a", "b"], by: "grammar" },
+    ]);
+  }
 });

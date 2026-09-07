@@ -887,10 +887,13 @@ Climbs a fixed ladder:
   learning. Ordered elimination gates test whole grammar, complete known meaning
   and then existing world concepts. A gate with one survivor selects it and
   records
-  `resolution: { by: "grammar" | "meaning" | "world" | "context", candidates }`;
+  `resolution: { by: "grammar" | "meaning" | "world" | "context", candidates,
+  eliminated }`;
   a gate with no survivors proves nothing, while a tie advances to the next
   gate. Established conversation language is the last gate and may choose only
-  a still-possible candidate. A final tie preserves the ambiguity.
+  a still-possible candidate. Every partial elimination is retained as
+  `{ lang, tokens, by }`. A final tie preserves only its survivors as candidates
+  while exposing everything removed in `eliminated`.
 - `existence(signal)` — `void` if the signal is empty or nothing but space; else
   **one root per perceived token**. Whitespace separates tokens, and the chosen
   language alone may split its standalone symbols or remove its edge marks. A
@@ -908,8 +911,10 @@ Climbs a fixed ladder:
   { lang, word: { text, pos, meaning, concept } | null, roles: [...] }
   ```
   A competing whole-signal reading instead records
-  `{ matches: [], candidates: [{ lang, tokens }] }` under a language node named
-  `ambiguous`; no candidate becomes a thought.
+  `{ matches: [], candidates: [{ lang, tokens }], eliminated: [{ lang, tokens,
+  by }] }` under a language node named `ambiguous`; `candidates` contains only
+  surviving readings, `eliminated` is omitted when none were removed, and no
+  unresolved candidate becomes a thought.
 - `moodOf(input, roots, langs)` — asks only when the last raw symbol belongs to
   the recognized language's `symbols.question` set; otherwise tells. Loaded
   language order cannot lend another language's punctuation to this signal.

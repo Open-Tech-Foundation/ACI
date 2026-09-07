@@ -99,35 +99,69 @@ function resolveLanguageReading(input, reading, langs, at, world) {
       grammatical: structured.length === 1 && !['thing', 'void'].includes(structured[0].kind),
     };
   });
+  const eliminated = [];
   let possible = trials;
-  const grammatical = possible.filter((trial) => trial.grammatical);
-  if (grammatical.length === 1) return resolvedReading(grammatical[0], considered, 'grammar');
-  if (grammatical.length > 1) possible = grammatical;
+  possible = evidenceGate(possible, (trial) => trial.grammatical, 'grammar', eliminated);
+  if (possible.length === 1) {
+    return resolvedReading(possible[0], considered, 'grammar', eliminated);
+  }
 
-  const meaningful = possible.filter((trial) => completeMeaning(trial.thought));
-  if (meaningful.length === 1) return resolvedReading(meaningful[0], considered, 'meaning');
-  if (meaningful.length > 1) possible = meaningful;
+  possible = evidenceGate(
+    possible,
+    (trial) => completeMeaning(trial.thought),
+    'meaning',
+    eliminated,
+  );
+  if (possible.length === 1) {
+    return resolvedReading(possible[0], considered, 'meaning', eliminated);
+  }
 
   if (world) {
-    const grounded = possible.filter((trial) => completeGrounding(trial.thought, world));
-    if (grounded.length === 1) return resolvedReading(grounded[0], considered, 'world');
-    if (grounded.length > 1) possible = grounded;
+    possible = evidenceGate(
+      possible,
+      (trial) => completeGrounding(trial.thought, world),
+      'world',
+      eliminated,
+    );
+    if (possible.length === 1) {
+      return resolvedReading(possible[0], considered, 'world', eliminated);
+    }
   }
 
   if (at && at.language != null) {
-    const contextual = possible.filter((trial) => (
-      trial.candidate.language.data.name === at.language
-    ));
-    if (contextual.length === 1) return resolvedReading(contextual[0], considered, 'context');
+    possible = evidenceGate(
+      possible,
+      (trial) => trial.candidate.language.data.name === at.language,
+      'context',
+      eliminated,
+    );
+    if (possible.length === 1) {
+      return resolvedReading(possible[0], considered, 'context', eliminated);
+    }
   }
-  return reading;
+  return eliminated.length > 0
+    ? { candidates: possible.map((trial) => trial.candidate), eliminated }
+    : reading;
 }
 
-function resolvedReading(trial, candidates, resolvedBy) {
+// A gate that rejects every candidate has no evidence to distinguish them and
+// therefore changes nothing. Otherwise it removes only the candidates that
+// failed and records the exact primitive that did so.
+function evidenceGate(possible, accepts, by, eliminated) {
+  const survivors = possible.filter(accepts);
+  if (survivors.length === 0 || survivors.length === possible.length) return possible;
+  for (const trial of possible) {
+    if (!survivors.includes(trial)) eliminated.push({ candidate: trial.candidate, by });
+  }
+  return survivors;
+}
+
+function resolvedReading(trial, candidates, resolvedBy, eliminated) {
   return {
     ...trial.candidate,
     candidates,
     resolvedBy,
+    eliminated,
   };
 }
 
@@ -162,13 +196,15 @@ function compareText(a, b) {
 // no language-specific sounds, words, grammar, mood or learning behavior.
 function recordLanguageAmbiguity(roots, reading) {
   if (!reading || !reading.candidates || reading.language) return roots;
-  const candidates = reading.candidates.map(({ language, tokens }) => ({
-    lang: language.data.name,
-    tokens: [...tokens],
-  }));
+  const candidates = readingCandidates(reading);
+  const eliminated = readingEliminations(reading);
   return roots.map((root) => withBranch(root, [
     ...root.branch,
-    node('language', 'ambiguous', [], { matches: [], candidates }),
+    node('language', 'ambiguous', [], {
+      matches: [],
+      candidates,
+      ...(eliminated.length > 0 ? { eliminated } : {}),
+    }),
   ]));
 }
 
@@ -176,6 +212,14 @@ function readingCandidates(reading) {
   return (reading && reading.candidates ? reading.candidates : []).map(({ language, tokens }) => ({
     lang: language.data.name,
     tokens: [...tokens],
+  }));
+}
+
+function readingEliminations(reading) {
+  return (reading && reading.eliminated ? reading.eliminated : []).map(({ candidate, by }) => ({
+    lang: candidate.language.data.name,
+    tokens: [...candidate.tokens],
+    by,
   }));
 }
 
@@ -187,6 +231,7 @@ function recordLanguageResolution(roots, reading) {
   const resolution = {
     by: reading.resolvedBy,
     candidates: readingCandidates(reading),
+    eliminated: readingEliminations(reading),
   };
   return roots.map((root) => withBranch(root, root.branch.map((part) => (
     part.kind === 'language'
