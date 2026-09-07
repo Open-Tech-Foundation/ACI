@@ -1190,11 +1190,14 @@ them said about one and the same thing comes back as **one** thing learned,
 holding each link once. The brain keeps nothing: `brainFrom` stays pure, and
 remembering is the runtime's act.
 
-A claim that would **close a loop** is refused instead — a relation already
-running from the object to the subject cannot also run back, so a `refuse` node
-is added and nothing is learned. The proposed learning is checked as one overlay
-on one immutable snapshot, so two individually harmless joined clauses cannot
-create a cycle, duplicate an id/name, or contradict one another when combined.
+A reverse fact is independent unless the relation's algebra says otherwise.
+An ordinary relation may therefore run in both directions, and the second edge
+is learned like any other absent fact. A relation declared `asymmetric` instead
+makes the reverse claim stand `against` what is held and refuses it. The base
+classification relation retains its separate acyclic invariant. Proposed
+learning is checked as one overlay on one immutable snapshot, so two
+individually harmless joined clauses cannot create a classification or strict
+relation cycle, duplicate an id/name, or contradict one another when combined.
 
 A **contradicted** claim is refused the same way, with `refuse: contradiction`.
 So teaching the brain `"a cat is two"` no longer corrupts it: a cat is a kind of

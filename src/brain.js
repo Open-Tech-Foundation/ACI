@@ -1504,19 +1504,20 @@ function judge(roots, world, mood, langs, sent) {
             : 'absent';
       const added = [node('standing', stands, [], { subject, relation: rel, object, negated: isDenied })];
 
-      // Offered a fact nothing it holds bears on, the brain takes it in —
-      // unless something stands against it, or taking it would close a loop. A
-      // rel already running from the object to the subject cannot also
-      // run back.
+      // Offered a fact nothing it holds bears on, the brain takes it in unless
+      // something stands against it. A reverse edge is contradictory only
+      // when the relation declares asymmetry (accounted for in `opposed`
+      // above); ordinary relations may hold independently in both directions.
+      // Classification and longer asymmetric cycles are checked atomically at
+      // the knowledge door.
       // How many is state: telling the brain a different count is not standing
       // against what it holds, it is saying the world has moved on.
       const revises = counted != null && world.held(holder, rel, object) !== counted;
 
       if (mood === 'tell') {
-        const loops = !isDenied && subject !== object && reverseHolds;
-        if (!revises && (stands === 'against' || loops)) {
+        if (!revises && stands === 'against') {
           added.push(
-            node('refuse', stands === 'against' ? 'contradiction' : 'loop', [], {
+            node('refuse', 'contradiction', [], {
               subject,
               relation: rel,
               object,

@@ -68,6 +68,14 @@ test("each relation runs one way", () => {
   assertEquals(truth("bird parts wing").name, "absent", "not backwards, and not denied");
 });
 
+test("an ordinary relation may be learned independently in both directions", () => {
+  const result = brainFrom("bird parts wing", knowledge);
+  assertEquals(result.expression.name, "learn");
+  assertEquals(result.learned.terms, [
+    { id: 10, name: "bird", links: [{ rel: PART, to: 11 }] },
+  ]);
+});
+
 test("a term reached by one relation is not reached by another", () => {
   assert(world.isA(11, 10, PART), "wing is part of bird");
   assertEquals(world.isA(11, 10), false, "but a wing is not a kind of bird");

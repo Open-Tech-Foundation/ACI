@@ -41,13 +41,22 @@ test("what the world excludes cannot be taught", async () => {
   assertEquals(r.learned, null);
 });
 
-test("a claim that would close a loop is never kept", async () => {
-  // speed and weight are both properties, and nothing says a property may be
-  // only one of them — so the first claim is taken and the second loops.
+test("a classification cycle is still never kept", async () => {
+  // Classification has its own acyclic invariant even though ordinary binary
+  // relations may hold in both directions.
   await brain("a speed is a weight");
   const back = await brain("a weight is a speed");
-  assertEquals(refusal(back), "loop");
+  assertEquals(back.expression.name, "deny");
   assertEquals(back.learned, null);
+});
+
+test("a non-asymmetric relation can be learned in both directions", async () => {
+  const isolated = openBrain("sqlite::memory:");
+  await isolated.brain("a stork has a wing");
+  const back = await isolated.brain("a wing has a stork");
+  assertEquals(back.expression.name, "learn");
+  assert(back.learned !== null);
+  assertEquals((await isolated.brain("a wing has a stork?")).expression.name, "affirm");
 });
 
 test("asking never teaches", async () => {

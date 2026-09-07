@@ -51,7 +51,7 @@ more world vocabulary.
 - [x] Require a force to be held by the universe before its effects propagate
   to every physical thing. A held force-kind admits its classified members;
   classification by itself activates nothing.
-- [ ] Remove the generic reverse-edge-as-loop assumption. Reverse facts are
+- [x] Remove the generic reverse-edge-as-loop assumption. Reverse facts are
   contradictory only for relations whose algebra says so; symmetric relations
   must be learnable.
 - [ ] Keep grammar/parser ordering risks deferred while language work is
@@ -125,6 +125,7 @@ words a language uses to voice them.
 | car → living/non-living choice | `nonliving` once its object classification proves exclusion from organism |
 | dog → `is … living` predicate | `affirm` through organism classification; no language phrase in core |
 | root thing → `is … living` predicate | `unsure`, preserving open-world status |
+| A relates-to B, then B relates-to A, with no strict characteristic | second fact → `learn` |
 | A connected-to B, with connected-to symmetric | B connected-to A → `affirm` |
 | A before B, then B before A | second fact → `deny`; memory unchanged |
 | wheel component-of car | car has-component wheel → `affirm` through its declared converse |

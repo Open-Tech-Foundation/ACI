@@ -489,12 +489,20 @@ test("told something new, the brain learns it and hands it back", async () => {
   forget();
 });
 
-test("a claim that would close a loop is refused, not learned", async () => {
+test("a claim that would close a classification cycle is refused, not learned", async () => {
   forget();
   // The world holds person -> human, so human -> person cannot also hold.
   const r = await brain("a human is a person");
-  assertEquals(kind(r.roots[0], "refuse").name, "loop");
-  assertEquals(kind(r.roots[0], "learn"), null);
+  assertEquals(kind(r.roots[0], "refuse").name, "inconsistent");
+  assertEquals(kind(r.roots[0], "refuse").state.why, "classification cycle");
+  assertEquals(kind(r.roots[0], "learn").state, {
+    subject: 26,
+    relation: 294,
+    object: 29,
+    quantity: null,
+    made: null,
+    not: false,
+  }, "the rejected proposal remains auditable on the tree");
   assertEquals(r.expression.name, "deny");
   assertEquals(r.learned, null);
 });

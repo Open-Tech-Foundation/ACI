@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Reverse facts are no longer rejected for every relation.** The judge used
+  to treat any existing object-to-subject edge as a universal loop, even when
+  the relation declared no such constraint. Independent facts may now be
+  learned in both directions for ordinary relations. Reverse temporal and
+  strict-part facts remain contradictions through declared `asymmetric`
+  semantics, while subtype cycles remain rejected atomically by the dedicated
+  classification invariant. Language-neutral and persisted-conversation tests
+  cover the allowed bidirectional case and the protected strict cases.
+
 - **Living and non-living refinements now work as ordinary predicates.** The
   same closed, language-owned labels used by a focused classification choice
   can now ask or state whether an explicit subject has either refinement.
