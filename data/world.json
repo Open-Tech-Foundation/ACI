@@ -63,7 +63,8 @@
     "capital": 1397,
     "neither": 1569,
     "double": 2818,
-    "halve": 2819
+    "halve": 2819,
+    "subrelation": 2828
   },
   "relations": {
     "is": 294,
@@ -28971,6 +28972,18 @@
       ]
     },
     {
+      "id": 2828,
+      "name": "subrelation",
+      "transitive": true,
+      "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        }
+      ]
+    },
+    {
       "id": 2827,
       "name": "made-of",
       "transitive": true,
@@ -28979,6 +28992,386 @@
         {
           "rel": 294,
           "to": 4
+        }
+      ]
+    },
+    {
+      "id": 2829,
+      "name": "hate",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 2830,
+      "name": "surprise",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 2831,
+      "name": "excitement",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 2832,
+      "name": "boredom",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 2833,
+      "name": "loneliness",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 2834,
+      "name": "trust",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 2835,
+      "name": "worry",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 2836,
+      "name": "like",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 2837,
+      "name": "knowledge",
+      "links": [
+        {
+          "rel": 294,
+          "to": 2
+        }
+      ]
+    },
+    {
+      "id": 2838,
+      "name": "belief",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 2839,
+      "name": "information",
+      "links": [
+        {
+          "rel": 294,
+          "to": 2
+        }
+      ]
+    },
+    {
+      "id": 2840,
+      "name": "problem",
+      "links": [
+        {
+          "rel": 294,
+          "to": 2
+        }
+      ]
+    },
+    {
+      "id": 2841,
+      "name": "solution",
+      "links": [
+        {
+          "rel": 294,
+          "to": 2
+        }
+      ]
+    },
+    {
+      "id": 2842,
+      "name": "value",
+      "links": [
+        {
+          "rel": 294,
+          "to": 3
+        }
+      ]
+    },
+    {
+      "id": 2843,
+      "name": "culture",
+      "links": [
+        {
+          "rel": 294,
+          "to": 2
+        }
+      ]
+    },
+    {
+      "id": 2844,
+      "name": "cry",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2845,
+      "name": "feel",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2846,
+      "name": "forget",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2847,
+      "name": "help",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2848,
+      "name": "learn",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2849,
+      "name": "need",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2850,
+      "name": "play",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2851,
+      "name": "remember",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2852,
+      "name": "sing",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2853,
+      "name": "sit",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2854,
+      "name": "stand",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2855,
+      "name": "teach",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2856,
+      "name": "try",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2857,
+      "name": "want",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2858,
+      "name": "grandparent",
+      "links": [
+        {
+          "rel": 294,
+          "to": 2793
+        }
+      ]
+    },
+    {
+      "id": 2859,
+      "name": "people",
+      "links": [
+        {
+          "rel": 294,
+          "to": 29
+        }
+      ]
+    },
+    {
+      "id": 2860,
+      "name": "cookie",
+      "links": [
+        {
+          "rel": 294,
+          "to": 23
+        }
+      ]
+    },
+    {
+      "id": 2861,
+      "name": "chocolate",
+      "links": [
+        {
+          "rel": 294,
+          "to": 23
+        }
+      ]
+    },
+    {
+      "id": 2862,
+      "name": "chicken",
+      "links": [
+        {
+          "rel": 294,
+          "to": 85
+        }
+      ]
+    },
+    {
+      "id": 2863,
+      "name": "gray",
+      "links": [
+        {
+          "rel": 294,
+          "to": 185
+        }
+      ]
+    },
+    {
+      "id": 2864,
+      "name": "today",
+      "links": [
+        {
+          "rel": 294,
+          "to": 187
+        }
+      ]
+    },
+    {
+      "id": 2865,
+      "name": "tomorrow",
+      "links": [
+        {
+          "rel": 294,
+          "to": 187
+        }
+      ]
+    },
+    {
+      "id": 2866,
+      "name": "yesterday",
+      "links": [
+        {
+          "rel": 294,
+          "to": 187
         }
       ]
     }

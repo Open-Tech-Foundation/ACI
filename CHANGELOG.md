@@ -4,6 +4,30 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **38 new world terms.** Emotions (hate, surprise, excitement, boredom,
+  loneliness, trust, worry, like), knowledge concepts (knowledge, belief,
+  information, problem, solution, value, culture), actions (cry, feel, forget,
+  help, learn, need, play, remember, sing, sit, stand, teach, try, want),
+  family (grandparent), people, food (cookie, chocolate, chicken), color
+  (gray), and time (today, tomorrow, yesterday).
+
+- **52 new English words.** Pronouns (we, us, our, whose), verb forms for
+  all new actions, adjectives (pretty, beautiful, fat, thin, dark, light,
+  sharp, smooth, rough, deep, cheap, expensive, safe, dangerous, young, old,
+  new, big, small, long, short, fast, slow, hot, cold, warm, cool, heavy,
+  hard, soft, clean, dirty, quiet, loud, rich, poor, strong, weak, full,
+  empty, busy, free, true, false, right, wrong, important, simple, difficult,
+  easy, happy, sad, angry, afraid, sick, healthy, nice), and degree word
+  (most).
+
+- **New grammar rules.** Existential (`there predicate`), comparative
+  (`degree adjective`), passive, and imperative sentence patterns.
+
+- **New expression frames.** Farewell, thank, apologize, request, offer,
+  and compliment intents.
+
 ### Fixed
 
 - **Reverse facts are no longer rejected for every relation.** The judge used

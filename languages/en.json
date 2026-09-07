@@ -15,7 +15,7 @@
       "places": 10
     },
     "sign": {
-      "characters": "+ - = < > * / × ÷ ^ %",
+      "characters": "+ - = < > * / \u00d7 \u00f7 ^ %",
       "alone": true
     },
     "group": {
@@ -108,7 +108,10 @@
         "pos": "pronoun",
         "meaning": "one",
         "marks": "spoken",
-        "select": { "after": "determiner", "across": "modifier" },
+        "select": {
+          "after": "determiner",
+          "across": "modifier"
+        },
         "person": "third",
         "number": "singular"
       }
@@ -1475,7 +1478,7 @@
       "concept": 568,
       "names": false
     },
-    "×": {
+    "\u00d7": {
       "pos": "verb",
       "meaning": "times",
       "concept": 568,
@@ -1610,7 +1613,12 @@
         "pos": "degree",
         "meaning": "so",
         "marks": "idea",
-        "select": { "after": ["pointer", "predicate"] }
+        "select": {
+          "after": [
+            "pointer",
+            "predicate"
+          ]
+        }
       }
     ],
     "hold": {
@@ -1705,7 +1713,7 @@
       "concept": 569,
       "names": false
     },
-    "÷": {
+    "\u00f7": {
       "pos": "verb",
       "meaning": "divide",
       "concept": 569,
@@ -10602,7 +10610,9 @@
         "pos": "complementizer",
         "meaning": "that",
         "functions": "encloses",
-        "select": { "before": "proposition" }
+        "select": {
+          "before": "proposition"
+        }
       },
       {
         "pos": "pronoun",
@@ -15466,8 +15476,12 @@
         "when": "past",
         "select": {
           "any": [
-            { "position": "first" },
-            { "before": "denial" }
+            {
+              "position": "first"
+            },
+            {
+              "before": "denial"
+            }
           ]
         }
       },
@@ -17322,6 +17336,372 @@
       "pos": "adjective",
       "meaning": "worst",
       "concept": 239
+    },
+    "we": {
+      "pos": "pronoun",
+      "meaning": "we",
+      "marks": "from",
+      "person": "first",
+      "number": "plural"
+    },
+    "us": {
+      "pos": "pronoun",
+      "meaning": "us",
+      "marks": "from",
+      "person": "first",
+      "number": "plural"
+    },
+    "our": {
+      "pos": "possessive",
+      "meaning": "our",
+      "marks": "from",
+      "functions": "possessor",
+      "person": "first",
+      "number": "plural"
+    },
+    "whose": {
+      "pos": "interrogative",
+      "meaning": "whose",
+      "marks": "unknown",
+      "concept": 138
+    },
+    "hate": {
+      "pos": "verb",
+      "meaning": "hate",
+      "concept": 2829
+    },
+    "hates": {
+      "pos": "verb",
+      "meaning": "hates",
+      "concept": 2829,
+      "person": "third",
+      "number": "singular"
+    },
+    "hated": {
+      "pos": "verb",
+      "meaning": "hated",
+      "concept": 2829,
+      "when": "past"
+    },
+    "surprise": [
+      {
+        "pos": "noun",
+        "meaning": "surprise",
+        "concept": 2830
+      },
+      {
+        "pos": "verb",
+        "meaning": "surprise",
+        "concept": 2830
+      }
+    ],
+    "excitement": {
+      "pos": "noun",
+      "meaning": "excitement",
+      "concept": 2831
+    },
+    "boredom": {
+      "pos": "noun",
+      "meaning": "boredom",
+      "concept": 2832
+    },
+    "loneliness": {
+      "pos": "noun",
+      "meaning": "loneliness",
+      "concept": 2833
+    },
+    "trust": [
+      {
+        "pos": "noun",
+        "meaning": "trust",
+        "concept": 2834
+      },
+      {
+        "pos": "verb",
+        "meaning": "trust",
+        "concept": 2834
+      }
+    ],
+    "worry": [
+      {
+        "pos": "verb",
+        "meaning": "worry",
+        "concept": 2835
+      },
+      {
+        "pos": "noun",
+        "meaning": "worry",
+        "concept": 2835
+      }
+    ],
+    "worried": {
+      "pos": "verb",
+      "meaning": "worried",
+      "concept": 2835,
+      "when": "past"
+    },
+    "liked": {
+      "pos": "verb",
+      "meaning": "liked",
+      "concept": 2836,
+      "when": "past"
+    },
+    "knowledge": {
+      "pos": "noun",
+      "meaning": "knowledge",
+      "concept": 2837
+    },
+    "belief": {
+      "pos": "noun",
+      "meaning": "belief",
+      "concept": 2838
+    },
+    "beliefs": {
+      "pos": "noun",
+      "meaning": "beliefs",
+      "concept": 2838
+    },
+    "information": {
+      "pos": "noun",
+      "meaning": "information",
+      "concept": 2839,
+      "bare": true
+    },
+    "problem": {
+      "pos": "noun",
+      "meaning": "problem",
+      "concept": 2840
+    },
+    "problems": {
+      "pos": "noun",
+      "meaning": "problems",
+      "concept": 2840
+    },
+    "solution": {
+      "pos": "noun",
+      "meaning": "solution",
+      "concept": 2841
+    },
+    "solutions": {
+      "pos": "noun",
+      "meaning": "solutions",
+      "concept": 2841
+    },
+    "value": {
+      "pos": "noun",
+      "meaning": "value",
+      "concept": 2842
+    },
+    "values": {
+      "pos": "noun",
+      "meaning": "values",
+      "concept": 2842
+    },
+    "culture": {
+      "pos": "noun",
+      "meaning": "culture",
+      "concept": 2843
+    },
+    "cried": {
+      "pos": "verb",
+      "meaning": "cried",
+      "concept": 2844,
+      "when": "past"
+    },
+    "feel": {
+      "pos": "verb",
+      "meaning": "feel",
+      "concept": 2845
+    },
+    "feels": {
+      "pos": "verb",
+      "meaning": "feels",
+      "concept": 2845,
+      "person": "third",
+      "number": "singular"
+    },
+    "felt": {
+      "pos": "verb",
+      "meaning": "felt",
+      "concept": 2845,
+      "when": "past"
+    },
+    "forget": {
+      "pos": "verb",
+      "meaning": "forget",
+      "concept": 2846
+    },
+    "forgets": {
+      "pos": "verb",
+      "meaning": "forgets",
+      "concept": 2846,
+      "person": "third",
+      "number": "singular"
+    },
+    "forgot": {
+      "pos": "verb",
+      "meaning": "forgot",
+      "concept": 2846,
+      "when": "past"
+    },
+    "helped": {
+      "pos": "verb",
+      "meaning": "helped",
+      "concept": 2847,
+      "when": "past"
+    },
+    "learn": {
+      "pos": "verb",
+      "meaning": "learn",
+      "concept": 2848
+    },
+    "learns": {
+      "pos": "verb",
+      "meaning": "learns",
+      "concept": 2848,
+      "person": "third",
+      "number": "singular"
+    },
+    "learned": {
+      "pos": "verb",
+      "meaning": "learned",
+      "concept": 2848,
+      "when": "past"
+    },
+    "needed": {
+      "pos": "verb",
+      "meaning": "needed",
+      "concept": 2849,
+      "when": "past"
+    },
+    "played": {
+      "pos": "verb",
+      "meaning": "played",
+      "concept": 2850,
+      "when": "past"
+    },
+    "remembered": {
+      "pos": "verb",
+      "meaning": "remembered",
+      "concept": 2851,
+      "when": "past"
+    },
+    "tried": {
+      "pos": "verb",
+      "meaning": "tried",
+      "concept": 2856,
+      "when": "past"
+    },
+    "wanted": {
+      "pos": "verb",
+      "meaning": "wanted",
+      "concept": 2857,
+      "when": "past"
+    },
+    "grandparent": {
+      "pos": "noun",
+      "meaning": "grandparent",
+      "concept": 2858
+    },
+    "grandparents": {
+      "pos": "noun",
+      "meaning": "grandparents",
+      "concept": 2858
+    },
+    "chicken": {
+      "pos": "noun",
+      "meaning": "chicken",
+      "concept": 2862
+    },
+    "gray": {
+      "pos": "adjective",
+      "meaning": "gray",
+      "concept": 2863
+    },
+    "today": {
+      "pos": "noun",
+      "meaning": "today",
+      "concept": 2864
+    },
+    "tomorrow": {
+      "pos": "noun",
+      "meaning": "tomorrow",
+      "concept": 2865
+    },
+    "yesterday": {
+      "pos": "noun",
+      "meaning": "yesterday",
+      "concept": 2866
+    },
+    "most": {
+      "pos": "degree",
+      "meaning": "most",
+      "concept": 305
+    },
+    "pretty": {
+      "pos": "adjective",
+      "meaning": "pretty",
+      "concept": 238
+    },
+    "fat": {
+      "pos": "adjective",
+      "meaning": "fat",
+      "concept": 3
+    },
+    "round": {
+      "pos": "adjective",
+      "meaning": "round",
+      "concept": 3
+    },
+    "sharp": {
+      "pos": "adjective",
+      "meaning": "sharp",
+      "concept": 3
+    },
+    "smooth": {
+      "pos": "adjective",
+      "meaning": "smooth",
+      "concept": 3
+    },
+    "rough": {
+      "pos": "adjective",
+      "meaning": "rough",
+      "concept": 3
+    },
+    "cheap": {
+      "pos": "adjective",
+      "meaning": "cheap",
+      "concept": 3
+    },
+    "expensive": {
+      "pos": "adjective",
+      "meaning": "expensive",
+      "concept": 3
+    },
+    "possible": {
+      "pos": "adjective",
+      "meaning": "possible",
+      "concept": 3
+    },
+    "impossible": {
+      "pos": "adjective",
+      "meaning": "impossible",
+      "concept": 3
+    },
+    "important": {
+      "pos": "adjective",
+      "meaning": "important",
+      "concept": 3
+    },
+    "angry": {
+      "pos": "adjective",
+      "meaning": "angry",
+      "concept": 233
+    },
+    "healthy": {
+      "pos": "adjective",
+      "meaning": "healthy",
+      "concept": 237
     }
   },
   "unknown": {
@@ -17337,12 +17717,18 @@
     "composition": [
       {
         "order": "descending",
-        "multipleOf": { "side": "left", "value": 10 },
+        "multipleOf": {
+          "side": "left",
+          "value": 10
+        },
         "operation": "add"
       },
       {
         "order": "ascending",
-        "multipleOf": { "side": "right", "value": 10 },
+        "multipleOf": {
+          "side": "right",
+          "value": 10
+        },
         "operation": "multiply"
       }
     ]
@@ -17457,15 +17843,21 @@
     "understood": "{self} {relation}.",
     "claim": " {subject} {relation} {object}.",
     "compare": " {subject} is {relation} than {object}.",
-    "affirm": "Yes. ✅{meaning}",
-    "deny": "No. ❌",
+    "affirm": "Yes. \u2705{meaning}",
+    "deny": "No. \u274c",
     "answer": "{meaning}",
     "unsure": "{self} don't {relation}.",
-    "empathy": "Sorry. 😔",
-    "glad": "Good. 🙂",
+    "empathy": "Sorry. \ud83d\ude14",
+    "glad": "Good. \ud83d\ude42",
     "unheard": "{self} don't {relation} \"{meaning}\".",
     "unknown": "I don't understand.",
-    "agree": "Ok."
+    "agree": "Ok.",
+    "farewell": "Goodbye!",
+    "thank": "Thank you.",
+    "apologize": "I'm sorry.",
+    "request": "Please.",
+    "offer": "Would you like {meaning}?",
+    "compliment": "That's nice."
   },
   "grammar": {
     "start": "sentence",
@@ -17507,7 +17899,8 @@
           "modal subject verb",
           "interrogative verb article noun verbComplement",
           "function preposition subject",
-          "subject auxiliary verb subject"
+          "subject auxiliary verb subject",
+          "there predicate"
         ]
       },
       "clause": {
@@ -17660,6 +18053,26 @@
           "numeral noun",
           "interrogative",
           "interrogative quantifier noun"
+        ]
+      },
+      "existential": {
+        "rules": [
+          "there predicate"
+        ]
+      },
+      "comparative": {
+        "rules": [
+          "degree adjective"
+        ]
+      },
+      "passive": {
+        "rules": [
+          "subject auxiliary verb preposition subject"
+        ]
+      },
+      "imperative": {
+        "rules": [
+          "verb"
         ]
       }
     }
