@@ -188,6 +188,27 @@ test("relation asymmetry is world data, not a relation name", () => {
   assertEquals(w.asymmetric(3), false);
 });
 
+test("a symmetric relation reads positive and negative facts from either end", () => {
+  const RELATED = 2;
+  const w = fromWorldData({
+    relations: { is: IS },
+    terms: [
+      { id: IS, name: "is", links: [] },
+      { id: RELATED, name: "unlabelled relation", symmetric: true, links: [] },
+      { id: 3, name: "a", links: [{ rel: RELATED, to: 4 }] },
+      { id: 4, name: "b", links: [] },
+      { id: 5, name: "c", links: [{ rel: RELATED, to: 6, not: true }] },
+      { id: 6, name: "d", links: [] },
+    ],
+  });
+  assertEquals(w.symmetric(RELATED), true);
+  assertEquals(w.isA(4, 3, RELATED), true, "one positive edge is readable backwards");
+  assertEquals(w.linked(4, RELATED), [3], "answers can leave from either endpoint");
+  assertEquals(w.members(3, RELATED), [4], "answers can arrive at either endpoint");
+  assertEquals(w.denies(6, 5, RELATED), true, "a denial is the same proposition backwards");
+  assertEquals(w.symmetric(IS), false);
+});
+
 test("transitive relations compose facts written through a converse", () => {
   const BEFORE = 2;
   const AFTER = 3;

@@ -2370,8 +2370,13 @@ function forced(thing, had, relation, world) {
 // stand `different` and the brain reads that pair either way about.
 function bothWays(relation, world) {
   const a = world.anchors || {};
-  if (a.converse == null || relation == null) return [];
-  return [...world.linked(relation, a.converse), ...world.members(relation, a.converse)];
+  if (relation == null) return [];
+  const ways = new Set(world.symmetric(relation) ? [relation] : []);
+  if (a.converse != null) {
+    for (const other of world.linked(relation, a.converse)) ways.add(other);
+    for (const other of world.members(relation, a.converse)) ways.add(other);
+  }
+  return [...ways];
 }
 
 // The relations the world says are a different one from this. Two things
@@ -4171,6 +4176,29 @@ function learningConflict(world, learned) {
         fact.quantity !== link.quantity
       ) return `term ${term.id} gives ${key} two quantities`;
       facts.set(key, link);
+    }
+  }
+
+  for (const relation of terms.values()) {
+    if (!relation.symmetric) continue;
+    const facts = new Map();
+    for (const term of terms.values()) {
+      for (const link of term.links || []) {
+        if (link.rel !== relation.id) continue;
+        const ends = term.id <= link.to ? [term.id, link.to] : [link.to, term.id];
+        const key = `${ends[0]}:${ends[1]}:${link.at ?? ''}`;
+        const fact = facts.get(key);
+        if (fact && Boolean(fact.not) !== Boolean(link.not)) {
+          return `symmetric relation ${relation.id} both holds and denies ${key}`;
+        }
+        if (
+          fact &&
+          fact.quantity !== undefined &&
+          link.quantity !== undefined &&
+          fact.quantity !== link.quantity
+        ) return `symmetric relation ${relation.id} gives ${key} two quantities`;
+        facts.set(key, link);
+      }
     }
   }
 

@@ -508,6 +508,7 @@ on, not even for not knowing.
   "terms": [
     { "id": 10, "name": "organism", "links": [{ "rel": 294, "to": 6 }] },
     { "id": 83, "name": "cat",      "links": [{ "rel": 294, "to": 24 }] },
+    { "id": 250, "name": "same", "symmetric": true, "links": [{ "rel": 294, "to": 4 }] },
     { "id": 249, "name": "order", "transitive": true, "links": [{ "rel": 294, "to": 4 }] },
     { "id": 2821, "name": "before", "transitive": true, "asymmetric": true,
       "links": [{ "rel": 294, "to": 249 }, { "rel": 590, "to": 2822 }] },
@@ -522,14 +523,18 @@ compared only for equality — that is what keeps the world language-neutral.
 Two language files may point at the same term (`cat` / `chat` -> `83`) and the
 brain reasons identically over both.
 
-`transitive: true` and `asymmetric: true` are semantic world knowledge about a
-relation term, not properties inferred from its name. An asymmetric relation
-may not relate a term to itself or hold in both directions; when also transitive,
-it may contain no cycle of any length. Ids, term values, quantities and logical times
-must be safe JSON integers; larger signal values remain exact strings rather
-than entering numeric world fields. Links may additionally carry `not`,
-`quantity` and deterministic logical time `at`; opposite polarities and
-same-time quantity disagreements are invalid knowledge.
+`transitive: true`, `symmetric: true` and `asymmetric: true` are semantic world
+knowledge about a relation term, not properties inferred from its name. One
+edge of a symmetric relation is read from either endpoint, including an explicit
+denial; mirrored authored edges are one proposition and may not disagree in
+polarity or same-moment quantity. A relation cannot be both symmetric and
+asymmetric. An asymmetric relation may not relate a term to itself or hold in
+both directions; when also transitive, it may contain no cycle of any length.
+Ids, term values, quantities and logical times must be safe JSON integers;
+larger signal values remain exact strings rather than entering numeric world
+fields. Links may additionally carry `not`, `quantity` and deterministic
+logical time `at`; opposite polarities and same-time quantity disagreements are
+invalid knowledge.
 
 ### Grammar semantics
 

@@ -431,6 +431,15 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Relations can now declare symmetry as world knowledge.** A relation term
+  marked `symmetric: true` makes one positive or negative edge readable from
+  either endpoint without storing a duplicate mirror. Truth checks, open-ended
+  answers, inherited claims and converse handling share the characteristic;
+  mirrored facts with conflicting polarity or quantity are rejected. `same`
+  and `different` now carry the justified declaration. Source merging, shape
+  validation, SQLite schema migration and round-trip persistence preserve it,
+  with opaque relation tests proving no relation name is inspected.
+
 - **Primitive coverage now has an audited, dependency-ordered roadmap.**
   `PRIMITIVES.md` distinguishes implemented inference from vocabulary-only
   concepts across identity, classification, relations, propositions,

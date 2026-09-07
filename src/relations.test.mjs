@@ -7,6 +7,7 @@ import { fromSources } from "./knowledge.js";
 // walked the same way.
 const IS = 90;
 const PART = 91;
+const MEETS = 92;
 const worldData = {
   anchors: { thing: 1, relation: 2 },
   relations: { is: IS },
@@ -15,7 +16,8 @@ const worldData = {
     { id: 2, name: "relation", links: [] },
     { id: 90, name: "is", links: [{ rel: IS, to: 2 }] },
     { id: 91, name: "part", links: [{ rel: IS, to: 2 }] },
-    { id: 10, name: "bird", links: [{ rel: IS, to: 1 }] },
+    { id: 92, name: "meeting", symmetric: true, links: [{ rel: IS, to: 2 }] },
+    { id: 10, name: "bird", links: [{ rel: IS, to: 1 }, { rel: MEETS, to: 12 }] },
     { id: 11, name: "wing", links: [{ rel: IS, to: 1 }, { rel: PART, to: 10 }] },
     { id: 12, name: "stone", links: [{ rel: IS, to: 1 }] },
   ],
@@ -30,6 +32,7 @@ const langData = {
     stone: { pos: "noun", meaning: "stone", concept: 12 },
     is: { pos: "verb", meaning: "is", concept: 90 },
     parts: { pos: "verb", meaning: "part of", concept: 91 },
+    meets: { pos: "verb", meaning: "meets", concept: 92 },
   },
   grammar: {
     start: "sentence",
@@ -74,6 +77,13 @@ test("an ordinary relation may be learned independently in both directions", () 
   assertEquals(result.learned.terms, [
     { id: 10, name: "bird", links: [{ rel: PART, to: 11 }] },
   ]);
+});
+
+test("a declared symmetric relation entails its reverse without a duplicate fact", () => {
+  const result = brainFrom("stone meets bird", knowledge);
+  assertEquals(result.expression.name, "understood");
+  assertEquals(truth("stone meets bird").name, "held");
+  assertEquals(result.learned, null);
 });
 
 test("a term reached by one relation is not reached by another", () => {

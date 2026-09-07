@@ -157,6 +157,7 @@ function merge(world, sources) {
         if (t.disjoint) kept.disjoint = true;
         if (t.transitive) kept.transitive = true;
         if (t.asymmetric) kept.asymmetric = true;
+        if (t.symmetric) kept.symmetric = true;
         terms.set(t.id, kept);
         origin.set(t.id, where);
         continue;
@@ -193,6 +194,12 @@ function merge(world, sources) {
           throw new Error(`${where}: term ${t.id} was already marked differently for asymmetry`);
         }
         held.asymmetric = t.asymmetric;
+      }
+      if (t.symmetric !== undefined) {
+        if (held.symmetric !== undefined && held.symmetric !== t.symmetric) {
+          throw new Error(`${where}: term ${t.id} was already marked differently for symmetry`);
+        }
+        held.symmetric = t.symmetric;
       }
       for (const l of t.links) {
         // A link is the same one only if it was set at the same time. A later

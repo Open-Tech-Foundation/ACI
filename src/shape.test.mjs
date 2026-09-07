@@ -490,3 +490,24 @@ test("asymmetric relations reject invalid declarations and cycles", () => {
   converseCycle.terms[2].links.push({ rel: 5, to: 4 });
   assert(refuses("a cycle stated through a converse", { world: converseCycle }).includes("both ways"));
 });
+
+test("symmetric relations reject invalid declarations and mirrored contradictions", () => {
+  const relation = (symmetric, links = []) => ({
+    relations: { is: 1 },
+    terms: [
+      { id: 1, name: "is", links: [] },
+      { id: 2, name: "undirected", symmetric, links: [] },
+      { id: 3, name: "a", links },
+      { id: 4, name: "b", links: [] },
+    ],
+  });
+  assert(refuses("false symmetry", { world: relation(false) }).includes("symmetric"));
+
+  const impossible = relation(true, [{ rel: 2, to: 4 }]);
+  impossible.terms[3].links.push({ rel: 2, to: 3, not: true });
+  assert(refuses("opposite mirrored polarity", { world: impossible }).includes("holds and denies"));
+
+  const both = relation(true);
+  both.terms[1].asymmetric = true;
+  assert(refuses("symmetric and asymmetric", { world: both }).includes("cannot be both"));
+});

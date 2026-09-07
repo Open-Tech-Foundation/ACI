@@ -7,7 +7,7 @@ const world = {
   relations: { is: IS },
   terms: [
     { id: 1, name: "thing", links: [], disjoint: true, asymmetric: true },
-    { id: 2, name: "relation", links: [] },
+    { id: 2, name: "relation", links: [], symmetric: true },
     { id: IS, name: "is", links: [{ rel: IS, to: 2 }] },
     { id: 20, name: "cart", links: [{ rel: IS, to: 1 }] },
     { id: 21, name: "load", links: [{ rel: IS, to: 1 }, { rel: IS, to: 20, quantity: 3, at: 0 }] },
@@ -30,6 +30,7 @@ test("a world put in comes back exactly as it went", async () => {
   assertEquals(back.terms.find((t) => t.id === 22).value, 4);
   assert(back.terms.find((t) => t.id === 1).disjoint);
   assert(back.terms.find((t) => t.id === 1).asymmetric);
+  assert(back.terms.find((t) => t.id === 2).symmetric);
   assertEquals(back.terms.find((t) => t.id === 21).links, world.terms[4].links);
 });
 

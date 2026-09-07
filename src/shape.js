@@ -55,7 +55,7 @@ export function checkWorld(data, where = 'world') {
   for (const t of data.terms) {
     const at = `${where} term ${JSON.stringify(t && t.id)}`;
     if (!t || typeof t !== 'object') fail(where, 'every term must be an object');
-    onlyKeys(t, ['id', 'name', 'links', 'value', 'individual', 'disjoint', 'transitive', 'asymmetric', 'symbol'], at);
+    onlyKeys(t, ['id', 'name', 'links', 'value', 'individual', 'disjoint', 'transitive', 'asymmetric', 'symmetric', 'symbol'], at);
     if (!isId(t.id)) fail(at, 'id must be a non-negative integer');
     if (typeof t.name !== 'string' || t.name === '') fail(at, 'name must be a non-empty string');
     if (byId.has(t.id)) fail(at, 'duplicate id');
@@ -81,6 +81,12 @@ export function checkWorld(data, where = 'world') {
     }
     if (t.asymmetric !== undefined && t.asymmetric !== true) {
       fail(at, 'asymmetric, where present, must be true');
+    }
+    if (t.symmetric !== undefined && t.symmetric !== true) {
+      fail(at, 'symmetric, where present, must be true');
+    }
+    if (t.symmetric && t.asymmetric) {
+      fail(at, 'a relation cannot be both symmetric and asymmetric');
     }
     if (t.value !== undefined && !Number.isSafeInteger(t.value)) {
       fail(at, 'value must be a safe whole number — it is what the term names, not a label');
@@ -210,6 +216,32 @@ export function checkWhole(data, origin = null, where = 'world') {
       visited.add(id);
     };
     for (const id of edges.keys()) visit(id);
+  }
+
+  // A symmetric edge and its mirror are one proposition. If both are
+  // authored, their polarity and same-moment quantity must agree.
+  for (const relation of data.terms.filter((term) => term.symmetric)) {
+    const facts = new Map();
+    for (const term of data.terms) {
+      for (const link of term.links) {
+        if (link.rel !== relation.id) continue;
+        const ends = term.id <= link.to ? [term.id, link.to] : [link.to, term.id];
+        const key = `${ends[0]}:${ends[1]}:${link.at ?? ''}`;
+        const held = facts.get(key);
+        if (held && Boolean(held.not) !== Boolean(link.not)) {
+          fail(`${from(term.id)} term ${term.id}`, `symmetric relation ${relation.id} both holds and denies ${key}`);
+        }
+        if (
+          held &&
+          held.quantity !== undefined &&
+          link.quantity !== undefined &&
+          held.quantity !== link.quantity
+        ) {
+          fail(`${from(term.id)} term ${term.id}`, `symmetric relation ${relation.id} gives ${key} two quantities`);
+        }
+        facts.set(key, link);
+      }
+    }
   }
 
   // An asymmetric relation can never lead back to where it began. For a

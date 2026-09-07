@@ -74,6 +74,9 @@ export function fromWorldData(data) {
   // both directions. The world supplies the converse relation and names none.
   function related(id, rel) {
     const out = new Set(outgoing.get(rel)?.get(id) || []);
+    if (terms.get(rel)?.symmetric) {
+      for (const from of incoming.get(rel)?.get(id) || []) out.add(from);
+    }
     for (const other of converseBy.get(rel) || []) {
       for (const from of incoming.get(other)?.get(id) || []) out.add(from);
     }
@@ -157,11 +160,14 @@ export function fromWorldData(data) {
     // kind, where `linked` gives what a term is a member of.
     members: (id, rel) => {
       if (id == null || rel == null) return [];
-      const out = [];
+      const out = new Set();
       for (const t of terms.values()) {
-        if ((t.links || []).some((l) => !l.not && l.rel === rel && l.to === id)) out.push(t.id);
+        if ((t.links || []).some((l) => !l.not && l.rel === rel && l.to === id)) out.add(t.id);
       }
-      return out;
+      if (terms.get(rel)?.symmetric) {
+        for (const target of outgoing.get(rel)?.get(id) || []) out.add(target);
+      }
+      return [...out];
     },
     // The value a term names, and the term that names a value. This is the
     // whole of the world's part in arithmetic: which symbol is which number.
@@ -187,7 +193,13 @@ export function fromWorldData(data) {
     denies: (id, object, rel) => {
       const t = terms.get(id);
       if (!t || rel == null) return false;
-      return (t.links || []).some((l) => l.not && l.rel === rel && l.to === object);
+      if ((t.links || []).some((l) => l.not && l.rel === rel && l.to === object)) return true;
+      const other = terms.get(object);
+      return Boolean(
+        terms.get(rel)?.symmetric &&
+        other &&
+        (other.links || []).some((l) => l.not && l.rel === rel && l.to === id),
+      );
     },
     // A kind names many; an individual exists once. Everything else about a term
     // is the same either way — an individual simply `is` its kind.
@@ -199,6 +211,9 @@ export function fromWorldData(data) {
     // property, never the relation's name: temporal order and any other strict
     // ordering receive the same contradiction semantics.
     asymmetric: (rel) => Boolean(terms.get(rel)?.asymmetric),
+    // Symmetry is likewise a property of the relation term. One authored fact
+    // can therefore be read from either endpoint without storing its mirror.
+    symmetric: (rel) => Boolean(terms.get(rel)?.symmetric),
     individualsOf: (kind) => {
       const out = [];
       for (const t of terms.values()) {
@@ -277,7 +292,11 @@ export function fromWorldData(data) {
         const top = Math.max(...links.map((l) => l.at ?? -1));
         links = links.filter((l) => (l.at ?? -1) === top);
       }
-      return [...new Set(links.map((l) => l.to))];
+      const found = new Set(links.map((l) => l.to));
+      if (terms.get(rel)?.symmetric) {
+        for (const from of incoming.get(rel)?.get(id) || []) found.add(from);
+      }
+      return [...found];
     },
     // Does `id` reach `ancestorId` by following `rel` (the `is` relation by
     // default)? The relation is a term like any other, so a signal can name it.
