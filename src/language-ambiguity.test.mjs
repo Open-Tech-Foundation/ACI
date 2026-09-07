@@ -36,6 +36,23 @@ function grammatical(name, rule) {
   };
 }
 
+function lexical(name, knowsEntity) {
+  return {
+    name,
+    symbols: { letter: { characters: "abcdefghijklmnopqrstuvwxyz" } },
+    unknown: { pos: "entity" },
+    words: {
+      ...(knowsEntity ? { mira: { pos: "entity", meaning: "mira" } } : {}),
+      ...(!knowsEntity ? { rim: { pos: "entity", meaning: "rim" } } : {}),
+      acts: { pos: "action", meaning: "acts" },
+    },
+    grammar: {
+      start: "sentence",
+      rules: { sentence: { rules: ["entity action"] } },
+    },
+  };
+}
+
 function branch(root, kind) {
   return (root.branch || []).find((part) => part.kind === kind) || null;
 }
@@ -116,4 +133,44 @@ test("equally grammatical readings remain ambiguous", () => {
   assert(
     result.phases.understand.every((root) => branch(root, "language").name === "ambiguous"),
   );
+});
+
+test("complete lexical meaning resolves an equal grammar tie", () => {
+  const known = lexical("known", true);
+  const unnamed = lexical("unnamed", false);
+
+  for (const languages of [[known, unnamed], [unnamed, known]]) {
+    const result = brainFrom("mira acts", fromSources({ languages }));
+    assertEquals(result.roots.length, 1);
+    assertEquals(result.roots[0].kind, "sentence");
+    for (const root of result.phases.understand) {
+      const language = branch(root, "language");
+      assertEquals(language.name, "known");
+      assertEquals(language.state.resolution.by, "meaning");
+    }
+  }
+});
+
+test("existing world concepts resolve an equal meaning tie", async () => {
+  const english = await file(new URL('../languages/en.json', import.meta.url).pathname).json();
+  const world = await file(new URL('../data/world.json', import.meta.url).pathname).json();
+  const grounded = structuredClone(english);
+  grounded.name = "grounded";
+  const absent = structuredClone(english);
+  absent.name = "absent";
+  absent.words.stone.concept = 999999;
+
+  for (const languages of [[grounded, absent], [absent, grounded]]) {
+    const result = brainFrom(
+      "a stone is warm?",
+      fromSources({ world, languages }),
+    );
+    assertEquals(result.learned, null);
+    assertEquals(result.expression.state.mood, "ask");
+    for (const root of result.phases.understand) {
+      const language = branch(root, "language");
+      assertEquals(language.name, "grounded");
+      assertEquals(language.state.resolution.by, "world");
+    }
+  }
 });

@@ -308,9 +308,15 @@ order, on a `language` node named `ambiguous`. Such a signal supplies no
 shared language-specific sound, vocabulary, question convention, expression or
 learnable claim. Each candidate may be thought and parsed independently because
 those operations change no world. If exactly one candidate's grammar consumes
-the complete signal, it becomes the reading; zero parses or a tie remain
-ambiguous. A selected language node records the `grammar` resolution and all
-candidate token sequences, so the evidence is visible in the returned tree.
+the complete signal, it becomes the reading. Otherwise complete known meaning
+is tested: every token must be a declared word, readable figure or name already
+held in the world. If meanings still tie, a candidate is world-grounded only
+when every concept it references exists in the supplied world; words that do
+not refer to a concept need no world term. Each gate selects only one survivor,
+and no survivors proves nothing. A tie after every available gate remains
+ambiguous. A selected language node records whether `grammar`, `meaning` or
+`world` resolved it and retains all candidate token sequences, so the evidence
+is visible in the returned tree.
 
 **A symbol set may say its symbols stand alone**: `"alone": true`. Those are
 words wherever they fall, so `1+1` comes apart into three and `cat` does not
@@ -867,9 +873,11 @@ Climbs a fixed ladder:
   explicit candidates and none is selected merely because it was loaded first.
 - `resolveLanguageReading(input, reading, langs, at, world)` — independently
   thinks and grammar-parses every complete candidate without judging or
-  learning. Exactly one whole parse selects its language and records
-  `resolution: { by: "grammar", candidates }`; no whole parse or several whole
-  parses preserve the ambiguity.
+  learning. Ordered elimination gates test whole grammar, complete known meaning
+  and then existing world concepts. A gate with one survivor selects it and
+  records `resolution: { by: "grammar" | "meaning" | "world", candidates }`; a
+  gate with no survivors proves nothing, while a tie advances to the next gate.
+  A final tie preserves the ambiguity.
 - `existence(signal)` — `void` if the signal is empty or nothing but space; else
   **one root per perceived token**. Whitespace separates tokens, and the chosen
   language alone may split its standalone symbols or remove its edge marks. A

@@ -81,24 +81,68 @@ function signalReading(input, langs) {
   return { candidates };
 }
 
-// Grammar is admissible disambiguating evidence because it belongs to each
-// candidate language and can be tested without judging or learning anything.
-// Only one candidate consuming the whole signal is a decision; no parse or a
-// tie preserves the original ambiguity.
+// Candidate evidence is tested from strongest structural constraint to
+// grounding: a complete grammar parse, complete known meaning, then concepts
+// that exist in the supplied world. These are elimination gates, never scores.
+// A gate with no survivors proves nothing; a tie moves to the next gate; only
+// one survivor is a decision. None of this judges or learns the candidate.
 function resolveLanguageReading(input, reading, langs, at, world) {
   if (!reading || !reading.candidates) return reading;
-  const coherent = reading.candidates.filter((candidate) => {
+  const considered = reading.candidates;
+  const trials = considered.map((candidate) => {
     const perceived = understand(input, langs, candidate);
     const thought = think(perceived, langs, at, world);
     const structured = structurePhrase(thought, langs);
-    return structured.length === 1 && !['thing', 'void'].includes(structured[0].kind);
+    return {
+      candidate,
+      thought,
+      grammatical: structured.length === 1 && !['thing', 'void'].includes(structured[0].kind),
+    };
   });
-  if (coherent.length !== 1) return reading;
+  let possible = trials;
+  const grammatical = possible.filter((trial) => trial.grammatical);
+  if (grammatical.length === 1) return resolvedReading(grammatical[0], considered, 'grammar');
+  if (grammatical.length > 1) possible = grammatical;
+
+  const meaningful = possible.filter((trial) => completeMeaning(trial.thought));
+  if (meaningful.length === 1) return resolvedReading(meaningful[0], considered, 'meaning');
+  if (meaningful.length > 1) possible = meaningful;
+
+  if (world) {
+    const grounded = possible.filter((trial) => completeGrounding(trial.thought, world));
+    if (grounded.length === 1) return resolvedReading(grounded[0], considered, 'world');
+  }
+  return reading;
+}
+
+function resolvedReading(trial, candidates, resolvedBy) {
   return {
-    ...coherent[0],
-    candidates: reading.candidates,
-    resolvedBy: 'grammar',
+    ...trial.candidate,
+    candidates,
+    resolvedBy,
   };
+}
+
+function thoughtWays(root) {
+  const thought = findBranch(root, 'thought');
+  if (!thought) return [];
+  return thought.state.ways || [thought.state.thought];
+}
+
+function completeMeaning(roots) {
+  return roots.length > 0 && roots.every((root) => (
+    thoughtWays(root).some((thought) => thought && thought.wordKnown)
+  ));
+}
+
+function completeGrounding(roots, world) {
+  return completeMeaning(roots) && roots.every((root) => (
+    thoughtWays(root).some((thought) => (
+      thought && thought.wordKnown && (
+        thought.concept == null || world.term(thought.concept) != null
+      )
+    ))
+  ));
 }
 
 function compareText(a, b) {

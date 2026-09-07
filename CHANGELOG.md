@@ -6,11 +6,20 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Known meaning and world grounding can resolve a grammar tie.** After
+  structural filtering, the brain now retains candidates whose every token is
+  a declared word, readable figure or already known name; exactly one complete
+  meaning selects its language. If meanings still tie, exactly one candidate
+  whose referenced concepts exist in the supplied world is selected. These are
+  ordered elimination gates rather than scores, and their decisions are
+  recorded as `resolution.by: meaning` or `world`. Reversed-order E2E tests use
+  an entity/action signal and an entity/relation/property question.
+
 - **A uniquely coherent grammar can resolve language ambiguity.** Competing
   whole-signal readings are now thought and parsed independently without
   judging or learning them. A language is selected only when its grammar alone
-  consumes the complete signal; zero successful parses or several successful
-  parses remain explicitly ambiguous. The chosen language node records
+  consumes the complete signal; zero or several successful parses proceed to
+  later evidence without an arbitrary choice. The chosen language node records
   `resolution.by: grammar` and every candidate token sequence, making the
   decision inspectable and independent of source order. Tests cover a unique
   parse, reversed language order, an equal-parse tie and a zero-parse tie.
