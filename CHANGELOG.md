@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A bare recognized entity now establishes conversational focus.** Topic
+  tracking previously considered only claims, answers, learned state and events,
+  so `honey` was recognized but a following `what is it?` had nothing to point
+  at. `spokenOf()` now accepts the solved entity branch of one bare thing as the
+  topic, without inferring from part of speech. Actions, properties, unknown
+  signals and signals naming several things still establish no guessed topic.
+  Tests cover `honey` followed by the pointer question and prove a later greeting
+  does not replace that entity focus.
+
 - **Language ambiguity now exposes evidence elimination.** Resolution gates
   previously narrowed candidates internally but an unresolved ambiguity still
   reported every original reading, including ones current evidence had already

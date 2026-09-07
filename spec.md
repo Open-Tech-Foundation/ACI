@@ -662,11 +662,16 @@ on, so a state taken in points at the one thing bearing it, not at its kind.
 One thing offered several facts is still one thing spoken of; several things
 offered facts together leave no one of them to point back at, and the brain
 does not pick. A signal it could make nothing of says nothing about what was
-spoken of, and what stood before it still stands.
+spoken of, and what stood before it still stands. One bare word whose solved
+tree contains an `entity` branch establishes that entity directly as the topic;
+this follows world classification rather than a language part of speech. A bare
+action, property or unknown word does not replace the earlier topic.
 
 ```
 > a cupboard has three cup and two plate    I understand.
 > it has how many plates?                   two
+> honey                                     I recognise "honey".
+> what is it?                               food
 ```
 
 The brain keeps none of this. Holding the thread is the runtime's act, and

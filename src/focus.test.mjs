@@ -3,6 +3,22 @@ import { openBrain } from "./index.js";
 
 const { brain, forget } = openBrain("sqlite::memory:");
 
+test("a bare recognized entity becomes the conversation topic", async () => {
+  await forget();
+  const named = await brain("honey");
+  assertEquals(named.spoken, 401);
+  assertEquals((await brain("what is it?")).expression.state.says, "food");
+  await forget();
+});
+
+test("a bare action does not replace an established entity topic", async () => {
+  await forget();
+  await brain("honey");
+  await brain("hi");
+  assertEquals((await brain("what is it?")).expression.state.says, "food");
+  await forget();
+});
+
 test("it on speaker-side focus stands for what is held", async () => {
   await forget();
   const told = await brain("i have 3 chocolates", { from: 26 });

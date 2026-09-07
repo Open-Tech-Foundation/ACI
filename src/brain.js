@@ -4125,7 +4125,16 @@ function spokenOf(roots, at, world) {
     (n.branch || []).forEach(walk);
   };
   roots.forEach(walk);
-  const found = took.length > 0 ? took : stood;
+  // A bare word that the world establishes as one thing is itself what was
+  // spoken of. This is perception, not a guessed noun rule: the solved entity
+  // branch is what proves it is a thing. Actions, properties, unknown words and
+  // signals naming several things establish no new single topic.
+  const perceived = [];
+  if (roots[0].kind === 'thing') {
+    const entity = findBranch(roots[0], 'entity');
+    if (entity && entity.state.concept != null) keep(perceived, entity.state.concept);
+  }
+  const found = took.length > 0 ? took : stood.length > 0 ? stood : perceived;
   if (found.length === 0) return at.spoken;
   return found.length === 1 ? found[0] : null;
 }
