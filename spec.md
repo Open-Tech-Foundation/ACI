@@ -300,6 +300,14 @@ One language must recognize every resulting token while preserving every
 Unicode letter and number in the raw signal. Otherwise the signal is not pieced
 together from several partial languages; it remains language-unrecognized.
 
+Exactly one complete reading is required before language-specific perception
+or thought may proceed. If several languages each read the whole signal, none
+receives an implicit priority from file or source order. Their names and their
+possibly different token sequences are retained, in canonical language-name
+order, on a `language` node named `ambiguous`. Such a signal supplies no
+language-specific sound, vocabulary, grammar, question convention, expression
+or learnable claim until later evidence can select one reading.
+
 **A symbol set may say its symbols stand alone**: `"alone": true`. Those are
 words wherever they fall, so `1+1` comes apart into three and `cat` does not
 come apart at all.
@@ -848,10 +856,11 @@ shape check is not kept.
 
 Climbs a fixed ladder:
 
-- `signalReading(input, langs)` — tries tokenization under each language in
-  stable load order. The first language that recognizes every token without
+- `signalReading(input, langs)` — tries tokenization under each language
+  independently. Exactly one language that recognizes every token without
   dropping a raw letter or number supplies the complete reading. No match means
-  no language-specific tokenization or later borrowing.
+  no language-specific tokenization or later borrowing. Several matches remain
+  explicit candidates and none is selected merely because it was loaded first.
 - `existence(signal)` — `void` if the signal is empty or nothing but space; else
   **one root per perceived token**. Whitespace separates tokens, and the chosen
   language alone may split its standalone symbols or remove its edge marks. A
@@ -868,6 +877,9 @@ Climbs a fixed ladder:
   ```js
   { lang, word: { text, pos, meaning, concept } | null, roles: [...] }
   ```
+  A competing whole-signal reading instead records
+  `{ matches: [], candidates: [{ lang, tokens }] }` under a language node named
+  `ambiguous`; no candidate becomes a thought.
 - `moodOf(input, roots, langs)` — asks only when the last raw symbol belongs to
   the recognized language's `symbols.question` set; otherwise tells. Loaded
   language order cannot lend another language's punctuation to this signal.

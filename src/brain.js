@@ -23,8 +23,8 @@ function node(kind, name, branch = [], state = {}) {
 // ---------------------------------------------------------------------------
 function understand(input, langs) {
   const reading = signalReading(input, langs);
-  const language = reading ? [reading.language] : [];
-  let roots = existence(input, reading ? reading.tokens : null);
+  const language = reading && reading.language ? [reading.language] : [];
+  let roots = existence(input, reading && reading.language ? reading.tokens : null);
 
   roots = thing(roots);
   roots = quality(roots, language);
@@ -32,6 +32,7 @@ function understand(input, langs) {
   roots = symbol(roots);
 
   roots = recognizeLanguage(roots, language);
+  roots = recordLanguageAmbiguity(roots, reading);
 
   return roots;
 }
@@ -53,12 +54,14 @@ function existence(signal, tokens) {
 // Read a whole signal under one language's symbol conventions. Tokenization is
 // part of a language: a symbol that stands alone in one may be inside a word in
 // another, and one language's mark may be another's letter. Trying each loaded
-// language independently keeps those conventions from leaking across. File
-// order is stable, so an inherently ambiguous signal is resolved the same way
-// every time; no complete reading means no language is guessed token by token.
+// language independently keeps those conventions from leaking across. Source
+// order supplies no priority: no complete reading means no language is guessed
+// token by token, while more than one is knowledge but not grounds for choosing
+// one. Every candidate is preserved and none is allowed to drive thought.
 function signalReading(input, langs) {
   const raw = toString(input);
   if (raw.trim() === '') return null;
+  const candidates = [];
   for (const language of langs || []) {
     const tokens = tokenize(raw, [language]);
     // Edge marks may come away, but no language may obtain a complete reading
@@ -69,10 +72,32 @@ function signalReading(input, langs) {
       tokens.length > 0 &&
       tokens.every((token) => recognizedBy(token, language))
     ) {
-      return { language, tokens };
+      candidates.push({ language, tokens });
     }
   }
-  return null;
+  if (candidates.length === 0) return null;
+  if (candidates.length === 1) return candidates[0];
+  candidates.sort((a, b) => compareText(a.language.data.name, b.language.data.name));
+  return { candidates };
+}
+
+function compareText(a, b) {
+  return a < b ? -1 : a > b ? 1 : 0;
+}
+
+// Keep every complete reading visible without pretending their token trees are
+// one tree. Until later evidence selects a candidate, an ambiguous signal has
+// no language-specific sounds, words, grammar, mood or learning behavior.
+function recordLanguageAmbiguity(roots, reading) {
+  if (!reading || !reading.candidates) return roots;
+  const candidates = reading.candidates.map(({ language, tokens }) => ({
+    lang: language.data.name,
+    tokens: [...tokens],
+  }));
+  return roots.map((root) => withBranch(root, [
+    ...root.branch,
+    node('language', 'ambiguous', [], { matches: [], candidates }),
+  ]));
 }
 
 function textualSymbols(value) {

@@ -6,6 +6,16 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Competing complete language readings no longer inherit file priority.**
+  The first loaded language previously won whenever several languages could
+  each recognize the entire signal. The brain now selects a language only when
+  exactly one complete reading exists. Competing readings are retained on an
+  explicit `language: ambiguous` node, including each language's own token
+  sequence in canonical language-name order, while language-specific sound,
+  vocabulary, grammar, question mood, expression and learning remain inactive.
+  Tests cover one-word versus three-word readings, reversed source order and
+  conflicting question conventions.
+
 - **Installed languages cannot alter another language's perception.**
   Tokenization previously combined standalone-symbol rules from every loaded
   language, while sound perception combined their vowel sets; one language
