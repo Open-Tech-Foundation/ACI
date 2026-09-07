@@ -19,6 +19,7 @@ function fail(where, why) {
 const MARKS = ['new', 'known', 'unknown', 'from', 'to', 'spoken', 'named', 'prior', 'idea'];
 const PERSONS = ['first', 'second', 'third'];
 const NUMBERS = ['singular', 'plural'];
+const ENTITY_CLASSES = ['living', 'nonliving'];
 const COGNITIVE_FUNCTIONS = [
   'condition',
   'determiner',
@@ -372,6 +373,21 @@ export function checkLanguage(data, where = 'language') {
   if (data.speech !== undefined) {
     if (!data.speech || typeof data.speech !== 'object') fail(at, 'speech must be an object');
     for (const [role, form] of Object.entries(data.speech)) {
+      // The refinements of an entity are brain primitives. A language may
+      // give each one words, but it may neither add another refinement nor
+      // leave a malformed label for the brain to interpret.
+      if (role === 'classification') {
+        if (!form || typeof form !== 'object' || Array.isArray(form)) {
+          fail(`${at} speech "${role}"`, 'must be an object');
+        }
+        onlyKeys(form, ENTITY_CLASSES, `${at} speech "${role}"`);
+        for (const [kind, said] of Object.entries(form)) {
+          if (typeof said !== 'string' || said === '') {
+            fail(`${at} speech "${role}" ${kind}`, 'must be a non-empty string');
+          }
+        }
+        continue;
+      }
       // A word that agrees with what follows it gives its forms instead: which
       // symbol set calls for which, and what it says otherwise.
       if (form && typeof form === 'object') {
@@ -485,7 +501,7 @@ function checkWord(info, w) {
   if (!info || typeof info !== 'object' || Array.isArray(info)) fail(w, 'must be an object');
   onlyKeys(
     info,
-    ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'person', 'number', 'on', 'bare', 'choice', 'proximity', 'select', 'functions'],
+    ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'person', 'number', 'on', 'bare', 'choice', 'proximity', 'select', 'functions', 'classifies'],
     w,
   );
   // A word may be more than one part of speech — English says a walk and
@@ -498,6 +514,9 @@ function checkWord(info, w) {
   if (typeof info.meaning !== 'string') fail(w, 'meaning must be a string');
   checkFunctions(info.functions, w);
   if (info.concept !== undefined && !isId(info.concept)) fail(w, 'concept must be a term id');
+  if (info.classifies !== undefined && !ENTITY_CLASSES.includes(info.classifies)) {
+    fail(w, `classifies must be one of ${ENTITY_CLASSES.map((kind) => `"${kind}"`).join(', ')}`);
+  }
   checkSelection(info.select, w);
   // Which scale a word compares on: heavier is more, on weight. The word names
   // the comparing; the scale says what is being compared.

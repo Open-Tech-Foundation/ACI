@@ -109,6 +109,16 @@ function buildLanguage(data) {
       const next = String(word || '').trim().replace(/^\s+/, '')[0] ?? '';
       return agreeWith(forms, symbols, next);
     },
+    // Words for the brain's entity refinements. The classification is
+    // universal; how a language says it belongs entirely to that language.
+    classificationFor: (kind) => {
+      const forms = (data.speech || {}).classification;
+      return forms && typeof forms[kind] === 'string' ? forms[kind] : null;
+    },
+    // Exact declared words take precedence over symbols which otherwise stand
+    // alone. This lets a language own a compound without weakening arithmetic
+    // tokenization for text that is not one of its words.
+    hasWord: (word) => words.has(String(word).toLowerCase()),
     lookupWord: (w) => lookUp(words, data.derivations, w),
     functionsFor: (word) => {
       const held = new Set(word && word.functions != null

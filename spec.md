@@ -199,6 +199,9 @@ runtime — never the brain — does the reading.
     ],
     "who":   { "pos": "interrogative","meaning": "who",  "marks": "unknown", "concept": 138 }
   },
+  "speech": {
+    "classification": { "living": "living thing", "nonliving": "non-living thing" }
+  },
   "expressions": {                   // how this language voices each brain act
     "greet":      "Hello!",
     "count":      "It is {meaning}.",
@@ -226,7 +229,12 @@ runtime — never the brain — does the reading.
 Each word carries `pos` (part of speech), `meaning`, and optionally `concept` —
 the id of the world term it names. It may also carry `marks` (what it points at
 or says of its neighbour), `negates`, `role` (which part its neighbour plays),
-`when`, `select`, `functions`, `names`, `groups`, `person` and `number`.
+`when`, `select`, `functions`, `names`, `groups`, `person`, `number` and
+`classifies`. The last maps an alternative phrase to exactly one closed entity
+refinement, `living` or `nonliving`; it does not state that anything has that
+refinement. A language may say those results through the corresponding
+`speech.classification` entries. The core owns the two categories and derives
+them from the world; the language owns only their input and output forms.
 `select` chooses one reading from universal context constraints: `position`
 may be `first`; `before` may be `denial` or `proposition`; `after` may be
 `pointer`, `predicate` or `determiner`; and `across: "modifier"` permits a
@@ -296,6 +304,9 @@ that words are made of letters.
 Token boundaries are tested independently under each language. A standalone
 symbol from one installed language cannot split another language's word, and a
 character used by one cannot prevent another from removing it as an edge mark.
+An exact word declared by the candidate language remains one token even when it
+contains a symbol that otherwise stands alone. Thus English can declare
+`non-living`, while an undeclared `5-2` still becomes three arithmetic tokens.
 One language must recognize every resulting token while preserving every
 Unicode letter and number in the raw signal. Otherwise the signal is not pieced
 together from several partial languages; it remains language-unrecognized.
@@ -1196,6 +1207,17 @@ against all the rest, that one is the answer — `"which is smaller, 8 or 0"`
 answers `"zero"`, and takes nothing in. Where every pairing works out and none
 does, it is a tie, and the answer is neither of them. Told nothing it could
 not work, the parts are answered one apiece, as before.
+
+A choice may instead offer the brain's closed **entity refinements**. Each
+alternative carries a language-owned `classifies` label (`living` or
+`nonliving`), while the subject is the one entity already established as the
+conversation topic. The core recomputes that topic through `worldNode`, selects
+an alternative only when exactly one label equals the derived refinement, and
+returns an `answer: classification` without learning. The chosen language says
+it through `speech.classification`. With no focused entity, or a focused value
+that is not an entity, the choice stays understood but unanswered; it never
+falls through into claim learning. Renaming every word and parser symbol leaves
+the decision unchanged.
 
 **Judging and saying are separate acts.** Every verdict stays on the tree, but
 saying one twice says nothing the first did not: two that came out differently

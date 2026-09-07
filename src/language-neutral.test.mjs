@@ -92,3 +92,39 @@ test('an unknown name receives its parser position from language data', async ()
   assertEquals(result.expression.name, 'unknown');
   assertEquals(result.learned, null);
 });
+
+test('entity-class choice uses semantic labels under opaque words and parser symbols', async () => {
+  const { world, english } = await load();
+  const changed = structuredClone(english);
+  const rename = (from, to, meaning) => {
+    changed.words[to] = { ...changed.words[from], meaning };
+    delete changed.words[from];
+  };
+  rename('thing', 'forma', 'forma');
+  rename('or', 'vel', 'vel');
+  delete changed.words.living;
+  delete changed.words['non-living'];
+  changed.words.vita = {
+    pos: ['noun', 'classification'],
+    meaning: 'vita',
+    concept: 2720,
+    classifies: 'living',
+  };
+  changed.words.inert = {
+    pos: 'classification',
+    meaning: 'inert',
+    classifies: 'nonliving',
+  };
+  changed.speech.classification = { living: 'vita forma', nonliving: 'inert forma' };
+  const knowledge = fromSources({ world, languages: [renamedSyntax(changed)] });
+
+  const living = brainFrom('vita forma vel inert forma', knowledge, { spoken: 83 });
+  assertEquals(living.expression.name, 'answer');
+  assertEquals(living.expression.state.says, 'vita forma');
+  assertEquals(living.learned, null);
+
+  const nonliving = brainFrom('vita forma vel inert forma', knowledge, { spoken: 69 });
+  assertEquals(nonliving.expression.name, 'answer');
+  assertEquals(nonliving.expression.state.says, 'inert forma');
+  assertEquals(nonliving.learned, null);
+});

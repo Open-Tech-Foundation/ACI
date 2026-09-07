@@ -396,6 +396,19 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Focused entities can answer primitive classification choices.** A language
+  may mark alternative labels as the closed `living` and `nonliving` entity
+  refinements and provide its own speech for each. The core derives the current
+  topic's refinement from the world, selects exactly one offered alternative,
+  and learns nothing from the choice. `honey / living thing or non-living
+  thing` now answers `non-living thing`; `tree` answers `living thing`. With no
+  focused entity the understood choice remains unanswered instead of falling
+  through as an accidental assertion. Exact declared compounds take precedence
+  over an embedded standalone symbol, while undeclared arithmetic such as
+  `5-2` still tokenizes and evaluates normally. Shape, E2E, arithmetic and
+  opaque-language tests cover closed labels, both entity classes, missing
+  focus, output ownership and parser-symbol neutrality.
+
 - **The residue, where it fits.** tell, watch, put and stand happen, with
   told and stood before now; taken, given, thrown, sung and driven stand as
   the doing done (known names a state, and no machinery reads a state done to

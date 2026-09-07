@@ -355,6 +355,7 @@ function recognizeLanguage(roots, langs) {
         marks: word.marks ?? null,
         negates: word.negates ?? false,
         choice: word.choice ?? null,
+        classifies: word.classifies ?? null,
         role: word.role ?? null,
         when: word.when ?? null,
         names: word.names ?? null,
@@ -456,6 +457,7 @@ function think(roots, langs, at, world) {
       marks: word ? word.marks : null,
       negates: word ? word.negates : false,
       choice: word ? word.choice === true : false,
+      classifies: word ? word.classifies ?? null : null,
       role: word ? word.role : null,
       when: word ? word.when : null,
       names: word ? word.names : read ? false : null,
@@ -1284,6 +1286,12 @@ function judge(roots, world, mood, langs, sent) {
   collect(root);
 
   const a = world.anchors || {};
+
+  // A choice can ask which primitive refinement the current topic has. The
+  // language labels the offered alternatives; the world-derived entity node
+  // decides between them. No word, part of speech or term id is built in.
+  const classified = classificationChoice(said, world, sent);
+  if (classified) return [withBranch(root, [...root.branch, classified])];
 
   // A signal may give a name rather than make a claim: `x is 5` says what x
   // stands for from here on. A name belongs to the conversation, not to the
@@ -3199,6 +3207,47 @@ function choiceOn(n) {
   return Boolean(t && t.state.thought && t.state.thought.choice);
 }
 
+// Select exactly one offered entity refinement for the established topic.
+// An alternative is only a label for a closed primitive; classification itself
+// is recomputed from the world every time, so language data cannot dictate it.
+function classificationChoice(said, world, sent) {
+  if (!said.some(choiceOn)) return null;
+  const offered = said.map(classificationOn).filter((kind) => kind != null);
+  if (new Set(offered).size < 2) return null;
+  // The alternatives are understood, but without one established subject
+  // there is no fact to decide and no assertion to learn by accident.
+  if (!sent || sent.spoken == null) {
+    return node('answer', 'classification', [], {
+      subject: null,
+      relation: null,
+      found: [],
+      classification: null,
+    });
+  }
+  const entity = worldNode(sent.spoken, world);
+  if (!entity || entity.kind !== 'entity') {
+    return node('answer', 'classification', [], {
+      subject: sent.spoken,
+      relation: null,
+      found: [],
+      classification: null,
+    });
+  }
+  const matched = [...new Set(offered)].filter((kind) => kind === entity.name);
+  if (matched.length !== 1) return null;
+  return node('answer', 'classification', [], {
+    subject: sent.spoken,
+    relation: null,
+    found: [],
+    classification: matched[0],
+  });
+}
+
+function classificationOn(n) {
+  const thought = thoughtOf(n);
+  return thought ? thought.classifies ?? null : null;
+}
+
 // What a word says about the thing beside it, or about itself.
 function markOn(n) {
   const t = n ? findBranch(n, 'thought') : null;
@@ -3630,6 +3679,10 @@ function wholeMeaning(intent, parts) {
 // has three, and saying the first of them would be picking one. The words are
 // the language's, and so is what goes between them.
 function spoken(answer, langName, langs, world, written) {
+  if (answer.state.classification != null) {
+    const lang = (langs || []).find((candidate) => candidate.data.name === langName);
+    return lang ? lang.classificationFor(answer.state.classification) : null;
+  }
   const { found } = answer.state;
   const words = found.map((t) => termWord(t, langName, langs, world, written)).filter(Boolean);
   // In an open world, finding no relation is lack of evidence rather than
@@ -4419,6 +4472,10 @@ function tokenize(signal, langs) {
   // `1+1` comes apart into three and `cat` does not come apart at all.
   const lone = (langs || []).map((l) => (ch) => l.isLoneSymbol(ch));
   const apart = (t) => {
+    // A whole declared word wins over an embedded standalone symbol. Other
+    // text still comes apart normally (`5-2` remains three tokens). Edge
+    // punctuation is ignored for this check because it comes away just below.
+    if ((langs || []).some((lang) => lang.hasWord(bare(t)))) return [t];
     const out = [];
     let held = '';
     for (const ch of t) {

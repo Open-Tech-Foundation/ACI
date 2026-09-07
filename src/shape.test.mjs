@@ -66,6 +66,36 @@ test("a word with no meaning is refused", () => {
   assert(msg.includes("meaning"), msg);
 });
 
+test("entity classification labels are a closed primitive", () => {
+  const language = (classifies) => ({
+    name: "l",
+    symbols: { letter: { characters: "ab" } },
+    words: { a: { pos: "one", meaning: "a", classifies } },
+  });
+  assert(
+    refuses("an invented entity class", { languages: [language("magical")] })
+      .includes("living"),
+  );
+
+  const badKey = {
+    ...language("living"),
+    speech: { classification: { living: "alive", magical: "enchanted" } },
+  };
+  assert(
+    refuses("an invented spoken entity class", { languages: [badKey] })
+      .includes('unknown field "magical"'),
+  );
+
+  const badLabel = {
+    ...language("nonliving"),
+    speech: { classification: { nonliving: "" } },
+  };
+  assert(
+    refuses("an empty entity class label", { languages: [badLabel] })
+      .includes("non-empty string"),
+  );
+});
+
 test("a word that points may not also name a term", () => {
   const msg = refuses("a pointer naming a term", {
     languages: [

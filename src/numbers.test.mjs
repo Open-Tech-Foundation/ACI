@@ -82,6 +82,7 @@ test("a symbol that stands alone is a word wherever it falls", async () => {
   assertEquals(await says("1+1"), "2");
   assertEquals(await says("9+4"), "13");
   assertEquals(await says("100-1"), "99");
+  assertEquals(await says("5-2"), "3", "a compound word does not capture arithmetic text");
   assertEquals(await act("cat"), "recognise", "and a word does not come apart");
 });
 

@@ -9635,9 +9635,18 @@
       "number": "singular"
     },
     "living": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "classification"
+      ],
       "meaning": "living",
-      "concept": 2720
+      "concept": 2720,
+      "classifies": "living"
+    },
+    "non-living": {
+      "pos": "classification",
+      "meaning": "non-living",
+      "classifies": "nonliving"
     },
     "lets": {
       "pos": "verb",
@@ -17383,7 +17392,11 @@
       "otherwise": "a"
     },
     "to": "you",
-    "list": ", "
+    "list": ", ",
+    "classification": {
+      "living": "living thing",
+      "nonliving": "non-living thing"
+    }
   },
   "expressions": {
     "greet": "Hello!",
@@ -17422,6 +17435,7 @@
           "clause conjunction sentence",
           "interjection",
           "interjection sentence",
+          "classification noun conjunction classification noun",
           "subject predicate",
           "subject verb",
           "verb subject",

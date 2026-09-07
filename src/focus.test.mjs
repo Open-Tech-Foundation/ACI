@@ -19,6 +19,32 @@ test("a bare action does not replace an established entity topic", async () => {
   await forget();
 });
 
+test("a classification choice answers from the focused entity", async () => {
+  await forget();
+  await brain("honey");
+  const result = await brain("living thing or non-living thing");
+  assertEquals(result.expression.name, "answer");
+  assertEquals(result.expression.state.says, "non-living thing");
+  assertEquals(result.learned, null, "choosing a known class teaches no fact");
+  await forget();
+});
+
+test("classification choice recomputes a living topic from the world", async () => {
+  await forget();
+  await brain("tree");
+  assertEquals((await brain("living thing or non-living thing?")).expression.state.says, "living thing");
+  await forget();
+});
+
+test("a classification choice without one focused topic does not guess", async () => {
+  await forget();
+  const result = await brain("living thing or non-living thing");
+  assertEquals(result.expression.name, "unsure");
+  assertEquals(result.expression.state.says, "I don't know.");
+  assertEquals(result.learned, null);
+  await forget();
+});
+
 test("it on speaker-side focus stands for what is held", async () => {
   await forget();
   const told = await brain("i have 3 chocolates", { from: 26 });
