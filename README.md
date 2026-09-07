@@ -116,6 +116,8 @@ tsr ci      # test + build + site
 - `data/world.json` — what exists and how it relates.
 - `knowledge/*.json` — anything taught on top, same shape as the world.
 - `spec.md` — the full implementation spec and design rules.
+- `PRIMITIVES.md` — audited primitive coverage and the dependency-ordered
+  foundation roadmap.
 - `CHANGELOG.md` — what changed, per release.
 
 The two rules everything answers to: the brain hardcodes no particulars, and a

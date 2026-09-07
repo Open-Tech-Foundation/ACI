@@ -396,6 +396,15 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Primitive coverage now has an audited, dependency-ordered roadmap.**
+  `PRIMITIVES.md` distinguishes implemented inference from vocabulary-only
+  concepts across identity, classification, relations, propositions,
+  composition, space, time, state, events, causality, quantity, modality and
+  knowledge. It records existing correctness defects separately from missing
+  primitives, defines deterministic acceptance probes, keeps existence as the
+  terminal root, and explicitly tracks the deferred component/material and
+  language work.
+
 - **Material structure now connects entity knowledge to the universe model.**
   `matter` sits under the existing `physical-thing` branch, with objects,
   substances and organisms beneath it while energy remains a distinct physical
