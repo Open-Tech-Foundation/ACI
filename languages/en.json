@@ -781,6 +781,40 @@
       "meaning": "thing",
       "concept": 2
     },
+    "physical": {
+      "pos": "noun",
+      "meaning": "physical",
+      "concept": 6
+    },
+    "matter": {
+      "pos": "noun",
+      "meaning": "matter",
+      "concept": 2823,
+      "bare": true
+    },
+    "element": {
+      "pos": "noun",
+      "meaning": "element",
+      "concept": 2824
+    },
+    "atom": {
+      "pos": "noun",
+      "meaning": "atom",
+      "concept": 2825
+    },
+    "molecule": {
+      "pos": "noun",
+      "meaning": "molecule",
+      "concept": 2826
+    },
+    "made-of": {
+      "pos": [
+        "preposition",
+        "noun"
+      ],
+      "meaning": "made of",
+      "concept": 2827
+    },
     "number": {
       "pos": "noun",
       "meaning": "number",

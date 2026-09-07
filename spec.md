@@ -1338,6 +1338,38 @@ than taking the number for a thing there are three of.
 Everything that is, is inside a **universe**, and what the universe has besides
 is **force**. A force is not a thing — it is what the universe has and does.
 
+The material branch connects that universe to the ordinary entity ladder
+without turning the universe into a superclass of everything:
+
+```
+existence
+  └─ thing
+      └─ physical-thing
+          ├─ matter
+          │   ├─ object ── atom, molecule
+          │   ├─ substance ── element, food
+          │   └─ organism ── plant, animal
+          └─ energy
+
+atom --part--> element --part--> matter --part--> universe
+universe --made-of--> matter --made-of--> element --made-of--> atom
+```
+
+Classification and composition are deliberately different. `element is a
+substance` says what an element is; `element made-of atom` says what constitutes
+it. `part` is the existing transitive relation, now strict (`asymmetric`), and
+`made-of` is its world-declared converse. Mixed directions therefore compose
+through the same generic relation machinery as before/after. The universe also
+`has matter`; energy remains physical but is excluded from matter by the
+disjoint physical hierarchy.
+
+This makes the ordinary kind walk deeper: `honey → food → substance → matter →
+physical-thing → thing → existence`. Existence remains the root, so asking what
+existence is has no higher class; the universe has existence rather than being
+its kind. Living/nonliving is a separate primitive classification derived from
+whether the entity reaches `organism`, so both a tree and an atom can traverse
+the material ladder while resolving to different living states.
+
 **What a force does, everything physical has.** This does not come down the
 ladder the way a kind's facts do; it comes from the universe inward. Nobody has
 to say a stone is heavy for the brain to know a stone **has weight**: a stone is

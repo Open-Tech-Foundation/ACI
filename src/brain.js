@@ -1976,7 +1976,12 @@ function judge(roots, world, mood, langs, sent) {
       // with its own name rather than `thing`. Specific answers (`animal` for a
       // cat) and kind-restricted or empty walks are untouched.
       const anchors = world.anchors || {};
-      if (of == null && found.length > 0 && found.every((t) => t === anchors.thing)) {
+      if (
+        of == null &&
+        found.length > 0 &&
+        found.every((t) => t === anchors.thing) &&
+        world.term(subject)?.symbol != null
+      ) {
         found = [subject];
       }
       const mine = [node('answer', 'link', [], { subject, relation, found })];

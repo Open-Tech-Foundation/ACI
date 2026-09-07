@@ -396,6 +396,20 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Material structure now connects entity knowledge to the universe model.**
+  `matter` sits under the existing `physical-thing` branch, with objects,
+  substances and organisms beneath it while energy remains a distinct physical
+  category. Elements are substances; atoms and molecules are objects. The
+  existing transitive `part` relation is now asymmetric and has the generic
+  converse `made-of`, connecting atom → element → matter → universe without
+  confusing composition with classification. The universe holds matter as it
+  already holds existence and force. Consequently the ordinary question walk
+  now follows `honey → food → substance → matter → physical → thing →
+  existence`, while living/nonliving remains an orthogonal world-derived
+  classification. Tests cover material taxonomy, energy separation, converse
+  and transitive composition, the complete knowledge walk, and living versus
+  nonliving entities.
+
 - **Before and after now form strict temporal order in the existing world.**
   Both are world relations classified under `order`, while `past`, `now` and
   `future` remain moments under the existing `time` model. Their converse,
