@@ -9,6 +9,7 @@ const sender = { from: 508 };
 const NICE = 563;
 const AGENT = 327;
 const TARGET = 328;
+const INSTANCE = 2870;
 
 const branchOf = (r, kind) => (r.roots[0].branch || []).find((b) => b.kind === kind) || null;
 const linkOf = (r, rel) => r.learned.terms[0].links.find((l) => l.rel === rel);
@@ -16,7 +17,7 @@ const linkOf = (r, rel) => r.learned.terms[0].links.find((l) => l.rel === rel);
 test("what someone says of a thing is held as theirs, with what they said it of", async () => {
   const r = await brain("the shelf is nice", sender);
   assertEquals(r.expression.state.says, "I understand.");
-  assertEquals(linkOf(r, 294).to, NICE, "of what was said");
+  assertEquals(linkOf(r, INSTANCE).to, NICE, "an occurrence of what was said");
   assertEquals(linkOf(r, AGENT).to, 508, "by whoever sent it");
   assertEquals(linkOf(r, TARGET).to, 435, "about the shelf");
 });
@@ -28,8 +29,8 @@ test("and the world is not made to agree with it", async () => {
 
 test("a denial is held as a denial, not as its opposite", async () => {
   const r = await brain("the ladder is not nice", sender);
-  assertEquals(linkOf(r, 294).not, true);
-  assertEquals(linkOf(r, 294).to, NICE, "what they denied, not what they did not say");
+  assertEquals(linkOf(r, INSTANCE).not, true);
+  assertEquals(linkOf(r, INSTANCE).to, NICE, "what they denied, not what they did not say");
 });
 
 test("with nobody to hold it, an opinion is not knowledge", async () => {

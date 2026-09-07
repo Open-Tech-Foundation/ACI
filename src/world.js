@@ -18,6 +18,7 @@ export function fromWorldData(data) {
   const rangeRel = anchors.range ?? null;
   const subtypeRel = anchors.subtype ?? null;
   const instanceRel = anchors.instance ?? null;
+  const predicationRel = anchors.predication ?? null;
   const inferredTypes = new Map();
   const outgoing = new Map();
   const incoming = new Map();
@@ -46,6 +47,44 @@ export function fromWorldData(data) {
     }
   }
 
+  const rawClassificationCache = new Map();
+  function rawClassificationReaches(id, target, skip = null) {
+    const key = `${id}:${skip ? `${skip[0]}:${skip[1]}` : ''}`;
+    if (rawClassificationCache.has(key)) return rawClassificationCache.get(key).has(target);
+    const seen = new Set();
+    const pending = [id];
+    while (pending.length) {
+      const at = pending.pop();
+      if (seen.has(at)) continue;
+      seen.add(at);
+      for (const link of terms.get(at)?.links || []) {
+        if (link.not || ![isRel, subtypeRel, instanceRel].includes(link.rel)) continue;
+        if (skip && at === skip[0] && link.rel === isRel && link.to === skip[1]) continue;
+        pending.push(link.to);
+      }
+    }
+    rawClassificationCache.set(key, seen);
+    return seen.has(target);
+  }
+
+  // Old sources used broad `is` for property assertions. It is a predication
+  // when the object is a property and the subject independently belongs to a
+  // different existence mode; property-to-property links remain taxonomy.
+  const legacyPredicationCache = new Map();
+  function legacyPredication(subject, object) {
+    const key = `${subject}:${object}`;
+    if (legacyPredicationCache.has(key)) return legacyPredicationCache.get(key);
+    const property = anchors.property ?? null;
+    const isPredication = property != null &&
+      rawClassificationReaches(object, property) &&
+      !rawClassificationReaches(subject, property, [subject, object]) &&
+      [anchors.thing, anchors.action, anchors.relation]
+      .filter((kind) => kind != null)
+      .some((kind) => rawClassificationReaches(subject, kind, [subject, object]));
+    legacyPredicationCache.set(key, isPredication);
+    return isPredication;
+  }
+
   // Walk one relation from a term, collecting every id it reaches. A term may
   // hold several links of the same relation — the base world gives one, a
   // knowledge file may add more — so this follows all of them, not the first.
@@ -62,8 +101,10 @@ export function fromWorldData(data) {
         // A denied link joins nothing. It records that the relation does not
         // hold, and nothing can be reached across it.
         if (l.not) continue;
+        const legacyClassifies = l.rel === rel &&
+          !(rel === isRel && legacyPredication(at, l.to));
         const classifies = rel === isRel && (l.rel === subtypeRel || l.rel === instanceRel);
-        if ((l.rel === rel || classifies) && !seen.has(l.to)) pending.push(l.to);
+        if ((legacyClassifies || classifies) && !seen.has(l.to)) pending.push(l.to);
       }
       if (rel === isRel) {
         for (const inferred of inferredTypes.get(at) || []) {
@@ -176,6 +217,21 @@ export function fromWorldData(data) {
     return required.every((kind) => reaches(id, isRel).has(kind));
   }
 
+  function semanticClassificationRelation(
+    subject,
+    object,
+    individual = terms.get(subject)?.individual,
+  ) {
+    const property = anchors.property ?? null;
+    if (property != null && reaches(object, isRel).has(property)) {
+      if (!individual && reaches(subject, isRel).has(property)) return subtypeRel ?? isRel;
+      return predicationRel ?? isRel;
+    }
+    return individual && instanceRel != null
+      ? instanceRel
+      : subtypeRel ?? isRel;
+  }
+
   // Edges stated in this direction, including facts using a narrower
   // relation, before any declared converse is normalized.
   function variantLinks(id, rel) {
@@ -184,10 +240,20 @@ export function fromWorldData(data) {
     if (rel === isRel) {
       if (subtypeRel != null) variants.add(subtypeRel);
       if (instanceRel != null) variants.add(instanceRel);
+      if (predicationRel != null) variants.add(predicationRel);
     }
     for (const variant of variants) {
       for (const link of terms.get(id)?.links || []) {
         if (!link.not && link.rel === variant) links.push({ ...link });
+      }
+    }
+    if (rel === subtypeRel || rel === instanceRel || rel === predicationRel) {
+      for (const link of terms.get(id)?.links || []) {
+        if (
+          !link.not &&
+          link.rel === isRel &&
+          semanticClassificationRelation(id, link.to) === rel
+        ) links.push({ ...link, rel });
       }
     }
     if (rel === isRel) {
@@ -347,6 +413,7 @@ export function fromWorldData(data) {
       if (rel === isRel) {
         if (subtypeRel != null) statedRelations.add(subtypeRel);
         if (instanceRel != null) statedRelations.add(instanceRel);
+        if (predicationRel != null) statedRelations.add(predicationRel);
       }
       for (const stated of statedRelations) {
         if ((t.links || []).some((l) => l.not && l.rel === stated && l.to === object)) return true;
@@ -386,12 +453,16 @@ export function fromWorldData(data) {
     ranges: (rel) => [...constraintKinds(rel, 'range')],
     subrelationOf: (relation, broader) => relationAncestors(relation).has(broader),
     related: (id, rel) => [...related(id, rel)],
-    classificationRelation: (subject, object, individual = terms.get(subject)?.individual) => {
-      const property = anchors.property ?? null;
-      if (property != null && reaches(object, isRel).has(property)) return isRel;
-      return individual && instanceRel != null
-        ? instanceRel
-        : subtypeRel ?? isRel;
+    classificationRelation: semanticClassificationRelation,
+    predicates: (id) => predicationRel == null ? [] : [...related(id, predicationRel)],
+    kinds: (id) => {
+      const out = new Set(inferredTypes.get(id) || []);
+      for (const link of terms.get(id)?.links || []) {
+        if (link.not) continue;
+        if (link.rel === subtypeRel || link.rel === instanceRel) out.add(link.to);
+        if (link.rel === isRel && !legacyPredication(id, link.to)) out.add(link.to);
+      }
+      return [...out];
     },
     individualsOf: (kind) => {
       const out = [];
@@ -491,7 +562,10 @@ export function fromWorldData(data) {
     // default)? The relation is a term like any other, so a signal can name it.
     isA: (id, ancestorId, rel = isRel) => {
       if (ancestorId == null || id == null || rel == null) return false;
-      if (rel === isRel) return reaches(id, rel).has(ancestorId);
+      if (rel === isRel) {
+        return reaches(id, rel).has(ancestorId) ||
+          (predicationRel != null && related(id, predicationRel).has(ancestorId));
+      }
       return relatedBy(id, rel).has(ancestorId);
     },
   };

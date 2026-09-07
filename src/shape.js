@@ -211,6 +211,7 @@ export function checkWhole(data, origin = null, where = 'world') {
 
   const subtype = data.anchors && data.anchors.subtype;
   const instance = data.anchors && data.anchors.instance;
+  const predication = data.anchors && data.anchors.predication;
   const classificationRelations = new Set(
     [data.relations && data.relations.is, subtype, instance].filter((id) => id != null),
   );
@@ -338,6 +339,22 @@ export function checkWhole(data, origin = null, where = 'world') {
     classificationAncestorCache.set(id, found);
     return found;
   };
+
+  const propertyKind = data.anchors && data.anchors.property;
+  const relationClass = data.anchors && data.anchors.relation;
+  if (
+    predication != null &&
+    relationClass != null &&
+    !classificationAncestors(predication).has(relationClass)
+  ) fail(`${from(predication)} term ${predication}`, 'predication anchor must be a relation');
+  for (const term of data.terms) {
+    for (const link of term.links) {
+      if (link.rel !== predication) continue;
+      if (propertyKind == null || !classificationAncestors(link.to).has(propertyKind)) {
+        fail(`${from(term.id)} term ${term.id}`, 'predication must name a property');
+      }
+    }
+  }
 
   const domain = data.anchors && data.anchors.domain;
   const range = data.anchors && data.anchors.range;

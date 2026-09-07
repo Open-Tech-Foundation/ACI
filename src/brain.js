@@ -1484,7 +1484,10 @@ function judge(roots, world, mood, langs, sent) {
       );
       const constrainedAgainst =
         typeAgainst(holder, world.domains(rel)) || typeAgainst(object, world.ranges(rel));
-      const opposed = functionalAgainst || constrainedAgainst || (counted != null
+      const predicateAgainst = rel === world.baseRelation && upward(holder, world).some(
+        (rung) => world.predicates(rung).some((found) => world.excludes(found, object)),
+      );
+      const opposed = functionalAgainst || constrainedAgainst || predicateAgainst || (counted != null
         ? knownCount != null && knownCount !== counted
         : heldDenied ||
           (kindFact && world.excludes(subject, object)) ||
@@ -2411,7 +2414,7 @@ function upward(id, world) {
     if (x == null || seen.has(x)) return;
     seen.add(x);
     out.push(x);
-    for (const up of world.linked(x, world.baseRelation)) climb(up);
+    for (const up of world.kinds(x)) climb(up);
   };
   climb(id);
   return out;
@@ -4244,6 +4247,7 @@ function learningConflict(world, learned) {
   const range = world.anchors ? world.anchors.range : null;
   const subtype = world.anchors ? world.anchors.subtype : null;
   const instance = world.anchors ? world.anchors.instance : null;
+  const predication = world.anchors ? world.anchors.predication : null;
   const classificationRelations = new Set(
     [world.baseRelation, subtype, instance].filter((id) => id != null),
   );
@@ -4448,6 +4452,10 @@ function learningConflict(world, learned) {
       if (link.rel === instance && (!term.individual || terms.get(link.to)?.individual)) {
         return 'instance must connect an individual to a kind';
       }
+      if (
+        link.rel === predication &&
+        (world.anchors.property == null || !isA(link.to, world.anchors.property))
+      ) return 'predication must name a property';
     }
   }
 
@@ -4872,16 +4880,17 @@ function learnedFrom(roots, world) {
   ]);
   // The surface copula names the broad classification question. Memory keeps
   // the stronger primitive when it can: one existing entity belongs to a
-  // kind, while one kind specializes another. Property predication remains on
-  // the legacy broad relation until its own primitive is introduced.
+  // kind, one kind specializes another, and a property describes a bearer.
   for (const term of terms) {
     for (const link of term.links) {
       if (link.rel !== world.baseRelation) continue;
-      link.rel = world.classificationRelation(
-        term.id,
-        link.to,
-        term.individual || world.isIndividual(term.id),
-      );
+      link.rel = term.individual && Number.isInteger(link.at) && world.anchors.instance != null
+        ? world.anchors.instance
+        : world.classificationRelation(
+          term.id,
+          link.to,
+          term.individual || world.isIndividual(term.id),
+        );
     }
   }
   return terms.length ? { terms } : null;

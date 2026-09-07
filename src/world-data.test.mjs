@@ -29,6 +29,14 @@ test("the authored world passes the shape check every source passes", async () =
   assert(knowledge.world.anchors.thing != null, "it has its anchors");
 });
 
+test("authored property facts do not classify their subjects as properties", async () => {
+  const knowledge = fromSources(await sources());
+  const { world } = knowledge;
+  assert(world.isA(40, 203), "the sky is blue through predication");
+  assert(!world.isA(40, world.anchors.property), "the sky is not a property");
+  assert(world.isA(203, world.anchors.property), "blue remains a property kind");
+});
+
 test("no term says the same thing twice", async () => {
   const world = (await sources()).world;
   for (const term of world.terms) {

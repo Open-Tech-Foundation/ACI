@@ -725,3 +725,24 @@ test("subtype connects kinds and instance connects an individual to a kind", () 
   subtypeCycle.terms[4].links.push({ rel: 3, to: 6 });
   assert(refuses("a subtype cycle", { world: subtypeCycle }).includes("classification cycle"));
 });
+
+test("predication names a property without joining the classification ladder", () => {
+  const base = {
+    anchors: { property: 2, relation: 3, predication: 4 },
+    relations: { is: 1 },
+    terms: [
+      { id: 1, name: "is", links: [{ rel: 1, to: 3 }] },
+      { id: 2, name: "property", links: [] },
+      { id: 3, name: "relation", links: [] },
+      { id: 4, name: "predication", links: [{ rel: 1, to: 3 }] },
+      { id: 5, name: "blue", links: [{ rel: 1, to: 2 }] },
+      { id: 6, name: "sky", links: [{ rel: 4, to: 5 }] },
+      { id: 7, name: "animal", links: [] },
+    ],
+  };
+  fromSources({ world: base });
+
+  const wrong = structuredClone(base);
+  wrong.terms[5].links[0].to = 7;
+  assert(refuses("a non-property predicate", { world: wrong }).includes("must name a property"));
+});

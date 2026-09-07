@@ -455,14 +455,23 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Property predication is now distinct from classification.** The
+  language-neutral `predication` relation connects an entity to a property
+  without putting that entity on the property's subtype ladder. Broad copular
+  queries remain compatible, but `sky predication blue` no longer entails
+  `sky is property`. New property statements use the dedicated relation,
+  authored colour and period facts are migrated, and compatible legacy broad
+  property links receive the same bounded semantics. Predication targets are
+  validated as properties in sources and atomic learned overlays.
+
 - **Classification now distinguishes kind specialization from individual
   membership.** The world anchors `subtype` and `instance` as separate
   language-neutral relations beneath the compatible broad `is` surface.
   `subtype` is strict and transitive; `instance` is direct and irreflexive.
   Their paths compose in the broad kind walk, but instance membership itself
   never becomes transitive. New conversational learning stores the strongest
-  applicable relation, while legacy world links and property predication keep
-  their existing behavior. Invalid endpoints and mixed classification cycles
+  applicable relation, while legacy world links keep their existing behavior.
+  Invalid endpoints and mixed classification cycles
   are rejected in sources and atomic learned overlays.
 
 - **Relations can now imply subject and object kinds through domain and range.**

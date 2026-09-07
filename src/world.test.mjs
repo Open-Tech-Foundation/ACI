@@ -516,6 +516,60 @@ test("classification denials remain visible through the broad is relation", () =
   assertEquals(w.denies(4, 2, IS), true);
 });
 
+test("property predication answers broad is without classifying its subject as a property", () => {
+  const THING = 2;
+  const PROPERTY = 3;
+  const COLOUR = 4;
+  const BLUE = 5;
+  const PREDICATION = 6;
+  const SKY = 7;
+  const w = fromWorldData({
+    anchors: { thing: THING, property: PROPERTY, predication: PREDICATION },
+    relations: { is: IS },
+    terms: [
+      { id: IS, name: "is", links: [] },
+      { id: THING, name: "thing", links: [] },
+      { id: PROPERTY, name: "property", links: [] },
+      { id: COLOUR, name: "colour", links: [{ rel: IS, to: PROPERTY }] },
+      { id: BLUE, name: "blue", links: [{ rel: IS, to: COLOUR }] },
+      { id: PREDICATION, name: "predication", links: [] },
+      { id: SKY, name: "sky", links: [{ rel: IS, to: THING }, { rel: PREDICATION, to: BLUE }] },
+    ],
+  });
+  assertEquals(w.isA(SKY, BLUE), true, "broad surface compatibility remains");
+  assertEquals(w.isA(SKY, BLUE, PREDICATION), true);
+  assertEquals(w.isA(SKY, PROPERTY), false, "a predicate is not a supertype");
+  assertEquals(w.kinds(SKY), [THING]);
+  assertEquals(w.linked(SKY, IS), [THING, BLUE], "the broad direct answer remains compatible");
+});
+
+test("legacy broad property edges receive the same non-classifying semantics", () => {
+  const THING = 2;
+  const PROPERTY = 3;
+  const BLUE = 4;
+  const PREDICATION = 5;
+  const SKY = 6;
+  const SUBTYPE = 7;
+  const w = fromWorldData({
+    anchors: { thing: THING, property: PROPERTY, predication: PREDICATION, subtype: SUBTYPE },
+    relations: { is: IS },
+    terms: [
+      { id: IS, name: "is", links: [] },
+      { id: THING, name: "thing", links: [] },
+      { id: PROPERTY, name: "property", links: [] },
+      { id: BLUE, name: "blue", links: [{ rel: IS, to: PROPERTY }] },
+      { id: PREDICATION, name: "predication", links: [] },
+      { id: SKY, name: "sky", links: [{ rel: IS, to: THING }, { rel: IS, to: BLUE }] },
+      { id: SUBTYPE, name: "subtype", links: [] },
+    ],
+  });
+  assertEquals(w.isA(SKY, BLUE), true);
+  assertEquals(w.isA(SKY, BLUE, PREDICATION), true);
+  assertEquals(w.isA(SKY, PROPERTY), false);
+  assertEquals(w.kinds(SKY), [THING]);
+  assertEquals(w.isA(BLUE, PROPERTY, SUBTYPE), true, "legacy taxonomy reads as subtype");
+});
+
 test("transitive relations compose facts written through a converse", () => {
   const BEFORE = 2;
   const AFTER = 3;

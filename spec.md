@@ -518,6 +518,9 @@ on, not even for not knowing.
       "links": [{ "rel": 294, "to": 4 }, { "rel": 2828, "to": 294 }] },
     { "id": 2870, "name": "instance", "irreflexive": true,
       "links": [{ "rel": 294, "to": 4 }, { "rel": 2828, "to": 294 }] },
+    { "id": 2871, "name": "predication",
+      "links": [{ "rel": 294, "to": 4 }, { "rel": 2828, "to": 294 },
+                { "rel": 2868, "to": 3 }] },
     { "id": 249, "name": "order", "transitive": true, "links": [{ "rel": 294, "to": 4 }] },
     { "id": 2821, "name": "before", "transitive": true, "asymmetric": true,
       "links": [{ "rel": 294, "to": 249 }, { "rel": 590, "to": 2822 }] },
@@ -588,11 +591,16 @@ subtype animal` entail the broad answer `Fido is animal`; they do not entail
 `Fido instance animal`. Both primitives are subrelations of the compatible
 broad `is` relation, so existing queries and legacy data continue to work.
 Newly learned copular classifications are stored as `instance` when the
-subject is an individual and `subtype` when both sides are kinds. Links whose
-object is a property remain on broad `is` temporarily, preserving property
-predication until its dedicated primitive is introduced. Subtype endpoints
-must be kinds, instance must connect an individual to a kind, and cycles across
-legacy and explicit classification links are refused atomically.
+subject is an individual and `subtype` when both sides are kinds. When the
+object is a property and the subject is not itself a property kind, the fact is
+stored under `anchors.predication`. This relation answers the compatible broad
+copular question directly but never enters the transitive kind ladder: `sky
+predication blue` and `blue subtype colour subtype property` do not make the
+sky a property. Compatible legacy broad property links are recognized at this
+boundary, and authored world facts are migrated to the explicit relation.
+Subtype endpoints must be kinds, instance must connect an individual to a
+kind, predication must target a property, and cycles across legacy and explicit
+classification links are refused atomically.
 
 ### Grammar semantics
 
@@ -1819,10 +1827,11 @@ it or answer with it.
   the same languages in the same order on every machine.
 - `src/world.js` — `fromWorldData(data)` compiles the world into
   `{ anchors, baseRelation, term, isA, linked, related, excludes,
-  subrelationOf, domains, ranges, classificationRelation }`. `isA` composes
-  legacy, subtype, instance and domain/range inferred classification
-  transitively;
-  another relation is direct unless its term declares `transitive: true`.
+  subrelationOf, domains, ranges, kinds, predicates,
+  classificationRelation }`. `isA` composes legacy, subtype, instance and
+  domain/range inferred classification transitively. Predication participates
+  only in the exact broad copular answer. Another relation is direct unless its
+  term declares `transitive: true`.
   Narrower relation edges participate in a broader walk. Every walk terminates
   defensively on cycles.
 - `src/index.js` — server-only bootstrap: `brain(input)` loads `languages/`,

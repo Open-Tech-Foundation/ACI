@@ -76,9 +76,9 @@ test('learned classifications distinguish instances, subtypes and legacy propert
   const predication = await properties.brain('a dog is red');
   assert(
     predication.learned.terms.some(
-      (term) => term.links.some((link) => link.rel === schema.relations.is),
+      (term) => term.links.some((link) => link.rel === schema.anchors.predication),
     ),
-    'property predication stays on the compatible broad relation until its dedicated primitive',
+    'property predication is stored separately from classification',
   );
 });
 
