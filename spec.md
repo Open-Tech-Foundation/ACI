@@ -1034,15 +1034,18 @@ than gives.
 Builds the `response` node from the meaning, then reasons about what the word
 names by walking the world's `is` chain to the brain's anchors:
 
-- reaches `anchors.thing` → `entity(nonliving)`, or `entity(living)` when it also
-  reaches `anchors.living`, refined by `entity(person)` at `anchors.person`
+- reaches `anchors.thing` → `entity(living)` when it reaches `anchors.living`,
+  `entity(nonliving)` only when the world excludes that living kind, and
+  `entity(unknown)` when neither side is established; a living entity is
+  refined by `entity(person)` at `anchors.person`
 - reaches `anchors.action` → `action`
 - reaches `anchors.property` → `property`
 - reaches `anchors.relation` → `relation`
 
-So `cat` (→ animal → organism) and `tree` (→ plant → organism) are living, `apple`
-(→ fruit → food → substance) is not, and `hi` (greeting → communication → action)
-is an **action** rather than any kind of thing.
+So `cat` (→ animal → organism) and `tree` (→ plant → organism) are living;
+`apple` (→ fruit → food → substance, which excludes organism) is nonliving;
+the root `thing` is neither until more is known; and `hi` (greeting →
+communication → action) is an **action** rather than any kind of thing.
 
 A word that names no term gets no category. The brain does **not** guess from the
 part of speech.
@@ -1234,10 +1237,10 @@ alternative carries a language-owned `classifies` label (`living` or
 conversation topic. The core recomputes that topic through `worldNode`, selects
 an alternative only when exactly one label equals the derived refinement, and
 returns an `answer: classification` without learning. The chosen language says
-it through `speech.classification`. With no focused entity, or a focused value
-that is not an entity, the choice stays understood but unanswered; it never
-falls through into claim learning. Renaming every word and parser symbol leaves
-the decision unchanged.
+it through `speech.classification`. With no focused entity, a focused value
+that is not an entity, or an entity whose life status is not established, the
+choice stays understood but unanswered; it never falls through into claim
+learning. Renaming every word and parser symbol leaves the decision unchanged.
 
 **Judging and saying are separate acts.** Every verdict stays on the tree, but
 saying one twice says nothing the first did not: two that came out differently

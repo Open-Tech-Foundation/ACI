@@ -127,4 +127,9 @@ test('entity-class choice uses semantic labels under opaque words and parser sym
   assertEquals(nonliving.expression.name, 'answer');
   assertEquals(nonliving.expression.state.says, 'inert forma');
   assertEquals(nonliving.learned, null);
+
+  const unknown = brainFrom('vita forma vel inert forma', knowledge, { spoken: 2 });
+  assertEquals(unknown.expression.name, 'unsure');
+  assertEquals(unknown.expression.state.says, "I don't know.");
+  assertEquals(unknown.learned, null);
 });

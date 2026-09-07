@@ -27,7 +27,7 @@ universe; the nature or essence of an entity may later be an ordinary relation.
 |---|---|---|---|
 | Existence | Implemented | Four modes exist: thing, property, relation and action. `existence` is their root. | No higher answer is expected for `what is existence?`; adding another label only moves the root. |
 | Identity | Partial | Stable term ids, named individuals, deterministic id allocation, self and contextual pointers. Numeric equality is computed exactly. | General `same` is not an equivalence relation and cannot substitute identicals. `different` has bespoke exclusion behavior rather than one general algebra. |
-| Classification | Partial | Transitive kind walking, inherited positive and negative facts, disjoint kinds, cycle rejection, kind versus individual metadata. | One `is` edge carries subtype, instance membership and some predication duties. Those meanings need explicit separation or constraints. Unknown living status is currently forced to non-living. |
+| Classification | Partial | Transitive kind walking, inherited positive and negative facts, disjoint kinds, cycle rejection, kind versus individual metadata, and open-world living/nonliving/unknown judgement. | One `is` edge carries subtype, instance membership and some predication duties. Those meanings need explicit separation or constraints. |
 | Relations | Partial | Direct and declared-transitive walks, converse relations, explicit denial, asymmetry and contradiction checks. | Symmetric, reflexive, irreflexive, functional, inverse-functional, subrelation, domain and range semantics. Relation subtypes do not currently lift their facts. |
 | Propositions and logic | Partial | Held, against and absent are distinct; negation is explicit; multi-fact learning is atomic; conjunction, immediate conditions and basic quantifier scope work. | A proposition cannot itself be the subject or object of knowledge. Stored rules, variables, implication chains, general disjunction, biconditionals and proof explanations are missing. |
 | Composition | Partial | Transitive strict `part` and converse `made-of`; atom, molecule, element and matter connect to the universe. | Component, material, member and portion are conflated. Direct part, cardinality, structural role and required versus optional parts are absent. |
@@ -46,7 +46,7 @@ universe; the nature or essence of an entity may later be an ordinary relation.
 These are defects in existing foundations, so they take priority over adding
 more world vocabulary.
 
-- [ ] Make living classification open-world: `living`, `nonliving` or
+- [x] Make living classification open-world: `living`, `nonliving` or
   `unknown`. Absence of an organism path is not proof of non-life.
 - [ ] Require a force to be held by the universe before its effects propagate
   to every physical thing. The current physical shortcut checks only that a
@@ -62,7 +62,7 @@ more world vocabulary.
 
 ### 1. Truth and relation substrate
 
-- [ ] Repair three-valued living classification.
+- [x] Repair three-valued living classification.
 - [ ] Add declarative relation characteristics: symmetric, reflexive,
   irreflexive and functional where justified.
 - [ ] Add subrelation, domain and range semantics.

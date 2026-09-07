@@ -36,6 +36,27 @@ test("classification choice recomputes a living topic from the world", async () 
   await forget();
 });
 
+test("classification choice stays unsure when life is not known either way", async () => {
+  await forget();
+  await brain("thing");
+  const result = await brain("living thing or non-living thing?");
+  assertEquals(result.expression.name, "unsure");
+  assertEquals(result.expression.state.says, "I don't know.");
+  assertEquals(result.learned, null, "an unanswered choice teaches no classification");
+  await forget();
+});
+
+test("an explicit denial of life proves non-living classification", async () => {
+  await forget();
+  await brain("a group is not an organism");
+  await brain("group");
+  const result = await brain("living thing or non-living thing?");
+  assertEquals(result.expression.name, "answer");
+  assertEquals(result.expression.state.says, "non-living thing");
+  assertEquals(result.learned, null);
+  await forget();
+});
+
 test("a classification choice without one focused topic does not guess", async () => {
   await forget();
   const result = await brain("living thing or non-living thing");

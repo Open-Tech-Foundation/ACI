@@ -1153,15 +1153,21 @@ function markingSide(said, langs) {
 
 // The world says what a term is; the brain reads only its own categories out of
 // it. thing / property / relation / action are the brain's innate schema — the
-// four ways anything can exist. Only a thing is living or nonliving; an action
-// is an action, never a nonliving thing. Mindedness is a separate axis: a thing
-// may have a mind whether or not it is alive.
+// four ways anything can exist. Only a thing can be living or nonliving, and
+// an open world may establish neither: not reaching organism is ignorance,
+// not evidence of non-life. An action is an action, never a nonliving thing.
+// Mindedness is a separate axis: a thing may have a mind whether or not it is
+// alive.
 function worldNode(concept, world) {
   if (concept == null || !world) return null;
   const a = world.anchors || {};
 
   if (world.isA(concept, a.thing)) {
     const alive = world.isA(concept, a.living);
+    const notAlive = !alive && (
+      world.excludes(concept, a.living) ||
+      upward(concept, world).some((rung) => world.denies(rung, a.living, world.baseRelation))
+    );
     const kids = [];
     if (alive && world.isA(concept, a.person)) {
       kids.push(node('entity', 'person', [], { kind: 'person' }));
@@ -1172,7 +1178,7 @@ function worldNode(concept, world) {
     if (world.isA(concept, a.mind, a.has)) {
       kids.push(node('mind', 'mind', [], { concept: a.mind }));
     }
-    return node('entity', alive ? 'living' : 'nonliving', kids, { concept });
+    return node('entity', alive ? 'living' : notAlive ? 'nonliving' : 'unknown', kids, { concept });
   }
   if (world.isA(concept, a.action)) return node('action', 'action', [], { concept });
   if (world.isA(concept, a.property)) return node('property', 'property', [], { concept });
@@ -3243,7 +3249,18 @@ function classificationChoice(said, world, sent) {
     });
   }
   const matched = [...new Set(offered)].filter((kind) => kind === entity.name);
-  if (matched.length !== 1) return null;
+  // An entity may be known to be a thing without the world proving either
+  // life or non-life. The alternatives were still understood as a question;
+  // keep its empty answer so it becomes unsure rather than falling through as
+  // an unrelated claim that might be learned.
+  if (matched.length !== 1) {
+    return node('answer', 'classification', [], {
+      subject: sent.spoken,
+      relation: null,
+      found: [],
+      classification: null,
+    });
+  }
   return node('answer', 'classification', [], {
     subject: sent.spoken,
     relation: null,

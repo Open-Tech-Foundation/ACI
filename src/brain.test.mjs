@@ -252,6 +252,13 @@ test("a fruit is nonliving even though it is a noun", async () => {
   assertEquals(kind(r.roots[0], "entity").name, "nonliving");
 });
 
+test("a thing with no evidence of life or non-life stays unknown", async () => {
+  const r = await brain("thing");
+  const entity = kind(r.roots[0], "entity");
+  assertEquals(entity.name, "unknown");
+  assertEquals(entity.state.concept, 2);
+});
+
 test("a numeral's entity comes from the world term, not the pos case", async () => {
   const r = await brain("two");
   const entity = kind(r.roots[0], "entity");

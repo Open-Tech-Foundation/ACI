@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Unknown life status is no longer classified as non-living.** The entity
+  primitive now distinguishes world-proven life, world-proven exclusion from
+  life, and an open-world unknown. Known organisms such as trees remain living;
+  objects, substances and abstract numbers remain non-living through explicit
+  world exclusion; a bare root such as `thing` remains unknown. A focused
+  living/non-living choice over that unknown returns `unsure`, learns nothing,
+  and behaves identically with renamed words and parser symbols.
+
 - **A bare recognized entity now establishes conversational focus.** Topic
   tracking previously considered only claims, answers, learned state and events,
   so `honey` was recognized but a following `what is it?` had nothing to point
