@@ -43,6 +43,14 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **The order terms were written in can no longer reach an answer.** A file
+  authors its terms in whatever order reads well and the store hands them back
+  by id, and `data/world.json` is not in id order — so the same world walked
+  through the file and through the store gave `members` the same set in a
+  different order, and one answer path hands that list straight out. The world
+  now settles one order for itself when it is built, so nothing that reads it
+  can tell which door it came through.
+
 - **A name the authored world brings back no longer stops the brain opening.**
   A name given in conversation and later shipped by `data/world.json` left two
   terms claiming one name, and seeding died on a raw unique-constraint error

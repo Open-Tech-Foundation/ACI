@@ -6,9 +6,18 @@
 // The brain owns the categories (living, person); the world says which term
 // realizes each one, via `anchors`. That is the whole bridge.
 
-export function fromWorldData(data) {
+export function fromWorldData(source) {
+  // One order, whichever door the world came through. A file authors its terms
+  // in whatever order reads well; a store hands them back by id. Nothing that
+  // reads the world should be able to tell which it was given — every walk
+  // below goes through this map, and what several of them hand back is a list
+  // in the order they walked. So the order is settled once, here.
+  const data = {
+    ...source,
+    terms: [...(source.terms || [])].sort((a, b) => a.id - b.id),
+  };
   const terms = new Map();
-  for (const t of data.terms || []) terms.set(t.id, t);
+  for (const t of data.terms) terms.set(t.id, t);
 
   const isRel = (data.relations && data.relations.is) ?? null;
   const sameRel = (data.relations && data.relations.same) ?? data.anchors?.same ?? null;

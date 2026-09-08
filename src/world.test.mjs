@@ -693,3 +693,30 @@ test("reading a relation from many terms gives what reading each alone gives", (
   assertEquals(w.members(7, PAIRED), [6, 8], "and arrives from either side");
   assertEquals(w.linked(9, HOLDS), [6], "a stated fact is read in the direction it was written");
 });
+
+test("the order terms were written in cannot reach an answer", () => {
+  const RELATED = 2;
+  const terms = [
+    { id: IS, name: "is", links: [] },
+    { id: RELATED, name: "unlabelled relation", symmetric: true, links: [] },
+    { id: 3, name: "a", links: [{ rel: IS, to: 6 }, { rel: RELATED, to: 5 }] },
+    { id: 4, name: "b", links: [{ rel: IS, to: 6 }] },
+    { id: 5, name: "c", links: [{ rel: IS, to: 6 }] },
+    { id: 6, name: "kind", links: [] },
+  ];
+  const build = (order) => fromWorldData({ relations: { is: IS }, terms: order });
+
+  // The same world, authored three ways: by id, backwards, and out of order the
+  // way a file that reads well tends to be.
+  const written = build(terms);
+  const backwards = build([...terms].reverse());
+  const shuffled = build([terms[3], terms[0], terms[5], terms[2], terms[4], terms[1]]);
+
+  for (const [what, other] of [["reversed", backwards], ["out of order", shuffled]]) {
+    assertEquals(other.members(6, IS), written.members(6, IS), `members, ${what}`);
+    assertEquals(other.members(5, RELATED), written.members(5, RELATED), `symmetric members, ${what}`);
+    assertEquals(other.linked(5, RELATED), written.linked(5, RELATED), `symmetric linked, ${what}`);
+    assertEquals(other.data.terms.map((t) => t.id), written.data.terms.map((t) => t.id), `terms, ${what}`);
+  }
+  assertEquals(written.members(6, IS), [3, 4, 5], "and the order is the terms' own");
+});
