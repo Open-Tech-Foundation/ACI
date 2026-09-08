@@ -299,6 +299,63 @@ piece was the derived value:
 Absence and denial are different. Absence is a count of zero with an empty
 slot. Denial is a relation that stands against.
 
+## Standing instructions
+
+A standing instruction holds a condition and what stands on it. It never
+occurred, so it is not in the history, and it keeps applying to whatever turns
+up later. What it produces is one of three things:
+
+    a fact becomes so    rains          ->  the road is wet
+    an action to be done temp >= 30     ->  switch on the AC
+    an action owed       amount > 500   ->  approved by a manager
+
+**Owed** belongs to what the instruction produces, never to the instruction.
+An owed action does nothing by itself and can sit unmet forever — that is what
+makes it reportable. A produced fact needs nobody:
+
+    When the temperature drops below zero, the pipe freezes.
+      temp -> -2   ->   p1(frozen: yes)      nobody has to do anything
+
+    When a part fails inspection, send it to the rework tray.
+      on   property_change(part, inspection: failed)
+      ->   movement(part, _, rework tray)   owed
+
+      Part 9 fails inspection.
+        action   property_change(p9, inspection: failed)   done
+      Where is part 9?
+        I don't know where it is. It is owed to the rework tray.
+      Part 9 is sent to the rework tray.
+        action   movement(p9, _, rework tray)   done
+      Where is part 9?
+        the rework tray
+
+The instruction did not put the part anywhere. That is the difference between
+the two kinds of consequence.
+
+An obligation said about one particular thing, with no instruction behind it —
+`Invoice 12 must be approved by Friday` — is a fact about that thing. Both
+kinds answer the same question.
+
+### Owed is computed, never materialised
+
+An instruction is stored once. It does not write an owed action per record —
+that copies its truth as many times as there are records, the same trap as a
+stored total. What is owed is worked out when asked, from whichever side the
+condition lives on:
+
+    condition is a state        walk the records and read the property
+      Every invoice over 500 must be approved by a manager.
+      which are still unapproved?
+        invoices where amount > 500, approved not set  ->  still owed
+
+    condition is an occurrence  walk the history and pair them up
+      nothing is *currently* failing inspection; the failure was a moment
+        fail@1  send@2  fail@3
+        fail@3 is unpaired  ->  still owed
+
+A real action needs no matching and no clearing. It is recorded, and the thing
+simply stops answering the question.
+
 ## Two things this design is not
 
 **Not a translation of sentences.** Words do not become nodes. `All cats are

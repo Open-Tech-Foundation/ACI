@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Obligation in the conversation graph design.** A standing instruction
+  produces a fact, an action to be done, or an action owed; `owed` belongs to
+  what is produced, not to the instruction. What is owed is computed when
+  asked — from the records when the condition is a state, from the recorded
+  history when it is an occurrence — never written out per record.
+
+
 - **Standing instructions are their own kind in the conversation graph design.**
   A rule never occurred and has no place in the recorded history, so it no
   longer counts as an action. It holds a condition and what stands on it, and
