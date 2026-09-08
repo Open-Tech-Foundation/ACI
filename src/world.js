@@ -11,7 +11,8 @@ export function fromWorldData(data) {
   for (const t of data.terms || []) terms.set(t.id, t);
 
   const isRel = (data.relations && data.relations.is) ?? null;
-  const differentRel = (data.relations && data.relations.different) ?? null;
+  const sameRel = (data.relations && data.relations.same) ?? data.anchors?.same ?? null;
+  const differentRel = (data.relations && data.relations.different) ?? data.anchors?.different ?? null;
   const anchors = data.anchors || {};
   const subrelationRel = anchors.subrelation ?? null;
   const domainRel = anchors.domain ?? null;
@@ -35,6 +36,35 @@ export function fromWorldData(data) {
       to.get(link.to).add(term.id);
     }
   }
+
+  // `same` does not copy or merge stored terms. It supplies an equivalence
+  // class at the read boundary, so every fact about one representative can be
+  // read through every other representative. The walk is deliberately based
+  // only on positive authored edges and treats them in both directions: those
+  // are the invariant semantics of identity, not a spelling convention.
+  const identityCache = new Map();
+  function equivalents(id) {
+    if (!terms.has(id)) return new Set();
+    if (sameRel == null) return new Set([id]);
+    if (identityCache.has(id)) return identityCache.get(id);
+    const found = new Set();
+    const pending = [id];
+    while (pending.length) {
+      const here = pending.pop();
+      if (found.has(here)) continue;
+      found.add(here);
+      for (const next of outgoing.get(sameRel)?.get(here) || []) pending.push(next);
+      for (const previous of incoming.get(sameRel)?.get(here) || []) pending.push(previous);
+    }
+    for (const member of found) identityCache.set(member, found);
+    return found;
+  }
+
+  const canonical = (id) => {
+    let first = null;
+    for (const member of equivalents(id)) if (first == null || member < first) first = member;
+    return first;
+  };
   const converseBy = new Map();
   if (anchors.converse != null) {
     for (const relation of terms.values()) {
@@ -95,6 +125,9 @@ export function fromWorldData(data) {
       const at = pending.pop();
       if (seen.has(at)) continue;
       seen.add(at);
+      for (const equivalent of equivalents(at)) {
+        if (!seen.has(equivalent)) pending.push(equivalent);
+      }
       const cur = terms.get(at);
       if (!cur) continue;
       for (const l of cur.links || []) {
@@ -220,14 +253,17 @@ export function fromWorldData(data) {
   function semanticClassificationRelation(
     subject,
     object,
-    individual = terms.get(subject)?.individual,
+    individual = null,
   ) {
+    const isIndividual = individual ?? [...equivalents(subject)].some(
+      (representative) => terms.get(representative)?.individual,
+    );
     const property = anchors.property ?? null;
     if (property != null && reaches(object, isRel).has(property)) {
-      if (!individual && reaches(subject, isRel).has(property)) return subtypeRel ?? isRel;
+      if (!isIndividual && reaches(subject, isRel).has(property)) return subtypeRel ?? isRel;
       return predicationRel ?? isRel;
     }
-    return individual && instanceRel != null
+    return isIndividual && instanceRel != null
       ? instanceRel
       : subtypeRel ?? isRel;
   }
@@ -284,7 +320,7 @@ export function fromWorldData(data) {
   // converse. This makes a fact written as `b after a` the same edge as `a
   // before b`, including when a transitive walk contains facts written from
   // both directions. The world supplies the converse relation and names none.
-  function related(id, rel) {
+  function rawRelated(id, rel) {
     const direct = directedLinks(id, rel);
     const out = new Set(direct.map((link) => link.to));
     if (reflexiveAt(id, rel)) out.add(id);
@@ -292,6 +328,18 @@ export function fromWorldData(data) {
       for (const term of terms.values()) {
         const links = directedLinks(term.id, rel);
         if (links.some((link) => link.to === id)) out.add(term.id);
+      }
+    }
+    return out;
+  }
+
+  function related(id, rel) {
+    if (!terms.has(id)) return new Set();
+    if (rel === sameRel) return new Set(equivalents(id));
+    const out = new Set();
+    for (const subject of equivalents(id)) {
+      for (const object of rawRelated(subject, rel)) {
+        for (const equivalent of equivalents(object)) out.add(equivalent);
       }
     }
     return out;
@@ -337,6 +385,7 @@ export function fromWorldData(data) {
     // is what lets the brain say no rather than only fail to say yes.
     excludes: (x, y) => {
       if (x == null || y == null) return false;
+      if (canonical(x) === canonical(y)) return false;
       const xs = reaches(x, isRel);
       const ys = reaches(y, isRel);
 
@@ -347,10 +396,8 @@ export function fromWorldData(data) {
           [ys, xs],
         ]) {
           for (const d of these) {
-            const t = terms.get(d);
-            if (!t) continue;
-            for (const l of t.links || []) {
-              if (l.rel === differentRel && those.has(l.to)) return true;
+            for (const other of relatedBy(d, differentRel)) {
+              if ([...those].some((candidate) => equivalents(candidate).has(other))) return true;
             }
           }
         }
@@ -376,56 +423,61 @@ export function fromWorldData(data) {
       if (id == null || rel == null) return [];
       const out = new Set();
       for (const t of terms.values()) {
-        const links = variantLinks(t.id, rel);
-        if (links.some((link) => link.to === id)) out.add(t.id);
+        if (related(t.id, rel).has(id)) out.add(canonical(t.id));
       }
-      if (terms.get(rel)?.symmetric) {
-        for (const link of variantLinks(id, rel)) out.add(link.to);
-      }
-      if (reflexiveAt(id, rel)) out.add(id);
       return [...out];
     },
     // The value a term names, and the term that names a value. This is the
     // whole of the world's part in arithmetic: which symbol is which number.
     // What follows from those numbers is the brain's, not the world's.
     valueOf: (id) => {
-      const t = terms.get(id);
-      return t && Number.isInteger(t.value) ? t.value : null;
+      for (const representative of [...equivalents(id)].sort((a, b) => a - b)) {
+        const value = terms.get(representative)?.value;
+        if (Number.isInteger(value)) return value;
+      }
+      return null;
     },
     // The symbols a thing is said as where no language has a word for it. A name
     // is not translated: it is the same in every language, so it is held here
     // rather than in any of them.
     symbolOf: (id) => {
-      const t = terms.get(id);
-      return t && typeof t.symbol === 'string' ? t.symbol : null;
+      for (const representative of [...equivalents(id)].sort((a, b) => a - b)) {
+        const symbol = terms.get(representative)?.symbol;
+        if (typeof symbol === 'string') return symbol;
+      }
+      return null;
     },
     termFor: (value) => {
       if (!Number.isInteger(value)) return null;
-      for (const t of terms.values()) if (t.value === value) return t.id;
+      for (const t of terms.values()) if (t.value === value) return canonical(t.id);
       return null;
     },
     // Whether the world has been told outright that a relation does not hold.
     // Not finding a path is ignorance; this is a denial, and it is knowledge.
     denies: (id, object, rel) => {
-      const t = terms.get(id);
-      if (!t || rel == null) return false;
+      if (!terms.has(id) || !terms.has(object) || rel == null) return false;
       const statedRelations = new Set(relationAncestors(rel));
       if (rel === isRel) {
         if (subtypeRel != null) statedRelations.add(subtypeRel);
         if (instanceRel != null) statedRelations.add(instanceRel);
         if (predicationRel != null) statedRelations.add(predicationRel);
       }
-      for (const stated of statedRelations) {
-        if ((t.links || []).some((l) => l.not && l.rel === stated && l.to === object)) return true;
-        const other = terms.get(object);
-        if (
-          terms.get(stated)?.symmetric &&
-          other &&
-          (other.links || []).some((l) => l.not && l.rel === stated && l.to === id)
-        ) return true;
-        for (const back of converseBy.get(stated) || []) {
-          if (other && (other.links || []).some((l) => l.not && l.rel === back && l.to === id)) {
-            return true;
+      for (const subject of equivalents(id)) {
+        const t = terms.get(subject);
+        for (const candidate of equivalents(object)) {
+          for (const stated of statedRelations) {
+            if ((t.links || []).some((l) => l.not && l.rel === stated && l.to === candidate)) return true;
+            const other = terms.get(candidate);
+            if (
+              terms.get(stated)?.symmetric &&
+              other &&
+              (other.links || []).some((l) => l.not && l.rel === stated && l.to === subject)
+            ) return true;
+            for (const back of converseBy.get(stated) || []) {
+              if (other && (other.links || []).some((l) => l.not && l.rel === back && l.to === subject)) {
+                return true;
+              }
+            }
           }
         }
       }
@@ -434,8 +486,7 @@ export function fromWorldData(data) {
     // A kind names many; an individual exists once. Everything else about a term
     // is the same either way — an individual simply `is` its kind.
     isIndividual: (id) => {
-      const t = terms.get(id);
-      return Boolean(t && t.individual);
+      return [...equivalents(id)].some((representative) => terms.get(representative)?.individual);
     },
     // Asymmetry is declared on the relation term. The engine reads the
     // property, never the relation's name: temporal order and any other strict
@@ -453,38 +504,40 @@ export function fromWorldData(data) {
     ranges: (rel) => [...constraintKinds(rel, 'range')],
     subrelationOf: (relation, broader) => relationAncestors(relation).has(broader),
     related: (id, rel) => [...related(id, rel)],
+    equivalents: (id) => [...equivalents(id)],
+    same: (left, right) => canonical(left) != null && canonical(left) === canonical(right),
     classificationRelation: semanticClassificationRelation,
     predicates: (id) => predicationRel == null ? [] : [...related(id, predicationRel)],
     kinds: (id) => {
-      const out = new Set(inferredTypes.get(id) || []);
-      for (const link of terms.get(id)?.links || []) {
-        if (link.not) continue;
-        if (link.rel === subtypeRel || link.rel === instanceRel) out.add(link.to);
-        if (link.rel === isRel && !legacyPredication(id, link.to)) out.add(link.to);
+      const out = new Set();
+      for (const representative of equivalents(id)) {
+        for (const inferred of inferredTypes.get(representative) || []) out.add(canonical(inferred));
+        for (const link of terms.get(representative)?.links || []) {
+          if (link.not) continue;
+          if (link.rel === subtypeRel || link.rel === instanceRel) out.add(canonical(link.to));
+          if (link.rel === isRel && !legacyPredication(representative, link.to)) out.add(canonical(link.to));
+        }
       }
       return [...out];
     },
     individualsOf: (kind) => {
-      const out = [];
+      const out = new Set();
       for (const t of terms.values()) {
-        if (!t.individual) continue;
-        if ((t.links || []).some(
-          (l) => !l.not && (l.rel === isRel || l.rel === instanceRel) && l.to === kind,
-        )) out.push(t.id);
+        if (![...equivalents(t.id)].some((representative) => terms.get(representative)?.individual)) continue;
+        if (reaches(t.id, isRel).has(kind)) out.add(canonical(t.id));
       }
-      return out;
+      return [...out];
     },
     // The one individual of a kind. None yet, or more than one, and there is no
     // "the" to resolve — the brain does not guess which was meant.
     oneOf: (kind) => {
       let found = null;
       for (const t of terms.values()) {
-        if (!t.individual) continue;
-        if (!(t.links || []).some(
-          (l) => !l.not && (l.rel === isRel || l.rel === instanceRel) && l.to === kind,
-        )) continue;
-        if (found != null) return null;
-        found = t.id;
+        if (![...equivalents(t.id)].some((representative) => terms.get(representative)?.individual)) continue;
+        if (!reaches(t.id, isRel).has(kind)) continue;
+        const candidate = canonical(t.id);
+        if (found != null && found !== candidate) return null;
+        found = candidate;
       }
       return found;
     },
@@ -498,24 +551,29 @@ export function fromWorldData(data) {
     // How many of `object` a term holds by one relation, where the world has
     // been told. This is state — what is so now — not what a thing is.
     held: (id, rel, object) => {
-      const t = terms.get(id);
-      if (!t || rel == null) return null;
+      if (!terms.has(id) || !terms.has(object) || rel == null) return null;
       let latest = null;
-      for (const l of t.links || []) {
-        if (l.not || l.rel !== rel || l.to !== object || !Number.isInteger(l.quantity)) continue;
-        if (latest == null || (l.at ?? -1) >= (latest.at ?? -1)) latest = l;
+      for (const subject of equivalents(id)) {
+        for (const l of terms.get(subject)?.links || []) {
+          if (l.not || l.rel !== rel || !equivalents(object).has(l.to) || !Number.isInteger(l.quantity)) continue;
+          if (latest == null || (l.at ?? -1) >= (latest.at ?? -1)) latest = l;
+        }
       }
       return latest ? latest.quantity : null;
     },
     // Everything the world has been told about what a thing held, in order.
     // Revising a count does not erase what was so before it.
     heldOver: (id, rel, object) => {
-      const t = terms.get(id);
-      if (!t || rel == null) return [];
-      return (t.links || [])
-        .filter((l) => !l.not && l.rel === rel && l.to === object && Number.isInteger(l.quantity))
+      if (!terms.has(id) || !terms.has(object) || rel == null) return [];
+      const history = [...equivalents(id)].flatMap((subject) => terms.get(subject)?.links || [])
+        .filter((l) => !l.not && l.rel === rel && equivalents(object).has(l.to) && Number.isInteger(l.quantity))
         .map((l) => ({ quantity: l.quantity, at: l.at ?? 0 }))
         .sort((x, y) => x.at - y.at);
+      return history.filter(
+        (entry, index) => history.findIndex(
+          (other) => other.at === entry.at && other.quantity === entry.quantity,
+        ) === index,
+      );
     },
     // The brain's clock. It ticks on what happens, not on any outside time, so
     // the same signals in the same order always give the same moments.
@@ -529,9 +587,9 @@ export function fromWorldData(data) {
     // What a term links to directly by one relation — its answer, where isA is
     // its question.
     linked: (id, rel) => {
-      const t = terms.get(id);
-      if (!t || rel == null) return [];
-      let links = variantLinks(id, rel);
+      if (!terms.has(id) || rel == null) return [];
+      if (rel === sameRel) return [...equivalents(id)];
+      let links = [...equivalents(id)].flatMap((subject) => variantLinks(subject, rel));
       // Quantity links retain history per object; only the latest value is a
       // current link. Placement relations have one current target, while old
       // targets remain available in the authored record.
@@ -548,14 +606,14 @@ export function fromWorldData(data) {
         const top = Math.max(...links.map((l) => l.at ?? -1));
         links = links.filter((l) => (l.at ?? -1) === top);
       }
-      const found = new Set(links.map((l) => l.to));
+      const found = new Set(links.map((l) => canonical(l.to)));
       if (terms.get(rel)?.symmetric) {
         for (const term of terms.values()) {
           const incomingLinks = variantLinks(term.id, rel);
-          if (incomingLinks.some((link) => link.to === id)) found.add(term.id);
+          if (incomingLinks.some((link) => equivalents(id).has(link.to))) found.add(canonical(term.id));
         }
       }
-      if (reflexiveAt(id, rel)) found.add(id);
+      if (reflexiveAt(id, rel)) found.add(canonical(id));
       return [...found];
     },
     // Does `id` reach `ancestorId` by following `rel` (the `is` relation by

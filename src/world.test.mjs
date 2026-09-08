@@ -230,6 +230,60 @@ test("reflexive and irreflexive characteristics decide self-reachability", () =>
   assertEquals(w.reflexive(DISTINCT), false);
 });
 
+test("same substitutes equivalent entities through facts, denials, kinds and state", () => {
+  const SAME = 2;
+  const DIFFERENT = 3;
+  const HOLDS = 4;
+  const KIND = 5;
+  const w = fromWorldData({
+    anchors: { same: SAME },
+    relations: { is: IS, same: SAME, different: DIFFERENT },
+    terms: [
+      { id: IS, name: "is", links: [] },
+      { id: SAME, name: "identity", symmetric: true, reflexive: true, transitive: true, links: [] },
+      { id: DIFFERENT, name: "distinction", symmetric: true, irreflexive: true, links: [] },
+      { id: HOLDS, name: "opaque relation", links: [] },
+      { id: KIND, name: "opaque kind", links: [] },
+      { id: 6, name: "first representative", links: [
+        { rel: SAME, to: 7 },
+        { rel: HOLDS, to: 10, quantity: 2 },
+      ] },
+      { id: 7, name: "second representative", links: [{ rel: SAME, to: 8 }] },
+      { id: 8, name: "third representative", individual: true, links: [
+        { rel: IS, to: KIND },
+        { rel: HOLDS, to: 9, quantity: 2 },
+        { rel: HOLDS, to: 12, not: true },
+        { rel: DIFFERENT, to: 11 },
+      ] },
+      { id: 9, name: "object", links: [{ rel: SAME, to: 10 }] },
+      { id: 10, name: "object representative", links: [] },
+      { id: 11, name: "other", links: [] },
+      { id: 12, name: "denied object", links: [] },
+      { id: 13, name: "numeric representative", value: 5, links: [{ rel: SAME, to: 14 }] },
+      { id: 14, name: "numeric alias", links: [] },
+    ],
+  });
+
+  assertEquals(w.same(6, 8), true, "identity closes transitively");
+  assertEquals(w.isA(8, 6, SAME), true, "identity reads symmetrically");
+  assertEquals(w.isA(6, KIND), true, "classification substitutes the subject");
+  assertEquals(w.isA(6, 10, HOLDS), true, "ordinary facts substitute both endpoints");
+  assertEquals(w.denies(6, 12, HOLDS), true, "denials substitute the subject");
+  assertEquals(w.held(6, HOLDS, 10), 2, "quantity state substitutes both endpoints");
+  assertEquals(w.heldOver(6, HOLDS, 10), [{ quantity: 2, at: 0 }], "identical history is not duplicated");
+  assertEquals(w.isIndividual(6), true, "individual identity substitutes across representatives");
+  assertEquals(w.kinds(6), [KIND], "direct kinds substitute across representatives");
+  assertEquals(w.individualsOf(KIND), [6], "equivalent individuals appear once");
+  assertEquals(w.oneOf(KIND), 6, "one identity remains one individual");
+  assertEquals(w.valueOf(14), 5, "numeric values substitute without changing exact arithmetic");
+  assertEquals(w.termFor(5), 13, "numeric lookup returns the canonical representative");
+  assertEquals(w.isA(6, 11, DIFFERENT), true, "difference follows an equivalent representative");
+  assertEquals(w.isA(11, 6, DIFFERENT), true, "difference remains symmetric");
+  assertEquals(w.isA(6, 6, DIFFERENT), false, "difference remains irreflexive");
+  assertEquals(w.excludes(6, 11), true, "general difference feeds exclusion");
+  assertEquals(w.members(10, HOLDS), [6], "open answers collapse identical subjects deterministically");
+});
+
 test("asymmetry entails irreflexivity", () => {
   const STRICT = 2;
   const w = fromWorldData({

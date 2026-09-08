@@ -2924,6 +2924,7 @@
       "name": "same",
       "symmetric": true,
       "reflexive": true,
+      "transitive": true,
       "links": [
         {
           "rel": 294,

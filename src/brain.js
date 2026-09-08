@@ -1491,7 +1491,7 @@ function judge(roots, world, mood, langs, sent) {
         ? knownCount != null && knownCount !== counted
         : heldDenied ||
           (kindFact && world.excludes(subject, object)) ||
-          (world.irreflexive(rel) && holder === object) ||
+          (world.irreflexive(rel) && world.same(holder, object)) ||
           (world.asymmetric(rel) && reverseHolds) ||
           apartFrom(rel, world).some((other) => joins(holder, object, other)));
       // Some of a kind is not the kind. What the kind reaches, some of it
@@ -1683,7 +1683,7 @@ function judge(roots, world, mood, langs, sent) {
       const opposed =
         world.denies(subject, object, rel) ||
         (kindFact && world.excludes(subject, object)) ||
-        (world.irreflexive(rel) && subject === object) ||
+        (world.irreflexive(rel) && world.same(subject, object)) ||
         apartFrom(rel, world).some((other) => joins(subject, object, other));
       const name = holds ? 'held' : opposed ? 'against' : 'absent';
       return [
@@ -4197,6 +4197,54 @@ function learningConflict(world, learned) {
     }
   }
 
+  const same = (world.data.relations && world.data.relations.same) ?? world.anchors?.same;
+  const identityEdges = new Map([...terms.keys()].map((id) => [id, []]));
+  if (same != null) {
+    for (const term of terms.values()) {
+      for (const link of term.links || []) {
+        if (link.not || link.rel !== same) continue;
+        identityEdges.get(term.id).push(link.to);
+        identityEdges.get(link.to).push(term.id);
+      }
+    }
+  }
+  const identityCache = new Map();
+  const identities = (id) => {
+    if (identityCache.has(id)) return identityCache.get(id);
+    const found = new Set();
+    const pending = [id];
+    while (pending.length) {
+      const here = pending.pop();
+      if (found.has(here)) continue;
+      found.add(here);
+      pending.push(...(identityEdges.get(here) || []));
+    }
+    for (const member of found) identityCache.set(member, found);
+    return found;
+  };
+  const identityOf = (id) => Math.min(...identities(id));
+  const identityFacts = new Map();
+  for (const term of terms.values()) {
+    for (const link of term.links || []) {
+      let subject = identityOf(term.id);
+      let object = identityOf(link.to);
+      if (terms.get(link.rel)?.symmetric && subject > object) {
+        [subject, object] = [object, subject];
+      }
+      const key = `${subject}:${link.rel}:${object}:${link.at ?? ''}`;
+      const fact = identityFacts.get(key);
+      const substitutesIdentity = identities(term.id).size > 1 || identities(link.to).size > 1;
+      if (substitutesIdentity && fact && Boolean(fact.not) !== Boolean(link.not)) {
+        return `equivalent terms both hold and deny ${key}`;
+      }
+      if (
+        substitutesIdentity && fact && fact.quantity !== undefined && link.quantity !== undefined &&
+        fact.quantity !== link.quantity
+      ) return `equivalent terms give ${key} two quantities`;
+      identityFacts.set(key, link);
+    }
+  }
+
   const subrelation = world.anchors ? world.anchors.subrelation : null;
   const relationParents = new Map([...terms.keys()].map((id) => [id, []]));
   if (subrelation != null) {
@@ -4395,9 +4443,11 @@ function learningConflict(world, learned) {
       }
     }
     const add = (subject, link) => {
-      bySubject.get(subject).push(link);
-      if (relation.symmetric && subject !== link.to) {
-        bySubject.get(link.to).push({ ...link, to: subject });
+      const normalizedSubject = identityOf(subject);
+      const normalizedLink = { ...link, to: identityOf(link.to) };
+      bySubject.get(normalizedSubject).push(normalizedLink);
+      if (relation.symmetric && normalizedSubject !== normalizedLink.to) {
+        bySubject.get(normalizedLink.to).push({ ...normalizedLink, to: normalizedSubject });
       }
     };
     for (const term of terms.values()) {
@@ -4498,7 +4548,7 @@ function learningConflict(world, learned) {
     }
     return found;
   };
-  const different = world.data.relations ? world.data.relations.different : null;
+  const different = (world.data.relations && world.data.relations.different) ?? world.anchors?.different;
   const excluded = (left, right) => {
     if (left === right) return false;
     if (different != null) {
@@ -4521,6 +4571,29 @@ function learningConflict(world, learned) {
     }
     return false;
   };
+  for (const component of new Set([...identityCache.values()])) {
+    if (component.size < 2) continue;
+    const effective = new Set();
+    const values = new Set();
+    for (const member of component) {
+      if (terms.get(member)?.value !== undefined) values.add(terms.get(member).value);
+      for (const ancestor of effectiveAncestors(member)) effective.add(ancestor);
+      if ((terms.get(member)?.links || []).some(
+        (link) => link.not && link.rel === same && component.has(link.to),
+      )) return 'equivalent terms are explicitly denied as same';
+    }
+    for (const member of component) {
+      if ((terms.get(member)?.links || []).some(
+        (link) => link.not && classificationRelations.has(link.rel) && effective.has(link.to),
+      )) return 'equivalent terms contradict an inherited classification';
+    }
+    if (values.size > 1) return 'equivalent terms name different numeric values';
+    for (const left of effective) {
+      for (const right of effective) {
+        if (excluded(left, right)) return 'equivalent terms have exclusive identities or kinds';
+      }
+    }
+  }
   for (const [id] of inferredTypes) {
     const effective = effectiveAncestors(id);
     for (const rung of effective) {

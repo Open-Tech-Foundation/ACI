@@ -24,6 +24,9 @@ const CAT = 105;
 const PET = 106;
 const SUBTYPE = 107;
 const INSTANCE = 108;
+const SAME = 109;
+const DIFFERENT = 110;
+const AVIAN = 111;
 const worldData = {
   anchors: {
     thing: 1,
@@ -33,8 +36,9 @@ const worldData = {
     range: RANGE,
     subtype: SUBTYPE,
     instance: INSTANCE,
+    same: SAME,
   },
-  relations: { is: IS },
+  relations: { is: IS, same: SAME, different: DIFFERENT },
   terms: [
     { id: 1, name: "thing", links: [] },
     { id: 2, name: "relation", links: [] },
@@ -57,6 +61,9 @@ const worldData = {
     { id: PET, name: "pet", links: [{ rel: IS, to: ANIMAL }] },
     { id: SUBTYPE, name: "subtype", transitive: true, asymmetric: true, links: [{ rel: IS, to: 2 }, { rel: SUBRELATION, to: IS }] },
     { id: INSTANCE, name: "instance", irreflexive: true, links: [{ rel: IS, to: 2 }, { rel: SUBRELATION, to: IS }] },
+    { id: SAME, name: "identity", symmetric: true, reflexive: true, transitive: true, links: [{ rel: IS, to: 2 }] },
+    { id: DIFFERENT, name: "distinction", symmetric: true, irreflexive: true, links: [{ rel: IS, to: 2 }] },
+    { id: AVIAN, name: "avian representative", links: [{ rel: SAME, to: 10 }] },
     { id: 10, name: "bird", links: [{ rel: IS, to: ANIMAL }, { rel: MEETS, to: 12 }, { rel: POINTS, to: 12 }, { rel: TAPS, to: 12 }, { rel: CARES, to: 11 }] },
     { id: 11, name: "wing", links: [{ rel: IS, to: 1 }, { rel: PART, to: 10 }] },
     { id: 12, name: "stone", links: [{ rel: IS, to: NONLIVING }] },
@@ -83,6 +90,9 @@ const langData = {
     animal: { pos: "noun", meaning: "animal", concept: ANIMAL },
     cat: { pos: "noun", meaning: "cat", concept: CAT },
     pet: { pos: "noun", meaning: "pet", concept: PET },
+    avian: { pos: "noun", meaning: "avian", concept: AVIAN },
+    equals: { pos: "verb", meaning: "identity", concept: SAME },
+    differs: { pos: "verb", meaning: "distinction", concept: DIFFERENT },
   },
   grammar: {
     start: "sentence",
@@ -134,6 +144,17 @@ test("a declared symmetric relation entails its reverse without a duplicate fact
   assertEquals(result.expression.name, "understood");
   assertEquals(truth("stone meets bird").name, "held");
   assertEquals(result.learned, null);
+});
+
+test("identity substitutes facts and protects distinction at the brain boundary", () => {
+  assertEquals(truth("avian taps stone").name, "held", "the representative inherits the fact");
+  assertEquals(truth("avian equals bird").name, "held", "same closes symmetrically");
+  assertEquals(truth("avian differs bird").name, "against", "different is irreflexive across identity");
+  assertEquals(brainFrom("avian differs bird", knowledge).learned, null);
+
+  const collapse = brainFrom("bird equals stone", knowledge);
+  assertEquals(collapse.expression.name, "deny", "exclusive kinds cannot be collapsed into one identity");
+  assertEquals(collapse.learned, null);
 });
 
 test("reflexive and irreflexive declarations decide self-relations", () => {

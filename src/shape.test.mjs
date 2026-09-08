@@ -651,7 +651,7 @@ test("domain and range declarations constrain relations with kinds", () => {
       { id: 9, name: "car", individual: true, links: [] },
       { id: 10, name: "machine", links: [{ rel: 1, to: 11 }] },
       { id: 11, name: "nature", disjoint: true, links: [] },
-      { id: 12, name: "different", links: [{ rel: 1, to: 2 }] },
+      { id: 12, name: "different", symmetric: true, irreflexive: true, links: [{ rel: 1, to: 2 }] },
     ],
   };
   const valid = fromSources({ world: base });
@@ -685,6 +685,112 @@ test("domain and range declarations constrain relations with kinds", () => {
     refuses("a domain inference excluded by its subject kind", { world: exclusive })
       .includes("contradicts an exclusive classification"),
   );
+});
+
+test("identity classes cannot contain differences or contradictory facts", () => {
+  const identityWorld = () => ({
+    anchors: { same: 2 },
+    relations: { is: 1, same: 2, different: 3 },
+    terms: [
+      { id: 1, name: "is", links: [] },
+      { id: 2, name: "identity", symmetric: true, reflexive: true, transitive: true, links: [] },
+      { id: 3, name: "distinction", symmetric: true, irreflexive: true, links: [] },
+      { id: 4, name: "opaque relation", links: [] },
+      { id: 5, name: "a", links: [{ rel: 2, to: 6 }] },
+      { id: 6, name: "b", links: [{ rel: 2, to: 7 }] },
+      { id: 7, name: "c", links: [] },
+      { id: 8, name: "object", links: [] },
+    ],
+  });
+
+  const different = identityWorld();
+  different.terms[6].links.push({ rel: 3, to: 5 });
+  assert(
+    refuses("one identity declared different", { world: different }).includes("exclusive identities"),
+  );
+
+  const deniedIdentity = identityWorld();
+  deniedIdentity.terms[6].links.push({ rel: 2, to: 5, not: true });
+  assert(
+    refuses("transitive identity explicitly denied", { world: deniedIdentity }).includes("hold and deny"),
+  );
+
+  const contradicted = identityWorld();
+  contradicted.terms[4].links.push({ rel: 4, to: 8 });
+  contradicted.terms[5].links.push({ rel: 4, to: 8, not: true });
+  assert(
+    refuses("equivalent subjects disagreeing", { world: contradicted }).includes("hold and deny"),
+  );
+
+  const quantities = identityWorld();
+  quantities.terms[4].links.push({ rel: 4, to: 8, quantity: 1 });
+  quantities.terms[5].links.push({ rel: 4, to: 8, quantity: 2 });
+  assert(
+    refuses("equivalent subjects with conflicting quantities", { world: quantities }).includes("two quantities"),
+  );
+
+  const values = identityWorld();
+  values.terms[4].value = 1;
+  values.terms[5].value = 2;
+  assert(
+    refuses("equivalent terms naming different values", { world: values }).includes("numeric values"),
+  );
+
+  const inherited = identityWorld();
+  inherited.terms.push({ id: 9, name: "kind", links: [{ rel: 1, to: 10 }] });
+  inherited.terms.push({ id: 10, name: "broader kind", links: [] });
+  inherited.terms[4].links.push({ rel: 1, to: 9 });
+  inherited.terms[5].links.push({ rel: 1, to: 10, not: true });
+  assert(
+    refuses("equivalent terms denying an inherited kind", { world: inherited })
+      .includes("inherited classification"),
+  );
+});
+
+test("identity relation declarations carry their required algebra", () => {
+  const base = {
+    anchors: { same: 2 },
+    relations: { is: 1, same: 2, different: 3 },
+    terms: [
+      { id: 1, name: "is", links: [] },
+      { id: 2, name: "identity", symmetric: true, reflexive: true, transitive: true, links: [] },
+      { id: 3, name: "distinction", symmetric: true, irreflexive: true, links: [] },
+    ],
+  };
+  fromSources({ world: base });
+
+  for (const characteristic of ["symmetric", "reflexive", "transitive"]) {
+    const bad = structuredClone(base);
+    delete bad.terms[1][characteristic];
+    assert(refuses(`same without ${characteristic}`, { world: bad }).includes("same must"));
+  }
+  for (const characteristic of ["symmetric", "irreflexive"]) {
+    const bad = structuredClone(base);
+    delete bad.terms[2][characteristic];
+    assert(refuses(`different without ${characteristic}`, { world: bad }).includes("different must"));
+  }
+});
+
+test("functional relations normalize equivalent subjects and objects", () => {
+  const world = {
+    anchors: { same: 2 },
+    relations: { is: 1, same: 2 },
+    terms: [
+      { id: 1, name: "is", links: [] },
+      { id: 2, name: "identity", symmetric: true, reflexive: true, transitive: true, links: [] },
+      { id: 3, name: "single value", functional: true, links: [] },
+      { id: 4, name: "a", links: [{ rel: 2, to: 5 }, { rel: 3, to: 6 }] },
+      { id: 5, name: "b", links: [{ rel: 3, to: 7 }] },
+      { id: 6, name: "first object", links: [] },
+      { id: 7, name: "second object", links: [] },
+    ],
+  };
+  assert(
+    refuses("equivalent subjects with competing values", { world }).includes("competing objects"),
+  );
+
+  world.terms.find((term) => term.id === 6).links.push({ rel: 2, to: 7 });
+  fromSources({ world });
 });
 
 test("subtype connects kinds and instance connects an individual to a kind", () => {

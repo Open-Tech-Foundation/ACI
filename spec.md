@@ -509,6 +509,9 @@ on, not even for not knowing.
     { "id": 10, "name": "organism", "links": [{ "rel": 294, "to": 6 }] },
     { "id": 83, "name": "cat",      "links": [{ "rel": 294, "to": 24 }] },
     { "id": 250, "name": "same", "symmetric": true, "reflexive": true,
+      "transitive": true,
+      "links": [{ "rel": 294, "to": 4 }] },
+    { "id": 251, "name": "different", "symmetric": true, "irreflexive": true,
       "links": [{ "rel": 294, "to": 4 }] },
     { "id": 2828, "name": "subrelation", "transitive": true, "asymmetric": true,
       "links": [{ "rel": 294, "to": 4 }] },
@@ -1244,6 +1247,17 @@ it is what the brain found among its own facts:
 
 Failing to find a path is **not** something standing against. Only a denial or
 an exclusion is.
+`same` is identity over term ids: reflexive, symmetric and transitive. The
+stored ids are never destructively merged and facts are never copied. Instead,
+the world substitutes equivalent representatives while reading classification,
+ordinary relations, explicit denials and quantity state. Open answers collapse
+an identity class to its least id, which makes the representative deterministic.
+This term identity is separate from arithmetic: two numeric expressions are
+still computed and compared exactly.
+
+`different` is an ordinary symmetric, irreflexive relation. It is read through
+identity like every other relation, so if `a same b` and `b different c`, then
+`a different c`; no representative can be different from its own identity.
 `world.excludes(x, y)` is true when anything `x` is a kind of stands `different`
 to anything `y` is a kind of, **or** when they descend by different children of a
 term marked `disjoint: true` — a parent saying its children are kinds apart from
@@ -1268,7 +1282,9 @@ makes the reverse claim stand `against` what is held and refuses it. The base
 classification relation retains its separate acyclic invariant. Proposed
 learning is checked as one overlay on one immutable snapshot, so two
 individually harmless joined clauses cannot create a classification or strict
-relation cycle, duplicate an id/name, or contradict one another when combined.
+relation cycle, duplicate an id/name, contradict equivalent representatives,
+give one functional relation competing values through aliases, or collapse
+different/exclusive kinds into one identity when combined.
 
 A **contradicted** claim is refused the same way, with `refuse: contradiction`.
 So teaching the brain `"a cat is two"` no longer corrupts it: a cat is a kind of

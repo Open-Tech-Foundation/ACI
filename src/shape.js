@@ -205,6 +205,20 @@ export function checkWhole(data, origin = null, where = 'world') {
   for (const [name, id] of Object.entries(data.anchors || {})) {
     if (!ids.has(id)) fail(`${where} anchor "${name}"`, `unknown term ${id}`);
   }
+  const sameRelation = (data.relations && data.relations.same) ?? data.anchors?.same;
+  if (sameRelation != null) {
+    const relation = data.terms.find((term) => term.id === sameRelation);
+    if (!relation?.reflexive || !relation.symmetric || !relation.transitive) {
+      fail(`${from(sameRelation)} term ${sameRelation}`, 'same must be reflexive, symmetric and transitive');
+    }
+  }
+  const differentRelation = (data.relations && data.relations.different) ?? data.anchors?.different;
+  if (differentRelation != null) {
+    const relation = data.terms.find((term) => term.id === differentRelation);
+    if (!relation?.symmetric || !relation.irreflexive) {
+      fail(`${from(differentRelation)} term ${differentRelation}`, 'different must be symmetric and irreflexive');
+    }
+  }
   if (data.terms.length > 0 && relationIds.size === 0) {
     fail(where, 'terms but no relations declared — nothing could be walked');
   }
@@ -448,7 +462,7 @@ export function checkWhole(data, origin = null, where = 'world') {
     }
     return found;
   };
-  const different = data.relations && data.relations.different;
+  const different = (data.relations && data.relations.different) ?? data.anchors?.different;
   const excluded = (left, right) => {
     if (left === right) return false;
     if (different != null) {
@@ -471,6 +485,88 @@ export function checkWhole(data, origin = null, where = 'world') {
     }
     return false;
   };
+
+  // Identity is an equivalence class over stored ids, not a destructive merge.
+  // Normalize proposition endpoints through that class before accepting the
+  // world: equivalent representatives cannot disagree about one fact, stand
+  // `different`, or acquire mutually exclusive kinds.
+  const same = (data.relations && data.relations.same) ?? data.anchors?.same;
+  const identityEdges = new Map(data.terms.map((term) => [term.id, []]));
+  if (same != null) {
+    for (const term of data.terms) {
+      for (const link of term.links) {
+        if (link.not || link.rel !== same) continue;
+        identityEdges.get(term.id).push(link.to);
+        identityEdges.get(link.to).push(term.id);
+      }
+    }
+  }
+  const identityCache = new Map();
+  const identities = (id) => {
+    if (identityCache.has(id)) return identityCache.get(id);
+    const found = new Set();
+    const pending = [id];
+    while (pending.length) {
+      const here = pending.pop();
+      if (found.has(here)) continue;
+      found.add(here);
+      pending.push(...(identityEdges.get(here) || []));
+    }
+    for (const member of found) identityCache.set(member, found);
+    return found;
+  };
+  const identityOf = (id) => Math.min(...identities(id));
+
+  const identityFacts = new Map();
+  for (const term of data.terms) {
+    for (const link of term.links) {
+      let subject = identityOf(term.id);
+      let object = identityOf(link.to);
+      if (termsById.get(link.rel)?.symmetric && subject > object) {
+        [subject, object] = [object, subject];
+      }
+      const key = `${subject}:${link.rel}:${object}:${link.at ?? ''}`;
+      const held = identityFacts.get(key);
+      const substitutesIdentity = identities(term.id).size > 1 || identities(link.to).size > 1;
+      if (substitutesIdentity && held && Boolean(held.not) !== Boolean(link.not)) {
+        fail(`${from(term.id)} term ${term.id}`, `equivalent terms hold and deny ${key}`);
+      }
+      if (
+        substitutesIdentity && held && held.quantity !== undefined && link.quantity !== undefined &&
+        held.quantity !== link.quantity
+      ) {
+        fail(`${from(term.id)} term ${term.id}`, `equivalent terms give ${key} two quantities`);
+      }
+      identityFacts.set(key, link);
+    }
+  }
+  for (const component of new Set([...identityCache.values()])) {
+    if (component.size < 2) continue;
+    const effective = new Set();
+    const values = new Set();
+    for (const member of component) {
+      if (termsById.get(member)?.value !== undefined) values.add(termsById.get(member).value);
+      for (const ancestor of effectiveAncestors(member)) effective.add(ancestor);
+      if ((termsById.get(member)?.links || []).some(
+        (link) => link.not && link.rel === same && component.has(link.to),
+      )) fail(`${from(member)} term ${member}`, 'equivalent terms are explicitly denied as same');
+    }
+    for (const member of component) {
+      if ((termsById.get(member)?.links || []).some(
+        (link) => link.not && classificationRelations.has(link.rel) && effective.has(link.to),
+      )) fail(`${from(member)} term ${member}`, 'equivalent terms contradict an inherited classification');
+    }
+    if (values.size > 1) {
+      fail(`${from(identityOf([...component][0]))} identity`, 'equivalent terms name different numeric values');
+    }
+    for (const left of effective) {
+      for (const right of effective) {
+        if (excluded(left, right)) {
+          fail(`${from(left)} term ${left}`, 'equivalent terms have exclusive identities or kinds');
+        }
+      }
+    }
+  }
   for (const [id] of inferredTypes) {
     const effective = effectiveAncestors(id);
     for (const rung of effective) {
@@ -595,9 +691,11 @@ export function checkWhole(data, origin = null, where = 'world') {
       }
     }
     const add = (subject, link) => {
-      bySubject.get(subject).push(link);
-      if (relation.symmetric && subject !== link.to) {
-        bySubject.get(link.to).push({ ...link, to: subject });
+      const normalizedSubject = identityOf(subject);
+      const normalizedLink = { ...link, to: identityOf(link.to) };
+      bySubject.get(normalizedSubject).push(normalizedLink);
+      if (relation.symmetric && normalizedSubject !== normalizedLink.to) {
+        bySubject.get(normalizedLink.to).push({ ...normalizedLink, to: normalizedSubject });
       }
     };
     for (const term of data.terms) {

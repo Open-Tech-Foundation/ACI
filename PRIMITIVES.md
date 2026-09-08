@@ -26,7 +26,7 @@ universe; the nature or essence of an entity may later be an ordinary relation.
 | Foundation | Status | What works now | What is still foundationally missing |
 |---|---|---|---|
 | Existence | Implemented | Four modes exist: thing, property, relation and action. `existence` is their root. | No higher answer is expected for `what is existence?`; adding another label only moves the root. |
-| Identity | Partial | Stable term ids, named individuals, deterministic id allocation, self and contextual pointers. Numeric equality is computed exactly. | General `same` is not an equivalence relation and cannot substitute identicals. `different` has bespoke exclusion behavior rather than one general algebra. |
+| Identity | Implemented | Stable term ids, named individuals, deterministic id allocation, self and contextual pointers. `same` is reflexive, symmetric and transitive; equivalent representatives substitute through classification, relations, denials and quantity state without copying facts. `different` is a general symmetric, irreflexive relation and numeric equality remains exact. | Rich identity criteria for changing objects and events belong with the later state/event foundations. |
 | Classification | Partial | Explicit transitive `subtype`, direct `instance` and non-classifying `predication` relations retain a compatible broad `is` surface; inherited positive and negative facts, disjoint kinds, cycle rejection, kind versus individual metadata, and open-world living/nonliving/unknown judgement. | Legacy authored classification edges remain accepted and interpreted during migration. General class intersection, union and complement are not represented. |
 | Relations | Partial | Direct, declared-transitive and subrelation walks; converse, symmetric, reflexive, irreflexive, functional, domain and range semantics; explicit denial, asymmetry and contradiction checks. | Inverse-functional semantics. |
 | Propositions and logic | Partial | Held, against and absent are distinct; negation is explicit; multi-fact learning is atomic; conjunction, immediate conditions and basic quantifier scope work. | A proposition cannot itself be the subject or object of knowledge. Stored rules, variables, implication chains, general disjunction, biconditionals and proof explanations are missing. |
@@ -72,7 +72,7 @@ more world vocabulary.
   broad kind walk.
 - [x] Separate property predication from the classification ladder while
   preserving the broad copular query surface.
-- [ ] Give `same` equivalence semantics and `different` general symmetric,
+- [x] Give `same` equivalence semantics and `different` general symmetric,
   irreflexive semantics.
 
 Every later primitive depends on trustworthy identity, typing and relations.

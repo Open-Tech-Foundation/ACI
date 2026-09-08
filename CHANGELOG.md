@@ -6,6 +6,19 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Identity now has one deterministic algebra.** `same` is reflexive,
+  symmetric and transitive, and equivalent term representatives substitute at
+  the world-query boundary through classification, ordinary relations,
+  explicit denials and quantity state without merging ids or copying facts.
+  Open answers collapse equivalent subjects to the least stable id.
+  `different` remains a general symmetric, irreflexive relation and now follows
+  identity substitution instead of serving only bespoke kind exclusion.
+  Source validation and atomic learning reject denied identity closure,
+  contradictory facts across aliases, competing functional values, and any
+  attempt to identify different or mutually exclusive kinds. Exact computed
+  numeric equality remains unchanged. Opaque-vocabulary world, validation and
+  brain-integration tests prove that none of these semantics depend on English.
+
 - **38 new world terms.** Emotions (hate, surprise, excitement, boredom,
   loneliness, trust, worry, like), knowledge concepts (knowledge, belief,
   information, problem, solution, value, culture), actions (cry, feel, forget,
