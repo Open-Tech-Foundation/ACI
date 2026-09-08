@@ -187,3 +187,57 @@ test("memory that stands nowhere the world is going is left where it is", async 
   const back = await readWorld(db);
   assertEquals(back.terms.find((t) => t.name === "tilly").id, 23, "no authored term wanted 23");
 });
+
+test("a name the world brings back goes to the world, and memory keeps the thing", async () => {
+  const db = await fresh();
+  await write(db, {
+    terms: [
+      { id: 23, name: "tilly", individual: true, links: [{ rel: IS, to: 20 }] },
+      { id: 24, name: "her load", individual: true, links: [{ rel: IS, to: 23, quantity: 5, at: 2 }] },
+    ],
+  });
+
+  // The authored world brings its own "tilly", at an id nothing has taken.
+  const grown = { ...world, terms: [...world.terms, { id: 40, name: "tilly", links: [{ rel: IS, to: 1 }] }] };
+  await seed(db, grown);
+
+  const back = await readWorld(db);
+  const named = (name) => back.terms.find((t) => t.name === name);
+  assertEquals(named("tilly").id, 40, "the bare word goes to the authored term");
+
+  const kept = back.terms.find((t) => t.name === "tilly#23");
+  assert(kept, "and memory keeps the thing under the name it makes individuals by");
+  assertEquals(kept.id, 23, "which it did not have to move to do");
+  assert(kept.individual);
+  assertEquals(kept.links, [{ rel: IS, to: 20 }]);
+  assertEquals(
+    named("her load").links,
+    [{ rel: IS, to: 23, quantity: 5, at: 2 }],
+    "what was said of it is still said of it",
+  );
+  assertEquals(back.terms.length, grown.terms.length + 2, "nothing was dropped either way");
+
+  // The renamed term no longer clashes, so opening again changes nothing.
+  await seed(db, grown);
+  const again = await readWorld(db);
+  assertEquals(again.terms.length, back.terms.length);
+  assert(again.terms.find((t) => t.name === "tilly#23"));
+});
+
+test("a term whose id and name are both claimed yields both at once", async () => {
+  const db = await fresh();
+  await write(db, { terms: [{ id: 23, name: "tilly", individual: true, links: [{ rel: IS, to: 20 }] }] });
+  const grown = {
+    ...world,
+    terms: [...world.terms, { id: 23, name: "wagon", links: [] }, { id: 24, name: "tilly", links: [] }],
+  };
+  await seed(db, grown);
+
+  const back = await readWorld(db);
+  assertEquals(back.terms.find((t) => t.name === "wagon").id, 23);
+  assertEquals(back.terms.find((t) => t.name === "tilly").id, 24);
+  const kept = back.terms.find((t) => t.name.startsWith("tilly#"));
+  assert(kept.id > 24, "memory moved up");
+  assertEquals(kept.name, `tilly#${kept.id}`, "and is named by where it moved to");
+  assertEquals(kept.links, [{ rel: IS, to: 20 }]);
+});

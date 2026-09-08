@@ -43,6 +43,14 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A name the authored world brings back no longer stops the brain opening.**
+  A name given in conversation and later shipped by `data/world.json` left two
+  terms claiming one name, and seeding died on a raw unique-constraint error
+  with the store unusable until cleared by hand. The authored world is the
+  vocabulary everyone shares, so it takes the bare word; memory keeps the thing
+  under the `name#id` the brain already gives an individual it makes without a
+  name of its own, with its links and everything else intact.
+
 - **A growing world no longer silently loses its own new terms.** Memory is
   numbered from the top of the authored world, and so is the next authored
   term, so a world that grows reaches ids that memory already took. The seed

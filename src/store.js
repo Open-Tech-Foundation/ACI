@@ -187,19 +187,29 @@ export async function seed(db, world) {
 // id order means the same store and the same world always give the same
 // numbers.
 //
+// A name is not so free. It is claimed once, and it is the whole of how a thing
+// is met again, so when the authored world brings a name memory had already
+// given to something else, the two cannot both keep it. The authored world is
+// the vocabulary everyone shares; a name given in one conversation is not. So
+// memory yields the bare word and keeps the thing, under the `name#id` the
+// brain already gives an individual it makes without a name of its own. What
+// was learned is all still there — but the bare word now reaches the authored
+// term, which is the point of the world bringing it.
+//
 // Memory is taken out and put back rather than renumbered in place: a name is
 // claimed once and a link may not point at a term that is not there, so there
 // is no order in which rows can be edited one at a time without breaking one
 // wall or the other on the way.
 async function stepAside(db, world) {
   const authored = new Set(world.terms.map((t) => t.id));
+  const claimed = new Set(world.terms.map((t) => t.name));
   const held = await rows(
     db,
     sql`select id, name, value, symbol, individual, disjoint, transitive, asymmetric,
                symmetric, reflexive, irreflexive, functional
         from term where learned = 1 order by id`,
   );
-  if (!held.some((t) => authored.has(t.id))) return;
+  if (!held.some((t) => authored.has(t.id) || claimed.has(t.name))) return;
 
   const links = await rows(
     db,
@@ -210,6 +220,7 @@ async function stepAside(db, world) {
   const moved = new Map();
   for (const t of held) if (authored.has(t.id)) moved.set(t.id, ++free);
   const at = (id) => moved.get(id) ?? id;
+  const called = (t) => (claimed.has(t.name) ? `${t.name}#${at(t.id)}` : t.name);
 
   await db.execute(sql`begin immediate`);
   try {
@@ -222,7 +233,7 @@ async function stepAside(db, world) {
     // once opens a transaction of its own, and this move is already in one.
     for (const t of held) {
       await db.execute(sql`insert into term (id, name, value, symbol, individual, disjoint, transitive, asymmetric, symmetric, reflexive, irreflexive, functional, learned)
-                           values (${at(t.id)}, ${t.name}, ${t.value}, ${t.symbol},
+                           values (${at(t.id)}, ${called(t)}, ${t.value}, ${t.symbol},
                                    ${t.individual}, ${t.disjoint}, ${t.transitive}, ${t.asymmetric},
                                    ${t.symmetric}, ${t.reflexive}, ${t.irreflexive}, ${t.functional}, 1)`);
     }
