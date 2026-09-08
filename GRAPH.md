@@ -196,9 +196,10 @@ Checked against the engine on 2026-09-08.
 | A | SETTLED — a pending action waits on a state, re-checked after every change | 5 |
 | B | SETTLED — a collection is identified, and later actions reach it | 6 |
 | C | clock time, and what was so at a moment nothing happened | 8 |
-| D | a description on a counted thing — `4 red balls`; `red` belongs neither to `ball` nor to the having | 10 |
+| D | SETTLED — a collection carries its own properties: `collection(ball, count: 4, color: red)` | 10 |
 
-Cases 1, 2, 3, 4, 7 and 9 place in the four kinds above with nothing new.
+Cases 1, 2, 3, 4, 7 and 9 place in the four kinds above with nothing new. Of
+the four that did not, three are settled above; only clock time is left.
 
 ## Two things this design is not
 
