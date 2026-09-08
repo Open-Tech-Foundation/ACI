@@ -110,3 +110,29 @@ test("two sources cannot give a functional relation competing objects", () => {
   }
   assert(threw != null, "functional competition crossed the source boundary");
 });
+
+test("what a term is, a later source may say of one the world already has", () => {
+  const base = {
+    ...world,
+    terms: [
+      ...world.terms,
+      { id: 20, name: "cart", links: [{ rel: 9, to: 1 }] },
+      { id: 21, name: "nature", links: [{ rel: 9, to: 1 }] },
+    ],
+  };
+  const taught = fromSources({
+    world: base,
+    knowledge: [{
+      terms: [
+        { id: 20, name: "cart", individual: true, links: [] },
+        { id: 21, name: "nature", disjoint: true, links: [] },
+      ],
+    }],
+  });
+  assertEquals(taught.world.isIndividual(20), true, "one of a kind, said by a knowledge file");
+  assertEquals(
+    taught.world.data.terms.find((t) => t.id === 21).disjoint,
+    true,
+    "and a kind whose children exclude each other",
+  );
+});

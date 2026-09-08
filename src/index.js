@@ -124,13 +124,19 @@ export function openBrain(url) {
     const result = brainFrom(input, knowledge, said);
     const standing = [...(held.told || [])];
     if (result.told && !standing.includes(result.told)) standing.push(result.told);
-    if (result.learned) {
-      // A turn is not acknowledged until the complete proposed change is
-      // committed. Persistence errors surface to the caller.
-      await write(store, result.learned);
+    // What the brain accepted, put where it will still be after the turn. A
+    // turn is not acknowledged until the complete proposed change is
+    // committed; persistence errors surface to the caller. One door for both
+    // ways a turn can reach a fact — stated outright, or reached at last by
+    // acting on something agreed to earlier — because they are the same fact.
+    const commit = async (accepted) => {
+      if (!accepted) return;
+      await write(store, accepted);
       knowledgePromise = build();
       await knowledgePromise;
-    }
+    };
+
+    await commit(result.learned);
 
     // What it agreed to follow, brought round again now something has moved.
     // The brain holds no instruction; it is asked afresh, and where it can act
@@ -146,6 +152,7 @@ export function openBrain(url) {
         to: said.to,
       });
       if (again.told == null && again.expression.name !== "unsure") {
+        await commit(again.learned);
         threads.set(thread, {
           spoken: result.spoken,
           focus: result.focus,

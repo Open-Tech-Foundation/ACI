@@ -186,6 +186,22 @@ function merge(world, sources) {
         }
         held.symbol = t.symbol;
       }
+      // What a term is — one of a kind, or a kind whose children exclude each
+      // other — is said the same way every other mark is, and carried the same
+      // way. A source may only ever say these are so, so agreeing costs
+      // nothing and there is nothing to disagree about.
+      if (t.individual !== undefined) {
+        if (held.individual !== undefined && held.individual !== t.individual) {
+          throw new Error(`${where}: term ${t.id} was already marked differently for individuality`);
+        }
+        held.individual = t.individual;
+      }
+      if (t.disjoint !== undefined) {
+        if (held.disjoint !== undefined && held.disjoint !== t.disjoint) {
+          throw new Error(`${where}: term ${t.id} was already marked differently for disjointness`);
+        }
+        held.disjoint = t.disjoint;
+      }
       if (t.transitive !== undefined) {
         if (held.transitive !== undefined && held.transitive !== t.transitive) {
           throw new Error(`${where}: term ${t.id} was already marked differently for transitivity`);

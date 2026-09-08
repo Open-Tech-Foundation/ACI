@@ -43,6 +43,21 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A knowledge file may say what a term is, not only what it links to.**
+  `individual` and `disjoint` were the only two marks a later source could not
+  add to a term the base world already held: the other eight were carried over
+  and checked for contradiction, these two were dropped without a word. So a
+  knowledge file could not make a world term one of a kind, or a kind whose
+  children exclude each other.
+
+- **A fact reached by acting on a standing instruction is now kept.** When an
+  instruction the brain had agreed to could finally be acted on, what it
+  learned in doing so was handed to the caller and never written, and the
+  instruction was dropped from the thread in the same breath — so the fact was
+  gone for good. Both ways a turn can reach a fact now go through one door.
+  (This path is unreachable while `knowledge/following.json` stands, so the
+  repair is by inspection; see the note below.)
+
 - **The order terms were written in can no longer reach an answer.** A file
   authors its terms in whatever order reads well and the store hands them back
   by id, and `data/world.json` is not in id order — so the same world walked
