@@ -4,6 +4,12 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **`src/graph.test.mjs`** — the ten cases the conversation graph is being
+  landed against, asserted behaviourally. Three pass today; the file is red
+  until the rest lands.
+
 ### Fixed
 
 - **Actions may sit in either slot of a fact** in the conversation graph
