@@ -552,6 +552,34 @@ export function fromWorldData(source) {
       }
       return false;
     },
+    // What a term claims, where it is a claim at all.
+    //
+    // A claim is held the way an occurrence is held: something that exists
+    // once, which is an instance of the relation it claims, and which says
+    // which two things stand in it. Nothing new carries it — a relation is a
+    // term, a role is a relation, and denying the claim is denying that it is
+    // an instance of anything, which is the `not` every link already has.
+    //
+    // A term that is not a claim reaches nothing here, and that is not a
+    // failure: most terms are not claims.
+    claimOf: (id) => {
+      if (anchors.subject == null || anchors.object == null || !terms.has(id)) return null;
+      const subject = related(id, anchors.subject);
+      const object = related(id, anchors.object);
+      if (subject.size === 0 || object.size === 0) return null;
+      const term = terms.get(id);
+      const stated = (term.links || []).find(
+        (l) => l.rel === isRel && terms.get(l.to) && reaches(l.to, isRel).has(anchors.relation),
+      );
+      if (!stated) return null;
+      return {
+        subject: canonical([...subject][0]),
+        relation: stated.to,
+        object: canonical([...object][0]),
+        not: Boolean(stated.not),
+        at: Number.isInteger(stated.at) ? stated.at : null,
+      };
+    },
     // A kind names many; an individual exists once. Everything else about a term
     // is the same either way — an individual simply `is` its kind.
     isIndividual: (id) => {

@@ -43,6 +43,21 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+### Added
+
+- **A claim may be a thing the brain holds.** Until now a claim could only be an
+  edge between two terms, so nothing could be said *about* one — which is why a
+  checked claim had to be copied out of memory as a loose triple to be kept in
+  mind, why a rule had nowhere to live, and why what someone knows could be
+  checked but never held. A claim is now held the way an occurrence already
+  was: something that exists once, which is an instance of what it claims, and
+  which says which two things stand in it. Nothing new carries it — a relation
+  is a term, a role is a relation, denying the claim is the `not` every link
+  already has, and when it was claimed is the `at` every link already has.
+  Holding a claim does not make it so: the world is not made to agree with it.
+
+### Fixed
+
 - **Being called something is a fact, not a field.** A name lived in two scalar
   fields on the term, and the world's own opening line — that a term is an id
   and its links, never a word, and that `name` is a label nothing reads — was

@@ -70,7 +70,9 @@
     "subtype": 2869,
     "instance": 2870,
     "predication": 2871,
-    "compares": 2875
+    "compares": 2875,
+    "subject": 2939,
+    "object": 2940
   },
   "relations": {
     "is": 294,
@@ -30748,6 +30750,26 @@
         {
           "rel": 2828,
           "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2939,
+      "name": "claim-subject",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        }
+      ]
+    },
+    {
+      "id": 2940,
+      "name": "claim-object",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
         }
       ]
     }
