@@ -52,18 +52,18 @@ The third is not a rule. A rule is a standing instruction and a separate kind
 of item; what sits waiting is what the instruction *produced* when something
 satisfied it.
 
-`If it rains, the road gets wet` is then:
+`If it rains, the road gets wet` is a standing instruction, not an action:
 
     nodes    road
-    actions  change_property(road, wet)  on condition: rain occurs
+    instr    on rain occurs  ->  road(wet: yes)
 
 **Checked:** the action itself already exists in the engine. `the road gets
 wet` records an occurrence with `agent -> road` and `target -> wet`. The shape
 is right and needs nothing new.
 
-**Missing:** there is no way to hold a condition on an action. `cause` relates
-two concepts — gravity causes falling — not "this action stands when that one
-happens".
+**Missing in the engine:** there is no way to hold a condition at all.
+`cause` relates two concepts — gravity causes falling — not "this stands when
+that happens".
 
 **Settled:** an action whose subject is not known when it is stated uses the
 empty slot — see below.
