@@ -4,6 +4,13 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Actions may sit in either slot of a fact** in the conversation graph
+  design. The note claiming nothing relates an action to another action was
+  wrong: `Sara arrived before John` relates two arrivals, and that is how order
+  is said when no clock time is given.
+
 ### Added
 
 - **Actions can be pointed at, and commands, in the conversation graph design.**

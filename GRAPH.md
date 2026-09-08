@@ -376,8 +376,8 @@ simply stops answering the question.
 ## Actions can be pointed at
 
 A recorded action is identified, the way a collection is, and that identity
-can sit in a target slot like anything else. No new relation is needed and
-nothing relates an action to another action.
+can sit in either slot of a fact, like anything else. No new kind of relation
+is needed for it.
 
     A manager approved invoice 12 on Monday.
       a1: property_change(i12, approved: yes)  by m1, when Monday
@@ -398,6 +398,28 @@ link with an action in the target slot.
 
 That is what makes a duplicate sayable: not two actions that resemble each
 other, but two records pointing at the same one.
+
+Both slots may hold actions, and that is how order is said when no clock time
+is given:
+
+    Sara arrived before John. John arrived before Mike.
+      before(a1, a2)   before(a2, a3)
+      who arrived first?   ->   farEnd of the chain   ->   Sara
+
+## Nothing composes two relations
+
+A relation marked transitive chains with itself. Two *different* relations
+never chain unless a composition is declared for them.
+
+    Kumar works for Alpha Corp. Alpha Corp is located in Chennai.
+    Kumar lives in Bangalore.
+
+    Where does Kumar work?   ->   Alpha Corp
+    In which city?           ->   not known
+
+`works for` and `located in` are two stored facts and nothing joins them. This
+is not a rule that has to be enforced — facts are stored and only what was
+said is known, so the wrong answer is never reachable in the first place.
 
 ## Commands
 
