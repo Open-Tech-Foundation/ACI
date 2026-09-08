@@ -42,3 +42,54 @@ test("the existential rule reaches the predicate it was written for", async () =
   assert(kinds.includes("predicate"), `the sentence did not become a predicate: ${kinds.join(", ")}`);
   await forget();
 });
+
+// A relation joins two things. Said by itself neither is there, so there is
+// nothing it claims and nothing to agree with — no more a claim than an action
+// said by itself, which the brain has always simply recognized.
+test("a relation said by itself is recognized, not agreed with", async () => {
+  await forget();
+  for (const word of ["is", "have", "in", "on", "under"]) {
+    const r = await brain(word);
+    assertEquals(r.expression.name, "recognise", `"${word}" was not recognized`);
+    assert(
+      !String(r.expression.state.says).startsWith("Yes"),
+      `"${word}" was agreed with: ${r.expression.state.says}`,
+    );
+  }
+  await forget();
+});
+
+test("an action said by itself is answered the same way", async () => {
+  await forget();
+  const action = await brain("swim");
+  const relation = await brain("have");
+  assertEquals(action.expression.name, relation.expression.name, "two modes, one answer to a bare word");
+  await forget();
+});
+
+// A kind belongs to the world; an individual is only ever something the brain
+// was told about, since the world as authored holds none at all. So counting
+// individuals reads back what someone said to it, which is what was asked —
+// not the world's inventory, which is nobody's business to ask after.
+test("the brain can count the individuals it was told about", async () => {
+  await forget();
+  await brain("tilly is a cat");
+  assertEquals((await brain("how many cats?")).expression.state.says, "one");
+  await brain("misha is a cat");
+  assertEquals((await brain("how many cats?")).expression.state.says, "two");
+  await forget();
+});
+
+test("a kind it was told of none of is still not counted out", async () => {
+  await forget();
+  await brain("tilly is a cat");
+  assertEquals((await brain("how many dogs?")).expression.name, "unsure");
+  await forget();
+});
+
+test("what a thing holds is still counted before its kind's individuals", async () => {
+  await forget();
+  await brain("a box holds three cats");
+  assertEquals((await brain("how many cats?")).expression.state.says, "three", "the count it was given wins");
+  await forget();
+});

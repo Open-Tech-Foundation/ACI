@@ -43,6 +43,22 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **The brain can count the individuals it was told about.** Told `tilly is a
+  cat` and `misha is a cat`, asked `how many cats?`, it said it did not know.
+  It only ever counted a quantity someone had given it outright — `a box holds
+  three cats` — and `world.individualsOf` was reached from possessives alone.
+  A kind belongs to the world and is still never counted out; an individual is
+  only ever something the brain was told about, since the authored world holds
+  none at all, so counting them reads back what was said to it. What a thing
+  holds is still answered first where it holds any.
+
+- **A relation said by itself is recognized, not agreed with.** Every bare
+  relation went to a frame that pasted its dictionary gloss into `Yes, it
+  {meaning}.` — `is` gave "Yes, it to be.", `in` gave "Yes, it in.", and none
+  of them were agreeing to anything: a relation joins two things and neither
+  was there. An action said by itself was already simply recognized; a relation
+  now is too.
+
 - **Saying something is there no longer names a thing `there`.** English's
   grammar carried a rule for the existential — `there predicate` — but the word
   `there` was never written into the language, so the rule could never fire.

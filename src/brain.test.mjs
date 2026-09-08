@@ -136,7 +136,7 @@ test("the whole expression keeps what was said about each thing", async () => {
       // An article marks which one is meant and names nothing of its own.
       "I don't understand.",
       'I recognise "feline animal".',
-      "Yes, it to be.",
+      'I recognise "to be".',
       "It is 2.",
     ],
   );
@@ -185,12 +185,12 @@ test("express names the brain's intent, not a reply", async () => {
 test("the language the signal was recognized as voices the intent", async () => {
   assertEquals(kind((await brain("hi")).roots[0], "express").state.says, "Hello!");
   assertEquals(kind((await brain("two")).roots[0], "express").state.says, "It is 2.");
-  assertEquals(kind((await brain("is")).roots[0], "express").state.says, "Yes, it to be.");
+  assertEquals(kind((await brain("is")).roots[0], "express").state.says, 'I recognise "to be".');
 });
 
 test("an intent is chosen from what the thing is", async () => {
   assertEquals(kind((await brain("two")).roots[0], "express").name, "count");
-  assertEquals(kind((await brain("is")).roots[0], "express").name, "confirm");
+  assertEquals(kind((await brain("is")).roots[0], "express").name, "recognise");
   assertEquals(kind((await brain("cat")).roots[0], "express").name, "recognise");
   assertEquals(kind((await brain("xyz")).roots[0], "express").name, "unknown");
 });

@@ -1844,7 +1844,11 @@ function judge(roots, world, mood, langs, sent) {
       // holds none of what was asked after, the brain does not know — it does
       // not go and count what it holds of its own instead. Whoever is talking
       // to it knows nothing of that, and never asked.
-      if (howMany == null) {
+      // Where it holds none of what was asked after, the brain does not go and
+      // count the world instead. Individuals are not the world, though — they
+      // are what it was told about — so where it has been told of any, they
+      // are the answer, and it falls through to counting them below.
+      if (howMany == null && !(things.length === 1 && world.individualsOf(kind).length > 0)) {
         return [
           withBranch(root, [
             ...root.branch,
@@ -1869,11 +1873,29 @@ function judge(roots, world, mood, langs, sent) {
 
     // Asked how many of a kind there are, with nothing being spoken of, the
     // world is not counted out. The world is for understanding — what a kind
-    // is, and how it stands — not an inventory to read back in public. What a
-    // thing holds is another matter, and is read above; a kind on its own is
-    // not counted, and the brain says it does not know.
+    // is, and how it stands — not an inventory to read back in public.
+    //
+    // Its individuals are another matter. A kind is the world's; an individual
+    // is only ever something the brain was told about, since the world as
+    // authored holds none at all. So counting them reads back what someone
+    // said to it, which is exactly what it was asked for. A kind it has been
+    // told of none of is still not counted out.
     if (things.length === 1) {
       const kind = conceptOf(things[0]);
+      const known = world.individualsOf(kind);
+      if (known.length > 0) {
+        return [
+          withBranch(root, [
+            ...root.branch,
+            node('count', world.termFor(known.length) == null ? 'beyond' : 'counted', [], {
+              of: kind,
+              held: null,
+              members: known.length,
+              total: world.termFor(known.length),
+            }),
+          ]),
+        ];
+      }
       return [
         withBranch(root, [
           ...root.branch,
@@ -3511,8 +3533,14 @@ function express(roots, langs, world) {
 // What the brain means to express about a thing, decided by what the world says
 // the thing IS — never by the part of speech the language filed it under. The
 // brain walks to its own anchors and answers the kind of thing it found: it
-// answers a communication with one of its own, counts a number, confirms a
-// relation, and otherwise says it knows the thing.
+// answers a communication with one of its own, counts a number, and otherwise
+// says it knows the thing.
+//
+// A relation said by itself is none of those. It joins two things and neither
+// is here, so there is nothing it says and nothing to agree with — no more a
+// claim than an action said by itself, which the brain has always simply
+// recognized. What it does with two things beside it is another matter and is
+// decided elsewhere, on the whole sentence.
 function intentOf(n, world) {
   if (!n.state.exists) return 'nothing';
   const ts = thoughtOf(n);
@@ -3523,7 +3551,6 @@ function intentOf(n, world) {
   if (concept != null && world) {
     if (world.isA(concept, a.communication)) return 'greet';
     if (world.isA(concept, a.number)) return 'count';
-    if (world.isA(concept, a.relation)) return 'confirm';
   }
   // A number the world never named is still a number.
   if (concept == null && ts.value != null) return 'count';

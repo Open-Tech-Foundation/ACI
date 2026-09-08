@@ -83,9 +83,13 @@ test("what a thing holds is counted across the kinds it holds", async () => {
 test("a kind is counted by everything that is one of it", async () => {
   await forget();
   await brain("a shop has 5 bats and two balls");
-  // With something being spoken of, the question is about it, and it holds no
-  // shops. The brain does not decide that a different question was meant.
-  assertEquals((await brain("how many shop")).expression.name, "unsure");
+  // The thing spoken of holds no shops, but the brain was told of one — the
+  // shop it made to hold the bats and balls. An individual is only ever
+  // something it was told about, so counting them answers the question that
+  // was asked rather than reading the world back.
+  assertEquals(await says("how many shop"), "one");
+  // A kind it has been told of none of is still not counted out.
+  assertEquals((await brain("how many cats")).expression.name, "unsure");
   await forget();
 });
 
