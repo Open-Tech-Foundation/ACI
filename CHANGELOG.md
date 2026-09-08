@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Absence and derived values in the conversation graph design.** Being told
+  there is none (`holding(i7, document, null, count: 0)` — an empty instance
+  slot with a count of zero) is now distinct from nobody having said anything.
+  A derived value such as a total is computed when asked and never stored, with
+  the recorded action list serving as the history to look back through.
+
+
 - **Identity now has one deterministic algebra.** `same` is reflexive,
   symmetric and transitive, and equivalent term representatives substitute at
   the world-query boundary through classification, ordinary relations,

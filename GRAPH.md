@@ -226,6 +226,69 @@ All ten place in the four kinds above. The four that needed more are settled:
 a pending action waits on a state, a collection is identified and carries its
 own properties, and a moment is a value on the time scale.
 
+## Absence
+
+Being told there is none is a fact. Nobody mentioning it is not. The two must
+stay apart, or an audit cannot ask its own question.
+
+    Invoice 8 has a receipt.
+      nodes    i8, r1
+      actions  holding(i8, receipt, r1, count: 1)
+
+    Invoice 7 has no supporting document.
+      nodes    i7
+      actions  holding(i7, document, null, count: 0)
+
+    Invoice 9 — nobody has said anything.
+      nodes    i9
+      actions  —
+
+A holding names the kind it is for, and the instance slot may be empty. The
+empty slot is the point: it says *there is a place for this and nothing is in
+it* — an empty plate is still a plate for food. When food arrives it has
+somewhere to land.
+
+    Which invoices have no supporting document?
+      i7   holding(document, null, count: 0)   ->  yes
+      i9   no holding at all                   ->  not known
+
+Nothing was recorded between March and April takes the same shape: a holding
+of the kind, with no instance and a count of zero, carrying a when.
+
+## Derived values
+
+`the total` is not a thing in the world and no node is made for it. It is one
+value read off a collection, and there are only three ways a value comes off
+one:
+
+    count     how many members            already on the collection
+    sum       one measured property, added across members
+    extreme   the highest or lowest member
+
+    Pallet 3 holds 2 crates.        landing(p3, collection1(crate, count: 2))
+    What is the total?              count(collection1)  ->  2
+    A crate is added.               landing(p3, collection1, count: 1)
+    What is the total?              count(collection1)  ->  3
+
+**A derived value is computed when asked, never stored.** Store it and it goes
+stale the moment a member moves — the number said on Monday would still be
+claimed after Tuesday's arrival. Computing it keeps one truth: the members.
+
+Looking back costs nothing, because the actions are the history:
+
+    What was the total before the crate was added?
+      cut the action list before that landing, read the collection there  ->  2
+
+This is also why `The total does not match the ledger` was never an absence
+case. The `not` is ordinary denial, which is already there; the only missing
+piece was the derived value:
+
+    nodes    l1 (ledger), collection1 (the invoices)
+    actions  match(sum(collection1, amount), l1)   denied
+
+Absence and denial are different. Absence is a count of zero with an empty
+slot. Denial is a relation that stands against.
+
 ## Two things this design is not
 
 **Not a translation of sentences.** Words do not become nodes. `All cats are
