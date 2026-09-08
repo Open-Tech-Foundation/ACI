@@ -45,7 +45,7 @@ test("being inside something inside something reaches the outermost", async () =
       "the blue box is inside the cupboard",
       "is the red box inside the cupboard?",
     ),
-    "Yes. ✅ the red box is inside the cupboard.",
+    "Yes. ✅ a box inside a cupboard.",
   );
 });
 

@@ -1554,7 +1554,10 @@
       "concept": 585
     },
     "inside": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "preposition"
+      ],
       "meaning": "inside",
       "concept": 580
     },
@@ -4616,47 +4619,74 @@
       "concept": 202
     },
     "maroon": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "maroon",
       "concept": 2606
     },
     "navy": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "navy",
       "concept": 2607
     },
     "ochre": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "ochre",
       "concept": 2608
     },
     "mauve": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "mauve",
       "concept": 2609
     },
     "blue": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "blue",
       "concept": 203
     },
     "green": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "green",
       "concept": 204
     },
     "yellow": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "yellow",
       "concept": 205
     },
     "black": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "black",
       "concept": 206
     },
     "white": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "white",
       "concept": 207
     },
@@ -4859,7 +4889,10 @@
       "concept": 1563
     },
     "good": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "good",
       "concept": 238
     },
@@ -4958,7 +4991,10 @@
       "number": "singular"
     },
     "bad": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "bad",
       "concept": 239
     },
@@ -4998,17 +5034,26 @@
       "concept": 239
     },
     "true": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "true",
       "concept": 240
     },
     "false": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "false",
       "concept": 241
     },
     "beautiful": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "beautiful",
       "concept": 242
     },
@@ -5437,12 +5482,18 @@
       "concept": 317
     },
     "near": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "near",
       "concept": 318
     },
     "far": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "far",
       "concept": 319
     },
@@ -7947,22 +7998,34 @@
       "concept": 513
     },
     "brown": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "brown",
       "concept": 514
     },
     "grey": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "grey",
       "concept": 515
     },
     "pink": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "pink",
       "concept": 516
     },
     "purple": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "purple",
       "concept": 517
     },
@@ -17549,7 +17612,10 @@
       "concept": 2862
     },
     "gray": {
-      "pos": "adjective",
+      "pos": [
+        "adjective",
+        "noun"
+      ],
       "meaning": "gray",
       "concept": 2863
     },

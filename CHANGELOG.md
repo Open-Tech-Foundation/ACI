@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Colours can describe as well as name.** Fifteen colour words, and `good`,
+  `bad`, `beautiful`, `true`, `false`, `far` and `near`, were listed as nouns
+  only, so `the blue box` did not parse.
+- **`inside` is one concept.** The position term is now also a placement
+  relation, declared a subrelation of `in`; both are transitive, so a thing
+  inside something inside something is inside it.
+
 - **A gerund reads as a thing as well as a doing.** English's `-ing` ending now
   gives both readings, so `a bicycle is faster than walking` is understood. A
   derivation rule may name more than one part of speech, the way a word already
