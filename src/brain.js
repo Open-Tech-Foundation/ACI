@@ -5074,7 +5074,19 @@ function learnedFrom(roots, world) {
       // A thing made because a signal spoke of one was never called anything,
       // so it is written as nothing and said by what it is.
       ...(c.state.made ? {} : { symbol: c.state.name }),
-      links: [{ rel: world.baseRelation, to: c.state.of }],
+      // One thing given a name, with nothing said of what it is, is not put at
+      // the top of the ladder. That it is a thing carries nothing — everything
+      // is — and the world holds the kinds of thing apart from one another, so
+      // a term pinned there cannot afterwards be found to be any particular
+      // one of them. It exists and is not yet any kind, which is the truth of
+      // it: what the signal says of it, and what its relations imply about
+      // what they may join, put it somewhere.
+      //
+      // A kind is another matter. A word standing for many is a kind the world
+      // does not have, and a kind with nothing above it hangs off nothing.
+      links: !c.state.made && !c.state.many && c.state.of === (world.anchors || {}).thing
+        ? []
+        : [{ rel: world.baseRelation, to: c.state.of }],
     })),
     // And whoever it belongs to has it.
     ...keptCalls

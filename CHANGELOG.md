@@ -43,6 +43,20 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A name given is no longer pinned at the top of the ladder, and a comparison
+  says what it may join.** `john is taller than mike` left john as an instance
+  of `thing` — which carries nothing, since everything is one, and which the
+  world holds apart from every particular kind of thing, so john could never
+  afterwards be found to be any of them. `what is john?` answered "john".
+  One thing given a name with nothing said of what it is now exists as no kind
+  at all, which is the truth of it. A kind is still placed, since a kind with
+  nothing above it hangs off nothing.
+  Comparing on size, weight, heat or motion says both sides are physical, so
+  those comparisons now declare it, and the domain and range inference already
+  in the engine grounds both ends: `what is john?` answers "physical", and
+  `is john a person?` still answers that it does not know — nobody said he was
+  one, and he could be a pig.
+
 - **A comparison is made on a state, and the state is what it carries.** Every
   comparison collapsed to a bare `more`, so `taller` and `heavier` recorded the
   same fact: told John was taller than Mike, the brain agreed he was heavier.
