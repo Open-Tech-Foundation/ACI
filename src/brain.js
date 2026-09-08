@@ -818,7 +818,7 @@ function solve(roots, world, langs, mood, allocate) {
   // on a pointer that landed on nothing would still name something.
   const positioned = contextual(roots, world);
   const settled = calling(
-    whose(settle(positioned, world), world, langs, mood, allocate),
+    standsIn(whose(settle(positioned, world), world, langs, mood, allocate), world),
     world,
     langs,
     mood,
@@ -920,6 +920,37 @@ function whose(roots, world, langs, mood, allocate) {
 // said of it and it joins no claim.
 function unnamed(n) {
   return thoughtOf(n) && thoughtOf(n).concept != null ? standingFor(n, null) : n;
+}
+
+// A word that names a relation, with `of` and a thing after it, names whoever
+// stands in that relation to the thing: `the father of sam` is sam's father,
+// not fatherhood and not sam. Where the world holds exactly one such, that one
+// is meant; where it holds none or several there is no *the* to resolve, and
+// the brain does not pick. The relation and the thing are spent saying it.
+function standsIn(roots, world) {
+  if (!world) return roots;
+  const a = world.anchors || {};
+  if (a.has == null || a.relation == null) return roots;
+  // Only where the signal has a hole. With both ends named, the relation is
+  // the claim being made — `tom is the father of sam` says fatherhood, it does
+  // not ask who the father is.
+  if (!roots.some((n) => markOn(n) === 'unknown')) return roots;
+  const spent = new Set();
+  return roots.map((n, i) => {
+    if (spent.has(i)) return unnamed(n);
+    const rel = conceptOf(n);
+    if (rel == null || rel === a.has || rel === a.hold) return n;
+    if (!world.isA(rel, a.relation)) return n;
+    const marker = roots[i + 1];
+    if (!marker || conceptOf(marker) !== a.has) return n;
+    const object = roots[i + 2] ? conceptOf(roots[i + 2]) : null;
+    if (object == null) return n;
+    const standing = world.members(object, rel);
+    if (standing.length !== 1) return n;
+    spent.add(i + 1);
+    spent.add(i + 2);
+    return standingFor(n, standing[0]);
+  });
 }
 
 // The same word, thought to stand for something else. What it was heard and
@@ -2164,7 +2195,23 @@ function judge(roots, world, mood, langs, sent) {
 
   const worked = calculate(said, at, relation, world);
   if (worked) return [withBranch(root, [...root.branch, worked])];
-  const terms = said.filter((n, i) => i !== at && claims(n));
+  // `of` straight after a word that names a relation is that relation's
+  // syntax, not a side of it: `the father of sam` is one relation with two
+  // ends. The same reading a bare operation already gets. A hole before it
+  // names no relation of its own — `who has the telescope` asks by holding.
+  const ofSyntax = (n, i) => {
+    if (conceptOf(n) !== a.has && conceptOf(n) !== a.hold) return false;
+    if (a.relation == null || i === 0) return false;
+    const before = conceptOf(said[i - 1]);
+    return (
+      before != null &&
+      before !== a.has &&
+      before !== a.hold &&
+      markOn(said[i - 1]) !== 'unknown' &&
+      world.isA(before, a.relation)
+    );
+  };
+  const terms = said.filter((n, i) => i !== at && claims(n) && !ofSyntax(n, i));
 
   // A choice between things joined as one or the other: `which is smaller, 8
   // or 0` asks for the one the comparison comes out for, not for each. Every
@@ -2297,7 +2344,9 @@ function judge(roots, world, mood, langs, sent) {
   if (terms.length >= 2) {
     const headed = (n, i) => !isDeterminer(said, i, world);
     let lefts = said.filter((n, i) => i < at && claims(n) && headed(n, i));
-    let rights = said.filter((n, i) => i > at && claims(n) && conceptOf(n) != null && headed(n, i));
+    let rights = said.filter(
+      (n, i) => i > at && claims(n) && conceptOf(n) != null && headed(n, i) && !ofSyntax(n, i),
+    );
     // A signal that turns its joint to the front says both sides after it, and
     // the first of them is the one the rest is said of.
     if (lefts.length === 0 && rights.length >= 2 && operates(relation, world) == null) {

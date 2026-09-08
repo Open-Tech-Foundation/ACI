@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A relation named with `of` is read as a relation.** `tom is the father of
+  sam` now records `father(tom, sam)` instead of two wrong `has` links, and
+  `who is the father of sam?` answers `tom`. Kinship terms named only a kind of
+  human; `father` now also declares itself a relation, `of` straight after a
+  relation-naming word is that relation's syntax rather than a side of it, and
+  a new pass resolves `the father of sam` to whoever stands in that relation
+  wherever the signal has a hole.
+
 - **Colours can describe as well as name.** Fifteen colour words, and `good`,
   `bad`, `beautiful`, `true`, `false`, `far` and `near`, were listed as nouns
   only, so `the blue box` did not parse.
