@@ -161,6 +161,30 @@ This is also why nothing needs a rule about how much of a condition must
 match. There is no matching. A condition is a question asked of the graph, and
 it is either true now or it is not.
 
+## Time
+
+Opening and closing are not things that happen. `A shop opens at 9 and closes
+at 5` says nothing occurred at nine o'clock; it says what the shop is like.
+They are properties, the same as any other:
+
+    nodes   s1 (shop)
+            s1(opens: 9, closes: 17)
+
+    Is it open at 2?
+            9 <= 14 < 17  ->  yes
+
+There is no moment to reconstruct and no gap to reason across — a property is
+read and two comparisons are made, and comparing is already there.
+
+Time also appears on actions, as the when they carry:
+
+    The machine stopped at 14:30.     an action, with a when
+    Was it running at 14:00?          compare 14:00 against 14:30
+
+One piece serves both: **a moment is a value on the time scale, and values on
+a scale compare.** That is the same shape as `hot` being a value on the
+temperature scale from thirty up. Nothing else about clock time is needed.
+
 ## Context
 
 Context is not part of the graph. It is what a word in this conversation lands
@@ -195,11 +219,12 @@ Checked against the engine on 2026-09-08.
 |---|---|---|
 | A | SETTLED — a pending action waits on a state, re-checked after every change | 5 |
 | B | SETTLED — a collection is identified, and later actions reach it | 6 |
-| C | clock time, and what was so at a moment nothing happened | 8 |
+| C | SETTLED — opening hours are properties, not actions; a moment is a value on the time scale | 8 |
 | D | SETTLED — a collection carries its own properties: `collection(ball, count: 4, color: red)` | 10 |
 
-Cases 1, 2, 3, 4, 7 and 9 place in the four kinds above with nothing new. Of
-the four that did not, three are settled above; only clock time is left.
+All ten place in the four kinds above. The four that needed more are settled:
+a pending action waits on a state, a collection is identified and carries its
+own properties, and a moment is a value on the time scale.
 
 ## Two things this design is not
 
