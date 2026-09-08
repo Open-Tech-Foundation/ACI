@@ -18074,7 +18074,8 @@
           "complement conjunction verbComplement",
           "complementizer sentence",
           "degree"
-        ]
+        ],
+        "completes": true
       },
       "complement": {
         "rules": [

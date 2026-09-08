@@ -1041,12 +1041,15 @@ function checkGrammar(grammar, at) {
   for (const [symbol, rule] of Object.entries(grammar.rules || {})) {
     const r = `${at} grammar rule "${symbol}"`;
     if (!rule || typeof rule !== 'object') fail(r, 'must be an object');
-    onlyKeys(rule, ['rules', 'whole', 'referent'], r);
+    onlyKeys(rule, ['rules', 'whole', 'referent', 'completes'], r);
     if (!Array.isArray(rule.rules) || rule.rules.length === 0) {
       fail(r, 'rules must be a non-empty array');
     }
     if (rule.whole !== undefined && rule.whole !== true) {
       fail(r, 'whole, where present, must be true');
+    }
+    if (rule.completes !== undefined && rule.completes !== true) {
+      fail(r, 'completes, where present, must be true');
     }
     if (rule.referent !== undefined && rule.referent !== true) {
       fail(r, 'referent, where present, must be true');

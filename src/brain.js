@@ -2179,7 +2179,7 @@ function judge(roots, world, mood, langs, sent) {
   // about kinds. Bare `why is a cat` still asks like what does.
   if (
     holes.some((n) => onOf(n) != null && onOf(n) === a.cause) &&
-    (findBranch(root, 'verbComplement')?.branch || []).some((n) => conceptOf(n) != null)
+    (completing(root)?.branch || []).some((n) => conceptOf(n) != null)
   ) {
     return [
       withBranch(root, [
@@ -4338,6 +4338,7 @@ function leafOrPhrase(c, rules) {
     {
       ...(rules[c.symbol] && rules[c.symbol].whole ? { whole: true } : {}),
       ...(rules[c.symbol] && rules[c.symbol].referent ? { referent: true } : {}),
+      ...(rules[c.symbol] && rules[c.symbol].completes ? { completes: true } : {}),
     },
   );
 }
@@ -4362,6 +4363,19 @@ function functionList(value) {
 
 function functionsOf(n) {
   return functionList(thoughtOf(n));
+}
+
+// The part of a signal that completes what is being said of a thing. Which
+// part of its own grammar does that is the language's to declare; the brain
+// knows only that some part does, and never what any language calls it.
+function completing(root) {
+  if (!root) return null;
+  for (const b of root.branch || []) {
+    if (b.state && b.state.completes) return b;
+    const deeper = completing(b);
+    if (deeper) return deeper;
+  }
+  return null;
 }
 
 function grammarOf(root, langs) {

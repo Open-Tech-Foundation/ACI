@@ -55,6 +55,16 @@ All notable changes to this project are documented in this file.
   two, and seven things. Weighing five hundred grams makes no such thing: that
   count says how much against a unit, and there is nothing there to describe.
 
+- **The engine no longer names one of English's grammar rules.** Asking whether
+  a why-question had a full predication behind it, the brain looked for a part
+  called `verbComplement` — English's name for that rule. Hindi's file happens
+  to use the same name, which hid the coupling; a language that called it
+  anything else would have failed silently and for no reason it could see. A
+  grammar rule may now declare that it *completes* what is said of a thing, the
+  way it can already declare that it is a whole or names a referent, and the
+  brain reads the mark. It knows only that some part does that job, never what
+  any language calls it.
+
 - **A count is answered under the word the question used.** Told a basket
   *holds* three apples and asked what it *has*, the brain answered three. The
   world kept the two apart all along — it was the count reading that reached
