@@ -55,11 +55,15 @@ All notable changes to this project are documented in this file.
   two, and seven things. Weighing five hundred grams makes no such thing: that
   count says how much against a unit, and there is nothing there to describe.
 
-  **Known regression, not yet fixed:** asked under one word for holding, the
-  brain may answer under another — told a basket *holds* three apples, asked
-  what it *has*, it answers three where it should say it does not know. The
-  world keeps the two relations properly apart; the brain picks the wrong
-  branch. One test is red for this.
+- **A count is answered under the word the question used.** Told a basket
+  *holds* three apples and asked what it *has*, the brain answered three. The
+  world kept the two apart all along — it was the count reading that reached
+  through the broad relation both are ways of saying, so either word found the
+  other's fact. It now reads under the word asked, and under any word the world
+  declares says the same thing the other way round: being in a thing and its
+  holding you are one fact, so a pond that holds a thousand stones still
+  answers how many stones are in it. A word merely beside another under
+  something broader is not followed.
 
 - **A kind is counted across everything that holds it.** Told a box has four
   balls and then that a box has three, the brain made two boxes — and answered

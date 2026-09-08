@@ -1175,7 +1175,12 @@ function manyOf(said, at, world) {
 function heldUnder(bearer, kind, world, under = null) {
   const a = world.anchors || {};
   let total = null;
-  for (const relation of [under ?? a.holding]) {
+  // The word the question used, and any word the world declares says the same
+  // thing the other way round — being in a thing and its holding you are one
+  // fact. Never a word merely beside it under something broader: what a basket
+  // holds is not what it has.
+  const ways = under == null ? [a.holding] : [under, ...bothWays(under, world)];
+  for (const relation of ways) {
     if (relation == null) continue;
     for (const of of world.linked(bearer, relation)) {
       if (of === kind || !world.isA(of, kind)) continue;
@@ -1921,7 +1926,10 @@ function judge(roots, world, mood, langs, sent) {
       // Asked after a kind it holds none of by name, but several kinds under
       // it, the count is all of those together: a shop of five bats and two
       // balls holds seven things.
-      const under = heldUnder(way.bearer, way.of, world);
+      // Under the word the question used. What a basket holds is not what it
+      // has: reading through the broad relation here answers one question with
+      // the other.
+      const under = heldUnder(way.bearer, way.of, world, way.relation);
       // Asked on the past side of now, the brain reads what was so then. What
       // a thing held is kept in order and never written over, so stepping back
       // one stamp is all it takes: it does not have to have remembered
