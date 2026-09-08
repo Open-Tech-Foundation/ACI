@@ -17706,6 +17706,34 @@
       "pos": "adjective",
       "meaning": "healthy",
       "concept": 237
+    },
+    "taller": {
+      "pos": "verb",
+      "meaning": "taller",
+      "concept": 305,
+      "names": false,
+      "on": 183
+    },
+    "wet": {
+      "pos": [
+        "noun",
+        "adjective"
+      ],
+      "meaning": "wet",
+      "concept": 2872
+    },
+    "dry": {
+      "pos": [
+        "noun",
+        "adjective"
+      ],
+      "meaning": "dry",
+      "concept": 2873
+    },
+    "notebook": {
+      "pos": "noun",
+      "meaning": "notebook",
+      "concept": 2874
     }
   },
   "unknown": {

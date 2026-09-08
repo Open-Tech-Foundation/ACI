@@ -43,6 +43,13 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Vocabulary: `taller`, `wet`, `dry`, `notebook`.** `taller` was the one
+  comparative with no entry, so `John is taller than Mike` was refused outright
+  while `heavier` was learned; it now mirrors `shorter` on the same scale.
+  `wet` and `dry` join the world as opposed states, the way `hot` and `cold`
+  already stand, and `notebook` as an object. All of it is language and world
+  data — the engine is unchanged, and another language needs none of it.
+
 - **A word it does not know stops it before any verdict.** `a box is zzzzz than
   a book` answered "No." — a confident denial of a claim it had never read.
   Saying which word stopped it sat at the end of the chain, after every verdict,
