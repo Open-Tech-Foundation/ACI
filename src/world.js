@@ -423,13 +423,19 @@ export function fromWorldData(source) {
     // signal can make: any other relation a signal names is more specific.
     baseRelation: isRel,
     term: (id) => terms.get(id) || null,
-    // A term by the name it was given. A name given in conversation is held
-    // nowhere else — no language lists it — so this is how a word that is a
-    // name is met again.
+    // A term by the name it was given. Being called something is a fact like
+    // any other — the thing is joined to the name it is called by — so this
+    // walks that link rather than reading a label off the term. A name given in
+    // conversation is held nowhere else: no language lists it.
     termNamed: (name) => {
-      if (typeof name !== 'string') return null;
+      if (typeof name !== 'string' || anchors.name == null) return null;
       const wanted = name.toLowerCase();
-      for (const t of terms.values()) if (t.name.toLowerCase() === wanted) return t.id;
+      for (const t of terms.values()) {
+        if (typeof t.symbol !== 'string' || t.symbol.toLowerCase() !== wanted) continue;
+        for (const candidate of terms.values()) {
+          if (related(candidate.id, anchors.name).has(t.id)) return canonical(candidate.id);
+        }
+      }
       return null;
     },
     // Whether two terms exclude each other as kinds: anything either of them is
@@ -492,7 +498,18 @@ export function fromWorldData(source) {
     // The symbols a thing is said as where no language has a word for it. A name
     // is not translated: it is the same in every language, so it is held here
     // rather than in any of them.
+    //
+    // What a thing is called it is joined to, so the walk goes out along that
+    // link first. A term may also carry symbols of its own — a figure is
+    // written the same everywhere and is called nothing — and those are read
+    // straight off it.
     symbolOf: (id) => {
+      if (anchors.name != null) {
+        for (const called of related(id, anchors.name)) {
+          const symbol = terms.get(called)?.symbol;
+          if (typeof symbol === 'string') return symbol;
+        }
+      }
       for (const representative of [...equivalents(id)].sort((a, b) => a - b)) {
         const symbol = terms.get(representative)?.symbol;
         if (typeof symbol === 'string') return symbol;

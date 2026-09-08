@@ -43,6 +43,15 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Being called something is a fact, not a field.** A name lived in two scalar
+  fields on the term, and the world's own opening line — that a term is an id
+  and its links, never a word, and that `name` is a label nothing reads — was
+  not true: meeting a named thing again read that label. So a name could not be
+  denied, dated, shared, or be one of several, and asking `what is john?`
+  answered "john" because the code testing whether a thing was named tested a
+  field. The name is now a term of its own, carrying what the signal wrote, and
+  the thing is joined to it by `name` — one more fact among its facts.
+
 - **A name given is no longer pinned at the top of the ladder, and a comparison
   says what it may join.** `john is taller than mike` left john as an instance
   of `thing` — which carries nothing, since everything is one, and which the

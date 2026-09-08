@@ -941,6 +941,11 @@ function calling(roots, world, mood, allocate) {
       return n;
     }
     const id = allocate();
+    // Being called something is a fact, so there are two things here: the thing
+    // itself, and the name it is called by. The name is a thing in the world
+    // like any other — it is what the signal wrote, the same in every language
+    // — and the two are joined.
+    const called = allocate();
     // A word nothing knows with a number beside it names many and not one:
     // there are three of whatever a cookie is, so it is a kind. Nothing counts
     // one thing three times.
@@ -953,7 +958,7 @@ function calling(roots, world, mood, allocate) {
       // Recognising a referent is separate from accepting what was said of it.
       // The call establishes only that it is a thing; the judged proposition
       // supplies any more specific kind, polarity and scope.
-      node('call', n.state.identity, [], { name: n.state.identity, id, of: a.thing, many }),
+      node('call', n.state.identity, [], { name: n.state.identity, id, called, of: a.thing, many }),
     ]);
   });
 }
@@ -2099,7 +2104,7 @@ function judge(roots, world, mood, langs, sent) {
         of == null &&
         found.length > 0 &&
         found.every((t) => t === anchors.thing) &&
-        world.term(subject)?.symbol != null
+        world.linked(subject, anchors.name).length > 0
       ) {
         found = [subject];
       }
@@ -5063,31 +5068,42 @@ function learnedFrom(roots, world) {
     // A thing given a name is a thing there is one of, called what it was
     // called. It comes first, because what else the signal said of it is said
     // of that thing.
-    ...keptCalls.map((c) => ({
-      id: c.state.id,
-      name: c.state.name,
-      // Counted, a word names a kind there may be many of; uncounted, it names
-      // one thing. A thing there are three of is not one thing.
-      individual: !c.state.many,
-      // A name is not translated: it is the same in every language, so it is
-      // held as what the thing is written as rather than looked for in one.
-      // A thing made because a signal spoke of one was never called anything,
-      // so it is written as nothing and said by what it is.
-      ...(c.state.made ? {} : { symbol: c.state.name }),
+    ...keptCalls.flatMap((c) => {
+      const a = world.anchors || {};
+      // Being called something is a fact, so the name is a thing of its own and
+      // the two are joined by it. A thing made because a signal spoke of one
+      // was never called anything, and there is no name to make.
+      const naming = c.state.made || c.state.called == null || a.name == null
+        ? []
+        : [{ rel: a.name, to: c.state.called }];
       // One thing given a name, with nothing said of what it is, is not put at
       // the top of the ladder. That it is a thing carries nothing — everything
       // is — and the world holds the kinds of thing apart from one another, so
-      // a term pinned there cannot afterwards be found to be any particular
-      // one of them. It exists and is not yet any kind, which is the truth of
-      // it: what the signal says of it, and what its relations imply about
-      // what they may join, put it somewhere.
+      // a term pinned there cannot afterwards be found to be any particular one
+      // of them. It exists and is not yet any kind, which is the truth of it:
+      // what the signal says of it puts it somewhere.
       //
       // A kind is another matter. A word standing for many is a kind the world
       // does not have, and a kind with nothing above it hangs off nothing.
-      links: !c.state.made && !c.state.many && c.state.of === (world.anchors || {}).thing
+      const kind = !c.state.made && !c.state.many && c.state.of === a.thing
         ? []
-        : [{ rel: world.baseRelation, to: c.state.of }],
-    })),
+        : [{ rel: world.baseRelation, to: c.state.of }];
+      return [
+        {
+          id: c.state.id,
+          name: c.state.name,
+          // Counted, a word names a kind there may be many of; uncounted, it
+          // names one thing. A thing there are three of is not one thing.
+          individual: !c.state.many,
+          links: [...kind, ...naming],
+        },
+        // The name itself: what the signal wrote, which is the same in every
+        // language and so is held here rather than looked for in one.
+        ...(naming.length === 0
+          ? []
+          : [{ id: c.state.called, name: `"${c.state.name}"`, symbol: c.state.name, links: [] }]),
+      ];
+    }),
     // And whoever it belongs to has it.
     ...keptCalls
       .filter((c) => c.state.whose != null)
