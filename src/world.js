@@ -397,6 +397,17 @@ export function fromWorldData(source) {
     return out;
   }
 
+  // Everything said of a thing: what was said of it, and what was said of any
+  // kind it is one of.
+  function predicated(id) {
+    const out = new Set();
+    if (predicationRel == null) return out;
+    for (const kind of reaches(id, isRel)) {
+      for (const said of related(kind, predicationRel)) out.add(said);
+    }
+    return out;
+  }
+
   function relatedBy(id, rel) {
     const relation = terms.get(rel);
     if (!relation || !relation.transitive) return related(id, rel);
@@ -608,7 +619,14 @@ export function fromWorldData(source) {
     equivalents: (id) => [...equivalents(id)],
     same: (left, right) => canonical(left) != null && canonical(left) === canonical(right),
     classificationRelation: semanticClassificationRelation,
-    predicates: (id) => predicationRel == null ? [] : [...related(id, predicationRel)],
+    // What is said of a thing, and of every kind it is one of. A property of a
+    // kind is a property of each thing that is one — that is the whole of what
+    // saying it of all of them says, and the denial of one already reads this
+    // way: told no cat is white, the brain says a particular cat is not.
+    //
+    // Saying it of some of them makes one of them and says it of that one, so
+    // nothing here reaches the kind and this walk cannot make it universal.
+    predicates: (id) => (predicationRel == null ? [] : [...predicated(id)]),
     kinds: (id) => {
       const out = new Set();
       for (const representative of equivalents(id)) {
@@ -730,7 +748,7 @@ export function fromWorldData(source) {
       if (ancestorId == null || id == null || rel == null) return false;
       if (rel === isRel) {
         return reaches(id, rel).has(ancestorId) ||
-          (predicationRel != null && related(id, predicationRel).has(ancestorId));
+          (predicationRel != null && predicated(id).has(ancestorId));
       }
       return relatedBy(id, rel).has(ancestorId);
     },

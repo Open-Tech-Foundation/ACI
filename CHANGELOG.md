@@ -45,6 +45,16 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Said of all of a kind, it is now said of each thing that is one.** Told
+  `all cats are white` and `Tom is a cat`, the brain did not know whether Tom
+  was white — which is most of what saying it of all of them was for. The
+  denial already read the right way round, saying a particular cat is not white
+  when told none are, and that asymmetry is what showed it was a defect rather
+  than something left out. What is said of a kind is now read of everything
+  that is one of it, down the whole ladder: told all animals are white, a cat
+  is white too. Saying it of *some* of them is untouched, because that makes
+  one of them and says it of that one, never reaching the kind at all.
+
 - **Holding is one thing the world says, not a list the engine keeps.** A
   basket *holds* apples and a person *has* them, and the two were unrelated
   relations — so the brain carried the pair `[hold, has]` hardcoded in seven
