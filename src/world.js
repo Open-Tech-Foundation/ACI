@@ -408,6 +408,20 @@ export function fromWorldData(source) {
     return out;
   }
 
+  // How much of one thing another holds, under any narrower way of saying it.
+  function heldBy(id, rel, object) {
+    if (!terms.has(id) || !terms.has(object) || rel == null) return null;
+    const ways = new Set(relationVariants(rel));
+    let latest = null;
+    for (const subject of equivalents(id)) {
+      for (const l of terms.get(subject)?.links || []) {
+        if (l.not || !ways.has(l.rel) || !equivalents(object).has(l.to) || !Number.isInteger(l.quantity)) continue;
+        if (latest == null || (l.at ?? -1) >= (latest.at ?? -1)) latest = l;
+      }
+    }
+    return latest ? latest.quantity : null;
+  }
+
   function relatedBy(id, rel) {
     const relation = terms.get(rel);
     if (!relation || !relation.transitive) return related(id, rel);
@@ -674,17 +688,27 @@ export function fromWorldData(source) {
     // are both holding, and which word the count was written under is not the
     // question. The world says which relations are narrower than which; the
     // count is read through them.
-    held: (id, rel, object) => {
-      if (!terms.has(id) || !terms.has(object) || rel == null) return null;
-      const ways = new Set(relationVariants(rel));
-      let latest = null;
-      for (const subject of equivalents(id)) {
-        for (const l of terms.get(subject)?.links || []) {
-          if (l.not || !ways.has(l.rel) || !equivalents(object).has(l.to) || !Number.isInteger(l.quantity)) continue;
-          if (latest == null || (l.at ?? -1) >= (latest.at ?? -1)) latest = l;
+    held: (id, rel, object) => heldBy(id, rel, object),
+
+    // How many of a kind there are, all told: every count anything holds of it,
+    // or of a kind of it, added together. Two boxes of four balls are eight
+    // balls, and it does not matter which box was spoken of last. Where nothing
+    // holds any, there is no count — which is not the same as none.
+    heldAll: (kind, rel) => {
+      if (kind == null || rel == null || !terms.has(kind)) return null;
+      let total = null;
+      for (const t of terms.values()) {
+        // Only what exists once is counted up. A kind holding a count says how
+        // many any of them has — a hand has five fingers — and adding those
+        // across the world would be counting hands nobody mentioned.
+        if (!t.individual) continue;
+        for (const of of related(t.id, rel)) {
+          if (!reaches(of, isRel).has(kind)) continue;
+          const many = heldBy(t.id, rel, of);
+          if (many != null) total = (total ?? 0) + many;
         }
       }
-      return latest ? latest.quantity : null;
+      return total;
     },
     // Everything the world has been told about what a thing held, in order.
     // Revising a count does not erase what was so before it.

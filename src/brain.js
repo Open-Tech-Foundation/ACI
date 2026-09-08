@@ -1960,10 +1960,17 @@ function judge(roots, world, mood, langs, sent) {
       const bearer = of == null ? sent.spoken : of;
       // Asked after several kinds at once, the count is all of them together:
       // how many brothers and sisters is how many of each, added.
+      // Asked how many of a kind there are, the answer is how many there are:
+      // every count anything holds of it, added. Two boxes of four balls are
+      // eight balls, and which box was spoken of last does not change that.
+      // What one thing in particular holds is asked for by saying so, and is
+      // answered above.
       const each = things.map((n) => {
         const kind = conceptOf(n);
         return (
-          world.held(bearer, a.holding, kind) ?? heldUnder(bearer, kind, world)
+          world.heldAll(kind, a.holding) ??
+          world.held(bearer, a.holding, kind) ??
+          heldUnder(bearer, kind, world)
         );
       });
       const kind = conceptOf(things[0]);

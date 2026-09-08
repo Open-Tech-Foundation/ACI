@@ -45,6 +45,16 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A kind is counted across everything that holds it.** Told a box has four
+  balls and then that a box has three, the brain made two boxes — and answered
+  `how many balls?` with three, the one it had heard of last. It could count
+  boxes, because those exist once and it counts what exists; it could not add
+  up what several things hold. Now it does, which is what counting a kind
+  means. Only what exists once is added: a kind carrying a count says how many
+  any one of them holds — a hand has five fingers — and adding those across the
+  world would count hands nobody mentioned. What one thing in particular holds
+  is still asked for by saying so.
+
 - **A word that narrows which one was meant is kept.** `tilly is a big cat`
   recorded only that she is a cat: the narrowing picked out which cat and was
   then thrown away, so the brain did not know she was big. A narrowing is

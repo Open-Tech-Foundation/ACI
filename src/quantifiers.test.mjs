@@ -86,3 +86,30 @@ test("a denied claim narrows nothing", async () => {
     "denying she is a big cat must not say she is big",
   );
 });
+
+// Asked how many of a kind there are, the answer is how many there are. Two
+// boxes of four balls are eight balls, and which box was spoken of last does
+// not change that. Only what exists once is added up: a kind carrying a count
+// says how many any of them has, and adding those across the world would be
+// counting hands nobody mentioned.
+test("a kind is counted across everything that holds it", async () => {
+  const brain = fresh();
+  await brain("a box has 4 balls", P);
+  await brain("a box has 3 balls", P);
+  assertEquals((await brain("how many balls?", P)).expression.state.says, "seven");
+  assertEquals((await brain("how many boxes?", P)).expression.state.says, "two");
+});
+
+test("what one thing holds is still asked for by saying so", async () => {
+  const brain = fresh();
+  await brain("a shop has 5 bats and two balls", P);
+  assertEquals((await brain("the shop has how many things?", P)).expression.state.says, "seven");
+});
+
+test("a count on a kind is not added up across the world", async () => {
+  // The world says what any one of a kind holds. Adding those would count
+  // things nobody has spoken of at all.
+  const brain = fresh();
+  await brain("a box has 4 balls", P);
+  assertEquals((await brain("how many balls?", P)).expression.state.says, "four");
+});
