@@ -45,6 +45,17 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **One thing passing between two is two changes, not one.** An action caused a
+  single operation worked at a single end, so `Ravi has 5 apples` followed by
+  `He gives 2 apples to Sam` left Ravi still holding five: giving was declared
+  to cause `plus`, which arrives at a destination, and nothing took anything
+  away from where it came from. The world now says giving causes both, and that
+  what a give comes from is whoever gives it — the same way it already said
+  what a get goes to is whoever did it. The brain works every operation an
+  action causes, each at the end its operation belongs to, and knows nothing
+  about giving. Where nothing was known of what an end held, nothing is claimed
+  of what it holds now, and the other end is untouched by that.
+
 - **The brain can be asked for the far end of an ordering.** `Which is
   heaviest?` answered "state" — the ending marking an extreme was dropped, so
   the question read as "what is heavy?". English now says only that an ending

@@ -823,6 +823,7 @@ function solve(roots, world, langs, mood, allocate) {
   const settled = calling(
     whose(settle(positioned, world), world, langs, mood, allocate),
     world,
+    langs,
     mood,
     allocate,
   );
@@ -944,7 +945,7 @@ function standingFor(n, concept) {
 // is judged, so that whatever else the signal says of it is said of it and not
 // of nothing: `john has 3 apples` names john and gives him the apples in one
 // breath.
-function calling(roots, world, mood, allocate) {
+function calling(roots, world, langs, mood, allocate) {
   if (!world || mood !== 'tell') return roots;
   // Asking is not giving: a hole stands for what the signal does not say, so
   // a signal carrying one names nothing — `who has the telescope` leaves no
@@ -954,10 +955,24 @@ function calling(roots, world, mood, allocate) {
   // A word stands in a claim where the signal has something to join it to
   // something else. Only then is there anything to name.
   const joined = roots.some((n) => world.isA(conceptOf(n), a.relation));
-  if (!joined) return roots;
+  // A doing joins things too, but not every word beside one is somebody.
+  // Whoever a thing was given *to* is; `the telescope` it was seen with is one
+  // of a kind and not a name — a word marked as which-one-is-meant was never
+  // being introduced. So in a doing a word is named only where a role points
+  // at it and nothing marks it as one of a kind. Which words do either is the
+  // language's to say.
+  const doing = roots.some((n) => world.isA(conceptOf(n), a.action));
+  const side = markingSide(roots, langs);
+  const whichOne = (i) => markOn(markerFor(roots, i, side, markOn));
+  const introduced = (i) =>
+    roleOn(markerFor(roots, i, side, roleOn)) != null &&
+    whichOne(i) !== 'new' &&
+    whichOne(i) !== 'known';
+  if (!joined && !doing) return roots;
   return roots.map((n, i) => {
     const thought = thoughtOf(n);
     if (!thought || thought.wordKnown || thought.concept != null) return n;
+    if (!joined && !introduced(i)) return n;
     const rest = roots.slice(i + 1).filter((other) => stands(other, world));
     const before = roots.slice(0, i).filter((other) => stands(other, world));
     if (rest.length < 2 && before.length < 2) return n;
@@ -3038,58 +3053,73 @@ function work(action, parts, at, world) {
   // The world says which action causes which operation; where the signal named
   // the operation itself there is nothing to look up.
   const causes = world.linked(action, a.cause);
-  const op = causes.find((c) => c === a.plus || c === a.minus) ?? operated(action, world);
-  if (!op) return null;
+  const stated = causes.filter((c) => c === a.plus || c === a.minus);
+  // One thing passing between two is two changes, not one: it leaves where it
+  // came from and arrives where it went. The world says which operations an
+  // action causes and the brain works every one of them, each at the end its
+  // operation belongs to — what is added arrives at a destination, what is
+  // taken away leaves a source. Nothing here knows what giving is.
+  const operations = stated.length > 0 ? stated : [operated(action, world)].filter(Boolean);
+  if (operations.length === 0) return null;
 
   const target = parts.find((p) => p.role === a.target);
-  const wanted = op === a.plus ? a.destination : a.source;
-  // An action may say that the part it goes to, or comes from, is one already
-  // named: what a get goes to is whoever did it. No signal has to say that
-  // twice, and which actions are like that is the world's to say, not the
-  // brain's — it reads the role off the action the same way it reads the
-  // operation off it.
-  const also = world.linked(action, wanted);
-  const place =
-    parts.find((p) => p.role === wanted) ?? parts.find((p) => also.includes(p.role));
-  if (!target || !place) return null;
-
+  if (!target || target.amount == null) return null;
   const amount = target.amount;
-  const one = world.oneOf(place.of);
-  const bearer = one == null ? place.of : one;
-  // What a thing has in it may have been said either way — that a basket
-  // holds three apples, or that it has them. Whichever the count was kept
-  // under is the one that changes.
-  const kept = [a.hold, a.has].find((rel) => world.held(bearer, rel, target.of) != null) ?? a.hold;
-  const before = world.held(bearer, kept, target.of);
-  if (amount == null || before == null) return null;
 
-  const after = op === a.plus ? before + amount : before - amount;
-  const term = world.termFor(after);
-  const done = node('did', world.term(action).name, [], {
-    action,
-    operation: op,
-    holder: bearer,
-    thing: target.of,
-    before,
-    amount,
-    after,
-    term,
-  });
+  const out = [];
+  for (const op of operations) {
+    const wanted = op === a.plus ? a.destination : a.source;
+    // An action may say that the part it goes to, or comes from, is one already
+    // named: what a get goes to is whoever did it, and what a give comes from
+    // is whoever gives it. No signal has to say that twice, and which actions
+    // are like that is the world's to say, not the brain's — it reads the role
+    // off the action the same way it reads the operation off it.
+    const also = world.linked(action, wanted);
+    const place =
+      parts.find((p) => p.role === wanted) ?? parts.find((p) => also.includes(p.role));
+    if (!place) continue;
 
-  // A state the world cannot name is not a state the brain will hold. Taking
-  // more than is there leaves what was there untouched.
-  if (term == null) return [done, node('refuse', 'beyond', [], { after })];
+    const one = world.oneOf(place.of);
+    const bearer = one == null ? place.of : one;
+    // What a thing has in it may have been said either way — that a basket
+    // holds three apples, or that it has them. Whichever the count was kept
+    // under is the one that changes.
+    const kept = [a.hold, a.has].find((rel) => world.held(bearer, rel, target.of) != null) ?? a.hold;
+    const before = world.held(bearer, kept, target.of);
+    // Nothing is known of what this end held, so nothing is known of what it
+    // holds now. The other end is untouched by that.
+    if (before == null) continue;
 
-  return [
-    done,
-    node('learn', 'link', [], {
-      subject: bearer,
-      relation: kept,
-      object: target.of,
-      quantity: after,
-      not: false,
-    }),
-  ];
+    const after = op === a.plus ? before + amount : before - amount;
+    const term = world.termFor(after);
+    const done = node('did', world.term(action).name, [], {
+      action,
+      operation: op,
+      holder: bearer,
+      thing: target.of,
+      before,
+      amount,
+      after,
+      term,
+    });
+    // A state the world cannot name is not a state the brain will hold. Taking
+    // more than is there leaves what was there untouched.
+    if (term == null) {
+      out.push(done, node('refuse', 'beyond', [], { after }));
+      continue;
+    }
+    out.push(
+      done,
+      node('learn', 'link', [], {
+        subject: bearer,
+        relation: kept,
+        object: target.of,
+        quantity: after,
+        not: false,
+      }),
+    );
+  }
+  return out.length > 0 ? out : null;
 }
 
 // Which thing in the signal names the relation being spoken of.
