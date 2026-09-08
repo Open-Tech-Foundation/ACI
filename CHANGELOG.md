@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Standing instructions are their own kind in the conversation graph design.**
+  A rule never occurred and has no place in the recorded history, so it no
+  longer counts as an action. It holds a condition and what stands on it, and
+  what it produces is a fact, an action to be done, or an action owed of
+  someone.
+
+
 - **Absence and derived values in the conversation graph design.** Being told
   there is none (`holding(i7, document, null, count: 0)` — an empty instance
   slot with a count of zero) is now distinct from nobody having said anything.

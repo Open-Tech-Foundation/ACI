@@ -7,7 +7,7 @@ over it. Everything below is written against the ten example inputs, and each
 part says whether it has been checked against the running engine or is still
 only proposed.
 
-## Four kinds of thing
+## The kinds of thing
 
     CONCEPTS   what is known before anyone speaks — apple, person, having,
                heavier — and the facts about them: a cat is a kind of animal,
@@ -18,8 +18,16 @@ only proposed.
                makes a node for Ravi. It does not make one for `apple`:
                apple was already a concept.
 
-    ACTIONS    what holds, and when. Not only what is already done — see
-               below.
+    FACTS      what is so. `Invoice 12 is for 800`, `the sky is blue`,
+               `the shop opens at 9`.
+
+    ACTIONS    what occurred, and when. These are the recorded history — the
+               list you backtrack through. Not only what is already done —
+               see below.
+
+    STANDING INSTRUCTIONS   what governs. `Every invoice over 500 must be
+               approved by a manager`. Never occurred, has no place in the
+               history, and keeps applying to whatever turns up later.
 
     CONTEXT    what a word in this conversation lands on: `He` is Ravi. No
                node is made for `He`.
@@ -40,8 +48,9 @@ An action carries when it stands, which is not always the past:
     on a condition   it happens when something else does
                      `If it rains, the road gets wet`
 
-The third is what a rule is: an action with a condition, sitting and waiting
-for the thing it waits on. Nothing about it is a separate kind of item.
+The third is not a rule. A rule is a standing instruction and a separate kind
+of item; what sits waiting is what the instruction *produced* when something
+satisfied it.
 
 `If it rains, the road gets wet` is then:
 
@@ -108,12 +117,13 @@ enclosed in them is small.
                     Spelled: rose, fell, melted, grew, amended, discontinued,
                     failed inspection, went overdue.
 
-    RULE (9)        something standing on a condition. As common as property
-                    change in real domains, and the commonest thing said in
-                    audit.
 
 Not actions at all:
 
+    STANDING INSTRUCTION (9)   something standing on a condition. As common as
+                    property change in real domains, and the commonest thing
+                    said in audit. Its own kind — it never occurs, so it never
+                    enters the history.
     STATE (18)      holding, being blue, being heavier, being before, being a
                     member. These hold; they do not happen.
     WHEN (6)        `at 14:30`, `on Tuesday`, `lasted two hours`. A qualifier
