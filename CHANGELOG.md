@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **One empty slot in the conversation graph design.** The three spellings for
+  a slot that names a kind and holds no instance are unified as `null`; what
+  the emptiness means (`count: 0`, `owed`, or nothing said) is carried by the
+  rest of the action.
+
+
 - **Obligation in the conversation graph design.** A standing instruction
   produces a fact, an action to be done, or an action owed; `owed` belongs to
   what is produced, not to the instruction. What is owed is computed when

@@ -65,10 +65,27 @@ is right and needs nothing new.
 two concepts — gravity causes falling — not "this action stands when that one
 happens".
 
-**Open in this design:** an action whose subject is not known when it is
-stated. `change_property(road, wet)` names the road. A rule about whoever
-turns out to satisfy the condition needs something the subject slot can be
-filled from later.
+**Settled:** an action whose subject is not known when it is stated uses the
+empty slot — see below.
+
+## The empty slot
+
+A slot names a kind and may hold no instance. Written `null`.
+
+    holding(i7, document, null, count: 0)     told there is none
+    approve(i12, by null)              owed    a manager, no manager yet
+    movement(p9, null, rework tray)           came from somewhere unstated
+
+One concept in all three. The slot says *there is a place for this kind and
+nothing is in it*; an empty plate is still a plate for food, and when food
+arrives it has somewhere to land. What the emptiness means is carried by the
+rest of the action, not by the slot:
+
+    count: 0   there is none, and that is a fact
+    owed       there will be one, and nobody has done it
+    neither    nobody has said
+
+That is what keeps `told none` apart from `nobody said`.
 
 ## Properties
 
@@ -318,14 +335,14 @@ makes it reportable. A produced fact needs nobody:
 
     When a part fails inspection, send it to the rework tray.
       on   property_change(part, inspection: failed)
-      ->   movement(part, _, rework tray)   owed
+      ->   movement(part, null, rework tray)   owed
 
       Part 9 fails inspection.
         action   property_change(p9, inspection: failed)   done
       Where is part 9?
         I don't know where it is. It is owed to the rework tray.
       Part 9 is sent to the rework tray.
-        action   movement(p9, _, rework tray)   done
+        action   movement(p9, null, rework tray)   done
       Where is part 9?
         the rework tray
 
