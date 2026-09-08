@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Actions can be pointed at, and commands, in the conversation graph design.**
+  A recorded action is identified and can sit in a target slot, so a fact about
+  it, a query over it, and a record standing for it are all ordinary links — no
+  action-to-action relation. A command is an action owed of whoever was told.
+  All 69 corpus sentences now place in the design.
+
+
 - **One empty slot in the conversation graph design.** The three spellings for
   a slot that names a kind and holds no instance are unified as `null`; what
   the emptiness means (`count: 0`, `owed`, or nothing said) is carried by the

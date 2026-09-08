@@ -373,6 +373,49 @@ condition lives on:
 A real action needs no matching and no clearing. It is recorded, and the thing
 simply stops answering the question.
 
+## Actions can be pointed at
+
+A recorded action is identified, the way a collection is, and that identity
+can sit in a target slot like anything else. No new relation is needed and
+nothing relates an action to another action.
+
+    A manager approved invoice 12 on Monday.
+      a1: property_change(i12, approved: yes)  by m1, when Monday
+
+    The approval was backdated.
+      a1(backdated: yes)                       a property on an action
+
+    Who approved it?
+      doer of a1  ->  m1                       read off the recorded action
+
+A record — an entry, a receipt, a log line — is an ordinary node whose link
+targets a happening. Standing for something is not its own relation; it is a
+link with an action in the target slot.
+
+    The entry was recorded twice.
+      e1  ->  a1
+      e2  ->  a1        two records, one happening
+
+That is what makes a duplicate sayable: not two actions that resemble each
+other, but two records pointing at the same one.
+
+## Commands
+
+A command is an action owed, arriving directly instead of being produced by a
+condition, and owed of whoever was told.
+
+    Send the display parts to the next tray.
+      nodes    tray2
+      actions  movement(collection1(display part), null, tray2)  owed
+
+The other things that look like commands are already covered:
+
+    Count only the defective products.     a query — asked, never stored
+    Switch on the AC if it's hot.          a standing instruction
+
+The brain holds the owed action; the runtime is what moves the parts, and the
+brain learns it happened only when it is told.
+
 ## Two things this design is not
 
 **Not a translation of sentences.** Words do not become nodes. `All cats are
