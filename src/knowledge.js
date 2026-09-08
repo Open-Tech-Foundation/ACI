@@ -20,17 +20,25 @@ export function speaking(languages = []) {
   return mergeLanguages(languages).map((l) => fromData(checkWholeLanguage(l, 'language')));
 }
 
+// `settled` says this world has already been through the door — it is what a
+// checked world became, read back unchanged. The walls are whole-world walks,
+// and a world that grows by one fact would pay for all of it again on every
+// signal; what the change itself had to answer for, it answered before it was
+// written. Everything arriving from outside is checked, always.
 export function fromSources({
   world = NO_WORLD,
   knowledge = [],
   languages = [],
   spoken = null,
+  settled = false,
 } = {}) {
-  checkWorld(world, 'world');
-  knowledge.forEach((k, i) => checkWorld(k, `knowledge[${i}]`));
+  if (!settled) {
+    checkWorld(world, 'world');
+    knowledge.forEach((k, i) => checkWorld(k, `knowledge[${i}]`));
+  }
 
   const { whole, origin } = merge(world, knowledge);
-  checkWhole(whole, origin);
+  if (!settled) checkWhole(whole, origin);
 
   return {
     world: fromWorldData(whole),

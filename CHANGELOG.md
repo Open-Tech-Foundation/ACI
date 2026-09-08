@@ -43,6 +43,19 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A learned fact is no longer weighed twice.** Every learning turn walked the
+  whole world twice over: once in the brain, weighing the proposed change, and
+  again in the shape check after it was written. Both are O(world), so learning
+  N facts cost O(N²) — 80ms per fact at 2822 terms, 385ms at 20k. The world
+  read back from the store is what the brain just weighed, not a new source, so
+  it is now built rather than walked again. A differential test pins the two
+  readings of the invariants against each other so the remaining wall cannot
+  drift from the one it stands in for.
+
+- **The brain no longer proposes a link to a term that is not there.** Its wall
+  checked every other invariant the shape check does but not this one, so a
+  dangling endpoint was caught only by the store's foreign key, mid-write.
+
 - **A knowledge file may say what a term is, not only what it links to.**
   `individual` and `disjoint` were the only two marks a later source could not
   add to a term the base world already held: the other eight were carried over

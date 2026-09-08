@@ -52,7 +52,8 @@ export function openBrain(url) {
   // Only the world moves. The languages were read once and checked once, and
   // are handed back as they are: a world that has grown is no reason to merge
   // and check every word of every language again.
-  const build = async () => fromSources({ ...sources, world: await readWorld(store) });
+  const build = async (settled = false) =>
+    fromSources({ ...sources, world: await readWorld(store), settled });
 
   async function assemble() {
     const { file } = await import('runtime:fs');
@@ -132,7 +133,10 @@ export function openBrain(url) {
     const commit = async (accepted) => {
       if (!accepted) return;
       await write(store, accepted);
-      knowledgePromise = build();
+      // The brain weighed this change against this world and accepted it; the
+      // store holds exactly what it weighed. Reading it back is not a new
+      // source, so it is built rather than walked again.
+      knowledgePromise = build(true);
       await knowledgePromise;
     };
 

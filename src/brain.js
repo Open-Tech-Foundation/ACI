@@ -4181,6 +4181,16 @@ function learningConflict(world, learned) {
     terms.get(proposed.id).links.push(...(proposed.links || []).map((l) => ({ ...l })));
   }
 
+  // A link may not point at a term that is not there, nor be made of one. Only
+  // what this change brings is looked at: the world it joins was already whole,
+  // and every term it could name is either in that world or arriving with it.
+  for (const proposed of learned.terms || []) {
+    for (const link of proposed.links || []) {
+      if (!terms.has(link.to)) return `link to unknown term ${link.to}`;
+      if (!terms.has(link.rel)) return `link by unknown term ${link.rel}`;
+    }
+  }
+
   for (const term of terms.values()) {
     const facts = new Map();
     for (const link of term.links || []) {
@@ -5132,4 +5142,4 @@ function quote(s) {
   return /^[\p{L}\p{N}]+$/u.test(s) ? s : `"${s}"`;
 }
 
-export { node };
+export { node, learningConflict };
