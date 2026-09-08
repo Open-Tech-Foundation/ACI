@@ -618,10 +618,7 @@ function intraSignal(roots, world, langs, at) {
   const heldKinds = (id) => {
     const held = [];
     if (id == null) return held;
-    for (const rel of [a.has, a.hold]) {
-      if (rel == null) continue;
-      for (const of of world.linked(id, rel)) if (!held.includes(of)) held.push(of);
-    }
+    for (const of of world.linked(id, a.holding)) if (!held.includes(of)) held.push(of);
     return held;
   };
   return roots.map((n, i) => {
@@ -1178,7 +1175,7 @@ function manyOf(said, at, world) {
 function heldUnder(bearer, kind, world) {
   const a = world.anchors || {};
   let total = null;
-  for (const relation of [a.hold, a.has]) {
+  for (const relation of [a.holding]) {
     if (relation == null) continue;
     for (const of of world.linked(bearer, relation)) {
       if (of === kind || !world.isA(of, kind)) continue;
@@ -1907,9 +1904,8 @@ function judge(roots, world, mood, langs, sent) {
         const bearer = inFocus ?? (sent.spoken != null ? one(sent.spoken) : null);
         const heldHere = [];
         if (bearer != null) {
-          for (const r of [a.has, a.hold]) {
-            if (r == null) continue;
-            for (const of of world.linked(bearer, r)) if (!heldHere.includes(of)) heldHere.push(of);
+          for (const of of world.linked(bearer, a.holding)) {
+            if (!heldHere.includes(of)) heldHere.push(of);
           }
         }
         const of = (heldHere.length === 1 ? heldHere[0] : null) ?? (things.length === 1 ? conceptOf(things[0]) : null);
@@ -1944,8 +1940,7 @@ function judge(roots, world, mood, langs, sent) {
       const each = things.map((n) => {
         const kind = conceptOf(n);
         return (
-          [a.hold, a.has].map((relation) => world.held(bearer, relation, kind)).find((many) => many != null) ??
-          heldUnder(bearer, kind, world)
+          world.held(bearer, a.holding, kind) ?? heldUnder(bearer, kind, world)
         );
       });
       const kind = conceptOf(things[0]);
@@ -3065,6 +3060,17 @@ function work(action, parts, at, world) {
   const target = parts.find((p) => p.role === a.target);
   if (!target || target.amount == null) return null;
   const amount = target.amount;
+  // A part spoken of as one of its kind is answered by the one of it there is.
+  const bearerOf = (part) => world.oneOf(part.of) ?? part.of;
+
+  // One kind of holding passes. What Ravi *had*, Sam now *has* — the thing
+  // moved, not the way of speaking about it — so whichever narrower word the
+  // count was already written under at either end is the word it is written
+  // under at both. Where neither end has been spoken of, holding is the plain
+  // one.
+  const ways = world.narrower(a.holding).filter((rel) => rel !== a.holding);
+  const kept =
+    ways.find((rel) => parts.some((p) => world.held(bearerOf(p), rel, target.of) != null)) ?? a.hold;
 
   const out = [];
   for (const op of operations) {
@@ -3079,25 +3085,28 @@ function work(action, parts, at, world) {
       parts.find((p) => p.role === wanted) ?? parts.find((p) => also.includes(p.role));
     if (!place) continue;
 
-    const one = world.oneOf(place.of);
-    const bearer = one == null ? place.of : one;
-    // What a thing has in it may have been said either way — that a basket
-    // holds three apples, or that it has them. Whichever the count was kept
-    // under is the one that changes.
-    const kept = [a.hold, a.has].find((rel) => world.held(bearer, rel, target.of) != null) ?? a.hold;
+    const bearer = bearerOf(place);
     const before = world.held(bearer, kept, target.of);
-    // Nothing is known of what this end held, so nothing is known of what it
-    // holds now. The other end is untouched by that.
-    if (before == null) continue;
+    // What passes between two ends is watched passing, so what arrived is what
+    // this end holds even though nothing said what it held before — the way
+    // anyone follows a thing going from one hand to another. Told later that
+    // it held more all along, the count is revised like any other.
+    //
+    // A lone adding is not that. Nothing left anywhere, so nothing was watched
+    // arriving, and a holding nobody has said anything about stays unsaid.
+    // Nor can anything be taken from one, whichever way the action runs.
+    const passing = operations.length > 1;
+    const from = before ?? (op === a.plus && passing ? 0 : null);
+    if (from == null) continue;
 
-    const after = op === a.plus ? before + amount : before - amount;
+    const after = op === a.plus ? from + amount : from - amount;
     const term = world.termFor(after);
     const done = node('did', world.term(action).name, [], {
       action,
       operation: op,
       holder: bearer,
       thing: target.of,
-      before,
+      before: from,
       amount,
       after,
       term,
@@ -3593,10 +3602,7 @@ function focusFor(term, world, sent) {
       (sent.to != null && (id === sent.to || world.isA(id, sent.to))));
   if (!speakerSide(subject)) return undefined;
   const held = [];
-  for (const rel of [a.has, a.hold]) {
-    if (rel == null) continue;
-    for (const of of world.linked(subject, rel)) if (!held.includes(of)) held.push(of);
-  }
+  for (const of of world.linked(subject, a.holding)) if (!held.includes(of)) held.push(of);
   if (held.length === 1) return held[0];
   return undefined;
 }
@@ -5060,10 +5066,7 @@ function focusOf(roots, at, world) {
   const held = [];
   if (primary != null && world) {
     const a = world.anchors || {};
-    for (const rel of [a.has, a.hold]) {
-      if (rel == null) continue;
-      for (const of of world.linked(primary, rel)) if (!held.includes(of)) held.push(of);
-    }
+    for (const of of world.linked(primary, a.holding)) if (!held.includes(of)) held.push(of);
   }
   const prior = at && Array.isArray(at.focus) ? at.focus : [];
   const out = [];

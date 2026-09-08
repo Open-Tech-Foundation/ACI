@@ -45,6 +45,21 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Holding is one thing the world says, not a list the engine keeps.** A
+  basket *holds* apples and a person *has* them, and the two were unrelated
+  relations — so the brain carried the pair `[hold, has]` hardcoded in seven
+  separate places, a list in code standing in for a fact about the world. The
+  world now says both are ways of saying one holding, and a count is read
+  through the narrower ways, so the seven become one. Which word a count was
+  written under is still the word it is revised under.
+
+- **What passes between two hands is watched arriving.** Told only that Ravi
+  gave two apples to Sam, the brain had Ravi down to three and could say
+  nothing of Sam — it wanted a count for him from before, and nobody had given
+  one. But the apples were followed across, so what arrived is what he holds.
+  A lone adding is not that: nothing left anywhere, nothing was watched
+  arriving, and a holding nobody has spoken of stays unspoken.
+
 - **One thing passing between two is two changes, not one.** An action caused a
   single operation worked at a single end, so `Ravi has 5 apples` followed by
   `He gives 2 apples to Sam` left Ravi still holding five: giving was declared

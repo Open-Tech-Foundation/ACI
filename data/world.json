@@ -72,7 +72,8 @@
     "predication": 2871,
     "compares": 2875,
     "subject": 2939,
-    "object": 2940
+    "object": 2940,
+    "holding": 2941
   },
   "relations": {
     "is": 294,
@@ -3436,6 +3437,10 @@
         {
           "rel": 294,
           "to": 4
+        },
+        {
+          "rel": 2828,
+          "to": 2941
         }
       ]
     },
@@ -6523,6 +6528,10 @@
         {
           "rel": 294,
           "to": 4
+        },
+        {
+          "rel": 2828,
+          "to": 2941
         }
       ]
     },
@@ -30782,6 +30791,16 @@
     {
       "id": 2940,
       "name": "claim-object",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        }
+      ]
+    },
+    {
+      "id": 2941,
+      "name": "holding",
       "links": [
         {
           "rel": 294,

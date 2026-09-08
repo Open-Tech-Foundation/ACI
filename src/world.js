@@ -600,6 +600,10 @@ export function fromWorldData(source) {
     domains: (rel) => [...constraintKinds(rel, 'domain')],
     ranges: (rel) => [...constraintKinds(rel, 'range')],
     subrelationOf: (relation, broader) => relationAncestors(relation).has(broader),
+    // The narrower ways of saying one relation, the relation itself among
+    // them. Holding is holding, but a count was written under one of its
+    // words, and revising it writes under the same one.
+    narrower: (rel) => (rel == null ? [] : [...relationVariants(rel)]),
     related: (id, rel) => [...related(id, rel)],
     equivalents: (id) => [...equivalents(id)],
     same: (left, right) => canonical(left) != null && canonical(left) === canonical(right),
@@ -647,12 +651,18 @@ export function fromWorldData(source) {
     },
     // How many of `object` a term holds by one relation, where the world has
     // been told. This is state — what is so now — not what a thing is.
+    // Asked how much of something a thing holds, every narrower way of saying
+    // it answers: a basket that holds three apples and a person who has five
+    // are both holding, and which word the count was written under is not the
+    // question. The world says which relations are narrower than which; the
+    // count is read through them.
     held: (id, rel, object) => {
       if (!terms.has(id) || !terms.has(object) || rel == null) return null;
+      const ways = new Set(relationVariants(rel));
       let latest = null;
       for (const subject of equivalents(id)) {
         for (const l of terms.get(subject)?.links || []) {
-          if (l.not || l.rel !== rel || !equivalents(object).has(l.to) || !Number.isInteger(l.quantity)) continue;
+          if (l.not || !ways.has(l.rel) || !equivalents(object).has(l.to) || !Number.isInteger(l.quantity)) continue;
           if (latest == null || (l.at ?? -1) >= (latest.at ?? -1)) latest = l;
         }
       }
@@ -662,8 +672,9 @@ export function fromWorldData(source) {
     // Revising a count does not erase what was so before it.
     heldOver: (id, rel, object) => {
       if (!terms.has(id) || !terms.has(object) || rel == null) return [];
+      const ways = new Set(relationVariants(rel));
       const history = [...equivalents(id)].flatMap((subject) => terms.get(subject)?.links || [])
-        .filter((l) => !l.not && l.rel === rel && equivalents(object).has(l.to) && Number.isInteger(l.quantity))
+        .filter((l) => !l.not && ways.has(l.rel) && equivalents(object).has(l.to) && Number.isInteger(l.quantity))
         .map((l) => ({ quantity: l.quantity, at: l.at ?? 0 }))
         .sort((x, y) => x.at - y.at);
       return history.filter(
