@@ -43,6 +43,12 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A word it does not know stops it before any verdict.** `a box is zzzzz than
+  a book` answered "No." — a confident denial of a claim it had never read.
+  Saying which word stopped it sat at the end of the chain, after every verdict,
+  so anything that reached a standing first won. It now comes before all of
+  them: a claim the brain could not read is not a claim it can answer.
+
 - **A word that leaves the brain nothing is no longer answered as though it
   landed.** Said alone, only a thing does any work: it becomes what is spoken
   of, so `tank` then `what is it?` answers `container`. A relation joins two

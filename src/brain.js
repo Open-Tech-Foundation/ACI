@@ -3737,7 +3737,15 @@ function expression(roots, langs, mood, world, sent) {
   // turning this one down rather than reporting on it.
   // Asked, it answers the claim. Told, it answers only if it disagrees; a claim
   // it already holds is simply understood.
-  const intent = refused
+  const intent =
+    // A word it does not have is why it got no further, and saying so comes
+    // before any verdict. A claim it could not read is not a claim it can
+    // answer: yes or no to one would be answering something it made up. This
+    // stands ahead of everything, because every verdict below it rests on
+    // having understood what was said.
+    unheard != null
+    ? 'unheard'
+    : refused
     ? 'deny'
     : agreed
       ? 'agree'
@@ -3785,13 +3793,9 @@ function expression(roots, langs, mood, world, sent) {
           felt
           ? 'learn'
           : 'unknown'
-        : // A word it does not have is why it got no further, and saying so is
-          // worth more than saying nothing.
-          unheard != null
-          ? 'unheard'
-          : parts.length === 1
-            ? parts[0].name
-            : 'unknown';
+        : parts.length === 1
+          ? parts[0].name
+          : 'unknown';
 
   const said =
     intent === 'unheard'
