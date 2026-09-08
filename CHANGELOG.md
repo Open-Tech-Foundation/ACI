@@ -51,11 +51,9 @@ All notable changes to this project are documented in this file.
   One thing given a name with nothing said of what it is now exists as no kind
   at all, which is the truth of it. A kind is still placed, since a kind with
   nothing above it hangs off nothing.
-  Comparing on size, weight, heat or motion says both sides are physical, so
-  those comparisons now declare it, and the domain and range inference already
-  in the engine grounds both ends: `what is john?` answers "physical", and
-  `is john a person?` still answers that it does not know — nobody said he was
-  one, and he could be a pig.
+  What a thing is, it is still only told. Comparing a physical property of two
+  things does not say what either of them is: `what is john?` answers that it
+  does not know, because nobody said, and he could be a pig.
 
 - **A comparison is made on a state, and the state is what it carries.** Every
   comparison collapsed to a bare `more`, so `taller` and `heavier` recorded the
