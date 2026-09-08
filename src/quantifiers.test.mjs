@@ -55,3 +55,34 @@ test("what is said of one of a kind is not said of the kind", async () => {
     "one white cat says nothing of the rest",
   );
 });
+
+// A word that narrows which one was meant is still true of the one that was
+// meant. Saying a thing is a big cat says it is a cat and says it is big: the
+// narrowing picks out which cat, and for a particular cat that is a thing it
+// is. Narrowing the one a claim is merely *about* says nothing new about the
+// narrowing itself.
+test("a thing said to be a narrowed kind is both", async () => {
+  const brain = fresh();
+  await brain("tilly is a big cat", P);
+  assertEquals((await brain("is tilly a cat?", P)).expression.name, "affirm", "the kind");
+  assertEquals((await brain("is tilly big?", P)).expression.name, "affirm", "and the narrowing");
+});
+
+test("the narrowing reaches what the kind reaches", async () => {
+  const brain = fresh();
+  await brain("tilly is a big cat", P);
+  assertEquals(
+    (await brain("is tilly an animal?", P)).expression.name,
+    "affirm",
+    "a cat is an animal, and tilly is still a cat",
+  );
+});
+
+test("a denied claim narrows nothing", async () => {
+  const brain = fresh();
+  await brain("tilly is not a big cat", P);
+  assert(
+    (await brain("is tilly big?", P)).expression.name !== "affirm",
+    "denying she is a big cat must not say she is big",
+  );
+});

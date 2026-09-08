@@ -1662,6 +1662,29 @@ function judge(roots, world, mood, langs, sent) {
           );
         }
       }
+      // A word that narrowed which one was meant is still true of the one that
+      // was meant. `tilly is a big cat` says she is a cat and says she is big:
+      // the narrowing picks out which cat, and for a particular cat that is a
+      // thing it is. Only where the claim is what a thing *is* — narrowing the
+      // one a claim is merely about (`the blue one is warm`) says nothing new
+      // about blue.
+      if (mood === 'tell' && rel === world.baseRelation && !isDenied) {
+        for (const narrower of restricted.narrowing.get(right) || []) {
+          const quality = conceptOf(narrower);
+          if (quality == null || quality === object) continue;
+          if (world.isA(holder, quality)) continue;
+          added.push(
+            node('learn', 'link', [], {
+              subject: holder,
+              relation: world.classificationRelation(holder, quality),
+              object: quality,
+              quantity: null,
+              made: null,
+              not: false,
+            }),
+          );
+        }
+      }
       return added;
     };
 
@@ -3253,6 +3276,7 @@ function pseudoTerm(concept) {
 // side still claims on its own.
 function restrictedIn(root) {
   const restricted = new Set();
+  const narrowing = new Map();
   const walk = (n) => {
     if (n.state && n.state.referent) {
       const kids = (n.branch || []).filter((b) => b.kind === 'thing');
@@ -3270,12 +3294,14 @@ function restrictedIn(root) {
         const describing = middles.every((k) => functionsOf(k).includes('modifier'));
         if ((isContextualPointer || isReferent) && describing) {
           middles.forEach((k) => restricted.add(k));
+          if (middles.length > 0) narrowing.set(head, middles);
         }
       }
     }
     (n.branch || []).forEach(walk);
   };
   walk(root);
+  restricted.narrowing = narrowing;
   return restricted;
 }
 

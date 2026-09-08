@@ -45,6 +45,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A word that narrows which one was meant is kept.** `tilly is a big cat`
+  recorded only that she is a cat: the narrowing picked out which cat and was
+  then thrown away, so the brain did not know she was big. A narrowing is
+  rightly not a claim of its own — `the blue one is warm` says nothing new
+  about blue — but where a thing is said to *be* a narrowed kind, the narrowing
+  is a thing it is. Both facts are now taken in, and a denial takes in neither.
+
 - **Said of all of a kind, it is now said of each thing that is one.** Told
   `all cats are white` and `Tom is a cat`, the brain did not know whether Tom
   was white — which is most of what saying it of all of them was for. The
