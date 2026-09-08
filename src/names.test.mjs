@@ -8,10 +8,9 @@ const says = async (said) => (await brain(said, { from: PERSON })).expression.st
 
 test("a word nothing knows, said to be of a kind, is a thing being named", async () => {
   await forget();
-  const r = await brain("luna is a cat");
-  assertEquals(r.expression.name, "learn");
-  assertEquals(r.learned.terms[0].name, "luna");
-  assertEquals(r.learned.terms[0].individual, true, "a thing there is one of");
+  assertEquals((await brain("luna is a cat")).expression.name, "learn");
+  assertEquals((await brain("is luna a cat?")).expression.name, "affirm", "met again by what it is called");
+  assertEquals(await says("how many cats?"), "one", "one thing there is, not a kind");
   await forget();
 });
 
@@ -117,11 +116,10 @@ test("a possessive landing on nothing names nothing", async () => {
 
 test("a thing spoken of as one of its kind is one of them, not the kind", async () => {
   await forget();
-  const r = await brain("i saw a film", { from: PERSON });
-  const made = r.learned.terms.find((t) => t.name.startsWith("film#"));
-  assert(made != null, "one film was made for the seeing");
-  assertEquals(made.individual, true);
-  // And it is said by what it is, having never been called anything.
+  await brain("i saw a film", { from: PERSON });
+  // One film was made for the seeing — one of them, not the kind — and it is
+  // said by what it is, having never been called anything.
+  assertEquals(await says("how many films?"), "one");
   assertEquals(await says("i saw what?"), "film");
   await forget();
 });

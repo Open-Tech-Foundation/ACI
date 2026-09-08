@@ -11,11 +11,10 @@ test("a possessive never claims alongside", async () => {
   await forget();
   const r = await brain("my lantern is black", { from: 508 });
   assertEquals(r.expression.name, "learn");
-  const holder = (r.learned.terms || []).find((t) => t.id === 508);
-  assert(holder != null, "ownership still recorded");
+  // What the lantern is is not said of whoever owns it.
   assert(
-    !(holder.links || []).some((l) => l.to === 206),
-    "holder untouched by what its thing is: " + JSON.stringify(holder.links),
+    (await brain("am i black?", { from: 508 })).expression.name !== "affirm",
+    "holder untouched by what its thing is",
   );
   assertEquals((await brain("my lantern is black?", { from: 508 })).expression.name, "affirm");
   await forget();
