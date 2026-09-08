@@ -485,7 +485,43 @@ function think(roots, langs, at, world) {
     const state = ways.length > 1 ? { thought: ways[0], ways } : { thought: ways[0] };
     return withBranch(n, [...n.branch, node('thought', 'understood', [], state)]);
   });
-  return intraSignal(reshaped(thought, world, langs), world, langs, at);
+  return intraSignal(compared(reshaped(thought, world, langs), world), world, langs, at);
+}
+
+// A word whose ending makes a comparison names a state, and comparing on it is
+// two things standing apart on the scale that measures it. The language says
+// only that the ending compares; everything else is the world's — which scale
+// measures this state, and which end of it the state sits at. So the brain
+// asks the world twice and reads no spelling: a state the world puts above its
+// opposite compares as more, one below it as less.
+//
+// This is why the comparison need not be listed word by word. Any state on a
+// scale can be compared the moment the world says where on it the state falls.
+function compared(roots, world) {
+  if (!world) return roots;
+  const a = world.anchors || {};
+  if (a.measure == null || a.more == null || a.less == null) return roots;
+  return roots.map((n) => {
+    const thought = thoughtOf(n);
+    if (!thought || !functionList(thought).includes('comparison')) return n;
+    const state = thought.concept;
+    if (state == null) return n;
+    // The scale is whatever measures this state; without one there is nothing
+    // to compare along and the word stands as it was.
+    const scale = world.members(state, a.measure)[0];
+    if (scale == null) return n;
+    // The scale says which of its states are its greater ones and which its
+    // lesser, so a state in the middle of several is as plain as one at an end.
+    // A state the scale places on neither side says nothing about direction,
+    // and the brain does not choose one for it.
+    const greater = world.linked(scale, a.more).includes(state);
+    const lesser = world.linked(scale, a.less).includes(state);
+    if (greater === lesser) return n;
+    const compares = { ...thought, concept: greater ? a.more : a.less, on: scale, names: false };
+    return withBranch(n, n.branch.map((b) =>
+      b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: compares }) : b,
+    ));
+  });
 }
 
 // Focus tracked from the current tree: a third-person pointer (`it`, `them`)

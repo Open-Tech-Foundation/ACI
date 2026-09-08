@@ -43,6 +43,17 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A comparison is worked out from the state and its scale, not listed word by
+  word.** Every comparative was a hand-written entry carrying the relation and
+  the scale itself — sixteen of them — so `taller` was refused outright while
+  `heavier` was learned, and `softer` and `darker` are refused still. English
+  now says only that an ending compares; the world says which scale measures a
+  state and which of its states are the scale's greater ones and which its
+  lesser. `warmer` and `colder` fall out of that without either being named,
+  and a state sitting in the middle of several is as plain as one at an end.
+  The written-out comparatives remain, because they are also how the language
+  says a comparison back.
+
 - **Vocabulary: `taller`, `wet`, `dry`, `notebook`.** `taller` was the one
   comparative with no entry, so `John is taller than Mike` was refused outright
   while `heavier` was learned; it now mirrors `shorter` on the same scale.

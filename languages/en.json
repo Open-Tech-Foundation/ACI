@@ -4563,7 +4563,10 @@
       "concept": 197
     },
     "short": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "short",
       "concept": 198
     },
@@ -4637,12 +4640,18 @@
       "concept": 207
     },
     "hot": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "hot",
       "concept": 208
     },
     "cold": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "cold",
       "concept": 209
     },
@@ -4655,7 +4664,10 @@
       "concept": 210
     },
     "cool": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "cool",
       "concept": 211
     },
@@ -10559,7 +10571,10 @@
       "concept": 616
     },
     "lightweight": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "lightweight",
       "concept": 201
     },
@@ -16274,111 +16289,6 @@
       "meaning": "because",
       "functions": "join"
     },
-    "bigger": {
-      "pos": "verb",
-      "meaning": "bigger",
-      "concept": 305,
-      "names": false,
-      "on": 183
-    },
-    "larger": {
-      "pos": "verb",
-      "meaning": "larger",
-      "concept": 305,
-      "names": false,
-      "on": 183
-    },
-    "newer": {
-      "pos": "verb",
-      "meaning": "newer",
-      "concept": 306,
-      "names": false,
-      "on": 187
-    },
-    "wider": {
-      "pos": "verb",
-      "meaning": "wider",
-      "concept": 305,
-      "names": false,
-      "on": 183
-    },
-    "smaller": {
-      "pos": "verb",
-      "meaning": "smaller",
-      "concept": 306,
-      "names": false,
-      "on": 183
-    },
-    "longer": {
-      "pos": "verb",
-      "meaning": "longer",
-      "concept": 305,
-      "names": false,
-      "on": 183
-    },
-    "shorter": {
-      "pos": "verb",
-      "meaning": "shorter",
-      "concept": 306,
-      "names": false,
-      "on": 183
-    },
-    "heavier": {
-      "pos": "verb",
-      "meaning": "heavier",
-      "concept": 305,
-      "names": false,
-      "on": 184
-    },
-    "lighter": {
-      "pos": "verb",
-      "meaning": "lighter",
-      "concept": 306,
-      "names": false,
-      "on": 184
-    },
-    "hotter": {
-      "pos": "verb",
-      "meaning": "hotter",
-      "concept": 305,
-      "names": false,
-      "on": 186
-    },
-    "colder": {
-      "pos": "verb",
-      "meaning": "colder",
-      "concept": 306,
-      "names": false,
-      "on": 186
-    },
-    "faster": {
-      "pos": "verb",
-      "meaning": "faster",
-      "concept": 305,
-      "names": false,
-      "on": 324
-    },
-    "slower": {
-      "pos": "verb",
-      "meaning": "slower",
-      "concept": 306,
-      "names": false,
-      "on": 324
-    },
-    "older": {
-      "pos": "verb",
-      "meaning": "older",
-      "concept": 305,
-      "names": false,
-      "on": 187
-    },
-    "younger": {
-      "pos": "verb",
-      "meaning": "younger",
-      "concept": 306,
-      "names": false,
-      "on": 187
-    },
     "than": {
       "pos": "preposition",
       "meaning": "than"
@@ -17707,13 +17617,6 @@
       "meaning": "healthy",
       "concept": 237
     },
-    "taller": {
-      "pos": "verb",
-      "meaning": "taller",
-      "concept": 305,
-      "names": false,
-      "on": 183
-    },
     "wet": {
       "pos": [
         "noun",
@@ -17734,6 +17637,118 @@
       "pos": "noun",
       "meaning": "notebook",
       "concept": 2874
+    },
+    "bigger": {
+      "pos": "verb",
+      "meaning": "bigger",
+      "concept": 305,
+      "names": false,
+      "on": 183
+    },
+    "larger": {
+      "pos": "verb",
+      "meaning": "larger",
+      "concept": 305,
+      "names": false,
+      "on": 183
+    },
+    "newer": {
+      "pos": "verb",
+      "meaning": "newer",
+      "concept": 306,
+      "names": false,
+      "on": 187
+    },
+    "wider": {
+      "pos": "verb",
+      "meaning": "wider",
+      "concept": 305,
+      "names": false,
+      "on": 183
+    },
+    "smaller": {
+      "pos": "verb",
+      "meaning": "smaller",
+      "concept": 306,
+      "names": false,
+      "on": 183
+    },
+    "longer": {
+      "pos": "verb",
+      "meaning": "longer",
+      "concept": 305,
+      "names": false,
+      "on": 183
+    },
+    "shorter": {
+      "pos": "verb",
+      "meaning": "shorter",
+      "concept": 306,
+      "names": false,
+      "on": 183
+    },
+    "heavier": {
+      "pos": "verb",
+      "meaning": "heavier",
+      "concept": 305,
+      "names": false,
+      "on": 184
+    },
+    "lighter": {
+      "pos": "verb",
+      "meaning": "lighter",
+      "concept": 306,
+      "names": false,
+      "on": 184
+    },
+    "hotter": {
+      "pos": "verb",
+      "meaning": "hotter",
+      "concept": 305,
+      "names": false,
+      "on": 186
+    },
+    "colder": {
+      "pos": "verb",
+      "meaning": "colder",
+      "concept": 306,
+      "names": false,
+      "on": 186
+    },
+    "faster": {
+      "pos": "verb",
+      "meaning": "faster",
+      "concept": 305,
+      "names": false,
+      "on": 324
+    },
+    "slower": {
+      "pos": "verb",
+      "meaning": "slower",
+      "concept": 306,
+      "names": false,
+      "on": 324
+    },
+    "older": {
+      "pos": "verb",
+      "meaning": "older",
+      "concept": 305,
+      "names": false,
+      "on": 187
+    },
+    "younger": {
+      "pos": "verb",
+      "meaning": "younger",
+      "concept": 306,
+      "names": false,
+      "on": 187
+    },
+    "taller": {
+      "pos": "verb",
+      "meaning": "taller",
+      "concept": 305,
+      "names": false,
+      "on": 183
     }
   },
   "unknown": {
@@ -17828,7 +17843,9 @@
     {
       "ending": "er",
       "becomes": "",
-      "of": "adjective"
+      "of": "adjective",
+      "functions": "comparison",
+      "pos": "verb"
     },
     {
       "ending": "est",
@@ -17843,7 +17860,9 @@
     {
       "ending": "ier",
       "becomes": "y",
-      "of": "adjective"
+      "of": "adjective",
+      "functions": "comparison",
+      "pos": "verb"
     },
     {
       "ending": "iest",

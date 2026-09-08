@@ -21,6 +21,7 @@ const PERSONS = ['first', 'second', 'third'];
 const NUMBERS = ['singular', 'plural'];
 const ENTITY_CLASSES = ['living', 'nonliving'];
 const COGNITIVE_FUNCTIONS = [
+  'comparison',
   'condition',
   'determiner',
   'encloses',
