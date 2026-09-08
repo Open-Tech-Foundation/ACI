@@ -79,13 +79,15 @@ function buildLanguage(data) {
     // The word that compares on one scale, where the language has one that is
     // not what the comparing is called: bigger is more, on size. First word
     // wins, the way a name does.
-    comparativeFor: (relation, on) => {
-      if (relation == null || on == null) return null;
+    // The word this language has for a comparison. A comparison names the state
+    // it is made on, so the relation alone finds it: nothing has to be measured
+    // for the brain to say a comparison back, and one made on a state no scale
+    // measures is said the same way as one made on a state that is measured.
+    comparativeFor: (relation) => {
+      if (relation == null) return null;
       for (const [word, entry] of Object.entries(data.words || {})) {
         const readings = Array.isArray(entry) ? entry : [entry];
-        if (readings.some((info) => info && info.concept === relation && info.on === on)) {
-          return word;
-        }
+        if (readings.some((info) => info && info.concept === relation)) return word;
       }
       return null;
     },

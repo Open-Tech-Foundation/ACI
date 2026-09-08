@@ -43,8 +43,22 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
-- **A comparison is worked out from the state and its scale, not listed word by
-  word.** Every comparative was a hand-written entry carrying the relation and
+- **A comparison is made on a state, and the state is what it carries.** Every
+  comparison collapsed to a bare `more`, so `taller` and `heavier` recorded the
+  same fact: told John was taller than Mike, the brain agreed he was heavier.
+  The world now names the comparison made on each state, and that is what a
+  fact holds — so the two no longer collide, `Is Mike shorter than John?` is
+  answered from the same fact through the comparison's declared converse, and
+  saying it back composes from the state rather than from a listed word.
+
+  No state is ranked above another: hot and cool are two states of one scale,
+  not an ordering, and which is being compared on is the whole of what a signal
+  said. A comparison declares its own direction against what a scale measures,
+  which is a property of the comparison and not of the states. A scale is only
+  for what is measured — `louder` and `deeper` compare without one.
+
+- **A comparison used to be worked out from the state and its scale, not listed
+  word by word.** Every comparative was a hand-written entry carrying the relation and
   the scale itself — sixteen of them — so `taller` was refused outright while
   `heavier` was learned, and `softer` and `darker` are refused still. English
   now says only that an ending compares; the world says which scale measures a

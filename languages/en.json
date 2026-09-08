@@ -17641,114 +17641,82 @@
     "bigger": {
       "pos": "verb",
       "meaning": "bigger",
-      "concept": 305,
-      "names": false,
-      "on": 183
+      "concept": 2876
     },
     "larger": {
       "pos": "verb",
       "meaning": "larger",
-      "concept": 305,
-      "names": false,
-      "on": 183
+      "concept": 2876
     },
     "newer": {
       "pos": "verb",
       "meaning": "newer",
-      "concept": 306,
-      "names": false,
-      "on": 187
+      "concept": 2908
     },
     "wider": {
       "pos": "verb",
       "meaning": "wider",
-      "concept": 305,
-      "names": false,
-      "on": 183
+      "concept": 2902
     },
     "smaller": {
       "pos": "verb",
       "meaning": "smaller",
-      "concept": 306,
-      "names": false,
-      "on": 183
+      "concept": 2877
     },
     "longer": {
       "pos": "verb",
       "meaning": "longer",
-      "concept": 305,
-      "names": false,
-      "on": 183
+      "concept": 2878
     },
     "shorter": {
       "pos": "verb",
       "meaning": "shorter",
-      "concept": 306,
-      "names": false,
-      "on": 183
+      "concept": 2879
     },
     "heavier": {
       "pos": "verb",
       "meaning": "heavier",
-      "concept": 305,
-      "names": false,
-      "on": 184
+      "concept": 2881
     },
     "lighter": {
       "pos": "verb",
       "meaning": "lighter",
-      "concept": 306,
-      "names": false,
-      "on": 184
+      "concept": 2882
     },
     "hotter": {
       "pos": "verb",
       "meaning": "hotter",
-      "concept": 305,
-      "names": false,
-      "on": 186
+      "concept": 2883
     },
     "colder": {
       "pos": "verb",
       "meaning": "colder",
-      "concept": 306,
-      "names": false,
-      "on": 186
+      "concept": 2884
     },
     "faster": {
       "pos": "verb",
       "meaning": "faster",
-      "concept": 305,
-      "names": false,
-      "on": 324
+      "concept": 2889
     },
     "slower": {
       "pos": "verb",
       "meaning": "slower",
-      "concept": 306,
-      "names": false,
-      "on": 324
+      "concept": 2890
     },
     "older": {
       "pos": "verb",
       "meaning": "older",
-      "concept": 305,
-      "names": false,
-      "on": 187
+      "concept": 2887
     },
     "younger": {
       "pos": "verb",
       "meaning": "younger",
-      "concept": 306,
-      "names": false,
-      "on": 187
+      "concept": 2888
     },
     "taller": {
       "pos": "verb",
       "meaning": "taller",
-      "concept": 305,
-      "names": false,
-      "on": 183
+      "concept": 2880
     }
   },
   "unknown": {

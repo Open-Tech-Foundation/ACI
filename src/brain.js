@@ -488,36 +488,65 @@ function think(roots, langs, at, world) {
   return intraSignal(compared(reshaped(thought, world, langs), world), world, langs, at);
 }
 
-// A word whose ending makes a comparison names a state, and comparing on it is
-// two things standing apart on the scale that measures it. The language says
-// only that the ending compares; everything else is the world's — which scale
-// measures this state, and which end of it the state sits at. So the brain
-// asks the world twice and reads no spelling: a state the world puts above its
-// opposite compares as more, one below it as less.
+// A word whose ending makes a comparison names a state, and comparing is made
+// on that state. The language says only that the ending compares; which
+// comparison that is, is the world's, and it names one for every state a scale
+// measures.
 //
-// This is why the comparison need not be listed word by word. Any state on a
-// scale can be compared the moment the world says where on it the state falls.
+// Nothing is ranked. Hot does not stand above cool — they are two states of one
+// scale, and a signal comparing on one is not the same fact as one comparing on
+// the other, any more than taller is heavier. That the two are one fact read
+// from either end is said by the world as a converse, the same way it says a
+// part and what it is made of are one fact.
+//
+// This is why a comparison need not be listed word by word: any state a scale
+// measures can be compared the moment the world names the comparison on it.
+// Whether a relation compares at all, and which way it runs. A comparison made
+// on a state is declared narrower than `more` or than `less`, so asking the
+// broader relation answers for every one of them without naming any.
+function isComparing(relation, world) {
+  const a = world.anchors || {};
+  return toward(relation, a.more, world) || toward(relation, a.less, world);
+}
+
+function toward(relation, broader, world) {
+  if (relation == null || broader == null) return false;
+  return relation === broader || world.subrelationOf(relation, broader);
+}
+
 function compared(roots, world) {
   if (!world) return roots;
   const a = world.anchors || {};
-  if (a.measure == null || a.more == null || a.less == null) return roots;
+  if (a.measure == null || a.compares == null) return roots;
+  // Which scale a comparison is made along, traced rather than read off the
+  // word: the comparison says which state it compares, and the state is
+  // measured by exactly one scale. A word never has to carry it.
+  const scaleOf = (comparison) => {
+    const state = world.linked(comparison, a.compares)[0];
+    return state == null ? null : world.members(state, a.measure)[0] ?? null;
+  };
   return roots.map((n) => {
     const thought = thoughtOf(n);
-    if (!thought || !functionList(thought).includes('comparison')) return n;
+    if (!thought || thought.concept == null) return n;
+    // A word may name the state and leave its ending to say it compares, or it
+    // may name the comparison outright. Both arrive here at the same place.
+    if (world.linked(thought.concept, a.compares).length > 0) {
+      const held = { ...thought, on: scaleOf(thought.concept) };
+      return withBranch(n, n.branch.map((b) =>
+        b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: held }) : b,
+      ));
+    }
+    if (!functionList(thought).includes('comparison')) return n;
     const state = thought.concept;
-    if (state == null) return n;
-    // The scale is whatever measures this state; without one there is nothing
-    // to compare along and the word stands as it was.
-    const scale = world.members(state, a.measure)[0];
-    if (scale == null) return n;
-    // The scale says which of its states are its greater ones and which its
-    // lesser, so a state in the middle of several is as plain as one at an end.
-    // A state the scale places on neither side says nothing about direction,
-    // and the brain does not choose one for it.
-    const greater = world.linked(scale, a.more).includes(state);
-    const lesser = world.linked(scale, a.less).includes(state);
-    if (greater === lesser) return n;
-    const compares = { ...thought, concept: greater ? a.more : a.less, on: scale, names: false };
+    // Comparing is made on a state, and the world names the comparison made on
+    // each one. Nothing here ranks the states: hot is not above cool, they are
+    // two states of one scale, and which of them is being compared on is the
+    // whole of what the signal said. The other reading of the same fact is
+    // that comparison's declared converse, which the world supplies and the
+    // brain never names.
+    const comparison = world.members(state, a.compares)[0];
+    if (comparison == null) return n;
+    const compares = { ...thought, concept: comparison, on: scaleOf(comparison), names: false };
     return withBranch(n, n.branch.map((b) =>
       b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: compares }) : b,
     ));
@@ -1985,7 +2014,7 @@ function judge(roots, world, mood, langs, sent) {
   // them. Told nothing it could not work, the parts are answered one apiece,
   // as before.
   if (holes.length > 0 && terms.length >= 2 && said.some(choiceOn) && !said.some(negatesOn)) {
-    if (relation === a.more || relation === a.less) {
+    if (isComparing(relation, world)) {
       const op = said[at];
       const stood = (x, y) => calculate([x, op, y], 1, relation, world);
       const beats = (x, y) => {
@@ -2367,7 +2396,7 @@ function alongScale(left, right, relation, world, on) {
   // heavier and cooler at once, and neither of those is the comparison.
   if (found.length === 0 || found.some((x) => x !== found[0])) return null;
 
-  const holds = relation === a.more ? found[0] : !found[0];
+  const holds = toward(relation, a.more, world) ? found[0] : !found[0];
   return node('standing', holds ? 'held' : 'against', [], {
     subject: conceptOf(left),
     relation,
@@ -2499,7 +2528,7 @@ function calculate(said, at, relation, world) {
     });
   }
 
-  if (relation === a.more || relation === a.less) {
+  if (isComparing(relation, world)) {
     // Each side is worked out on its own, the way two sides asked to be the
     // same are: what is compared is what each side comes to, not the nearest
     // number standing in it.
@@ -2524,7 +2553,7 @@ function calculate(said, at, relation, world) {
     }
     const compared = numericCompare(left, right);
     if (Number.isNaN(compared)) return null;
-    const holds = relation === a.more ? compared > 0 : compared < 0;
+    const holds = toward(relation, a.more, world) ? compared > 0 : compared < 0;
     // The terms compared, not the numbers they name: a standing joins terms
     // wherever it comes from, and what is said back is said in words.
     return node('standing', holds ? 'held' : 'against', [], {
@@ -3983,10 +4012,10 @@ function claimSaid(stood, langName, langs, world) {
   const one = said(subject, false);
   const other = classification == null ? said(object, true) : lang.classificationFor(classification);
   if (one == null || other == null) return '';
-  const comparing =
-    on != null && (relation === a.more || relation === a.less)
-      ? lang.comparativeFor(relation, on)
-      : null;
+  // Saying a comparison back needs no scale: what was compared on is in the
+  // comparison itself. A scale is what lets measured things be worked out
+  // against each other, and plenty of states are never measured at all.
+  const comparing = isComparing(relation, world) ? lang.comparativeFor(relation) : null;
   if (comparing != null) {
     return lang.express('compare', { subject: one, relation: comparing, object: other }) ?? '';
   }

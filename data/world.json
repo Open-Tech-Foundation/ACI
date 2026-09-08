@@ -69,7 +69,8 @@
     "range": 2868,
     "subtype": 2869,
     "instance": 2870,
-    "predication": 2871
+    "predication": 2871,
+    "compares": 2875
   },
   "relations": {
     "is": 294,
@@ -2099,24 +2100,12 @@
           "to": 199
         },
         {
-          "rel": 305,
-          "to": 195
+          "rel": 617,
+          "to": 2727
         },
         {
-          "rel": 305,
-          "to": 197
-        },
-        {
-          "rel": 305,
-          "to": 199
-        },
-        {
-          "rel": 306,
-          "to": 196
-        },
-        {
-          "rel": 306,
-          "to": 198
+          "rel": 617,
+          "to": 2728
         }
       ],
       "disjoint": true
@@ -2135,14 +2124,6 @@
         },
         {
           "rel": 617,
-          "to": 201
-        },
-        {
-          "rel": 305,
-          "to": 200
-        },
-        {
-          "rel": 306,
           "to": 201
         }
       ]
@@ -2181,22 +2162,6 @@
         {
           "rel": 617,
           "to": 209
-        },
-        {
-          "rel": 305,
-          "to": 208
-        },
-        {
-          "rel": 305,
-          "to": 210
-        },
-        {
-          "rel": 306,
-          "to": 211
-        },
-        {
-          "rel": 306,
-          "to": 209
         }
       ],
       "disjoint": true
@@ -2218,12 +2183,8 @@
           "to": 2735
         },
         {
-          "rel": 305,
-          "to": 2734
-        },
-        {
-          "rel": 306,
-          "to": 2735
+          "rel": 617,
+          "to": 2733
         }
       ]
     },
@@ -3827,14 +3788,6 @@
         },
         {
           "rel": 617,
-          "to": 2741
-        },
-        {
-          "rel": 305,
-          "to": 2740
-        },
-        {
-          "rel": 306,
           "to": 2741
         }
       ]
@@ -29557,6 +29510,1244 @@
         {
           "rel": 294,
           "to": 8
+        }
+      ]
+    },
+    {
+      "id": 2875,
+      "name": "compares",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        }
+      ]
+    },
+    {
+      "id": 2876,
+      "name": "more-big",
+      "transitive": true,
+      "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 195
+        },
+        {
+          "rel": 590,
+          "to": 2877
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2877,
+      "name": "more-small",
+      "transitive": true,
+      "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 196
+        },
+        {
+          "rel": 2828,
+          "to": 306
+        }
+      ]
+    },
+    {
+      "id": 2878,
+      "name": "more-long",
+      "transitive": true,
+      "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 197
+        },
+        {
+          "rel": 590,
+          "to": 2879
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2879,
+      "name": "more-short",
+      "transitive": true,
+      "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 198
+        },
+        {
+          "rel": 2828,
+          "to": 306
+        }
+      ]
+    },
+    {
+      "id": 2880,
+      "name": "more-tall",
+      "transitive": true,
+      "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 199
+        },
+        {
+          "rel": 590,
+          "to": 2879
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2881,
+      "name": "more-heavy",
+      "transitive": true,
+      "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 200
+        },
+        {
+          "rel": 590,
+          "to": 2882
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2882,
+      "name": "more-light-weight",
+      "transitive": true,
+      "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 201
+        },
+        {
+          "rel": 2828,
+          "to": 306
+        }
+      ]
+    },
+    {
+      "id": 2883,
+      "name": "more-hot",
+      "transitive": true,
+      "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 208
+        },
+        {
+          "rel": 590,
+          "to": 2884
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2884,
+      "name": "more-cold",
+      "transitive": true,
+      "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 209
+        },
+        {
+          "rel": 2828,
+          "to": 306
+        }
+      ]
+    },
+    {
+      "id": 2885,
+      "name": "more-warm",
+      "transitive": true,
+      "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 210
+        },
+        {
+          "rel": 590,
+          "to": 2886
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2886,
+      "name": "more-cool",
+      "transitive": true,
+      "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 211
+        },
+        {
+          "rel": 2828,
+          "to": 306
+        }
+      ]
+    },
+    {
+      "id": 2887,
+      "name": "more-old",
+      "transitive": true,
+      "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2734
+        },
+        {
+          "rel": 590,
+          "to": 2888
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2888,
+      "name": "more-young",
+      "transitive": true,
+      "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2735
+        },
+        {
+          "rel": 2828,
+          "to": 306
+        }
+      ]
+    },
+    {
+      "id": 2889,
+      "name": "more-fast",
+      "transitive": true,
+      "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2740
+        },
+        {
+          "rel": 590,
+          "to": 2890
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2890,
+      "name": "more-slow",
+      "transitive": true,
+      "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2741
+        },
+        {
+          "rel": 2828,
+          "to": 306
+        }
+      ]
+    },
+    {
+      "id": 2891,
+      "name": "more-life",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 225
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2892,
+      "name": "more-sleep",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 227
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2893,
+      "name": "more-health",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 228
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2894,
+      "name": "more-feeling",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 229
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2895,
+      "name": "more-know",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 285
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2896,
+      "name": "more-cleanliness",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2721
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2897,
+      "name": "more-large",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2722
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        },
+        {
+          "rel": 590,
+          "to": 2898
+        }
+      ]
+    },
+    {
+      "id": 2898,
+      "name": "more-little",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2723
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2899,
+      "name": "more-huge",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2724
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        },
+        {
+          "rel": 590,
+          "to": 2900
+        }
+      ]
+    },
+    {
+      "id": 2900,
+      "name": "more-tiny",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2725
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2901,
+      "name": "more-vast",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2726
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2902,
+      "name": "more-wide",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2727
+        },
+        {
+          "rel": 590,
+          "to": 2903
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2903,
+      "name": "more-narrow",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2728
+        },
+        {
+          "rel": 2828,
+          "to": 306
+        }
+      ]
+    },
+    {
+      "id": 2904,
+      "name": "more-deep",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2729
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        },
+        {
+          "rel": 590,
+          "to": 2905
+        }
+      ]
+    },
+    {
+      "id": 2905,
+      "name": "more-shallow",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2730
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2906,
+      "name": "more-thick",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2731
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        },
+        {
+          "rel": 590,
+          "to": 2907
+        }
+      ]
+    },
+    {
+      "id": 2907,
+      "name": "more-thin",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2732
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2908,
+      "name": "more-new",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2733
+        },
+        {
+          "rel": 590,
+          "to": 2887
+        },
+        {
+          "rel": 2828,
+          "to": 306
+        }
+      ]
+    },
+    {
+      "id": 2909,
+      "name": "more-modern",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2736
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2910,
+      "name": "more-ancient",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2737
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2911,
+      "name": "more-chilly",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2738
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2912,
+      "name": "more-freezing",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2739
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2913,
+      "name": "more-quick",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2742
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        },
+        {
+          "rel": 590,
+          "to": 2890
+        }
+      ]
+    },
+    {
+      "id": 2914,
+      "name": "more-loud",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2743
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        },
+        {
+          "rel": 590,
+          "to": 2915
+        }
+      ]
+    },
+    {
+      "id": 2915,
+      "name": "more-quiet",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2744
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2916,
+      "name": "more-bright",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2745
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2917,
+      "name": "more-fresh",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2746
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2918,
+      "name": "more-dark",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2747
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2919,
+      "name": "more-strong",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2748
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2920,
+      "name": "more-weak",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2749
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2921,
+      "name": "more-free",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2750
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2922,
+      "name": "more-busy",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2751
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2923,
+      "name": "more-full",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2752
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2924,
+      "name": "more-empty",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2753
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2925,
+      "name": "more-dirty",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2754
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2926,
+      "name": "more-sure",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2755
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2927,
+      "name": "more-certain",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2756
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2928,
+      "name": "more-hungry",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2757
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2929,
+      "name": "more-thirsty",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2758
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2930,
+      "name": "more-tired",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2759
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2931,
+      "name": "more-sick",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2760
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2932,
+      "name": "more-ill",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2761
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2933,
+      "name": "more-clear",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2780
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2934,
+      "name": "more-ready",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2782
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2935,
+      "name": "more-alone",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2784
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2936,
+      "name": "more-flu",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2816
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2937,
+      "name": "more-wet",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2872
+        },
+        {
+          "rel": 2828,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2938,
+      "name": "more-dry",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2873
+        },
+        {
+          "rel": 2828,
+          "to": 305
         }
       ]
     }
