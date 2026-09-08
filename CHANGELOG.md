@@ -43,6 +43,18 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Saying something is there no longer names a thing `there`.** English's
+  grammar carried a rule for the existential — `there predicate` — but the word
+  `there` was never written into the language, so the rule could never fire.
+  `there` was the one symbol in the whole English grammar with nothing to match
+  it. The word fell through to the path that takes an unknown word standing
+  where a thing stands as a name being given, so `there is a dog` made an
+  individual called "there" and `what is there?` answered "dog". The word is
+  now declared, the rule fires, and the sentence reaches the predicate it was
+  written for. What an existential subject *means* is not yet read — the brain
+  says it does not understand rather than inventing something, which is the
+  honest answer until the reading lands.
+
 - **A learned fact is no longer weighed twice.** Every learning turn walked the
   whole world twice over: once in the brain, weighing the proposed change, and
   again in the shape check after it was written. Both are O(world), so learning
