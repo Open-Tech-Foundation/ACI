@@ -54,6 +54,32 @@ more world vocabulary.
 - [x] Remove the generic reverse-edge-as-loop assumption. Reverse facts are
   contradictory only for relations whose algebra says so; symmetric relations
   must be learnable.
+- [x] Settle one term order in the world however it arrives. A file authors
+  its terms in whatever order reads well and the store hands them back by id;
+  `data/world.json` is not in id order, so `members` gave the same set in a
+  different order through the two doors, and one answer path hands that list
+  straight out.
+- [x] Carry `individual` and `disjoint` from a knowledge file onto a term the
+  base world already holds. Every other mark was carried and checked; these two
+  were dropped in silence.
+- [x] Keep what a standing instruction learns when it finally fires. The fact
+  was handed to the caller and never written, and the instruction was dropped
+  in the same turn, so it had nowhere left to come from. Unreachable while
+  `knowledge/following.json` stands, and repaired by inspection.
+- [x] Stop a growing world losing its own new terms to memory. Learned ids are
+  taken from the top of the authored world, and so is the next authored term;
+  the seed upsert skipped the collision in silence, and a name the world later
+  brought back stopped the brain opening at all.
+- [ ] Validate an accepted fact without rewalking the whole world. `checkWhole`
+  is O(world) and runs after every learned fact, so learning N facts costs
+  O(N²) validation: 44ms at 2822 terms, 183ms at 20k, 376ms at 40k, and today
+  42% of a turn. Phase 2 puts the world on that curve immediately, since a
+  proposition can only be an endpoint by being a term. **This is a blocker for
+  phase 2, not a performance note.**
+- [ ] Decide what a derived fact does when the world denies it. `denies` reads
+  authored `not` links; stored rules will produce facts no source authored, and
+  the collision has no rule yet. Settle it before rules land, or the first
+  derived contradiction is a silent wrong answer instead of a refusal.
 - [ ] Keep grammar/parser ordering risks deferred while language work is
   paused. They are deterministic for identical ordered data, but some choices
   still depend on authored alternative order.
@@ -80,12 +106,21 @@ Every later primitive depends on trustworthy identity, typing and relations.
 ### 2. First-class propositions and rules
 
 - [ ] Represent a proposition as data with subject, relation, object, polarity
-  and scope while preserving the current link storage format where possible.
-- [ ] Allow propositions to participate in cause, knowledge, belief, evidence
-  and modality relations.
+  and scope. A link cannot be addressed, so a proposition is an endpoint only
+  by being a term: this needs its own anchors, and `checkWhole`'s
+  classification walk, domain/range inference and disjointness checks must all
+  be taught that a proposition's own links are not classification. Stored facts
+  keep the current link format; the proposition that names one is new.
+- [ ] Make a proposition a legal endpoint of any relation. Which relations mean
+  what over one — cause, knowledge, belief, evidence, modality — is phase 5's;
+  this phase only makes them expressible.
 - [ ] Store safe conditional rules and derive them deterministically with an
   inspectable proof path.
 - [ ] Add variables and quantifier scope without closed-world inference.
+
+The two repairs above — incremental validation, and denial versus derivation —
+come first. The first is a cost that becomes structural here; the second is a
+semantics that rules cannot be written without.
 
 ### 3. Unified time, state and change
 
@@ -109,6 +144,10 @@ Every later primitive depends on trustworthy identity, typing and relations.
 - [ ] Model cause/effect, enable/prevent and precondition/result.
 - [ ] Add actual/possible/impossible/necessary and capability semantics.
 - [ ] Add knower, belief, evidence and provenance over first-class claims.
+
+Phase 2 makes a proposition something a relation can point at; this phase is
+where those relations get their meaning. The split is deliberate — do not read
+phase 2 as delivering epistemics.
 
 ### 6. Quantity and measurement
 
