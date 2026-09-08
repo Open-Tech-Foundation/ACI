@@ -298,21 +298,34 @@ export function fromWorldData(data) {
     return currentFunctional(links, rel);
   }
 
-  // Direct edges plus facts written through a declared converse, normalized
-  // into the requested direction before relation characteristics are applied.
-  function directedLinks(id, rel) {
-    const links = variantLinks(id, rel);
+  // Facts written through a relation declared this one's converse, held by the
+  // term they point at. Asking one term what points at it is a walk of the
+  // whole world, and every term asks; so the walk is made once per relation and
+  // kept, in the order the terms themselves are in.
+  const converseCache = new Map();
+  function converseLinks(rel) {
+    if (converseCache.has(rel)) return converseCache.get(rel);
+    const index = new Map();
     for (const variant of relationVariants(rel)) {
       for (const other of converseBy.get(variant) || []) {
         for (const term of terms.values()) {
           for (const link of term.links || []) {
-            if (!link.not && link.rel === other && link.to === id) {
-              links.push({ ...link, to: term.id });
-            }
+            if (link.not || link.rel !== other) continue;
+            if (!index.has(link.to)) index.set(link.to, []);
+            index.get(link.to).push({ ...link, to: term.id });
           }
         }
       }
     }
+    converseCache.set(rel, index);
+    return index;
+  }
+
+  // Direct edges plus facts written through a declared converse, normalized
+  // into the requested direction before relation characteristics are applied.
+  function directedLinks(id, rel) {
+    const links = variantLinks(id, rel);
+    for (const link of converseLinks(rel).get(id) || []) links.push({ ...link });
     return currentFunctional(links, rel);
   }
 
@@ -325,12 +338,42 @@ export function fromWorldData(data) {
     const out = new Set(direct.map((link) => link.to));
     if (reflexiveAt(id, rel)) out.add(id);
     if (terms.get(rel)?.symmetric) {
-      for (const term of terms.values()) {
-        const links = directedLinks(term.id, rel);
-        if (links.some((link) => link.to === id)) out.add(term.id);
-      }
+      for (const subject of pointingAt(rel).get(id) || []) out.add(subject);
     }
     return out;
+  }
+
+  // Which terms reach a term by one relation. A symmetric relation asks this of
+  // every term, so it is compiled in one pass and kept rather than recomputed
+  // for each term in turn.
+  const pointingCache = new Map();
+  function pointingAt(rel) {
+    if (pointingCache.has(rel)) return pointingCache.get(rel);
+    const index = new Map();
+    pointingCache.set(rel, index);
+    for (const term of terms.values()) {
+      for (const link of directedLinks(term.id, rel)) {
+        if (!index.has(link.to)) index.set(link.to, new Set());
+        index.get(link.to).add(term.id);
+      }
+    }
+    return index;
+  }
+
+  // The same index over edges as they are stated, without converse
+  // normalization — what `linked` reads back.
+  const statedCache = new Map();
+  function statedAt(rel) {
+    if (statedCache.has(rel)) return statedCache.get(rel);
+    const index = new Map();
+    statedCache.set(rel, index);
+    for (const term of terms.values()) {
+      for (const link of variantLinks(term.id, rel)) {
+        if (!index.has(link.to)) index.set(link.to, new Set());
+        index.get(link.to).add(term.id);
+      }
+    }
+    return index;
   }
 
   function related(id, rel) {
@@ -608,9 +651,9 @@ export function fromWorldData(data) {
       }
       const found = new Set(links.map((l) => canonical(l.to)));
       if (terms.get(rel)?.symmetric) {
-        for (const term of terms.values()) {
-          const incomingLinks = variantLinks(term.id, rel);
-          if (incomingLinks.some((link) => equivalents(id).has(link.to))) found.add(canonical(term.id));
+        const stated = statedAt(rel);
+        for (const equivalent of equivalents(id)) {
+          for (const subject of stated.get(equivalent) || []) found.add(canonical(subject));
         }
       }
       if (reflexiveAt(id, rel)) found.add(canonical(id));

@@ -43,6 +43,16 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Reading a symmetric relation or a converse no longer walks the whole
+  world per term.** Asking one term what points at it was a pass over every
+  term and every link, and `members` asked it of every term in turn, so a
+  single `members` call over a symmetric relation cost a full quadratic sweep
+  of the world — a second per call on the authored world, and the dominant
+  cost of every signal that reached one. The reverse edges of a relation are
+  now compiled once and kept, in the order the terms themselves are in.
+  Answers and their order are unchanged; a world test pins that reading a
+  relation from many terms gives exactly what reading each alone gives.
+
 - **Reverse facts are no longer rejected for every relation.** The judge used
   to treat any existing object-to-subject edge as a universal loop, even when
   the relation declared no such constraint. Independent facts may now be

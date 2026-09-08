@@ -644,3 +644,52 @@ test("transitive relations compose facts written through a converse", () => {
   assertEquals(w.isA(5, 7, BEFORE), true, "a before b and c after b means a before c");
   assertEquals(w.isA(7, 5, AFTER), true, "the same path is readable from its converse");
 });
+
+test("reading a relation from many terms gives what reading each alone gives", () => {
+  const PAIRED = 2;
+  const HOLDS = 3;
+  const BACK = 4;
+  const CONVERSE = 5;
+  const build = () =>
+    fromWorldData({
+      anchors: { converse: CONVERSE },
+      relations: { is: IS },
+      terms: [
+        { id: IS, name: "is", links: [] },
+        { id: PAIRED, name: "paired", symmetric: true, links: [] },
+        { id: HOLDS, name: "holds", links: [{ rel: CONVERSE, to: BACK }] },
+        { id: BACK, name: "held by", links: [] },
+        { id: CONVERSE, name: "converse", links: [] },
+        { id: 6, name: "a", links: [{ rel: PAIRED, to: 7 }] },
+        { id: 7, name: "b", links: [{ rel: PAIRED, to: 8 }] },
+        { id: 8, name: "c", links: [{ rel: BACK, to: 9 }] },
+        { id: 9, name: "d", links: [{ rel: HOLDS, to: 6 }] },
+      ],
+    });
+
+  // Each answer read from a world that was asked nothing else.
+  const alone = new Map();
+  for (const id of [6, 7, 8, 9]) {
+    alone.set(id, {
+      paired: build().linked(id, PAIRED),
+      members: build().members(id, PAIRED),
+      holds: build().linked(id, HOLDS),
+    });
+  }
+
+  // The same answers from one world asked about every term, in both orders.
+  for (const order of [[6, 7, 8, 9], [9, 8, 7, 6]]) {
+    const w = build();
+    for (const id of order) {
+      const want = alone.get(id);
+      assertEquals(w.linked(id, PAIRED), want.paired, `symmetric read of ${id}`);
+      assertEquals(w.members(id, PAIRED), want.members, `symmetric members of ${id}`);
+      assertEquals(w.linked(id, HOLDS), want.holds, `converse read of ${id}`);
+    }
+  }
+
+  const w = build();
+  assertEquals(w.linked(7, PAIRED), [8, 6], "symmetry reaches the neighbour on either side");
+  assertEquals(w.members(7, PAIRED), [6, 8], "and arrives from either side");
+  assertEquals(w.linked(9, HOLDS), [6], "a stated fact is read in the direction it was written");
+});
