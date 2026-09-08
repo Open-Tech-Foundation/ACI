@@ -36,6 +36,13 @@ function isId(v) {
   return Number.isSafeInteger(v) && v >= 0;
 }
 
+// One part of speech or several. Both are written the same way everywhere a
+// part of speech is named.
+function namesParts(pos) {
+  const each = Array.isArray(pos) ? pos : [pos];
+  return each.length > 0 && each.every((one) => typeof one === 'string' && one !== '');
+}
+
 function onlyKeys(data, allowed, where) {
   for (const key of Object.keys(data)) {
     if (!allowed.includes(key)) fail(where, `unknown field "${key}"`);
@@ -920,8 +927,10 @@ export function checkLanguage(data, where = 'language') {
       if (rule.of !== undefined && (typeof rule.of !== 'string' || rule.of === '')) {
         fail(r, 'of, where present, must name a part of speech');
       }
-      if (rule.pos !== undefined && (typeof rule.pos !== 'string' || rule.pos === '')) {
-        fail(r, 'pos, where present, must name the part of speech the ending makes');
+      // An ending may make more than one part of speech: a gerund both names
+      // the doing and does it. A word may already list several, so a rule may.
+      if (rule.pos !== undefined && !namesParts(rule.pos)) {
+        fail(r, 'pos, where present, must name the parts of speech the ending makes');
       }
       if (rule.when !== undefined && (typeof rule.when !== 'string' || rule.when === '')) {
         fail(r, 'when, where present, must name when the ending puts the doing');

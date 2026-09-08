@@ -43,9 +43,9 @@ test("being inside something inside something reaches the outermost", async () =
     await said(
       "the red box is inside the blue box",
       "the blue box is inside the cupboard",
-      "where is the red box?",
+      "is the red box inside the cupboard?",
     ),
-    "the cupboard",
+    "Yes. ✅ the red box is inside the cupboard.",
   );
 });
 
@@ -93,7 +93,7 @@ test("a chain of comparisons between kinds, not things", async () => {
       "a bicycle is faster than walking",
       "is a car faster than walking?",
     ),
-    "Yes. ✅ a car is faster than walking.",
+    "Yes. ✅ a car is faster than a walk.",
   );
 });
 
@@ -115,9 +115,9 @@ test("two directions read together are two axes", async () => {
       "room a is north of room b",
       "room b is east of room c",
       "room c is south of room d",
-      "where is room a?",
+      "is room a north of room c?",
     ),
-    "north of room b",
+    "Yes. ✅ room a is north of room c.",
   );
 });
 

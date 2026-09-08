@@ -17800,13 +17800,19 @@
       "ending": "ing",
       "becomes": "",
       "of": "verb",
-      "pos": "verb"
+      "pos": [
+        "verb",
+        "noun"
+      ]
     },
     {
       "ending": "ing",
       "becomes": "e",
       "of": "verb",
-      "pos": "verb"
+      "pos": [
+        "verb",
+        "noun"
+      ]
     },
     {
       "ending": "ied",

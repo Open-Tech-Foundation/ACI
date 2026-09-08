@@ -6,6 +6,11 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A gerund reads as a thing as well as a doing.** English's `-ing` ending now
+  gives both readings, so `a bicycle is faster than walking` is understood. A
+  derivation rule may name more than one part of speech, the way a word already
+  could.
+
 - **`src/graph.test.mjs`** — the ten cases the conversation graph is being
   landed against, asserted behaviourally. Three pass today; the file is red
   until the rest lands.
