@@ -121,6 +121,46 @@ Not actions at all:
     QUERY (3)       `count only the defective`, `who approved this`. Asked,
                     never stored.
 
+## Conditions are tested against state
+
+An action need not already be done. It may be done, or it may be pending —
+waiting on a condition. What it waits on is not an arriving action to be
+matched against; it is a **state**, read off the graph.
+
+    Tell me when Ravi pays Sam 500.
+      Ravi paid Sam 300.    total 300 — not reached, stays pending
+      Ravi paid Sam 200.    total 500 — reached, fires
+
+Nothing is compared action to action. The second payment does not match the
+condition any better than the first did; what changed is that the total
+reached five hundred, and the total is a state.
+
+    the temperature is hot at 30 degrees
+    switch on the AC in the bedroom if the temperature is hot
+
+      concepts   temperature — a scale
+                 hot — a state on it, from 30 up
+      nodes      b1 (bedroom), a1 (AC)
+      actions    change_property(a1, on)  on: (temperature(b1) is hot)  pending
+
+So there is one loop, not two:
+
+    an action changes a property
+       -> the property may make a state true
+          -> a true state fires whatever was pending on it
+
+Two things this needs:
+
+  * **A threshold naming a state on a scale.** `hot` is temperature from 30 up.
+    That is what makes *is it hot* answerable at all, and it is the same shape
+    as `heavier` comparing on weight.
+  * **Re-checking what is pending after every property change.** Nothing
+    arrives announcing itself; the state simply comes to be true.
+
+This is also why nothing needs a rule about how much of a condition must
+match. There is no matching. A condition is a question asked of the graph, and
+it is either true now or it is not.
+
 ## Context
 
 Context is not part of the graph. It is what a word in this conversation lands
@@ -153,7 +193,7 @@ Checked against the engine on 2026-09-08.
 
 | | what is missing | cases |
 |---|---|---|
-| A | a condition an action waits on | 5 |
+| A | SETTLED — a pending action waits on a state, re-checked after every change | 5 |
 | B | SETTLED — a collection is identified, and later actions reach it | 6 |
 | C | clock time, and what was so at a moment nothing happened | 8 |
 | D | a description on a counted thing — `4 red balls`; `red` belongs neither to `ball` nor to the having | 10 |
