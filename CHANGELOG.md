@@ -45,6 +45,22 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **What a thing holds is a thing, not a number written on an edge.** A box
+  holding four balls linked straight to the kind `ball` with a `4` on the link.
+  A number on an edge is not a node: there was nothing standing for *those
+  four*, so there was nowhere to say they are big and no telling them from
+  another four in another box. What is held is now a thing of its own — it is a
+  ball, and it is however many it is — and the holder links to that. Counting
+  reads through it unchanged: five bats and two balls in a shop are still five,
+  two, and seven things. Weighing five hundred grams makes no such thing: that
+  count says how much against a unit, and there is nothing there to describe.
+
+  **Known regression, not yet fixed:** asked under one word for holding, the
+  brain may answer under another — told a basket *holds* three apples, asked
+  what it *has*, it answers three where it should say it does not know. The
+  world keeps the two relations properly apart; the brain picks the wrong
+  branch. One test is red for this.
+
 - **A kind is counted across everything that holds it.** Told a box has four
   balls and then that a box has three, the brain made two boxes — and answered
   `how many balls?` with three, the one it had heard of last. It could count

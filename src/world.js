@@ -409,17 +409,29 @@ export function fromWorldData(source) {
   }
 
   // How much of one thing another holds, under any narrower way of saying it.
+  //
+  // What is held may be the kind itself, or a thing that is one of it: four
+  // balls in a box are a thing of their own, which is a ball and is however
+  // many it is. Asking how many balls the box holds finds them either way.
+  // Each such thing is counted once, however many names it goes by, and where
+  // there are several they are added.
   function heldBy(id, rel, object) {
     if (!terms.has(id) || !terms.has(object) || rel == null) return null;
     const ways = new Set(relationVariants(rel));
-    let latest = null;
+    const latest = new Map();
     for (const subject of equivalents(id)) {
       for (const l of terms.get(subject)?.links || []) {
-        if (l.not || !ways.has(l.rel) || !equivalents(object).has(l.to) || !Number.isInteger(l.quantity)) continue;
-        if (latest == null || (l.at ?? -1) >= (latest.at ?? -1)) latest = l;
+        if (l.not || !ways.has(l.rel) || !Number.isInteger(l.quantity)) continue;
+        if (!equivalents(object).has(l.to) && !reaches(l.to, isRel).has(object)) continue;
+        const which = canonical(l.to);
+        const had = latest.get(which);
+        if (!had || (l.at ?? -1) >= (had.at ?? -1)) latest.set(which, l);
       }
     }
-    return latest ? latest.quantity : null;
+    if (latest.size === 0) return null;
+    let total = 0;
+    for (const l of latest.values()) total += l.quantity;
+    return total;
   }
 
   function relatedBy(id, rel) {
@@ -716,7 +728,11 @@ export function fromWorldData(source) {
       if (!terms.has(id) || !terms.has(object) || rel == null) return [];
       const ways = new Set(relationVariants(rel));
       const history = [...equivalents(id)].flatMap((subject) => terms.get(subject)?.links || [])
-        .filter((l) => !l.not && ways.has(l.rel) && equivalents(object).has(l.to) && Number.isInteger(l.quantity))
+        .filter((l) =>
+          !l.not &&
+          ways.has(l.rel) &&
+          (equivalents(object).has(l.to) || reaches(l.to, isRel).has(object)) &&
+          Number.isInteger(l.quantity))
         .map((l) => ({ quantity: l.quantity, at: l.at ?? 0 }))
         .sort((x, y) => x.at - y.at);
       return history.filter(

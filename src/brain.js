@@ -1172,10 +1172,10 @@ function manyOf(said, at, world) {
 // How many of a kind a thing holds, counting everything it holds that is one
 // of that kind. Nothing says a thing holds `things`; it holds bats and balls,
 // and those are things.
-function heldUnder(bearer, kind, world) {
+function heldUnder(bearer, kind, world, under = null) {
   const a = world.anchors || {};
   let total = null;
-  for (const relation of [a.holding]) {
+  for (const relation of [under ?? a.holding]) {
     if (relation == null) continue;
     for (const of of world.linked(bearer, relation)) {
       if (of === kind || !world.isA(of, kind)) continue;
@@ -1628,6 +1628,42 @@ function judge(roots, world, mood, langs, sent) {
           : found === 'against'
             ? 'held'
             : 'absent';
+      // What is held is a thing, not a kind with a number written beside it.
+      // Four balls in a box are four balls: one thing of their own, which is a
+      // ball and is however many it is. A count written on the link from the
+      // box to the kind `ball` is not a thing at all, so there is nowhere to
+      // say those four are big, and no telling them from another four.
+      //
+      // Only what is held. Weighing five hundred grams is not holding five
+      // hundred of anything: the count says how much against a unit, and there
+      // is no thing there to describe or to tell from another.
+      const gathered = [];
+      let holdsWhat = object;
+      const holdingSomething =
+        a.holding != null && (rel === a.holding || world.subrelationOf(rel, a.holding));
+      if (
+        mood === 'tell' &&
+        counted != null &&
+        !isDenied &&
+        holdingSomething &&
+        world.term(object) &&
+        !world.isIndividual(object)
+      ) {
+        // The one already there, or a new one. A box told twice how many balls
+        // it holds holds the same balls, counted again — not another lot of
+        // them beside the first.
+        const standing = world
+          .linked(holder, rel)
+          .find((one) => world.isIndividual(one) && world.isA(one, object));
+        if (standing != null) {
+          holdsWhat = standing;
+        } else {
+          const id = sent.allocate();
+          const name = `${world.term(object).name}#${id}`;
+          gathered.push(node('call', name, [], { name, id, of: object, made: true }));
+          holdsWhat = id;
+        }
+      }
       const added = [node('standing', stands, [], { subject, relation: rel, object, negated: isDenied })];
 
       // Offered a fact nothing it holds bears on, the brain takes it in unless
@@ -1654,7 +1690,7 @@ function judge(roots, world, mood, langs, sent) {
             node('learn', 'link', [], {
               subject: holder,
               relation: rel,
-              object,
+              object: holdsWhat,
               quantity: counted,
               made: bearer && bearer.made ? bearer : null,
               not: isDenied,
@@ -1685,7 +1721,7 @@ function judge(roots, world, mood, langs, sent) {
           );
         }
       }
-      return added;
+      return [...gathered, ...added];
     };
 
     // Told agreement (`i think so`): the last idea goes back in as fact, with
@@ -1927,12 +1963,20 @@ function judge(roots, world, mood, langs, sent) {
         const bearer = inFocus ?? (sent.spoken != null ? one(sent.spoken) : null);
         const heldHere = [];
         if (bearer != null) {
-          for (const of of world.linked(bearer, a.holding)) {
+          // Under the word the question used. What a basket holds is not what
+          // it has, and gathering under the broad relation would answer one
+          // question with the other.
+          for (const of of world.linked(bearer, named)) {
             if (!heldHere.includes(of)) heldHere.push(of);
           }
         }
         const of = (heldHere.length === 1 ? heldHere[0] : null) ?? (things.length === 1 ? conceptOf(things[0]) : null);
-        const howMany = bearer == null || of == null ? null : (world.held(bearer, named, of) ?? heldUnder(bearer, of, world));
+        // Asked under one word for holding, answered under that word. What a
+        // basket holds is not what it has, and reading through the broad
+        // relation here would make them the same question.
+        const howMany = bearer == null || of == null
+          ? null
+          : (world.held(bearer, named, of) ?? heldUnder(bearer, of, world, named));
         if (howMany != null) {
           const total = world.termFor(howMany);
           return [
@@ -2419,7 +2463,13 @@ function asOneOffering(offered) {
   const refused = offered.flatMap((ns) => ns.filter((n) => n.kind === 'refuse'));
   if (refused.length > 0) return [whole, refused[0]];
   if (against) return [whole];
-  return [whole, ...offered.flatMap((ns) => ns.filter((n) => n.kind === 'learn'))];
+  // What each fact is about comes with it. A thing made to bear one of them is
+  // part of that fact, not a verdict of its own, and dropping it would leave
+  // the fact pointing at nothing.
+  return [
+    whole,
+    ...offered.flatMap((ns) => ns.filter((n) => n.kind === 'call' || n.kind === 'learn')),
+  ];
 }
 
 // Which of several verdicts reached at once this one is, so that what was
@@ -2998,7 +3048,7 @@ function act(said, claims, world, side, sides, allocate) {
   }
 
   const at = world.now();
-  const worked = work(action, parts, at, world);
+  const worked = work(action, parts, at, world, allocate);
   // Nobody did an operation a signal named outright. Nothing happened to
   // anyone — only what a thing holds coming to something else — so there is
   // nothing that happened to put on the record.
@@ -3073,7 +3123,7 @@ function amountOf(n, world) {
 // An action the world says causes an operation, worked on what a thing holds.
 // Which thing that is comes from the parts: taking draws from its source,
 // giving adds to its destination, and the amount is what the target counted.
-function work(action, parts, at, world) {
+function work(action, parts, at, world, allocate) {
   const a = world.anchors || {};
   // The world says which action causes which operation; where the signal named
   // the operation itself there is nothing to look up.
@@ -3147,12 +3197,27 @@ function work(action, parts, at, world) {
       out.push(done, node('refuse', 'beyond', [], { after }));
       continue;
     }
+    // What it holds is a thing of its own, so the new count goes on that
+    // thing — the one it already holds where there is one, and a new one where
+    // what arrived is the first of its kind here.
+    const madeHere = [];
+    let of = world
+      .linked(bearer, kept)
+      .find((one) => world.isIndividual(one) && world.isA(one, target.of));
+    if (of == null) {
+      if (allocate == null) continue;
+      const id = allocate();
+      const name = `${world.term(target.of).name}#${id}`;
+      madeHere.push(node('call', name, [], { name, id, of: target.of, made: true }));
+      of = id;
+    }
     out.push(
       done,
+      ...madeHere,
       node('learn', 'link', [], {
         subject: bearer,
         relation: kept,
-        object: target.of,
+        object: of,
         quantity: after,
         not: false,
       }),

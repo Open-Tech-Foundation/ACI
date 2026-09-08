@@ -33,12 +33,18 @@ test("what a thing holds is counted, and held by the one thing holding it", asyn
 
 test("what a thing holds is stamped, so it can change without erasing what was", async () => {
   await forget();
-  const first = await brain("a basket holds three apple");
-  const then = await brain("it holds five apple");
-  const was = first.learned.terms[0].links.find((l) => l.quantity === 3);
-  const now = then.learned.terms[0].links.find((l) => l.quantity === 5);
-  assert(was.at < now.at, "the later holding stands after the earlier one");
+  await brain("a basket holds three apple");
+  await brain("it holds five apple");
+  // The later holding stands after the earlier one rather than erasing it:
+  // asked now, it answers now, and what was so before is still on the record
+  // for a question that asks after it. Which links carry the stamps is the
+  // memory's own business.
   assertEquals((await brain("it holds how many apples?")).expression.state.says, "five");
+  assertEquals(
+    (await brain("how many apples did it hold?")).expression.state.says,
+    "three",
+    "what was so before is not written over",
+  );
   await forget();
 });
 
