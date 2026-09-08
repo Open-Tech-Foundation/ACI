@@ -1130,13 +1130,30 @@ function settle(roots, world) {
 // through: solve reads a marker or a number beside a thing, judge reads which
 // thing beside an action plays which part — neither ever reaches past a thing
 // that isn't the one it was looking for.
-function nearestOver(said, from, step, wanted) {
+function nearestOver(said, from, step, wanted, over = null) {
   for (let i = from + step; i >= 0 && i < said.length; i += step) {
     if (wanted(said[i])) return said[i];
+    if (over && over(said[i])) continue;
     if (conceptOf(said[i]) != null) return null;
   }
   return null;
 }
+
+// A word saying what a thing is like is not another thing standing in the way:
+// four big balls are four balls, and the count reaches the balls past the
+// bigness. Another thing does stop it — a count never reaches over one thing
+// to another.
+const describing = (world) => (n) => {
+  const a = world.anchors || {};
+  const concept = conceptOf(n);
+  return (
+    concept != null &&
+    a.thing != null &&
+    a.property != null &&
+    !world.isA(concept, a.thing) &&
+    world.isA(concept, a.property)
+  );
+};
 
 // Whether the signal says how much of something rather than how many of it. A
 // number standing beside a property is a measure, and the brain has no measure
@@ -1153,6 +1170,19 @@ function measured(said, world) {
     // A unit is the one thing a number beside it does say how much of: ten
     // hours is a measure, and an hour is a period of time for all that.
     if (a.unit != null && world.isA(conceptOf(beside), a.unit)) return false;
+    // A number may stand before words that say what the thing it counts is
+    // like — four big balls are four balls, not four bignesses. Looking past
+    // what describes to what is described is the same walk the count itself
+    // makes, so the two cannot disagree about which it is.
+    const past = describing(world);
+    const isThing = (other) =>
+      a.thing != null && conceptOf(other) != null && world.isA(conceptOf(other), a.thing);
+    if (
+      nearestOver(said, at, 1, isThing, past) != null ||
+      nearestOver(said, at, -1, isThing, past) != null
+    ) {
+      return false;
+    }
     return world.isA(conceptOf(beside), a.property);
   });
 }
@@ -1211,7 +1241,9 @@ function quantityOf(roots, at, world) {
   // names every one, and a thousand stones is still a thousand.
   const isNumber = (n) =>
     n && n.state.exists && (world.isA(conceptOf(n), a.number) || numberOf(n, world) != null);
-  const found = nearestOver(roots, at, -1, isNumber) || nearestOver(roots, at, 1, isNumber);
+  const past = describing(world);
+  const found =
+    nearestOver(roots, at, -1, isNumber, past) || nearestOver(roots, at, 1, isNumber, past);
   return found ? { concept: conceptOf(found), value: numberOf(found, world), said: found } : null;
 }
 
@@ -1222,7 +1254,10 @@ function numberBeside(roots, at, world) {
   const a = world.anchors || {};
   const isNumber = (n) =>
     n && n.state.exists && (world.isA(conceptOf(n), a.number) || numberOf(n, world) != null);
-  return Boolean(nearestOver(roots, at, -1, isNumber) || nearestOver(roots, at, 1, isNumber));
+  const past = describing(world);
+  return Boolean(
+    nearestOver(roots, at, -1, isNumber, past) || nearestOver(roots, at, 1, isNumber, past),
+  );
 }
 
 // Read off the order, like a count: a marker beside a thing marks that thing.
@@ -1470,7 +1505,7 @@ function judge(roots, world, mood, langs, sent) {
   // never offers a fact of its own — `the blue one is warm` says the kind is
   // warm, not blueness. Determiner-headed phrases only; togetherness (`a cow
   // and a dog`) still offers every side.
-  const restricted = restrictedIn(root);
+  const restricted = restrictedIn(root, world);
 
   // A claim may be about anything that exists, not only about a thing: gravity
   // is a force, and neither of them is a thing.
@@ -1709,15 +1744,16 @@ function judge(roots, world, mood, langs, sent) {
       // thing it is. Only where the claim is what a thing *is* — narrowing the
       // one a claim is merely about (`the blue one is warm`) says nothing new
       // about blue.
-      if (mood === 'tell' && rel === world.baseRelation && !isDenied) {
+      const narrowed = rel === world.baseRelation ? holder : null;
+      if (mood === 'tell' && !isDenied && narrowed != null) {
         for (const narrower of restricted.narrowing.get(right) || []) {
           const quality = conceptOf(narrower);
           if (quality == null || quality === object) continue;
-          if (world.isA(holder, quality)) continue;
+          if (world.isA(narrowed, quality)) continue;
           added.push(
             node('learn', 'link', [], {
-              subject: holder,
-              relation: world.classificationRelation(holder, quality),
+              subject: narrowed,
+              relation: world.classificationRelation(narrowed, quality),
               object: quality,
               quantity: null,
               made: null,
@@ -3354,13 +3390,22 @@ function pseudoTerm(concept) {
 // readings, or a plain referent. Middles must all carry the language-declared
 // modifier function — a join between them is togetherness, and each joined
 // side still claims on its own.
-function restrictedIn(root) {
+function restrictedIn(root, world) {
   const restricted = new Set();
   const narrowing = new Map();
+  const a = (world && world.anchors) || {};
+  // A phrase headed by a word saying which one, or by one saying how many:
+  // both leave what follows narrowing the head rather than claiming for
+  // itself — `the blue one`, `four big balls`. That a number does this is the
+  // world's to say; the brain asks whether the word names a number and never
+  // how it is spelled.
+  const headsPhrase = (n) =>
+    functionsOf(n).includes('determiner') ||
+    (world != null && a.number != null && world.isA(conceptOf(n), a.number));
   const walk = (n) => {
     if (n.state && n.state.referent) {
       const kids = (n.branch || []).filter((b) => b.kind === 'thing');
-      if (kids.length > 2 && functionsOf(kids[0]).includes('determiner')) {
+      if (kids.length > 2 && headsPhrase(kids[0])) {
         const head = kids[kids.length - 1];
         const t = head ? findBranch(head, 'thought') : null;
         const thought = t ? t.state.thought : null;

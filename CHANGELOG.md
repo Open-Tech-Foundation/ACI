@@ -55,6 +55,15 @@ All notable changes to this project are documented in this file.
   two, and seven things. Weighing five hundred grams makes no such thing: that
   count says how much against a unit, and there is nothing there to describe.
 
+- **A number reaches past what describes the thing it counts.** `a box has four
+  big balls` was answered with "I don't know": the number stood beside `big`,
+  and a number beside a property says how *much*, not how many — an apple does
+  not have three weights. But it was not measuring bigness, it was counting
+  balls, and the balls were one word further on. Both the count and the check
+  for measuring now look past what describes a thing to the thing described,
+  by the same walk, so the two cannot disagree about which was meant. English
+  also gained the sentence shape for it, which it had never had.
+
 - **The engine no longer names one of English's grammar rules.** Asking whether
   a why-question had a full predication behind it, the brain looked for a part
   called `verbComplement` — English's name for that rule. Hindi's file happens
