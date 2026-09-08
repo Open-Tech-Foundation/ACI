@@ -43,27 +43,28 @@ test("the existential rule reaches the predicate it was written for", async () =
   await forget();
 });
 
-// A relation joins two things. Said by itself neither is there, so there is
-// nothing it claims and nothing to agree with — no more a claim than an action
-// said by itself, which the brain has always simply recognized.
-test("a relation said by itself is recognized, not agreed with", async () => {
+// A word said by itself is taken in only where it leaves the brain holding
+// something. A thing becomes what is spoken of, and what follows can ask after
+// it. A relation joins two things and neither is there; an action is done by
+// someone to something and nobody is there; a property is had by something and
+// nothing is there. After any of those the brain holds what it held before, so
+// there is nothing it took in and nothing to report having recognized.
+test("a word that leaves the brain nothing is not understood", async () => {
   await forget();
-  for (const word of ["is", "have", "in", "on", "under"]) {
+  for (const word of ["is", "have", "in", "on", "under", "swim", "run", "brown", "big"]) {
     const r = await brain(word);
-    assertEquals(r.expression.name, "recognise", `"${word}" was not recognized`);
-    assert(
-      !String(r.expression.state.says).startsWith("Yes"),
-      `"${word}" was agreed with: ${r.expression.state.says}`,
-    );
+    assertEquals(r.expression.name, "unknown", `"${word}" was answered as though it landed`);
+    assertEquals(r.spoken, null, `"${word}" left something spoken of`);
   }
   await forget();
 });
 
-test("an action said by itself is answered the same way", async () => {
+test("a thing said by itself is what is spoken of, and can be asked after", async () => {
   await forget();
-  const action = await brain("swim");
-  const relation = await brain("have");
-  assertEquals(action.expression.name, relation.expression.name, "two modes, one answer to a bare word");
+  const r = await brain("tank");
+  assertEquals(r.expression.name, "recognise");
+  assert(r.spoken != null, "a thing said alone left nothing spoken of");
+  assertEquals((await brain("what is it?")).expression.state.says, "container");
   await forget();
 });
 

@@ -43,6 +43,20 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A word that leaves the brain nothing is no longer answered as though it
+  landed.** Said alone, only a thing does any work: it becomes what is spoken
+  of, so `tank` then `what is it?` answers `container`. A relation joins two
+  things and neither is there; an action is done by someone to something and
+  nobody is there; a property is had by something and nothing is there. After
+  any of those the brain holds exactly what it held before — `spoken` stays
+  null and nothing is in focus — yet it reported having recognized the word.
+  It now says it does not understand, which is the whole of what happened.
+
+- **The brain says the thing, not the gloss it was filed under.** Recognising
+  `dog` answered `I recognise "canine animal"` — the dictionary definition read
+  back out. The term is now handed to the language, which says it in its own
+  word for it, the same road every other answer already took.
+
 - **The brain can count the individuals it was told about.** Told `tilly is a
   cat` and `misha is a cat`, asked `how many cats?`, it said it did not know.
   It only ever counted a quantity someone had given it outright — `a box holds

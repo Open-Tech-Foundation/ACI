@@ -3523,7 +3523,15 @@ function express(roots, langs, world) {
       b.kind === 'thing' || b.kind === 'void'
         ? withBranch(b, [
             ...b.branch,
-            speak(intentOf(b, world), meaningOf(b), languageOf(b), langs),
+            speak(
+              intentOf(b, world),
+              // Recognising a thing says the thing. Every other intent says
+              // what that intent is about, and a number is voiced as it was
+              // written rather than as the word for it.
+              intentOf(b, world) === 'recognise' ? saidBack(b) : meaningOf(b),
+              languageOf(b),
+              langs,
+            ),
           ])
         : withBranch(b),
     ),
@@ -3536,11 +3544,12 @@ function express(roots, langs, world) {
 // answers a communication with one of its own, counts a number, and otherwise
 // says it knows the thing.
 //
-// A relation said by itself is none of those. It joins two things and neither
-// is here, so there is nothing it says and nothing to agree with — no more a
-// claim than an action said by itself, which the brain has always simply
-// recognized. What it does with two things beside it is another matter and is
-// decided elsewhere, on the whole sentence.
+// A word said by itself is recognized only where the brain is left holding
+// something: a thing becomes what is spoken of, and what follows can ask after
+// it. Everything else said alone leaves the brain exactly as it was, and it
+// says it does not understand rather than reporting a word it looked up. What
+// any of them does with the rest of a sentence around it is another matter,
+// and is decided on the whole sentence.
 function intentOf(n, world) {
   if (!n.state.exists) return 'nothing';
   const ts = thoughtOf(n);
@@ -3551,6 +3560,16 @@ function intentOf(n, world) {
   if (concept != null && world) {
     if (world.isA(concept, a.communication)) return 'greet';
     if (world.isA(concept, a.number)) return 'count';
+    // Said by itself, only a thing leaves the brain anything. It becomes what
+    // is being spoken of, and the next signal can ask after it — `tank`, then
+    // `what is it?`. A relation joins two things and neither is there; an
+    // action is done by someone to something and nobody is there; a property
+    // is had by something and nothing is there. After any of them the brain
+    // holds exactly what it held before, so there is nothing it took in and
+    // nothing to say it recognized. It does not understand, and says so.
+    // Only where the world can say so. Told nothing about what a thing is,
+    // the brain has no category to answer with and does not refuse on it.
+    if (a.thing != null && !world.isA(concept, a.thing)) return 'unknown';
   }
   // A number the world never named is still a number.
   if (concept == null && ts.value != null) return 'count';
@@ -3581,6 +3600,17 @@ function thoughtOf(n) {
 function meaningOf(n) {
   const ts = thoughtOf(n);
   return ts ? ts.meaning : null;
+}
+
+// Saying back the thing a word named, rather than the gloss the language filed
+// it under: `dog` is answered with dog, not with canine animal. The term is
+// handed over and the language says it in its own word for it, which is the
+// same road every other answer takes. Where the word named nothing the brain
+// has nothing to hand over, and the word itself has to stand for it.
+function saidBack(n) {
+  const ts = thoughtOf(n);
+  if (!ts) return null;
+  return ts.concept != null ? ts.concept : ts.meaning;
 }
 
 function languageOf(n) {
