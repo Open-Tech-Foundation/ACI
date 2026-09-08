@@ -501,6 +501,33 @@ function think(roots, langs, at, world) {
 //
 // This is why a comparison need not be listed word by word: any state a scale
 // measures can be compared the moment the world names the comparison on it.
+// The far end of an ordering, where a word asks for one. The quality is the
+// word's own; the comparison made on it is the world's, and so is which way it
+// runs. Among everything that comparison joins, the far end is the one nothing
+// stands beyond — and where several are unbeaten there is no one far end, so
+// the brain names none rather than choosing.
+function farEnd(term, world) {
+  const a = world.anchors || {};
+  if (a.compares == null || !functionsOf(term).includes('extreme')) return undefined;
+  const state = conceptOf(term);
+  if (state == null) return undefined;
+  const comparison = world.members(state, a.compares)[0];
+  if (comparison == null) return undefined;
+  // Read through any converse the world declares, so a thing said to be older
+  // than another stands in the ordering of youth as well — one fact, either
+  // end. Reading only what was written down would find nothing at the end
+  // nobody happened to speak from.
+  const joined = new Set();
+  for (const t of world.data.terms) {
+    const beyond = world.related(t.id, comparison);
+    if (beyond.length === 0) continue;
+    joined.add(t.id);
+    for (const other of beyond) joined.add(other);
+  }
+  const unbeaten = [...joined].filter((id) => world.members(id, comparison).length === 0);
+  return unbeaten.length === 1 ? unbeaten : [];
+}
+
 // Whether a relation compares at all, and which way it runs. A comparison made
 // on a state is declared narrower than `more` or than `less`, so asking the
 // broader relation answers for every one of them without naming any.
@@ -2086,6 +2113,15 @@ function judge(roots, world, mood, langs, sent) {
       // A hole seeking how, when or across what scale never takes a pointer
       // for an answer: `when is it` is none, not the topic's kind. Kinds
       // answer as ever.
+      // A word marking an extreme asks for the far end of an ordering: among
+      // everything the comparison on that quality joins, the one nothing
+      // stands beyond. The world holds the comparison and holds it as an
+      // ordering; the brain walks it and ranks nothing itself.
+      const far = farEnd(term, world);
+      if (far !== undefined) {
+        nodes.push(node('answer', 'link', [], { subject, relation, found: far }));
+        continue;
+      }
       const seeksOn = holes.some((n) => onOf(n) != null);
       const pointed =
         markOn(term) === 'spoken' || markOn(term) === 'from' || markOn(term) === 'to';

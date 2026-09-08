@@ -4372,12 +4372,18 @@
       "concept": 2726
     },
     "wide": {
-      "pos": "adjective",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "wide",
       "concept": 2727
     },
     "narrow": {
-      "pos": "adjective",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "narrow",
       "concept": 2728
     },
@@ -4402,17 +4408,26 @@
       "concept": 2732
     },
     "new": {
-      "pos": "adjective",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "new",
       "concept": 2733
     },
     "old": {
-      "pos": "adjective",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "old",
       "concept": 2734
     },
     "young": {
-      "pos": "adjective",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "young",
       "concept": 2735
     },
@@ -4437,12 +4452,18 @@
       "concept": 2739
     },
     "fast": {
-      "pos": "adjective",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "fast",
       "concept": 2740
     },
     "slow": {
-      "pos": "adjective",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "slow",
       "concept": 2741
     },
@@ -17818,7 +17839,8 @@
     {
       "ending": "est",
       "becomes": "",
-      "of": "adjective"
+      "of": "adjective",
+      "functions": "extreme"
     },
     {
       "ending": "n't",
@@ -17835,7 +17857,8 @@
     {
       "ending": "iest",
       "becomes": "y",
-      "of": "adjective"
+      "of": "adjective",
+      "functions": "extreme"
     }
   ],
   "speech": {

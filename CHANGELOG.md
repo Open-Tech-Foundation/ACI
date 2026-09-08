@@ -45,6 +45,16 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **The brain can be asked for the far end of an ordering.** `Which is
+  heaviest?` answered "state" — the ending marking an extreme was dropped, so
+  the question read as "what is heavy?". English now says only that an ending
+  marks an extreme, as it says an ending compares; the world holds the
+  comparison made on that quality and holds it as an ordering, and the brain
+  walks it to the one nothing stands beyond. It reads through a declared
+  converse, so things said to be older than one another answer `which is
+  youngest?` from the other end of the same facts. Where several are unbeaten
+  there is no one far end and the brain names none.
+
 - **A claim may be a thing the brain holds.** Until now a claim could only be an
   edge between two terms, so nothing could be said *about* one — which is why a
   checked claim had to be copied out of memory as a loose triple to be kept in

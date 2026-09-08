@@ -23,6 +23,7 @@ const ENTITY_CLASSES = ['living', 'nonliving'];
 const COGNITIVE_FUNCTIONS = [
   'comparison',
   'condition',
+  'extreme',
   'determiner',
   'encloses',
   'join',
