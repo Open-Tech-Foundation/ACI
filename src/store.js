@@ -117,6 +117,7 @@ export async function isEmpty(db) {
 export async function seed(db, world) {
   const learned = 0;
   await db.execute(sql`delete from link where learned = 0`);
+  await stepAside(db, world);
 
   await db.executeMany(
     sql`insert into term (id, name, value, symbol, individual, disjoint, transitive, asymmetric, symmetric, reflexive, irreflexive, functional, learned)
@@ -169,6 +170,72 @@ export async function seed(db, world) {
               on conflict (name) do update set term = excluded.term`,
       Object.entries(named),
     );
+  }
+}
+
+// A learned term standing where an authored one is about to land steps aside.
+//
+// Memory is numbered from the top of the authored world, and so is the next
+// authored term: a world that grows reaches the ids memory already took. The
+// authored term must land at the id it was written with — that id is what
+// every other authored link names it by — and what was learned must survive,
+// so the learned term takes a free id above both worlds and every learned link
+// that named it moves with it.
+//
+// An id is not the thing. Nothing outside this table reads one for meaning —
+// a term is met again by its name — so moving one loses nothing, and moving in
+// id order means the same store and the same world always give the same
+// numbers.
+//
+// Memory is taken out and put back rather than renumbered in place: a name is
+// claimed once and a link may not point at a term that is not there, so there
+// is no order in which rows can be edited one at a time without breaking one
+// wall or the other on the way.
+async function stepAside(db, world) {
+  const authored = new Set(world.terms.map((t) => t.id));
+  const held = await rows(
+    db,
+    sql`select id, name, value, symbol, individual, disjoint, transitive, asymmetric,
+               symmetric, reflexive, irreflexive, functional
+        from term where learned = 1 order by id`,
+  );
+  if (!held.some((t) => authored.has(t.id))) return;
+
+  const links = await rows(
+    db,
+    sql`select term, rel, target, quantity, moment, denied
+        from link where learned = 1 order by term, rowid`,
+  );
+  let free = Math.max(...world.terms.map((t) => t.id), ...held.map((t) => t.id));
+  const moved = new Map();
+  for (const t of held) if (authored.has(t.id)) moved.set(t.id, ++free);
+  const at = (id) => moved.get(id) ?? id;
+
+  await db.execute(sql`begin immediate`);
+  try {
+    // Links first and terms after, so nothing is ever pointing at a term that
+    // has gone; on the way back, terms first and links after, for the same
+    // reason the other way round.
+    await db.execute(sql`delete from link where learned = 1`);
+    await db.execute(sql`delete from term where learned = 1`);
+    // A row at a time, as a learned write is: what is handed all its rows at
+    // once opens a transaction of its own, and this move is already in one.
+    for (const t of held) {
+      await db.execute(sql`insert into term (id, name, value, symbol, individual, disjoint, transitive, asymmetric, symmetric, reflexive, irreflexive, functional, learned)
+                           values (${at(t.id)}, ${t.name}, ${t.value}, ${t.symbol},
+                                   ${t.individual}, ${t.disjoint}, ${t.transitive}, ${t.asymmetric},
+                                   ${t.symmetric}, ${t.reflexive}, ${t.irreflexive}, ${t.functional}, 1)`);
+    }
+    for (const l of links) {
+      await db.execute(sql`insert or ignore into link
+        (term, rel, target, quantity, moment, denied, learned)
+        values (${at(l.term)}, ${at(l.rel)}, ${at(l.target)}, ${l.quantity},
+                ${l.moment}, ${l.denied}, 1)`);
+    }
+    await db.execute(sql`commit`);
+  } catch (why) {
+    await db.execute(sql`rollback`);
+    throw why;
   }
 }
 

@@ -43,6 +43,15 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A growing world no longer silently loses its own new terms.** Memory is
+  numbered from the top of the authored world, and so is the next authored
+  term, so a world that grows reaches ids that memory already took. The seed
+  upsert skipped those rows, and the authored term never reached the brain —
+  no error, no warning. A learned term standing where an authored one is about
+  to land now steps aside to a free id above both worlds, and every learned
+  link naming it moves with it. Ids carry no meaning outside the store, so
+  nothing learned is lost; re-seeding the same world twice changes nothing.
+
 - **Reading a symmetric relation or a converse no longer walks the whole
   world per term.** Asking one term what points at it was a pass over every
   term and every link, and `members` asked it of every term in turn, so a
