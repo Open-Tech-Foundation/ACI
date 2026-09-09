@@ -56,7 +56,7 @@ test("nothing of the walking to the claim is kept, only what it came to", async 
 
 test("a signal with no claim spoken of is unchanged", async () => {
   assertEquals((await fresh("a mango is a fruit")).expression.name, "understood");
-  assertEquals((await fresh("a mango is a hammer")).expression.name, "deny");
+  assertEquals((await fresh("a mango is a hammer")).expression.name, "conflict");
   const taught = await fresh("ice is a liquid");
   assert(taught.learned != null);
   await forget();

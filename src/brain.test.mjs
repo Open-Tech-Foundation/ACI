@@ -638,7 +638,9 @@ test("a contradicted claim is refused rather than learned", async () => {
   assertEquals(kind(r.roots[0], "refuse").name, "contradiction");
   assertEquals(kind(r.roots[0], "learn"), null);
   assertEquals(r.learned, null);
-  assertEquals(r.expression.name, "deny");
+  // Told, not asked. It is still refused — nothing is written — and what it
+  // says is that two things cannot both stand, not that this one is false.
+  assertEquals(r.expression.name, "conflict");
   forget();
 });
 

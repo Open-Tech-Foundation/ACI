@@ -36,6 +36,7 @@ test("one claim standing as why another is so joins them", async () => {
   // Both halves are said, and both are answered. That the second is *why* the
   // first is not written down: a claim is not yet a thing the world can hold.
   const r = await brain("a bell is a toy because a bell is an object");
-  assertEquals(r.expression.state.says, "No. ❌ I know.");
+  // Told, not asked: the half that clashes says so and neither is written.
+  assertEquals(r.expression.state.says, "Conflict. ⚠ a bell is a toy. I know.");
   await forget();
 });

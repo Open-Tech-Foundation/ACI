@@ -9938,13 +9938,23 @@
         "marks": "unknown",
         "concept": 138,
         "select": {
+          "position": "first",
           "before": "pointer"
         }
       },
       {
         "pos": "interrogative",
         "meaning": "who",
-        "marks": "unknown"
+        "marks": "unknown",
+        "select": {
+          "position": "first"
+        }
+      },
+      {
+        "pos": "interrogative",
+        "meaning": "who",
+        "marks": "unknown",
+        "concept": 138
       }
     ],
     "how": {

@@ -26,7 +26,7 @@ test("what is offered as one thing is answered as one thing", async () => {
   const whole = all(r.roots[0], "standing")[0];
   assertEquals(whole.branch.map((n) => n.name), ["held", "against"]);
   assertEquals(whole.name, "against", "one standing against it stands against the offering");
-  assertEquals(r.expression.state.says, "No. ❌");
+  assertEquals(r.expression.state.says, "Conflict. ⚠");
 });
 
 test("the offering is about all of them and about no one of them", async () => {
@@ -85,7 +85,7 @@ test("what was offered on its own is taken on its own", async () => {
 test("joined clauses are two offerings, not one — each answered on its own", async () => {
   const r = await brain("a sparrow is an animal and a river is an animal");
   assertEquals(all(r.roots[0], "standing").map((t) => t.name), ["held", "against"]);
-  assertEquals(r.expression.state.says, "I know. No. ❌");
+  assertEquals(r.expression.state.says, "I know. Conflict. ⚠ a river is an animal.");
 });
 
 test("but joins the way and does — a togetherness, not a choice", async () => {
@@ -124,7 +124,7 @@ test("the object side joins too, and offers a fact for each", async () => {
   const r = await brain("a sparrow is a plant and a bird");
   const whole = all(r.roots[0], "standing")[0];
   assertEquals(whole.branch.map((n) => n.name), ["against", "held"]);
-  assertEquals(r.expression.state.says, "No. ❌");
+  assertEquals(r.expression.state.says, "Conflict. ⚠");
 });
 
 test("joined on both sides, as many facts are offered as the sides pair into", async () => {
@@ -169,7 +169,7 @@ test("a denial reaches every fact the offering holds", async () => {
   const r = await brain("a sparrow and a snake are not animals");
   const whole = all(r.roots[0], "standing")[0];
   assertEquals(whole.branch.map((n) => n.name), ["against", "against"]);
-  assertEquals(r.expression.state.says, "No. ❌");
+  assertEquals(r.expression.state.says, "Conflict. ⚠");
 });
 
 test("a joining word leaves a working out alone", async () => {

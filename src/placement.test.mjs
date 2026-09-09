@@ -16,7 +16,7 @@ test("a word that says no placement joins no placement", async () => {
   // `at` is a preposition with no term behind it: the claim is what the apple
   // is, and an apple is not a table.
   const r = await brain("an apple is at a table");
-  assertEquals(r.expression.name, "deny");
+  assertEquals(r.expression.name, "conflict");
   assertEquals(r.learned, null);
   await forget();
 });

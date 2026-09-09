@@ -36,7 +36,8 @@ test("which end was said first is word order, not the fact", async () => {
 test("an auxiliary carries a denial the same as any other claim", async () => {
   await forget();
   await said("i have 3 tokens");
-  assertEquals((await said("i do not have tokens")).expression.name, "deny");
+  // Told, not asked: it says the two cannot both stand, and writes nothing.
+  assertEquals((await said("i do not have tokens")).expression.name, "conflict");
   await forget();
 });
 
