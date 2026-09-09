@@ -17,6 +17,15 @@ All notable changes to this project are documented in this file.
   called. For the length of the conversation the word reaches that thing —
   `what is river?` says dog — while the world goes on calling a river a river.
 
+- **A name is one thing, so one of many is the world's word.** Told `the shop
+  is called apple`, the brain had the speaker eating the shop. A word said of
+  one of a kind (`an apple`), counted (`two apples`) or said in the plural
+  (`apples are red`) is the world's however this conversation has used it, and
+  only the bare or definite one reaches what was named. `i ate an apple` and
+  `the apple has 3 products` now land on different things. `the apple` on its
+  own stays the named one — nothing in such a signal says otherwise, and what
+  would settle it is what the doing will take, which the brain has yet to weigh.
+
 - **A quality standing beside a thing is said of that thing.** `a red box` is a
   box that is red, and the colour was being thrown away entirely — said the
   other way round, `the box is red`, it was kept, so it was only the standing

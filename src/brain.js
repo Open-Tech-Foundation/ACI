@@ -434,10 +434,6 @@ function think(roots, langs, at, world) {
     // conversation and held in the world since. Nothing about a name is
     // special to the brain: it is a term, met by what it is called.
     const called = first.word || read || !world ? null : world.termNamed(n.state.identity);
-    // A word somebody gave as a name in this conversation reaches what they
-    // gave it to, whatever else the word means. The world is unchanged: it
-    // goes on calling a river a river, and the next conversation will too.
-    const here = read ? null : calledInConversation(n.state.identity);
     const readOf = (word) => {
       // A bare result value in focus holds no term: the pointer stands for the
       // amount itself, so it names no term and the value below is what counts.
@@ -448,19 +444,17 @@ function think(roots, langs, at, world) {
         word && word.marks === 'prior' ? (pointedAt(word, at, world) ?? word.concept ?? null) : null;
       return {
       language: first.lang,
-      wordKnown: Boolean(word) || read || called != null || here != null,
+      wordKnown: Boolean(word) || read || called != null,
       // A word nothing knows still stands where it stands. Standing where a
       // thing stands is what a name does, so that is what it is taken as —
       // and `wordKnown` stays false, because nothing knows it yet.
       pos: word ? word.pos : read ? lang.figuresPos : lang.unknownPos,
       meaning: word ? word.meaning : read || called != null ? String(n.state.identity) : null,
-      concept: here != null
-        ? here
-        : result != null ? null : pointed != null ? pointed : word
-          ? oneMeant(pointedAt(word, at, world), world) ?? word.concept
-          : read && world
-            ? world.termFor(value)
-            : called,
+      concept: result != null ? null : pointed != null ? pointed : word
+        ? oneMeant(pointedAt(word, at, world), world) ?? word.concept
+        : read && world
+          ? world.termFor(value)
+          : called,
       value: word && word.marks === 'named' ? givenValue(word, at) : result ?? value,
       marks: word ? word.marks : null,
       negates: word ? word.negates : false,
@@ -1041,7 +1035,7 @@ function solve(roots, world, langs, mood, allocate) {
   // Whose a thing is settles what it names, and a word nothing knows is named
   // only where it stands in a claim — so whose comes first, or a claim resting
   // on a pointer that landed on nothing would still name something.
-  const positioned = contextual(roots, world);
+  const positioned = calledHere(contextual(roots, world), world, langs);
   const settled = pointingAgain(
     described(
       calling(
@@ -1163,6 +1157,48 @@ function described(roots, world, langs, mood, allocate) {
         made: true,
       }),
     ]);
+  });
+}
+
+// A word somebody gave as a name in this conversation reaches what they gave
+// it to, whatever else the word means. The world is unchanged: it goes on
+// calling a river a river, and the next conversation will too.
+//
+// Unless the signal says one of many. A name is one thing — nobody eats *an*
+// apple the company, and three apples are not three of it either — so a word
+// marked as one of a kind, counted, or said in the plural is the world's word
+// however this conversation has used it. `i ate an apple while watching the
+// apple product launch` says both in one breath, and that is what tells them
+// apart.
+function calledHere(roots, world, langs) {
+  if (!world) return roots;
+  const side = markingSide(roots, langs);
+  return roots.map((n, i) => {
+    const thought = thoughtOf(n);
+    if (!thought || thought.figures) return n;
+    const here = calledInConversation(n.state.identity);
+    if (here == null || here === thought.concept) return n;
+    // The conversation says which thing; the world must still hold it, and
+    // hold it under the word that was said. What another conversation called
+    // something reaches nothing here.
+    const term = world.term(here);
+    const held = term && typeof term.name === 'string' ? term.name.split('#')[0] : null;
+    if (held == null || held.toLowerCase() !== String(n.state.identity).toLowerCase()) return n;
+    // A name is one thing. Said of one of many — marked as one of a kind,
+    // counted, or said in the plural — the word is the world's.
+    if (markOn(markerFor(roots, i, side, markOn)) === 'new') return n;
+    if (thought.number === 'plural' || numberBeside(roots, i, world)) return n;
+    return withBranch(
+      n,
+      (n.branch || []).map((b) =>
+        b.kind === 'thought'
+          ? withBranch(b, b.branch, {
+              ...b.state,
+              thought: { ...thought, concept: here, wordKnown: true },
+            })
+          : b,
+      ),
+    );
   });
 }
 
