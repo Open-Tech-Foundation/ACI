@@ -76,7 +76,10 @@
     "holding": 2941,
     "leading": 2942,
     "trailing": 2943,
-    "composition": 2944
+    "composition": 2944,
+    "instructing": 2965,
+    "condition": 2966,
+    "consequence": 2967
   },
   "relations": {
     "is": 294,
@@ -31143,6 +31146,66 @@
         {
           "rel": 294,
           "to": 253
+        }
+      ]
+    },
+    {
+      "id": 2962,
+      "name": "flight",
+      "links": [
+        {
+          "rel": 294,
+          "to": 260
+        }
+      ]
+    },
+    {
+      "id": 2963,
+      "name": "reserve",
+      "links": [
+        {
+          "rel": 294,
+          "to": 257
+        }
+      ]
+    },
+    {
+      "id": 2964,
+      "name": "cancel",
+      "links": [
+        {
+          "rel": 294,
+          "to": 257
+        }
+      ]
+    },
+    {
+      "id": 2965,
+      "name": "standing-instruction",
+      "links": [
+        {
+          "rel": 294,
+          "to": 7
+        }
+      ]
+    },
+    {
+      "id": 2966,
+      "name": "instruction-condition",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        }
+      ]
+    },
+    {
+      "id": 2967,
+      "name": "instruction-consequence",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
         }
       ]
     }

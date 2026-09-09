@@ -673,8 +673,14 @@ export function fromWorldData(source) {
       const object = related(id, anchors.object);
       if (subject.size === 0 || object.size === 0) return null;
       const term = terms.get(id);
+      // Which relation is claimed, said the broad way or the precise one. A
+      // claim written down by the brain says it the precise way, because
+      // memory keeps the stronger primitive wherever it can.
       const stated = (term.links || []).find(
-        (l) => l.rel === isRel && terms.get(l.to) && reaches(l.to, isRel).has(anchors.relation),
+        (l) =>
+          (l.rel === isRel || l.rel === instanceRel || l.rel === subtypeRel) &&
+          terms.get(l.to) &&
+          reaches(l.to, isRel).has(anchors.relation),
       );
       if (!stated) return null;
       return {

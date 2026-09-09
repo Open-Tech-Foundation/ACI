@@ -1419,7 +1419,19 @@ function judge(roots, world, mood, langs, sent) {
         object: null,
         negated: false,
       });
-      return [withBranch(root, [...root.branch, ...(found.length ? found : [nothing])])];
+      // A condition the brain cannot reach yet is not a dead end: what was
+      // said still governs, and keeps governing whatever turns up later. It is
+      // kept as a standing instruction — never as the fact it speaks of — so
+      // that when the condition does come to stand, what stands on it follows.
+      // A condition the world stands against will never come to stand, and
+      // nothing is kept for it.
+      const kept =
+        mood === 'tell' && stood && stood.name === 'absent'
+          ? instructionFrom(when, so, world, langs, sent)
+          : [];
+      return [
+        withBranch(root, [...root.branch, ...kept, ...(found.length ? found : [nothing])]),
+      ];
     }
     // A thing standing where a claim would stand is the thing to say.
     if (!joinedWhole(next, root)) {
@@ -1436,7 +1448,38 @@ function judge(roots, world, mood, langs, sent) {
     return [withBranch(root, [...root.branch, ...(followed.branch || []).filter(taken)])];
   }
 
-  // A word may hold a claim at arm's length rather than make it: `a cat might
+  // What a signal put as a condition, and what it put on the other side, held as
+// one thing the brain can come back to. Both sides are checked the way a
+// question is — neither is made — and what is kept is the pair, not the facts.
+function instructionFrom(when, so, world, langs, sent) {
+  const a = world.anchors || {};
+  if (a.instructing == null || a.condition == null || a.consequence == null) return [];
+  if (a.subject == null || a.object == null || sent == null || sent.allocate == null) return [];
+  const sideOf = (part) => {
+    if (!part) return null;
+    const [seen] = judge([part], world, 'ask', langs, sent);
+    const stood = (seen.branch || []).find((n) => n.kind === 'standing');
+    if (!stood) return null;
+    const { subject, relation, object, negated } = stood.state;
+    return subject == null || relation == null || object == null
+      ? null
+      : { subject, relation, object, negated: Boolean(negated) };
+  };
+  const on = sideOf(when);
+  const then = sideOf(so);
+  if (!on || !then) return [];
+  return [
+    node('instruction', 'kept', [], {
+      id: sent.allocate(),
+      onId: sent.allocate(),
+      thenId: sent.allocate(),
+      on,
+      then,
+    }),
+  ];
+}
+
+// A word may hold a claim at arm's length rather than make it: `a cat might
   // be an animal` says nothing is so, it says what might be. The brain checks
   // it, which is what being asked does, and takes nothing in. It cannot tell
   // might from does-not-know — it has no notion of what could be, only of what
@@ -4570,6 +4613,7 @@ export function brainFrom(input, knowledge, circumstance) {
   const solvedRoots = solve(thoughtRoots, world, langs, mood, at.allocate);
   const structuredRoots = structurePhrase(solvedRoots, langs);
   let judgedRoots = judge(structuredRoots, world, mood, langs, at);
+  judgedRoots = awoken(judgedRoots, world, mood);
   let learned = learnedFrom(judgedRoots, world);
   const inconsistent = learningConflict(world, learned);
   if (inconsistent && judgedRoots.length === 1) {
@@ -5351,13 +5395,19 @@ function learnedFrom(roots, world) {
   const branch = roots[0].branch || [];
   const events = branch.filter((b) => b.kind === 'event');
   const learns = branch.filter((b) => b.kind === 'learn');
+  const instructions = branch.filter((b) => b.kind === 'instruction');
   const called = [];
   const gather = (n) => {
     if (n.kind === 'call') called.push(n);
     (n.branch || []).forEach(gather);
   };
   gather(roots[0]);
-  if (events.length === 0 && learns.length === 0 && called.length === 0) return null;
+  if (
+    events.length === 0 &&
+    learns.length === 0 &&
+    instructions.length === 0 &&
+    called.length === 0
+  ) return null;
   // What was named in this signal is not in the world yet, so its name is
   // known here and nowhere else.
   const naming = new Map(called.map((c) => [c.state.id, c.state.name]));
@@ -5371,7 +5421,7 @@ function learnedFrom(roots, world) {
     else if (value && typeof value === 'object') Object.values(value).forEach(reference);
   };
   const accepted = (n) => {
-    if (n.kind === 'learn' || n.kind === 'event') reference(n.state);
+    if (n.kind === 'learn' || n.kind === 'event' || n.kind === 'instruction') reference(n.state);
     (n.branch || []).forEach(accepted);
   };
   accepted(roots[0]);
@@ -5424,6 +5474,7 @@ function learnedFrom(roots, world) {
         name: world.term(c.state.whose) ? world.term(c.state.whose).name : c.state.name,
         links: [{ rel: world.anchors.has, to: c.state.id }],
       })),
+    ...instructions.flatMap((i) => tookHold(i, world)),
     ...events.flatMap((e) => tookPlace(e, world)),
     ...learns.flatMap((l) => tookIn(l, world, naming)),
   ]);
@@ -5448,6 +5499,81 @@ function learnedFrom(roots, world) {
 // Something that happened, in the one shape all knowledge takes. How much of
 // each part goes on the record with it: amounts are state of the occurrence,
 // so a later count reads them rather than guessing.
+// A standing instruction never occurred and is never done with. Every time the
+// brain takes a fact in, what it holds is laid against every instruction it
+// keeps: where a condition has come to stand, what stands on it follows. The
+// instruction stays where it is — it governs whatever turns up next as well.
+function awoken(roots, world, mood) {
+  if (mood !== 'tell' || !world || roots.length !== 1) return roots;
+  const a = world.anchors || {};
+  if (a.instructing == null || a.condition == null || a.consequence == null) return roots;
+  const root = roots[0];
+  const offered = (root.branch || []).filter((n) => n.kind === 'learn');
+  if (offered.length === 0) return roots;
+  const told = new Set(
+    offered.map((n) => `${n.state.subject}:${n.state.relation}:${n.state.object}:${Boolean(n.state.not)}`),
+  );
+  const follows = [];
+  for (const one of world.individualsOf(a.instructing)) {
+    const [onId] = world.linked(one, a.condition);
+    const [thenId] = world.linked(one, a.consequence);
+    if (onId == null || thenId == null) continue;
+    const on = world.claimOf(onId);
+    const then = world.claimOf(thenId);
+    if (!on || !then) continue;
+    // The condition stands where the world already had it or where this very
+    // signal brings it. Nothing is looked up twice: what was just offered is
+    // as good as what was already held.
+    const arriving = told.has(`${on.subject}:${on.relation}:${on.object}:${on.not}`);
+    if (!arriving && !world.isA(on.subject, on.object, on.relation)) continue;
+    if (world.isA(then.subject, then.object, then.relation)) continue;
+    follows.push(
+      node('learn', 'link', [], {
+        subject: then.subject,
+        relation: then.relation,
+        object: then.object,
+        quantity: null,
+        made: null,
+        not: then.not,
+      }),
+    );
+  }
+  return follows.length === 0 ? roots : [withBranch(root, [...root.branch, ...follows])];
+}
+
+// A standing instruction on the record: the pair it holds, each side written
+// as a claim the way any claim is written, and the instruction joining them.
+// Nothing here is the fact either side speaks of — a claim is a thing that
+// says something, not the saying of it.
+function tookHold(instruction, world) {
+  const a = world.anchors || {};
+  const { id, onId, thenId, on, then } = instruction.state;
+  const claim = (side, at) => ({
+    id: at,
+    name: `claim#${at}`,
+    individual: true,
+    links: [
+      { rel: world.baseRelation, to: side.relation, ...(side.negated ? { not: true } : {}) },
+      { rel: a.subject, to: side.subject },
+      { rel: a.object, to: side.object },
+    ],
+  });
+  return [
+    claim(on, onId),
+    claim(then, thenId),
+    {
+      id,
+      name: `instruction#${id}`,
+      individual: true,
+      links: [
+        { rel: world.baseRelation, to: a.instructing },
+        { rel: a.condition, to: onId },
+        { rel: a.consequence, to: thenId },
+      ],
+    },
+  ];
+}
+
 function tookPlace(event, world) {
   const { id, action, at, parts, not, when } = event.state;
   const of = { rel: world.baseRelation, to: action, at };

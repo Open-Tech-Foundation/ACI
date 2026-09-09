@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A standing instruction is held, and keeps applying.** A condition the brain
+  cannot yet reach is no longer thrown away: what was said is kept as a
+  standing instruction — a term joining two claims — and when the condition
+  comes to stand, what stands on it follows. The instruction stays after it
+  fires, because it governs whatever turns up next as well. A condition the
+  world stands against is never kept; it can never come to stand.
+
 - **`work` can be done, not only had.** `kumar works for alpha` is understood,
   and `kumar works for chennai?` is not answered from `alpha is in chennai` —
   two stored facts, and nothing joins them.
