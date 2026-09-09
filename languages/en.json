@@ -16510,7 +16510,8 @@
       "meaning": "she",
       "marks": "spoken",
       "person": "third",
-      "number": "singular"
+      "number": "singular",
+      "stands": 31
     },
     "they": {
       "pos": "pronoun",
@@ -16524,7 +16525,8 @@
       "meaning": "he",
       "marks": "spoken",
       "person": "third",
-      "number": "singular"
+      "number": "singular",
+      "stands": 30
     },
     "people": {
       "pos": "noun",

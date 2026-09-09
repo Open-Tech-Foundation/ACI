@@ -59,7 +59,9 @@ test("a thing spoken of in particular is a thing, and stays in reach", async () 
   assertEquals(held.nodes.length, 1);
   assertEquals(held.nodes[0].said, 'sky');
   assertEquals(held.facts[0].parts[0], 'n1');
-  assertEquals(held.context.focus, ['n1']);
+  // In reach: the sky itself, and the fact just said of it — both by the ids
+  // the graph gave them.
+  assertEquals(held.context.focus, ['n1', 'f1']);
 });
 
 test("a doing carries the part each thing played in it", async () => {
@@ -77,7 +79,7 @@ test("a doing carries the part each thing played in it", async () => {
   assertEquals(doing.parts.doer, 'n1');
   assertEquals(doing.parts.to, 'n2');
   assertEquals(doing.parts.from, null, 'nothing said where it came from');
-  assertEquals(doing.properties.entity, 79);
+  assertEquals(doing.properties.thing, 79);
   assertEquals(doing.properties.count, 2);
 });
 
@@ -94,8 +96,18 @@ test("a primitive is known by its shape, not by a list of words", async () => {
   // ends that say so.
   const held = await said('john gives 2 apples to sam');
   assertEquals(held.actions[0].of, TRANSFER);
-  // Holding is holding however it was said.
-  assertEquals(held.facts[0].of, HOLDING);
+  // Nobody said who holds what. What everyone holds afterwards follows from
+  // the doing and is worked out when it is asked for, so it is not a fact.
+  assertEquals(held.facts, []);
+  // Holding is holding where it was said outright.
+  assertEquals((await said('john has 5 apples')).facts[0].of, HOLDING);
+});
+
+test("a pointing word lands only where exactly one thing fits", async () => {
+  const held = await said('tom has 5 books', 'he put three books into a bag');
+  // A book cannot be what `he` stands for; tom can, and he is the only one
+  // left, so the doing is his.
+  assertEquals(held.actions[0].parts.doer, 'n1');
 });
 
 test("what governs is held apart, and its condition is never taken in", async () => {

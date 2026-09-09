@@ -13,8 +13,9 @@ if (lines.length === 0) {
   console.log('say something: esdev graph.mjs "john has 5 apples"');
 } else {
   for (const line of lines) {
-    await brain(line);
-    console.log(`\n> ${line}\n`);
+    const answer = await brain(line);
+    console.log(`\n> ${line}`);
+    console.log(`  ${answer.expression?.state?.says ?? answer.expression?.name ?? ''}\n`);
     console.log(serialize());
   }
 }

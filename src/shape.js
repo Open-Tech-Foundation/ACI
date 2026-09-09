@@ -1077,7 +1077,7 @@ function checkWord(info, w) {
   if (!info || typeof info !== 'object' || Array.isArray(info)) fail(w, 'must be an object');
   onlyKeys(
     info,
-    ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'person', 'number', 'on', 'bare', 'choice', 'proximity', 'select', 'functions', 'classifies'],
+    ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'person', 'number', 'on', 'bare', 'choice', 'proximity', 'select', 'functions', 'classifies', 'stands'],
     w,
   );
   // A word may be more than one part of speech — English says a walk and
@@ -1097,6 +1097,11 @@ function checkWord(info, w) {
   // Which scale a word compares on: heavier is more, on weight. The word names
   // the comparing; the scale says what is being compared.
   if (info.on !== undefined && !isId(info.on)) fail(w, 'on must be a term id');
+  // What kind of thing a word points back at. A language decides that one of
+  // its pointing words is said of a man and another of a woman; the brain only
+  // knows that a pointer stands for some kind, and drops whatever cannot be
+  // that kind.
+  if (info.stands !== undefined && !isId(info.stands)) fail(w, 'stands must be a term id');
   if (info.role !== undefined && (typeof info.role !== 'string' || info.role === '')) {
     fail(w, 'role, where present, must name the part a thing plays');
   }

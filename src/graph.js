@@ -156,6 +156,7 @@ export function fromUnderstood(roots, world, focus, marking) {
     said.add(key);
     const primitive = standingOf(relation, reach(object), world);
     put('facts', {
+      key,
       of: primitive ?? relation,
       said: relation,
       parts: [reach(subject), reach(object)],
@@ -169,13 +170,26 @@ export function fromUnderstood(roots, world, focus, marking) {
     });
   };
 
-  for (const link of links) {
-    const { subject, relation, object, quantity, not } = link.state;
-    claimed(subject, relation, object, quantity, not);
-  }
+  // Only what the signal claimed is a fact. Where a doing follows from it, the
+  // brain works out what everyone holds afterwards and writes that down — but
+  // nobody said it, and it is not a second fact. Five books were said and two
+  // were moved; how many are left follows from those and is worked out when it
+  // is asked for, never stored, because storing it goes stale the moment
+  // anything moves again.
+  //
+  // What was said carries a claim beside it. What was worked out carries none.
+  const amount = (claim) => {
+    const from = links.find(
+      (link) =>
+        link.state.subject === claim.subject &&
+        link.state.relation === claim.relation &&
+        reach(link.state.object) === reach(claim.object),
+    );
+    return from ? from.state.quantity : null;
+  };
   for (const claim of claims) {
     const { subject, relation, object, negated } = claim.state;
-    claimed(subject, relation, object, null, negated);
+    claimed(subject, relation, object, amount(claim.state), negated);
   }
 
   for (const event of events) {
@@ -211,10 +225,34 @@ export function fromUnderstood(roots, world, focus, marking) {
   // holds where it holds one, and the concept itself where it does not.
   // What is in reach is replaced, never added to: it is where the brain's
   // attention is now, and the last signal settles that on its own.
-  inReach = (focus || [])
-    .map((one) => (Number.isInteger(one) ? one : one && one.term))
-    .filter((one) => Number.isInteger(one))
-    .map((one) => reach(one));
+  //
+  // A flat list of what was just spoken of — things, doings, what was claimed
+  // — so a word in the next signal has somewhere to land. What arrives as a
+  // whole claim is opened up: the two things it stands between are what a
+  // later word can point at, and a claim standing in reach with a subject
+  // buried inside it is nothing to point at at all.
+  const inSight = [];
+  const bring = (one) => {
+    if (one != null && !inSight.includes(one)) inSight.push(one);
+  };
+  // A doing that was recorded is in reach as the doing that was recorded, not
+  // as the concept behind it; a claim is the fact it became. The graph already
+  // gave both an id, and that id is what a later word points at.
+  const recorded = (concept) => {
+    const one = held.actions.find((doing) => doing.said === concept);
+    return one ? one.id : concept;
+  };
+  const stated = (claim) => {
+    const key = triple(reach(claim.subject), claim.relation, reach(claim.object));
+    const one = held.facts.find((fact) => fact.key === key);
+    return one ? one.id : null;
+  };
+  for (const one of focus || []) {
+    if (Number.isInteger(one)) bring(recorded(one));
+    else if (one && Number.isInteger(one.term)) bring(reach(one.term));
+    else if (one && one.standing) bring(stated(one.standing) ?? reach(one.standing.subject));
+  }
+  inReach = inSight.map((one) => (typeof one === 'string' ? one : reach(one)));
 
   return graph();
 }
@@ -265,7 +303,7 @@ function transferring(roles, properties, world) {
   const at = (role) => (role != null && Object.hasOwn(roles, role) ? roles[role] : null);
   return {
     parts: { doer: at(anchors.agent), from: at(anchors.source), to: at(anchors.destination) },
-    properties: { entity: at(anchors.target), ...properties },
+    properties: { thing: at(anchors.target), ...properties },
   };
 }
 
@@ -433,7 +471,7 @@ export function serialize(world = against) {
   // nothing goes looking for a word for it. Which is which is named here
   // rather than guessed at, because both are integers and they do not look
   // any different.
-  const CONCEPTS = new Set(['entity', 'on']);
+  const CONCEPTS = new Set(['thing', 'on']);
   const properties = (of) => {
     const said = Object.entries(of || {})
       .filter(([, value]) => value != null)

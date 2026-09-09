@@ -357,6 +357,7 @@ function recognizeLanguage(roots, langs) {
         negates: word.negates ?? false,
         choice: word.choice ?? null,
         classifies: word.classifies ?? null,
+        stands: word.stands ?? null,
         role: word.role ?? null,
         when: word.when ?? null,
         names: word.names ?? null,
@@ -459,6 +460,7 @@ function think(roots, langs, at, world) {
       negates: word ? word.negates : false,
       choice: word ? word.choice === true : false,
       classifies: word ? word.classifies ?? null : null,
+      stands: word ? word.stands ?? null : null,
       role: word ? word.role : null,
       when: word ? word.when : null,
       names: word ? word.names : read ? false : null,
@@ -486,7 +488,60 @@ function think(roots, langs, at, world) {
     const state = ways.length > 1 ? { thought: ways[0], ways } : { thought: ways[0] };
     return withBranch(n, [...n.branch, node('thought', 'understood', [], state)]);
   });
-  return intraSignal(compared(reshaped(thought, world, langs), world), world, langs, at);
+  return borrowing(
+    intraSignal(compared(reshaped(thought, world, langs), world), world, langs, at),
+    world,
+  );
+}
+
+// What a clause leaves unsaid, taken from what stands beside it.
+//
+// `tom has five books, and mary has three` says three of the same thing and
+// never says of what. A number standing where a thing stands counts
+// something; where nothing beside it says what, the brain takes what was
+// counted alongside it.
+//
+// It borrows only what was actually counted there. Nothing counted beside it,
+// nothing borrowed — the number is left standing as it is, and the brain says
+// what it has rather than filling the gap with a guess.
+function borrowing(roots, world) {
+  if (!world) return roots;
+  const a = world.anchors || {};
+  const isNumber = (n) =>
+    n && n.state.exists && (world.isA(conceptOf(n), a.number) || numberOf(n, world) != null);
+
+  // Which numbers something has already taken as its count, and what each of
+  // those things was. A number already counting something is not left unsaid.
+  const taken = new Set();
+  const alongside = [];
+  roots.forEach((n, at) => {
+    const count = quantityOf(roots, at, world);
+    if (!count) return;
+    if (count.said) taken.add(count.said);
+    if (conceptOf(n) != null) alongside.push({ at, of: conceptOf(n) });
+  });
+
+  return roots.map((n, at) => {
+    if (!isNumber(n) || taken.has(n)) return n;
+    const value = numberOf(n, world);
+    if (value == null) return n;
+    // The nearest thing counted before it. What comes after cannot be what a
+    // word already spoken was leaning on.
+    let of = null;
+    for (const one of alongside) if (one.at < at) of = one.of;
+    if (of == null) return n;
+    return withBranch(
+      n,
+      (n.branch || []).map((b) =>
+        b.kind === 'thought'
+          ? withBranch(b, b.branch, {
+              ...b.state,
+              thought: { ...b.state.thought, concept: of, counts: value },
+            })
+          : b,
+      ),
+    );
+  });
 }
 
 // A word whose ending makes a comparison names a state, and comparing is made
@@ -648,7 +703,19 @@ function intraSignal(roots, world, langs, at) {
       if (held.length === 1) return rewrite(n, held[0]);
       return n;
     }
-    return rewrite(n, seen[seen.length - 1]);
+    // A pointer lands only where exactly one thing fits. Which kind a pointing
+    // word stands for is its language's to declare; the brain drops whatever
+    // cannot be that kind and takes what is left, and where none or more than
+    // one is left it says nothing rather than taking the nearest and hoping.
+    const fits = [];
+    for (let at = seen.length - 1; at >= 0; at -= 1) {
+      const candidate = seen[at];
+      if (fits.includes(candidate)) continue;
+      if (t.stands != null && world.excludes(candidate, t.stands)) continue;
+      fits.push(candidate);
+    }
+    if (t.stands == null) return rewrite(n, seen[seen.length - 1]);
+    return fits.length === 1 ? rewrite(n, fits[0]) : n;
   });
 }
 
@@ -1333,6 +1400,13 @@ function measureOf(of, kind, world, under) {
 function quantityOf(roots, at, world) {
   if (!world) return null;
   const a = world.anchors || {};
+  // A word that borrowed its kind from what stood beside it carries the count
+  // it was itself saying. There is no number beside it to find — it *was* the
+  // number — so it is asked directly.
+  const said = thoughtOf(roots[at]);
+  if (said && said.counts != null) {
+    return { concept: world.termFor(said.counts), value: said.counts, said: null };
+  }
   const mine = conceptOf(roots[at]);
   // A thing being named in this very signal is not in the world yet, so there
   // is nothing to look up. What it is being made as says whether a number
