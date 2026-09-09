@@ -66,7 +66,9 @@ test("refinement statements agree with established life status", async () => {
 test("a refinement statement contradicting the world is refused", async () => {
   await forget();
   const result = await brain("a dog is a non-living thing");
-  assertEquals(result.expression.name, "deny");
+  // Told, not asked: the brain says two things cannot both stand rather than
+  // denying one of them, and still writes nothing down.
+  assertEquals(result.expression.name, "conflict");
   assertEquals(result.learned, null);
   assertEquals((await brain("is a dog a living thing?")).expression.name, "affirm");
   await forget();

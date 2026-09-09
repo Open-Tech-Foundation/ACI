@@ -2777,11 +2777,26 @@ function instructionFrom(when, so, world, langs, sent) {
       const pointed =
         markOn(term) === 'spoken' || markOn(term) === 'from' || markOn(term) === 'to';
       const of = asking.size === 1 && ![...asking].includes(a.cause) ? [...asking][0] : null;
+      // Which side the hole stands on says which way to walk. `who is taller
+      // than sam` asks after whoever stands above sam, and walking out from
+      // sam finds whoever he stands above instead — the same fact read from
+      // the wrong end. A hole before the thing asks who stands to it; a hole
+      // after asks what it stands to.
+      // Only where the two ends are not alike. A relation that runs one way —
+      // standing taller, coming before — reads differently from either end, so
+      // a hole standing before the thing asks after the far end rather than
+      // the near one. Where the relation says nothing about direction, there
+      // is no other end to ask after.
+      const asksBack =
+        relation != null &&
+        world.asymmetric(relation) &&
+        holes.some((hole) => said.indexOf(hole) < said.indexOf(term));
       let found = seeksOn && pointed
         ? []
-        : reached(subject, relation, world).filter(
-            (t) => of == null || world.isA(t, of),
-          );
+        : (asksBack
+            ? world.standing(subject, relation)
+            : reached(subject, relation, world)
+          ).filter((t) => of == null || world.isA(t, of));
       // The walk came back with nothing but the most generic kind: say the
       // thing itself instead — `chocolates`, known only as a thing, is answered
       // with its own name rather than `thing`. Specific answers (`animal` for a
@@ -4891,17 +4906,23 @@ function structurePhrase(roots, langs) {
   const rules = grammar && grammar.rules;
   if (!start || !rules || !rules[start]) return roots;
 
-  const memo = new Map();
-  for (const parse of parsesFrom(rules, start, tagged, 0, memo)) {
-    if (parse.next !== tagged.length) continue;
-    const kids = (parse.tree.children || []).map((c) => leafOrPhrase(c, rules)).filter(Boolean);
-    return [
-      node(start, start, kids, {
-        text: tagged.map((t) => t.root.state.identity).join(' '),
-        ...(rules[start].whole ? { whole: true } : {}),
-        ...(rules[start].referent ? { referent: true } : {}),
-      }),
-    ];
+  // Read as the language writes it first. Only where nothing the language
+  // declares reads the whole signal is a hole allowed to stand as a thing in
+  // its own right — otherwise a question naming what it asks after would be
+  // swallowed by the asking word alone.
+  for (const standing of [false, true]) {
+    const memo = new Map();
+    for (const parse of parsesFrom(rules, start, tagged, 0, memo, standing)) {
+      if (parse.next !== tagged.length) continue;
+      const kids = (parse.tree.children || []).map((c) => leafOrPhrase(c, rules)).filter(Boolean);
+      return [
+        node(start, start, kids, {
+          text: tagged.map((t) => t.root.state.identity).join(' '),
+          ...(rules[start].whole ? { whole: true } : {}),
+          ...(rules[start].referent ? { referent: true } : {}),
+        }),
+      ];
+    }
   }
   return roots;
 }
@@ -4914,7 +4935,7 @@ function structurePhrase(roots, langs) {
 // Seeding the memo before recursing makes a left-recursive rule yield nothing
 // instead of overflowing the stack: a grammar is data, and bad data must not
 // take the brain down.
-function parsesFrom(rules, symbol, tagged, index, memo) {
+function parsesFrom(rules, symbol, tagged, index, memo, standing = false) {
   const key = symbol + ':' + index;
   if (memo.has(key)) return memo.get(key);
   memo.set(key, []);
@@ -4931,10 +4952,21 @@ function parsesFrom(rules, symbol, tagged, index, memo) {
     results = [];
     for (const alternative of rule.rules) {
       const seq = alternative.split(/\s+/).filter(Boolean);
-      for (const r of parseSequence(rules, seq, tagged, index, memo)) {
+      for (const r of parseSequence(rules, seq, tagged, index, memo, standing)) {
         results.push({ next: r.next, tree: { symbol, children: r.children } });
       }
     }
+  }
+
+  // A hole stands wherever a thing may stand.
+  //
+  // Asking is saying with a hole in it, and the hole falls where the thing it
+  // asks after would have stood. So anything the grammar says stands for
+  // something can be a hole instead, and no language has to write its asking
+  // words into every place a thing may go — one rule for holding a telescope,
+  // another for standing taller than somebody, another for each after that.
+  if (standing && rule && rule.referent && index < tagged.length && markOn(tagged[index].root) === 'unknown') {
+    results = [...results, { next: index + 1, tree: { symbol, root: tagged[index].root } }];
   }
 
   // Two of the same sort with a joining word between them are one of that
@@ -4951,7 +4983,7 @@ function parsesFrom(rules, symbol, tagged, index, memo) {
   for (const r of results) {
     const between = tagged[r.next];
     if (!between || !functionsOf(between.root).includes('join')) continue;
-    for (const other of parsesFrom(rules, symbol, tagged, r.next + 1, memo)) {
+    for (const other of parsesFrom(rules, symbol, tagged, r.next + 1, memo, standing)) {
       joined.push({
         next: other.next,
         tree: { symbol, joined: true, children: [r.tree, { symbol, root: between.root }, other.tree] },
@@ -4965,12 +4997,12 @@ function parsesFrom(rules, symbol, tagged, index, memo) {
 }
 
 // Every way the sequence `seq` can match starting at `index`.
-function parseSequence(rules, seq, tagged, index, memo) {
+function parseSequence(rules, seq, tagged, index, memo, standing = false) {
   let states = [{ next: index, children: [] }];
   for (const symbol of seq) {
     const grown = [];
     for (const state of states) {
-      for (const r of parsesFrom(rules, symbol, tagged, state.next, memo)) {
+      for (const r of parsesFrom(rules, symbol, tagged, state.next, memo, standing)) {
         grown.push({ next: r.next, children: [...state.children, r.tree] });
       }
     }

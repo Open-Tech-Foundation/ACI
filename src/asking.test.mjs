@@ -65,8 +65,8 @@ test("a choice joined by or is answered with the one it comes out for", async ()
 
 test("a choice may be measured things, not only numbers", async () => {
   await forget();
-  await brain("alice measures 2 metre", { from: PERSON });
-  await brain("bob measures 1 metre", { from: PERSON });
+  await brain("alice measures 2 metre big", { from: PERSON });
+  await brain("bob measures 1 metre big", { from: PERSON });
   assertEquals((await brain("which is bigger alice or bob", { from: PERSON })).expression.state.says, "alice");
   await forget();
 });

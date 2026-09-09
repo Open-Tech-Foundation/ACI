@@ -313,6 +313,30 @@ Asked, it still answers from what it knows. Nothing is written to the world
 either way, and a conflict is not a denial: a denial says what was said is
 false, a conflict says two things were said that cannot both stand.
 
+**A hole stands wherever a thing may stand.** Asking is saying with a hole in
+it, and the hole falls where the thing it asks after would have stood. So
+anything that stands for something can be a hole instead, and no language has
+to write its asking words into every place a thing may go — one rule for
+holding a telescope, another for standing taller than somebody, another for
+each after that.
+
+It is read as the language writes it first. Only where nothing the language
+declares reads the whole signal is a hole allowed to stand alone, or a question
+naming what it asks after would be swallowed by the asking word: `what colour
+is the car` asks after a colour, not after nothing in particular.
+
+**Which side the hole stands on says which way to walk.**
+
+    > tom is taller than sam
+    > sam is taller than john
+    what is taller than sam?    tom
+    what is shorter than sam?   john
+
+Walking out *from* sam finds whoever he stands above — the same fact read from
+the wrong end. Only where the two ends are not alike: a relation that runs one
+way reads differently from either end, and where it says nothing about
+direction there is no other end to ask after.
+
 **Being the doer of a doing is reason enough to be introduced.** A thing is
 introduced where the signal gives it something to be. Standing in a claim
 counted, and so did standing as a part of a doing — but the brain also demanded
