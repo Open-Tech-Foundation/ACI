@@ -44,9 +44,19 @@ test("two things this conversation brought in, and what stands between them", as
 });
 
 test("a claim about kinds makes no node at all", async () => {
-  const held = await said('the sky is blue');
-  assertEquals(held.nodes, [], 'nothing was introduced; two concepts were joined');
+  const held = await said('all cats are animals');
+  assertEquals(held.nodes, [], 'nothing was introduced; two kinds were joined');
   assertEquals(held.facts.length, 1);
+});
+
+test("a thing spoken of in particular is a thing, and stays in reach", async () => {
+  const held = await said('the sky is blue');
+  // `the` says which one, so the sky is spoken of and not merely named. The
+  // next signal may point back at it, which is what makes it a node.
+  assertEquals(held.nodes.length, 1);
+  assertEquals(held.nodes[0].said, 'sky');
+  assertEquals(held.facts[0].parts[0], 'n1');
+  assertEquals(held.context.focus, ['n1']);
 });
 
 test("a doing carries the part each thing played in it", async () => {
@@ -54,10 +64,20 @@ test("a doing carries the part each thing played in it", async () => {
   assertEquals(held.nodes.map((one) => one.said), ['john', 'sam']);
   assertEquals(held.actions.length, 1);
   const [doing] = held.actions;
-  assertEquals(world.term(doing.of).name, 'give');
+  // The graph says the primitive, not the word. Giving is a transfer, and so
+  // is putting; which word a language spells it with is that language's.
+  assert(serialize().includes('transfer['), serialize());
+  assertEquals(doing.said, 282, 'what was said is kept beside it');
   assertEquals(doing.roles[world.anchors.agent], 'n1');
   assertEquals(doing.roles[world.anchors.destination], 'n2');
   assertEquals(doing.properties.count, 2);
+});
+
+test("two words for one primitive come out as one primitive", async () => {
+  const giving = await said('john gives 2 apples to sam');
+  const putting = await said('john put 2 apples into a basket');
+  assertEquals(giving.actions[0].of, putting.actions[0].of);
+  assert(giving.actions[0].said !== putting.actions[0].said, 'and what was said differs');
 });
 
 test("what governs is held apart, and its condition is never taken in", async () => {

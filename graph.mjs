@@ -5,10 +5,8 @@
 // Nothing here builds or describes the graph. It calls serialize and prints it.
 import { openBrain } from './src/index.js';
 import { serialize } from './src/graph.js';
-import { loadWorldFile } from './src/world.js';
 
 const { brain } = openBrain('sqlite::memory:');
-const world = await loadWorldFile(new URL('./data/world.json', import.meta.url).pathname);
 const lines = (await import('runtime:process')).args;
 
 if (lines.length === 0) {
@@ -17,6 +15,6 @@ if (lines.length === 0) {
   for (const line of lines) {
     await brain(line);
     console.log(`\n> ${line}\n`);
-    console.log(serialize(world));
+    console.log(serialize());
   }
 }

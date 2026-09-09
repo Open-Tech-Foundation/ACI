@@ -32,6 +32,29 @@ All notable changes to this project are documented in this file.
 
   `graph.mjs` shows it for anything typed at it.
 
+- **A thing spoken of in particular is a thing.** `the sky is blue` speaks of
+  the sky, and the next signal may point back at it, so it is a node and not
+  merely a concept two facts joined. What makes it particular is the language's
+  to say: a determiner marks *which one*, and which side of the word it stands
+  on the language declares as well, so nothing in the engine assumes an order.
+  A kind spoken of as a kind still introduces nothing — `all cats are animals`
+  joins two kinds and makes no node.
+
+- **The graph carries what is still in reach.** Context is not one of the four
+  kinds and never becomes a fact: it is what a word in the next signal lands
+  on, and it goes when the conversation does.
+
+- **The graph says the primitive, not the word** — `knowledge/primitives.json`.
+  Giving is a transfer and so is putting; holding is holding whether it was
+  said as having or as holding. Which concepts are primitive is the world's to
+  declare, so a new one is a line of knowledge rather than a line of code, and
+  what was actually said is kept beside it.
+
+  Being primitive is marked with a link of its own, never by putting a concept
+  under a parent. A parent is inherited, so a set of primitives standing above
+  `transfer` made every kind of transfer a relation as well — and every doing
+  in the graph collapsed into a fact.
+
 
 - **The conversation graph is held in memory** — `src/working-memory.js`, the
   design in `GRAPH.md`. It holds what *is*: the items a conversation

@@ -4709,18 +4709,23 @@ export function brainFrom(input, knowledge, circumstance) {
   // one place it is built: the phases below settle who did what to whom, and
   // the graph is where that settles into things, facts, doings and what
   // governs. Reading it is `serialize`, and nothing else assembles it.
-  fromUnderstood(judgedRoots, world);
+  // What the signal left in reach, so a word in the next one has something to
+  // land on. Worked out once and handed both to the graph and to the runtime.
+  const inReach = focusOf(judgedRoots, at, world);
+  // Which side of a word its markers stand on is the language's to declare;
+  // the graph is told, and assumes no order of its own.
+  const spoken = signalLanguage(thoughtRoots, langs);
+  fromUnderstood(judgedRoots, world, inReach, spoken ? spoken.data.marking : null);
 
   const expressedRoots = express(judgedRoots, langs, world);
-  const selectedLanguage = signalLanguage(thoughtRoots, langs);
   return {
     input,
-    language: selectedLanguage ? selectedLanguage.data.name : null,
+    language: spoken ? spoken.data.name : null,
     roots: expressedRoots,
     expression: expression(expressedRoots, langs, mood, world, at),
     learned,
     spoken: spokenOf(judgedRoots, at, world),
-    focus: focusOf(judgedRoots, at, world),
+    focus: inReach,
     names: namedIn(solvedRoots, { ...at, world, mood }),
     // An instruction the brain agreed to follow and could not act on yet. It
     // keeps none of it: it hands it back, and the runtime brings it round again
