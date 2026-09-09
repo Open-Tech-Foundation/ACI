@@ -3,6 +3,7 @@ import { openBrain } from './index.js';
 import {
   graph, serialize,
   TRANSFER, PROPERTY_CHANGE, HOLDING, PLACEMENT, COMPARISON, ORDER, PROPERTY, KIND,
+  ranking,
 } from './graph.js';
 import { loadWorldFile } from './world.js';
 
@@ -196,8 +197,9 @@ test("standings the world declares: holding, placement, order, comparison", asyn
   // So a thing said to be two metres and a thing said to be taller are
   // speaking of one quantity.
   assertEquals(taller.facts[0].properties.on, 2970);
-  // And which way it runs, or nobody can say which is the taller.
-  assertEquals(taller.facts[0].properties.more, 'n1');
+  // Which is above is said by the order of the two, never by a flag naming
+  // one of them.
+  assertEquals(taller.facts[0].parts, ['n1', 'n2']);
 });
 
 test("a standing the brain has no primitive for keeps the world's own concept", async () => {
@@ -240,9 +242,37 @@ test("a measure belongs on the thing, and the unit says of what", async () => {
   assertEquals(weighed.facts, [], 'how much a thing is, is its own');
 });
 
-test("a comparison is made on a quantity, and says which way it runs", async () => {
+test("a comparison said the other way round turns the same fact round", async () => {
   const held = await said('tom is shorter than sam');
   assertEquals(held.facts[0].of, COMPARISON);
   assertEquals(held.facts[0].properties.on, 2970, 'height, not shortness');
-  assertEquals(held.facts[0].properties.more, 'n2', 'sam is the taller');
+  assertEquals(held.facts[0].parts, ['n2', 'n1'], 'sam stands above tom');
+});
+
+test("where each thing stands on a quantity is counted, not stored", async () => {
+  await said('tom is taller than sam', 'sam is taller than john');
+  // A thing stands as high as the number of things it reaches down to, so
+  // being above john comes out of the chain without anyone saying it.
+  const at = ranking(2970);
+  assertEquals([...at.values()].sort(), [1, 2, 3]);
+  assertEquals(at.get('n1'), 3);
+  assertEquals(at.get('n2'), 2);
+  assertEquals(at.get('n3'), 1);
+});
+
+test("the same shape stands on every quantity, and the brain reads no word", () => {
+  // Heavier, hotter, faster, bigger: four words, one shape. Each is a
+  // comparison because the world says it compares on something.
+  const rungs = async (lines, quantity) => {
+    await said(...lines);
+    return [...ranking(quantity).values()].sort();
+  };
+  return Promise.all([
+    rungs(['the cow is heavier than the goat', 'the goat is heavier than the hen'], 184),
+    rungs(['the oven is hotter than the room', 'the room is hotter than the fridge'], 186),
+    rungs(['the car is faster than the bike', 'the bike is faster than the boat'], 324),
+    rungs(['the box is bigger than the cup', 'the cup is bigger than the pin'], 183),
+  ]).then((all) => {
+    for (const found of all) assertEquals(found, [1, 2, 3]);
+  });
 });

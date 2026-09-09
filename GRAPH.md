@@ -222,15 +222,40 @@ a degree, and that was written into the world. A unit with a number beside it
 names a stronger claim than being. Only the weakest gives way: a signal that
 already said weighing or reading meant something more particular.
 
-**A comparison is made on a quantity, not on a state of one, and it says which
-way it runs.** `taller` compares on how tall a thing is, and how tall a thing
-is, is its *height* — so a thing said to be two metres and a thing said to be
-taller speak of one quantity and can be held together. Told only what a
-comparison is made on, nobody can say which is the taller, so the greater side
-is named.
+**A comparison is made on a quantity, not on a state of one.** `taller`
+compares on how tall a thing is, and how tall a thing is, is its *height* — so
+a thing said to be two metres tall and a thing said to be taller speak of one
+quantity and can be held together.
 
-    > tom is taller than sam    comparison(n1, n2)  {on: height, more: n1}
-    > tom is shorter than sam   comparison(n1, n2)  {on: height, more: n2}
+**Which is above is said by the order of the two**, never by a flag naming one
+of them: a flag has nothing to say at three parties and nothing to say where
+neither is more. Said the other way round, the same fact turns round with it.
+
+    > tom is taller than sam    comparison(n1, n2)  {on: height}
+    > tom is shorter than sam   comparison(n2, n1)  {on: height}
+
+**Where a thing stands on a quantity is counted, not stored.** A thing stands
+as high as the number of things it reaches down to, so being above the third
+comes out of the chain without anyone saying it. Say one more comparison and
+every position moves, which is why none is written down.
+
+    > tom is taller than sam
+    > sam is taller than john
+    height   tom=3  sam=2  john=1
+
+Every question is then arithmetic on those numbers, and none needs a rule of
+its own: the tallest is the greatest, the shortest the least, taller than sam
+is greater than his, between two is between their numbers, how many taller is
+a count, and arranging them is a sort.
+
+It is ordinal and says so. From `taller` comes an order and no heights, so how
+much taller is not answerable and the brain does not pretend.
+
+The same shape stands on every quantity a thing has of its own — weight,
+temperature, speed, size, height, time — and the brain reads none of the words.
+**Distance does not fit**, and that is not a gap in the shape: every other
+quantity is *of* one thing, and a distance is *between* two. It needs a third
+party and is taken up separately.
 
 **Being the doer of a doing is reason enough to be introduced.** A thing is
 introduced where the signal gives it something to be. Standing in a claim

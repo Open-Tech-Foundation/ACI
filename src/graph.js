@@ -201,18 +201,24 @@ export function fromUnderstood(roots, world, focus, marking) {
     // held is a kind and how many, never the thing itself.
     const of = made.get(object);
     const far = primitive === HOLDING ? (of ? of.state.of ?? object : object) : reach(object);
+    // A comparison stands one thing above another on a quantity, and which is
+    // above is said by the order of the two, never by a flag naming one of
+    // them. Said the other way round — shorter rather than taller — the same
+    // fact turns round with it.
+    const parts =
+      primitive === COMPARISON && !above(relation, world)
+        ? [far, reach(subject)]
+        : [reach(subject), far];
     put('facts', {
       key,
       of: primitive ?? relation,
       said: relation,
-      parts: [reach(subject), far],
+      parts,
       properties: {
         ...(quantity == null ? {} : { count: quantity }),
         // A comparison is made on something. Which scale is the world's to
         // say, and without it `taller` is only a word.
-        ...(primitive === COMPARISON
-          ? { on: scaleOf(relation, world), more: greater(relation, world, reach(subject), reach(object)) }
-          : {}),
+        ...(primitive === COMPARISON ? { on: scaleOf(relation, world) } : {}),
         // Which placement it is. Inside is not beside and neither is under, so
         // the primitive says a thing stands somewhere and the world says where.
         ...(primitive === PLACEMENT ? { as: relation } : {}),
@@ -427,18 +433,13 @@ const scaleOf = (relation, world) => {
   return on == null ? null : quantityOn(on, world) ?? on;
 };
 
-// Which of the two has more of the quantity. A comparison runs one way or the
-// other, and saying only what it is made on leaves it unanswerable: told that
-// two things compare on height, nobody can say which is the taller.
-//
-// The world says which way — a comparison is a kind of more, or a kind of
-// less — and one read from either end is one fact, so the far side has more
-// where the near side has less.
-function greater(relation, world, near, far) {
+// Whether the near side of a comparison is the one with more. The world says
+// which way it runs — a comparison is a kind of more, or a kind of less — and
+// one read from either end is one fact.
+function above(relation, world) {
   const anchors = world.anchors || {};
-  if (anchors.more != null && world.subrelationOf(relation, anchors.more)) return near;
-  if (anchors.less != null && world.subrelationOf(relation, anchors.less)) return far;
-  return null;
+  if (anchors.less != null && world.subrelationOf(relation, anchors.less)) return false;
+  return true;
 }
 
 // The quantity a state is a state of. The world says which; where it says
@@ -595,6 +596,42 @@ function reached(roots, found = []) {
     if (Number.isInteger(id) && !found.includes(id)) found.push(id);
     reached(root.branch, found);
   }
+  return found;
+}
+
+// Where each thing stands on a quantity, worked out from what was said.
+//
+// Told one thing is above another and that one above a third, the brain is
+// told an ordering and never a height. So a position is counted, not stored:
+// a thing stands as high as the number of things it reaches down to. Say one
+// more comparison and every position moves, which is exactly why none of them
+// is written down.
+//
+// It is ordinal and says so. From `taller` comes an order and no heights, so
+// how much taller is not answerable and the brain does not pretend it is.
+export function ranking(quantity, moment) {
+  const below = new Map();
+  for (const one of held.facts) {
+    if (one.of !== COMPARISON || one.properties.on !== quantity) continue;
+    if (one.denied) continue;
+    const [over, under] = one.parts;
+    if (over == null || under == null) continue;
+    if (!below.has(over)) below.set(over, new Set());
+    if (!below.has(under)) below.set(under, new Set());
+    below.get(over).add(under);
+  }
+  // Everything a thing reaches down to, not only what it was said to be above:
+  // told tom is above sam and sam above john, tom is above john as well.
+  const reaches = (one, seen = new Set()) => {
+    for (const next of below.get(one) || []) {
+      if (seen.has(next)) continue;
+      seen.add(next);
+      reaches(next, seen);
+    }
+    return seen;
+  };
+  const found = new Map();
+  for (const one of below.keys()) found.set(one, reaches(one).size + 1);
   return found;
 }
 
