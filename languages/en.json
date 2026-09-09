@@ -10094,14 +10094,24 @@
       "concept": 272,
       "when": "past"
     },
-    "reads": {
-      "pos": "verb",
-      "meaning": "reads",
-      "concept": 617,
-      "names": false,
-      "person": "third",
-      "number": "singular"
-    },
+    "reads": [
+      {
+        "pos": "verb",
+        "meaning": "reads",
+        "concept": 273,
+        "person": "third",
+        "number": "singular",
+        "names": false
+      },
+      {
+        "pos": "verb",
+        "meaning": "reads",
+        "concept": 617,
+        "names": false,
+        "person": "third",
+        "number": "singular"
+      }
+    ],
     "listens": {
       "pos": "verb",
       "meaning": "listens",

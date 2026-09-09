@@ -110,17 +110,73 @@ Four things are **not** nodes:
 Nothing said and a place with nothing in it are different, and are written
 differently: `?` and `—`.
 
+### What the brain can do, that a language no longer writes out
+
+These are the brain's own. A language says which of its words do a thing; it
+never has to write out every sort they may stand between, and it never has to
+enumerate a shape per case.
+
+**Joining.** Two of the same sort with a joining word between them are one of
+that sort. English had one written rule for whole claims joined, another for
+things joined, another for complements joined — and was still missing doings,
+so `tom reads and writes` was not understood at all. It needs none of them now.
+
+**A joining stands over whatever surrounds it.** Somebody who reads and writes
+reads, and writes. The two sides are not two parts of one doing; they are two
+doings, and everything said outside the joining is said of both. The signal is
+spread into one of itself per side, and each is judged on its own — which is
+what the brain already did for two whole claims said outright.
+
+    > tom reads and writes
+    nodes    n1  tom
+    actions  a1  read[273](agent: n1)
+             a2  write[272](agent: n1)
+
+**What is left unsaid is taken from what stands beside it.** A number standing
+where a thing stands counts something; where nothing beside it says what, take
+what was counted alongside. It borrows only what was actually counted there —
+nothing counted beside it, nothing borrowed, and the number is left standing
+rather than the gap filled with a guess.
+
+    > tom has five books, and mary has three
+    facts    f1  holding(n1, book[18])  {count: 5}
+             f2  holding(n2, book[18])  {count: 3}
+
+Where the other side names its own kind, nothing is borrowed. A number used as
+a number is untouched: `what is three plus four?` still answers seven.
+
+**A pointing word lands only where exactly one thing fits.** Which kind a
+pointing word stands for is its language's to declare — English says one of its
+words is said of a man and another of a woman — and the brain drops whatever
+cannot be that kind, taking what is left only if one remains. It was taking the
+nearest thing it had met and hoping.
+
+**Being the doer of a doing is reason enough to be introduced.** A thing is
+introduced where the signal gives it something to be. Standing in a claim
+counted, and so did standing as a part of a doing — but the brain also demanded
+that two *other* things stand in the signal, so `tom writes` introduced nobody,
+had no doer, and recorded nothing. Circular, and it hid a whole class of
+sentence.
+
 ### Known wrong, and still showing
 
-  * `john has 5 apples and he put three apples into a basket` resolves `he` to
-    *apple*, not john. The graph shows `transfer(apple[79], ...)`.
   * `the red box is inside the blue box` collapses both boxes to one concept,
     so it reads `placement(n1, n1)`.
   * A transfer's `from` is empty where the doer is plainly the source:
     `tom gives 2 books to jerry` gives `from: —`. Parked until wanted — the
     source may well be something other than the doer.
-  * A transfer carries what moved as `{entity: ...}`, which names a primitive
-    this brain does not have.
+  * `tom has books and pens` leaves an empty `holding(—, —)` beside the two
+    real holdings.
+  * One English word carries a mark meaning *this signal was written in
+    figures, so answer in figures*. It sits on a doing word rather than on
+    anything written in figures, and adding a second reading of that word
+    changed the answer from `10` to `ten` until the mark was carried on both.
+    The form of an answer should come from what the brain was told, not from a
+    flag on a verb.
+  * A pointing word still finds nothing *inside* one signal: `tom has 5 books
+    and he put three books into a bag` leaves the doing with no doer, because
+    tom is being introduced by the very signal that then points back at him.
+    As two signals it is right.
 
 ### Left over from an earlier attempt
 

@@ -1111,7 +1111,11 @@ function calling(roots, world, langs, mood, allocate) {
     if (!joined && !introduced(i)) return n;
     const rest = roots.slice(i + 1).filter((other) => stands(other, world));
     const before = roots.slice(0, i).filter((other) => stands(other, world));
-    if (rest.length < 2 && before.length < 2) return n;
+    // Standing as a part of a doing is reason enough on its own. Somebody
+    // wrote, and that is somebody — waiting for two more things to stand
+    // beside them leaves the one doing it never introduced, and then there is
+    // nobody for the doing to be of.
+    if (!positioned(i) && rest.length < 2 && before.length < 2) return n;
     // A name given a number holds the number: `p is 1` is not a thing called
     // p, it is p standing for one. That is the conversation's to keep, not the
     // world's, and it is left to whoever keeps the conversation.
@@ -4630,6 +4634,29 @@ function parsesFrom(rules, symbol, tagged, index, memo) {
     }
   }
 
+  // Two of the same sort with a joining word between them are one of that
+  // sort. This is the brain's, not any language's: a language says which of
+  // its words join, and never has to write out every sort they may stand
+  // between. Written out, a language would need one rule for things joined,
+  // another for doings joined, another for whole claims joined, and would
+  // still be missing the next one.
+  //
+  // Read from the right, so a run of them joins without the rule standing on
+  // itself: what is already matched is the left side, and what follows the
+  // joining word is asked for afresh.
+  const joined = [];
+  for (const r of results) {
+    const between = tagged[r.next];
+    if (!between || !functionsOf(between.root).includes('join')) continue;
+    for (const other of parsesFrom(rules, symbol, tagged, r.next + 1, memo)) {
+      joined.push({
+        next: other.next,
+        tree: { symbol, joined: true, children: [r.tree, { symbol, root: between.root }, other.tree] },
+      });
+    }
+  }
+  results = [...results, ...joined];
+
   memo.set(key, results);
   return results;
 }
@@ -4661,8 +4688,43 @@ function leafOrPhrase(c, rules) {
       ...(rules[c.symbol] && rules[c.symbol].whole ? { whole: true } : {}),
       ...(rules[c.symbol] && rules[c.symbol].referent ? { referent: true } : {}),
       ...(rules[c.symbol] && rules[c.symbol].completes ? { completes: true } : {}),
+      ...(c.joined ? { joined: true } : {}),
     },
   );
+}
+
+// A joining stands over whatever surrounds it: somebody who reads and writes
+// reads, and writes. The two sides are not two parts of one doing — they are
+// two doings, and everything said outside the joining is said of both.
+//
+// So the signal is spread into one of itself per side, and those stand joined
+// as wholes. From there the brain judges each on its own, which is what it
+// already does when a signal joins two whole claims outright.
+function spread(roots, world) {
+  if (!world || roots.length !== 1) return roots;
+  const a = world.anchors || {};
+  if (a.action == null) return roots;
+  const root = roots[0];
+  const found = joinedDoings(root, world, a);
+  if (!found) return roots;
+  const sides = found.branch.filter((b) => reaches(b, a.action, world));
+  if (sides.length < 2) return roots;
+  return [withBranch(root, sides.map((side) => instead(root, found, side)))];
+}
+
+// A joining the brain made whose sides are doings. Only doings: a joining of
+// things is already one thing standing in one place, and spreading it would
+// say the signal twice over.
+function joinedDoings(n, world, a) {
+  if (!n || !n.branch) return null;
+  if (n.state && n.state.joined && n.branch.filter((b) => reaches(b, a.action, world)).length > 1) {
+    return n;
+  }
+  for (const b of n.branch) {
+    const found = joinedDoings(b, world, a);
+    if (found) return found;
+  }
+  return null;
 }
 
 // What the brain made of the word, not what the language listed: a number read
@@ -4767,7 +4829,7 @@ export function brainFrom(input, knowledge, circumstance) {
   const thoughtRoots = think(roots, langs, at, world);
   const mood = moodOf(input, thoughtRoots, langs);
   const solvedRoots = solve(thoughtRoots, world, langs, mood, at.allocate);
-  const structuredRoots = structurePhrase(solvedRoots, langs);
+  const structuredRoots = spread(structurePhrase(solvedRoots, langs), world);
   let judgedRoots = judge(structuredRoots, world, mood, langs, at);
   judgedRoots = awoken(judgedRoots, world, mood);
   let learned = learnedFrom(judgedRoots, world);

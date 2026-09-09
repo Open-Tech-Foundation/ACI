@@ -6,6 +6,34 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **The brain joins, and a language stops writing out where.** Two of the same
+  sort with a joining word between them are one of that sort. A language says
+  which of its words join; it never has to enumerate every sort they may stand
+  between. English had one written rule for whole claims joined, another for
+  things joined, another for complements joined — and was still missing doings,
+  so `tom reads and writes` was not understood at all.
+
+- **A joining stands over whatever surrounds it.** Somebody who reads and
+  writes reads, and writes. The two sides are not two parts of one doing; they
+  are two doings, and everything said outside the joining is said of both. The
+  signal is spread into one of itself per side, and each is judged on its own —
+  which is what the brain already did for two whole claims said outright.
+
+- **Being the doer of a doing is reason enough to be introduced.** A thing is
+  introduced where the signal gives it something to be: standing in a claim
+  counted, and so did standing as a part of a doing. But the brain also
+  demanded that two *other* things stand in the same signal, so a two-word
+  signal introduced nobody, had no doer, and recorded nothing — circular, and
+  it hid every sentence of the shape `somebody does`.
+
+### Fixed
+
+- **`reads` was only ever a measuring.** The word was listed as a meter reading
+  a value, and the doing was missing from it entirely, so nobody could read
+  anything. Both readings now stand and the brain settles which a signal means.
+  A hole in the language pack, not in the brain.
+
+
 - **The conversation graph is a conversation's, not a signal's.** What one
   signal puts in is still there when the next arrives, and it goes when the
   conversation does. That is what makes a thing still that thing three signals
