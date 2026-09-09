@@ -8,7 +8,7 @@
 // (see src/languages.js). It never knows a language's name.
 
 import { Decimal } from '@opentf/std';
-import { fromUnderstood } from './graph.js';
+import { fromUnderstood, told, standingIn } from './graph.js';
 
 const $ = Symbol.for('aci.node');
 
@@ -2791,12 +2791,27 @@ function instructionFrom(when, so, world, langs, sent) {
         relation != null &&
         world.asymmetric(relation) &&
         holes.some((hole) => said.indexOf(hole) < said.indexOf(term));
+      // What this conversation was told comes first, and the world answers
+      // where it is silent. Somebody named a moment ago is in the conversation
+      // and not yet in the world, so a question about them reaches nothing
+      // there.
+      const here = asksBack ? standingIn(subject, relation) : [];
+      // Asked after something by name, what answers is whatever has one.
+      // Being called something is a fact a thing holds, never a kind it is,
+      // so asking whether it *is* a name turns every named thing away.
+      const wants = (t) =>
+        of == null ||
+        (a.name != null && of === a.name
+          ? world.related(t, a.name).length > 0 || world.symbolOf(t) != null
+          : world.isA(t, of));
       let found = seeksOn && pointed
         ? []
-        : (asksBack
-            ? world.standing(subject, relation)
-            : reached(subject, relation, world)
-          ).filter((t) => of == null || world.isA(t, of));
+        : [...new Set([
+            ...here,
+            ...(asksBack
+              ? world.standing(subject, relation)
+              : reached(subject, relation, world)),
+          ])].filter(wants);
       // The walk came back with nothing but the most generic kind: say the
       // thing itself instead — `chocolates`, known only as a thing, is answered
       // with its own name rather than `thing`. Specific answers (`animal` for a

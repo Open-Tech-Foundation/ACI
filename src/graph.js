@@ -661,6 +661,46 @@ function bandOf(state, world) {
   return { above: bound(anchors.above), below: bound(anchors.below) };
 }
 
+// What this conversation was told, asked of exactly. A question is answered
+// from what was said here before the world is asked at all: the world is what
+// the brain knows in general, and a conversation is what it has just been
+// told.
+//
+// Exactly, and not nearly. A fact about one thing is not a fact about its kind
+// or about anything like it, and reaching for one would answer a question
+// nobody asked.
+export function told(subject, relation, object) {
+  for (const one of held.facts) {
+    if (one.said !== relation) continue;
+    if (!same(one.parts[0], subject) || !same(one.parts[1], object)) continue;
+    return one.denied ? 'against' : 'held';
+  }
+  return null;
+}
+
+// Everything this conversation put on the near side of a relation to a thing:
+// who stands taller than sam, rather than who sam stands taller than.
+export function standingIn(object, relation) {
+  const found = [];
+  for (const one of held.facts) {
+    if (one.said !== relation || one.denied) continue;
+    if (!same(one.parts[1], object)) continue;
+    const term = termOf(one.parts[0]);
+    if (term != null && !found.includes(term)) found.push(term);
+  }
+  return found;
+}
+
+// A node stands for a term of the world, so a claim about that term is a claim
+// about the node.
+const same = (part, term) => part === term || termOf(part) === term;
+
+const termOf = (part) => {
+  if (typeof part !== 'string') return part;
+  const one = held.nodes.find((node) => node.id === part);
+  return one ? one.term : null;
+};
+
 // Where each thing stands on a quantity, worked out from what was said.
 //
 // Told one thing is above another and that one above a third, the brain is

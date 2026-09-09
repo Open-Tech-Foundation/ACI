@@ -325,6 +325,17 @@ declares reads the whole signal is a hole allowed to stand alone, or a question
 naming what it asks after would be swallowed by the asking word: `what colour
 is the car` asks after a colour, not after nothing in particular.
 
+**A question is answered from this conversation first, and from the world
+where the conversation is silent.** The world is what the brain knows in
+general; a conversation is what it has just been told, and somebody named a
+moment ago is in the conversation and not yet in the world. Asked exactly, and
+not nearly: a fact about one thing is not a fact about its kind or about
+anything like it.
+
+**Asked after something by name, what answers is whatever has one.** Being
+called something is a fact a thing holds, never a kind it is, so asking whether
+it *is* a name turns every named thing away.
+
 **Which side the hole stands on says which way to walk.**
 
     > tom is taller than sam
