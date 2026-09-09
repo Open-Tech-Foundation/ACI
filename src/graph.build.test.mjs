@@ -24,7 +24,7 @@ test("one thing this conversation brought in, and what it holds", async () => {
   assertEquals(held.nodes.length, 1);
   assertEquals(held.nodes[0].said, 'john');
   // Nobody said what john is. Being held by something makes him a thing and
-  // no more than that.
+  // no more than that — `thing` being a concept of the world like any other.
   assertEquals(held.nodes[0].of, world.anchors.thing);
 
   // Five apples introduces no apple: a quantity of a kind names no particular
@@ -126,7 +126,11 @@ test("a thing an earlier signal brought in is the same thing later", async () =>
   // The second signal makes no call for john — he was already here — and he is
   // still a node in it.
   assertEquals(held.nodes.map((one) => one.said), ['john', 'sam']);
-  assertEquals(held.facts[0].parts, ['n1', 'n2']);
+  // The graph is the conversation's, so the first signal's holding still
+  // stands and the second signal's comparison is added after it.
+  assertEquals(held.facts.length, 2);
+  assertEquals(held.facts[0].parts[0], 'n1', 'john, from the signal before');
+  assertEquals(held.facts[1].parts, ['n1', 'n2']);
 });
 
 test("the graph says what is in it, under four headings, always", async () => {
@@ -136,7 +140,7 @@ test("the graph says what is in it, under four headings, always", async () => {
   assert(shown.includes('facts:'), shown);
   assert(shown.includes('actions:'), shown);
   assert(shown.includes('rules:'), shown);
-  assert(shown.includes('n1  john  type: entity -> thing'), shown);
+  assert(shown.includes('n1  john  type: thing[2]'), shown);
   assert(shown.includes('{count: 5}'), shown);
 });
 

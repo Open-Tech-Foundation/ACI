@@ -6,6 +6,34 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **The conversation graph is a conversation's, not a signal's.** What one
+  signal puts in is still there when the next arrives, and it goes when the
+  conversation does. That is what makes a thing still that thing three signals
+  later, and it is what makes the facts and doings, kept in the order they were
+  said, a history there is anything to look back through: told that one person
+  had five books and gave two away, both holdings stand, so how it was before
+  the transfer is still there to be read. What is in reach is the exception —
+  replaced every signal, never added to, because it is where attention is now.
+
+- **A node's kind is read, never written.** A node holds which term of the
+  world it stands for and nothing else. Naming a thing before saying what it is
+  had frozen it as a thing for the rest of the conversation, however much a
+  later signal said about it; now nothing has to be updated, because there was
+  never a kind written down to go stale.
+
+- **The far side of a classification is not a thing.** Saying somebody is a
+  person says which person no more than naming the bare kind would. Only the
+  one being classified is a node; what they are is a fact about them.
+
+### Changed
+
+- **`thing` is said as the concept it is.** A node whose kind nobody has said
+  reads `thing[2]`, not `entity -> thing`: there is no kind above `thing` that
+  the brain keeps for itself, and no `entity` in this brain at all. What
+  carries that name in the engine is a phase node kind — a perception marker
+  with no id, which never reaches the world.
+
+
 - **The conversation graph is built as a phase of the brain** — `src/graph.js`,
   filled once a signal is understood and read back by `serialize`. Four kinds,
   and the difference between them is the whole point:

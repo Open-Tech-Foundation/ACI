@@ -13,8 +13,54 @@ anything typed at it:
 Four kinds — nodes, facts, actions, rules — and context beside them, which is
 not one of the kinds and never becomes a fact.
 
-An id in the output means the world said it: `apple[79]`. A bare name means the
+An id in the output means the world said it: `book[18]`. A bare name means the
 brain knows it of itself: `transfer`. That is the whole of how to read one.
+
+### It is a conversation's, not a signal's
+
+The graph accumulates. What one signal puts in is still there when the next
+arrives, and it is thrown away when the conversation is. That is what makes a
+thing still that thing three signals later, and it is what makes the facts and
+doings — kept in the order they were said — a history there is anything to
+look back through.
+
+    > tom is a person
+    > jerry is a rat
+    > tom has 5 books
+    > tom gives 2 books to jerry
+
+    nodes
+      n1  tom     type: person[29]
+      n2  jerry   type: rat[345]
+    facts
+      f1  kind(n1, person[29])
+      f2  kind(n2, rat[345])
+      f3  holding(n1, book[18])  {count: 5}
+      f4  holding(n2, book[18])  {count: 2}
+      f5  holding(n1, book[18])  {count: 3}
+    actions
+      a1  transfer(n1, from: —, to: n2)  {entity: book[18], count: 2}
+
+`f3` and `f5` both stand, in the order they were said. Nothing was overwritten,
+so how it was before the transfer is still there to be read.
+
+What is in reach is the exception: it is replaced every signal, never added to,
+because it is where attention is now and the last signal settles that.
+
+### Nothing is stored that can be worked out
+
+A node holds which term of the world it stands for, and nothing else. What it
+*is* is read off the world at the moment it is asked for.
+
+    > tom is a person       n1  tom   type: person[29]
+
+On the signal before that one, nobody had said what tom was, and he read
+`thing[2]`. Nothing had to be updated when the next signal said more: there was
+never a kind written down to go stale. A node whose kind nobody has said still
+reads `thing[2]`, because `thing` is a concept of the world like any other —
+there is no kind above it the brain keeps for itself, and **there is no
+`entity` in this brain at all**. `entity` in `brain.js` is a phase node kind, a
+perception marker; it has no id and never reaches the world.
 
 ### The primitives, and what has been agreed
 
@@ -49,14 +95,20 @@ Something this conversation brought in. Three ways it becomes one:
   * the signal spoke of it in particular — `the sky`
 
 A determiner says *which one*, and which side of the word it stands on is the
-language's to declare, so the engine assumes no order. A quantity of a kind is
-not a node: `5 apples` names no particular apple. A kind spoken of as a kind is
-not one either: `all cats are animals` introduces nothing. Nor is a relation:
-`the father of sam` says which father, but a father is what stands between two
-people, not a third beside them.
+language's to declare, so the engine assumes no order.
 
-A node whose kind nobody said is `entity -> thing`. Nothing said and a place
-with nothing in it are different, and are written differently: `?` and `—`.
+Four things are **not** nodes:
+
+  * a quantity of a kind — `5 books` names no particular book
+  * a kind spoken of as a kind — it introduces nothing
+  * the far side of a classification — `tom is a person` says which person no
+    more than a bare kind would. Only tom is a thing here; being a person is
+    what we come to know about him, and it is a fact
+  * a relation — `the father of sam` says which father, but a father is what
+    stands between two people, not a third beside them
+
+Nothing said and a place with nothing in it are different, and are written
+differently: `?` and `—`.
 
 ### Known wrong, and still showing
 
@@ -65,7 +117,10 @@ with nothing in it are different, and are written differently: `?` and `—`.
   * `the red box is inside the blue box` collapses both boxes to one concept,
     so it reads `placement(n1, n1)`.
   * A transfer's `from` is empty where the doer is plainly the source:
-    `john gives 2 apples to sam` gives `from: —`.
+    `tom gives 2 books to jerry` gives `from: —`. Parked until wanted — the
+    source may well be something other than the doer.
+  * A transfer carries what moved as `{entity: ...}`, which names a primitive
+    this brain does not have.
 
 ### Left over from an earlier attempt
 

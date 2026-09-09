@@ -15,6 +15,7 @@
 // admit a new source; a new source is a new file in one of those directories.
 import { brainFrom } from './brain.js';
 import { layOut } from './reading.js';
+import { clear as forgetGraph } from './graph.js';
 import { openGraph } from './working-memory.js';
 import { fromSources, speaking } from './knowledge.js';
 import { openStore, seed, readWorld, write, forgetLearned } from './store.js';
@@ -212,6 +213,8 @@ export function openBrain(url) {
   const forget = () => inTurn(async () => {
     threads.clear();
     graphs.clear();
+    // The conversation graph goes with the conversation.
+    forgetGraph();
     if (!store) return;
     await forgetLearned(store);
     knowledgePromise = build();

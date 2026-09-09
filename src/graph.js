@@ -35,6 +35,12 @@ let counting = new Map();
 // and asking the caller to find it again invites a different answer.
 let against = null;
 
+// A conversation at a time, not a signal at a time. What one signal put in is
+// still there when the next arrives — that is what makes tom still tom three
+// signals later, and what makes the facts and doings, in the order they were
+// said, a history there is anything to look back through.
+//
+// Called when a conversation ends, and never between two signals of one.
 export function clear() {
   for (const kind of KINDS) {
     held[kind].length = 0;
@@ -48,7 +54,12 @@ export function clear() {
 
 export function graph() {
   return {
-    ...Object.fromEntries(KINDS.map((kind) => [kind, held[kind].map((one) => ({ ...one }))])),
+    ...Object.fromEntries(
+      KINDS.map((kind) => [
+        kind,
+        held[kind].map((one) => (kind === 'nodes' ? { ...one, of: known(one, against) } : { ...one })),
+      ]),
+    ),
     context: { focus: [...inReach] },
   };
 }
@@ -64,7 +75,6 @@ function put(kind, entry) {
 // Things first, then what stands between them and what happened to them: a
 // fact cannot reach a thing that is not there yet.
 export function fromUnderstood(roots, world, focus, marking) {
-  clear();
   against = world;
   const calls = gather(roots, 'call');
   const links = gather(roots, 'learn').filter((one) => one.name === 'link');
@@ -90,6 +100,14 @@ export function fromUnderstood(roots, world, focus, marking) {
   // kind is not a second thing beside it.
   for (const call of calls) particular.delete(call.state.of);
 
+  // `tom is a person` says which person no more than `all cats are animals`
+  // does: what stands on the far side of a classification is the kind tom is
+  // one of, not somebody standing beside him. Only tom is a thing here, and
+  // being a person is what we come to know about him.
+  for (const one of [...links, ...claims]) {
+    if (classifies(one.state.relation, world)) particular.delete(one.state.object);
+  }
+
   // Things in the order the signal reached them, not in the order it happened
   // to introduce them. A thing an earlier signal brought in is mentioned
   // rather than called, and it is no less first for that.
@@ -105,12 +123,19 @@ export function fromUnderstood(roots, world, focus, marking) {
     // two people, not a third person beside them.
     if (!call && world && world.anchors.relation != null && world.isA(id, world.anchors.relation)) continue;
     const term = world && world.term(id);
+    // What it is is not written down. A signal three turns later may say what
+    // a thing is, and a kind fixed when the node was made would still be
+    // calling it a thing. It is read off the world when it is asked for.
+    //
+    // What the call said is kept only to fall back on. A thing this very
+    // signal made is not in the world yet — the change is written after the
+    // brain has answered — so until it lands there is nowhere else to ask.
     standing.set(
       id,
       put('nodes', {
         said: call ? named(call) : term ? term.name : String(id),
         term: id,
-        of: call ? call.state.of ?? null : kindOf(id, world),
+        made: call ? call.state.of ?? null : null,
       }),
     );
   }
@@ -184,6 +209,8 @@ export function fromUnderstood(roots, world, focus, marking) {
 
   // What is still in reach, said as the graph says everything else: a thing it
   // holds where it holds one, and the concept itself where it does not.
+  // What is in reach is replaced, never added to: it is where the brain's
+  // attention is now, and the last signal settles that on its own.
   inReach = (focus || [])
     .map((one) => (Number.isInteger(one) ? one : one && one.term))
     .filter((one) => Number.isInteger(one))
@@ -292,9 +319,18 @@ const classifies = (relation, world) => {
     .some((one) => relation === one || world.subrelationOf(relation, one));
 };
 
+// What a node is: what the world holds it under, or what it was made as while
+// the world has yet to hear of it.
+function known(one, world) {
+  const held = world && (world.kinds(one.term) || [])[0];
+  if (held != null && held !== (world.anchors || {}).thing) return held;
+  return one.made ?? held ?? (world && world.anchors ? world.anchors.thing : null);
+}
+
 // What the world holds a thing under. Nothing said of it beyond its existing
 // leaves it a thing and no more.
 function kindOf(id, world) {
+  if (!world) return null;
   const kinds = world.kinds(id) || [];
   return kinds.length ? kinds[0] : (world.anchors || {}).thing ?? null;
 }
@@ -410,9 +446,10 @@ export function serialize(world = against) {
     const name = world && world.term(id) ? world.term(id).name : null;
     return name ?? String(id);
   };
-  // Nothing is known of it beyond its being a thing at all.
-  const bare = world && world.anchors ? world.anchors.thing : null;
-  const type = (of) => (of == null ? 'entity -> ?' : of === bare ? 'entity -> thing' : spell(of));
+  // What a thing is. Nothing said of it beyond its existing leaves it a thing
+  // and no more, and `thing` is a concept of the world like any other — there
+  // is no kind above it the brain keeps for itself.
+  const type = (of) => (of == null ? '?' : spell(of));
 
   const lines = [];
   const section = (kind, rows) => {
@@ -421,7 +458,7 @@ export function serialize(world = against) {
     lines.push('');
   };
 
-  section('nodes', held.nodes.map((one) => `${one.id}  ${one.said.split('#')[0]}  type: ${type(one.of)}`));
+  section('nodes', held.nodes.map((one) => `${one.id}  ${one.said.split('#')[0]}  type: ${type(known(one, world))}`));
   section(
     'facts',
     held.facts.map(
