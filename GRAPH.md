@@ -300,6 +300,19 @@ time**. Told `sara arrived before john` the brain ranks; told `alice arrived at
 before whom, and how long between them are the arithmetic that already answers
 who is tallest and how much farther.
 
+**Told two things that cannot both be true, the brain reports a conflict.**
+Denying the second would pick a winner between two things it was told, and
+there is nothing to choose by. A deterministic brain says what it has rather
+than settling it quietly.
+
+    > tom is a bird     I understand.
+    > tom is a fish     Conflict. ⚠ tom is a fish.
+    > is tom a fish?    No. ❌
+
+Asked, it still answers from what it knows. Nothing is written to the world
+either way, and a conflict is not a denial: a denial says what was said is
+false, a conflict says two things were said that cannot both stand.
+
 **Being the doer of a doing is reason enough to be introduced.** A thing is
 introduced where the signal gives it something to be. Standing in a claim
 counted, and so did standing as a part of a doing — but the brain also demanded

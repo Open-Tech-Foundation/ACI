@@ -18097,7 +18097,8 @@
     "apologize": "I'm sorry.",
     "request": "Please.",
     "offer": "Would you like {meaning}?",
-    "compliment": "That's nice."
+    "compliment": "That's nice.",
+    "conflict": "Conflict. ⚠{meaning}"
   },
   "grammar": {
     "start": "sentence",

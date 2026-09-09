@@ -35,7 +35,7 @@ test("the condition itself is never taken in", async () => {
 
 test("what follows is checked, not swallowed", async () => {
   const r = await fresh("if a planet is a thing then a planet is a knife");
-  assertEquals(r.expression.name, "deny", "the world says otherwise");
+  assertEquals(r.expression.name, "conflict", "told two things that cannot both be true");
   assertEquals(r.learned, null);
   await forget();
 });

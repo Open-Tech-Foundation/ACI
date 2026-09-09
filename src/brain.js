@@ -4614,7 +4614,14 @@ function expression(roots, langs, mood, world, sent) {
     : refused
     ? UNPLACED.includes(refused.name)
       ? 'unsure'
-      : 'deny'
+      : // Told two things that cannot both be true, the brain says so and
+        // names them. Denying the second would pick a winner between two
+        // things it was told, and there is nothing to choose by: what it has
+        // is a conflict, and a deterministic brain reports one rather than
+        // settling it quietly. Asked, it still answers from what it knows.
+        refused.name === 'contradiction' && mood !== 'ask'
+        ? 'conflict'
+        : 'deny'
     : agreed
       ? 'agree'
       : gave || named
@@ -4685,8 +4692,10 @@ function expression(roots, langs, mood, world, sent) {
     ? { relation: world && world.anchors ? world.anchors.know : null }
     : null;
   const whole = speak(
-    intent === 'affirm' ? intent : intent,
-    intent === 'affirm' ? claimSaid(stood, langName, langs, world) : said,
+    intent,
+    intent === 'affirm' || intent === 'conflict'
+      ? claimSaid(stood, langName, langs, world)
+      : said,
     langName,
     langs,
     terms,

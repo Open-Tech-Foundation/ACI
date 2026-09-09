@@ -164,7 +164,7 @@ test("reflexive and irreflexive declarations decide self-relations", () => {
   assertEquals(reflected.learned, null);
 
   const avoided = brainFrom("bird avoids bird", knowledge);
-  assertEquals(avoided.expression.name, "deny");
+  assertEquals(avoided.expression.name, "conflict");
   assertEquals(truth("bird avoids bird").name, "against");
   assertEquals(avoided.learned, null);
 });
@@ -173,7 +173,7 @@ test("a functional relation refuses a competing object", () => {
   assertEquals(truth("bird points stone").name, "held");
   assertEquals(truth("bird points wing").name, "against");
   const competing = brainFrom("bird points wing", knowledge);
-  assertEquals(competing.expression.name, "deny");
+  assertEquals(competing.expression.name, "conflict");
   assertEquals(competing.learned, null);
 });
 
@@ -202,7 +202,7 @@ test("domain and range implications are understood and incompatible claims are d
 
   for (const input of ["stone cares bird", "bird cares stone"]) {
     const result = brainFrom(input, knowledge);
-    assertEquals(result.expression.name, "deny", input);
+    assertEquals(result.expression.name, "conflict", input);
     assertEquals(result.learned, null, input);
   }
 });
