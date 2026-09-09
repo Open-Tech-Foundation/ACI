@@ -359,6 +359,28 @@ holds them as a thing and no more. What the world happens to call the term the
 runtime handed in is not a claim about who they are, and told nothing, the
 brain holds nobody at all.
 
+**A name with nothing given to it names something.** English has `x` as a word
+for giving a name — `x is 5` — and with nothing given, it stood for nothing at
+all: `my house is bigger than x` kept no x, so the comparison had nothing on
+its far side and came out as the house *being* a bigger-ness. Where an amount
+stands in the signal, x is still waiting for a value and nothing is made of it.
+
+**A name the world already claims takes one of its own.** A name is claimed
+once, so bringing in a second thing called `x` — a word the world knows as a
+letter — was refused outright and the whole signal with it. The thing this
+conversation brings in is named apart and is still *called* what it was called:
+the word reaches the world's term, the naming reaches this one.
+
+    > my house is bigger than x
+    nodes    n1  human · n2  house · n3  x
+    facts    f1  comparison(n2, n3)  {on: size[183]}
+             f2  holding(n1, n2)
+
+This does not settle a name that is also an ordinary word. `apple is a shop`
+still reaches the fruit, because `apple` is a noun the world knows rather than
+a word for naming, and telling those apart needs what the language marks a name
+with.
+
 **A hole stands wherever a thing may stand.** Asking is saying with a hole in
 it, and the hole falls where the thing it asks after would have stood. So
 anything that stands for something can be a hole instead, and no language has

@@ -1373,7 +1373,21 @@ function calling(roots, world, langs, mood, allocate) {
   if (!joined && !doing) return roots;
   return roots.map((n, i) => {
     const thought = thoughtOf(n);
-    if (!thought || thought.wordKnown || thought.concept != null) return n;
+    // A word whose whole job is to name something, with nothing given to it
+    // yet, names something now. `x is 5` gives x an amount and makes no thing;
+    // `my house is bigger than x` gives x nothing, and x is then whatever the
+    // house is bigger than — a thing this signal is bringing in, the same as
+    // any word nothing knows.
+    // Unless an amount stands in the signal. A naming word is how a signal
+    // gives one — `x is 5`, `x > 10` — and there x is waiting for a value, not
+    // standing as a thing. With no amount anywhere, nothing is waiting, and x
+    // is whatever the signal says of it.
+    const naming =
+      thought &&
+      thought.marks === 'named' &&
+      thought.concept == null &&
+      !roots.some((other) => numberOf(other, world) != null);
+    if (!thought || (!naming && (thought.wordKnown || thought.concept != null))) return n;
     if (!joined && !introduced(i)) return n;
     const rest = roots.slice(i + 1).filter((other) => stands(other, world));
     const before = roots.slice(0, i).filter((other) => stands(other, world));
@@ -1406,9 +1420,30 @@ function calling(roots, world, langs, mood, allocate) {
       // Recognising a referent is separate from accepting what was said of it.
       // The call establishes only that it is a thing; the judged proposition
       // supplies any more specific kind, polarity and scope.
-      node('call', n.state.identity, [], { name: n.state.identity, id, called, of: a.thing, many }),
+      // A name given here may be one the world already claims — `x` is a
+      // letter it knows, and somebody may still be called x. A name is claimed
+      // once, so the thing this conversation brings in takes a name of its
+      // own and is still *called* what it was called: the word reaches the
+      // world's term, and the naming reaches this one.
+      node('call', n.state.identity, [], {
+        name: world.termNamed(n.state.identity) != null || namesInWorld(n.state.identity, world)
+          ? `${n.state.identity}#${id}`
+          : n.state.identity,
+        id,
+        called,
+        of: a.thing,
+        many,
+      }),
     ]);
   });
+}
+
+// Whether the world already calls something by this word. Being called
+// something is one thing's; two things cannot share one name.
+function namesInWorld(word, world) {
+  if (!world || typeof word !== 'string') return false;
+  const wanted = word.toLowerCase();
+  return world.data.terms.some((t) => typeof t.name === 'string' && t.name.toLowerCase() === wanted);
 }
 
 // A language may distinguish readings through context without teaching the
