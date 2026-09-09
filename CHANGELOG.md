@@ -26,6 +26,13 @@ All notable changes to this project are documented in this file.
   own stays the named one — nothing in such a signal says otherwise, and what
   would settle it is what the doing will take, which the brain has yet to weigh.
 
+- **A word nothing knows, claimed as a kind, is a kind.** `the apple is
+  company` said `No. ❌`. The unknown word was read as one particular thing, so
+  the claim came out as the apple being that very thing, which is false — and a
+  word the world has never heard is no grounds to deny anything. Standing where
+  a kind is claimed it is now a kind, the apple is one of it, and nothing
+  standing against it, the claim is simply accepted.
+
 - **A quality standing beside a thing is said of that thing.** `a red box` is a
   box that is red, and the colour was being thrown away entirely — said the
   other way round, `the box is red`, it was kept, so it was only the standing

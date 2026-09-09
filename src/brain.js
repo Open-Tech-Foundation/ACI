@@ -1513,7 +1513,14 @@ function calling(roots, world, langs, mood, allocate) {
     // A word nothing knows with a number beside it names many and not one:
     // there are three of whatever a cookie is, so it is a kind. Nothing counts
     // one thing three times.
-    const many = numberBeside(roots, i, world);
+    // And a word nothing knows standing where a kind is claimed is a kind, not
+    // one thing. `the apple is company` says what the apple is one of; read as
+    // one particular thing it says the apple is that very thing, which is
+    // false, and the brain denied a claim nothing stood against. A word the
+    // world has never heard is no grounds to deny anything.
+    const classified =
+      before.length > 0 && conceptOf(before[before.length - 1]) === world.baseRelation;
+    const many = numberBeside(roots, i, world) || classified;
     const given = { ...thought, concept: id, wordKnown: true };
     return withBranch(n, [
       ...n.branch.map((b) =>
