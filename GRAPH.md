@@ -313,6 +313,18 @@ Asked, it still answers from what it knows. Nothing is written to the world
 either way, and a conflict is not a denial: a denial says what was said is
 false, a conflict says two things were said that cannot both stand.
 
+**What the brain meets enters the conversation, whether or not anything was
+said of it.** A number said on its own was answered and dropped on the floor,
+so the next signal's `it` had nothing to land on and every follow-up failed.
+
+    > 12345          It is 12345.
+    > what is it?    12345
+
+Asked what a bare amount is, the answer is the amount. Nothing in the world is
+called twelve thousand three hundred and forty-five, so there is no kind to
+give, and saying it does not know would be forgetting what it was just told. An
+amount the world *does* name still answers with its kind.
+
 **A hole stands wherever a thing may stand.** Asking is saying with a hole in
 it, and the hole falls where the thing it asks after would have stood. So
 anything that stands for something can be a hole instead, and no language has

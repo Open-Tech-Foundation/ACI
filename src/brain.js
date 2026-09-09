@@ -2750,6 +2750,30 @@ function instructionFrom(when, so, world, langs, sent) {
       ]),
     ];
   }
+  // A word pointing back at a bare amount stands for the amount itself and
+  // names no term — nothing in the world is called twelve thousand three
+  // hundred and forty-five. Asked what it is, the answer is the amount: it is
+  // what the conversation has, and saying it does not know would be forgetting
+  // what it was just told.
+  if (holes.length > 0) {
+    const pointing = said.find(
+      (n) => markOn(n) === 'spoken' && conceptOf(n) == null && numberOf(n, world) != null,
+    );
+    if (pointing && terms.every((n) => conceptOf(n) == null)) {
+      return [
+        withBranch(root, [
+          ...root.branch,
+          node('sum', 'worked', [], {
+            left: null,
+            right: null,
+            value: numberOf(pointing, world),
+            term: world.termFor(numberOf(pointing, world)),
+          }),
+        ]),
+      ];
+    }
+  }
+
   if (holes.length > 0 && terms.length >= 1) {
     const nodes = [];
     const asked = terms.flatMap((t) => membersFor(t, world, sent));
@@ -5905,6 +5929,7 @@ function keep(found, of) {
 function focusOf(roots, at, world) {
   const primary = spokenOf(roots, at, world);
   const sum = [];
+  const met = [];
   const actions = [];
   const ideas = [];
   const gather = (n) => {
@@ -5929,6 +5954,13 @@ function focusOf(roots, at, world) {
         },
       });
     }
+    // A number said on its own is a thing the conversation now has. Nothing
+    // was said *of* it — it was simply said — and until now that meant it was
+    // answered and dropped, leaving the next signal's `it` nothing to land on.
+    if (n.kind === 'thing' && conceptOf(n) == null) {
+      const value = numberOf(n, world);
+      if (value != null) met.push({ value });
+    }
     (n.branch || []).forEach(gather);
   };
   roots.forEach(gather);
@@ -5948,7 +5980,7 @@ function focusOf(roots, at, world) {
     }
     return null;
   };
-  for (const id of [...sum, primary, ...held, ...actions, ...ideas, ...prior]) {
+  for (const id of [...sum, ...met, primary, ...held, ...actions, ...ideas, ...prior]) {
     if (id == null) continue;
     const k = key(id);
     if (k != null && out.some((had) => key(had) === k)) continue;
