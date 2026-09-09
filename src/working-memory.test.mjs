@@ -331,3 +331,46 @@ test("an instruction may say what it is about, rather than what it matched", () 
   assertEquals(g.propertyOf(road, 'wet'), 'yes');
   assertEquals(g.propertyOf(sky, 'wet'), undefined, "the rain is not what got wet");
 });
+
+// The graph says what is in it. Nothing that looks at it describes it.
+
+test("the graph says what is in it, and spells only what it was told is a concept", () => {
+  const g = openGraph();
+  g.concept('husband', { is: 'person', has: { sex: 'male' } });
+  const john = g.node('husband');
+  const crates = g.collection('crate', { count: 2 });
+  g.context.name('john', john);
+  const moved = g.action('movement', { what: crates, source: null, destination: john, quantity: 1 });
+  g.context.saw(moved);
+
+  const said = g.text();
+  assert(said.includes('n1  husband  called john  (sex: male)'), said);
+  assert(said.includes('c1  crate × 3'), said);
+  // A quantity is a number, and nothing goes looking for a word for one.
+  assert(said.includes('quantity: 1'), said);
+  // The empty slot is said as one.
+  assert(said.includes('source: —'), said);
+  assert(said.includes('[done]'), said);
+  assert(said.includes('focus  a1, c1, n1'), said);
+});
+
+test("what a thing is is not said the way a place with nothing in it is", () => {
+  const g = openGraph();
+  g.node(null);
+  const said = g.text();
+  assert(said.includes('n1  ?'), said);
+});
+
+test("an instruction and what it demands are said back", () => {
+  const g = openGraph();
+  g.rule({
+    on: { each: 'invoice', property: 'amount', above: 500 },
+    then: { action: 'approval', slots: { by: null } },
+    owed: true,
+  });
+  g.node('invoice', { amount: 800 });
+  const said = g.text();
+  assert(said.includes('r1  on each invoice amount above 500 -> approval(by: —)  [owed]'), said);
+  assert(said.includes('owed'), said);
+  assert(said.includes('r1  n1'), said);
+});

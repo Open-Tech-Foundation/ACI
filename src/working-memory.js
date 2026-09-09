@@ -489,15 +489,164 @@ export function openGraph() {
     return false;
   }
 
+  // ---- saying what is in it ------------------------------------------------
+
+  // Everything a thing holds, at some moment: what was said of it, what its
+  // kind carries, and what an instruction produces for it. The three places a
+  // property can come from, gathered rather than asked for one at a time.
+  function propertiesOf(id, moment) {
+    const held = {};
+    const seen = new Set();
+    for (let i = 0; i <= upto(moment); i++) {
+      const record = told[i];
+      if (record.what === 'held' && record.id === id) seen.add(record.name);
+    }
+    const item = items.get(id);
+    for (const kind of item ? kinds(item.of) : []) {
+      for (const name of Object.keys(concepts.get(kind)?.has || {})) seen.add(name);
+    }
+    for (const rule of rules) if (rule.then?.property !== undefined) seen.add(rule.then.property);
+    for (const name of seen) {
+      const value = propertyOf(id, name, moment);
+      if (value !== undefined) held[name] = value;
+    }
+    return held;
+  }
+
+  // The graph as text, walked off the graph itself. Nothing here is composed
+  // by whoever is looking at it: what it says is what is in it.
+  //
+  // The graph holds no words, so how a concept is spelled is handed in. Told
+  // nothing, it says the concept's own identifier — which is still the truth,
+  // only harder to read.
+  function text(label = () => null, moment) {
+    // Only a concept is spelled. A quantity is a number and a count is a
+    // number, and nothing may go looking for a word for one: the graph knows
+    // which of its values are concepts because it was told, and a value it was
+    // never told about is said as it stands.
+    const spell = (value) => {
+      if (value === null) return '—';
+      if (value === undefined) return '?';
+      if (Array.isArray(value)) return value.map(spell).join('/');
+      if (items.has(value)) return value;
+      if (concepts.has(value)) return label(value) ?? String(value);
+      return String(value);
+    };
+    // What a thing is. Nothing said is not the same as a place with nothing
+    // in it, so it is not said the same way.
+    const kindOf = (value) => (value == null ? '?' : spell(value));
+    const pairs = (held) =>
+      Object.entries(held)
+        .map(([name, value]) => `${name}: ${spell(value)}`)
+        .join(', ');
+    const holding = (id) => {
+      const held = pairs(propertiesOf(id, moment));
+      return held ? `  (${held})` : '';
+    };
+
+    const lines = [];
+    const section = (title, rows) => {
+      if (!rows.length) return;
+      lines.push(title);
+      for (const row of rows) lines.push(`  ${row}`);
+    };
+    const of = (kind) => [...items.values()].filter((held) => held.kind === kind);
+    const spoken = context.names();
+    const calledOf = (id) => {
+      const word = Object.keys(spoken).find((given) => spoken[given] === id);
+      return word ? `  called ${word}` : '';
+    };
+
+    section(
+      'concepts',
+      [...concepts.entries()]
+        .filter(([, facts]) => Object.keys(facts).length > 0)
+        .map(([named, facts]) => `${spell(named)}  ${pairs(facts)}`),
+    );
+    section('nodes', of('node').map((held) => `${held.id}  ${kindOf(held.of)}${calledOf(held.id)}${holding(held.id)}`));
+    section(
+      'collections',
+      of('collection').map((held) => `${held.id}  ${kindOf(held.of)} × ${count(held.id, moment)}${holding(held.id)}`),
+    );
+    section(
+      'facts',
+      of('fact').map(
+        (held) =>
+          `${held.id}  ${held.denied ? 'not ' : ''}${kindOf(held.of)}(${pairs(held.slots || {})})${holding(held.id)}`,
+      ),
+    );
+    section(
+      'actions',
+      history(moment).map((id) => {
+        const held = items.get(id);
+        return `${id}  ${held.denied ? 'not ' : ''}${kindOf(held.of)}(${pairs(held.slots || {})})  [${whenOf(id, moment)}]${holding(id)}`;
+      }),
+    );
+    section(
+      'rules',
+      rules.map(
+        (held) => `${held.id}  on ${asked(held.on, spell, pairs)} -> ${asked(held.then, spell, pairs)}${held.owed ? '  [owed]' : ''}`,
+      ),
+    );
+    section(
+      'owed',
+      owing(moment).map((one) => `${one.rule}  ${spell(one.on)}${one.since ? `  since ${one.since}` : ''}`),
+    );
+    const reach = context.focus();
+    section('context', [
+      ...(reach.length ? [`focus  ${reach.join(', ')}`] : []),
+      ...Object.entries(spoken).map(([word, id]) => `name   ${word} -> ${id}`),
+    ]);
+    return lines.join('\n');
+  }
+
   const graph = {
     concept, knows, kinds,
     node, collection, fact, action, property, collect, rule,
     item, all, isA, ruled, governing,
-    propertyOf, members, count, sum, highest, lowest,
+    propertyOf, propertiesOf, members, count, sum, highest, lowest,
     holds, stands, matching, whenOf, settle, owed: owing,
-    history, moment: now, at, before,
+    history, moment: now, at, before, text,
   };
-  return { ...graph, context: openContext(graph) };
+  const context = openContext({ item, propertyOf, isA });
+  return { ...graph, context };
+}
+
+// A condition or a consequence, said back. Every form it can take is written
+// out here rather than guessed at, so a shape nothing knows how to say shows
+// itself as one instead of going missing.
+function asked(side, spell, pairs) {
+  if (!side) return '—';
+  if (side.claim) {
+    const { of, subject, object } = side.claim;
+    return `${spell(subject)} ${spell(of)} ${spell(object)}`;
+  }
+  if (side.occurred !== undefined) {
+    const slots = side.slots ? `(${pairs(side.slots)})` : '';
+    return `${spell(side.occurred)}${slots} occurred`;
+  }
+  if (side.property !== undefined && side.value !== undefined) {
+    return `${side.of !== undefined ? `${spell(side.of)} ` : ''}${side.property}: ${spell(side.value)}`;
+  }
+  if (side.action !== undefined) {
+    return `${spell(side.action)}(${pairs(side.slots || {})})`;
+  }
+  const over = side.each !== undefined ? `each ${spell(side.each)}` : side.of !== undefined ? spell(side.of) : '?';
+  const read =
+    side.count ? 'count'
+    : side.total !== undefined ? `total ${side.total}`
+    : side.highest !== undefined ? `highest ${side.highest}`
+    : side.lowest !== undefined ? `lowest ${side.lowest}`
+    : side.property !== undefined ? side.property
+    : '?';
+  const test =
+    'is' in side ? `is ${spell(side.is)}`
+    : 'above' in side ? `above ${side.above}`
+    : 'below' in side ? `below ${side.below}`
+    : 'atLeast' in side ? `at least ${side.atLeast}`
+    : 'atMost' in side ? `at most ${side.atMost}`
+    : '?';
+  return `${over} ${read} ${test}`;
 }
 
 // ---- context ---------------------------------------------------------------
@@ -561,6 +710,7 @@ export function openContext(graph) {
     saw,
     name,
     named: (word) => (names.has(word) ? names.get(word) : null),
+    names: () => Object.fromEntries(names),
     focus: () => [...inReach],
     spoken: () => inReach[0] ?? null,
     point,

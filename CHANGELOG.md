@@ -59,6 +59,28 @@ All notable changes to this project are documented in this file.
   `structure.mjs` shows it for anything typed at it. The running brain is
   otherwise untouched: nothing in the answering path reads any of this.
 
+- **The graph says what is in it.** `text()` walks the graph itself — concepts,
+  nodes, collections, facts, actions, rules, what is owed and what is in reach
+  — and hands back the whole of it as text. Whoever is looking at it prints
+  what it said and describes nothing of its own. The graph holds no words, so
+  how a concept is spelled is handed in; told nothing, it says the concept's
+  own identifier, which is still the truth and only harder to read.
+
+  Writing it found three things that were wrong and could not be seen:
+
+  A quantity was being spelled as if it named a concept, so a count of five
+  came back as the word the world holds at five. Only what the graph was told
+  is a concept is spelled now, and a number is said as it stands.
+
+  A thing whose kind nobody said was written the way an empty slot is written.
+  Nothing said and a place with nothing in it are not the same, and they are no
+  longer said the same.
+
+  A kind the brain had never met was becoming a thing in the conversation. `the
+  invoice has no document` made a collection of things where it should have
+  added the concept `document` and left the holding pointing at the kind with
+  nothing in it — which is the empty slot, and now what it gives.
+
 ### Removed
 
 - **`flight`, `reserve` and `cancel`**, added while reaching for the booking

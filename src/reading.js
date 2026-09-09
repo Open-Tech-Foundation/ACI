@@ -25,7 +25,15 @@ import { openGraph } from './working-memory.js';
 // later signal reaching back to something an earlier one introduced finds it.
 export function layOut(learned, world, into = openGraph(), known = new Map()) {
   const laid = { nodes: [], collections: [], actions: [], facts: [], rules: [] };
-  if (!learned || !world) return { graph: into, ...laid };
+  const label = world ? (id) => (id == null ? null : world.term(id)?.name ?? null) : () => null;
+  // Which of the world's concepts this conversation has met. The graph holds
+  // no words and cannot tell a concept from a quantity by looking; it is told.
+  const met = (id) => {
+    if (id != null && world.term(id)) into.concept(id);
+    return id;
+  };
+  const saying = () => into.text(label);
+  if (!learned || !world) return { graph: into, text: saying, ...laid };
 
   const anchors = world.anchors || {};
   const roles = [anchors.agent, anchors.target, anchors.source, anchors.destination].filter(
@@ -44,6 +52,22 @@ export function layOut(learned, world, into = openGraph(), known = new Map()) {
     const met = world.kinds(term.id) || [];
     return met.length ? met[0] : null;
   };
+
+  // Whether a term stands for one thing or for a kind. A change only carries
+  // the mark the first time it says a thing exists; after that it names it and
+  // adds a link, so the question is put to the world rather than to the change.
+  const one = (term) =>
+    term.individual === true || laidAs.has(term.id) || world.isIndividual(term.id);
+
+  // What a kind is a kind of, however the change said it.
+  const above = (term) =>
+    (term.links || [])
+      .filter(
+        (link) =>
+          !link.not &&
+          (link.rel === anchors.subtype || link.rel === anchors.instance || link.rel === world.baseRelation),
+      )
+      .map((link) => met(link.to));
 
   // A word given to something in this conversation. The word is held on a term
   // of its own; that term is not a thing, so nothing is made for it.
@@ -75,13 +99,19 @@ export function layOut(learned, world, into = openGraph(), known = new Map()) {
     }
   }
 
-  const label = (id) => (id == null ? null : world.term(id)?.name ?? null);
   const laidAs = known;
 
   // Things first, then what stands between them: a fact cannot reach an item
   // that is not there yet.
   for (const term of terms.values()) {
     if (spelling.has(term.id) || claiming.has(term.id) || laidAs.has(term.id)) continue;
+    // A kind is not a thing this conversation introduced. `all cats are
+    // animals` adds a concept fact and no node at all, and a word the brain
+    // had never met arrives the same way: as a kind, with what it is a kind of.
+    if (!one(term)) {
+      into.concept(term.id, { is: above(term) });
+      continue;
+    }
     const of = conceptOf(term);
     if (of === anchors.instructing) continue;
 
@@ -92,20 +122,20 @@ export function layOut(learned, world, into = openGraph(), known = new Map()) {
         slots[label(link.rel)] = laidAs.get(link.to) ?? link.to;
         if (link.quantity != null) slots.quantity = link.quantity;
       }
-      const id = into.action(of, slots);
+      const id = into.action(met(of), slots);
       laidAs.set(term.id, id);
       laid.actions.push({ id, of, name: label(of), slots });
       continue;
     }
 
     if (many.has(term.id)) {
-      const id = into.collection(of, { count: many.get(term.id) });
+      const id = into.collection(met(of), { count: many.get(term.id) });
       laidAs.set(term.id, id);
       laid.collections.push({ id, of, name: label(of), count: many.get(term.id) });
       continue;
     }
 
-    const id = into.node(of);
+    const id = into.node(met(of));
     laidAs.set(term.id, id);
     const called = calledOf(term);
     if (called) into.context.name(called, id);
@@ -126,6 +156,9 @@ export function layOut(learned, world, into = openGraph(), known = new Map()) {
 
   for (const term of terms.values()) {
     if (spelling.has(term.id) || claiming.has(term.id)) continue;
+    // What a kind is a kind of was taken in above; it is a fact about the
+    // concept, not one between two things in this conversation.
+    if (!one(term)) continue;
     const of = conceptOf(term);
     if (of === anchors.instructing) {
       laid.rules.push(ruleFrom(term));
@@ -136,7 +169,7 @@ export function layOut(learned, world, into = openGraph(), known = new Map()) {
     for (const link of links(term)) {
       if (link.rel === anchors.instance || link.rel === world.baseRelation) continue;
       const slots = { subject: stood(term.id), object: stood(link.to) };
-      const id = into.fact(link.rel, slots, {
+      const id = into.fact(met(link.rel), slots, {
         denied: link.not === true,
         props: link.quantity != null ? { count: link.quantity } : {},
       });
@@ -157,10 +190,10 @@ export function layOut(learned, world, into = openGraph(), known = new Map()) {
   function claimAt(id) {
     const term = terms.get(id);
     if (!term) return null;
-    const claim = { of: conceptOf(term) };
+    const claim = { of: met(conceptOf(term)) };
     for (const link of term.links || []) {
-      if (link.rel === anchors.subject) claim.subject = stood(link.to);
-      if (link.rel === anchors.object) claim.object = stood(link.to);
+      if (link.rel === anchors.subject) claim.subject = met(stood(link.to));
+      if (link.rel === anchors.object) claim.object = met(stood(link.to));
     }
     return claim;
   }
@@ -180,7 +213,9 @@ export function layOut(learned, world, into = openGraph(), known = new Map()) {
     };
   }
 
-  return { graph: into, ...laid };
+  // The graph says what is in it; this only supplies how the world spells a
+  // concept. Nothing about the reading is described here twice.
+  return { graph: into, text: saying, ...laid };
 }
 
 // A rule read back with the world's own labels beside the terms, so what it
