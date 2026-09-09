@@ -16439,7 +16439,8 @@
     },
     "above": {
       "pos": "preposition",
-      "meaning": "above"
+      "meaning": "above",
+      "concept": 2974
     },
     "off": {
       "pos": "preposition",
@@ -17921,6 +17922,11 @@
       "pos": "noun",
       "meaning": "duration",
       "concept": 2972
+    },
+    "below": {
+      "pos": "preposition",
+      "meaning": "below",
+      "concept": 2975
     }
   },
   "unknown": {

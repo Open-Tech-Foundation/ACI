@@ -512,6 +512,13 @@ function measuring(roots, world) {
   if (!world) return roots;
   const a = world.anchors || {};
   if (a.unit == null || a.measure == null) return roots;
+  // A signal that says where a state begins or ends is not saying how much of
+  // something a thing is. `hot is above thirty degrees` says what hot is, and
+  // the amount belongs to the band and not to any hot thing.
+  const bounding = (n) =>
+    conceptOf(n) != null && (conceptOf(n) === a.above || conceptOf(n) === a.below);
+  if (roots.some(bounding)) return roots;
+
   const isUnit = (n, at) =>
     n.state.exists &&
     conceptOf(n) != null &&
@@ -2019,12 +2026,17 @@ function instructionFrom(when, so, world, langs, sent) {
       // A fact about how many is about the thing that bears it, not about its
       // kind.
       const existential = mood === 'tell' && howMany === a.some && !world.isIndividual(subject);
-      const bearer = counted == null && !existential
+      // Where a state begins or ends is said of the state, not of anything in
+      // it. `hot is above thirty degrees` says what hot is; making a hot thing
+      // to hold the thirty would put the band on one warm afternoon and leave
+      // hot itself meaning nothing.
+      const bounding = (rel === a.above || rel === a.below) && rel != null;
+      const bearer = (counted == null && !existential) || bounding
         ? null
         : existential
           ? bearerOf(subject, world, 'new', sent.allocate)
           : bearerFor(left, subject);
-      if (counted != null && bearer == null) return [];
+      if (counted != null && bearer == null && !bounding) return [];
       const holder = bearer ? bearer.id : subject;
 
       // A claim whose object stands at a pole — good or bad — is not the

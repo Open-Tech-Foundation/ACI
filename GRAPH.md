@@ -271,6 +271,25 @@ Where amounts are known the arithmetic runs on them rather than on positions,
 and that is what makes *how much farther* answerable — an order alone gives no
 distances and never could.
 
+**A state holds over a band of its quantity.** Hot is temperature from thirty
+degrees up, so a room at thirty-two is hot without anyone having said so. That
+is what makes *is it hot* answerable at all, and it is the same shape as one
+thing standing above another on a quantity.
+
+The split is three ways. The **brain** knows a state holds over a band and
+compares the amount against it. The **world** knows a band can be said at all —
+`above`, `below`. What the band **is** comes from outside: taught in a file, or
+said in conversation and committed. Delete what taught it and the brain stops
+knowing what hot means while answering everything else exactly as before.
+
+Where a state begins is said *of the state*. Making a hot thing to hold the
+thirty would put the band on one warm afternoon and leave hot itself meaning
+nothing.
+
+Where nothing has said a band, the brain says it does not know. Two metres is
+near for a city and far for a desk, so no band is true of both, and it does not
+pick one.
+
 **Being the doer of a doing is reason enough to be introduced.** A thing is
 introduced where the signal gives it something to be. Standing in a claim
 counted, and so did standing as a part of a doing — but the brain also demanded

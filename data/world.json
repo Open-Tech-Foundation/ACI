@@ -80,7 +80,9 @@
     "instructing": 2965,
     "condition": 2966,
     "consequence": 2967,
-    "reference": 2973
+    "reference": 2973,
+    "above": 2974,
+    "below": 2975
   },
   "relations": {
     "is": 294,
@@ -3820,6 +3822,14 @@
         {
           "rel": 251,
           "to": 319
+        },
+        {
+          "rel": 617,
+          "to": 252
+        },
+        {
+          "rel": 294,
+          "to": 188
         }
       ]
     },
@@ -3830,6 +3840,14 @@
         {
           "rel": 294,
           "to": 191
+        },
+        {
+          "rel": 617,
+          "to": 252
+        },
+        {
+          "rel": 294,
+          "to": 188
         }
       ]
     },
@@ -31398,6 +31416,26 @@
     {
       "id": 2973,
       "name": "reference",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        }
+      ]
+    },
+    {
+      "id": 2974,
+      "name": "above",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        }
+      ]
+    },
+    {
+      "id": 2975,
+      "name": "below",
       "links": [
         {
           "rel": 294,

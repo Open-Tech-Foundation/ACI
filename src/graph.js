@@ -461,7 +461,7 @@ function above(relation, world) {
 
 // The quantity a state is a state of. The world says which; where it says
 // nothing, the state is all there is.
-const quantityOn = (state, world) => {
+export const quantityOn = (state, world) => {
   const of = world.anchors && world.anchors.measure != null
     ? world.related(state, world.anchors.measure) || []
     : [];
@@ -621,6 +621,41 @@ function reached(roots, found = []) {
     reached(root.branch, found);
   }
   return found;
+}
+
+// Whether a thing is in a state, worked out from what it measures.
+//
+// A state holds over a band of its quantity: hot is temperature from thirty
+// degrees up, and a room at thirty-two is hot without anyone having said so.
+// The band is the world's — what counts as hot is a fact about the world, not
+// about any language — and where the world declares none, the brain says it
+// does not know rather than deciding for itself.
+//
+// This is what makes `is it hot` answerable at all, and it is the same shape
+// as one thing standing above another on a quantity.
+export function inState(thing, state, world = against, from) {
+  const of = quantityOn(state, world);
+  if (of == null) return null;
+  const held = amounts(of, from).get(thing);
+  if (held == null) return null;
+  const band = bandOf(state, world);
+  if (band.above == null && band.below == null) return null;
+  if (band.above != null && held < band.above) return false;
+  if (band.below != null && held >= band.below) return false;
+  return true;
+}
+
+// Where a state begins and ends on its quantity, as the world declares it.
+// The amount rides on the link and the unit is what it points at.
+function bandOf(state, world) {
+  const anchors = (world && world.anchors) || {};
+  const bound = (rel) => {
+    if (rel == null) return null;
+    const term = world.term(state);
+    const link = ((term && term.links) || []).find((one) => one.rel === rel && !one.not);
+    return link ? link.quantity : null;
+  };
+  return { above: bound(anchors.above), below: bound(anchors.below) };
 }
 
 // Where each thing stands on a quantity, worked out from what was said.
