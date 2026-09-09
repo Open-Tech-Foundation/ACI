@@ -2,16 +2,76 @@
 
 The design note, and what is built from it.
 
-**The graph is `src/working-memory.js`** — what *is*: the kinds of item, the
-slots including the empty one, properties, collections, actions and the order
-they came in, derived values and looking back; and what *governs*: standing
-instructions, conditions asked of the graph, actions waiting on one, and what
-is owed. Context sits beside it.
+## Where this stands
 
-**Reading a signal into it is `src/reading.js`**, reached by `read(input)`
-beside `brain(input)`, and shown by `structure.mjs`. It lays out what the brain
-already understood; it understands nothing of its own. The answering path does
-not read any of this yet.
+**The graph is `src/graph.js`.** The brain fills it once a signal is
+understood, and `serialize` says what is in it. `graph.mjs` shows it for
+anything typed at it:
+
+    esdev graph.mjs "john has 5 apples"
+
+Four kinds — nodes, facts, actions, rules — and context beside them, which is
+not one of the kinds and never becomes a fact.
+
+An id in the output means the world said it: `apple[79]`. A bare name means the
+brain knows it of itself: `transfer`. That is the whole of how to read one.
+
+### The primitives, and what has been agreed
+
+A primitive does not change with the language and does not change with the
+world, so it is the brain's own — not a term, not a file. What the world
+supplies is which of *its* terms realizes a category the brain owns, and it
+says so with the links it already carries.
+
+| primitive | how it is known | agreed |
+|---|---|---|
+| `transfer` | a doing with a source or a destination | **yes** |
+| `holding` | the world puts the relation under its `holding` | **yes** |
+| `property-change` | a doing whose target is a property, and nothing moved | proposed |
+| `placement` | a kind of the world's `placement` | proposed |
+| `comparison` | the relation carries a `compares` link; the scale comes with it | proposed |
+| `order` | a kind of the world's `order` | proposed |
+| `property` | the other side is a property | proposed |
+| `kind` | a classifying relation with a thing on the other side | proposed |
+
+Proposed means built and working, not settled. Each still has to be walked
+through on its own inputs before it counts.
+
+A standing the brain has no primitive for keeps the world's own concept, with
+its id: being a father is not a primitive, so it comes out `father[503]`.
+
+### What a node is
+
+Something this conversation brought in. Three ways it becomes one:
+
+  * the signal made one of it — `a basket`
+  * the world already holds it as an individual — a name met before
+  * the signal spoke of it in particular — `the sky`
+
+A determiner says *which one*, and which side of the word it stands on is the
+language's to declare, so the engine assumes no order. A quantity of a kind is
+not a node: `5 apples` names no particular apple. A kind spoken of as a kind is
+not one either: `all cats are animals` introduces nothing. Nor is a relation:
+`the father of sam` says which father, but a father is what stands between two
+people, not a third beside them.
+
+A node whose kind nobody said is `entity -> thing`. Nothing said and a place
+with nothing in it are different, and are written differently: `?` and `—`.
+
+### Known wrong, and still showing
+
+  * `john has 5 apples and he put three apples into a basket` resolves `he` to
+    *apple*, not john. The graph shows `transfer(apple[79], ...)`.
+  * `the red box is inside the blue box` collapses both boxes to one concept,
+    so it reads `placement(n1, n1)`.
+  * A transfer's `from` is empty where the doer is plainly the source:
+    `john gives 2 apples to sam` gives `from: —`.
+
+### Left over from an earlier attempt
+
+`src/working-memory.js` and `src/reading.js` are a second, redundant graph,
+still wired to `read()` in `src/index.js`. They are not part of the above and
+should go.
 
 The aim is the smallest set of items that can hold a conversation and answer
 over it. Everything below is written against the ten example inputs, and each

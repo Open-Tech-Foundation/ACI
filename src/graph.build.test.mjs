@@ -1,6 +1,9 @@
 import { test, assert, assertEquals } from 'runtime:test';
 import { openBrain } from './index.js';
-import { graph, serialize } from './graph.js';
+import {
+  graph, serialize,
+  TRANSFER, PROPERTY_CHANGE, HOLDING, PLACEMENT, COMPARISON, ORDER, PROPERTY, KIND,
+} from './graph.js';
 import { loadWorldFile } from './world.js';
 
 // The conversation graph, built from the very basic inputs upward. Every case
@@ -66,18 +69,33 @@ test("a doing carries the part each thing played in it", async () => {
   const [doing] = held.actions;
   // The graph says the primitive, not the word. Giving is a transfer, and so
   // is putting; which word a language spells it with is that language's.
-  assert(serialize().includes('transfer['), serialize());
+  assertEquals(doing.of, TRANSFER, 'the brain\'s own primitive, not the world\'s word');
+  assert(serialize().includes('transfer(n1, from:'), serialize());
   assertEquals(doing.said, 282, 'what was said is kept beside it');
-  assertEquals(doing.roles[world.anchors.agent], 'n1');
-  assertEquals(doing.roles[world.anchors.destination], 'n2');
+  // A transfer carries the brain's own parts: whoever did it stands first,
+  // then where it came from and where it went. What moved is what it carries.
+  assertEquals(doing.parts.doer, 'n1');
+  assertEquals(doing.parts.to, 'n2');
+  assertEquals(doing.parts.from, null, 'nothing said where it came from');
+  assertEquals(doing.properties.entity, 79);
   assertEquals(doing.properties.count, 2);
 });
 
 test("two words for one primitive come out as one primitive", async () => {
   const giving = await said('john gives 2 apples to sam');
   const putting = await said('john put 2 apples into a basket');
-  assertEquals(giving.actions[0].of, putting.actions[0].of);
+  assertEquals(giving.actions[0].of, TRANSFER);
+  assertEquals(putting.actions[0].of, TRANSFER);
   assert(giving.actions[0].said !== putting.actions[0].said, 'and what was said differs');
+});
+
+test("a primitive is known by its shape, not by a list of words", async () => {
+  // Something comes to be with someone: either end may be open, and it is the
+  // ends that say so.
+  const held = await said('john gives 2 apples to sam');
+  assertEquals(held.actions[0].of, TRANSFER);
+  // Holding is holding however it was said.
+  assertEquals(held.facts[0].of, HOLDING);
 });
 
 test("what governs is held apart, and its condition is never taken in", async () => {
@@ -120,4 +138,45 @@ test("the graph says what is in it, under four headings, always", async () => {
   assert(shown.includes('rules:'), shown);
   assert(shown.includes('n1  john  type: entity -> thing'), shown);
   assert(shown.includes('{count: 5}'), shown);
+});
+
+// The primitives. Each is recognised by its shape or by what the world
+// declares — never by a word, and never by a list of verbs.
+
+test("a doing that moves something is a transfer; one that takes a value is not", async () => {
+  const moved = await said('john gives 2 apples to sam');
+  assertEquals(moved.actions[0].of, TRANSFER, 'it went somewhere');
+
+  const took = await said('the sky turned red');
+  assertEquals(took.actions[0].of, PROPERTY_CHANGE, 'nothing moved; a value was taken');
+  assertEquals(took.actions[0].parts.thing, 'n1');
+  assertEquals(took.actions[0].parts.took, 202);
+});
+
+test("one relation says both a property and a kind, told apart by the other side", async () => {
+  const blue = await said('the sky is blue');
+  assertEquals(blue.facts[0].of, PROPERTY);
+  assertEquals(blue.facts[0].said, 294);
+
+  const animal = await said('all cats are animals');
+  assertEquals(animal.facts[0].of, KIND);
+  assertEquals(animal.facts[0].said, 294, 'the same relation was said in both');
+});
+
+test("standings the world declares: holding, placement, order, comparison", async () => {
+  assertEquals((await said('john has 5 apples')).facts[0].of, HOLDING);
+  assertEquals((await said('the red box is inside the blue box')).facts[0].of, PLACEMENT);
+  assertEquals((await said('sara arrived before john')).facts[0].of, ORDER);
+
+  const taller = await said('john is taller than sam');
+  assertEquals(taller.facts[0].of, COMPARISON);
+  // A comparison is made on something; without the scale `taller` is a word.
+  assertEquals(taller.facts[0].properties.on, 199);
+});
+
+test("a standing the brain has no primitive for keeps the world's own concept", async () => {
+  const held = await said('tom is the father of sam');
+  assertEquals(held.facts[0].of, 503, 'being a father is not one of the primitives');
+  // And a father is what stands between two people, not a third beside them.
+  assertEquals(held.nodes.map((one) => one.said), ['tom', 'sam']);
 });

@@ -101,6 +101,9 @@ export function fromUnderstood(roots, world, focus, marking) {
     // if the signal spoke of it in particular. A kind spoken of as a kind is
     // not a thing this conversation brought in.
     if (!call && !(world && world.isIndividual(id)) && !particular.has(id)) continue;
+    // `the father of sam` says which one, but a father is what stands between
+    // two people, not a third person beside them.
+    if (!call && world && world.anchors.relation != null && world.isA(id, world.anchors.relation)) continue;
     const term = world && world.term(id);
     standing.set(
       id,
@@ -126,11 +129,17 @@ export function fromUnderstood(roots, world, focus, marking) {
     const key = triple(reach(subject), relation, reach(object));
     if (said.has(key) || governed.has(triple(subject, relation, object))) return;
     said.add(key);
+    const primitive = standingOf(relation, reach(object), world);
     put('facts', {
-      of: primitiveOf(relation, world),
+      of: primitive ?? relation,
       said: relation,
       parts: [reach(subject), reach(object)],
-      properties: quantity == null ? {} : { count: quantity },
+      properties: {
+        ...(quantity == null ? {} : { count: quantity }),
+        // A comparison is made on something. Which scale is the world's to
+        // say, and without it `taller` is only a word.
+        ...(primitive === COMPARISON ? { on: scaleOf(relation, world) } : {}),
+      },
       denied: denied === true,
     });
   };
@@ -152,11 +161,18 @@ export function fromUnderstood(roots, world, focus, marking) {
       roles[part.role] = reach(part.of);
       if (part.amount != null) properties.count = part.amount;
     }
+    const primitive = doing(roles, world);
     put('actions', {
-      of: primitiveOf(action, world),
+      of: primitive ?? action,
       said: action,
-      roles,
-      properties,
+      // A primitive of the brain's own carries the brain's own parts. A doing
+      // it does not yet know keeps the roles the world gave it, rather than
+      // being forced into a shape that is not its.
+      ...(primitive === TRANSFER
+        ? transferring(roles, properties, world)
+        : primitive === PROPERTY_CHANGE
+          ? changing(roles, properties, world)
+          : { roles, properties }),
       denied: not === true,
       when: when ?? null,
     });
@@ -176,24 +192,105 @@ export function fromUnderstood(roots, world, focus, marking) {
   return graph();
 }
 
-// The primitive a concept falls under. `give` and `put` are both a transfer;
-// which word a language spells them with is that language's, and the graph
-// says the primitive. Which concepts are primitive is the world's to declare,
-// not this module's to know.
-function primitiveOf(concept, world) {
-  const set = world && world.anchors ? world.anchors.primitive : null;
-  if (set == null || concept == null) return concept;
-  // Declared, not inferred. Being primitive is said of a concept directly, and
-  // it is said with a link of its own rather than by putting the concept under
-  // a parent: a parent would be inherited, and every kind of a transfer would
-  // then call itself one.
-  const declared = (id) => {
-    const term = world.term(id);
-    return !!term && (term.links || []).some((link) => !link.not && link.rel === set);
-  };
-  for (const kind of world.kinds(concept) || []) if (declared(kind)) return kind;
-  return concept;
+// The primitives the brain knows.
+//
+// A primitive does not change with the language and does not change with the
+// world, so it is the brain's own. It is not a term and not a file: `give`,
+// `put`, `send` and `hand over` are one doing, and which word says it is the
+// language's business, while which verbs a world happens to have is the
+// world's.
+//
+// What the world does supply is which of its terms realizes a category the
+// brain owns, and it says so through its anchors — the same bridge the brain
+// already crosses for agent, target, source and destination.
+export const TRANSFER = 'transfer';
+export const PROPERTY_CHANGE = 'property-change';
+export const HOLDING = 'holding';
+export const PLACEMENT = 'placement';
+export const COMPARISON = 'comparison';
+export const ORDER = 'order';
+export const PROPERTY = 'property';
+export const KIND = 'kind';
+
+// Which doing this is.
+//
+// A transfer is a thing coming to be, or ceasing to be, somewhere or with
+// someone. Either end may be open — losing has no destination, building has no
+// source — so it is the ends that say so, never the verb.
+//
+// A property change is a value taken and nothing moved. That is the whole
+// difference between the two, and it is visible in the parts alone: one has
+// somewhere it went, the other has only what it became.
+function doing(roles, world) {
+  const anchors = (world && world.anchors) || {};
+  const played = (role) => role != null && Object.hasOwn(roles, role);
+  if (played(anchors.source) || played(anchors.destination)) return TRANSFER;
+  if (played(anchors.target) && isProperty(roles[anchors.target], world)) return PROPERTY_CHANGE;
+  return null;
 }
+
+// What a transfer is made of: whoever did it, where it came from, where it
+// went, and what moved. Either end may be open and says so with nothing in it.
+// These are the brain's own parts. Which of its terms plays each one is the
+// world's to say, through the anchors it already carries.
+function transferring(roles, properties, world) {
+  const anchors = (world && world.anchors) || {};
+  const at = (role) => (role != null && Object.hasOwn(roles, role) ? roles[role] : null);
+  return {
+    parts: { doer: at(anchors.agent), from: at(anchors.source), to: at(anchors.destination) },
+    properties: { entity: at(anchors.target), ...properties },
+  };
+}
+
+// What a property change is made of: the thing, and the value it took.
+function changing(roles, properties, world) {
+  const anchors = (world && world.anchors) || {};
+  const at = (role) => (role != null && Object.hasOwn(roles, role) ? roles[role] : null);
+  return { parts: { thing: at(anchors.agent), took: at(anchors.target) }, properties };
+}
+
+// Which standing this is.
+//
+// The brain owns the categories; which of its terms realizes each one is the
+// world's, and it says so with the links it already carries. Nothing here
+// reads a word: a relation is a holding because the world put it under
+// holding, a comparison because it compares on a scale, an ordering because it
+// is a kind of order.
+//
+// The last two are told apart by what is on the other side rather than by the
+// relation, because one relation says both: the sky *is* blue is a property,
+// and a cat *is* an animal is a kind.
+function standingOf(relation, object, world) {
+  if (relation == null || !world) return null;
+  const anchors = world.anchors || {};
+  const realizes = (anchor) =>
+    anchor != null &&
+    (relation === anchor || world.isA(relation, anchor) || world.subrelationOf(relation, anchor));
+
+  if (realizes(anchors.holding)) return HOLDING;
+  if (realizes(anchors.placement)) return PLACEMENT;
+  if (anchors.compares != null && (world.related(relation, anchors.compares) || []).length) return COMPARISON;
+  if (realizes(anchors.order)) return ORDER;
+  if (isProperty(object, world)) return PROPERTY;
+  if (classifies(relation, world) && object != null && world.isA(object, anchors.thing)) return KIND;
+  return null;
+}
+
+// What a comparing relation compares on.
+const scaleOf = (relation, world) => {
+  const on = world.related(relation, world.anchors.compares) || [];
+  return on.length ? on[0] : null;
+};
+
+const isProperty = (id, world) =>
+  id != null && world && world.anchors.property != null && world.isA(id, world.anchors.property);
+
+const classifies = (relation, world) => {
+  const anchors = world.anchors || {};
+  return [anchors.subtype, anchors.instance, anchors.predication, world.baseRelation]
+    .filter((one) => one != null)
+    .some((one) => relation === one || world.subrelationOf(relation, one));
+};
 
 // What the world holds a thing under. Nothing said of it beyond its existing
 // leaves it a thing and no more.
@@ -232,11 +329,14 @@ function determined(roots, marking) {
       if (one.kind === 'thing') {
         const thought = (one.branch || []).find((branch) => branch.kind === 'thought');
         const said = (thought && thought.state && thought.state.thought) || {};
+        // What the brain took to be a thing at all. `the red box` speaks of a
+        // box; red is how it is, not what it is, so a determiner reaches past
+        // it to the thing.
         const entity = (one.branch || []).find((branch) => branch.kind === 'entity');
         spoken.push({
           marks: said.marks ?? null,
           determiner: [].concat(said.functions || []).includes('determiner'),
-          concept: said.concept ?? (entity && entity.state ? entity.state.concept : null),
+          concept: entity && entity.state ? entity.state.concept : null,
         });
       }
       walk(one.branch);
@@ -293,8 +393,15 @@ export function serialize(world = against) {
     // was given. The id is already said beside it, so it is not said twice.
     return name ? `${name.split('#')[0]}[${id}]` : String(id);
   };
+  // A property whose value is a thing is said as one; a count is a number and
+  // nothing goes looking for a word for it. Which is which is named here
+  // rather than guessed at, because both are integers and they do not look
+  // any different.
+  const CONCEPTS = new Set(['entity', 'on']);
   const properties = (of) => {
-    const said = Object.entries(of || {}).map(([name, value]) => `${name}: ${value}`);
+    const said = Object.entries(of || {})
+      .filter(([, value]) => value != null)
+      .map(([name, value]) => `${name}: ${CONCEPTS.has(name) ? spell(value) : value}`);
     return said.length ? `  {${said.join(', ')}}` : '';
   };
   // The part a thing played in a doing is a role, not something said. It is
@@ -325,10 +432,19 @@ export function serialize(world = against) {
   section(
     'actions',
     held.actions.map((one) => {
-      const roles = Object.entries(one.roles)
-        .map(([role, value]) => `${part(Number(role))}: ${spell(value)}`)
-        .join(', ');
-      return `${one.id}  ${one.denied ? 'not ' : ''}${spell(one.of)}(${roles})${properties(one.properties)}`;
+      // A primitive says its parts by name and in its own order; whoever did
+      // it stands first, because a doing is somebody's before it is anything
+      // else. A doing the brain does not yet know says the roles it was given.
+      const said = one.parts
+        ? Object.entries(one.parts)
+            // Whoever or whatever the doing is of stands first and unnamed: a
+            // doing is something's before it is anything else.
+            .map(([name, value], at) => (at === 0 ? spell(value) : `${name}: ${spell(value)}`))
+            .join(', ')
+        : Object.entries(one.roles)
+            .map(([role, value]) => `${part(Number(role))}: ${spell(value)}`)
+            .join(', ');
+      return `${one.id}  ${one.denied ? 'not ' : ''}${spell(one.of)}(${said})${properties(one.properties)}`;
     }),
   );
   // A claim inside an instruction, said the way a fact is said.
