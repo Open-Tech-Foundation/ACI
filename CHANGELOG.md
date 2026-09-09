@@ -6,6 +6,16 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **`work` can be done, not only had.** `kumar works for alpha` is understood,
+  and `kumar works for chennai?` is not answered from `alpha is in chennai` —
+  two stored facts, and nothing joins them.
+- **`first` asks for the far end of an ordering**, the way `biggest` asks for
+  the far end of a scale. `arrive` is a word the brain knows.
+- **A doing is not one of the things a claim holds between.** `sara arrived
+  before john` was writing `arrive -> before -> john` onto the shared `arrive`
+  concept; it now relates sara and john and leaves the concept alone. A side
+  that is only a doing still stands — walking is faster than running.
+
 - **A relation may be two relations followed one after the other.** The world
   can now say that one relation followed by another gives a third, and the walk
   derives the fact when asked rather than writing it down. `father-of-father`

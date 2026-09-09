@@ -511,7 +511,12 @@ function farEnd(term, world) {
   if (a.compares == null || !functionsOf(term).includes('extreme')) return undefined;
   const state = conceptOf(term);
   if (state == null) return undefined;
-  const comparison = world.members(state, a.compares)[0];
+  // The ordering the extreme is of: the one a state declares it compares by,
+  // or the word itself where it already names an ordering. `first` is the far
+  // end of `before` the way `biggest` is the far end of size.
+  const comparison =
+    world.members(state, a.compares)[0] ??
+    (a.relation != null && world.isA(state, a.relation) ? state : null);
   if (comparison == null) return undefined;
   // Read through any converse the world declares, so a thing said to be older
   // than another stands in the ordering of youth as well — one fact, either
@@ -2353,6 +2358,18 @@ function judge(roots, world, mood, langs, sent) {
       lefts = rights.slice(0, 1);
       rights = rights.slice(1);
     }
+    // Where a side has more than one word, a doing among them is how the fact
+    // was said, not one of the things it holds between: `sara arrived before
+    // john` relates sara and john, and the arriving is not a third party to
+    // it. A side that is only a doing still stands — walking is faster than
+    // running.
+    const notDoing = (list) => {
+      if (list.length < 2) return list;
+      const things = list.filter((n) => !reaches(n, a.action, world));
+      return things.length > 0 ? things : list;
+    };
+    lefts = notDoing(lefts);
+    rights = notDoing(rights);
     // A plural pointer stands for every topic in focus, one apiece.
     lefts = lefts.flatMap((n) => membersFor(n, world, sent));
     rights = rights.flatMap((n) => membersFor(n, world, sent));
@@ -3338,6 +3355,9 @@ function namedRelation(said, world, claims, asking) {
     // A word that names a kind of thing as well as a relation is the thing,
     // unless `of` after it says which of the two is meant: `two sisters`
     // counts sisters, `the sister of maya` names sisterhood.
+    // A word marking an extreme names an ordering but never joins on it: it
+    // asks for the far end of that ordering instead.
+    if (functionsOf(said[i]).includes('extreme')) continue;
     const kindToo = a.thing != null && world.isA(conceptOf(said[i]), a.thing);
     const ofAfter =
       said[i + 1] != null &&

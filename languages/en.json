@@ -5173,7 +5173,10 @@
       "concept": 256
     },
     "work": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "verb"
+      ],
       "meaning": "work",
       "concept": 257
     },
@@ -17846,6 +17849,34 @@
       ],
       "meaning": "west",
       "concept": 2952
+    },
+    "works": {
+      "pos": "verb",
+      "meaning": "works",
+      "concept": 257,
+      "person": "third",
+      "number": "singular"
+    },
+    "arrive": {
+      "pos": "verb",
+      "meaning": "arrive",
+      "concept": 2961
+    },
+    "arrives": {
+      "pos": "verb",
+      "meaning": "arrives",
+      "concept": 2961,
+      "person": "third",
+      "number": "singular"
+    },
+    "first": {
+      "pos": [
+        "adjective",
+        "noun"
+      ],
+      "meaning": "first",
+      "concept": 2821,
+      "functions": "extreme"
     }
   },
   "unknown": {
