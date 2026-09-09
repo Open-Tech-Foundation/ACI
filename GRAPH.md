@@ -79,6 +79,7 @@ says so with the links it already carries.
 | `order` | a kind of the world's `order` | proposed |
 | `property` | the other side is a property | proposed |
 | `kind` | a classifying relation with a thing on the other side | proposed |
+| `measure` | so much of a quantity, in a unit; held on the thing | proposed |
 
 Proposed means built and working, not settled. Each still has to be walked
 through on its own inputs before it counts.
@@ -184,6 +185,30 @@ of the same kind, described otherwise, that leaves no reading but two.
     nodes    n1  box  type: box[993]  {colour: red[202]}
              n2  box  type: box[993]  {colour: blue[203]}
     facts    f1  placement(n1, n2)  {as: inside[580]}
+
+**A thing has physical quantities.** It weighs so much, stands so high, is so
+warm. Each is an amount in a unit, and it is held **on** the thing the way a
+colour is — how much of something a thing is, is its own. Which quantity a unit
+measures is the world's: a kilogram measures weight, a degree temperature.
+
+    > the box weighs 5 kilogram
+    nodes    n1  box  {weight: 5 kilogram[620]}
+
+**So much of something is not a kind of it.** `the room is 30 degree` had only
+the weakest claim a signal can make — being — to go on, so the room came out as
+a degree, and that was written into the world. A unit with a number beside it
+names a stronger claim than being. Only the weakest gives way: a signal that
+already said weighing or reading meant something more particular.
+
+**A comparison is made on a quantity, not on a state of one, and it says which
+way it runs.** `taller` compares on how tall a thing is, and how tall a thing
+is, is its *height* — so a thing said to be two metres and a thing said to be
+taller speak of one quantity and can be held together. Told only what a
+comparison is made on, nobody can say which is the taller, so the greater side
+is named.
+
+    > tom is taller than sam    comparison(n1, n2)  {on: height, more: n1}
+    > tom is shorter than sam   comparison(n1, n2)  {on: height, more: n2}
 
 **Being the doer of a doing is reason enough to be introduced.** A thing is
 introduced where the signal gives it something to be. Standing in a claim

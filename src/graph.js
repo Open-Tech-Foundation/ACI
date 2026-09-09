@@ -168,6 +168,17 @@ export function fromUnderstood(roots, world, focus, marking) {
     if (said.has(key) || governed.has(triple(subject, relation, object))) return;
     said.add(key);
     const primitive = standingOf(relation, reach(object), world);
+    // How much of something a thing is, is the thing's own — it belongs on it
+    // the way a colour does, not between it and the unit. Which quantity it is
+    // of, the unit says.
+    if (primitive === MEASURE && quantity != null) {
+      const one = held.nodes.find((node) => node.id === reach(subject));
+      const quantityOf = (world.related(object, world.anchors.measure) || [])[0];
+      if (one && quantityOf != null) {
+        one.measures = { ...(one.measures || {}), [quantityOf]: { amount: quantity, unit: object } };
+        return;
+      }
+    }
     // What is held is a thing of a kind, not a party to the fact: it is said
     // by the kind the world holds it under, the same way a doing says what
     // moved. Whoever holds it is a party, and that is a node.
@@ -184,7 +195,9 @@ export function fromUnderstood(roots, world, focus, marking) {
         ...(quantity == null ? {} : { count: quantity }),
         // A comparison is made on something. Which scale is the world's to
         // say, and without it `taller` is only a word.
-        ...(primitive === COMPARISON ? { on: scaleOf(relation, world) } : {}),
+        ...(primitive === COMPARISON
+          ? { on: scaleOf(relation, world), more: greater(relation, world, reach(subject), reach(object)) }
+          : {}),
         // Which placement it is. Inside is not beside and neither is under, so
         // the primitive says a thing stands somewhere and the world says where.
         ...(primitive === PLACEMENT ? { as: relation } : {}),
@@ -201,12 +214,24 @@ export function fromUnderstood(roots, world, focus, marking) {
   // anything moves again.
   //
   // What was said carries a claim beside it. What was worked out carries none.
+  // A claim names the kinds; what was written down names the things made of
+  // them. Either side may be one or the other, so both are matched the same
+  // way: the thing itself, or the kind it was made of.
+  const same = (link, there, said) => {
+    if (there === said) return true;
+    // What was written down may name the thing the signal made of a kind,
+    // where the claim names the kind. A record says which it made.
+    if (link.state.made && link.state.made.id === there && link.state.made.of === said) return true;
+    const one = made.get(there);
+    if (one && (one.state.of === said || one.state.id === said)) return true;
+    return counting.get(there)?.of === said;
+  };
   const alongside = (claim) =>
     links.find(
       (link) =>
-        link.state.subject === claim.subject &&
+        same(link, link.state.subject, claim.subject) &&
         link.state.relation === claim.relation &&
-        (link.state.object === claim.object || counting.get(link.state.object)?.of === claim.object),
+        same(link, link.state.object, claim.object),
     ) || null;
   for (const claim of claims) {
     const { subject, relation, object, negated } = claim.state;
@@ -308,6 +333,7 @@ export const COMPARISON = 'comparison';
 export const ORDER = 'order';
 export const PROPERTY = 'property';
 export const KIND = 'kind';
+export const MEASURE = 'measure';
 
 // Which doing this is.
 //
@@ -364,6 +390,10 @@ function standingOf(relation, object, world) {
     anchor != null &&
     (relation === anchor || world.isA(relation, anchor) || world.subrelationOf(relation, anchor));
 
+  // So much of something, in a unit. What the unit measures is the world's to
+  // say — a kilogram measures weight, a metre size — so the brain knows only
+  // that a thing has physical quantities and that a unit names which.
+  if (realizes(anchors.measure)) return MEASURE;
   if (realizes(anchors.holding)) return HOLDING;
   if (realizes(anchors.placement)) return PLACEMENT;
   if (anchors.compares != null && (world.related(relation, anchors.compares) || []).length) return COMPARISON;
@@ -373,10 +403,36 @@ function standingOf(relation, object, world) {
   return null;
 }
 
-// What a comparing relation compares on.
+// What a comparing relation compares on: the quantity, not the state of it.
+// `taller` compares on how tall a thing is, and how tall a thing is, is its
+// height — so a thing said to be two metres and a thing said to be taller are
+// speaking of one quantity and can be held together.
 const scaleOf = (relation, world) => {
-  const on = world.related(relation, world.anchors.compares) || [];
-  return on.length ? on[0] : null;
+  const on = (world.related(relation, world.anchors.compares) || [])[0];
+  return on == null ? null : quantityOn(on, world) ?? on;
+};
+
+// Which of the two has more of the quantity. A comparison runs one way or the
+// other, and saying only what it is made on leaves it unanswerable: told that
+// two things compare on height, nobody can say which is the taller.
+//
+// The world says which way — a comparison is a kind of more, or a kind of
+// less — and one read from either end is one fact, so the far side has more
+// where the near side has less.
+function greater(relation, world, near, far) {
+  const anchors = world.anchors || {};
+  if (anchors.more != null && world.subrelationOf(relation, anchors.more)) return near;
+  if (anchors.less != null && world.subrelationOf(relation, anchors.less)) return far;
+  return null;
+}
+
+// The quantity a state is a state of. The world says which; where it says
+// nothing, the state is all there is.
+const quantityOn = (state, world) => {
+  const of = world.anchors && world.anchors.measure != null
+    ? world.related(state, world.anchors.measure) || []
+    : [];
+  return of.length ? of[0] : null;
 };
 
 // How something is, and not how many of it there are.
@@ -505,6 +561,10 @@ function determined(roots, marking, world) {
 // it is a quality, that is what it is called.
 function qualityKind(quality, world) {
   const property = world && world.anchors ? world.anchors.property : null;
+  // A quality that is a state of some quantity is filed under that quantity:
+  // tall is how high a thing is, so it belongs with the height.
+  const on = world ? quantityOn(quality, world) : null;
+  if (on != null) return world.term(on)?.name ?? String(on);
   for (const kind of (world && world.kinds(quality)) || []) {
     if (kind !== quality && kind !== property) return world.term(kind)?.name ?? String(kind);
   }
@@ -581,7 +641,12 @@ export function serialize(world = against) {
       (one) =>
         `${one.id}  ${one.said.split('#')[0]}  type: ${type(known(one, world))}` +
         (one.count != null ? `  × ${one.count}` : '') +
-        (one.how ? `  {${Object.entries(one.how).map(([name, value]) => `${name}: ${spell(value)}`).join(', ')}}` : ''),
+        (one.how ? `  {${Object.entries(one.how).map(([name, value]) => `${name}: ${spell(value)}`).join(', ')}}` : '') +
+        (one.measures
+          ? `  {${Object.entries(one.measures)
+              .map(([of, held]) => `${part(Number(of))}: ${held.amount} ${spell(held.unit)}`)
+              .join(', ')}}`
+          : ''),
     ),
   );
   section(

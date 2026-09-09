@@ -191,8 +191,13 @@ test("standings the world declares: holding, placement, order, comparison", asyn
 
   const taller = await said('john is taller than sam');
   assertEquals(taller.facts[0].of, COMPARISON);
-  // A comparison is made on something; without the scale `taller` is a word.
-  assertEquals(taller.facts[0].properties.on, 199);
+  // A comparison is made on a quantity, not on a state of one: `taller`
+  // compares on how tall a thing is, and how tall a thing is, is its height.
+  // So a thing said to be two metres and a thing said to be taller are
+  // speaking of one quantity.
+  assertEquals(taller.facts[0].properties.on, 2970);
+  // And which way it runs, or nobody can say which is the taller.
+  assertEquals(taller.facts[0].properties.more, 'n1');
 });
 
 test("a standing the brain has no primitive for keeps the world's own concept", async () => {
@@ -200,4 +205,32 @@ test("a standing the brain has no primitive for keeps the world's own concept", 
   assertEquals(held.facts[0].of, 503, 'being a father is not one of the primitives');
   // And a father is what stands between two people, not a third beside them.
   assertEquals(held.nodes.map((one) => one.said), ['tom', 'sam']);
+});
+
+// Physical quantities. A thing has extent — it weighs so much, stands so
+// high, is so warm — and each is an amount in a unit, held on the thing.
+
+test("so much of something is not a kind of it", async () => {
+  const held = await said('the room is 30 degree');
+  // The weakest claim a signal can make is being, and it was all the brain had
+  // to go on, so the room came out as a degree. A unit with a number beside it
+  // names a stronger claim than being.
+  assertEquals(held.facts, []);
+  const [room] = held.nodes;
+  assertEquals(room.measures[186].amount, 30);
+  assertEquals(room.measures[186].unit, 623);
+});
+
+test("a measure belongs on the thing, and the unit says of what", async () => {
+  const weighed = await said('the box weighs 5 kilogram');
+  // A kilogram measures weight, so weight is what was said of the box.
+  assertEquals(weighed.nodes[0].measures[184].amount, 5);
+  assertEquals(weighed.facts, [], 'how much a thing is, is its own');
+});
+
+test("a comparison is made on a quantity, and says which way it runs", async () => {
+  const held = await said('tom is shorter than sam');
+  assertEquals(held.facts[0].of, COMPARISON);
+  assertEquals(held.facts[0].properties.on, 2970, 'height, not shortness');
+  assertEquals(held.facts[0].properties.more, 'n2', 'sam is the taller');
 });

@@ -488,10 +488,49 @@ function think(roots, langs, at, world) {
     const state = ways.length > 1 ? { thought: ways[0], ways } : { thought: ways[0] };
     return withBranch(n, [...n.branch, node('thought', 'understood', [], state)]);
   });
-  return borrowing(
-    intraSignal(compared(reshaped(thought, world, langs), world), world, langs, at),
+  return measuring(
+    borrowing(
+      intraSignal(compared(reshaped(thought, world, langs), world), world, langs, at),
+      world,
+    ),
     world,
   );
+}
+
+// So much of something is not a kind of it.
+//
+// `the room is 30 degree` says how warm the room is, and the weakest claim a
+// signal can make — being — was all the brain had to go on, so it took the
+// room to be a degree. A unit with a number beside it names a stronger claim
+// than being: it says the thing is measured, and what the unit measures is
+// what it is measured on.
+//
+// Only the weakest claim gives way. A signal that already named what it meant
+// — weighing, reading — said something more particular than measuring, and
+// that stands.
+function measuring(roots, world) {
+  if (!world) return roots;
+  const a = world.anchors || {};
+  if (a.unit == null || a.measure == null) return roots;
+  const measured = roots.some(
+    (n, at) =>
+      n.state.exists &&
+      conceptOf(n) != null &&
+      world.isA(conceptOf(n), a.unit) &&
+      numberBeside(roots, at, world),
+  );
+  if (!measured) return roots;
+  return roots.map((n) => {
+    if (conceptOf(n) !== world.baseRelation) return n;
+    return withBranch(
+      n,
+      (n.branch || []).map((b) =>
+        b.kind === 'thought'
+          ? withBranch(b, b.branch, { ...b.state, thought: { ...b.state.thought, concept: a.measure } })
+          : b,
+      ),
+    );
+  });
 }
 
 // What a clause leaves unsaid, taken from what stands beside it.
