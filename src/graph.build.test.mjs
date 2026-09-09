@@ -310,3 +310,19 @@ test("when a doing happened is held as a time, not as what it happened to", asyn
   assertEquals(held.actions[1].time, { amount: 9, unit: 220 });
   assertEquals(Object.values(held.actions[0].roles).length, 1, 'only the one who arrived');
 });
+
+test("whose a thing is stands in the conversation, and they stand first", async () => {
+  await forget();
+  await brain('my house is red', { from: 26 });
+  const held = graph();
+  // The brain was already recording whose the house was; nothing held them,
+  // so `my` looked dropped when it was only unread.
+  assertEquals(held.nodes.length, 2);
+  assertEquals(held.nodes[1].said.split('#')[0], 'house');
+  // Told only that somebody is speaking, the brain holds them as a thing and
+  // no more: what the world calls the term it was handed is not a claim about
+  // who they are.
+  assertEquals(held.nodes[0].of, 2);
+  const holding = held.facts.find((one) => one.of === HOLDING);
+  assertEquals(holding.parts, ['n1', 'n2'], 'whose it is, and what is theirs');
+});

@@ -121,6 +121,36 @@ export function fromUnderstood(roots, world, focus, marking) {
     if (classifies(one.state.relation, world)) particular.delete(one.state.object);
   }
 
+  // Whose a thing is. The runtime says who is speaking and the brain records
+  // whose the thing is; without a node for them, `my house` said a house was
+  // red and nothing about whose it was.
+  //
+  // Nothing is assumed about them. They are a thing in this conversation and
+  // no more than that — what the runtime named is what they are called, and
+  // the brain never decides who it is talking to.
+  const owned = [];
+  for (const call of calls) {
+    const whose = call.state.whose;
+    if (whose == null || call.state.id == null) continue;
+    owned.push([whose, call.state.id]);
+  }
+  // Whoever a thing belongs to was spoken of before it — `my house` says whose
+  // before it says what — so they stand first.
+  for (const [whose] of owned) {
+    if (!standing.has(whose)) {
+      const term = world && world.term(whose);
+      standing.set(
+        whose,
+        put('nodes', {
+          said: term ? term.name : String(whose),
+          term: whose,
+          made: world && world.anchors ? world.anchors.thing : null,
+          bare: true,
+        }),
+      );
+    }
+  }
+
   // Things in the order the signal reached them, not in the order it happened
   // to introduce them. A thing an earlier signal brought in is mentioned
   // rather than called, and it is no less first for that.
@@ -297,6 +327,21 @@ export function fromUnderstood(roots, world, focus, marking) {
           : { roles, properties }),
       denied: not === true,
       when: when ?? null,
+    });
+  }
+
+  // Whose a thing is, said as the holding it is.
+  for (const [whose, of] of owned) {
+    const key = triple(reach(whose), world.anchors.holding, reach(of));
+    if (said.has(key)) continue;
+    said.add(key);
+    put('facts', {
+      key,
+      of: HOLDING,
+      said: world.anchors.holding,
+      parts: [reach(whose), reach(of)],
+      properties: {},
+      denied: false,
     });
   }
 
@@ -497,6 +542,10 @@ const classifies = (relation, world) => {
 // the world has yet to hear of it.
 function known(one, world) {
   if (!world) return one.made ?? null;
+  // Told only that somebody is speaking, the brain holds them as a thing and
+  // no more. What the world happens to call the term it was handed is not a
+  // claim about who they are.
+  if (one.bare) return one.made ?? (world.anchors ? world.anchors.thing : null);
   // A thing spoken of by its kind is that kind. Climbing a step would answer
   // with what it is a kind of — a box would come back a container — and throw
   // away the very thing that was said.

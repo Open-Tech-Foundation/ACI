@@ -342,6 +342,23 @@ Read as a relation it produced four facts nobody said — `more(plus, flower)`,
 `more(two, pond)` — and the brain reported *I understand* and *learned* while
 writing them, then answered a later question confidently with the old count.
 
+**Whose a thing is stands in the conversation.** The runtime says who is
+speaking and the brain records whose a thing is; with nobody holding them,
+`my house is red` said a house was red and nothing about whose it was — the
+word was recorded and never read.
+
+    > my house is red
+    nodes    n1  human  type: thing[2]
+             n2  house  type: house[50]
+    facts    f1  property(n2, red[202])
+             f2  holding(n1, n2)
+
+Whoever a thing belongs to was spoken of before it, so they stand first. And
+nothing is assumed about them: told only that somebody is speaking, the brain
+holds them as a thing and no more. What the world happens to call the term the
+runtime handed in is not a claim about who they are, and told nothing, the
+brain holds nobody at all.
+
 **A hole stands wherever a thing may stand.** Asking is saying with a hole in
 it, and the hole falls where the thing it asks after would have stood. So
 anything that stands for something can be a hole instead, and no language has
