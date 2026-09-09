@@ -300,3 +300,13 @@ test("a quantity taken from another thing is between the two, not on either", as
   const of = (who) => far.get(held.nodes.find((one) => one.said === who).id);
   assertEquals(of('bob') - of('alice'), 3);
 });
+
+test("when a doing happened is held as a time, not as what it happened to", async () => {
+  const held = await said('alice arrived at 8 hour', 'bob arrived at 9 hour');
+  // Arriving at eight hours is not arriving at an hour the way one arrives at
+  // a station. The brain reads no word for it: the world says an hour measures
+  // time, and that is the whole of how it knows.
+  assertEquals(held.actions[0].time, { amount: 8, unit: 220 });
+  assertEquals(held.actions[1].time, { amount: 9, unit: 220 });
+  assertEquals(Object.values(held.actions[0].roles).length, 1, 'only the one who arrived');
+});

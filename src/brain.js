@@ -1419,6 +1419,10 @@ function contextBefore(wanted, roots, at, world) {
   return kinds.some((kind) => {
     const rest = roots.slice(at + 1);
     if (kind === 'denial') return rest.some(negatesOn);
+    // A unit standing after it. Which reading of a word is meant may turn on
+    // one: a clock that reads ten hours is measuring, where somebody who reads
+    // is doing something.
+    if (kind === 'unit') return rest.some((n) => contextKind(n, 'unit', world));
     if (kind !== 'proposition' || !world) return false;
     const a = world.anchors || {};
     const things = rest.filter((n) => {
@@ -1446,6 +1450,13 @@ function contextKind(n, kind, world) {
   const thought = thoughtOf(n);
   if (kind === 'pointer') return thought && thought.marks != null;
   if (kind === 'determiner') return functionsOf(n).includes('determiner');
+  // A word standing for a unit. Which reading of a word is meant may turn on
+  // one standing beside it: a clock that reads ten hours is measuring, where
+  // somebody who reads is doing something.
+  if (kind === 'unit') {
+    const a = world ? world.anchors || {} : {};
+    return world != null && a.unit != null && conceptOf(n) != null && world.isA(conceptOf(n), a.unit);
+  }
   if (kind !== 'predicate' || !world) return false;
   const concept = conceptOf(n);
   const a = world.anchors || {};
@@ -3632,13 +3643,32 @@ function act(said, claims, world, side, sides, allocate) {
   // goes on the record as not having happened: agreement with a denial is a
   // denial of its own.
   const denied = said.some(negatesOn) || (a.neither != null && said.some((n, i) => i !== named && conceptOf(n) === a.neither));
+  // A measure of time standing with a doing is *when* it happened, never what
+  // it happened to. Arriving at eight hours is not arriving at an hour the way
+  // one arrives at a station, and holding it as a part left two arrivals with
+  // nothing to compare and no way to say which came first.
+  //
+  // The brain reads no word for it: the world says an hour measures time, and
+  // that is the whole of how it knows.
+  // Unless the doing is itself a measuring. A clock reading ten hours has the
+  // ten hours as what it read, not as when it read it.
+  const measuring = a.measure != null && (action === a.measure || world.isA(action, a.measure));
+  const timely = (part) =>
+    !measuring &&
+    a.unit != null &&
+    a.time != null &&
+    part.amount != null &&
+    world.isA(part.of, a.unit) &&
+    (world.related(part.of, a.measure) || []).includes(a.time);
+  const clock = parts.find(timely) || null;
   const event = node('event', `${world.term(action).name}#${happened}`, [], {
     id: happened,
     action,
     at,
     when: whenIn(said, world),
+    ...(clock ? { time: { amount: clock.amount, unit: clock.of } } : {}),
     not: denied,
-    parts,
+    parts: parts.filter((part) => !timely(part)),
   });
 
   // What the brain refuses did not happen, and it does not go on the record as

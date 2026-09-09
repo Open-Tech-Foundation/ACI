@@ -284,6 +284,9 @@ export function fromUnderstood(roots, world, focus, marking) {
     put('actions', {
       of: primitive ?? action,
       said: action,
+      // When it happened, where the signal said so. A doing stands on the same
+      // quantity as anything else that has a time, so two of them compare.
+      ...(event.state.time ? { time: event.state.time } : {}),
       // A primitive of the brain's own carries the brain's own parts. A doing
       // it does not yet know keeps the roles the world gave it, rather than
       // being forced into a shape that is not its.
@@ -802,7 +805,8 @@ export function serialize(world = against) {
         : Object.entries(one.roles)
             .map(([role, value]) => `${part(Number(role))}: ${spell(value)}`)
             .join(', ');
-      return `${one.id}  ${one.denied ? 'not ' : ''}${spell(one.of)}(${said})${properties(one.properties)}`;
+      const when = one.time ? `  at ${one.time.amount} ${spell(one.time.unit)}` : '';
+      return `${one.id}  ${one.denied ? 'not ' : ''}${spell(one.of)}(${said})${when}${properties(one.properties)}`;
     }),
   );
   // A claim inside an instruction, said the way a fact is said.

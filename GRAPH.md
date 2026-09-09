@@ -73,10 +73,9 @@ says so with the links it already carries.
 |---|---|---|
 | `transfer` | a doing with a source or a destination | **yes** |
 | `holding` | the world puts the relation under its `holding` | **yes** |
-| `property-change` | a doing whose target is a property, and nothing moved | proposed |
-| `placement` | a kind of the world's `placement`; which one comes with it | proposed |
-| `comparison` | the relation carries a `compares` link; the scale comes with it | proposed |
-| `order` | a kind of the world's `order` | proposed |
+| `property-change` | a doing whose target is a property, and nothing moved | **yes** |
+| `placement` | a kind of the world's `placement`; which one comes with it | **yes** |
+| `comparison` | the relation carries a `compares` link; the quantity comes with it | **yes** |
 | `property` | the other side is a property | proposed |
 | `kind` | a classifying relation with a thing on the other side | proposed |
 | `measure` | so much of a quantity, in a unit; held on the thing | proposed |
@@ -289,6 +288,17 @@ nothing.
 Where nothing has said a band, the brain says it does not know. Two metres is
 near for a city and far for a desk, so no band is true of both, and it does not
 pick one.
+
+**When a doing happened is held as a time.** Arriving at eight hours is not
+arriving at an hour the way one arrives at a station, and holding it as a part
+left two arrivals with nothing to compare and no way to say which came first.
+The brain reads no word for it: the world says an hour measures time.
+
+That is what makes **`order` not a primitive of its own — it is a comparison on
+time**. Told `sara arrived before john` the brain ranks; told `alice arrived at
+8 hour` it now has a value on the same quantity, so who came first, who came
+before whom, and how long between them are the arithmetic that already answers
+who is tallest and how much farther.
 
 **Being the doer of a doing is reason enough to be introduced.** A thing is
 introduced where the signal gives it something to be. Standing in a claim

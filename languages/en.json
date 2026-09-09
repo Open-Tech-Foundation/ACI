@@ -10105,18 +10105,21 @@
       {
         "pos": "verb",
         "meaning": "reads",
-        "concept": 273,
+        "concept": 617,
+        "names": false,
         "person": "third",
         "number": "singular",
-        "names": false
+        "select": {
+          "before": "unit"
+        }
       },
       {
         "pos": "verb",
         "meaning": "reads",
-        "concept": 617,
-        "names": false,
+        "concept": 273,
         "person": "third",
-        "number": "singular"
+        "number": "singular",
+        "names": false
       }
     ],
     "listens": {
