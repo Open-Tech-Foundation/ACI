@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Whoever did it is introduced.** A new name standing where a language puts
+  the one doing was never made, so an action was recorded with no doer and
+  `who gave a book?` answered nothing. A word standing on a part's side of a
+  doing is now as much a part as one a preposition points at.
+- **A recorded action can be pointed at.** `the giving` stands for the doing
+  that happened rather than for doing in general, so a fact about an action —
+  or a record standing for it — is an ordinary link with that action in a slot.
+
 - **A total is worked out when it is asked for.** Where nothing was measured of
   a thing itself, what it holds is measured instead — three crates of two
   kilograms each is six kilograms — and a fourth crate moves the answer without

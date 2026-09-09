@@ -823,7 +823,11 @@ function solve(roots, world, langs, mood, allocate) {
   // on a pointer that landed on nothing would still name something.
   const positioned = contextual(roots, world);
   const settled = calling(
-    standsIn(whose(settle(positioned, world), world, langs, mood, allocate), world),
+    stoodFor(
+      standsIn(whose(settle(positioned, world), world, langs, mood, allocate), world),
+      world,
+      langs,
+    ),
     world,
     langs,
     mood,
@@ -927,6 +931,24 @@ function unnamed(n) {
   return thoughtOf(n) && thoughtOf(n).concept != null ? standingFor(n, null) : n;
 }
 
+// `the giving` is not giving in general — it is the one that happened. A word
+// naming a doing, marked as the one meant, stands for the latest occurrence of
+// it, so that what is said next is said about that doing and not about the
+// kind. Nothing having happened, the word still names the kind.
+function stoodFor(roots, world, langs) {
+  if (!world) return roots;
+  const a = world.anchors || {};
+  if (a.action == null) return roots;
+  const side = markingSide(roots, langs);
+  return roots.map((n, i) => {
+    const kind = conceptOf(n);
+    if (kind == null || world.isIndividual(kind) || !world.isA(kind, a.action)) return n;
+    if (markOn(markerFor(roots, i, side, markOn)) !== 'known') return n;
+    const one = priorEvent(kind, world);
+    return one == null ? n : standingFor(n, one);
+  });
+}
+
 // A word that names a relation, with `of` and a thing after it, names whoever
 // stands in that relation to the thing: `the father of sam` is sam's father,
 // not fatherhood and not sam. Where the world holds exactly one such, that one
@@ -997,8 +1019,21 @@ function calling(roots, world, langs, mood, allocate) {
   const doing = roots.some((n) => world.isA(conceptOf(n), a.action));
   const side = markingSide(roots, langs);
   const whichOne = (i) => markOn(markerFor(roots, i, side, markOn));
+  // A doing puts its parts on either side of it as well as under a word for
+  // them: which side is which is the language's (`parts`), and a word standing
+  // on one of those sides is as much a part as one a preposition points at.
+  // Without this the one *doing* it is never introduced — every language marks
+  // whoever gave by where they stand, and only whoever it was given *to* by a
+  // word.
+  const parts = partsSide(roots, langs);
+  const acting = roots.findIndex((n) => world.isA(conceptOf(n), a.action));
+  const positioned = (i) =>
+    parts != null &&
+    acting >= 0 &&
+    i !== acting &&
+    (i < acting ? parts.before : parts.after) != null;
   const introduced = (i) =>
-    roleOn(markerFor(roots, i, side, roleOn)) != null &&
+    (roleOn(markerFor(roots, i, side, roleOn)) != null || positioned(i)) &&
     whichOne(i) !== 'new' &&
     whichOne(i) !== 'known';
   if (!joined && !doing) return roots;
