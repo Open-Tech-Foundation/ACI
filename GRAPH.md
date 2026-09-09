@@ -325,6 +325,23 @@ called twelve thousand three hundred and forty-five, so there is no kind to
 give, and saying it does not know would be forgetting what it was just told. An
 amount the world *does* name still answers with its kind.
 
+**There is no primitive called *more*.** English says `two more flowers` for
+two further flowers, and says `five is more than two` with the same word.
+Neither is a thing in its own right: standing above is the **comparison**, and
+further is **arithmetic** the brain already does.
+
+Between two amounts the word compares them. With an amount on one side and a
+kind on the other it stands aside and lets the amount speak, because there the
+number is the whole of what it adds.
+
+    > a pond has nine flowers
+    > add two more flowers to the pond
+    how many flowers does the pond have?   eleven
+
+Read as a relation it produced four facts nobody said — `more(plus, flower)`,
+`more(two, pond)` — and the brain reported *I understand* and *learned* while
+writing them, then answered a later question confidently with the old count.
+
 **A hole stands wherever a thing may stand.** Asking is saying with a hole in
 it, and the hole falls where the thing it asks after would have stood. So
 anything that stands for something can be a hole instead, and no language has

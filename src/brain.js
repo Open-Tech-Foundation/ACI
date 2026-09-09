@@ -488,13 +488,45 @@ function think(roots, langs, at, world) {
     const state = ways.length > 1 ? { thought: ways[0], ways } : { thought: ways[0] };
     return withBranch(n, [...n.branch, node('thought', 'understood', [], state)]);
   });
-  return measuring(
-    borrowing(
-      intraSignal(compared(reshaped(thought, world, langs), world), world, langs, at),
+  return furthering(
+    measuring(
+      borrowing(
+        intraSignal(compared(reshaped(thought, world, langs), world), world, langs, at),
+        world,
+      ),
       world,
     ),
     world,
   );
+}
+
+// A word saying *in addition* beside a number is part of the amount.
+//
+// English says `two more flowers` for two further flowers, and the word it
+// uses is the same one it uses to say one thing stands above another. There is
+// no primitive called *more*: standing above is the comparison, and further is
+// arithmetic the brain already does. Beside a number the word says neither of
+// itself — the number is the whole of what it adds — so it stands aside and
+// lets the amount speak.
+//
+// Away from a number it is untouched, and `tom has more books than sam` still
+// compares.
+function furthering(roots, world) {
+  if (!world) return roots;
+  const a = world.anchors || {};
+  if (a.more == null) return roots;
+  const amount = (n) => n != null && numberOf(n, world) != null;
+  return roots.filter((n, at) => {
+    if (conceptOf(n) !== a.more) return true;
+    // Between two amounts it is comparing them: five is more than two. It only
+    // stands aside where an amount is on one side of it and a kind on the
+    // other — two more flowers — because there the number is the whole of what
+    // it adds.
+    const stands = (one) => one != null && (conceptOf(one) != null || numberOf(one, world) != null);
+    const before = nearestOver(roots, at, -1, stands);
+    const after = nearestOver(roots, at, 1, stands);
+    return !(amount(before) && after != null && !amount(after));
+  });
 }
 
 // So much of something is not a kind of it.
