@@ -6,6 +6,17 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A quantity of a kind is a thing this conversation brought in.** `one book`
+  and `a book` are the same book, and either can be pointed back at — `how many
+  pages does it have?` needs something to land on — so saying it with a number
+  no longer makes it less of a thing. The node carries the count.
+
+  What a fact or a doing reaches is never that node. What is held, and what
+  moved, are said by the kind the world holds them under, with how many
+  alongside: so many of a kind cannot be handed to one thing until there is a
+  way to say a group. Parties are nodes; what is held is a kind.
+
+
 - **The brain joins, and a language stops writing out where.** Two of the same
   sort with a joining word between them are one of that sort. A language says
   which of its words join; it never has to enumerate every sort they may stand

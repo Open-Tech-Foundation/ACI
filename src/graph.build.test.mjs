@@ -21,14 +21,17 @@ const said = async (...lines) => {
 
 test("one thing this conversation brought in, and what it holds", async () => {
   const held = await said('john has 5 apples');
-  assertEquals(held.nodes.length, 1);
-  assertEquals(held.nodes[0].said, 'john');
+  // Both are things this conversation brought in. A quantity of a kind is one
+  // too: five apples can be pointed back at, so saying it with a number does
+  // not make it less of a thing.
+  assertEquals(held.nodes.map((one) => one.said.split('#')[0]), ['john', 'apple']);
+  assertEquals(held.nodes[1].count, 5);
   // Nobody said what john is. Being held by something makes him a thing and
   // no more than that — `thing` being a concept of the world like any other.
   assertEquals(held.nodes[0].of, world.anchors.thing);
 
-  // Five apples introduces no apple: a quantity of a kind names no particular
-  // thing, so what the fact reaches is the kind the world already had.
+  // What a fact reaches is the kind and how many, never the node: so many of
+  // a kind cannot be handed to one thing until there is a way to say a group.
   assertEquals(held.facts.length, 1);
   const [holding] = held.facts;
   assertEquals(holding.parts[0], 'n1');
@@ -66,7 +69,7 @@ test("a thing spoken of in particular is a thing, and stays in reach", async () 
 
 test("a doing carries the part each thing played in it", async () => {
   const held = await said('john gives 2 apples to sam');
-  assertEquals(held.nodes.map((one) => one.said), ['john', 'sam']);
+  assertEquals(held.nodes.map((one) => one.said.split('#')[0]), ['john', 'sam', 'apple']);
   assertEquals(held.actions.length, 1);
   const [doing] = held.actions;
   // The graph says the primitive, not the word. Giving is a transfer, and so
@@ -124,10 +127,10 @@ test("what governs is held apart, and its condition is never taken in", async ()
 
 test("two clauses in one signal build one graph", async () => {
   const held = await said('john has 5 apples and he put three apples into a basket');
-  assertEquals(held.nodes.map((one) => one.said.split('#')[0]), ['john', 'basket']);
+  assertEquals(held.nodes.map((one) => one.said.split('#')[0]), ['john', 'apple', 'basket']);
   // A basket was said of in particular, so it is a thing; apples were a
   // quantity of a kind, so they are not.
-  assertEquals(held.nodes[1].of, 307);
+  assertEquals(held.nodes[2].of, 307);
   assertEquals(held.facts.length, 1);
   assertEquals(held.actions.length, 1);
   assertEquals(held.actions[0].properties.count, 3);
@@ -137,12 +140,14 @@ test("a thing an earlier signal brought in is the same thing later", async () =>
   const held = await said('john has 5 apples', 'john is taller than sam');
   // The second signal makes no call for john — he was already here — and he is
   // still a node in it.
-  assertEquals(held.nodes.map((one) => one.said), ['john', 'sam']);
+  assertEquals(held.nodes.map((one) => one.said.split('#')[0]), ['john', 'apple', 'sam']);
   // The graph is the conversation's, so the first signal's holding still
   // stands and the second signal's comparison is added after it.
   assertEquals(held.facts.length, 2);
   assertEquals(held.facts[0].parts[0], 'n1', 'john, from the signal before');
-  assertEquals(held.facts[1].parts, ['n1', 'n2']);
+  // sam is the third thing this conversation brought in: john, the apples he
+  // holds, and then sam.
+  assertEquals(held.facts[1].parts, ['n1', 'n3']);
 });
 
 test("the graph says what is in it, under four headings, always", async () => {

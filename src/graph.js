@@ -6,9 +6,10 @@
 //
 // Four kinds, and the difference between them is the whole point:
 //
-//   nodes    what this conversation brought in. A quantity of a kind is not
-//            one of them — five apples introduces no apple, only a number of
-//            a concept the world already had.
+//   nodes    what this conversation brought in. A quantity of a kind is one
+//            of them too: one book and a book are the same book, and either
+//            can be pointed back at, so saying it with a number does not make
+//            it less of a thing.
 //   facts    what is so. Holding, being taller, being inside. It did not
 //            happen, so it is not in the history.
 //   actions  what occurred, with the part each thing played in it.
@@ -27,8 +28,8 @@ const KINDS = ['nodes', 'facts', 'actions', 'rules'];
 let inReach = [];
 const PREFIX = { nodes: 'n', facts: 'f', actions: 'a', rules: 'r' };
 
-// Which node stands for which term of the world, and which terms turned out to
-// be a quantity of a kind rather than a thing.
+// Which node stands for which term of the world, and how many of its kind
+// each node that was said as a quantity stands for.
 let standing = new Map();
 let counting = new Map();
 // The world the graph was filled against. Saying it back needs the same one,
@@ -84,12 +85,16 @@ export function fromUnderstood(roots, world, focus, marking) {
   // something the brain knew still said it, and the conversation holds it.
   const claims = gather(roots, 'standing');
 
-  // A quantity of a kind names no particular thing, so nothing is made for it.
-  // What later facts reach is the kind itself.
+  // A quantity of a kind is still a thing this conversation brought in. One
+  // book and a book are the same book, and either can be pointed back at, so
+  // saying it with a number does not make it less of a thing — it makes it a
+  // thing that many of its kind stand in.
   for (const link of links) {
     if (link.state.quantity == null) continue;
     const made = calls.find((call) => call.state.id === link.state.object);
-    if (made && made.state.of != null) counting.set(made.state.id, made.state.of);
+    if (made && made.state.of != null) {
+      counting.set(made.state.id, { of: made.state.of, count: link.state.quantity });
+    }
   }
 
   // A thing spoken of in particular is a thing, whether or not the world holds
@@ -113,7 +118,7 @@ export function fromUnderstood(roots, world, focus, marking) {
   // rather than called, and it is no less first for that.
   const made = new Map(calls.filter((call) => call.state.id != null).map((call) => [call.state.id, call]));
   for (const id of reached(roots)) {
-    if (standing.has(id) || counting.has(id)) continue;
+    if (standing.has(id)) continue;
     const call = made.get(id);
     // A thing, if this signal made one of it, if the world holds it as one, or
     // if the signal spoke of it in particular. A kind spoken of as a kind is
@@ -130,12 +135,14 @@ export function fromUnderstood(roots, world, focus, marking) {
     // What the call said is kept only to fall back on. A thing this very
     // signal made is not in the world yet — the change is written after the
     // brain has answered — so until it lands there is nowhere else to ask.
+    const many = counting.get(id);
     standing.set(
       id,
       put('nodes', {
         said: call ? named(call) : term ? term.name : String(id),
         term: id,
         made: call ? call.state.of ?? null : null,
+        ...(many ? { count: many.count } : {}),
       }),
     );
   }
@@ -155,11 +162,15 @@ export function fromUnderstood(roots, world, focus, marking) {
     if (said.has(key) || governed.has(triple(subject, relation, object))) return;
     said.add(key);
     const primitive = standingOf(relation, reach(object), world);
+    // What is held is a thing of a kind, not a party to the fact: it is said
+    // by the kind the world holds it under, the same way a doing says what
+    // moved. Whoever holds it is a party, and that is a node.
+    const far = primitive === HOLDING ? object : reach(object);
     put('facts', {
       key,
       of: primitive ?? relation,
       said: relation,
-      parts: [reach(subject), reach(object)],
+      parts: [reach(subject), far],
       properties: {
         ...(quantity == null ? {} : { count: quantity }),
         // A comparison is made on something. Which scale is the world's to
@@ -178,18 +189,21 @@ export function fromUnderstood(roots, world, focus, marking) {
   // anything moves again.
   //
   // What was said carries a claim beside it. What was worked out carries none.
-  const amount = (claim) => {
-    const from = links.find(
+  const alongside = (claim) =>
+    links.find(
       (link) =>
         link.state.subject === claim.subject &&
         link.state.relation === claim.relation &&
-        reach(link.state.object) === reach(claim.object),
-    );
-    return from ? from.state.quantity : null;
-  };
+        (link.state.object === claim.object || counting.get(link.state.object)?.of === claim.object),
+    ) || null;
   for (const claim of claims) {
     const { subject, relation, object, negated } = claim.state;
-    claimed(subject, relation, object, amount(claim.state), negated);
+    const from = alongside(claim.state);
+    // A counted thing is a node, so a later word can point back at it — but
+    // what a fact reaches is the kind and how many, not that node. So many of
+    // a kind cannot be handed to one thing until there is a way to say a group,
+    // and until then the count says everything the fact knows.
+    claimed(subject, relation, object, from ? from.state.quantity : null, negated);
   }
 
   for (const event of events) {
@@ -252,7 +266,13 @@ export function fromUnderstood(roots, world, focus, marking) {
     else if (one && Number.isInteger(one.term)) bring(reach(one.term));
     else if (one && one.standing) bring(stated(one.standing) ?? reach(one.standing.subject));
   }
-  inReach = inSight.map((one) => (typeof one === 'string' ? one : reach(one)));
+  // Two different terms may be one thing in the graph, so what is in reach is
+  // settled after they are reached, not before.
+  inReach = [];
+  for (const one of inSight) {
+    const found = typeof one === 'string' ? one : reach(one);
+    if (found != null && !inReach.includes(found)) inReach.push(found);
+  }
 
   return graph();
 }
@@ -383,7 +403,7 @@ const named = (call) => call.state.name ?? String(call.state.id);
 function reach(id) {
   if (id == null) return null;
   if (standing.has(id)) return standing.get(id);
-  if (counting.has(id)) return counting.get(id);
+  if (counting.has(id)) return counting.get(id).of;
   return id;
 }
 

@@ -97,9 +97,23 @@ Something this conversation brought in. Three ways it becomes one:
 A determiner says *which one*, and which side of the word it stands on is the
 language's to declare, so the engine assumes no order.
 
-Four things are **not** nodes:
+A quantity of a kind is a node too. `one book` and `a book` are the same book,
+and either can be pointed back at — `how many pages does it have?` needs
+something to land on — so saying it with a number does not make it less of a
+thing. The node carries the count.
 
-  * a quantity of a kind — `5 books` names no particular book
+But **what a fact or a doing reaches is never that node**: what is held, and
+what moved, are said by the kind the world holds them under, with how many
+alongside. So many of a kind cannot be handed to one thing until there is a way
+to say a group. Parties are nodes; what is held is a kind.
+
+    > tom has 5 books
+    nodes    n1  tom
+             n2  book  type: book[18]
+    facts    f1  holding(n1, book[18])  {count: 5}
+
+Three things are **not** nodes:
+
   * a kind spoken of as a kind — it introduces nothing
   * the far side of a classification — `tom is a person` says which person no
     more than a bare kind would. Only tom is a thing here; being a person is
@@ -167,6 +181,10 @@ sentence.
     source may well be something other than the doer.
   * `tom has books and pens` leaves an empty `holding(—, —)` beside the two
     real holdings.
+  * Saying a quantity twice makes two nodes for it. `tom has 5 books` then
+    `tom gives 2 books to jerry` leaves a node for the five and another for the
+    two, when the two are part of the five. This is the groups question above, seen
+    from the other side.
   * One English word carries a mark meaning *this signal was written in
     figures, so answer in figures*. It sits on a doing word rather than on
     anything written in figures, and adding a second reading of that word
