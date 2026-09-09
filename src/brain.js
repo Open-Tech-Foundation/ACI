@@ -512,25 +512,73 @@ function measuring(roots, world) {
   if (!world) return roots;
   const a = world.anchors || {};
   if (a.unit == null || a.measure == null) return roots;
-  const measured = roots.some(
-    (n, at) =>
-      n.state.exists &&
-      conceptOf(n) != null &&
-      world.isA(conceptOf(n), a.unit) &&
-      numberBeside(roots, at, world),
-  );
+  const isUnit = (n, at) =>
+    n.state.exists &&
+    conceptOf(n) != null &&
+    world.isA(conceptOf(n), a.unit) &&
+    numberBeside(roots, at, world);
+  const measured = roots.some(isUnit);
   if (!measured) return roots;
-  return roots.map((n) => {
-    if (conceptOf(n) !== world.baseRelation) return n;
-    return withBranch(
-      n,
-      (n.branch || []).map((b) =>
-        b.kind === 'thought'
-          ? withBranch(b, b.branch, { ...b.state, thought: { ...b.state.thought, concept: a.measure } })
-          : b,
-      ),
-    );
+
+  // An amount, a unit, and what it is an amount *of* are one thing said, not
+  // three things standing in a row. Two metres tall is a height; the state
+  // says which quantity, and the unit alone could not — it serves a height, a
+  // length and a size alike.
+  //
+  // So the state is taken into the measure rather than left standing beside
+  // it. A signal saying how tall something is says one thing about it.
+  const absorbed = new Set();
+  const measures = new Map();
+  roots.forEach((n, at) => {
+    if (!isUnit(n, at)) return;
+    const serves = world.related(conceptOf(n), a.measure) || [];
+    if (serves.length < 2) return;
+    for (const step of [1, -1]) {
+      const beside = roots[at + step];
+      if (!beside || absorbed.has(at + step)) continue;
+      const of = quantityOn(conceptOf(beside), world);
+      if (of == null || !serves.includes(of)) continue;
+      measures.set(at, of);
+      absorbed.add(at + step);
+      break;
+    }
   });
+
+  return roots
+    .map((n, at) => {
+      if (measures.has(at)) {
+        return withBranch(
+          n,
+          (n.branch || []).map((b) =>
+            b.kind === 'thought'
+              ? withBranch(b, b.branch, {
+                  ...b.state,
+                  thought: { ...b.state.thought, measures: measures.get(at) },
+                })
+              : b,
+          ),
+        );
+      }
+      if (conceptOf(n) !== world.baseRelation) return n;
+      return withBranch(
+        n,
+        (n.branch || []).map((b) =>
+          b.kind === 'thought'
+            ? withBranch(b, b.branch, { ...b.state, thought: { ...b.state.thought, concept: a.measure } })
+            : b,
+        ),
+      );
+    })
+    .filter((n, at) => !absorbed.has(at));
+}
+
+// The quantity a state is a state of. The world says which; where it says
+// nothing, the state is a state of nothing measurable.
+function quantityOn(state, world) {
+  const a = world.anchors || {};
+  if (state == null || a.measure == null) return null;
+  const of = world.related(state, a.measure) || [];
+  return of.length ? of[0] : null;
 }
 
 // What a clause leaves unsaid, taken from what stands beside it.
@@ -2097,6 +2145,24 @@ function instructionFrom(when, so, world, langs, sent) {
           gathered.push(node('call', name, [], { name, id, of: object, made: true }));
           holdsWhat = id;
         }
+      }
+      // A measure the brain cannot say the quantity of is not taken in. A
+      // metre serves a height, a length and a size alike, and nothing said
+      // which: choosing one and writing it down would be a guess kept as
+      // fact, and this brain holds only what it was told.
+      if (
+        a.measure != null &&
+        a.unit != null &&
+        rel === a.measure &&
+        counted != null &&
+        world.isA(object, a.unit) &&
+        (world.related(object, a.measure) || []).length > 1 &&
+        !said.some((n) => {
+          const t = thoughtOf(n);
+          return t && t.measures != null;
+        })
+      ) {
+        return [node('refuse', 'unmeasured', [], { subject, object })];
       }
       const added = [node('standing', stands, [], { subject, relation: rel, object, negated: isDenied })];
 
@@ -4370,6 +4436,11 @@ const KNOWING = ['understood', 'unsure', 'empathy', 'learn', 'unheard'];
 // and each of them is whole: the first does not stand for the rest.
 const VERDICT = ['standing', 'answer', 'learn', 'refuse'];
 
+// Refusals where the brain is not standing against what was said but cannot
+// place it. Saying no to those would be answering something it never
+// understood; it says it does not know instead.
+const UNPLACED = ['unmeasured'];
+
 // A signal that came to several verdicts, one root apiece — or nothing, where
 // it came to one. There are two ways a signal holds more than one: whole
 // clauses joined by a word, and one act judged of several things at once.
@@ -4479,7 +4550,9 @@ function expression(roots, langs, mood, world, sent) {
     unheard != null
     ? 'unheard'
     : refused
-    ? 'deny'
+    ? UNPLACED.includes(refused.name)
+      ? 'unsure'
+      : 'deny'
     : agreed
       ? 'agree'
       : gave || named

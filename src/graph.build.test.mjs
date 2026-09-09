@@ -222,12 +222,15 @@ test("so much of something is not a kind of it", async () => {
   assertEquals(room.measures[0], { of: 186, amount: 30, unit: 623 });
 });
 
-test("a measure the unit cannot name is held with its quantity unknown", async () => {
-  const held = await said('tom is 2 metre');
-  // A metre serves a height, a length and a size alike. Nothing said which,
-  // so the amount stands and the brain says it does not know what of, rather
-  // than picking one and writing it down as fact.
-  assertEquals(held.nodes[0].measures[0], { of: null, amount: 2, unit: 621 });
+test("a measure the brain cannot place is refused, not guessed at", async () => {
+  // A metre serves a height, a length and a size alike, and nothing said
+  // which. Choosing one would be a guess kept as fact.
+  const open = await said('tom is 2 metre');
+  assertEquals(open.nodes[0].measures, undefined, 'nothing was taken in');
+
+  // Said which, it is taken: tall is a state of height.
+  const told = await said('tom is 2 metre tall');
+  assertEquals(told.nodes[0].measures[0], { of: 2970, amount: 2, unit: 621 });
 });
 
 test("a measure belongs on the thing, and the unit says of what", async () => {

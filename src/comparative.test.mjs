@@ -11,11 +11,13 @@ async function fresh(...said) {
   return last;
 }
 
+// A metre serves a height, a length and a size alike, so a signal that gives
+// one says which. A gram can be nothing but weight, and says nothing.
 const MEASURED = [
   "a cow weighs 500 gram",
-  "the cow measures 2 metre",
+  "the cow measures 2 metre big",
   "a goat weighs 200 gram",
-  "the goat measures 3 metre",
+  "the goat measures 3 metre big",
 ];
 
 test("a comparative says which scale it compares on", async () => {
@@ -47,8 +49,8 @@ test("a comparison is said back as the comparing, not as more-or-less", async ()
   // The standing joins the things by more, but what the signal said was
   // bigger — and a name takes no article.
   await forget();
-  await brain("alice measures 2 metre");
-  await brain("bob measures 1 metre");
+  await brain("alice measures 2 metre big");
+  await brain("bob measures 1 metre big");
   assertEquals(
     (await brain("alice is bigger than bob?")).expression.state.says,
     "Yes. ✅ alice is bigger than bob.",

@@ -37,8 +37,8 @@ test("clean is the wash, the doing, and the state it leaves", async () => {
 
 test("larger and wider read the size scale, newer the time", async () => {
   await forget();
-  await brain("alice measures 2 metre");
-  await brain("bob measures 1 metre");
+  await brain("alice measures 2 metre big");
+  await brain("bob measures 1 metre big");
   assertEquals(
     (await brain("alice is larger than bob?")).expression.state.says,
     "Yes. ✅ alice is bigger than bob.",

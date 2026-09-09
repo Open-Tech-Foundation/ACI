@@ -85,6 +85,14 @@ export function fromUnderstood(roots, world, focus, marking) {
   // something the brain knew still said it, and the conversation holds it.
   const claims = gather(roots, 'standing');
 
+  // Which quantity a measure was said to be of, where the signal said it. Two
+  // metres tall is a height, and the unit could not have told us.
+  const saidOf = new Map();
+  for (const one of gather(roots, 'thought')) {
+    const said = one.state && one.state.thought;
+    if (said && said.measures != null && said.concept != null) saidOf.set(said.concept, said.measures);
+  }
+
   // A quantity of a kind is still a thing this conversation brought in. One
   // book and a book are the same book, and either can be pointed back at, so
   // saying it with a number does not make it less of a thing — it makes it a
@@ -181,7 +189,7 @@ export function fromUnderstood(roots, world, focus, marking) {
         // which, the brain holds the amount and says it does not know what of,
         // rather than choosing one and writing it down as fact.
         const serves = world.related(object, world.anchors.measure) || [];
-        const of = serves.length === 1 ? serves[0] : null;
+        const of = saidOf.get(object) ?? (serves.length === 1 ? serves[0] : null);
         one.measures = [...(one.measures || []), { of, amount: quantity, unit: object }];
         return;
       }

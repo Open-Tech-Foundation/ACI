@@ -193,12 +193,20 @@ a thing is, is its own.
 **A measure is three things, never two: a quantity, an amount, a unit.**
 `5 kilogram` on its own is an amount and a unit looking for a quantity. The
 unit answers which only where it serves one — a degree can be nothing but
-temperature — and a metre serves a height, a length and a size alike. Where it
-serves several and nothing said which, the brain holds the amount and says it
-does not know what of, rather than choosing one and writing it down as fact.
+temperature — and a metre serves a height, a length and a size alike.
+
+Where it serves several and nothing said which, the signal is **refused** and
+nothing is taken in. Choosing one would be a guess kept as fact. The brain says
+it does not know rather than no: it is not standing against what was said, it
+cannot place it, and saying no would be answering something it never
+understood. A deterministic brain wants a determinate input.
+
+An amount, a unit, and what it is an amount **of** are one thing said, not three
+standing in a row — so no language has to write a rule for the shape.
 
     > the box weighs 5 kilogram    n1  box  {weight: 5 kilogram[620]}
-    > tom is 2 metre               n1  tom  {?: 2 metre[621]}
+    > tom is 2 metre tall          n1  tom  {height: 2 metre[621]}
+    > tom is 2 metre               I don't know.  — nothing taken in
 
 **A measure is taken from a reference.** That is the brain's word for it, and
 it knows nothing about which: the world says a height is taken from the ground
