@@ -158,6 +158,10 @@ export function fromUnderstood(roots, world, focus, marking) {
 
   const said = new Set();
   const claimed = (subject, relation, object, quantity, denied) => {
+    // A claim naming neither what it is about nor what it stands to says
+    // nothing. Joining two things leaves one of these over the pair, and it is
+    // not a third holding beside the two real ones.
+    if (subject == null || object == null) return;
     const key = triple(reach(subject), relation, reach(object));
     if (said.has(key) || governed.has(triple(subject, relation, object))) return;
     said.add(key);

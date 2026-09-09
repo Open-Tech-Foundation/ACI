@@ -4,6 +4,27 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- **A pointing word can look back at what the same signal is bringing in.**
+  While a signal was being thought about, only what the world already held
+  could be considered, so a word pointing at somebody that signal was itself
+  introducing found nothing and the doing was left with no doer. The pointer is
+  now put the same question again once names have been given: walk what has
+  been met, drop whatever cannot be what the word stands for, take what is left
+  only if one remains. A pointer already standing for an amount is left alone —
+  it names no term because the amount is the whole of what it stands for.
+
+- **A claim naming neither side says nothing.** Joining two things left one of
+  these standing over the pair, and it came out as a third holding between
+  nothing and nothing.
+
+### Removed
+
+- **The second graph.** An earlier attempt left `working-memory.js` and
+  `reading.js` beside the one the brain fills, with a door of their own. One
+  graph now.
+
 ### Added
 
 - **A quantity of a kind is a thing this conversation brought in.** `one book`

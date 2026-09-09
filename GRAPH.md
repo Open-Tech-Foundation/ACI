@@ -179,8 +179,6 @@ sentence.
   * A transfer's `from` is empty where the doer is plainly the source:
     `tom gives 2 books to jerry` gives `from: —`. Parked until wanted — the
     source may well be something other than the doer.
-  * `tom has books and pens` leaves an empty `holding(—, —)` beside the two
-    real holdings.
   * Saying a quantity twice makes two nodes for it. `tom has 5 books` then
     `tom gives 2 books to jerry` leaves a node for the five and another for the
     two, when the two are part of the five. This is the groups question above, seen
@@ -191,16 +189,11 @@ sentence.
     changed the answer from `10` to `ten` until the mark was carried on both.
     The form of an answer should come from what the brain was told, not from a
     flag on a verb.
-  * A pointing word still finds nothing *inside* one signal: `tom has 5 books
-    and he put three books into a bag` leaves the doing with no doer, because
-    tom is being introduced by the very signal that then points back at him.
-    As two signals it is right.
-
-### Left over from an earlier attempt
-
-`src/working-memory.js` and `src/reading.js` are a second, redundant graph,
-still wired to `read()` in `src/index.js`. They are not part of the above and
-should go.
+  * A quality standing beside a thing is dropped. `tom has a red box` loses the
+    red, and `the red box is inside the blue box` reads as one box inside
+    itself. A quality *said of* a thing is kept — `the box is red` works — so
+    it is only the standing-beside case. Telling two things apart by a quality
+    needs describing to introduce a thing, the way naming does.
 
 The aim is the smallest set of items that can hold a conversation and answer
 over it. Everything below is written against the ten example inputs, and each

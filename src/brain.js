@@ -890,16 +890,19 @@ function solve(roots, world, langs, mood, allocate) {
   // only where it stands in a claim — so whose comes first, or a claim resting
   // on a pointer that landed on nothing would still name something.
   const positioned = contextual(roots, world);
-  const settled = calling(
-    stoodFor(
-      standsIn(whose(settle(positioned, world), world, langs, mood, allocate), world),
+  const settled = pointingAgain(
+    calling(
+      stoodFor(
+        standsIn(whose(settle(positioned, world), world, langs, mood, allocate), world),
+        world,
+        langs,
+      ),
       world,
       langs,
+      mood,
+      allocate,
     ),
     world,
-    langs,
-    mood,
-    allocate,
   );
   return settled.map((n, at) => {
     if (!n.state.exists) {
@@ -933,6 +936,54 @@ function solve(roots, world, langs, mood, allocate) {
     if (marked) result.branch.push(node('mark', marked, []));
 
     return result;
+  });
+}
+
+// A pointing word may look back at something this very signal is bringing in.
+// While the signal was being thought about there was nothing to find — the
+// thing had not been given an identity yet, and only what the world already
+// held could be considered — so the pointer is put the same question again
+// once names have been given.
+//
+// The rule is the one it was asked before: walk what has been met, drop
+// whatever cannot be what the word stands for, and take what is left only if
+// exactly one remains.
+function pointingAgain(roots, world) {
+  if (!world) return roots;
+  const a = world.anchors || {};
+  if (a.thing == null) return roots;
+  const seen = [];
+  return roots.map((n) => {
+    const t = thoughtOf(n);
+    if (!t) return n;
+    // A thing named in this signal is met by the identity it was just given;
+    // one the world already held is met by its own.
+    const call = findBranch(n, 'call');
+    const met = call ? call.state.id : t.concept;
+    if (t.marks !== 'spoken' || t.person !== 'third' || t.concept != null) {
+      if (met != null && (call || world.isA(met, a.thing))) seen.push(met);
+      return n;
+    }
+    // A pointer already standing for an amount is resolved. It names no term
+    // because the amount is the whole of what it stands for, and asking again
+    // would take it back to whatever happens to stand nearby.
+    if (t.value != null) return n;
+    const fits = [];
+    for (let at = seen.length - 1; at >= 0; at -= 1) {
+      const candidate = seen[at];
+      if (fits.includes(candidate)) continue;
+      if (t.stands != null && world.excludes(candidate, t.stands)) continue;
+      fits.push(candidate);
+    }
+    if (fits.length !== 1) return n;
+    return withBranch(
+      n,
+      (n.branch || []).map((b) =>
+        b.kind === 'thought'
+          ? withBranch(b, b.branch, { ...b.state, thought: { ...b.state.thought, concept: fits[0] } })
+          : b,
+      ),
+    );
   });
 }
 
