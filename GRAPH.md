@@ -253,9 +253,23 @@ much taller is not answerable and the brain does not pretend.
 
 The same shape stands on every quantity a thing has of its own — weight,
 temperature, speed, size, height, time — and the brain reads none of the words.
-**Distance does not fit**, and that is not a gap in the shape: every other
-quantity is *of* one thing, and a distance is *between* two. It needs a third
-party and is taken up separately.
+
+**A quantity may be taken from another thing.** Every other quantity is *of*
+one thing; a distance is *between* two, so it stands on what joins them and
+belongs to neither. What tells the two apart is the reference: a height is
+taken from the ground and never says so, a distance is taken from whatever it
+is taken from and always must. So a reference standing in the signal is itself
+what names the quantity — nothing else in `2 metre from the tree` says it is a
+distance.
+
+    > alice is 2 metre from the tree
+    > bob is 5 metre from the tree
+    facts    f1  measure(n1, n2)  {of: distance[252], amount: 2, unit: metre}
+             f2  measure(n3, n2)  {of: distance[252], amount: 5, unit: metre}
+
+Where amounts are known the arithmetic runs on them rather than on positions,
+and that is what makes *how much farther* answerable — an order alone gives no
+distances and never could.
 
 **Being the doer of a doing is reason enough to be introduced.** A thing is
 introduced where the signal gives it something to be. Standing in a claim

@@ -3,7 +3,7 @@ import { openBrain } from './index.js';
 import {
   graph, serialize,
   TRANSFER, PROPERTY_CHANGE, HOLDING, PLACEMENT, COMPARISON, ORDER, PROPERTY, KIND,
-  ranking,
+  ranking, amounts,
 } from './graph.js';
 import { loadWorldFile } from './world.js';
 
@@ -275,4 +275,28 @@ test("the same shape stands on every quantity, and the brain reads no word", () 
   ]).then((all) => {
     for (const found of all) assertEquals(found, [1, 2, 3]);
   });
+});
+
+test("a quantity taken from another thing is between the two, not on either", async () => {
+  const held = await said(
+    'alice is 2 metre from the tree',
+    'bob is 5 metre from the tree',
+    'charlie is 10 metre from the tree',
+  );
+  // Every other quantity is of one thing; a distance is between two, so it
+  // stands on what joins them and belongs to neither.
+  assertEquals(held.nodes.every((one) => one.measures == null), true);
+  assertEquals(held.facts.length, 3);
+  assertEquals(held.facts[0].properties.of, 252);
+  assertEquals(held.facts[0].properties.amount, 2);
+
+  // Which thing it is taken from has to be named: there is no distance
+  // without saying from what.
+  const tree = held.nodes.find((one) => one.said === 'tree').id;
+  const far = amounts(252, tree);
+  assertEquals([...far.values()], [2, 5, 10]);
+  // And with real amounts, how much farther is answerable — an order alone
+  // never could be.
+  const of = (who) => far.get(held.nodes.find((one) => one.said === who).id);
+  assertEquals(of('bob') - of('alice'), 3);
 });

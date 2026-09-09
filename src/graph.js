@@ -166,6 +166,9 @@ export function fromUnderstood(roots, world, focus, marking) {
     }
   }
 
+  // Measures taken from another thing, held until the fact that names both
+  // turns up.
+  const waiting = [];
   const said = new Set();
   const claimed = (subject, relation, object, quantity, denied) => {
     // A claim naming neither what it is about nor what it stands to says
@@ -185,11 +188,16 @@ export function fromUnderstood(roots, world, focus, marking) {
         // A measure is a quantity, an amount and a unit — three, never two.
         // The unit answers which quantity only where it serves one: a degree
         // can be nothing but temperature, while a metre serves a height, a
-        // length and a depth alike. Where it serves several and nothing said
-        // which, the brain holds the amount and says it does not know what of,
-        // rather than choosing one and writing it down as fact.
+        // length and a distance alike.
         const serves = world.related(object, world.anchors.measure) || [];
         const of = saidOf.get(object) ?? (serves.length === 1 ? serves[0] : null);
+        // A quantity taken from another thing is between the two of them and
+        // belongs to neither, so it waits for the fact that names both rather
+        // than sitting on the one that happened to be said first.
+        if (of != null && between(of, world)) {
+          waiting.push({ subject: reach(subject), of, amount: quantity, unit: object });
+          return;
+        }
         one.measures = [...(one.measures || []), { of, amount: quantity, unit: object }];
         return;
       }
@@ -287,6 +295,15 @@ export function fromUnderstood(roots, world, focus, marking) {
       denied: not === true,
       when: when ?? null,
     });
+  }
+
+  // What is measured between two things goes on the standing between them.
+  for (const one of waiting) {
+    const on = held.facts.find(
+      (fact) => fact.of === MEASURE && fact.parts[0] === one.subject && fact.properties.of == null,
+    );
+    if (!on) continue;
+    on.properties = { ...on.properties, of: one.of, amount: one.amount, unit: one.unit };
   }
 
   for (const instruction of instructions) {
@@ -452,6 +469,13 @@ const quantityOn = (state, world) => {
 };
 
 // How something is, and not how many of it there are.
+// A quantity taken from another thing rather than from some one thing nobody
+// names: it is between two and belongs to neither.
+const between = (of, world) =>
+  world.anchors.reference != null &&
+  world.anchors.thing != null &&
+  (world.related(of, world.anchors.reference) || []).includes(world.anchors.thing);
+
 const isQuality = (id, world) =>
   isProperty(id, world) &&
   !(world.anchors.quantity != null && world.isA(id, world.anchors.quantity));
@@ -609,6 +633,26 @@ function reached(roots, found = []) {
 //
 // It is ordinal and says so. From `taller` comes an order and no heights, so
 // how much taller is not answerable and the brain does not pretend it is.
+// How much of a quantity each thing has, where the amounts were said. A
+// quantity of a thing's own is read off the thing; one taken from another
+// thing is read off the standing between them, and which thing it is taken
+// from has to be named — there is no distance without saying from what.
+export function amounts(quantity, from) {
+  const found = new Map();
+  for (const one of held.nodes) {
+    for (const measure of one.measures || []) {
+      if (measure.of === quantity) found.set(one.id, measure.amount);
+    }
+  }
+  for (const one of held.facts) {
+    if (one.of !== MEASURE || one.denied) continue;
+    if (one.properties.of !== quantity) continue;
+    if (from != null && one.parts[1] !== from) continue;
+    found.set(one.parts[0], one.properties.amount);
+  }
+  return found;
+}
+
 export function ranking(quantity, moment) {
   const below = new Map();
   for (const one of held.facts) {
@@ -662,7 +706,7 @@ export function serialize(world = against) {
   // nothing goes looking for a word for it. Which is which is named here
   // rather than guessed at, because both are integers and they do not look
   // any different.
-  const CONCEPTS = new Set(['thing', 'on', 'as']);
+  const CONCEPTS = new Set(['thing', 'on', 'as', 'of', 'unit']);
   const properties = (of) => {
     const said = Object.entries(of || {})
       .filter(([, value]) => value != null)

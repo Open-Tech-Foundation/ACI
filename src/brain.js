@@ -527,12 +527,32 @@ function measuring(roots, world) {
   //
   // So the state is taken into the measure rather than left standing beside
   // it. A signal saying how tall something is says one thing about it.
+  // A quantity taken from another thing, rather than from some one thing
+  // nobody names. A distance is measured from whatever it is measured from,
+  // and the signal has to say; a height is measured from the ground and never
+  // says. So a reference standing in the signal is itself what names the
+  // quantity.
+  const relational = (of) =>
+    a.reference != null &&
+    a.thing != null &&
+    (world.related(of, a.reference) || []).includes(a.thing);
+  const named = roots.some((n) => roleOn(n) === 'source');
+
   const absorbed = new Set();
   const measures = new Map();
   roots.forEach((n, at) => {
     if (!isUnit(n, at)) return;
     const serves = world.related(conceptOf(n), a.measure) || [];
     if (serves.length < 2) return;
+    // Said what it is taken from, that is the quantity: the only one this unit
+    // serves that is taken from another thing at all.
+    if (named) {
+      const of = serves.find(relational);
+      if (of != null) {
+        measures.set(at, of);
+        return;
+      }
+    }
     for (const step of [1, -1]) {
       const beside = roots[at + step];
       if (!beside || absorbed.has(at + step)) continue;
