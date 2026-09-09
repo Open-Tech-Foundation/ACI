@@ -4,6 +4,29 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **The conversation graph is held in memory** — `src/working-memory.js`, the
+  first phase of the design in `GRAPH.md`. It holds what *is*: the items a
+  conversation introduces, the slots they stand in, the properties they hold,
+  the collections they gather into, and the order it was all said in. What
+  *governs* — a standing instruction, a condition, an action waiting on one,
+  what is owed — is the phase after this, and nothing here anticipates it.
+
+  Nothing is stored that can be worked out. A count, a total, an extreme and a
+  property's current value are read back off what was said, at the moment they
+  are asked for, so a number said on Monday is not still claimed after
+  Tuesday's arrival — and a question about how things stood before some doing
+  reads the same walk with a shorter list.
+
+  A slot holding nothing is not the same as a slot nobody spoke of: the first
+  says there is a place for this kind and nothing is in it, and the second says
+  nothing at all. Context sits beside the graph rather than in it — what is in
+  reach, nearest first, and the names given here — and a pointer resolves only
+  where exactly one candidate fits.
+
+  Nothing in `src/` reads it yet; the running brain is untouched.
+
 ### Removed
 
 - **`flight`, `reserve` and `cancel`**, added while reaching for the booking
