@@ -1254,7 +1254,40 @@ function heldUnder(bearer, kind, world, under = null) {
       if (many != null) total = (total ?? 0) + many;
     }
   }
+  if (total != null || under == null || a.holding == null) return total;
+  // Only for what a thing measures, never for what it holds. How many pears a
+  // basket holds is not answered by looking inside the apples it holds.
+  if (toward(under, a.holding, world)) return total;
+  // Nothing was measured of the thing itself, so what it holds is measured
+  // instead: three crates of two kilograms each is six kilograms. Worked out
+  // when it is asked for and never written down — one more crate and the
+  // answer moves with it.
+  for (const of of world.linked(bearer, a.holding)) {
+    const many = world.held(bearer, a.holding, of);
+    if (many == null) continue;
+    const each = measureOf(of, kind, world, under);
+    if (each != null) total = (total ?? 0) + many * each;
+  }
   return total;
+}
+
+// What one of a kind measures, wherever the world put it: on the thing, on a
+// kind it is one of, or on some one of that kind that was measured.
+function measureOf(of, kind, world, under) {
+  const seen = new Set();
+  const rungs = [of, ...upward(of, world)];
+  for (const rung of rungs) {
+    if (seen.has(rung)) continue;
+    seen.add(rung);
+    for (const bearer of [rung, ...world.individualsOf(rung)]) {
+      for (const measure of world.linked(bearer, under)) {
+        if (!world.isA(measure, kind)) continue;
+        const each = world.held(bearer, under, measure);
+        if (each != null) return each;
+      }
+    }
+  }
+  return null;
 }
 
 // A number standing beside a thing says how many of it there are. The brain
@@ -2045,7 +2078,11 @@ function instructionFrom(when, so, world, langs, sent) {
         })),
       ];
       const counts = (w) =>
-        world.held(w.bearer, w.relation, w.of) != null || heldUnder(w.bearer, w.of, world) != null;
+        world.held(w.bearer, w.relation, w.of) != null ||
+        heldUnder(w.bearer, w.of, world) != null ||
+        // What a thing measures may be carried by what it holds rather than
+        // written of the thing, and that end is the one that answers.
+        heldUnder(w.bearer, w.of, world, w.relation) != null;
       const way = ways.find(counts) ?? ways[0];
       // Asked after a kind it holds none of by name, but several kinds under
       // it, the count is all of those together: a shop of five bats and two

@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A total is worked out when it is asked for.** Where nothing was measured of
+  a thing itself, what it holds is measured instead — three crates of two
+  kilograms each is six kilograms — and a fourth crate moves the answer without
+  anything being written down. Only for what a thing measures, never for what
+  it holds: how many pears a basket holds is not answered by looking inside the
+  apples.
+
 - **Told there is none is held apart from nobody having said.** `none` is the
   amount zero, so `tarun has no apples` records a count of zero on the kind
   instead of a positive link that answered `has an apple?` with *Yes*. A count
