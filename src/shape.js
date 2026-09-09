@@ -29,6 +29,7 @@ const COGNITIVE_FUNCTIONS = [
   'join',
   'modal',
   'modifier',
+  'naming',
   'possessor',
 ];
 

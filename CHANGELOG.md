@@ -6,6 +6,17 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A word said as a name is a name, whatever else it means.** `the dog is
+  called river` was not understood at all, and `the dog is river` said the dog
+  was a body of water. The language says which word announces a name — English
+  has `called` and `named` — and whatever stands after it is stripped of what
+  it meant, leaving a word nothing knows standing where a thing stands. The
+  signal is then put the way the brain already reads a naming (`bruno is a
+  dog`): the name first, what it is second. The thing takes a name of its own
+  where the world already claims the word, and is still *called* what it was
+  called. For the length of the conversation the word reaches that thing —
+  `what is river?` says dog — while the world goes on calling a river a river.
+
 - **A quality standing beside a thing is said of that thing.** `a red box` is a
   box that is red, and the colour was being thrown away entirely — said the
   other way round, `the box is red`, it was kept, so it was only the standing

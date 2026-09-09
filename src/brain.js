@@ -8,7 +8,7 @@
 // (see src/languages.js). It never knows a language's name.
 
 import { Decimal } from '@opentf/std';
-import { fromUnderstood, told, standingIn } from './graph.js';
+import { fromUnderstood, told, standingIn, namedIn as calledInConversation } from './graph.js';
 
 const $ = Symbol.for('aci.node');
 
@@ -434,6 +434,10 @@ function think(roots, langs, at, world) {
     // conversation and held in the world since. Nothing about a name is
     // special to the brain: it is a term, met by what it is called.
     const called = first.word || read || !world ? null : world.termNamed(n.state.identity);
+    // A word somebody gave as a name in this conversation reaches what they
+    // gave it to, whatever else the word means. The world is unchanged: it
+    // goes on calling a river a river, and the next conversation will too.
+    const here = read ? null : calledInConversation(n.state.identity);
     const readOf = (word) => {
       // A bare result value in focus holds no term: the pointer stands for the
       // amount itself, so it names no term and the value below is what counts.
@@ -444,17 +448,19 @@ function think(roots, langs, at, world) {
         word && word.marks === 'prior' ? (pointedAt(word, at, world) ?? word.concept ?? null) : null;
       return {
       language: first.lang,
-      wordKnown: Boolean(word) || read || called != null,
+      wordKnown: Boolean(word) || read || called != null || here != null,
       // A word nothing knows still stands where it stands. Standing where a
       // thing stands is what a name does, so that is what it is taken as —
       // and `wordKnown` stays false, because nothing knows it yet.
       pos: word ? word.pos : read ? lang.figuresPos : lang.unknownPos,
       meaning: word ? word.meaning : read || called != null ? String(n.state.identity) : null,
-      concept: result != null ? null : pointed != null ? pointed : word
-        ? oneMeant(pointedAt(word, at, world), world) ?? word.concept
-        : read && world
-          ? world.termFor(value)
-          : called,
+      concept: here != null
+        ? here
+        : result != null ? null : pointed != null ? pointed : word
+          ? oneMeant(pointedAt(word, at, world), world) ?? word.concept
+          : read && world
+            ? world.termFor(value)
+            : called,
       value: word && word.marks === 'named' ? givenValue(word, at) : result ?? value,
       marks: word ? word.marks : null,
       negates: word ? word.negates : false,
@@ -1039,11 +1045,17 @@ function solve(roots, world, langs, mood, allocate) {
   const settled = pointingAgain(
     described(
       calling(
-      stoodFor(
-        standsIn(whose(settle(positioned, world), world, langs, mood, allocate), world),
-        world,
-        langs,
-      ),
+        naming(
+          stoodFor(
+            standsIn(whose(settle(positioned, world), world, langs, mood, allocate), world),
+            world,
+            langs,
+          ),
+          world,
+          langs,
+          mood,
+          allocate,
+        ),
         world,
         langs,
         mood,
@@ -1152,6 +1164,60 @@ function described(roots, world, langs, mood, allocate) {
       }),
     ]);
   });
+}
+
+// A word said as a name is a name, whatever else it means.
+//
+// Somebody may call a pet `river`, and a river is a thing the world already
+// knows. Without this the brain reads the word it knows and answers that the
+// pet is a body of water. Which word says a name is coming is the language's —
+// English has `called` and `named` — and the brain takes what follows as a
+// name rather than as a meaning.
+//
+// The name is given to whatever stands on the other side of the naming word.
+// It holds for as long as the conversation does: the world goes on calling a
+// river a river.
+function naming(roots, world, langs, mood, allocate) {
+  if (!world || mood !== 'tell') return roots;
+  const a = world.anchors || {};
+  const at = roots.findIndex((n) => functionsOf(n).includes('naming'));
+  if (at < 0) return roots;
+
+  const stands = (n) => n != null && n.state.exists && conceptOf(n) != null;
+  // Whatever is being named is a thing, never the word joining it to its name.
+  const thing = (n) =>
+    stands(n) && a.thing != null && world.isA(conceptOf(n), a.thing) &&
+    !(a.relation != null && world.isA(conceptOf(n), a.relation));
+  // `is called` — the word joining the thing to its naming is stepped over,
+  // and it is where the two sides meet once they change places.
+  const joining = (n) =>
+    stands(n) && a.relation != null && world.isA(conceptOf(n), a.relation);
+  const given = nearestOver(roots, at, 1, stands);
+  const whose = nearestOver(roots, at, -1, thing, joining);
+  if (given == null || whose == null) return roots;
+  const held = roots.indexOf(whose);
+  let mid = -1;
+  for (let i = held + 1; i < at; i += 1) if (joining(roots[i])) mid = i;
+  if (mid < 0) return roots;
+
+  // The word given as a name is not the world's word any more. Stripped of
+  // what it meant, it is a word nothing knows standing where a thing stands,
+  // and that is already how a signal brings something in and calls it
+  // something: `bruno is a dog`. So the signal is put that way round — the
+  // name said first, what it is second — and the naming word itself, having
+  // said which word is a name, drops out.
+  const bare = withBranch(
+    given,
+    (given.branch || []).map((b) =>
+      b.kind === 'thought'
+        ? withBranch(b, b.branch, {
+            ...b.state,
+            thought: { ...b.state.thought, concept: null, wordKnown: false, meaning: null },
+          })
+        : b,
+    ),
+  );
+  return [bare, roots[mid], ...roots.slice(0, mid)];
 }
 
 // A pointing word may look back at something this very signal is bringing in.
@@ -1429,6 +1495,9 @@ function calling(roots, world, langs, mood, allocate) {
         name: world.termNamed(n.state.identity) != null || namesInWorld(n.state.identity, world)
           ? `${n.state.identity}#${id}`
           : n.state.identity,
+        // What it is called stays the word that was said, even where the term
+        // had to take a name of its own to keep from clashing.
+        word: n.state.identity,
         id,
         called,
         of: a.thing,
@@ -6144,7 +6213,14 @@ function learnedFrom(roots, world) {
         // language and so is held here rather than looked for in one.
         ...(naming.length === 0
           ? []
-          : [{ id: c.state.called, name: `"${c.state.name}"`, symbol: c.state.name, links: [] }]),
+          : [
+              {
+                id: c.state.called,
+                name: `"${c.state.word ?? c.state.name}"`,
+                symbol: c.state.word ?? c.state.name,
+                links: [],
+              },
+            ]),
       ];
     }),
     // And whoever it belongs to has it.

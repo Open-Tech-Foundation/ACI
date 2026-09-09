@@ -17950,6 +17950,18 @@
       "pos": "preposition",
       "meaning": "below",
       "concept": 2975
+    },
+    "called": {
+      "pos": "noun",
+      "meaning": "called",
+      "concept": 138,
+      "functions": "naming"
+    },
+    "named": {
+      "pos": "noun",
+      "meaning": "named",
+      "concept": 138,
+      "functions": "naming"
     }
   },
   "unknown": {

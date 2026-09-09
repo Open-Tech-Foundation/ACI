@@ -180,6 +180,12 @@ export function fromUnderstood(roots, world, focus, marking) {
         said: call ? named(call) : term ? term.name : String(id),
         term: id,
         made: call ? call.state.of ?? null : null,
+        // What it was called, where somebody called it something. A word given
+        // as a name reaches this thing for the rest of the conversation, even
+        // where the world calls something else by it.
+        ...(call && !call.state.made && call.state.called != null
+          ? { called: call.state.word ?? call.state.name }
+          : {}),
         ...(many ? { count: many.count } : {}),
         // How it is, where the signal said so beside it.
         ...(qualities.has(id) ? { how: qualities.get(id) } : {}),
@@ -741,6 +747,19 @@ export function told(subject, relation, object) {
     if (one.said !== relation) continue;
     if (!same(one.parts[0], subject) || !same(one.parts[1], object)) continue;
     return one.denied ? 'against' : 'held';
+  }
+  return null;
+}
+
+// What this conversation calls by a word. Somebody may call a pet `river`, and
+// the world goes on calling a river a river — but here, and until the
+// conversation ends, the word reaches the pet.
+export function namedIn(word) {
+  if (typeof word !== 'string') return null;
+  const wanted = word.toLowerCase();
+  for (let i = held.nodes.length - 1; i >= 0; i -= 1) {
+    const one = held.nodes[i];
+    if (typeof one.called === 'string' && one.called.toLowerCase() === wanted) return one.term;
   }
   return null;
 }
