@@ -17906,6 +17906,21 @@
       "pos": "preposition",
       "meaning": "aside",
       "concept": 2969
+    },
+    "height": {
+      "pos": "noun",
+      "meaning": "height",
+      "concept": 2970
+    },
+    "length": {
+      "pos": "noun",
+      "meaning": "length",
+      "concept": 2971
+    },
+    "duration": {
+      "pos": "noun",
+      "meaning": "duration",
+      "concept": 2972
     }
   },
   "unknown": {

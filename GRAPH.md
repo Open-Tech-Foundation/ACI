@@ -187,9 +187,23 @@ of the same kind, described otherwise, that leaves no reading but two.
     facts    f1  placement(n1, n2)  {as: inside[580]}
 
 **A thing has physical quantities.** It weighs so much, stands so high, is so
-warm. Each is an amount in a unit, and it is held **on** the thing the way a
-colour is — how much of something a thing is, is its own. Which quantity a unit
-measures is the world's: a kilogram measures weight, a degree temperature.
+warm. Each is held **on** the thing the way a colour is — how much of something
+a thing is, is its own.
+
+**A measure is three things, never two: a quantity, an amount, a unit.**
+`5 kilogram` on its own is an amount and a unit looking for a quantity. The
+unit answers which only where it serves one — a degree can be nothing but
+temperature — and a metre serves a height, a length and a size alike. Where it
+serves several and nothing said which, the brain holds the amount and says it
+does not know what of, rather than choosing one and writing it down as fact.
+
+    > the box weighs 5 kilogram    n1  box  {weight: 5 kilogram[620]}
+    > tom is 2 metre               n1  tom  {?: 2 metre[621]}
+
+**A measure is taken from a reference.** That is the brain's word for it, and
+it knows nothing about which: the world says a height is taken from the ground
+and a depth from the top. Height, depth and length are all metres, and the
+reference is what tells them apart — not the unit, and not a guess.
 
     > the box weighs 5 kilogram
     nodes    n1  box  {weight: 5 kilogram[620]}

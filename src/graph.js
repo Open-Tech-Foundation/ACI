@@ -173,9 +173,16 @@ export function fromUnderstood(roots, world, focus, marking) {
     // of, the unit says.
     if (primitive === MEASURE && quantity != null) {
       const one = held.nodes.find((node) => node.id === reach(subject));
-      const quantityOf = (world.related(object, world.anchors.measure) || [])[0];
-      if (one && quantityOf != null) {
-        one.measures = { ...(one.measures || {}), [quantityOf]: { amount: quantity, unit: object } };
+      if (one) {
+        // A measure is a quantity, an amount and a unit — three, never two.
+        // The unit answers which quantity only where it serves one: a degree
+        // can be nothing but temperature, while a metre serves a height, a
+        // length and a depth alike. Where it serves several and nothing said
+        // which, the brain holds the amount and says it does not know what of,
+        // rather than choosing one and writing it down as fact.
+        const serves = world.related(object, world.anchors.measure) || [];
+        const of = serves.length === 1 ? serves[0] : null;
+        one.measures = [...(one.measures || []), { of, amount: quantity, unit: object }];
         return;
       }
     }
@@ -643,8 +650,8 @@ export function serialize(world = against) {
         (one.count != null ? `  × ${one.count}` : '') +
         (one.how ? `  {${Object.entries(one.how).map(([name, value]) => `${name}: ${spell(value)}`).join(', ')}}` : '') +
         (one.measures
-          ? `  {${Object.entries(one.measures)
-              .map(([of, held]) => `${part(Number(of))}: ${held.amount} ${spell(held.unit)}`)
+          ? `  {${one.measures
+              .map((held) => `${held.of == null ? '?' : part(held.of)}: ${held.amount} ${spell(held.unit)}`)
               .join(', ')}}`
           : ''),
     ),

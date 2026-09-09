@@ -217,14 +217,23 @@ test("so much of something is not a kind of it", async () => {
   // names a stronger claim than being.
   assertEquals(held.facts, []);
   const [room] = held.nodes;
-  assertEquals(room.measures[186].amount, 30);
-  assertEquals(room.measures[186].unit, 623);
+  // A degree can be nothing but temperature, so the unit answers which
+  // quantity by itself and nothing is guessed.
+  assertEquals(room.measures[0], { of: 186, amount: 30, unit: 623 });
+});
+
+test("a measure the unit cannot name is held with its quantity unknown", async () => {
+  const held = await said('tom is 2 metre');
+  // A metre serves a height, a length and a size alike. Nothing said which,
+  // so the amount stands and the brain says it does not know what of, rather
+  // than picking one and writing it down as fact.
+  assertEquals(held.nodes[0].measures[0], { of: null, amount: 2, unit: 621 });
 });
 
 test("a measure belongs on the thing, and the unit says of what", async () => {
   const weighed = await said('the box weighs 5 kilogram');
-  // A kilogram measures weight, so weight is what was said of the box.
-  assertEquals(weighed.nodes[0].measures[184].amount, 5);
+  // A kilogram can be nothing but weight, so weight is what was said.
+  assertEquals(weighed.nodes[0].measures[0], { of: 184, amount: 5, unit: 620 });
   assertEquals(weighed.facts, [], 'how much a thing is, is its own');
 });
 
