@@ -4,6 +4,36 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **A quality standing beside a thing is said of that thing.** `a red box` is a
+  box that is red, and the colour was being thrown away entirely — said the
+  other way round, `the box is red`, it was kept, so it was only the standing
+  beside case. It is held **on** the thing rather than put between two things
+  as a fact: how something is belongs to it. Which sort of quality it is, the
+  world says — red is a colour before it is anything else, and tall is a state.
+
+- **Two of one kind, told apart, are two things.** `the red box is inside the
+  blue box` was one box inside itself, both colours gone. A quality usually
+  narrows the kind rather than bringing in something new — `the tallest pig is
+  quiet` says something of pigs — so one on its own stays one. It is standing
+  beside another of the same kind, described otherwise, that leaves no reading
+  but two.
+
+- **`outside`, `beside` and `aside` are placements.** `outside` was held only
+  as a position, so it never reached the primitive at all; the other two did
+  not exist in the world or the language. The graph also says *which* placement
+  a thing stands in — inside is not beside, and neither is under.
+
+### Fixed
+
+- **A thing spoken of by its kind is that kind.** A node's type climbed a step
+  and answered with what the thing is a kind of, so a box came back a container
+  and a book an object, throwing away the very thing that was said. Where
+  nothing was said, climbing is still all there is, and the most general kind
+  is the honest answer.
+
+
 ### Fixed
 
 - **A pointing word can look back at what the same signal is bringing in.**

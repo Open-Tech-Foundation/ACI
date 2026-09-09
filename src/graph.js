@@ -100,7 +100,7 @@ export function fromUnderstood(roots, world, focus, marking) {
   // A thing spoken of in particular is a thing, whether or not the world holds
   // one. `the sky is blue` speaks of the sky, and the next signal may point
   // back at it, so it is a node and not merely a concept two facts joined.
-  const particular = determined(roots, marking);
+  const { determined: particular, qualities } = determined(roots, marking, world);
   // Where the signal made one of a kind, that one is the thing spoken of. The
   // kind is not a second thing beside it.
   for (const call of calls) particular.delete(call.state.of);
@@ -143,6 +143,8 @@ export function fromUnderstood(roots, world, focus, marking) {
         term: id,
         made: call ? call.state.of ?? null : null,
         ...(many ? { count: many.count } : {}),
+        // How it is, where the signal said so beside it.
+        ...(qualities.has(id) ? { how: qualities.get(id) } : {}),
       }),
     );
   }
@@ -169,7 +171,10 @@ export function fromUnderstood(roots, world, focus, marking) {
     // What is held is a thing of a kind, not a party to the fact: it is said
     // by the kind the world holds it under, the same way a doing says what
     // moved. Whoever holds it is a party, and that is a node.
-    const far = primitive === HOLDING ? object : reach(object);
+    // A thing this signal picked out is still said by its kind here: what is
+    // held is a kind and how many, never the thing itself.
+    const of = made.get(object);
+    const far = primitive === HOLDING ? (of ? of.state.of ?? object : object) : reach(object);
     put('facts', {
       key,
       of: primitive ?? relation,
@@ -180,6 +185,9 @@ export function fromUnderstood(roots, world, focus, marking) {
         // A comparison is made on something. Which scale is the world's to
         // say, and without it `taller` is only a word.
         ...(primitive === COMPARISON ? { on: scaleOf(relation, world) } : {}),
+        // Which placement it is. Inside is not beside and neither is under, so
+        // the primitive says a thing stands somewhere and the world says where.
+        ...(primitive === PLACEMENT ? { as: relation } : {}),
       },
       denied: denied === true,
     });
@@ -371,6 +379,11 @@ const scaleOf = (relation, world) => {
   return on.length ? on[0] : null;
 };
 
+// How something is, and not how many of it there are.
+const isQuality = (id, world) =>
+  isProperty(id, world) &&
+  !(world.anchors.quantity != null && world.isA(id, world.anchors.quantity));
+
 const isProperty = (id, world) =>
   id != null && world && world.anchors.property != null && world.isA(id, world.anchors.property);
 
@@ -384,9 +397,14 @@ const classifies = (relation, world) => {
 // What a node is: what the world holds it under, or what it was made as while
 // the world has yet to hear of it.
 function known(one, world) {
-  const held = world && (world.kinds(one.term) || [])[0];
+  if (!world) return one.made ?? null;
+  // A thing spoken of by its kind is that kind. Climbing a step would answer
+  // with what it is a kind of — a box would come back a container — and throw
+  // away the very thing that was said.
+  if (world.term(one.term) && !world.isIndividual(one.term)) return one.term;
+  const held = (world.kinds(one.term) || [])[0];
   if (held != null && held !== (world.anchors || {}).thing) return held;
-  return one.made ?? held ?? (world && world.anchors ? world.anchors.thing : null);
+  return one.made ?? held ?? (world.anchors ? world.anchors.thing : null);
 }
 
 // What the world holds a thing under. Nothing said of it beyond its existing
@@ -420,7 +438,7 @@ const triple = (subject, relation, object) => `${subject}|${relation}|${object}`
 // spoken of. Which side of the word it stands on is the language's to declare,
 // so nothing here assumes an order: the language says `after` or `before` and
 // the marker is read off whichever neighbour that names.
-function determined(roots, marking) {
+function determined(roots, marking, world) {
   const spoken = [];
   const walk = (nodes) => {
     for (const one of nodes || []) {
@@ -428,13 +446,20 @@ function determined(roots, marking) {
         const thought = (one.branch || []).find((branch) => branch.kind === 'thought');
         const said = (thought && thought.state && thought.state.thought) || {};
         // What the brain took to be a thing at all. `the red box` speaks of a
-        // box; red is how it is, not what it is, so a determiner reaches past
-        // it to the thing.
+        // box; red is how it is, not what it is, so a marker beside it reaches
+        // past it to the thing.
         const entity = (one.branch || []).find((branch) => branch.kind === 'entity');
+        // A thing the signal made one of is that one, not its kind: two boxes
+        // told apart by their colours are two things, and each quality belongs
+        // to the box it was said beside.
+        const call = (one.branch || []).find((branch) => branch.kind === 'call');
         spoken.push({
           marks: said.marks ?? null,
           determiner: [].concat(said.functions || []).includes('determiner'),
-          concept: entity && entity.state ? entity.state.concept : null,
+          concept: call ? call.state.id : entity && entity.state ? entity.state.concept : null,
+          // A word standing beside a thing that says how it is, rather than
+          // what it is.
+          quality: isQuality(said.concept, world) ? said.concept : null,
         });
       }
       walk(one.branch);
@@ -442,18 +467,48 @@ function determined(roots, marking) {
   };
   walk(roots);
 
-  const found = new Set();
   const step = marking === 'before' ? -1 : 1;
+  // The thing a word beside it is about: the nearest one on the side the
+  // language says its markers stand on.
+  const about = (i) => {
+    for (let at = i + step; at >= 0 && at < spoken.length; at += step) {
+      if (spoken[at].concept != null) return spoken[at].concept;
+    }
+    return null;
+  };
+
+  const found = new Set();
+  const how = new Map();
   for (let i = 0; i < spoken.length; i++) {
     const one = spoken[i];
-    if (!one.determiner || (one.marks !== 'known' && one.marks !== 'new')) continue;
-    for (let at = i + step; at >= 0 && at < spoken.length; at += step) {
-      if (spoken[at].concept == null) continue;
-      found.add(spoken[at].concept);
-      break;
+    if (one.determiner && (one.marks === 'known' || one.marks === 'new')) {
+      const thing = about(i);
+      if (thing != null) found.add(thing);
+    }
+    // `a red box` is a box that is red. The quality is said of the thing it
+    // stands beside, and it is held on the thing rather than put between two
+    // things as a fact: how something is belongs to it.
+    if (one.quality != null) {
+      const thing = about(i);
+      if (thing != null) {
+        const held = how.get(thing) || {};
+        held[qualityKind(one.quality, world)] = one.quality;
+        how.set(thing, held);
+      }
     }
   }
-  return found;
+  return { determined: found, qualities: how };
+}
+
+// Which sort of quality it is: a colour, a size, a shape. The world says so —
+// `red` is a colour before it is anything else — and where it says only that
+// it is a quality, that is what it is called.
+function qualityKind(quality, world) {
+  const property = world && world.anchors ? world.anchors.property : null;
+  for (const kind of (world && world.kinds(quality)) || []) {
+    if (kind !== quality && kind !== property) return world.term(kind)?.name ?? String(kind);
+  }
+  return world && world.term(property) ? world.term(property).name : 'quality';
 }
 
 // Every term the signal reached, in the order it reached it. A thing is named
@@ -495,7 +550,7 @@ export function serialize(world = against) {
   // nothing goes looking for a word for it. Which is which is named here
   // rather than guessed at, because both are integers and they do not look
   // any different.
-  const CONCEPTS = new Set(['thing', 'on']);
+  const CONCEPTS = new Set(['thing', 'on', 'as']);
   const properties = (of) => {
     const said = Object.entries(of || {})
       .filter(([, value]) => value != null)
@@ -520,7 +575,15 @@ export function serialize(world = against) {
     lines.push('');
   };
 
-  section('nodes', held.nodes.map((one) => `${one.id}  ${one.said.split('#')[0]}  type: ${type(known(one, world))}`));
+  section(
+    'nodes',
+    held.nodes.map(
+      (one) =>
+        `${one.id}  ${one.said.split('#')[0]}  type: ${type(known(one, world))}` +
+        (one.count != null ? `  × ${one.count}` : '') +
+        (one.how ? `  {${Object.entries(one.how).map(([name, value]) => `${name}: ${spell(value)}`).join(', ')}}` : ''),
+    ),
+  );
   section(
     'facts',
     held.facts.map(

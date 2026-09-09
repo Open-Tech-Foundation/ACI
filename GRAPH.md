@@ -74,7 +74,7 @@ says so with the links it already carries.
 | `transfer` | a doing with a source or a destination | **yes** |
 | `holding` | the world puts the relation under its `holding` | **yes** |
 | `property-change` | a doing whose target is a property, and nothing moved | proposed |
-| `placement` | a kind of the world's `placement` | proposed |
+| `placement` | a kind of the world's `placement`; which one comes with it | proposed |
 | `comparison` | the relation carries a `compares` link; the scale comes with it | proposed |
 | `order` | a kind of the world's `order` | proposed |
 | `property` | the other side is a property | proposed |
@@ -165,6 +165,26 @@ words is said of a man and another of a woman — and the brain drops whatever
 cannot be that kind, taking what is left only if one remains. It was taking the
 nearest thing it had met and hoping.
 
+**A quality standing beside a thing is said of that thing**, and it is held on
+the thing rather than put between two things as a fact: how something is
+belongs to it. Which sort of quality it is, the world says — red is a *colour*
+before it is anything else, and tall is a *state* — so nothing here is English.
+
+    > tom has a red box
+    nodes    n1  tom
+             n2  box  type: box[993]  {colour: red[202]}
+    facts    f1  holding(n1, box[993])
+
+**Two of one kind, told apart, are two things.** A quality usually narrows the
+kind rather than bringing in something new — `the tallest pig is quiet` says
+something of pigs, and one on its own stays one. It is standing beside another
+of the same kind, described otherwise, that leaves no reading but two.
+
+    > the red box is inside the blue box
+    nodes    n1  box  type: box[993]  {colour: red[202]}
+             n2  box  type: box[993]  {colour: blue[203]}
+    facts    f1  placement(n1, n2)  {as: inside[580]}
+
 **Being the doer of a doing is reason enough to be introduced.** A thing is
 introduced where the signal gives it something to be. Standing in a claim
 counted, and so did standing as a part of a doing — but the brain also demanded
@@ -174,8 +194,6 @@ sentence.
 
 ### Known wrong, and still showing
 
-  * `the red box is inside the blue box` collapses both boxes to one concept,
-    so it reads `placement(n1, n1)`.
   * A transfer's `from` is empty where the doer is plainly the source:
     `tom gives 2 books to jerry` gives `from: —`. Parked until wanted — the
     source may well be something other than the doer.
@@ -189,11 +207,6 @@ sentence.
     changed the answer from `10` to `ten` until the mark was carried on both.
     The form of an answer should come from what the brain was told, not from a
     flag on a verb.
-  * A quality standing beside a thing is dropped. `tom has a red box` loses the
-    red, and `the red box is inside the blue box` reads as one box inside
-    itself. A quality *said of* a thing is kept — `the box is red` works — so
-    it is only the standing-beside case. Telling two things apart by a quality
-    needs describing to introduce a thing, the way naming does.
 
 The aim is the smallest set of items that can hold a conversation and answer
 over it. Everything below is written against the ten example inputs, and each

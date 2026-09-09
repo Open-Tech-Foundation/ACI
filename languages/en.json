@@ -1561,11 +1561,18 @@
       "meaning": "inside",
       "concept": 580
     },
-    "outside": {
-      "pos": "noun",
-      "meaning": "outside",
-      "concept": 581
-    },
+    "outside": [
+      {
+        "pos": "noun",
+        "meaning": "outside",
+        "concept": 581
+      },
+      {
+        "pos": "preposition",
+        "meaning": "outside",
+        "concept": 581
+      }
+    ],
     "top": {
       "pos": "noun",
       "meaning": "top",
@@ -17889,6 +17896,16 @@
       "meaning": "first",
       "concept": 2821,
       "functions": "extreme"
+    },
+    "beside": {
+      "pos": "preposition",
+      "meaning": "beside",
+      "concept": 2968
+    },
+    "aside": {
+      "pos": "preposition",
+      "meaning": "aside",
+      "concept": 2969
     }
   },
   "unknown": {

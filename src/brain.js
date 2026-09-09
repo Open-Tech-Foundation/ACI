@@ -891,11 +891,17 @@ function solve(roots, world, langs, mood, allocate) {
   // on a pointer that landed on nothing would still name something.
   const positioned = contextual(roots, world);
   const settled = pointingAgain(
-    calling(
+    described(
+      calling(
       stoodFor(
         standsIn(whose(settle(positioned, world), world, langs, mood, allocate), world),
         world,
         langs,
+      ),
+        world,
+        langs,
+        mood,
+        allocate,
       ),
       world,
       langs,
@@ -936,6 +942,69 @@ function solve(roots, world, langs, mood, allocate) {
     if (marked) result.branch.push(node('mark', marked, []));
 
     return result;
+  });
+}
+
+// A thing told apart by a quality is a particular thing.
+//
+// `the red box is inside the blue box` speaks of two boxes, not of box twice.
+// Nobody named either of them, but each was picked out — one is the red one,
+// the other the blue one — and picking a thing out is as much a way of
+// bringing it into a conversation as naming it. Without this both come to the
+// same kind, and the signal reads as a box inside itself.
+//
+// Only where a quality stands beside it, and only of a kind: something the
+// world already holds as one thing is already that one thing, and describing
+// it further does not make a second.
+function described(roots, world, langs, mood, allocate) {
+  if (!world || mood !== 'tell' || typeof allocate !== 'function') return roots;
+  const a = world.anchors || {};
+  if (a.thing == null || a.property == null) return roots;
+  const side = markingSide(roots, langs);
+  // How something is, not how many of it there are. A word saying how many
+  // stands beside a thing the same way, and it picks nothing out: all cats are
+  // still cats, and no particular cat was brought in by saying so.
+  const quality = (n) => {
+    const of = conceptOf(n);
+    if (of == null || !functionsOf(n).includes('modifier')) return false;
+    if (a.quantity != null && world.isA(of, a.quantity)) return false;
+    return world.isA(of, a.property);
+  };
+  const describes = (i) => {
+    const found = markerFor(roots, i, side, quality);
+    return found ? conceptOf(found) : null;
+  };
+  // Two of one kind, told apart, are two things. One on its own is not: `the
+  // tallest pig is quiet` says something of pigs, and `the sweet one is hot`
+  // claims one fact — a quality there narrows the kind rather than bringing in
+  // something new. It is standing beside another of the same kind, described
+  // otherwise, that leaves no reading but two.
+  const told = (i, of) =>
+    roots.some((other, at) => {
+      if (at === i || conceptOf(other) !== of) return false;
+      const how = describes(at);
+      return how != null && how !== describes(i);
+    });
+  return roots.map((n, i) => {
+    const of = conceptOf(n);
+    if (of == null || world.isIndividual(of) || !world.isA(of, a.thing)) return n;
+    if (findBranch(n, 'call')) return n;
+    if (describes(i) == null || !told(i, of)) return n;
+    const id = allocate();
+    const thought = thoughtOf(n);
+    return withBranch(n, [
+      ...n.branch.map((b) =>
+        b.kind === 'thought'
+          ? withBranch(b, b.branch, { ...b.state, thought: { ...thought, concept: id } })
+          : b,
+      ),
+      node('call', `${world.term(of).name}#${id}`, [], {
+        name: `${world.term(of).name}#${id}`,
+        id,
+        of,
+        made: true,
+      }),
+    ]);
   });
 }
 
