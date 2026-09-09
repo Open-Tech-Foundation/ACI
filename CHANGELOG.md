@@ -6,6 +6,33 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **The conversation graph is built as a phase of the brain** — `src/graph.js`,
+  filled once a signal is understood and read back by `serialize`. Four kinds,
+  and the difference between them is the whole point:
+
+  A **node** is what this conversation brought in. A quantity of a kind is not
+  one: `john has 5 apples` introduces john and no apple, because five apples
+  names no particular apple, and what the fact reaches is the concept the world
+  already had. A thing nobody said anything about is a thing and no more —
+  `entity -> thing` — and one the world knows carries the kind it knows it by.
+
+  A **fact** is what is so, whether or not the world had it already: a signal
+  saying something the brain knew still said it. A claim about kinds makes no
+  node at all — `the sky is blue` joins two concepts and introduces nothing.
+
+  An **action** is what occurred, carrying the part each thing played in it.
+
+  A **rule** is a condition and what stands on it, held apart from both. What
+  an instruction is built out of stays inside it: putting a claim as a
+  condition is not saying it, so neither side is taken in as a fact.
+
+  Things come out in the order the signal reached them, not in the order it
+  happened to introduce them: a thing an earlier signal brought in is mentioned
+  rather than introduced again, and it is no less first for that.
+
+  `graph.mjs` shows it for anything typed at it.
+
+
 - **The conversation graph is held in memory** — `src/working-memory.js`, the
   design in `GRAPH.md`. It holds what *is*: the items a conversation
   introduces, the slots they stand in, the properties they hold, the

@@ -1,0 +1,121 @@
+{
+  "name": "hindi",
+  "symbols": {
+    "letter": {
+      "characters": "अआइईउऊऋएऐओऔकखगघङचछजझञटठडढणतथदधनपफबभमयरलवशषसहािीुूृेैोौंःँ़्ॅड़ढ़"
+    },
+    "vowel": {
+      "characters": "अआइईउऊऋएऐओऔ"
+    },
+    "punctuation": {
+      "characters": "। , ! ? ; : ' \" - ( ) [ ]"
+    },
+    "question": {
+      "characters": "?"
+    }
+  },
+  "unknown": {
+    "pos": "noun"
+  },
+  "words": {
+    "बिल्ली": {
+      "pos": "noun",
+      "meaning": "feline animal",
+      "concept": 83
+    },
+    "कुत्ता": {
+      "pos": "noun",
+      "meaning": "canine animal",
+      "concept": 82
+    },
+    "जानवर": {
+      "pos": "noun",
+      "meaning": "animal",
+      "concept": 24
+    },
+    "स्तनपायी": {
+      "pos": "noun",
+      "meaning": "mammal",
+      "concept": 297
+    },
+    "मछली": {
+      "pos": "noun",
+      "meaning": "fish",
+      "concept": 28
+    },
+    "पेड़": {
+      "pos": "noun",
+      "meaning": "plant",
+      "concept": 33
+    },
+    "चिड़िया": {
+      "pos": "noun",
+      "meaning": "flying animal",
+      "concept": 85
+    },
+    "है": {
+      "pos": "verb",
+      "meaning": "to be",
+      "concept": 294
+    },
+    "हैं": {
+      "pos": "verb",
+      "meaning": "to be (plural)",
+      "concept": 294
+    },
+    "क्या": {
+      "pos": "interrogative",
+      "meaning": "what",
+      "marks": "unknown"
+    },
+    "कौन": {
+      "pos": "interrogative",
+      "meaning": "who",
+      "marks": "unknown",
+      "concept": 138
+    }
+  },
+  "speech": {
+    "self": "मैं"
+  },
+  "expressions": {
+    "affirm": "हाँ। ✅{meaning}",
+    "deny": "नहीं। ❌",
+    "answer": "{meaning}",
+    "unsure": "मुझे नहीं पता।",
+    "unknown": "मैं समझा नहीं।",
+    "learn": "समझ गया।",
+    "understood": "समझ गया।",
+    "recognise": "मैं \"{meaning}\" को पहचानता हूँ।",
+    "unheard": "मैं \"{meaning}\" नहीं जानता।"
+  },
+  "grammar": {
+    "start": "sentence",
+    "rules": {
+      "sentence": {
+        "whole": true,
+        "rules": [
+          "subject predicate"
+        ]
+      },
+      "subject": {
+        "referent": true,
+        "rules": [
+          "noun"
+        ]
+      },
+      "predicate": {
+        "rules": [
+          "verbComplement verb"
+        ]
+      },
+      "verbComplement": {
+        "rules": [
+          "noun",
+          "interrogative"
+        ],
+        "completes": true
+      }
+    }
+  }
+}

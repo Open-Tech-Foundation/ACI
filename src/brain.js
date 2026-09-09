@@ -8,6 +8,7 @@
 // (see src/languages.js). It never knows a language's name.
 
 import { Decimal } from '@opentf/std';
+import { fromUnderstood } from './graph.js';
 
 const $ = Symbol.for('aci.node');
 
@@ -4704,6 +4705,12 @@ export function brainFrom(input, knowledge, circumstance) {
     ])];
     learned = null;
   }
+  // The conversation graph, filled once the signal is understood. This is the
+  // one place it is built: the phases below settle who did what to whom, and
+  // the graph is where that settles into things, facts, doings and what
+  // governs. Reading it is `serialize`, and nothing else assembles it.
+  fromUnderstood(judgedRoots, world);
+
   const expressedRoots = express(judgedRoots, langs, world);
   const selectedLanguage = signalLanguage(thoughtRoots, langs);
   return {
