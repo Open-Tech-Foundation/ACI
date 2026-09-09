@@ -75,7 +75,7 @@ function put(kind, entry) {
 //
 // Things first, then what stands between them and what happened to them: a
 // fact cannot reach a thing that is not there yet.
-export function fromUnderstood(roots, world, focus, marking) {
+export function fromUnderstood(roots, world, focus, marking, from) {
   against = world;
   const calls = gather(roots, 'call');
   const links = gather(roots, 'learn').filter((one) => one.name === 'link');
@@ -161,7 +161,13 @@ export function fromUnderstood(roots, world, focus, marking) {
     // A thing, if this signal made one of it, if the world holds it as one, or
     // if the signal spoke of it in particular. A kind spoken of as a kind is
     // not a thing this conversation brought in.
-    if (!call && !(world && world.isIndividual(id)) && !particular.has(id)) continue;
+    //
+    // Whoever is speaking is a thing whatever else they are. The runtime says
+    // no more than what they are — a person, a device — and the brain never
+    // decides who it is talking to; but somebody said this, and what they said
+    // is theirs, so they stand in the conversation like anything else spoken
+    // of. Without this `i have a car` had the car belong to the kind `person`.
+    if (!call && !(world && world.isIndividual(id)) && !particular.has(id) && id !== from) continue;
     // `the father of sam` says which one, but a father is what stands between
     // two people, not a third person beside them.
     if (!call && world && world.anchors.relation != null && world.isA(id, world.anchors.relation)) continue;
@@ -187,8 +193,15 @@ export function fromUnderstood(roots, world, focus, marking) {
           ? { called: call.state.word ?? call.state.name }
           : {}),
         ...(many ? { count: many.count } : {}),
-        // How it is, where the signal said so beside it.
-        ...(qualities.has(id) ? { how: qualities.get(id) } : {}),
+        // How it is, where the signal said so beside it. Counted, the thing
+        // this signal made has an identity of its own while the quality was
+        // said of the kind standing there — `two red cars` says red of cars —
+        // so what was said of the kind is said of the one made from it.
+        ...(qualities.has(id)
+          ? { how: qualities.get(id) }
+          : call && call.state.of != null && qualities.has(call.state.of)
+            ? { how: qualities.get(call.state.of) }
+            : {}),
       }),
     );
   }

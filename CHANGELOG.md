@@ -33,6 +33,19 @@ All notable changes to this project are documented in this file.
   a kind is claimed it is now a kind, the apple is one of it, and nothing
   standing against it, the claim is simply accepted.
 
+- **Whoever is speaking is a thing in the conversation.** `i have a car` gave
+  `holding(person[29], car[46])` — the car belonged to the *kind* person rather
+  than to anybody. Somebody said this and what they said is theirs, so they
+  stand as a node like anything else spoken of. The brain still decides nothing
+  about who they are: the runtime says only what they are, and that is all the
+  node carries.
+
+- **A quality survives a count.** `a red car` kept its colour and `two red
+  cars` lost it: counted, the thing the signal makes has an identity of its own
+  while the quality was said of the kind standing there. What was said of the
+  kind is now said of the one made from it, so `i have two loud speakers` keeps
+  the loudness.
+
 - **A quality standing beside a thing is said of that thing.** `a red box` is a
   box that is red, and the colour was being thrown away entirely — said the
   other way round, `the box is red`, it was kept, so it was only the standing

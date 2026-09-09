@@ -5407,7 +5407,7 @@ export function brainFrom(input, knowledge, circumstance) {
   // Which side of a word its markers stand on is the language's to declare;
   // the graph is told, and assumes no order of its own.
   const spoken = signalLanguage(thoughtRoots, langs);
-  fromUnderstood(judgedRoots, world, inReach, spoken ? spoken.data.marking : null);
+  fromUnderstood(judgedRoots, world, inReach, spoken ? spoken.data.marking : null, at.from);
 
   const expressedRoots = express(judgedRoots, langs, world);
   return {
