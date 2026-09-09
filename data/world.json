@@ -31151,36 +31151,6 @@
       ]
     },
     {
-      "id": 2962,
-      "name": "flight",
-      "links": [
-        {
-          "rel": 294,
-          "to": 260
-        }
-      ]
-    },
-    {
-      "id": 2963,
-      "name": "reserve",
-      "links": [
-        {
-          "rel": 294,
-          "to": 257
-        }
-      ]
-    },
-    {
-      "id": 2964,
-      "name": "cancel",
-      "links": [
-        {
-          "rel": 294,
-          "to": 257
-        }
-      ]
-    },
-    {
       "id": 2965,
       "name": "standing-instruction",
       "links": [

@@ -4,6 +4,11 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Removed
+
+- **`flight`, `reserve` and `cancel`**, added while reaching for the booking
+  case and never confirmed as concepts. Nothing referenced them.
+
 ### Added
 
 - **Whoever did it is introduced.** A new name standing where a language puts
