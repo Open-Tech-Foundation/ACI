@@ -86,6 +86,22 @@ export function fromWorldData(source) {
     }
   }
 
+  // A relation may be two relations followed one after the other: a father's
+  // father is a grandfather, and going east does not change how far north a
+  // thing is. The world says which pair gives which relation; the walk derives
+  // the fact when it is asked for and never writes it down. Transitivity is
+  // the case where a relation composes with itself, and keeps its own flag.
+  const compositions = [];
+  if (anchors.composition != null && anchors.leading != null && anchors.trailing != null) {
+    for (const term of terms.values()) {
+      const [gives] = outgoing.get(anchors.composition)?.get(term.id) || [];
+      const [leading] = outgoing.get(anchors.leading)?.get(term.id) || [];
+      const [trailing] = outgoing.get(anchors.trailing)?.get(term.id) || [];
+      if (gives == null || leading == null || trailing == null) continue;
+      compositions.push({ gives, leading, trailing });
+    }
+  }
+
   const rawClassificationCache = new Map();
   function rawClassificationReaches(id, target, skip = null) {
     const key = `${id}:${skip ? `${skip[0]}:${skip[1]}` : ''}`;
@@ -434,22 +450,64 @@ export function fromWorldData(source) {
     return total;
   }
 
+  const reachedBy = new Map();
+  const partialBy = new Map();
+  const walking = new Set();
+  // A walk that had to cut a cycle short is not the whole answer, so it is not
+  // kept. Only a walk that ran to the end is.
+  let cut = false;
   function relatedBy(id, rel) {
+    const key = `${id}:${rel}`;
+    if (reachedBy.has(key)) return reachedBy.get(key);
+    // A composition that leads back to where it started stops here. What the
+    // walk found on the way out still counts; going round again finds nothing.
+    if (walking.has(key)) {
+      cut = true;
+      return partialBy.get(key) || new Set();
+    }
+    const outermost = walking.size === 0;
+    if (outermost) cut = false;
+    walking.add(key);
     const relation = terms.get(rel);
-    if (!relation || !relation.transitive) return related(id, rel);
     const found = new Set();
-    const pending = [id];
-    const seen = new Set([id]);
-    while (pending.length) {
-      const here = pending.pop();
-      for (const next of related(here, rel)) {
-        found.add(next);
-        if (!seen.has(next)) {
-          seen.add(next);
-          pending.push(next);
+    partialBy.set(key, found);
+    if (relation && relation.transitive) {
+      const pending = [id];
+      const seen = new Set([id]);
+      while (pending.length) {
+        const here = pending.pop();
+        for (const next of related(here, rel)) {
+          found.add(next);
+          if (!seen.has(next)) {
+            seen.add(next);
+            pending.push(next);
+          }
+        }
+      }
+    } else {
+      for (const next of related(id, rel)) found.add(next);
+    }
+    // A composition may give back the relation it starts with — a father's
+    // sibling's father is a father — so what one round adds is what the next
+    // round steps from. Rounds run until nothing new is reached.
+    let grew = true;
+    while (grew) {
+      grew = false;
+      for (const { gives, leading, trailing } of compositions) {
+        if (gives !== rel) continue;
+        for (const middle of [...relatedBy(id, leading)]) {
+          for (const end of relatedBy(middle, trailing)) {
+            if (found.has(end)) continue;
+            found.add(end);
+            grew = true;
+          }
         }
       }
     }
+    walking.delete(key);
+    partialBy.delete(key);
+    if (!cut || outermost) reachedBy.set(key, found);
+    if (outermost) cut = false;
     return found;
   }
 
@@ -514,6 +572,16 @@ export function fromWorldData(source) {
     },
     // Everything that links to a term directly by one relation: the members of a
     // kind, where `linked` gives what a term is a member of.
+    // Who stands in a relation to a thing, counting the relations reached by
+    // composition as well as the ones written down.
+    standing: (id, rel) => {
+      if (id == null || rel == null) return [];
+      const out = new Set();
+      for (const t of terms.values()) {
+        if (relatedBy(t.id, rel).has(id)) out.add(canonical(t.id));
+      }
+      return [...out];
+    },
     members: (id, rel) => {
       if (id == null || rel == null) return [];
       const out = new Set();

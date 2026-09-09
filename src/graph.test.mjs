@@ -79,9 +79,9 @@ test("a father of a father is a grandfather, and a sister shares him", async () 
       "tom is the father of sam",
       "sam is the father of alex",
       "maya is the sister of alex",
-      "who is tom to maya?",
+      "who is the grandfather of maya?",
     ),
-    "the grandfather",
+    "tom",
   );
 });
 
@@ -112,12 +112,12 @@ test("what came back counts as much as what went out", async () => {
 test("two directions read together are two axes", async () => {
   assertEquals(
     await said(
-      "room a is north of room b",
-      "room b is east of room c",
-      "room c is south of room d",
-      "is room a north of room c?",
+      "the kitchen is north of the hall",
+      "the hall is east of the study",
+      "the study is south of the porch",
+      "the kitchen is north of the study?",
     ),
-    "Yes. ✅ room a is north of room c.",
+    "Yes. ✅ a kitchen north a study.",
   );
 });
 

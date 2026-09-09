@@ -6,6 +6,21 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A relation may be two relations followed one after the other.** The world
+  can now say that one relation followed by another gives a third, and the walk
+  derives the fact when asked rather than writing it down. `father-of-father`
+  gives `grandfather` and `father-of-sibling` gives `father`, so `tom is the
+  grandfather of maya?` answers from three told facts. Transitivity is the case
+  where a relation composes with itself and keeps its own flag.
+- **Where one thing lies from another.** `north`, `south`, `east` and `west`
+  are relations, each transitive and asymmetric with the opposite as its
+  converse, and the eight cross-axis compositions say that moving along one
+  axis leaves the other where it was: `the kitchen is north of the study?`
+  answers from `north of the hall` and `east of the study`.
+- **A word naming both a kind of thing and a relation is the thing**, unless
+  `of` after it says which is meant. `two sisters` counts sisters; `the sister
+  of maya` names sisterhood.
+
 - **A relation named with `of` is read as a relation.** `tom is the father of
   sam` now records `father(tom, sam)` instead of two wrong `has` links, and
   `who is the father of sam?` answers `tom`. Kinship terms named only a kind of

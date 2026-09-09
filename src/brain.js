@@ -945,7 +945,7 @@ function standsIn(roots, world) {
     if (!marker || conceptOf(marker) !== a.has) return n;
     const object = roots[i + 2] ? conceptOf(roots[i + 2]) : null;
     if (object == null) return n;
-    const standing = world.members(object, rel);
+    const standing = world.standing(object, rel);
     if (standing.length !== 1) return n;
     spent.add(i + 1);
     spent.add(i + 2);
@@ -3335,6 +3335,14 @@ function namedRelation(said, world, claims, asking) {
   let worked = -1;
   for (let i = 0; i < said.length; i += 1) {
     if (!reaches(said[i], a.relation, world)) continue;
+    // A word that names a kind of thing as well as a relation is the thing,
+    // unless `of` after it says which of the two is meant: `two sisters`
+    // counts sisters, `the sister of maya` names sisterhood.
+    const kindToo = a.thing != null && world.isA(conceptOf(said[i]), a.thing);
+    const ofAfter =
+      said[i + 1] != null &&
+      (conceptOf(said[i + 1]) === a.has || conceptOf(said[i + 1]) === a.hold);
+    if (kindToo && !ofAfter) continue;
     // An operation is worked out, not joined across: in `1+1 > 1` the joint is
     // the comparing, and the adding is one of the sides being compared. Where
     // nothing else joins, the operation is all there is — and standing before
@@ -3359,6 +3367,7 @@ function namedRelation(said, world, claims, asking) {
     const ahead = said.filter((n, j) => j > i && claims(n)).length;
     const behind = nearest(said, i, -1, claims);
     if (!asking && !(behind && nearest(said, i, 1, claims)) && !(!behind && ahead >= 2)) continue;
+
     if (conceptOf(said[i]) !== world.baseRelation) return i;
     // A tensed `be` never joins where a doing stands after it: `i will go`
     // is going, not being. Plain `be` still joins. Which words carry time

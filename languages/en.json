@@ -17804,6 +17804,48 @@
       "pos": "verb",
       "meaning": "taller",
       "concept": 2880
+    },
+    "grandfather": {
+      "pos": "noun",
+      "meaning": "grandfather",
+      "concept": 2946
+    },
+    "sibling": {
+      "pos": "noun",
+      "meaning": "sibling",
+      "concept": 2945
+    },
+    "north": {
+      "pos": [
+        "noun",
+        "preposition"
+      ],
+      "meaning": "north",
+      "concept": 2949
+    },
+    "south": {
+      "pos": [
+        "noun",
+        "preposition"
+      ],
+      "meaning": "south",
+      "concept": 2950
+    },
+    "east": {
+      "pos": [
+        "noun",
+        "preposition"
+      ],
+      "meaning": "east",
+      "concept": 2951
+    },
+    "west": {
+      "pos": [
+        "noun",
+        "preposition"
+      ],
+      "meaning": "west",
+      "concept": 2952
     }
   },
   "unknown": {
