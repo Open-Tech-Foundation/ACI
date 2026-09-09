@@ -1683,9 +1683,13 @@ function instructionFrom(when, so, world, langs, sent) {
           ? world.isA(from, to, rel)
           : upward(from, world).some((rung) => world.isA(rung, to, rel));
       const knownCount = counted == null ? null : world.held(holder, rel, object);
+      // How many of a kind a thing holds answers whether it holds one at all:
+      // three apples is an apple, and none of them is not.
+      const heldMany = counted == null ? world.held(holder, rel, object) : null;
       const holds = counted != null
         ? knownCount === counted
-        : joins(holder, object, rel) ||
+        : heldMany > 0 ||
+          joins(holder, object, rel) ||
           bothWays(rel, world).some((back) => joins(object, holder, back)) ||
           forced(holder, object, rel, world);
       const reverseHolds =
@@ -1715,9 +1719,14 @@ function instructionFrom(when, so, world, langs, sent) {
       const predicateAgainst = rel === world.baseRelation && upward(holder, world).some(
         (rung) => world.predicates(rung).some((found) => world.excludes(found, object)),
       );
+      // Told there are none of a kind is not silence about them. A count of
+      // zero stands against the claim that there is one, the way any other
+      // count stands against a claim of a different one.
+      const heldNone = heldMany === 0;
       const opposed = functionalAgainst || constrainedAgainst || predicateAgainst || (counted != null
         ? knownCount != null && knownCount !== counted
-        : heldDenied ||
+        : heldNone ||
+          heldDenied ||
           (kindFact && world.excludes(subject, object)) ||
           (world.irreflexive(rel) && world.same(holder, object)) ||
           (world.asymmetric(rel) && reverseHolds) ||

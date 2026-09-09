@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Told there is none is held apart from nobody having said.** `none` is the
+  amount zero, so `tarun has no apples` records a count of zero on the kind
+  instead of a positive link that answered `has an apple?` with *Yes*. A count
+  of zero stands against the claim that there is one; a count above zero stands
+  for it, so three apples is an apple. The zero-count link is the empty slot: a
+  place for the kind with nothing in it, which a later arrival fills.
+
 - **A standing instruction is held, and keeps applying.** A condition the brain
   cannot yet reach is no longer thrown away: what was said is kept as a
   standing instruction — a term joining two claims — and when the condition
