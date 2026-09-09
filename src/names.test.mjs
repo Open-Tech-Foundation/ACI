@@ -61,8 +61,8 @@ test("a thing named keeps what the same signal said of it", async () => {
 
 test("a thing named by anything said of it is still a thing", async () => {
   await forget();
-  await brain("alice measures 2 metre");
-  await brain("bob measures 1 metre");
+  await brain("alice measures 2 metre big");
+  await brain("bob measures 1 metre big");
   assertEquals((await brain("alice is bigger than bob?")).expression.name, "affirm");
   await forget();
 });

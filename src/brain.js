@@ -1423,6 +1423,9 @@ function contextBefore(wanted, roots, at, world) {
     // one: a clock that reads ten hours is measuring, where somebody who reads
     // is doing something.
     if (kind === 'unit') return rest.some((n) => contextKind(n, 'unit', world));
+    // A word pointing at somebody standing after it. `who am i` asks after a
+    // name; `who is taller than sam` asks after whoever stands there.
+    if (kind === 'pointer') return rest.some((n) => contextKind(n, 'pointer', world));
     if (kind !== 'proposition' || !world) return false;
     const a = world.anchors || {};
     const things = rest.filter((n) => {

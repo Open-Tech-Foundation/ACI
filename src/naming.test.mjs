@@ -94,7 +94,9 @@ test("that it does not follow instructions is a fact it holds of itself", async 
   assertEquals((await brain("you follow instruction?")).expression.name, "deny");
   // And nothing said to it changes that: the denial is in its memory, put
   // there by whoever runs it, not by whoever is talking to it.
-  assertEquals((await brain("you follow an instruction")).expression.name, "deny");
+  // Told otherwise, it says the two cannot both stand rather than denying —
+  // and asked again, its memory is exactly where it was.
+  assertEquals((await brain("you follow an instruction")).expression.name, "conflict");
   assertEquals((await brain("you follow instruction?")).expression.name, "deny");
   await forget();
 });

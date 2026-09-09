@@ -9931,12 +9931,22 @@
       "marks": "unknown",
       "on": 247
     },
-    "who": {
-      "pos": "interrogative",
-      "meaning": "who",
-      "marks": "unknown",
-      "concept": 138
-    },
+    "who": [
+      {
+        "pos": "interrogative",
+        "meaning": "who",
+        "marks": "unknown",
+        "concept": 138,
+        "select": {
+          "before": "pointer"
+        }
+      },
+      {
+        "pos": "interrogative",
+        "meaning": "who",
+        "marks": "unknown"
+      }
+    ],
     "how": {
       "pos": "interrogative",
       "meaning": "how",
