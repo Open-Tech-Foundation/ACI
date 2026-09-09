@@ -1,15 +1,17 @@
 # The conversation graph
 
-The design note. It is being landed in phases.
+The design note, and what is built from it.
 
-**Phase one is in `src/working-memory.js`** — what *is*: the kinds of item, the
+**The graph is `src/working-memory.js`** — what *is*: the kinds of item, the
 slots including the empty one, properties, collections, actions and the order
-they came in, derived values, looking back, and context beside the graph.
+they came in, derived values and looking back; and what *governs*: standing
+instructions, conditions asked of the graph, actions waiting on one, and what
+is owed. Context sits beside it.
 
-**Phase two is not written yet** — what *governs*: a standing instruction, a
-condition asked of the graph, an action waiting on one, and what is owed.
-Nothing in phase one anticipates it. Neither phase is joined to the running
-brain yet.
+**Reading a signal into it is `src/reading.js`**, reached by `read(input)`
+beside `brain(input)`, and shown by `structure.mjs`. It lays out what the brain
+already understood; it understands nothing of its own. The answering path does
+not read any of this yet.
 
 The aim is the smallest set of items that can hold a conversation and answer
 over it. Everything below is written against the ten example inputs, and each

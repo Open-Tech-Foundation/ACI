@@ -14,6 +14,8 @@
 // brain(input) takes ONLY the input. The brain's own signature never grows to
 // admit a new source; a new source is a new file in one of those directories.
 import { brainFrom } from './brain.js';
+import { layOut } from './reading.js';
+import { openGraph } from './working-memory.js';
 import { fromSources, speaking } from './knowledge.js';
 import { openStore, seed, readWorld, write, forgetLearned } from './store.js';
 
@@ -182,15 +184,41 @@ export function openBrain(url) {
   // allocate from the same stale snapshot and overwrite its identity.
   const brain = (input, circumstance) => inTurn(() => turn(input, circumstance));
 
+  // The conversation graph, one per thread. It holds only what this
+  // conversation introduced, it is never written to the store, and it goes
+  // when the conversation does — which is what makes it working memory.
+  const graphs = new Map();
+
+  // The same turn, with what it put into the graph handed back: the nodes,
+  // collections, actions, facts and rules this signal introduced. Nothing is
+  // understood here that `brain` does not already understand; this says what
+  // came of it.
+  async function reading(input, circumstance) {
+    const thread = (circumstance && circumstance.conversation) ?? ALONE;
+    const result = await turn(input, circumstance);
+    if (!graphs.has(thread)) graphs.set(thread, { graph: openGraph(), known: new Map() });
+    const held = graphs.get(thread);
+    const { world } = await loaded();
+    const laid = layOut(result.learned, world, held.graph, held.known);
+    return {
+      input: result.input,
+      says: result.expression?.state?.says ?? result.expression?.name ?? null,
+      ...laid,
+    };
+  }
+
+  const read = (input, circumstance) => inTurn(() => reading(input, circumstance));
+
   const forget = () => inTurn(async () => {
     threads.clear();
+    graphs.clear();
     if (!store) return;
     await forgetLearned(store);
     knowledgePromise = build();
     await knowledgePromise;
   });
 
-  return { brain, forget };
+  return { brain, read, forget };
 }
 
 async function projectRoot(file) {
@@ -235,4 +263,5 @@ async function readAll(root, dir) {
 // The brain this process speaks with, over whatever store ACI_STORE names.
 const here = openBrain();
 export const brain = (input, circumstance) => here.brain(input, circumstance);
+export const read = (input, circumstance) => here.read(input, circumstance);
 export const forget = () => here.forget();

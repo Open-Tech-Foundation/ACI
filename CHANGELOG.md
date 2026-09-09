@@ -7,11 +7,9 @@ All notable changes to this project are documented in this file.
 ### Added
 
 - **The conversation graph is held in memory** — `src/working-memory.js`, the
-  first phase of the design in `GRAPH.md`. It holds what *is*: the items a
-  conversation introduces, the slots they stand in, the properties they hold,
-  the collections they gather into, and the order it was all said in. What
-  *governs* — a standing instruction, a condition, an action waiting on one,
-  what is owed — is the phase after this, and nothing here anticipates it.
+  design in `GRAPH.md`. It holds what *is*: the items a conversation
+  introduces, the slots they stand in, the properties they hold, the
+  collections they gather into, and the order it was all said in.
 
   Nothing is stored that can be worked out. A count, a total, an extreme and a
   property's current value are read back off what was said, at the moment they
@@ -25,7 +23,41 @@ All notable changes to this project are documented in this file.
   reach, nearest first, and the names given here — and a pointer resolves only
   where exactly one candidate fits.
 
-  Nothing in `src/` reads it yet; the running brain is untouched.
+  It also holds what **governs**. A standing instruction is a condition and
+  what stands on it: it never occurred, so it has no place in the history, and
+  it keeps applying to whatever turns up later. A condition is a question asked
+  of the graph rather than an arriving action to be matched against — either
+  true now or not — so a payment of three hundred and one of two hundred settle
+  what was waiting on five hundred, because the total is a state.
+
+  What an instruction produces is one of two things, and the difference is the
+  point. A fact simply becomes so and needs nobody: rain makes the road wet,
+  and the road stops being wet the moment the rain does, because nothing was
+  written down. An action is *owed* — it does nothing by itself and can sit
+  unmet for ever, which is exactly what makes it reportable. Owed is worked out
+  when it is asked for and never materialised: an instruction is stored once,
+  however many records it governs, and a part that failed inspection twice and
+  was sent onward once is still owed once.
+
+- **What a signal put into the graph can be read back** — `src/reading.js`, and
+  `read(input)` beside `brain(input)`. Nothing is understood there that the
+  brain does not already understand; it says what came of it, as nodes,
+  collections, actions, facts and rules.
+
+  No word is looked at. What a term is decides what it becomes: a doing becomes
+  an action and its roles become its slots, a quantity arriving at a kind
+  becomes a collection of that many, any other individual becomes a node, a
+  link between them becomes a fact, and a term joining a condition to what
+  stands on it becomes a rule. A name is not a node — it is a word this
+  conversation gave to something, so it goes to context and is thrown away with
+  the conversation.
+
+  A thing said of twice is one node. `meera has 5 books` and then `meera gives
+  2 books to dev` leaves one meera, one collection of books, and three of them
+  left in it.
+
+  `structure.mjs` shows it for anything typed at it. The running brain is
+  otherwise untouched: nothing in the answering path reads any of this.
 
 ### Removed
 

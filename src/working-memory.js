@@ -1,10 +1,10 @@
 // The brain's working memory: the conversation graph, held in memory.
 //
-// Phase one of the design in GRAPH.md — what *is*. The kinds of item a
-// conversation introduces, the slots they stand in, the properties they hold,
-// the collections they gather into, and the order it was all said in. What
-// *governs* — a standing instruction, a condition, an action waiting on one,
-// what is owed — is the phase after this, and nothing here anticipates it.
+// The design in GRAPH.md. What *is* — the kinds of item a conversation
+// introduces, the slots they stand in, the properties they hold, the
+// collections they gather into, and the order it was all said in — and what
+// *governs*: a standing instruction, a condition asked of the graph, an action
+// waiting on one, and what is owed.
 //
 // Three things this module holds to:
 //
@@ -22,12 +22,13 @@
 // It holds no world either. Concepts named here are the ones this conversation
 // needs; joining them to the world the brain already has is a later phase.
 
-// What an action carries as its standing: it happened, or it is still to.
-// An action waiting on a condition is phase two.
+// What an action carries as its standing: it happened, it is still to, or it
+// waits on a condition and neither has nor has not happened yet.
 export const DONE = 'done';
 export const TO_COME = 'to come';
+export const PENDING = 'pending';
 
-const PREFIX = { node: 'n', collection: 'c', fact: 'f', action: 'a' };
+const PREFIX = { node: 'n', collection: 'c', fact: 'f', action: 'a', rule: 'r' };
 
 export function openGraph() {
   // What is known before anyone speaks, and the facts about it.
@@ -37,7 +38,10 @@ export function openGraph() {
   // Everything said, in the order it was said.
   const told = [];
   const made = new Map();
-  const counted = { node: 0, collection: 0, fact: 0, action: 0 };
+  const counted = { node: 0, collection: 0, fact: 0, action: 0, rule: 0 };
+  // What governs. A standing instruction never occurred, so it is not in the
+  // history and it is not undone by looking back.
+  const rules = [];
 
   const now = () => told.length - 1;
   const upto = (at) => (at == null ? now() : Math.min(at, now()));
@@ -100,10 +104,16 @@ export function openGraph() {
   // What occurred, and when. A slot named with `null` in it is the empty slot:
   // there is a place for this kind and nothing is in it. A slot left out was
   // never spoken of at all, and the two must stay apart.
+  //
+  // Given a condition, the action is pending: it waits on a state of the graph
+  // and neither has nor has not happened. What it waits on is never an
+  // arriving action to be matched — it is a question asked of the graph, true
+  // now or not.
   const action = (of, slots = {}, opts = {}) =>
     put('action', of, opts.props || {}, {
       slots: { ...slots },
-      when: opts.when ?? DONE,
+      when: opts.on !== undefined ? PENDING : (opts.when ?? DONE),
+      ...(opts.on !== undefined ? { on: opts.on } : {}),
       denied: opts.denied === true,
     });
 
@@ -128,10 +138,16 @@ export function openGraph() {
   const at = (id) => (made.has(id) ? made.get(id) : -1);
   const before = (id) => at(id) - 1;
 
-  // A property held now, or at some earlier moment. Where nothing was said of
-  // it, the kind may still carry it: `john is a husband` and a husband's sex
-  // is male gives john a sex nobody stated.
-  function propertyOf(id, name, moment) {
+  // A property held now, or at some earlier moment. Three places it can come
+  // from, nearest first: said of this thing, carried by the kind — `john is a
+  // husband` and a husband's sex is male gives john a sex nobody stated — or
+  // produced by an instruction whose condition stands.
+  //
+  // The last is worked out, never written: a produced fact needs nobody, and
+  // it stops being so the moment its condition stops standing. `stated` asks
+  // for only what was said, which is what a condition is read against, so a
+  // rule can never be asked to answer itself.
+  function propertyOf(id, name, moment, stated = false) {
     for (let i = upto(moment); i >= 0; i--) {
       const record = told[i];
       if (record.what === 'held' && record.id === id && record.name === name) return record.value;
@@ -142,6 +158,19 @@ export function openGraph() {
       const from = concepts.get(kind)?.has;
       if (from && name in from) return from[name];
     }
+    if (stated) return undefined;
+    for (const rule of rules) {
+      // An owed consequence does nothing by itself. That is what makes it
+      // reportable, and what keeps it from quietly coming true.
+      if (rule.owed || rule.then?.property !== name) continue;
+      // Where the instruction says what it is about — rain makes the *road*
+      // wet — it lands there. Where it does not, it lands on whatever the
+      // condition stood for, which is how one instruction governs many.
+      const found = matching(rule.on, moment, true);
+      if (rule.then.of !== undefined ? rule.then.of === id && found.length : found.some((one) => one.item === id)) {
+        return rule.then.value;
+      }
+    }
     return undefined;
   }
 
@@ -151,6 +180,19 @@ export function openGraph() {
     const held = items.get(id);
     return held ? kinds(held.of).includes(of) : false;
   };
+
+  // How an action stands at some moment. What it was made with, unless it was
+  // pending and its condition came to stand — settling is recorded like
+  // anything else, so an action read at an earlier moment is pending again.
+  function whenOf(id, moment) {
+    const held = items.get(id);
+    if (!held) return null;
+    for (let i = upto(moment); i >= 0; i--) {
+      const record = told[i];
+      if (record.what === 'settled' && record.id === id) return DONE;
+    }
+    return held.when ?? null;
+  }
 
   const members = (into, moment) => {
     const out = [];
@@ -245,11 +287,214 @@ export function openGraph() {
     return out;
   }
 
+  // ---- what governs --------------------------------------------------------
+
+  // A standing instruction: a condition, and what stands on it. It never
+  // occurred, so it has no place in the history, and it keeps applying to
+  // whatever turns up later.
+  //
+  // What it produces is one of two things. A fact simply becomes so and needs
+  // nobody — that is read back through `propertyOf`. An action is *owed*: it
+  // does nothing by itself and can sit unmet for ever, which is exactly what
+  // makes it reportable.
+  //
+  // The instruction is stored once. It never writes an owed action per record:
+  // that would copy its truth as many times as there are records, the same
+  // trap as a stored total. What is owed is worked out when it is asked for.
+  function rule({ on, then, owed = false } = {}) {
+    const id = PREFIX.rule + ++counted.rule;
+    rules.push({ id, on, then, owed: owed === true });
+    return id;
+  }
+
+  const ruled = (id) => rules.find((held) => held.id === id) || null;
+  const governing = () => rules.map((held) => held.id);
+
+  // A condition is a question asked of the graph. There is no matching and no
+  // rule about how much of it must match: it is either true now or it is not.
+  //
+  // Two ways to ask. Over what is so — `each` walks the things of a kind and
+  // reads a state off them — or over what happened, where `occurred` walks the
+  // history. What comes back is every thing the condition stands for, which is
+  // also what binds the consequence to something in particular.
+  function matching(condition, moment, stated = false) {
+    if (condition == null) return [];
+    const end = upto(moment);
+
+    // A fact put as a question: does this stand? Asked of what was said, and
+    // of what an instruction produces — the same loop, on the other kind of
+    // consequence.
+    if (condition.claim !== undefined) {
+      return stands(condition.claim, end, stated)
+        ? [{ item: condition.claim.subject ?? null, action: null }]
+        : [];
+    }
+
+    if (condition.occurred !== undefined) {
+      const about = condition.about ?? 'target';
+      return history(end)
+        .map((id) => items.get(id))
+        .filter(
+          (held) =>
+            !held.denied &&
+            whenOf(held.id, end) === DONE &&
+            kinds(held.of).includes(condition.occurred) &&
+            fits(held.slots || {}, condition.slots),
+        )
+        .map((held) => ({ item: (held.slots || {})[about] ?? null, action: held.id }));
+    }
+
+    const over =
+      condition.each !== undefined
+        ? [...items.values()].filter((held) => kinds(held.of).includes(condition.each)).map((held) => held.id)
+        : condition.of !== undefined
+          ? [condition.of]
+          : [];
+    return over
+      .filter((id) => tests(reads(id, condition, end, stated), condition))
+      .map((id) => ({ item: id, action: null }));
+  }
+
+  const holds = (condition, moment) => matching(condition, moment).length > 0;
+
+  const fits = (slots, wanted = {}) =>
+    Object.entries(wanted).every(([role, value]) => value === undefined || slots[role] === value);
+
+  // Whether a fact stands: said outright, or produced by an instruction whose
+  // condition stands. Nothing is written when one is produced — it stops
+  // standing the moment its condition does.
+  function stands(claim, moment, stated = false) {
+    if (claim == null) return false;
+    const end = upto(moment);
+    const wanted = { subject: claim.subject, object: claim.object };
+    const said = [...items.values()].some(
+      (held) =>
+        held.kind === 'fact' &&
+        !held.denied &&
+        at(held.id) <= end &&
+        kinds(held.of).includes(claim.of) &&
+        fits(held.slots || {}, wanted),
+    );
+    if (said || stated) return said;
+    for (const rule of rules) {
+      if (rule.owed || rule.then?.claim === undefined) continue;
+      const produced = rule.then.claim;
+      if (produced.of !== claim.of) continue;
+      if (claim.subject !== undefined && produced.subject !== claim.subject) continue;
+      if (claim.object !== undefined && produced.object !== claim.object) continue;
+      if (matching(rule.on, end, true).length) return true;
+    }
+    return false;
+  }
+
+  // What the condition reads off the thing: a property, or one of the three
+  // values a collection yields.
+  function reads(id, condition, end, stated) {
+    if (condition.count) return count(id, end);
+    if (condition.total !== undefined) return sum(id, condition.total, end);
+    if (condition.highest !== undefined) return propertyOf(highest(id, condition.highest, end), condition.highest, end, stated);
+    if (condition.lowest !== undefined) return propertyOf(lowest(id, condition.lowest, end), condition.lowest, end, stated);
+    return propertyOf(id, condition.property, end, stated);
+  }
+
+  // The test it puts to that value. `is` compares, unless what it is compared
+  // against is a state on a scale — `hot` is temperature from thirty up — and
+  // then it asks whether the value falls in it. That is the same shape as one
+  // measure standing above another, and it is the whole of what a threshold
+  // needs to be answerable.
+  function tests(value, condition) {
+    if (value === undefined || value === null) return false;
+    if ('is' in condition) return same(value, condition.is);
+    const number = typeof value === 'number';
+    if ('above' in condition) return number && value > condition.above;
+    if ('below' in condition) return number && value < condition.below;
+    if ('atLeast' in condition) return number && value >= condition.atLeast;
+    if ('atMost' in condition) return number && value <= condition.atMost;
+    return false;
+  }
+
+  function same(value, wanted) {
+    const state = concepts.get(wanted);
+    if (state && (state.from !== undefined || state.to !== undefined)) {
+      if (typeof value !== 'number') return false;
+      if (state.from !== undefined && value < state.from) return false;
+      if (state.to !== undefined && value > state.to) return false;
+      return true;
+    }
+    return value === wanted;
+  }
+
+  // One loop, not two: an action changes a property, the property may make a
+  // state true, and a true state settles whatever was waiting on it. Nothing
+  // arrives announcing itself, so this is asked after a change rather than
+  // triggered by one — and it says what came true rather than doing anything
+  // about it. Acting is the runtime's.
+  function settle(moment) {
+    const fired = [];
+    for (const held of items.values()) {
+      if (held.kind !== 'action' || whenOf(held.id, moment) !== PENDING) continue;
+      if (!holds(held.on, moment)) continue;
+      say({ what: 'settled', id: held.id });
+      fired.push(held.id);
+    }
+    return fired;
+  }
+
+  // What an instruction demands and nothing has met. Worked out from whichever
+  // side the condition lives on: a state is read off the records, and an
+  // occurrence is paired against the history — a failure that was answered is
+  // done with, and one that was not is still owed. A real action needs no
+  // matching and no clearing; the thing simply stops answering the question.
+  function owing(moment) {
+    const end = upto(moment);
+    const out = [];
+    for (const held of rules) {
+      if (!held.owed) continue;
+      const found = matching(held.on, end);
+      const answers = held.then?.action !== undefined ? consequences(held, end) : null;
+      const used = new Set();
+      for (const one of found) {
+        if (met(held, one, end, answers, used)) continue;
+        out.push({ rule: held.id, on: one.item, since: one.action });
+      }
+    }
+    return out;
+  }
+
+  const consequences = (held, end) =>
+    history(end)
+      .map((id) => items.get(id))
+      .filter(
+        (done) =>
+          !done.denied && whenOf(done.id, end) === DONE && kinds(done.of).includes(held.then.action),
+      );
+
+  function met(held, one, end, answers, used) {
+    // A produced fact is met by the property simply being set. Which value it
+    // took is not the instruction's to say — somebody answered it.
+    if (held.then?.property !== undefined) {
+      return propertyOf(held.then.of ?? one.item, held.then.property, end, true) !== undefined;
+    }
+    if (held.then?.action === undefined) return false;
+    // Paired in order. A doing before the demand does not answer it, and one
+    // answer does not answer two demands.
+    for (const done of answers) {
+      if (used.has(done.id)) continue;
+      if (one.action != null && at(done.id) < at(one.action)) continue;
+      const about = held.then.of ?? one.item;
+      if (about != null && !Object.values(done.slots || {}).includes(about)) continue;
+      used.add(done.id);
+      return true;
+    }
+    return false;
+  }
+
   const graph = {
     concept, knows, kinds,
-    node, collection, fact, action, property, collect,
-    item, all, isA,
+    node, collection, fact, action, property, collect, rule,
+    item, all, isA, ruled, governing,
     propertyOf, members, count, sum, highest, lowest,
+    holds, stands, matching, whenOf, settle, owed: owing,
     history, moment: now, at, before,
   };
   return { ...graph, context: openContext(graph) };

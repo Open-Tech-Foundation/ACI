@@ -1,5 +1,5 @@
 import { test, assert, assertEquals } from 'runtime:test';
-import { openGraph, DONE, TO_COME } from './working-memory.js';
+import { openGraph, DONE, TO_COME, PENDING } from './working-memory.js';
 
 // Phase one of GRAPH.md: what the graph holds, and what is read back off it.
 // Every case here is one the design note works through.
@@ -202,4 +202,132 @@ test("a name given in this conversation lands on what it was given to", () => {
   g.context.name('anu', anu);
   assertEquals(g.context.named('anu'), anu);
   assertEquals(g.context.named('bala'), null);
+});
+
+// What governs: a standing instruction, a condition asked of the graph, an
+// action waiting on one, and what is owed.
+
+test("a condition is a question asked of the graph, not an arriving action", () => {
+  const g = openGraph();
+  g.concept('hot', { on: 'temperature', from: 30 });
+  const bedroom = g.node('room', { temperature: 22 });
+  const cooler = g.node('appliance');
+  const switchOn = g.action('change-property', { target: cooler, property: 'on', value: 'yes' }, {
+    on: { of: bedroom, property: 'temperature', is: 'hot' },
+  });
+  assertEquals(g.whenOf(switchOn), PENDING);
+  assertEquals(g.settle(), []);
+
+  g.property(bedroom, { temperature: 31 });
+  assertEquals(g.settle(), [switchOn]);
+  assertEquals(g.whenOf(switchOn), DONE);
+});
+
+test("a state on a scale is reached, not equalled", () => {
+  const g = openGraph();
+  g.concept('freezing', { on: 'temperature', to: 0 });
+  const pipe = g.node('pipe', { temperature: 5 });
+  const cold = { of: pipe, property: 'temperature', is: 'freezing' };
+  assertEquals(g.holds(cold), false);
+  g.property(pipe, { temperature: -2 });
+  assertEquals(g.holds(cold), true);
+});
+
+test("nothing is compared action to action; what changed is a total", () => {
+  const g = openGraph();
+  const paid = g.collection('payment');
+  const enough = { of: paid, total: 'amount', atLeast: 500 };
+  const tell = g.action('telling', { target: null }, { on: enough });
+
+  g.collect(paid, g.node('payment', { amount: 300 }));
+  assertEquals(g.settle(), [], "three hundred is not five hundred");
+
+  g.collect(paid, g.node('payment', { amount: 200 }));
+  assertEquals(g.settle(), [tell], "the total reached it, and the total is a state");
+});
+
+test("a produced fact needs nobody, and stops being so when its condition does", () => {
+  const g = openGraph();
+  g.concept('freezing', { on: 'temperature', to: 0 });
+  const pipe = g.node('pipe', { temperature: 4 });
+  g.rule({
+    on: { each: 'pipe', property: 'temperature', is: 'freezing' },
+    then: { property: 'frozen', value: 'yes' },
+  });
+  assertEquals(g.propertyOf(pipe, 'frozen'), undefined);
+
+  const dropped = g.property(pipe, { temperature: -2 });
+  assertEquals(g.propertyOf(pipe, 'frozen'), 'yes');
+  // Worked out, never written: read at the moment before, it was not frozen.
+  assertEquals(g.propertyOf(pipe, 'frozen', g.moment() - 1), undefined);
+});
+
+test("an owed action does nothing by itself, and that is what makes it reportable", () => {
+  const g = openGraph();
+  g.rule({
+    on: { each: 'invoice', property: 'amount', above: 500 },
+    then: { action: 'approval', slots: { by: null } },
+    owed: true,
+  });
+  const big = g.node('invoice', { amount: 800 });
+  const small = g.node('invoice', { amount: 200 });
+
+  assertEquals(g.owed().map((one) => one.on), [big], "only the one over five hundred");
+  // The instruction put nothing anywhere. Someone has to.
+  const manager = g.node('person');
+  g.action('approval', { agent: manager, target: big });
+  assertEquals(g.owed(), []);
+  assertEquals(g.propertyOf(small, 'approved'), undefined);
+});
+
+test("an occurrence is paired against the history, and an unanswered one is still owed", () => {
+  const g = openGraph();
+  const tray = g.node('tray');
+  g.rule({
+    on: { occurred: 'property-change', slots: { property: 'inspection', value: 'failed' } },
+    then: { action: 'movement', slots: { destination: tray } },
+    owed: true,
+  });
+
+  const part = g.node('part');
+  g.action('property-change', { target: part, property: 'inspection', value: 'failed' });
+  assertEquals(g.owed().length, 1, "nobody has sent it anywhere");
+
+  g.action('movement', { what: part, source: null, destination: tray });
+  assertEquals(g.owed(), [], "the thing simply stops answering the question");
+
+  // Failing again is a second demand, and the first answer does not answer it.
+  g.action('property-change', { target: part, property: 'inspection', value: 'failed' });
+  assertEquals(g.owed().length, 1);
+});
+
+test("an instruction is stored once, however many records it governs", () => {
+  const g = openGraph();
+  const standing = g.rule({
+    on: { each: 'invoice', property: 'amount', above: 500 },
+    then: { action: 'approval', slots: { by: null } },
+    owed: true,
+  });
+  for (const amount of [900, 700, 600, 100]) g.node('invoice', { amount });
+  assertEquals(g.governing(), [standing]);
+  assertEquals(g.owed().length, 3);
+  // It never entered the history: nothing occurred.
+  assertEquals(g.history(), []);
+});
+
+test("an instruction may say what it is about, rather than what it matched", () => {
+  const g = openGraph();
+  const road = g.node('road');
+  g.rule({
+    on: { each: 'sky', property: 'raining', is: 'yes' },
+    then: { of: road, property: 'wet', value: 'yes' },
+  });
+  const sky = g.node('sky');
+  // Putting a claim as a condition is not saying it.
+  assertEquals(g.propertyOf(sky, 'raining'), undefined);
+  assertEquals(g.propertyOf(road, 'wet'), undefined);
+
+  g.property(sky, { raining: 'yes' });
+  assertEquals(g.propertyOf(road, 'wet'), 'yes');
+  assertEquals(g.propertyOf(sky, 'wet'), undefined, "the rain is not what got wet");
 });
