@@ -62,10 +62,10 @@ test("a thing spoken of in particular is a thing, and stays in reach", async () 
   // next signal may point back at it, which is what makes it a node.
   assertEquals(held.nodes.length, 1);
   assertEquals(held.nodes[0].said, 'sky');
-  assertEquals(held.facts[0].parts[0], 'n1');
-  // In reach: the sky itself, and the fact just said of it — both by the ids
-  // the graph gave them.
-  assertEquals(held.context.focus, ['n1', 'f1']);
+  // How a thing is belongs to it, so nothing stands between the sky and blue.
+  assertEquals(held.nodes[0].how.colour, 203);
+  assertEquals(held.facts, []);
+  assertEquals(held.context.focus, ['n1']);
 });
 
 test("a doing carries the part each thing played in it", async () => {
@@ -172,13 +172,14 @@ test("a doing that moves something is a transfer; one that takes a value is not"
   const took = await said('the sky turned red');
   assertEquals(took.actions[0].of, PROPERTY_CHANGE, 'nothing moved; a value was taken');
   assertEquals(took.actions[0].parts.thing, 'n1');
-  assertEquals(took.actions[0].parts.took, 202);
+  // Which property took the value, not only the value.
+  assertEquals(took.actions[0].properties.colour, 202);
 });
 
 test("one relation says both a property and a kind, told apart by the other side", async () => {
   const blue = await said('the sky is blue');
-  assertEquals(blue.facts[0].of, PROPERTY);
-  assertEquals(blue.facts[0].said, 294);
+  assertEquals(blue.facts, [], 'how a thing is is held on it, not between two');
+  assertEquals(blue.nodes[0].how.colour, 203);
 
   const animal = await said('all cats are animals');
   assertEquals(animal.facts[0].of, KIND);

@@ -232,6 +232,18 @@ export function fromUnderstood(roots, world, focus, marking) {
         return;
       }
     }
+    // How a thing is belongs to it. Said beside it — a red box — it was
+    // already held on the thing; said of it — the sky is blue — it stood
+    // between the two as a fact, so the same claim landed in two places and
+    // which one depended on where English put the word. It goes on the thing
+    // either way now, and there is one place to look.
+    if (primitive === PROPERTY) {
+      const one = held.nodes.find((node) => node.id === reach(subject));
+      if (one) {
+        one.how = { ...(one.how || {}), [qualityKind(object, world)]: object };
+        return;
+      }
+    }
     // What is held is a thing of a kind, not a party to the fact: it is said
     // by the kind the world holds it under, the same way a doing says what
     // moved. Whoever holds it is a party, and that is a node.
@@ -455,7 +467,13 @@ function transferring(roles, properties, world) {
 function changing(roles, properties, world) {
   const anchors = (world && world.anchors) || {};
   const at = (role) => (role != null && Object.hasOwn(roles, role) ? roles[role] : null);
-  return { parts: { thing: at(anchors.agent), took: at(anchors.target) }, properties };
+  const took = at(anchors.target);
+  // Which property took the value, not only the value. Turning red is a change
+  // of colour, and the world says red is a colour before it is anything else.
+  return {
+    parts: { thing: at(anchors.agent) },
+    properties: { ...(took == null ? {} : { [qualityKind(took, world)]: took }), ...properties },
+  };
 }
 
 // Which standing this is.
@@ -833,7 +851,7 @@ export function serialize(world = against) {
   // nothing goes looking for a word for it. Which is which is named here
   // rather than guessed at, because both are integers and they do not look
   // any different.
-  const CONCEPTS = new Set(['thing', 'on', 'as', 'of', 'unit']);
+  const CONCEPTS = new Set(['thing', 'on', 'as', 'of', 'unit', 'colour', 'state', 'position', 'size', 'height', 'weight', 'temperature', 'speed', 'time', 'length', 'distance']);
   const properties = (of) => {
     const said = Object.entries(of || {})
       .filter(([, value]) => value != null)

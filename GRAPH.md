@@ -73,10 +73,10 @@ says so with the links it already carries.
 |---|---|---|
 | `transfer` | a doing with a source or a destination | **yes** |
 | `holding` | the world puts the relation under its `holding` | **yes** |
-| `property-change` | a doing whose target is a property, and nothing moved | **yes** |
+| `property-change` | a doing whose target is a property, and nothing moved; it names which | **yes** |
 | `placement` | a kind of the world's `placement`; which one comes with it | **yes** |
 | `comparison` | the relation carries a `compares` link; the quantity comes with it | **yes** |
-| `property` | the other side is a property | proposed |
+| `property` | the other side is a property; held **on** the thing | **yes** |
 | `kind` | a classifying relation with a thing on the other side | proposed |
 | `measure` | so much of a quantity, in a unit; held on the thing | proposed |
 
@@ -165,9 +165,17 @@ words is said of a man and another of a woman — and the brain drops whatever
 cannot be that kind, taking what is left only if one remains. It was taking the
 nearest thing it had met and hoping.
 
-**A quality standing beside a thing is said of that thing**, and it is held on
-the thing rather than put between two things as a fact: how something is
-belongs to it. Which sort of quality it is, the world says — red is a *colour*
+**How a thing is belongs to it.** Said beside it — `a red box` — or said of it
+— `the sky is blue` — it is held on the thing either way. It used to land in
+two places, and which one depended on where English put the word, so anything
+reading the graph had to look in both for *what colour is it*.
+
+    > the sky is blue                      n1  sky  {colour: blue[203]}
+    > the sky turns red                    a1  property-change(n1)  {colour: red[202]}
+    > the sky is blue and it has a rainbow n1  sky  {colour: blue[203]}
+                                           f1  holding(n1, rainbow[1566])
+
+A change names **which** property took the value, not only the value. Which sort of quality it is, the world says — red is a *colour*
 before it is anything else, and tall is a *state* — so nothing here is English.
 
     > tom has a red box
