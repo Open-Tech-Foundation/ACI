@@ -69,19 +69,28 @@ world, so it is the brain's own — not a term, not a file. What the world
 supplies is which of *its* terms realizes a category the brain owns, and it
 says so with the links it already carries.
 
-| primitive | how it is known | agreed |
-|---|---|---|
-| `transfer` | a doing with a source or a destination | **yes** |
-| `holding` | the world puts the relation under its `holding` | **yes** |
-| `property-change` | a doing whose target is a property, and nothing moved; it names which | **yes** |
-| `placement` | a kind of the world's `placement`; which one comes with it | **yes** |
-| `comparison` | the relation carries a `compares` link; the quantity comes with it | **yes** |
-| `property` | the other side is a property; held **on** the thing | **yes** |
-| `kind` | a classifying relation with a thing on the other side | proposed |
-| `measure` | so much of a quantity, in a unit; held on the thing | proposed |
+| primitive | how it is known |
+|---|---|
+| `transfer` | a doing with a source or a destination |
+| `property-change` | a doing whose target is a property, and nothing moved; it names which |
+| `holding` | the world puts the relation under its `holding` |
+| `placement` | a kind of the world's `placement`; which one comes with it |
+| `comparison` | the relation carries a `compares` link; the quantity comes with it |
+| `measure` | a quantity, an amount and a unit — three, never two |
+| `property` | the other side is a property; held **on** the thing |
+| `kind` | a classifying relation with a thing on the other side |
 
-Proposed means built and working, not settled. Each still has to be walked
-through on its own inputs before it counts.
+All eight are settled, walked through one at a time against their own inputs.
+
+`order` was proposed and **dropped**: it is a comparison on time. Told `sara
+arrived before john` the brain ranks; told `alice arrived at 8 hour` it has a
+value on the same quantity, so who came first and how long between them are the
+arithmetic that already answers who is tallest and how much farther.
+
+Two of them are held **on** the thing rather than between two — `property` and
+`measure` — because how a thing is, and how much of something it is, belong to
+it. A fact stands only where there are two parties. The exception is a measure
+taken from another thing: a distance is between two and belongs to neither.
 
 A standing the brain has no primitive for keeps the world's own concept, with
 its id: being a father is not a primitive, so it comes out `father[503]`.
