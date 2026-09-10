@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Two units are one scale once the world says how they stand.** Five
+  kilograms and ten grams did not compare. The world already held that an hour
+  has sixty minutes and a minute sixty seconds; weight was missing its one
+  step, so a kilogram now has a thousand grams beside them. Nothing says what
+  an hour comes to in seconds — the brain walks the steps the world does say
+  and multiplies, exactly, with the same calculator that answers `0.1+0.2`.
+
 - **One claim being so as the reason another is.** `a drum is cold because a
   drum is wet` recorded both halves and nothing joining them, so `why is a drum
   cold?` found nothing to say. A note in the tests gave the reason — a claim

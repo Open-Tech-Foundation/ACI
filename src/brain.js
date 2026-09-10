@@ -3405,6 +3405,40 @@ function reached(subject, relation, world) {
   return out;
 }
 
+// How many of one unit make another, where the world says so.
+//
+// An hour is sixty minutes and a minute sixty seconds, so an hour is what the
+// two of them come to together — worked out, and never a third fact somebody
+// had to write down. The world says only the steps it knows; the brain does
+// the arithmetic, the same arithmetic it does for anything else.
+function unitsIn(from, to, world, seen = new Set()) {
+  if (from === to) return 1;
+  const a = world.anchors || {};
+  if (a.has == null || a.unit == null || seen.has(from)) return null;
+  seen.add(from);
+  for (const next of world.linked(from, a.has)) {
+    if (!world.isA(next, a.unit)) continue;
+    const many = world.held(from, a.has, next);
+    if (many == null) continue;
+    const rest = unitsIn(next, to, world, seen);
+    if (rest == null) continue;
+    return exactly((x, y) => x.multiply(y))(many, rest);
+  }
+  return null;
+}
+
+// Which of two amounts on one scale is the further along, whatever units they
+// were told in. Put in the same unit they compare like any other two numbers;
+// with no way between the units there is nothing to say.
+function furtherAlong(l, r, world) {
+  if (l.unit === r.unit) return numericCompare(l.amount, r.amount);
+  const up = unitsIn(l.unit, r.unit, world);
+  if (up != null) return numericCompare(exactly((x, y) => x.multiply(y))(l.amount, up), r.amount);
+  const down = unitsIn(r.unit, l.unit, world);
+  if (down != null) return numericCompare(l.amount, exactly((x, y) => x.multiply(y))(r.amount, down));
+  return null;
+}
+
 // A scale is what a property takes its values on, and a value is an amount of
 // a unit. Two things stand on one scale by both having been measured on it,
 // and which is further along is what their amounts say — not what either of
@@ -3423,11 +3457,12 @@ function alongScale(left, right, relation, world, on) {
   const found = [];
   for (const l of lefts) {
     for (const r of rights) {
-      // The same unit, or there is nothing to compare: five grams and five
-      // metres are not two readings of one thing, and nor are grams and
-      // kilograms until something says how one stands to the other.
-      if (l.unit !== r.unit || l.amount === r.amount) continue;
-      found.push(l.amount > r.amount);
+      // Five grams and five metres are not two readings of one thing. Grams
+      // and kilograms are, once the world says how one stands to the other —
+      // and what that comes to the brain works out rather than looks up.
+      const side = furtherAlong(l, r, world);
+      if (side == null || side === 0) continue;
+      found.push(side > 0);
     }
   }
   // Nothing measured in common, or two scales that disagree — a thing may be

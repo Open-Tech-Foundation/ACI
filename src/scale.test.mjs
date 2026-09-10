@@ -57,9 +57,14 @@ test("a thing nothing has measured has no place on the scale", async () => {
   await forget();
 });
 
-test("two units are not one scale until something says how they stand", async () => {
+test("two units are one scale once the world says how they stand", async () => {
+  // A kilogram is a thousand grams, and that is all the world says. What five
+  // of one comes to against ten of the other the brain works out, the way it
+  // works out anything else.
   const r = await fresh("an apple weighs ten gram", "a stone weighs five kilogram", "a stone more an apple?");
-  assertEquals(r.expression.name, "unsure", "five kilograms and ten grams do not compare yet");
+  assertEquals(r.expression.name, "affirm", "five kilograms is five thousand grams");
+  const back = await fresh("an apple weighs ten kilogram", "a stone weighs five gram", "a stone more an apple?");
+  assertEquals(back.expression.name, "deny", "and it reads the same the other way round");
   await forget();
 });
 
