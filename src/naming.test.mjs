@@ -117,6 +117,7 @@ test("what the signal says outranks what a name was waiting for", async () => {
   const r = await brain("x is my friend", { from: 29 });
   assertEquals(r.expression.name, "learn");
   assert(r.learned != null, "and it is taken in, not quietly dropped");
-  assertEquals((await brain("what is x?")).expression.state.says, "person");
+  // And nothing says what x is. A friend may be a dog.
+  assertEquals((await brain("what is x?")).expression.name, "unsure");
   await forget();
 });

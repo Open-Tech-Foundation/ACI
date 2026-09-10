@@ -35,8 +35,8 @@ All notable changes to this project are documented in this file.
   word for giving a name to, and the possessive standing after the joint was
   read as the thing to give — so x was quietly bound to the sender and the
   claim was lost. A word marking whose something is stands for nothing itself.
-  The claim now holds: `friend(x, me)`, with x a person because friendship has
-  one at either end.
+  The claim now holds: `friend(x, me)`, and nothing says what x is — a friend
+  may be a dog.
 
 - **Every word for greeting is the one act of greeting.** `hey`, `welcome` and
   `greetings` were unheard; they are the same doing `hello` and `hi` already
