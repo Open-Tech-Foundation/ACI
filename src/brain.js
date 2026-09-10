@@ -2057,6 +2057,42 @@ function instructionFrom(when, so, world, langs, sent) {
   ];
 }
 
+// What one claim being so is why another is.
+//
+// The two claims are written down as things — the same way the two sides of a
+// standing instruction are — and the reason is joined to what it is the reason
+// for. Nothing here is the fact either claim speaks of: a claim is a thing that
+// says something, not the saying of it.
+function because(joined, world, mood, sent) {
+  if (mood !== 'tell' || !world || sent == null || sent.allocate == null) return [];
+  const a = world.anchors || {};
+  if (a.cause == null || a.subject == null || a.object == null) return [];
+  const at = (joined.branch || []).findIndex((n) => functionsOf(n).includes('reason'));
+  if (at < 0) return [];
+  const sideOf = (n) => {
+    const stood = n && (n.branch || []).find((b) => b.kind === 'standing');
+    if (!stood) return null;
+    const { subject, relation, object, negated } = stood.state;
+    return subject == null || relation == null || object == null
+      ? null
+      : { subject, relation, object, negated: Boolean(negated) };
+  };
+  const wholes = (joined.branch || []).filter((b) => joinedWhole(b, joined));
+  const before = wholes.filter((b) => (joined.branch || []).indexOf(b) < at);
+  const after = wholes.filter((b) => (joined.branch || []).indexOf(b) > at);
+  const effect = sideOf(before[before.length - 1]);
+  const reason = sideOf(after[0]);
+  if (!effect || !reason) return [];
+  return [
+    node('cause', 'because', [], {
+      reason,
+      effect,
+      reasonId: sent.allocate(),
+      effectId: sent.allocate(),
+    }),
+  ];
+}
+
 // A word may hold a claim at arm's length rather than make it: `a cat might
   // be an animal` says nothing is so, it says what might be. The brain checks
   // it, which is what being asked does, and takes nothing in. It cannot tell
@@ -2087,7 +2123,12 @@ function instructionFrom(when, so, world, langs, sent) {
         joinedWhole(b, join) ? judge([b], world, offered ? 'ask' : mood, langs, sent)[0] : b,
       ),
     );
-    return [instead(root, join, judged)];
+    // One claim standing as why another is so joins the two of them. Both are
+    // still said — a drum is cold, and it is wet — and on top of that the
+    // second is the reason for the first, which is a fact about the two
+    // claims rather than about either drum. Which side is the reason the
+    // language says: English puts it after the word.
+    return [instead(root, join, withBranch(judged, [...judged.branch, ...because(judged, world, mood, sent)]))];
   }
 
   const greeted = greeting(root, world);
@@ -2137,6 +2178,33 @@ function instructionFrom(when, so, world, langs, sent) {
     .map((hole) => nearestOver(said, said.indexOf(hole), 1, (n) => conceptOf(n) != null))
     .filter((n) => n != null && reaches(n, (world.anchors || {}).property, world));
   const asking = new Set(wanted.map((n) => conceptOf(n)));
+
+  // Asked *why* something is so, the question is about the claim and not about
+  // the thing in it: it is not asking whether a drum is cold — that was said —
+  // but what stands behind its being so. So the claim is looked for, and
+  // whatever was said to be the reason for it is the answer. Finding nothing,
+  // the question is left to be read the other ways it can be.
+  if (mood === 'ask' && a.cause != null && holes.some((n) => onOf(n) === a.cause)) {
+    const parts = said
+      .filter(
+        (n) =>
+          markOn(n) !== 'unknown' &&
+          conceptOf(n) != null &&
+          conceptOf(n) !== world.baseRelation,
+      )
+      .map((n) => conceptOf(n));
+    const behind = parts.length >= 2
+      ? reasonFor(parts[0], parts[parts.length - 1], world)
+      : [];
+    if (behind.length > 0) {
+      return [
+        withBranch(root, [
+          ...root.branch,
+          node('answer', 'link', [], { subject: parts[0], relation: a.cause, found: behind }),
+        ]),
+      ];
+    }
+  }
   // A hole may carry the kind it asks after rather than stand beside it: `how`
   // asks after the way a thing is, and there is no word beside it saying so.
   for (const hole of holes) {
@@ -2241,6 +2309,7 @@ function instructionFrom(when, so, world, langs, sent) {
           : bearerFor(left, subject);
       if (counted != null && bearer == null && !bounding) return [];
       const holder = bearer ? bearer.id : subject;
+
 
       // A claim whose object stands at a pole — good or bad — is not the
       // world's to hold: it is what one sender says of one thing. It is kept
@@ -3027,6 +3096,10 @@ function instructionFrom(when, so, world, langs, sent) {
         (a.name != null && of === a.name
           ? world.related(t, a.name).length > 0 || world.symbolOf(t) != null
           : world.isA(t, of));
+      // Asked why something is so, what answers is what was said to be the
+      // reason for it. The question is about the claim — that a drum is cold —
+      // and not about the drum, so the claim itself is what is looked for, and
+      // what is joined to it as its cause is what the answer is about.
       let found = seeksOn && pointed
         ? []
         : [...new Set([
@@ -3369,6 +3442,29 @@ function alongScale(left, right, relation, world, on) {
     worked: true,
     on,
   });
+}
+
+// What was said to be the reason a claim is so.
+//
+// A claim is a thing the world holds, with what it is about on one side and
+// what it says on the other, and one claim may be joined to another as its
+// cause. Asked why a drum is cold, the brain looks for the claim that a drum
+// is cold, then for whatever stands behind it, and answers with what that one
+// says.
+function reasonFor(subject, object, world) {
+  const a = world.anchors || {};
+  if (a.cause == null || a.subject == null || a.object == null) return [];
+  if (subject == null || object == null) return [];
+  const found = [];
+  for (const claim of world.standing(subject, a.subject)) {
+    if (!(world.related(claim, a.object) || []).includes(object)) continue;
+    for (const behind of world.standing(claim, a.cause)) {
+      for (const of of world.related(behind, a.object) || []) {
+        if (!found.includes(of)) found.push(of);
+      }
+    }
+  }
+  return found;
 }
 
 // Which scale a word compares on, where it says so.
@@ -6209,11 +6305,23 @@ function learnedFrom(roots, world) {
   if (!world || roots.length !== 1) return null;
   // A signal that came to several verdicts learned from every one of them,
   // held together — the second fact is as much a fact as the first.
+  // What one claim being so is why another is, is a fact about the pair and
+  // belongs to neither half. It is looked for over the whole signal, before
+  // the halves are taken one at a time.
+  const reasons = [];
+  const seek = (n) => {
+    if (n.kind === 'cause') reasons.push(n);
+    (n.branch || []).forEach(seek);
+  };
+  seek(roots[0]);
+  const behind = reasons.flatMap((c) => stoodBehind(c, world));
+
   const together = apart(roots, world);
   if (together) {
-    const terms = asOne(
-      together.flatMap((r) => (learnedFrom([r], world) || { terms: [] }).terms),
-    );
+    const terms = asOne([
+      ...together.flatMap((r) => (learnedFrom([r], world) || { terms: [] }).terms),
+      ...behind,
+    ]);
     return terms.length ? { terms } : null;
   }
 
@@ -6224,6 +6332,7 @@ function learnedFrom(roots, world) {
   const events = branch.filter((b) => b.kind === 'event');
   const learns = branch.filter((b) => b.kind === 'learn');
   const instructions = branch.filter((b) => b.kind === 'instruction');
+  const causes = reasons;
   const called = [];
   const gather = (n) => {
     if (n.kind === 'call') called.push(n);
@@ -6234,7 +6343,8 @@ function learnedFrom(roots, world) {
     events.length === 0 &&
     learns.length === 0 &&
     instructions.length === 0 &&
-    called.length === 0
+    called.length === 0 &&
+    causes.length === 0
   ) return null;
   // What was named in this signal is not in the world yet, so its name is
   // known here and nowhere else.
@@ -6310,6 +6420,7 @@ function learnedFrom(roots, world) {
         links: [{ rel: world.anchors.has, to: c.state.id }],
       })),
     ...instructions.flatMap((i) => tookHold(i, world)),
+    ...behind,
     ...events.flatMap((e) => tookPlace(e, world)),
     ...learns.flatMap((l) => tookIn(l, world, naming)),
   ]);
@@ -6387,6 +6498,27 @@ function awoken(roots, world, mood) {
     }
   }
   return follows.length === 0 ? roots : [withBranch(root, [...root.branch, ...follows])];
+}
+
+// One claim being so as the reason another is: both written down as things,
+// and the reason joined to what it is the reason for.
+function stoodBehind(cause, world) {
+  const a = world.anchors || {};
+  const { reason, effect, reasonId, effectId } = cause.state;
+  const claim = (side, at) => ({
+    id: at,
+    name: `claim#${at}`,
+    individual: true,
+    links: [
+      { rel: world.baseRelation, to: side.relation, ...(side.negated ? { not: true } : {}) },
+      { rel: a.subject, to: side.subject },
+      { rel: a.object, to: side.object },
+    ],
+  });
+  return [
+    claim(effect, effectId),
+    { ...claim(reason, reasonId), links: [...claim(reason, reasonId).links, { rel: a.cause, to: effectId }] },
+  ];
 }
 
 // A standing instruction on the record: the pair it holds, each side written

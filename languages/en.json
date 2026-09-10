@@ -16411,11 +16411,7 @@
       "names": false,
       "when": "past"
     },
-    "because": {
-      "pos": "conjunction",
-      "meaning": "because",
-      "functions": "join"
-    },
+    "because": {"pos": "conjunction", "meaning": "because", "concept": 247, "functions": ["join", "reason"]},
     "than": {
       "pos": "preposition",
       "meaning": "than"

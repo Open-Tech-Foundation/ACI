@@ -6,6 +6,17 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **One claim being so as the reason another is.** `a drum is cold because a
+  drum is wet` recorded both halves and nothing joining them, so `why is a drum
+  cold?` found nothing to say. A note in the tests gave the reason — a claim
+  was not yet a thing the world could hold — and that stopped being true when
+  standing instructions began writing their two sides down as things. Both
+  claims are now written down the same way and the reason is joined to what it
+  is the reason for; the language says which side is the reason, since another
+  may put it the other way round. Asked why, the brain looks for the claim
+  rather than for the thing in it, and where it finds no reason the question
+  falls through to be read the other ways it can be.
+
 - **A chain of instructions is followed to its end.** Told a cold drum makes a
   bell red and a red bell makes a cup blue, the brain turned the bell red and
   stopped: it went through its standing instructions once, so only what the
