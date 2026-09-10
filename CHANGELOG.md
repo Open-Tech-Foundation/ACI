@@ -4,6 +4,17 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **What two kinds hold is what makes them differ.** `a man is a woman?` said
+  `I don't know`, and every denial the brain could make at the level of kinds
+  rested on a `different` link written by hand, pair by pair — four of them on
+  `tiger` alone. Standing under one kind is not what makes two things differ: a
+  person and a man are both human and one may well be the other. What they hold
+  is. Where one is male and the other female — two states of one property the
+  world holds apart — neither can be the other, and nobody says so pair by
+  pair. The world says `male different female` once and every pair follows.
+
 ### Fixed
 
 - **A part played in a doing belongs to the doing.** `anu changed the

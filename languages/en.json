@@ -9119,10 +9119,9 @@
       "when": "past"
     },
     "grown": {
-      "pos": "verb",
+      "pos": "adjective",
       "meaning": "grown",
-      "concept": 2686,
-      "when": "past"
+      "concept": 2979
     },
     "growing": {
       "pos": "noun",
@@ -17966,6 +17965,27 @@
       "meaning": "named",
       "concept": 138,
       "functions": "naming"
+    },
+    "sex": {
+      "pos": "noun",
+      "meaning": "sex",
+      "concept": 2976
+    },
+    "male": {
+      "pos": [
+        "adjective",
+        "noun"
+      ],
+      "meaning": "male",
+      "concept": 2977
+    },
+    "female": {
+      "pos": [
+        "adjective",
+        "noun"
+      ],
+      "meaning": "female",
+      "concept": 2978
     }
   },
   "unknown": {

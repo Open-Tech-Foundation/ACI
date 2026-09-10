@@ -2384,11 +2384,23 @@ function because(joined, world, mood, sent) {
       const predicateAgainst = rel === world.baseRelation && upward(holder, world).some(
         (rung) => world.predicates(rung).some((found) => world.excludes(found, object)),
       );
+      // Two kinds standing under one kind are not thereby different: a person
+      // and a man are both human, and one may well be the other. What makes
+      // them differ is what they hold. Where one is male and the other female
+      // — two states of one property, which the world holds apart — neither
+      // can be the other, and nobody has to say so pair by pair.
+      const heldApart = kindFact && upward(holder, world).some((rung) =>
+        world.predicates(rung).some((mine) =>
+          upward(object, world).some((theirs) =>
+            world.predicates(theirs).some((of) => world.excludes(mine, of)),
+          ),
+        ),
+      );
       // Told there are none of a kind is not silence about them. A count of
       // zero stands against the claim that there is one, the way any other
       // count stands against a claim of a different one.
       const heldNone = heldMany === 0;
-      const opposed = functionalAgainst || constrainedAgainst || predicateAgainst || (counted != null
+      const opposed = functionalAgainst || constrainedAgainst || predicateAgainst || heldApart || (counted != null
         ? knownCount != null && knownCount !== counted
         : heldNone ||
           heldDenied ||
