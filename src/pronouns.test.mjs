@@ -43,3 +43,13 @@ test("a pointer landing on a number still counts it", async () => {
   assertEquals((await brain("it", { from: 508 })).expression.name, "count");
   await forget();
 });
+
+test("what a pointer stands for is said of what it lands on", async () => {
+  await forget();
+  await brain("x is my friend", { from: 29 });
+  await brain("she is white", { from: 29 });
+  // Calling x `she` says x is female, as surely as saying so outright. It says
+  // nothing about how old x is, or what kind of thing x is at all.
+  assertEquals((await brain("what is x?")).expression.state.says, "white, female");
+  await forget();
+});

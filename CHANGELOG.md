@@ -30,6 +30,15 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **What a pointer stands for is said of what it lands on.** English says `she`
+  stands for a kind of thing, and the brain landed the pointer and threw that
+  away: calling x `she` left x a bare thing. Somebody calling x `she` has said
+  x is female, as surely as saying so outright, and it now holds — as a claim
+  the conversation keeps and a fact the world takes in.
+
+  What `she` stands for is corrected with it: female, not a grown woman. A
+  girl is `she` too, and nothing about the word says how old anyone is.
+
 - **What the signal says outranks what a name was waiting for.** `x is my
   friend` answered `I understand` and took nothing in: English marks `x` as a
   word for giving a name to, and the possessive standing after the joint was

@@ -6120,6 +6120,7 @@ export function brainFrom(input, knowledge, circumstance) {
   const structuredRoots = spread(structurePhrase(solvedRoots, langs), world);
   let judgedRoots = judge(structuredRoots, world, mood, langs, at);
   judgedRoots = awoken(judgedRoots, world, mood);
+  judgedRoots = saidByPointing(judgedRoots, world, mood);
   let learned = learnedFrom(judgedRoots, world);
   const inconsistent = learningConflict(world, learned);
   if (inconsistent && judgedRoots.length === 1) {
@@ -6177,6 +6178,51 @@ export function brainFrom(input, knowledge, circumstance) {
       express: expressedRoots,
     },
   };
+}
+
+// What a pointer stands for is said of what it lands on.
+//
+// A language may say that one of its pointing words stands for a kind or a
+// state — `she` for female. Landing it on something says that of the thing:
+// somebody calling x `she` has said x is female, as surely as saying so
+// outright. Which word stands for what is the language's; that saying it of a
+// thing says it is the brain's.
+//
+// Only what the signal itself put there. Asking after something says nothing
+// of it, and neither does a pointer that landed nowhere.
+function saidByPointing(roots, world, mood) {
+  if (!world || mood !== 'tell') return roots;
+  const a = world.anchors || {};
+  const relation = a.predication ?? world.baseRelation;
+  if (relation == null) return roots;
+  const said = [];
+  const seek = (n) => {
+    const t = thoughtOf(n);
+    if (
+      n.kind === 'thing' &&
+      t &&
+      t.stands != null &&
+      t.concept != null &&
+      t.concept !== t.stands &&
+      markOn(n) === 'spoken' &&
+      !world.isA(t.concept, t.stands)
+    ) said.push({ subject: t.concept, object: t.stands });
+    (n.branch || []).forEach(seek);
+  };
+  roots.forEach(seek);
+  if (said.length === 0) return roots;
+  return roots.map((root) =>
+    withBranch(root, [
+      ...(root.branch || []),
+      // Said, and taken in: the claim the pointing made, and the fact it
+      // leaves behind. A claim is what the conversation holds; the fact is
+      // what the world does.
+      ...said.flatMap(({ subject, object }) => [
+        node('standing', 'absent', [], { subject, relation, object, negated: false }),
+        node('learn', 'link', [], { subject, relation, object, not: false }),
+      ]),
+    ]),
+  );
 }
 
 // Whether a change the brain proposes would leave the world unsound.
