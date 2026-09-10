@@ -2972,11 +2972,20 @@ function because(joined, world, mood, sent) {
       // anything on purpose.
       const over = world.heldOver(way.bearer, way.relation, way.of);
       const back = whenIn(said, world) === a.past;
+      // Two units of one scale stand in a fixed number to each other, and the
+      // brain walks the steps between them and multiplies — the same
+      // arithmetic that lets five kilograms and ten grams compare. A day is
+      // twenty-four hours and an hour sixty minutes, so a day is what the two
+      // come to together, and nobody has to write the third down.
+      const stepped =
+        a.unit != null && world.isA(way.bearer, a.unit) && world.isA(way.of, a.unit)
+          ? unitsIn(way.bearer, way.of, world)
+          : null;
       const howMany = back
         ? over.length > 1
           ? over[over.length - 2].quantity
           : null
-        : world.held(way.bearer, way.relation, way.of) ?? under;
+        : world.held(way.bearer, way.relation, way.of) ?? under ?? stepped;
       const total = howMany == null ? null : world.termFor(howMany);
       return [
         withBranch(root, [

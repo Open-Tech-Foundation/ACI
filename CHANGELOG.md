@@ -30,6 +30,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Two units of one scale come to a number, however many steps apart.** `an
+  hour has how many minutes?` answered sixty and `a day has how many minutes?`
+  said it did not know — though the world says a day is twenty-four hours and
+  an hour sixty minutes, and the brain already walks steps like those and
+  multiplies when it compares five kilograms against ten grams. The same
+  arithmetic answers the question now: 1440, and a week is 168 hours.
+
 - **A time named is when it happened, not what it happened to.** `nila arrived
   yesterday` filed yesterday as the thing she arrived at. A measure of time
   standing with a doing was already read as when — eight hours — but a time

@@ -79,3 +79,15 @@ test("a time named is when it happened, not what it happened to", async () => {
   );
   await forget();
 });
+
+test("two units of one scale come to a number, however many steps apart", async () => {
+  await forget();
+  assertEquals((await brain("an hour has how many minutes?")).expression.state.says, "sixty");
+  assertEquals(
+    (await brain("a day has how many minutes?")).expression.state.says,
+    "1440",
+    "a day is twenty-four hours and an hour sixty minutes; nobody wrote the third down",
+  );
+  assertEquals((await brain("a week has how many hours?")).expression.state.says, "168");
+  await forget();
+});
