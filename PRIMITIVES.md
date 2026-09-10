@@ -10,6 +10,15 @@ The admission test for a primitive remains:
 2. Would it change with the world? If so, it belongs in world knowledge.
 3. Only the invariant operation that survives both tests belongs in the core.
 
+One exception is recorded deliberately. Time's steps — a day is twenty-four
+hours, a week seven days, a year twelve months, and which years are leap — live
+in the core, though they would fail the second test. There is one time scale
+and every brain shares it, and a brain that must be taught the calendar cannot
+reason about time at all. Weight does not follow: a world picks kilograms or
+pounds, so its steps stay world knowledge, and the core converts either way by
+walking steps and multiplying. Which term is which unit is still the world's,
+through the anchors.
+
 `existence` is intentionally the terminal ontology root. `nature` is therefore
 not required above it. Physical nature may be world knowledge about the
 universe; the nature or essence of an entity may later be an ordinary relation.
