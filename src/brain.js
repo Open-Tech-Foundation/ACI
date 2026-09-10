@@ -2080,6 +2080,37 @@ function worldNode(concept, world) {
 function judge(roots, world, mood, langs, sent) {
   if (!world || roots.length !== 1) return roots;
   const root = roots[0];
+  // Greeting somebody is a doing, and it happened. Nothing was done to
+  // anything — an act of communication is no thing — so it goes on the record
+  // as itself, with whoever sent it as the one who did it. One greeting is one
+  // doing and two are two, whether they stand alone or beside each other, and
+  // the conversation can be asked afterwards how many there were.
+  const greetings = mood === 'tell' ? onlyGreetings(root, world) : null;
+  if (greetings) {
+    const when = world.now();
+    const { agent, target } = world.anchors || {};
+    // Greeting is said by somebody to somebody. Both are the runtime's to say,
+    // and where it says neither, that a greeting happened is still so.
+    const played = [
+      ...(sent.from != null && agent != null ? [{ role: agent, of: sent.from, amount: null }] : []),
+      ...(sent.to != null && target != null ? [{ role: target, of: sent.to, amount: null }] : []),
+    ];
+    return greetings.map((one) => {
+      const action = conceptOf(one);
+      const id = sent.allocate();
+      return withBranch(one, [
+        ...(one.branch || []),
+        node('event', `${world.term(action).name}#${id}`, [], {
+          id,
+          action,
+          at: when,
+          when: null,
+          not: false,
+          parts: played,
+        }),
+      ]);
+    });
+  }
   if (root.kind === 'thing' || root.kind === 'void') return roots;
 
   // A signal joining whole clauses is read one at a time, not folded into one
@@ -3577,6 +3608,21 @@ function taken(n) {
   return VERDICT.includes(n.kind) || n.kind === 'count' || n.kind === 'sum';
 }
 
+// A signal that says nothing but greetings, and the greetings in it. One is a
+// greeting; several are several, and neither is part of the other.
+function onlyGreetings(root, world) {
+  const communication = world && world.anchors ? world.anchors.communication : null;
+  if (communication == null) return null;
+  return greetsOnly(root, world, communication);
+}
+
+// Whether this word greets. An act of communication is not a thing of the
+// world, so nothing can be done to it and it can do nothing.
+function greetsHere(n, world) {
+  const communication = world && world.anchors ? world.anchors.communication : null;
+  return communication != null && n.kind === 'thing' && world.isA(conceptOf(n), communication);
+}
+
 // The greetings in something that greets and says nothing else. A greeting may
 // stand as a word among the rest, or a language may set a word between it and
 // what follows and make a whole of it; neither changes that it only greets.
@@ -4401,8 +4447,11 @@ function rolesIn(said, acting, claims, world, side, sides) {
   said.forEach((n, i) => {
     if (i === acting || !claims(n) || isDeterminer(said, i, world)) return;
     // A word marking an extreme plays no part in the doing: it says which of
-    // them is being asked after, not who did it.
-    if (functionsOf(n).includes('extreme')) return;
+    // them is being asked after, not who did it. Nor does a greeting: an act
+    // of communication is no thing, so there is nothing there for a doing to
+    // be done to — `hi hi` is two greetings, not one greeting greeting the
+    // other.
+    if (functionsOf(n).includes('extreme') || greetsHere(n, world)) return;
     const named = roleOn(of(i));
     if (!named || a[named] == null) return;
     parts.push({ role: a[named], of: conceptOf(n), amount: amountOf(n, world), mark: markAt(n), at: i });
@@ -4414,7 +4463,7 @@ function rolesIn(said, acting, claims, world, side, sides) {
   // the language's. Told nothing, the brain assigns no part by order at all.
   said.forEach((n, i) => {
     if (i === acting || taken.has(i) || !claims(n) || isDeterminer(said, i, world) || !sides) return;
-    if (functionsOf(n).includes('extreme')) return;
+    if (functionsOf(n).includes('extreme') || greetsHere(n, world)) return;
     const role = a[i < acting ? sides.before : sides.after];
     if (role != null) parts.push({ role, of: conceptOf(n), amount: amountOf(n, world), mark: markAt(n), at: i });
   });
@@ -4810,6 +4859,7 @@ function partAsked(said, world, claims, side, sides) {
     // them is asked after — `who arrived first` names one arrival, not two —
     // and taking it for a participant makes a doing nobody described.
     if (i === acting || !asking(n) || functionsOf(n).includes('extreme')) return;
+    if (greetsHere(n, world)) return;
     const named = roleOn(of(i));
     const role =
       named && a[named] != null
@@ -5286,8 +5336,15 @@ function apart(roots, world) {
   // Several things said, each already whole and each judged on its own. Loose
   // words that never bound into anything are not that: they are one signal the
   // brain could not make a whole of.
-  if (roots.length > 1 && roots.every((n) => n.kind !== 'thing' && n.kind !== 'void')) return roots;
+  if (
+    roots.length > 1 &&
+    roots.every((n) => (n.kind !== 'thing' && n.kind !== 'void') || greetsHere(n, world))
+  ) return roots;
   if (roots.length !== 1) return null;
+  // A signal that only greets is greetings, however many of them there are.
+  // Nothing was said beside them, so there is nothing for them to be part of.
+  const onlyGreets = onlyGreetings(roots[0], world);
+  if (onlyGreets && onlyGreets.length > 1) return onlyGreets;
   const greeted = greeting(roots[0], world);
   if (greeted) return greeted;
   const join = joinIn(roots[0]);
@@ -6697,7 +6754,11 @@ function spokenOf(roots, at, world) {
     // Something that happened was about the thing it was done to. Told a thing
     // was seen, the next signal may point back at what was seen — a signal
     // that offers no fact still speaks of something.
-    if (n.kind === 'event' && target != null) {
+    // Being greeted is not what a conversation is now about: a greeting names
+    // nothing to speak of next, and what was in mind stays there.
+    const a = world && world.anchors ? world.anchors : {};
+    const greeting = n.kind === 'event' && world && world.isA(n.state.action, a.communication);
+    if (n.kind === 'event' && target != null && !greeting) {
       for (const part of n.state.parts || []) if (part.role === target) keep(took, part.of);
     }
     if (n.kind === 'standing' || n.kind === 'answer') keep(stood, n.state.subject);
@@ -6800,7 +6861,7 @@ function focusOf(roots, at, world) {
 // What the brain accepted, in the one shape all knowledge takes. The brain does
 // not keep it — it hands it back, and the runtime decides whether to remember.
 function learnedFrom(roots, world) {
-  if (!world || roots.length !== 1) return null;
+  if (!world || roots.length === 0) return null;
   // A signal that came to several verdicts learned from every one of them,
   // held together — the second fact is as much a fact as the first.
   // What one claim being so is why another is, is a fact about the pair and
@@ -6811,10 +6872,10 @@ function learnedFrom(roots, world) {
     if (n.kind === 'cause') reasons.push(n);
     (n.branch || []).forEach(seek);
   };
-  seek(roots[0]);
+  roots.forEach(seek);
   const behind = reasons.flatMap((c) => stoodBehind(c, world));
 
-  const together = apart(roots, world);
+  const together = roots.length > 1 ? roots : apart(roots, world);
   if (together) {
     const terms = asOne([
       ...together.flatMap((r) => (learnedFrom([r], world) || { terms: [] }).terms),

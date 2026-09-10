@@ -18051,6 +18051,11 @@
       "pos": "noun",
       "meaning": "colour",
       "concept": 185
+    },
+    "greet": {
+      "pos": "verb",
+      "meaning": "greet",
+      "concept": 277
     }
   },
   "unknown": {

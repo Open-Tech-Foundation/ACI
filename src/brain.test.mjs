@@ -121,11 +121,13 @@ test("each word of a phrase is solved individually", async () => {
 
 test("a bound signal gets one expression for the whole", async () => {
   const r = await brain("hi hi");
-  // A greeting is a communication, and a communication is an action: something
-  // happened, and the brain took it in rather than claiming to have known it.
-  assertEquals(r.expression.name, "learn");
-  assertEquals(r.expression.state.says, "I understand.");
+  // Two greetings and nothing else said. A greeting is an act of
+  // communication, not a thing, so neither is something the other was done to
+  // — there is no doing here to take in, and greeting is what it answers.
+  assertEquals(r.expression.name, "greet");
+  assertEquals(r.expression.state.says, "Hello!");
   assertEquals(r.expression.state.bound, true);
+  assertEquals(r.learned.terms.length, 2, "two greetings are two doings on the record");
 });
 
 test("the whole expression keeps what was said about each thing", async () => {
@@ -283,9 +285,12 @@ test("an unknown word gets no entity", async () => {
 
 test("a recursive rule parses — the parser backtracks past a short match", async () => {
   const r = await brain("hi hi");
-  assertEquals(r.roots.length, 1, "sentence -> interjection sentence");
-  assertEquals(r.roots[0].kind, "sentence");
-  const inner = r.roots[0].branch.find((b) => b.kind === "sentence");
+  // The parse, before what was made of it: two greetings are judged one
+  // apiece, so this asks the phase that reads, not the one that answers.
+  const read = r.phases.structure;
+  assertEquals(read.length, 1, "sentence -> interjection sentence");
+  assertEquals(read[0].kind, "sentence");
+  const inner = read[0].branch.find((b) => b.kind === "sentence");
   assert(inner !== null, "the tail is itself a sentence");
 });
 

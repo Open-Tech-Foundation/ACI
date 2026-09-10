@@ -88,7 +88,9 @@ test("a greeting before a signal is said alongside it, not in it", async () => {
 
 test("one greeting after another is two greetings, not a greeting and a signal", async () => {
   await forget();
-  assertEquals((await brain("hi hi")).expression.name, "learn");
+  const r = await brain("hi hi");
+  assertEquals(r.expression.name, "greet");
+  assertEquals(r.expression.state.says, "Hello!", "said once, however many times it was said");
   await forget();
 });
 

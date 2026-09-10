@@ -30,6 +30,15 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Greeting somebody is a doing, and it happened.** `hi hi` was read as a
+  greeting greeting a greeting: an act of communication was allowed to be the
+  thing a doing was done to, so the brain wrote that down and answered `I
+  understand.` An act of communication is no thing — nothing can be done to it
+  and it can do nothing — so two greetings are two doings, each with whoever
+  sent it and whoever it went to, both on the record. Greeting once is the
+  whole of what is said back, and being greeted does not become what the
+  conversation is about.
+
 - **Only what is needed is said back.** A signal holding several things said
   answered with all of them stacked up — `I know. Yes. ✅ a wren is a bird.`
   Saying it took something in says nothing about the world, so beside anything
