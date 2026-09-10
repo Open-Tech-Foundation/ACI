@@ -218,6 +218,13 @@ Examples that came back wrong, with what each waits on.
   coarse stamp rather than the moment the doing happened at. Waits on the
   temporal foundation.
 
+- `there are seven days in a week` and `how many days are there in a week?` are
+  not read, though `a week has seven days` and `how many days does a week have?`
+  both work. English declares only `there predicate` — enough for `there is a
+  dog`. Adding rules for the longer forms makes them parse into nonsense
+  (`measure(day, in)`), so what is missing is the reading, not the rule: what a
+  signal saying something is *there* says about what holds it.
+
 - `what is mobile?` answers `toy`. The world holds one `mobile`, authored among
   the toys; the phone sense is not there. Adding it makes the first English
   word with two noun senses, which nothing settles without context. Waits on
