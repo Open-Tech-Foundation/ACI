@@ -9,6 +9,7 @@
 
 import { Decimal } from '@opentf/std';
 import { fromWorldData } from './world.js';
+import { UNITS, unitsIn as stepsInTime } from './calendar.js';
 
 // The conversation this signal belongs to, for the length of one turn. Set on
 // the way in from what the runtime knows and never read outside a turn — the
@@ -3847,6 +3848,14 @@ function reached(subject, relation, world) {
 function unitsIn(from, to, world, seen = new Set()) {
   if (from === to) return 1;
   const a = world.anchors || {};
+  // Time the brain does not have to be told. It owns the steps between the
+  // units of the one scale every brain shares, and the world says only which
+  // of its terms each unit is.
+  const named = (id) => UNITS.find((unit) => a[unit] === id) ?? null;
+  const here = named(from);
+  const there = named(to);
+  const ours = here != null && there != null ? stepsInTime(here, there) : null;
+  if (ours != null) return ours;
   if (a.has == null || a.unit == null || seen.has(from)) return null;
   seen.add(from);
   for (const next of world.linked(from, a.has)) {

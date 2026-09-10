@@ -83,7 +83,14 @@
     "reference": 2973,
     "above": 2974,
     "below": 2975,
-    "time": 187
+    "time": 187,
+    "second": 222,
+    "minute": 221,
+    "hour": 220,
+    "day": 215,
+    "week": 217,
+    "month": 218,
+    "year": 219
   },
   "relations": {
     "is": 294,

@@ -30,6 +30,20 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **The calendar is the brain's own.** Time is not something it is taught: the
+  steps between second, minute, hour, day and week live in the core now, with
+  twelve months to a year, the length of each month, and the rule for which
+  years are long — every fourth, except every hundredth, except every
+  four-hundredth. A moment is one number, the seconds standing between it and
+  a nought nobody ever says, so two moments subtract to how long lies between
+  them and the last second of a long year rolls into the first of the next.
+  The world says only which of its terms is which unit.
+
+  Weight does not follow, and the difference is the reason: a world picks
+  kilograms or pounds and there are many such systems, so those steps stay
+  world knowledge and the brain converts by walking what it was given. There is
+  one time scale, and every brain shares it.
+
 - **How long something lasted can be said.** English gains `lasted` and
   `lasts`, meaning measured: `the meeting lasted two hours` holds
   `measure(meeting, hour) {count: 2}` — the same fact shape as a rope being two
