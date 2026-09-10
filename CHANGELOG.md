@@ -30,6 +30,20 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **An ordering is places, and what is asked of it is arithmetic.** `is monday
+  before tuesday?` said `I don't know`, though the world says the whole week in
+  order — because `before` and the chain the world writes were two unconnected
+  relations, and joining them was a question nobody could answer well. They did
+  not need joining. The brain reads where each thing stands in its sequence and
+  compares the two numbers, so `is monday before wednesday?` answers without
+  anyone having said anything about that pair, and `is march before january?`
+  is a no rather than a shrug.
+
+  Two things compare only inside one sequence — the days and the numbers are
+  two orderings, and nothing is asked across them. A sequence that comes round
+  has no first, so it has no places to compare: after sunday is monday again,
+  and neither is before the other.
+
 - **The calendar is the brain's own.** Time is not something it is taught: the
   steps between second, minute, hour, day and week live in the core now, with
   twelve months to a year, the length of each month, and the rule for which

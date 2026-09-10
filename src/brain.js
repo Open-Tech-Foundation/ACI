@@ -709,6 +709,48 @@ function borrowing(roots, world) {
 //
 // This is why a comparison need not be listed word by word: any state a scale
 // measures can be compared the moment the world names the comparison on it.
+// Where a thing stands in a sequence: how many steps back to the one nothing
+// stands before, and which one that is. Two things compare only where they
+// stand in the same sequence — the days of the week and the numbers are two
+// orderings, and nothing is asked across them.
+//
+// A sequence that comes round has no first, and so no places to compare: after
+// sunday is monday again, and neither is before the other. That is said by
+// coming back to where the walk began, and the walk says nothing rather than
+// counting for ever.
+function placeIn(term, world) {
+  const a = world.anchors || {};
+  if (a.order == null || term == null) return null;
+  const seen = new Set([term]);
+  let at = 0;
+  let here = term;
+  for (;;) {
+    const before = world.pointing(here, a.order).filter((one) => world.term(one) != null);
+    if (before.length !== 1) break;
+    if (seen.has(before[0])) return null;
+    seen.add(before[0]);
+    here = before[0];
+    at += 1;
+  }
+  return { head: here, at };
+}
+
+// Whether one thing stands before another in the sequence they share. Which
+// way round the relation runs is the world's — before and after are one
+// ordering read from either end — and the comparison itself is arithmetic.
+function placedAgainst(holder, object, rel, world) {
+  const a = world.anchors || {};
+  if (a.order == null || rel == null || holder == null || object == null) return null;
+  if (rel === a.order || !world.isA(rel, a.order)) return null;
+  const left = placeIn(holder, world);
+  const right = placeIn(object, world);
+  if (left == null || right == null || left.head !== right.head) return null;
+  if (left.at === right.at) return null;
+  // Read from the far end, the same ordering runs the other way.
+  const back = bothWays(rel, world).length > 0 && world.linked(rel, a.converse).length === 0;
+  return back ? left.at > right.at : left.at < right.at;
+}
+
 // The far end of an ordering, where a word asks for one. The quality is the
 // word's own; the comparison made on it is the world's, and so is which way it
 // runs. Among everything that comparison joins, the far end is the one nothing
@@ -2536,10 +2578,17 @@ function because(joined, world, mood, sent) {
         }
         return false;
       })();
+      // Where in a sequence each of them stands. An ordering is places, and
+      // what is asked of it is arithmetic on those: monday comes before
+      // tuesday because it stands first of the two, and nobody has to have
+      // said so of that pair.
+      const ordered = placedAgainst(holder, object, rel, world);
       const holds = nearestDenies
         ? false
         : counted != null
         ? knownCount === counted
+        : ordered != null
+        ? ordered
         : heldMany > 0 ||
           joins(holder, object, rel) ||
           bothWays(rel, world).some((back) => joins(object, holder, back)) ||
@@ -2587,7 +2636,7 @@ function because(joined, world, mood, sent) {
       // zero stands against the claim that there is one, the way any other
       // count stands against a claim of a different one.
       const heldNone = heldMany === 0;
-      const opposed = functionalAgainst || constrainedAgainst || predicateAgainst || heldApart || (counted != null
+      const opposed = ordered === false || functionalAgainst || constrainedAgainst || predicateAgainst || heldApart || (counted != null
         ? knownCount != null && knownCount !== counted
         : heldNone ||
           heldDenied ||
