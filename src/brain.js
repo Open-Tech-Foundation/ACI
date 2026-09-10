@@ -6349,29 +6349,42 @@ function awoken(roots, world, mood) {
     offered.map((n) => `${n.state.subject}:${n.state.relation}:${n.state.object}:${Boolean(n.state.not)}`),
   );
   const follows = [];
-  for (const one of world.individualsOf(a.instructing)) {
-    const [onId] = world.linked(one, a.condition);
-    const [thenId] = world.linked(one, a.consequence);
-    if (onId == null || thenId == null) continue;
-    const on = world.claimOf(onId);
-    const then = world.claimOf(thenId);
-    if (!on || !then) continue;
-    // The condition stands where the world already had it or where this very
-    // signal brings it. Nothing is looked up twice: what was just offered is
-    // as good as what was already held.
-    const arriving = told.has(`${on.subject}:${on.relation}:${on.object}:${on.not}`);
-    if (!arriving && !world.isA(on.subject, on.object, on.relation)) continue;
-    if (world.isA(then.subject, then.object, then.relation)) continue;
-    follows.push(
-      node('learn', 'link', [], {
-        subject: then.subject,
-        relation: then.relation,
-        object: then.object,
-        quantity: null,
-        made: null,
-        not: then.not,
-      }),
-    );
+  // What one instruction leads to may be what another was waiting for. A cold
+  // drum makes a bell red, and a red bell makes a cup blue: the bell turning
+  // red is as much something that has come about as anything the signal said,
+  // so the instructions are gone through again with it among them, and again,
+  // until a whole round adds nothing. What has already followed is never added
+  // twice, so a chain that leads back on itself ends.
+  for (let more = true; more; ) {
+    more = false;
+    for (const one of world.individualsOf(a.instructing)) {
+      const [onId] = world.linked(one, a.condition);
+      const [thenId] = world.linked(one, a.consequence);
+      if (onId == null || thenId == null) continue;
+      const on = world.claimOf(onId);
+      const then = world.claimOf(thenId);
+      if (!on || !then) continue;
+      // The condition stands where the world already had it or where this very
+      // signal brings it. Nothing is looked up twice: what was just offered is
+      // as good as what was already held.
+      const arriving = told.has(`${on.subject}:${on.relation}:${on.object}:${on.not}`);
+      if (!arriving && !world.isA(on.subject, on.object, on.relation)) continue;
+      if (world.isA(then.subject, then.object, then.relation)) continue;
+      const reached = `${then.subject}:${then.relation}:${then.object}:${Boolean(then.not)}`;
+      if (told.has(reached)) continue;
+      told.add(reached);
+      follows.push(
+        node('learn', 'link', [], {
+          subject: then.subject,
+          relation: then.relation,
+          object: then.object,
+          quantity: null,
+          made: null,
+          not: then.not,
+        }),
+      );
+      more = true;
+    }
   }
   return follows.length === 0 ? roots : [withBranch(root, [...root.branch, ...follows])];
 }

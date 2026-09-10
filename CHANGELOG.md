@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A chain of instructions is followed to its end.** Told a cold drum makes a
+  bell red and a red bell makes a cup blue, the brain turned the bell red and
+  stopped: it went through its standing instructions once, so only what the
+  signal itself brought could set one off. What one instruction leads to is as
+  much something that has come about, so they are gone through again with it
+  among them until a whole round adds nothing. A chain that leads back on
+  itself ends rather than spinning — what has already followed is never added
+  twice — and the order the instructions were given in no longer matters.
+
 - **An amount is exact, wherever it is kept.** `the apple weighs 1.5 gram` was
   accepted and then unreachable: the brain writes an exact amount as it was
   said, written out digit for digit, while the door, the store and the world
