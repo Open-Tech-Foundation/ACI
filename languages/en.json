@@ -1355,18 +1355,11 @@
       "meaning": "memory",
       "concept": 561
     },
-    "book": [
-      {
-        "pos": "noun",
-        "meaning": "book",
-        "concept": 18
-      },
-      {
-        "pos": "verb",
-        "meaning": "book",
-        "concept": 2976
-      }
-    ],
+    "book": {
+      "pos": "noun",
+      "meaning": "book",
+      "concept": 18
+    },
     "moon": {
       "pos": "noun",
       "meaning": "moon",
@@ -17973,27 +17966,6 @@
       "meaning": "named",
       "concept": 138,
       "functions": "naming"
-    },
-    "booking": {
-      "pos": "noun",
-      "meaning": "booking",
-      "concept": 2976
-    },
-    "cancel": {
-      "pos": "verb",
-      "meaning": "cancel",
-      "concept": 2977
-    },
-    "cancelled": {
-      "pos": "verb",
-      "meaning": "cancelled",
-      "concept": 2977,
-      "when": "past"
-    },
-    "flight": {
-      "pos": "noun",
-      "meaning": "flight",
-      "concept": 2978
     }
   },
   "unknown": {
