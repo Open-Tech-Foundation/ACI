@@ -87,3 +87,17 @@ test("what the brain worked out, it answers — asked or not", async () => {
   assertEquals((await brain("a mango is a fruit")).expression.name, "understood");
   await forget();
 });
+
+test("which of two, where the world names neither number", async () => {
+  await forget();
+  // No world names every number. The comparison is worked out all the same,
+  // and the amount that came out on top is the answer.
+  assertEquals((await brain("which is larger 45 or 54?")).expression.state.says, "54");
+  assertEquals((await brain("which is smaller, 45 or 54?")).expression.state.says, "45");
+  assertEquals(
+    (await brain("which is smaller, 8 or 0?")).expression.state.says,
+    "zero",
+    "and one the world does name is said by its word",
+  );
+  await forget();
+});

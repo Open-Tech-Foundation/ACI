@@ -30,6 +30,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Which of two, where the world names neither number.** `which is smaller, 8
+  or 0?` answered `zero`, and `which is larger 45 or 54?` said `I don't know`.
+  The comparison was worked out either way — what failed was saying it: the
+  answer was looked for as a term of the world, and no world names every
+  number. The amount that came out on top is the answer where there is no word
+  for it.
+
 - **Where asks after a place, however the place was said.** `the dog is under
   the table` was taken in and `where is the dog?` said `I don't know`. English
   had `where` standing for `in` alone, so nothing said with `on` or `under` was

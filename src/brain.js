@@ -3195,10 +3195,21 @@ function because(joined, world, mood, sent) {
       };
       const winner = terms.find((x) => terms.every((y) => x === y || beats(x, y)));
       if (winner != null) {
+        // The one that came out on top, said. No world names every number, so
+        // where it has no term of its own the amount itself is the answer —
+        // the brain worked it out and can say it.
+        const value = conceptOf(winner) == null ? numberOf(winner, world) : null;
         return [
           withBranch(root, [
             ...root.branch,
-            node('answer', 'link', [], { subject: null, relation, found: [conceptOf(winner)] }),
+            value == null
+              ? node('answer', 'link', [], { subject: null, relation, found: [conceptOf(winner)] })
+              : node('sum', 'worked', [], {
+                  left: null,
+                  right: null,
+                  value,
+                  term: world.termFor(value),
+                }),
           ]),
         ];
       }
