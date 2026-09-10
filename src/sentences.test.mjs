@@ -10,16 +10,17 @@ const { brain, forget } = openBrain("sqlite::memory:");
 test("three sentences said at once are three things said", async () => {
   await forget();
   const r = await brain("Sara is older than Tom. Tom is older than Mike. Who is the youngest?");
-  assertEquals(r.expression.state.says, "Mike");
+  assertEquals(r.expression.state.says, "I understand. Mike", "each is said, and the same said twice is said once");
   await forget();
 });
 
 test("what one settles, the next one asks against", async () => {
   await forget();
+  const r = await brain("a wren is a bird. is a wren a bird?");
   assertEquals(
-    (await brain("a wren is a bird. is a wren a bird?")).expression.name,
-    "affirm",
-    "the second was answered against the world the first left",
+    r.expression.state.says,
+    "I know. Yes. \u2705 a wren is a bird.",
+    "the second was answered against the world the first left, and both are said",
   );
   await forget();
 });

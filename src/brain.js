@@ -8,6 +8,7 @@
 // (see src/languages.js). It never knows a language's name.
 
 import { Decimal } from '@opentf/std';
+import { fromWorldData } from './world.js';
 
 // The conversation this signal belongs to, for the length of one turn. Set on
 // the way in from what the runtime knows and never read outside a turn — the
@@ -5138,6 +5139,26 @@ function express(roots, langs, world) {
   );
 }
 
+// Several finished acts, said back as one. Each was judged in full and each
+// verdict stays on the tree, but saying one of them twice says nothing the
+// first did not: two that came out differently are both worth saying, two that
+// came out the same are one thing to say, however many things it was reached
+// about. What goes between is the language's — a list of answers is listed the
+// way it lists; anything else has already been ended the way it ends a
+// sentence, so nothing goes between but the space.
+function saidTogether(parts, langs, mood) {
+  const langName = parts.map((p) => p.state.language).find(Boolean) || null;
+  const between = parts.every((p) => p.name === 'answer') ? listing(langName, langs) : ' ';
+  const says = [
+    ...new Set(parts.map((p) => p.state.says).filter((s) => s != null)),
+  ].join(between);
+  return withBranch(
+    node('express', parts[0].name, [], { says: says || null, language: langName }),
+    parts,
+    { says: says || null, language: langName, bound: true, mood },
+  );
+}
+
 // What the brain means to express about a thing, decided by what the world says
 // the thing IS — never by the part of speech the language filed it under. The
 // brain walks to its own anchors and answers the kind of thing it found: it
@@ -5248,6 +5269,10 @@ const UNPLACED = ['unmeasured'];
 // Either way the words are the same words; only what was reached of them
 // differs, so each root keeps the whole signal and only its own verdict.
 function apart(roots, world) {
+  // Several things said, each already whole and each judged on its own. Loose
+  // words that never bound into anything are not that: they are one signal the
+  // brain could not make a whole of.
+  if (roots.length > 1 && roots.every((n) => n.kind !== 'thing' && n.kind !== 'void')) return roots;
   if (roots.length !== 1) return null;
   const greeted = greeting(roots[0], world);
   if (greeted) return greeted;
@@ -5275,25 +5300,10 @@ function expression(roots, langs, mood, world, sent) {
   // finished acts into a single one said back together.
   const together = roots.length === 1 && findBranch(roots[0], 'refuse') ? null : apart(roots, world);
   if (together) {
-    const parts = together.map((r) => expression([r], langs, mood, world, sent));
-    const langName = parts.map((p) => p.state.language).find(Boolean) || null;
-    // An act that says a term is one of a list, and the language says what
-    // goes between those. An act that says a sentence has already been ended
-    // the way this language ends one, so nothing goes between but the space.
-    const between = parts.every((p) => p.name === 'answer')
-      ? listing(langName, langs)
-      : ' ';
-    // Each was judged in full and each verdict stays on the tree, but saying
-    // one of them twice says nothing the first did not. Two that came out
-    // differently are both worth saying; two that came out the same are one
-    // thing to say, however many things it was reached about.
-    const says = [
-      ...new Set(parts.map((p) => p.state.says).filter((s) => s != null)),
-    ].join(between);
-    return withBranch(
-      node('express', parts[0].name, [], { says: says || null, language: langName }),
-      parts,
-      { says: says || null, language: langName, bound: true, mood },
+    return saidTogether(
+      together.map((r) => expression([r], langs, mood, world, sent)),
+      langs,
+      mood,
     );
   }
 
@@ -5872,6 +5882,69 @@ function grammarOf(root, langs) {
 
 // ---------------------------------------------------------------------------
 // Pipeline driver — the five phases, all inside the brain. Express runs last,
+// Several things said at once, taken one after another.
+//
+// Each is reasoned through in full, and what it settles stands for the next:
+// `tom is older than mike` has to be so before `who is the oldest` can be
+// asked. The world the brain was handed does not move, so it grows one of its
+// own from what it has accepted so far — nothing is written anywhere, and the
+// runtime is handed the whole of it at the end as one change.
+function oneAfterAnother(wholes, knowledge, circumstance) {
+  let world = (knowledge && knowledge.world) || null;
+  let said = circumstance || {};
+  const done = [];
+  for (const whole of wholes) {
+    const answer = brainFrom(whole, { ...knowledge, world }, said);
+    done.push(answer);
+    if (answer.learned) world = grownBy(world, answer.learned);
+    said = {
+      ...said,
+      spoken: answer.spoken,
+      focus: answer.focus,
+      names: answer.names,
+      language: answer.language ?? said.language ?? null,
+    };
+  }
+  const langs = (knowledge && knowledge.languages) || [];
+  const roots = done.flatMap((answer) => answer.roots);
+  const terms = done.flatMap((answer) => (answer.learned ? answer.learned.terms : []));
+  const last = done[done.length - 1];
+  return {
+    ...last,
+    input: toString(wholes.join(' ')),
+    roots,
+    // Each was said with the mood it was said in — a question asked at the end
+    // does not make what came before it a question — so what each came to is
+    // composed, never worked out again over all of them at once.
+    expression: saidTogether(done.map((answer) => answer.expression), langs, last.expression.state.mood),
+    learned: terms.length > 0 ? { terms } : null,
+    // Each in the order it was said: the conversation holds them the way it
+    // was told them.
+    remember: () => done.forEach((answer) => answer.remember()),
+    phases: last.phases,
+  };
+}
+
+// The world as it stands with a change in it, built for the brain's own use
+// while a signal is still being read. What the runtime does with the change is
+// the runtime's; this is only so the next thing said can be reasoned against
+// what the last one settled.
+function grownBy(world, learned) {
+  if (!world || !learned) return world;
+  const terms = world.data.terms.map((term) => ({ ...term, links: [...(term.links || [])] }));
+  const at = new Map(terms.map((term, i) => [term.id, i]));
+  for (const proposed of learned.terms || []) {
+    const found = at.get(proposed.id);
+    if (found === undefined) {
+      at.set(proposed.id, terms.length);
+      terms.push({ ...proposed, links: [...(proposed.links || [])] });
+    } else {
+      terms[found].links.push(...(proposed.links || []));
+    }
+  }
+  return fromWorldData({ ...world.data, terms });
+}
+
 // on the structured signal, so the brain replies to the whole and not only to
 // each word of it.
 // The brain is pure: given the input and the already-loaded language data it
@@ -5886,6 +5959,12 @@ function grammarOf(root, langs) {
 export function brainFrom(input, knowledge, circumstance) {
   const langs = (knowledge && knowledge.languages) || [];
   const world = (knowledge && knowledge.world) || null;
+  // A signal may hold more than one thing said. Reading where each one ends is
+  // reading, so it is done here and not outside — and they are taken in order,
+  // each against the world the one before it left, because that is what saying
+  // them one after another means.
+  const wholes = signalsIn(input, langs);
+  if (wholes.length > 1) return oneAfterAnother(wholes, knowledge, circumstance);
   // Which conversation this signal belongs to. One brain, one graph: reading a
   // turn through to the end never gives way to another, so the brain knows
   // which conversation it is reasoning in for as long as it takes, and nothing

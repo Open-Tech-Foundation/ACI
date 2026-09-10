@@ -30,6 +30,14 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Several things said at once are read by the brain, and taken in order.**
+  Where a signal ends is reading, so the brain does the splitting, not the
+  runtime around it. Each whole is reasoned through in full and what it settles
+  stands for the next — the brain grows a world of its own from what it has
+  accepted so far, and hands the runtime the whole change at the end as one.
+  Every reply is said, and one said twice is said once: `a wren is a bird. is a
+  wren a bird?` comes back `I know. Yes. ✅ a wren is a bird.`
+
 - **A signal may hold more than one thing said.** `Sara is older than Tom. Tom
   is older than Mike. Who is the youngest?` came back `I don't know "Sara"`:
   the full stops were taken off with the rest of the punctuation, leaving ten
