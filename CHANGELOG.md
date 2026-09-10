@@ -28,6 +28,22 @@ All notable changes to this project are documented in this file.
   drawn from the eight, and says nothing about how many went into each —
   because nobody did.
 
+### Added
+
+- **A claim is said back whole.** `why is the door open?` answered `strong`.
+  The claim standing behind it was on the record — the brain has been writing
+  claims down as things since standing instructions needed two sides to hold —
+  but the walk reached through it and handed back the property inside, which is
+  not what anybody said. What stands behind a claim is a claim, so what answers
+  is `a wind is strong`, said in the frame the language already has for saying
+  a claim back.
+
+- **Settled, for when rules land: a denial stands.** What somebody said
+  outweighs what the brain works out. A fact derived by a rule is never written
+  over a denial and never answers in its place, and where the two disagree the
+  brain says so — a rule that is wrong about one thing cannot hide behind the
+  exception it makes.
+
 ### Changed
 
 - **A change is weighed against what it touches, not against everything known.**

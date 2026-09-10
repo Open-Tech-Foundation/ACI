@@ -19,3 +19,14 @@ test("why with nothing asked stays unanswered", async () => {
   assertEquals((await brain("why is a drum cold?")).expression.name, "unsure");
   await forget();
 });
+
+test("what stands behind a claim is a claim, and is said back whole", async () => {
+  await forget();
+  await brain("the door is open because the wind is strong");
+  assertEquals(
+    (await brain("why is the door open?")).expression.state.says,
+    "a wind is strong",
+    "not the strength on its own, which is not what was said",
+  );
+  await forget();
+});

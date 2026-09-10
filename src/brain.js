@@ -3795,10 +3795,11 @@ function reasonFor(subject, object, world) {
   const found = [];
   for (const claim of world.standing(subject, a.subject)) {
     if (!(world.related(claim, a.object) || []).includes(object)) continue;
+    // What stands behind a claim is a claim, not a thing. Asked why the door
+    // is open, what answers is that the wind is strong — the whole of it, and
+    // not the strength on its own, which was never what was said.
     for (const behind of world.standing(claim, a.cause)) {
-      for (const of of world.related(behind, a.object) || []) {
-        if (!found.includes(of)) found.push(of);
-      }
+      if (!found.includes(behind)) found.push(behind);
     }
   }
   return found;
@@ -5498,7 +5499,9 @@ function spoken(answer, langName, langs, world, written) {
     return lang ? lang.classificationFor(answer.state.classification) : null;
   }
   const { found } = answer.state;
-  const words = found.map((t) => termWord(t, langName, langs, world, written)).filter(Boolean);
+  const words = found
+    .map((t) => claimTermSaid(t, langName, langs, world) ?? termWord(t, langName, langs, world, written))
+    .filter(Boolean);
   // In an open world, finding no relation is lack of evidence rather than
   // evidence of none. Explicit negative knowledge is judged separately.
   if (words.length === 0) return null;
@@ -5526,6 +5529,25 @@ function listing(langName, langs) {
 // A comparing said on one scale is said back as the comparing, not as the
 // more-or-less it was worked through: asked bigger, the brain says bigger,
 // in the frame the language gives for saying so.
+// A thing the world holds that says something — a claim — said back as what
+// it says. Anything else is said by its own word.
+function claimTermSaid(id, langName, langs, world) {
+  const claim = world && world.claimOf ? world.claimOf(id) : null;
+  if (!claim) return null;
+  const said = claimSaid(
+    node('standing', 'held', [], {
+      subject: claim.subject,
+      relation: claim.relation,
+      object: claim.object,
+      negated: claim.not,
+    }),
+    langName,
+    langs,
+    world,
+  );
+  return said ? said.trim().replace(/\.$/, '') : null;
+}
+
 function claimSaid(stood, langName, langs, world) {
   const lang = (langs || []).find((l) => l.data.name === langName);
   if (!lang || !stood) return null;

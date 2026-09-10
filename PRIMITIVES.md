@@ -81,10 +81,12 @@ more world vocabulary.
   the world back and rebuilding its indexes after a write, which is still
   O(world) per fact — a rebuild rather than a re-derivation, and the next thing
   to take out of the loop.
-- [ ] Decide what a derived fact does when the world denies it. `denies` reads
-  authored `not` links; stored rules will produce facts no source authored, and
-  the collision has no rule yet. Settle it before rules land, or the first
-  derived contradiction is a silent wrong answer instead of a refusal.
+- [x] Decide what a derived fact does when the world denies it. Settled: a
+  denial stands. What somebody said outweighs what the brain worked out, so a
+  derived fact is never written over a denial and never answers in its place —
+  and the brain says that what it was told and what follows from what it was
+  told disagree, so a wrong rule cannot hide behind the exception it makes.
+  Nothing to build until rules land; the rule they must follow is this one.
 - [ ] Keep grammar/parser ordering risks deferred while language work is
   paused. They are deterministic for identical ordered data, but some choices
   still depend on authored alternative order.
