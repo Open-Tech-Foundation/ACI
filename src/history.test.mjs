@@ -102,3 +102,16 @@ test("asked after several kinds at once, the count is all of them together", asy
   assertEquals(await says("how many humans"), "three", "and a kind that covers both");
   await forget();
 });
+
+test("how many a thing had is not how many it has", async () => {
+  await forget();
+  await brain("nila has five books");
+  await brain("nila had three books");
+  assertEquals(
+    (await brain("how many books does nila have?")).expression.state.says,
+    "five",
+    "what was said last is not what stands now — when each was so settles that",
+  );
+  assertEquals((await brain("how many books did nila have?")).expression.state.says, "three");
+  await forget();
+});

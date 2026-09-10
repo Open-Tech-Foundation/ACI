@@ -2726,6 +2726,10 @@ function because(joined, world, mood, sent) {
               quantity: counted,
               made: bearer && bearer.made ? bearer : null,
               not: isDenied,
+              // Which side of now the signal put it on. How many a thing had
+              // is not how many it has, and what stands is settled by when
+              // each was so, not by which was said last.
+              when: whenIn(said, world),
             }),
           );
         }
@@ -7313,19 +7317,32 @@ function became(event, world) {
 // A fact the brain took in. A world with no term for what it is about has
 // nowhere to put it, and it comes back with nothing.
 function tookIn(learn, world, naming) {
-  const { subject, relation, object, quantity, made, not } = learn.state;
+  const { subject, relation, object, quantity, made, not, when } = learn.state;
   const link = { rel: relation, to: object };
   if (not) link.not = true;
+  // When a state was so. What is said plainly is so from now; what is said of
+  // the past was so before anything else the brain holds about it, since that
+  // is all the tense says — it was so, and it is not what stands now.
+  const past = when != null && world.anchors.past != null && when === world.anchors.past;
+  const stamp = () => {
+    const now = world.now();
+    if (!past) return now;
+    let first = now;
+    for (const l of (world.term(subject) || { links: [] }).links || []) {
+      if (l.rel === relation && Number.isInteger(l.at) && l.at < first) first = l.at;
+    }
+    return first - 1;
+  };
   if (quantity != null) {
     link.quantity = quantity;
     // What is so now is so from now: state is stamped, so what was so before
     // stays on the record instead of being written over.
-    link.at = world.now();
+    link.at = stamp();
   }
   // Placement is state too: a new location succeeds the old one while both
   // remain in history. Which relations are placements is world knowledge.
   if (quantity == null && world.anchors.placement != null && world.isA(relation, world.anchors.placement)) {
-    link.at = world.now();
+    link.at = stamp();
   }
   // And so is how a thing stands on one of its quantities. Cold and hot are
   // both temperatures, and a thing has one temperature at a time: the second
@@ -7333,7 +7350,7 @@ function tookIn(learn, world, naming) {
   // states of a quantity the world says, the same way it says which relations
   // are placements.
   if (quantity == null && link.at == null && quantityOn(object, world) != null) {
-    link.at = world.now();
+    link.at = stamp();
   }
   if (made) {
     const kind = world.term(made.of);
