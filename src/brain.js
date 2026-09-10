@@ -3063,6 +3063,27 @@ function because(joined, world, mood, sent) {
     }
   }
 
+  // Asked after a part played in a doing — the destination, the source — what
+  // answers is the doing this conversation holds that plays it. A part belongs
+  // to the doing, so there is nothing to look up in the world: it is what was
+  // said here, and the latest of it.
+  if (holes.length > 0 && graph) {
+    const a2 = world.anchors || {};
+    const roles = [a2.destination, a2.source, a2.agent, a2.target].filter((of) => of != null);
+    for (const n of said) {
+      const of = conceptOf(n);
+      if (of == null || !roles.includes(of) || markOn(n) === 'unknown') continue;
+      const played = graph.roleIn(of);
+      if (played == null) continue;
+      return [
+        withBranch(root, [
+          ...root.branch,
+          node('answer', 'link', [], { subject: null, relation: of, found: [played] }),
+        ]),
+      ];
+    }
+  }
+
   if (holes.length > 0 && terms.length >= 1) {
     const nodes = [];
     const asked = terms.flatMap((t) => membersFor(t, world, sent));

@@ -242,6 +242,13 @@ function fromUnderstood(roots, world, focus, marking, from) {
     const key = triple(reach(subject), relation, reach(object));
     if (said.has(key) || governed.has(triple(subject, relation, object))) return;
     said.add(key);
+    // A part played in a doing belongs to the doing, not between two things.
+    // `anu changed the destination to mumbai` says where the booking is now
+    // for — the transfer already has a destination, and this is that one
+    // changed. Where the doing is a transfer the brain already holds its ends
+    // as its own, so the change goes there and what it was before stays behind
+    // it.
+    if (rolePlayed(relation, world) && shifted(relation, reach(object), world)) return;
     const primitive = standingOf(relation, reach(object), world);
     // How much of something a thing is, is the thing's own — it belongs on it
     // the way a colour does, not between it and the unit. Which quantity it is
@@ -472,6 +479,61 @@ function doing(roles, world) {
   const played = (role) => role != null && Object.hasOwn(roles, role);
   if (played(anchors.source) || played(anchors.destination)) return TRANSFER;
   if (played(anchors.target) && isProperty(roles[anchors.target], world)) return PROPERTY_CHANGE;
+  return null;
+}
+
+// Whether a relation names a part played in a doing rather than a fact between
+// two things. Which parts there are the world says, through its anchors.
+function rolePlayed(relation, world) {
+  const a = (world && world.anchors) || {};
+  return relation != null && [a.agent, a.target, a.source, a.destination].includes(relation);
+}
+
+// The latest doing this conversation holds that plays that part, given a new
+// one to play it. What it was stays behind it, so the history keeps the rest.
+function shifted(relation, to, world) {
+  const a = (world && world.anchors) || {};
+  const where = relation === a.destination
+    ? 'to'
+    : relation === a.source
+      ? 'from'
+      : relation === a.agent
+        ? 'doer'
+        : null;
+  for (let i = held.actions.length - 1; i >= 0; i -= 1) {
+    const one = held.actions[i];
+    if (where != null && one.parts && one.parts[where] != null) {
+      if (one.parts[where] === to) return true;
+      one.was = [...(one.was || []), { part: where, of: one.parts[where] }];
+      one.parts = { ...one.parts, [where]: to };
+      return true;
+    }
+    if (one.roles && one.roles[relation] != null) {
+      if (one.roles[relation] === to) return true;
+      one.was = [...(one.was || []), { part: relation, of: one.roles[relation] }];
+      one.roles = { ...one.roles, [relation]: to };
+      return true;
+    }
+  }
+  return false;
+}
+
+// What this conversation holds as the part played in the latest doing that
+// plays it. Asked for the destination, it is the one the booking is for now.
+function roleIn(relation, world) {
+  const a = (world && world.anchors) || {};
+  const where = relation === a.destination
+    ? 'to'
+    : relation === a.source
+      ? 'from'
+      : relation === a.agent
+        ? 'doer'
+        : null;
+  for (let i = held.actions.length - 1; i >= 0; i -= 1) {
+    const one = held.actions[i];
+    if (where != null && one.parts && one.parts[where] != null) return termOf(one.parts[where]);
+    if (one.roles && one.roles[relation] != null) return termOf(one.roles[relation]);
+  }
   return null;
 }
 
@@ -1018,6 +1080,7 @@ function serialize(world = against) {
     namedIn,
     standingIn,
     joinedBy,
+    roleIn: (relation) => roleIn(relation, against),
     amounts,
     ranking,
   };

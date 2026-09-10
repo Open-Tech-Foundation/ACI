@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A part played in a doing belongs to the doing.** `anu changed the
+  destination to mumbai` was read as a fact between anu and mumbai, and
+  `what is the destination?` found nothing to say. The transfer already held
+  the destination as one of its own ends, so the change goes there — what it
+  was before staying behind it — and asked for a part played, what answers is
+  the doing this conversation holds that plays it. The same holds for a
+  transfer's source, its doer and what moved. With this, the ten cases the
+  conversation graph was landed against all hold.
+
 - **An extreme is the far end of what is being spoken of.** `who arrived
   first?` named nobody after a chain of arrivals. The walk gathered every term
   the world holds in that ordering — days of the week among them — so several

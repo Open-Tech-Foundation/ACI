@@ -1355,11 +1355,18 @@
       "meaning": "memory",
       "concept": 561
     },
-    "book": {
-      "pos": "noun",
-      "meaning": "book",
-      "concept": 18
-    },
+    "book": [
+      {
+        "pos": "noun",
+        "meaning": "book",
+        "concept": 18
+      },
+      {
+        "pos": "verb",
+        "meaning": "book",
+        "concept": 2976
+      }
+    ],
     "moon": {
       "pos": "noun",
       "meaning": "moon",
@@ -16411,7 +16418,15 @@
       "names": false,
       "when": "past"
     },
-    "because": {"pos": "conjunction", "meaning": "because", "concept": 247, "functions": ["join", "reason"]},
+    "because": {
+      "pos": "conjunction",
+      "meaning": "because",
+      "concept": 247,
+      "functions": [
+        "join",
+        "reason"
+      ]
+    },
     "than": {
       "pos": "preposition",
       "meaning": "than"
@@ -17958,6 +17973,27 @@
       "meaning": "named",
       "concept": 138,
       "functions": "naming"
+    },
+    "booking": {
+      "pos": "noun",
+      "meaning": "booking",
+      "concept": 2976
+    },
+    "cancel": {
+      "pos": "verb",
+      "meaning": "cancel",
+      "concept": 2977
+    },
+    "cancelled": {
+      "pos": "verb",
+      "meaning": "cancelled",
+      "concept": 2977,
+      "when": "past"
+    },
+    "flight": {
+      "pos": "noun",
+      "meaning": "flight",
+      "concept": 2978
     }
   },
   "unknown": {
