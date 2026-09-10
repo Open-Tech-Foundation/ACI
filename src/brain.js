@@ -3947,6 +3947,10 @@ function valuesOn(term, world) {
   const one = world.oneOf(term);
   const bearer = one == null ? term : one;
   const out = [];
+  // A unit is one of itself. An hour is not measured — it is what measuring is
+  // done in — and it still stands on its scale, at one, which is how an hour
+  // and a minute come to be comparable at all.
+  if (a.unit != null && world.isA(term, a.unit)) out.push({ unit: term, amount: 1 });
   for (const unit of world.linked(bearer, a.measure)) {
     const amount = world.held(bearer, a.measure, unit);
     if (amount != null) out.push({ unit, amount });

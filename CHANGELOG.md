@@ -30,6 +30,12 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A unit is one of itself, so two units compare.** `is an hour more than a
+  minute?` said `I don't know`. Two things stand on one scale by having been
+  measured on it, and a unit is never measured — it is what measuring is done
+  in. But an hour is one hour, and that is where it stands, so an hour and a
+  minute compare like any other two amounts, and so do a kilogram and a gram.
+
 - **Two units of one scale come to a number, however many steps apart.** `an
   hour has how many minutes?` answered sixty and `a day has how many minutes?`
   said it did not know — though the world says a day is twenty-four hours and

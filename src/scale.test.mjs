@@ -126,3 +126,15 @@ test("where a state begins on the scale is not fixed", async () => {
   assertEquals((await brain("an apple is lightweight?")).expression.name, "unsure");
   await forget();
 });
+
+test("a unit is one of itself, so two units compare", async () => {
+  await forget();
+  assertEquals((await brain("is an hour more than a minute?")).expression.name, "affirm");
+  assertEquals((await brain("is a minute more than an hour?")).expression.name, "deny");
+  assertEquals(
+    (await brain("is a kilogram more than a gram?")).expression.name,
+    "affirm",
+    "the same on any scale the world says the steps of",
+  );
+  await forget();
+});
