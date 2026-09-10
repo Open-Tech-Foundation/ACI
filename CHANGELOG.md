@@ -30,6 +30,12 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A place is where a thing stands to something, and both halves answer.**
+  `where is the dog?` said `a table` — which is not where the dog is. A place
+  is one of the brain's own: a thing standing to something, with which standing
+  the world's to say. Asked for one, it answers `under a table`. Only a place —
+  what a thing holds, or is one of, is still answered by the far end alone.
+
 - **Which of two, where the world names neither number.** `which is smaller, 8
   or 0?` answered `zero`, and `which is larger 45 or 54?` said `I don't know`.
   The comparison was worked out either way — what failed was saying it: the

@@ -65,7 +65,8 @@ test("working for a company is not working in its city", async () => {
   // Two stored facts and nothing joins them, so the wrong answer is not
   // reachable in the first place.
   assertEquals(await said(...told, "kumar works for chennai?"), "I don't know.");
-  assertEquals(await said(...told, "where is kumar?"), "bangalore");
+  // A place is where he stands to something, so the standing is half of it.
+  assertEquals(await said(...told, "where is kumar?"), "in bangalore");
 });
 
 test("the first of a chain of arrivals", async () => {

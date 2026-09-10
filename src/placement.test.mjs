@@ -110,15 +110,15 @@ test("opposed positions exclude each other, the way up and down already did", as
 test("where asks after a place, however the place was said", async () => {
   await forget();
   await brain("the dog is under the table");
-  assertEquals((await brain("where is the dog?")).expression.state.says, "table");
+  assertEquals((await brain("where is the dog?")).expression.state.says, "under a table");
   await forget();
   await brain("the key is in the drawer");
-  assertEquals((await brain("where is the key?")).expression.state.says, "drawer");
+  assertEquals((await brain("where is the key?")).expression.state.says, "in a drawer");
   await forget();
   await brain("the cup is on the table");
   assertEquals(
     (await brain("where is the cup?")).expression.state.says,
-    "table",
+    "on a table",
     "in, on and under are ways of saying where, and where asks after all of them",
   );
   await forget();

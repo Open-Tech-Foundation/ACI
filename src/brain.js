@@ -3468,7 +3468,22 @@ function because(joined, world, mood, sent) {
       ) {
         found = [subject];
       }
-      const mine = [node('answer', 'link', [], { subject, relation, found })];
+      // A place is where something stands to something else, so the way it
+      // stands is half of it: asked where the dog is, `a table` is not the
+      // place — `under a table` is. Only a place. What a thing holds, or is
+      // one of, is answered by the far end alone.
+      const asksPlace =
+        relation != null &&
+        a.placement != null &&
+        (relation === a.placement || world.subrelationOf(relation, a.placement));
+      const ways = asksPlace ? world.narrower(relation).filter((w) => w !== relation) : [];
+      const through =
+        ways.length > 0 && found.length > 0
+          ? ways.find((way) =>
+              upward(subject, world).some((rung) => world.linked(rung, way).includes(found[0])),
+            ) ?? null
+          : null;
+      const mine = [node('answer', 'link', [], { subject, relation, found, ...(through == null ? {} : { through }) })];
       // A possessive determining its head never answers for it (`what colour
       // is my cat` is about the cat); standing as head it still speaks
       // (`what is your name`). Where its walk comes back empty it stays
@@ -5632,9 +5647,24 @@ function spoken(answer, langName, langs, world, written) {
     const lang = (langs || []).find((candidate) => candidate.data.name === langName);
     return lang ? lang.classificationFor(answer.state.classification) : null;
   }
-  const { found } = answer.state;
+  const { found, through } = answer.state;
+  const way = through == null ? null : termWord(through, langName, langs, world);
+  // A place is said as a place — the way it holds, and the thing it holds to,
+  // which takes whatever the language puts before one of a kind. A bare term
+  // said on its own takes nothing, as ever.
+  const lang = (langs || []).find((l) => l.data.name === langName);
+  const asOne = (term, said) =>
+    lang && !lang.isBare(term) && !(world && world.isIndividual(term))
+      ? `${lang.oneFor(said)} ${said}`
+      : said;
   const words = found
-    .map((t) => claimTermSaid(t, langName, langs, world) ?? termWord(t, langName, langs, world, written))
+    .map((t) => {
+      const claim = claimTermSaid(t, langName, langs, world);
+      if (claim != null) return claim;
+      const said = termWord(t, langName, langs, world, written);
+      if (said == null) return null;
+      return way == null ? said : `${way} ${asOne(t, said)}`;
+    })
     .filter(Boolean);
   // In an open world, finding no relation is lack of evidence rather than
   // evidence of none. Explicit negative knowledge is judged separately.
