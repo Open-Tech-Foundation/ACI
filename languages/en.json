@@ -18056,6 +18056,21 @@
       "pos": "verb",
       "meaning": "greet",
       "concept": 277
+    },
+    "hey": {
+      "pos": "interjection",
+      "meaning": "greeting",
+      "concept": 277
+    },
+    "greetings": {
+      "pos": "interjection",
+      "meaning": "greeting",
+      "concept": 277
+    },
+    "welcome": {
+      "pos": "interjection",
+      "meaning": "greeting",
+      "concept": 277
     }
   },
   "unknown": {

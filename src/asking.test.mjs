@@ -130,3 +130,13 @@ test("an operation standing before what it takes is a doing, not a joint", async
   assertEquals((await brain("it holds how many apples?")).expression.state.says, "four");
   await forget();
 });
+
+test("every word for greeting is the one act of greeting", async () => {
+  for (const said of ["hello", "hi", "hey", "welcome", "greetings"]) {
+    await forget();
+    const r = await brain(said, { from: PERSON });
+    assertEquals(r.expression.name, "greet", said);
+    assertEquals(r.learned, null, `nothing about the world was said: ${said}`);
+  }
+  await forget();
+});

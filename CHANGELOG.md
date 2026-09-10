@@ -30,6 +30,12 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Every word for greeting is the one act of greeting.** `hey`, `welcome` and
+  `greetings` were unheard; they are the same doing `hello` and `hi` already
+  are, and English now says so. How formal each is belongs to the word, not to
+  the world — it is left unsaid until something chooses between them, since
+  the brain greets back with the one word its language gives it.
+
 - **Being somebody's friend is a relation between them, not a friend they
   have.** `nila is my friend` made a friend-thing, gave it to the sender, and
   filed nila as being that thing — `holding(me, friend)` beside a node for nila
