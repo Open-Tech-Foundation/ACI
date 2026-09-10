@@ -2075,10 +2075,16 @@ function instructionFrom(when, so, world, langs, sent) {
 
   const join = joinIn(root);
   if (join) {
+    // An alternative is not a claim. `a drum is red or a drum is blue` says one
+    // of them is so and does not say which, and taking both in would leave the
+    // brain holding what it was never told — that the drum is red, and blue.
+    // So each side is checked, the way a claim the signal only speaks *of* is
+    // checked, and nothing is taken in until something says which.
+    const offered = mood === 'tell' && (join.branch || []).some(choiceOn);
     const judged = withBranch(
       join,
       join.branch.map((b) =>
-        joinedWhole(b, join) ? judge([b], world, mood, langs, sent)[0] : b,
+        joinedWhole(b, join) ? judge([b], world, offered ? 'ask' : mood, langs, sent)[0] : b,
       ),
     );
     return [instead(root, join, judged)];
@@ -2403,7 +2409,14 @@ function instructionFrom(when, so, world, langs, sent) {
       // the knowledge door.
       // How many is state: telling the brain a different count is not standing
       // against what it holds, it is saying the world has moved on.
-      const revises = counted != null && world.held(holder, rel, object) !== counted;
+      // How many is state: telling the brain a different count is not standing
+      // against what it holds, it is saying the world has moved on. So is how
+      // a thing stands on one of its quantities — a drum that was cold and is
+      // now hot did not contradict itself, it changed — and which qualities
+      // are states of a quantity is the world's to say.
+      const revises =
+        (counted != null && world.held(holder, rel, object) !== counted) ||
+        (stands === 'against' && quantityOn(object, world) != null);
 
       if (mood === 'tell') {
         if (!revises && stands === 'against') {
@@ -6417,6 +6430,32 @@ function tookPlace(event, world) {
         })),
       ],
     },
+    ...became(event, world),
+  ];
+}
+
+// A change leaves the thing changed.
+//
+// Recording that a becoming happened is not the same as the thing being how it
+// became: told a drum becomes hot, the brain held a becoming and went on saying
+// the drum was cold. So where a doing takes a thing to a state — one of its
+// quantities, the world says which — the thing is put in that state as of the
+// moment it happened, and the state it was in before stays behind it as
+// history, the way any other state does.
+function became(event, world) {
+  const { at, parts, not } = event.state;
+  if (not || !parts || world.anchors.predication == null) return [];
+  const whom = parts.find((p) => p.role === world.anchors.agent);
+  const into = parts.find((p) => p.role === world.anchors.target);
+  if (!whom || !into || quantityOn(into.of, world) == null) return [];
+  const term = world.term(whom.of);
+  if (!term) return [];
+  return [
+    {
+      id: whom.of,
+      name: term.name,
+      links: [{ rel: world.anchors.predication, to: into.of, at }],
+    },
   ];
 }
 
@@ -6435,6 +6474,14 @@ function tookIn(learn, world, naming) {
   // Placement is state too: a new location succeeds the old one while both
   // remain in history. Which relations are placements is world knowledge.
   if (quantity == null && world.anchors.placement != null && world.isA(relation, world.anchors.placement)) {
+    link.at = world.now();
+  }
+  // And so is how a thing stands on one of its quantities. Cold and hot are
+  // both temperatures, and a thing has one temperature at a time: the second
+  // succeeds the first rather than standing against it. Which qualities are
+  // states of a quantity the world says, the same way it says which relations
+  // are placements.
+  if (quantity == null && link.at == null && quantityOn(object, world) != null) {
     link.at = world.now();
   }
   if (made) {

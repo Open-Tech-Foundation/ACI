@@ -762,12 +762,41 @@ function bandOf(state, world) {
 // or about anything like it, and reaching for one would answer a question
 // nobody asked.
 function told(subject, relation, object) {
+  let found = null;
   for (const one of held.facts) {
-    if (one.said !== relation) continue;
-    if (!same(one.parts[0], subject) || !same(one.parts[1], object)) continue;
-    return one.denied ? 'against' : 'held';
+    if (!same(one.parts[0], subject)) continue;
+    // State is the latest of it and nothing earlier. Where a thing is, and how
+    // it stands on one of its quantities, are both of them state: a drum put in
+    // a box and then on a shelf is on the shelf, and what it was said to be
+    // before is history rather than a second fact standing beside this one.
+    // Everything else stands together — a thing holding a book still holds the
+    // pen it was given first.
+    if (state(one, against) && !same(one.parts[1], object)) {
+      if (sameState(one, relation, object, against)) found = null;
+      continue;
+    }
+    if (one.said !== relation || !same(one.parts[1], object)) continue;
+    found = one.denied ? 'against' : 'held';
   }
-  return null;
+  return found;
+}
+
+// Whether a fact is one that a later one supersedes.
+function state(one, world) {
+  if (!world) return false;
+  if (one.of === PLACEMENT) return true;
+  return one.of === PROPERTY && quantityOn(termOf(one.parts[1]), world) != null;
+}
+
+// Whether a later fact is about the same state — the same placement, or the
+// same quantity — as the one being asked after.
+function sameState(one, relation, object, world) {
+  if (!world) return false;
+  if (one.of === PLACEMENT) {
+    return world.anchors.placement != null && world.isA(relation, world.anchors.placement);
+  }
+  const of = quantityOn(termOf(one.parts[1]), world);
+  return of != null && of === quantityOn(object, world);
 }
 
 // What this conversation calls by a word. Somebody may call a pet `river`, and

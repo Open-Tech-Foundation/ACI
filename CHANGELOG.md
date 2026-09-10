@@ -6,6 +6,22 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **An alternative is not a claim.** `a drum is red or a drum is blue` was
+  taken in as both, so the brain afterwards affirmed the drum was red *and*
+  blue — holding what it was never told. Each side of a choice is now checked
+  rather than asserted, the way a claim a signal only speaks *of* already is,
+  and nothing is taken in until something says which.
+
+- **A change leaves the thing changed.** Told a drum becomes hot, the brain
+  recorded that a becoming happened and went on saying the drum was cold.
+  Three things were missing, and together they are the general model of state:
+  a later state is not a contradiction but the world having moved on; a state
+  is stamped with its moment the way a count and a placement already were; and
+  every walk through the world — direct, transitive, and read through a
+  converse — sees only the latest of each, keeping the rest as history. That
+  last also settles placement: a drum put in a box and then on a shelf is no
+  longer answered as being in the box.
+
 - **One conversation, one graph.** The conversation graph was held once for the
   whole process, so two brains over two worlds answered each other's questions
   and forgot together: teaching only the first that a cat is taller than a dog

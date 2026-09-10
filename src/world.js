@@ -155,7 +155,18 @@ export function fromWorldData(source) {
       }
       const cur = terms.get(at);
       if (!cur) continue;
-      for (const l of cur.links || []) {
+      // A walk sees what is so now. Where a signal stamped the moment, the
+      // latest of that state stands and the ones before it are history, so a
+      // drum moved to a shelf is no longer reached through the box.
+      const links = cur.links || [];
+      const dated = links.some((l) => l.rel === rel && Number.isInteger(l.at));
+      const current = dated
+        ? [
+            ...links.filter((l) => l.rel !== rel),
+            ...currentState(links.filter((l) => l.rel === rel), rel),
+          ]
+        : links;
+      for (const l of current) {
         // A denied link joins nothing. It records that the relation does not
         // hold, and nothing can be reached across it.
         if (l.not) continue;
@@ -182,6 +193,38 @@ export function fromWorldData(source) {
   // A functional relation may retain stamped history while exposing one
   // current value. Untimed links are static; validation ensures they cannot
   // compete with a different stamped object.
+  // How a thing stands on one of its quantities is state: a drum that was cold
+  // and is now hot is hot, and was cold. Where a signal stamped the moment, the
+  // latest stands and the rest are history — one quantity at a time, since a
+  // drum may be hot and heavy at once.
+  function currentState(links, rel) {
+    // Where a thing is is state too, and a placement says which one it is in
+    // rather than which quantity it stands on: the latest of them all.
+    if (rel != null && anchors.placement != null && reaches(rel, isRel).has(anchors.placement)) {
+      const stamped = links.filter((l) => Number.isInteger(l.at));
+      if (stamped.length === 0) return links;
+      const top = Math.max(...stamped.map((l) => l.at));
+      return links.filter((l) => !Number.isInteger(l.at) || l.at === top);
+    }
+    const on = (id) => {
+      if (anchors.measure == null) return null;
+      for (const l of terms.get(id)?.links || []) if (l.rel === anchors.measure) return l.to;
+      return null;
+    };
+    const latest = new Map();
+    const rest = [];
+    for (const l of links) {
+      const quantity = Number.isInteger(l.at) ? on(l.to) : null;
+      if (quantity == null) {
+        rest.push(l);
+        continue;
+      }
+      const held = latest.get(quantity);
+      if (!held || (l.at ?? -1) >= (held.at ?? -1)) latest.set(quantity, l);
+    }
+    return [...rest, ...latest.values()];
+  }
+
   function currentFunctional(links, rel) {
     if (!terms.get(rel)?.functional) return links;
     const stamped = links.filter((link) => Number.isInteger(link.at));
@@ -334,8 +377,12 @@ export function fromWorldData(source) {
     for (const variant of relationVariants(rel)) {
       for (const other of converseBy.get(variant) || []) {
         for (const term of terms.values()) {
-          for (const link of term.links || []) {
-            if (link.not || link.rel !== other) continue;
+          // Read the other way round, state is still state, and it is the term
+          // it was written on that says which of it is current: a drum moved
+          // from a box to a shelf leaves the box holding nothing, and the box's
+          // own links cannot tell — the drum has to be asked.
+          const written = (term.links || []).filter((l) => !l.not && l.rel === other);
+          for (const link of currentState(written, other)) {
             if (!index.has(link.to)) index.set(link.to, []);
             index.get(link.to).push({ ...link, to: term.id });
           }
@@ -359,7 +406,11 @@ export function fromWorldData(source) {
   // before b`, including when a transitive walk contains facts written from
   // both directions. The world supplies the converse relation and names none.
   function rawRelated(id, rel) {
-    const direct = directedLinks(id, rel);
+    // What is so now, not everything that was ever so. A stamped link is state
+    // — how many, where a thing is, how it stands on one of its quantities —
+    // and the latest of each supersedes the ones before it, which stay on the
+    // record as history.
+    const direct = currentState(directedLinks(id, rel), rel);
     const out = new Set(direct.map((link) => link.to));
     if (reflexiveAt(id, rel)) out.add(id);
     if (terms.get(rel)?.symmetric) {
@@ -845,6 +896,8 @@ export function fromWorldData(source) {
       } else if (anchors.placement != null && reaches(rel, isRel).has(anchors.placement)) {
         const top = Math.max(...links.map((l) => l.at ?? -1));
         links = links.filter((l) => (l.at ?? -1) === top);
+      } else {
+        links = currentState(links);
       }
       const found = new Set(links.map((l) => canonical(l.to)));
       if (terms.get(rel)?.symmetric) {
