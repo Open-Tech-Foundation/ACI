@@ -327,3 +327,19 @@ test("whose a thing is stands in the conversation, and they stand first", async 
   const holding = held.facts.find((one) => one.of === HOLDING);
   assertEquals(holding.parts, ['n1', 'n2'], 'whose it is, and what is theirs');
 });
+
+test("a bare name is the brain's own; the world's stands on it", async () => {
+  await forget();
+  await brain("ravi is my father", { from: 29 });
+  const said = serialize();
+  assert(
+    said.includes("relation(n1, n2, type: father[503])"),
+    `a fact on a relation the world holds says the primitive it is, and what it stands on:\n${said}`,
+  );
+  await brain("tom gives 2 books to jerry");
+  assert(
+    serialize().includes("transfer("),
+    "a doing the brain knows of itself says its own name, bare",
+  );
+  await forget();
+});

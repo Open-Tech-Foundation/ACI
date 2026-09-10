@@ -1089,10 +1089,19 @@ function serialize(world = against) {
   );
   section(
     'facts',
-    held.facts.map(
-      (one) =>
-        `${one.id}  ${one.denied ? 'not ' : ''}${spell(one.of)}(${one.parts.map(spell).join(', ')})${properties(one.properties)}`,
-    ),
+    held.facts.map((one) => {
+      // A bare name is one of the brain's own; a name with an id beside it is
+      // the world's. So a fact the brain knows of itself says its own name,
+      // and a fact standing on a relation the world holds says `relation` —
+      // which is what the brain knows — with the relation itself as what it
+      // stands on. Nothing of the world is ever spelled where a primitive goes.
+      const own = typeof one.of === 'string';
+      const ends = one.parts.map(spell).join(', ');
+      const said = own
+        ? `${one.of}(${ends})`
+        : `relation(${ends}, type: ${spell(one.of)})`;
+      return `${one.id}  ${one.denied ? 'not ' : ''}${said}${properties(one.properties)}`;
+    }),
   );
   section(
     'actions',
@@ -1110,7 +1119,14 @@ function serialize(world = against) {
             .map(([role, value]) => `${part(Number(role))}: ${spell(value)}`)
             .join(', ');
       const when = one.time ? `  at ${one.time.amount} ${spell(one.time.unit)}` : '';
-      return `${one.id}  ${one.denied ? 'not ' : ''}${spell(one.of)}(${said})${when}${properties(one.properties)}`;
+      // The same rule the facts are said by: a doing the brain knows of itself
+      // says its own name, and a doing the world holds says `doing`, with the
+      // doing itself as what it stands on.
+      const own = typeof one.of === 'string';
+      const does = own
+        ? `${one.of}(${said})`
+        : `doing(${said}${said ? ', ' : ''}type: ${spell(one.of)})`;
+      return `${one.id}  ${one.denied ? 'not ' : ''}${does}${when}${properties(one.properties)}`;
     }),
   );
   // A claim inside an instruction, said the way a fact is said.

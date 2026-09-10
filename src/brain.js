@@ -2108,7 +2108,6 @@ function judge(roots, world, mood, langs, sent) {
           at: when,
           when: null,
           not: false,
-          said: one.state.identity,
           parts: greeter == null || agent == null ? [] : [{ role: agent, of: greeter, amount: null }],
         }),
       ]);
