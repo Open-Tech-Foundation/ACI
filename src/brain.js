@@ -5149,11 +5149,20 @@ function express(roots, langs, world) {
 function saidTogether(parts, langs, mood) {
   const langName = parts.map((p) => p.state.language).find(Boolean) || null;
   const between = parts.every((p) => p.name === 'answer') ? listing(langName, langs) : ' ';
+  // Only what is needed. Saying it took something in says nothing where the
+  // same signal also said something about the world: the answer is the reply,
+  // and that it was also told a thing it now holds is not news. Where nothing
+  // else was said, one of those is enough — the last, which is where the
+  // signal left off.
+  const told = parts.filter((p) => TAKEN_IN.includes(p.name));
+  const rest = parts.filter((p) => !TAKEN_IN.includes(p.name));
+  const worth = rest.length > 0 ? rest : told.slice(-1);
   const says = [
-    ...new Set(parts.map((p) => p.state.says).filter((s) => s != null)),
+    ...new Set(worth.map((p) => p.state.says).filter((s) => s != null)),
   ].join(between);
   return withBranch(
-    node('express', parts[0].name, [], { says: says || null, language: langName }),
+    // The act is the one that got said. Every part stays underneath.
+    node('express', (worth[0] || parts[0]).name, [], { says: says || null, language: langName }),
     parts,
     { says: says || null, language: langName, bound: true, mood },
   );
@@ -5253,6 +5262,11 @@ function moodOf(input, roots, langs) {
 // The acts that are about what the brain does or does not know, and so are
 // handed the term for knowing. It holds no word for it.
 const KNOWING = ['understood', 'unsure', 'empathy', 'learn', 'unheard'];
+
+// The acts that say only that something was taken in. Nothing about the world
+// is in them, so beside anything that does say something they are not worth
+// saying. Not knowing is not one of them: it is an answer.
+const TAKEN_IN = ['understood', 'learn'];
 
 // What a signal comes to. A signal may come to more than one of these at once,
 // and each of them is whole: the first does not stand for the rest.

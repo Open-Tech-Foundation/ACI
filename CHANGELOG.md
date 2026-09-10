@@ -30,6 +30,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Only what is needed is said back.** A signal holding several things said
+  answered with all of them stacked up — `I know. Yes. ✅ a wren is a bird.`
+  Saying it took something in says nothing about the world, so beside anything
+  that does say something it is not worth saying, and the answer alone comes
+  back. Not knowing is not one of those: that is an answer. Where nothing else
+  was said, one acknowledgement is enough.
+
 - **Several things said at once are read by the brain, and taken in order.**
   Where a signal ends is reading, so the brain does the splitting, not the
   runtime around it. Each whole is reasoned through in full and what it settles

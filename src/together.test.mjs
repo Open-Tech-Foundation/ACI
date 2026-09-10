@@ -85,7 +85,9 @@ test("what was offered on its own is taken on its own", async () => {
 test("joined clauses are two offerings, not one — each answered on its own", async () => {
   const r = await brain("a sparrow is an animal and a river is an animal");
   assertEquals(all(r.roots[0], "standing").map((t) => t.name), ["held", "against"]);
-  assertEquals(r.expression.state.says, "I know. Conflict. ⚠ a river is an animal.");
+  // Only what is needed: that it already knew the first half is not news
+  // beside a half it will not take.
+  assertEquals(r.expression.state.says, "Conflict. ⚠ a river is an animal.");
 });
 
 test("but joins the way and does — a togetherness, not a choice", async () => {
