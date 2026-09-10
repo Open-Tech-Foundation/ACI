@@ -218,6 +218,18 @@ Examples that came back wrong, with what each waits on.
   coarse stamp rather than the moment the doing happened at. Waits on the
   temporal foundation.
 
+- `when did nila arrive?` says `I don't know` with the arrival on the record,
+  its when written twice over — past, and yesterday by name. The question now
+  asks after when and names the part it wants, and still nothing answers: the
+  walk that reads a doing's parts does not reach this one. Part of the class
+  where a question reaches the near end only.
+
+- `is monday before tuesday?` says `I don't know`, though the world holds
+  `monday order tuesday`. `before` sits under `order` by `is`, which no walk of
+  the relation algebra reaches. Whether an `order` fact should answer a
+  `before` question — whether they are one relation or one is narrower — is a
+  model question, not a data one.
+
 - `there are seven days in a week` and `how many days are there in a week?` are
   not read, though `a week has seven days` and `how many days does a week have?`
   both work. English declares only `there predicate` — enough for `there is a

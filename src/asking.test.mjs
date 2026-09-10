@@ -102,8 +102,10 @@ test("how asks after the way a thing is, not what it is", async () => {
   await forget();
 });
 
-test("when and why ask like what does", async () => {
-  assertEquals((await fresh("when is dinner")).expression.state.says, "meal");
+test("when asks after when, and answering what a thing is is no answer", async () => {
+  // `when is dinner` used to say `meal` — the kind of thing dinner is, which
+  // is not when it is. Nobody has said when, so there is nothing to say.
+  assertEquals((await fresh("when is dinner")).expression.name, "unsure");
   assertEquals((await fresh("why is a cat")).expression.state.says, "mammal");
   await forget();
 });

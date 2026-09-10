@@ -2726,10 +2726,10 @@ function because(joined, world, mood, sent) {
               quantity: counted,
               made: bearer && bearer.made ? bearer : null,
               not: isDenied,
-              // Which side of now the signal put it on. How many a thing had
-              // is not how many it has, and what stands is settled by when
-              // each was so, not by which was said last.
-              when: whenIn(said, world),
+              // Which side of now the signal put it on, where it said. How
+              // many a thing had is not how many it has, and what stands is
+              // settled by when each was so, not by which was said last.
+              ...(whenIn(said, world) == null ? {} : { when: whenIn(said, world) }),
             }),
           );
         }
@@ -4461,18 +4461,26 @@ function act(said, claims, world, side, sides, allocate) {
   const measuring = a.measure != null && (action === a.measure || world.isA(action, a.measure));
   const timely = (part) =>
     !measuring &&
-    a.unit != null &&
     a.time != null &&
-    part.amount != null &&
-    world.isA(part.of, a.unit) &&
-    (world.related(part.of, a.measure) || []).includes(a.time);
-  const clock = parts.find(timely) || null;
+    // A measure of time standing with a doing — eight hours — or a time
+    // itself: yesterday is when somebody arrived, never what they arrived at.
+    ((a.unit != null &&
+      part.amount != null &&
+      world.isA(part.of, a.unit) &&
+      (world.related(part.of, a.measure) || []).includes(a.time)) ||
+      world.isA(part.of, a.time));
+  // How much of a time — eight hours — is a reading of the clock. A time
+  // itself — yesterday — is when it happened, and the doing holds it the same
+  // way it holds which side of now it was on.
+  const clock = parts.find((p) => timely(p) && p.amount != null) || null;
+  const times = parts.filter((p) => timely(p) && p.amount == null).map((p) => p.of);
   const event = node('event', `${world.term(action).name}#${happened}`, [], {
     id: happened,
     action,
     at,
     when: whenIn(said, world),
     ...(clock ? { time: { amount: clock.amount, unit: clock.of } } : {}),
+    ...(times.length > 0 ? { times } : {}),
     not: denied,
     parts: parts.filter((part) => !timely(part)),
   });
@@ -4903,6 +4911,11 @@ function happened(said, world, claims, side, sides) {
   });
 }
 
+// The parts a thing may play in a doing. The world says which term each is;
+// that a doing has parts, and that a question may name the one it asks after,
+// is the brain's.
+const ROLES = ['agent', 'target', 'source', 'destination', 'when', 'instrument'];
+
 // What played the part a hole stands in. Everything the signal names has a
 // part in what happened, the hole included; the brain looks through what it
 // was told happened for one where the named parts match, and answers with what
@@ -4924,13 +4937,18 @@ function partAsked(said, world, claims, side, sides) {
     // and taking it for a participant makes a doing nobody described.
     if (i === acting || !asking(n) || functionsOf(n).includes('extreme')) return;
     if (greetsHere(n, world)) return;
+    // A hole may name the part it asks after rather than stand where that part
+    // stands: `when did nila arrive` asks after when, and says so.
+    const asked = markOn(n) === 'unknown' ? conceptOf(n) : null;
+    const own = asked != null && ROLES.some((of) => a[of] === asked) ? asked : null;
     const named = roleOn(of(i));
     const role =
-      named && a[named] != null
+      own ??
+      (named && a[named] != null
         ? a[named]
         : sides
           ? a[i < acting ? sides.before : sides.after]
-          : null;
+          : null);
     if (role == null) return;
     played.push({ role, of: markOn(n) === 'unknown' ? null : conceptOf(n) });
   });
@@ -7265,10 +7283,15 @@ function tookHold(instruction, world) {
 }
 
 function tookPlace(event, world) {
-  const { id, action, at, parts, not, when } = event.state;
+  const { id, action, at, parts, not, when, times } = event.state;
   const of = { rel: world.baseRelation, to: action, at };
   if (not) of.not = true;
-  const stood = when == null ? [] : [{ rel: world.anchors.when, to: when, at }];
+  // Which side of now it was on, and any time the signal named. Both are when
+  // it happened, said one coarsely and the other by name.
+  const stood = [
+    ...(when == null ? [] : [{ rel: world.anchors.when, to: when, at }]),
+    ...(times || []).map((to) => ({ rel: world.anchors.when, to, at })),
+  ];
   return [
     {
       id,

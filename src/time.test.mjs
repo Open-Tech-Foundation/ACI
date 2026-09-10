@@ -1,7 +1,7 @@
 import { test, assert, assertEquals } from "runtime:test";
 import { openBrain } from "./index.js";
 
-const { brain } = openBrain("sqlite::memory:");
+const { brain, forget } = openBrain("sqlite::memory:");
 
 const sender = { from: 441 };
 const WHEN = 567;
@@ -64,4 +64,18 @@ test("one offering cannot create a temporal cycle", async () => {
   const result = await isolated("morning is before afternoon and morning is after afternoon");
   assertEquals(result.expression.name, "deny");
   assertEquals(result.learned, null);
+});
+
+test("a time named is when it happened, not what it happened to", async () => {
+  await forget();
+  const r = await brain("nila arrived yesterday", { from: 29 });
+  const doing = (r.learned.terms || []).find((t) => t.name.startsWith("arrive#"));
+  const when = doing.links.filter((l) => l.rel === 567).map((l) => l.to);
+  assert(when.includes(2866), `yesterday is when she arrived: ${JSON.stringify(doing.links)}`);
+  assert(when.includes(565), "and it was in the past");
+  assert(
+    !doing.links.some((l) => l.rel === 328 && l.to === 2866),
+    "never what she arrived at",
+  );
+  await forget();
 });

@@ -30,6 +30,17 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A time named is when it happened, not what it happened to.** `nila arrived
+  yesterday` filed yesterday as the thing she arrived at. A measure of time
+  standing with a doing was already read as when — eight hours — but a time
+  itself was not, so the doing came out with a day as its target. Both are when
+  it happened, and the doing holds them the way it holds which side of now it
+  was on.
+
+  And `when` asks after when. English had it asking on cause, copied from
+  `why`, so `when is dinner` answered `meal` — the kind of thing dinner is,
+  which is not when it is.
+
 - **A place is where a thing stands to something, and both halves answer.**
   `where is the dog?` said `a table` — which is not where the dog is. A place
   is one of the brain's own: a thing standing to something, with which standing
