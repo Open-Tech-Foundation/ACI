@@ -44,6 +44,12 @@ function namesParts(pos) {
   return each.length > 0 && each.every((one) => typeof one === 'string' && one !== '');
 }
 
+// A whole number, or an exact decimal written out.
+function isAmount(value) {
+  if (Number.isSafeInteger(value)) return true;
+  return typeof value === 'string' && /^-?\d+\.\d+$/.test(value);
+}
+
 function onlyKeys(data, allowed, where) {
   for (const key of Object.keys(data)) {
     if (!allowed.includes(key)) fail(where, `unknown field "${key}"`);
@@ -127,8 +133,12 @@ export function checkWorld(data, where = 'world') {
       onlyKeys(l, ['rel', 'to', 'quantity', 'at', 'not'], at);
       if (!isId(l.rel)) fail(at, 'link rel must be a non-negative integer');
       if (!isId(l.to)) fail(at, 'link to must be a non-negative integer');
-      if (l.quantity !== undefined && !Number.isSafeInteger(l.quantity)) {
-        fail(at, 'link quantity must be a safe whole number');
+      // An amount is exact. A whole one is a number; one that is not is
+      // written out, digit for digit, because a machine that counts in halves
+      // cannot hold a tenth and the brain will not answer a hair beside what
+      // it was told. Anything else is not an amount.
+      if (l.quantity !== undefined && !isAmount(l.quantity)) {
+        fail(at, 'link quantity must be a whole number or an exact decimal');
       }
       if (l.at !== undefined && !(Number.isSafeInteger(l.at) && l.at >= 0)) {
         fail(at, 'link at must be a safe whole number of ticks');

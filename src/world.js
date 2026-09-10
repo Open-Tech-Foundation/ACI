@@ -482,13 +482,17 @@ export function fromWorldData(source) {
   // many it is. Asking how many balls the box holds finds them either way.
   // Each such thing is counted once, however many names it goes by, and where
   // there are several they are added.
+  // A whole number, or an exact decimal written out. Both are amounts.
+  const amount = (value) =>
+    Number.isInteger(value) || (typeof value === 'string' && /^-?\d+\.\d+$/.test(value));
+
   function heldBy(id, rel, object) {
     if (!terms.has(id) || !terms.has(object) || rel == null) return null;
     const ways = new Set(relationVariants(rel));
     const latest = new Map();
     for (const subject of equivalents(id)) {
       for (const l of terms.get(subject)?.links || []) {
-        if (l.not || !ways.has(l.rel) || !Number.isInteger(l.quantity)) continue;
+        if (l.not || !ways.has(l.rel) || !amount(l.quantity)) continue;
         if (!equivalents(object).has(l.to) && !reaches(l.to, isRel).has(object)) continue;
         const which = canonical(l.to);
         const had = latest.get(which);
@@ -496,8 +500,16 @@ export function fromWorldData(source) {
       }
     }
     if (latest.size === 0) return null;
+    // An amount that is not whole is written out, and stays written out: adding
+    // it as a machine counts would give the nearest thing a double can hold and
+    // not what was said. One of them is the answer as it stands; several the
+    // world cannot add, and it says nothing rather than something near enough.
+    const found = [...latest.values()];
+    if (found.some((l) => typeof l.quantity === 'string')) {
+      return found.length === 1 ? found[0].quantity : null;
+    }
     let total = 0;
-    for (const l of latest.values()) total += l.quantity;
+    for (const l of found) total += l.quantity;
     return total;
   }
 
@@ -857,7 +869,7 @@ export function fromWorldData(source) {
           !l.not &&
           ways.has(l.rel) &&
           (equivalents(object).has(l.to) || reaches(l.to, isRel).has(object)) &&
-          Number.isInteger(l.quantity))
+          amount(l.quantity))
         .map((l) => ({ quantity: l.quantity, at: l.at ?? 0 }))
         .sort((x, y) => x.at - y.at);
       return history.filter(
@@ -886,7 +898,7 @@ export function fromWorldData(source) {
       // targets remain available in the authored record.
       if (terms.get(rel)?.functional) {
         links = currentFunctional(links, rel);
-      } else if (links.some((l) => Number.isInteger(l.quantity))) {
+      } else if (links.some((l) => amount(l.quantity))) {
         const latest = new Map();
         for (const l of links) {
           const held = latest.get(l.to);

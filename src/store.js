@@ -33,6 +33,9 @@ const SCHEMA = [
         rel integer not null references term(id),
         target integer not null references term(id),
         quantity integer,
+        -- an amount that is not whole, written out, since a counting column
+        -- would hold the nearest double instead of what was said.
+        amount text,
         -- never null: sqlite holds two nulls to be different, so a link with no
         -- moment could be written twice under a unique index.
         moment integer not null default -1,
@@ -79,6 +82,13 @@ export async function openStore(url) {
   }
   if (!columns.some((c) => c.name === 'functional')) {
     await db.execute(sql`alter table term add column functional integer not null default 0`);
+  }
+  // An amount that is not whole is written out digit for digit, and a column
+  // that counts would round it to the nearest thing a machine can hold. It is
+  // kept as text beside the count, and read back in its place.
+  const linkColumns = await rows(db, sql`pragma table_info(link)`);
+  if (!linkColumns.some((c) => c.name === 'amount')) {
+    await db.execute(sql`alter table link add column amount text`);
   }
   return db;
 }
@@ -282,7 +292,7 @@ async function stepAside(db, world) {
 
   const links = await rows(
     db,
-    sql`select term, rel, target, quantity, moment, denied
+    sql`select term, rel, target, quantity, amount, moment, denied
         from link where learned = 1 order by term, rowid`,
   );
   let free = Math.max(...world.terms.map((t) => t.id), ...held.map((t) => t.id));
@@ -308,8 +318,8 @@ async function stepAside(db, world) {
     }
     for (const l of links) {
       await db.execute(sql`insert or ignore into link
-        (term, rel, target, quantity, moment, denied, learned)
-        values (${at(l.term)}, ${at(l.rel)}, ${at(l.target)}, ${l.quantity},
+        (term, rel, target, quantity, amount, moment, denied, learned)
+        values (${at(l.term)}, ${at(l.rel)}, ${at(l.target)}, ${l.quantity}, ${l.amount},
                 ${l.moment}, ${l.denied}, 1)`);
     }
     await db.execute(sql`commit`);
@@ -327,7 +337,7 @@ export async function readWorld(db) {
   );
   const links = await rows(
     db,
-    sql`select term, rel, target, quantity, moment, denied from link order by term, rowid`,
+    sql`select term, rel, target, quantity, amount, moment, denied from link order by term, rowid`,
   );
   const anchors = await rows(db, sql`select name, term from anchor`);
   const relations = await rows(db, sql`select name, term from relation`);
@@ -350,7 +360,8 @@ export async function readWorld(db) {
   });
   for (const l of links) {
     const link = { rel: l.rel, to: l.target };
-    if (l.quantity !== null) link.quantity = l.quantity;
+    if (l.amount !== null && l.amount !== undefined) link.quantity = l.amount;
+    else if (l.quantity !== null) link.quantity = l.quantity;
     if (l.moment >= 0) link.at = l.moment;
     if (l.denied) link.not = true;
     byId.get(l.term).links.push(link);
@@ -384,8 +395,8 @@ export async function write(db, learned) {
     for (const t of learned.terms || []) {
       for (const l of t.links || []) {
         await db.execute(sql`insert or ignore into link
-          (term, rel, target, quantity, moment, denied, learned)
-          values (${t.id}, ${l.rel}, ${l.to}, ${l.quantity ?? null}, ${l.at ?? -1},
+          (term, rel, target, quantity, amount, moment, denied, learned)
+          values (${t.id}, ${l.rel}, ${l.to}, ${whole(l.quantity)}, ${written(l.quantity)}, ${l.at ?? -1},
                   ${l.not ? 1 : 0}, 1)`);
       }
     }
@@ -404,17 +415,23 @@ export async function forgetLearned(db) {
 }
 
 // Every link in one statement. A link a term already has is left as it is.
+// The two halves of an amount as a store holds it: the count where it is
+// whole, and what was written where it is not. Only one of them is ever there.
+const whole = (amount) => (Number.isSafeInteger(amount) ? amount : null);
+const written = (amount) => (typeof amount === 'string' ? amount : null);
+
 async function putLinks(db, links, learned) {
   if (links.length === 0) return;
   await db.executeMany(
     sql`insert or ignore into link
-          (term, rel, target, quantity, moment, denied, learned)
-        values (?, ?, ?, ?, ?, ?, ?)`,
+          (term, rel, target, quantity, amount, moment, denied, learned)
+        values (?, ?, ?, ?, ?, ?, ?, ?)`,
     links.map(([term, l]) => [
       term,
       l.rel,
       l.to,
-      l.quantity ?? null,
+      whole(l.quantity),
+      written(l.quantity),
       l.at ?? -1,
       l.not ? 1 : 0,
       learned,

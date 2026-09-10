@@ -6,6 +6,16 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **An amount is exact, wherever it is kept.** `the apple weighs 1.5 gram` was
+  accepted and then unreachable: the brain writes an exact amount as it was
+  said, written out digit for digit, while the door, the store and the world
+  all insisted an amount was a whole number. All three now agree that an amount
+  is a whole number or an exact decimal written out — the store keeping the
+  written form beside the count rather than in a column that rounds, so
+  `0.30000000000000004` comes back as itself and not as the nearest double.
+  Several written amounts the world will not add: it says nothing rather than
+  something near enough.
+
 - **An alternative is not a claim.** `a drum is red or a drum is blue` was
   taken in as both, so the brain afterwards affirmed the drum was red *and*
   blue — holding what it was never told. Each side of a choice is now checked
