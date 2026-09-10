@@ -18071,6 +18071,19 @@
       "pos": "interjection",
       "meaning": "greeting",
       "concept": 277
+    },
+    "lasted": {
+      "pos": "verb",
+      "meaning": "lasted",
+      "concept": 617,
+      "when": "past"
+    },
+    "lasts": {
+      "pos": "verb",
+      "meaning": "lasts",
+      "concept": 617,
+      "person": "third",
+      "number": "singular"
     }
   },
   "unknown": {

@@ -30,6 +30,12 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **How long something lasted can be said.** English gains `lasted` and
+  `lasts`, meaning measured: `the meeting lasted two hours` holds
+  `measure(meeting, hour) {count: 2}` — the same fact shape as a rope being two
+  metres, on the time scale instead of the length scale. An extent is a measure
+  like any other, and needed no primitive of its own.
+
 - **A unit is one of itself, so two units compare.** `is an hour more than a
   minute?` said `I don't know`. Two things stand on one scale by having been
   measured on it, and a unit is never measured — it is what measuring is done

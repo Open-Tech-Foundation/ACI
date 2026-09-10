@@ -251,6 +251,33 @@ Examples that came back wrong, with what each waits on.
   word with two noun senses, which nothing settles without context. Waits on
   word sense from context.
 
+## The event primitive, part built
+
+An event is a bounded stretch of time with people in it and doings inside it.
+Three things tell it from an ordinary doing, and one of the three is in.
+
+- **Extent — in.** English can say how long: `the meeting lasted two hours`
+  holds `measure(meeting, hour) {count: 2}`, the same fact shape as a rope
+  being two metres, on the time scale. Said with `took` it is not read — `took`
+  would need choosing between taking a thing and taking a length of time, by
+  what completes it, which is the word-sense work that is parked.
+
+- **Extent, asked back — not in.** `how long was the meeting?` and every
+  phrasing of it come back unanswered, though the fact is held. Part of the
+  class where a question reaches the near end only.
+
+- **Membership — not started.** Being at a meeting is not doing it and not
+  having it done to you. Nothing in the brain says a thing is one of those in
+  an event.
+
+- **Containment — not started.** Nothing says one doing happened inside
+  another, so `nila spoke during the meeting` has nowhere to put the during.
+  This is what makes events the place nesting starts.
+
+One shape deviation to settle with it: a measure said with a verb leaves a
+fact and a stray node for the number, where the same measure said as `the rope
+is 2 metres long` lands as a quality on the thing.
+
 ## Deferred, not forgotten
 
 - Component/material refinement remains tracked under roadmap phase 4.
