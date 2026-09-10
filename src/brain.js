@@ -1155,8 +1155,12 @@ function drawn(roots, world, langs, mood, allocate) {
   const reaches = (n, i) => {
     if (functionsOf(n).includes('member')) return true;
     if (numberOf(n, world) == null) return false;
+    // What stands next says something of it, rather than being the kind it
+    // counts. A word stands here as one of the four ways of existing, and that
+    // is what is asked — not what the world says its term may also be. A
+    // sister is a thing and a relation both, and `two sisters` counts sisters.
     const next = nearestOver(roots, i, 1, stands);
-    return next != null && a.relation != null && world.isA(conceptOf(next), a.relation);
+    return next != null && findBranch(next, 'relation') != null;
   };
   return roots.map((n, i) => {
     if (!n.state.exists || findBranch(n, 'call') || !reaches(n, i)) return n;
@@ -1812,10 +1816,22 @@ function settle(roots, world) {
 function nearestOver(said, from, step, wanted, over = null) {
   for (let i = from + step; i >= 0 && i < said.length; i += step) {
     if (wanted(said[i])) return said[i];
+    if (opensPart(said[i])) return null;
     if (over && over(said[i])) continue;
     if (conceptOf(said[i]) != null) return null;
   }
   return null;
+}
+
+// A word that says where one part of a signal ends and another begins. It
+// names nothing of the world, and a walk that steps over words naming nothing
+// would go straight past it — but what stands on the far side of one was never
+// beside what stands on this side. `if z > 10 then wool` counts no wool: the
+// ten is in the condition and the wool is in what follows it. Which words mark
+// a part is the language's to say; that a reach stops at one is the brain's.
+const PART_MARKS = ['condition', 'consequence', 'otherwise'];
+function opensPart(n) {
+  return n.kind === 'thing' && functionsOf(n).some((f) => PART_MARKS.includes(f));
 }
 
 // A word saying what a thing is like is not another thing standing in the way:
@@ -3467,17 +3483,40 @@ function taken(n) {
   return VERDICT.includes(n.kind) || n.kind === 'count' || n.kind === 'sum';
 }
 
+// The greetings in something that greets and says nothing else. A greeting may
+// stand as a word among the rest, or a language may set a word between it and
+// what follows and make a whole of it; neither changes that it only greets.
+// What comes back is the greeting words themselves, since the wrapping a
+// language put round them says nothing of its own.
+function greetsOnly(n, world, communication) {
+  if (n.kind === 'thing') {
+    return world.isA(conceptOf(n), communication) ? [n] : null;
+  }
+  if (!n.state || !n.state.whole) return null;
+  const found = [];
+  for (const b of n.branch || []) {
+    const only = greetsOnly(b, world, communication);
+    if (!only) return null;
+    found.push(...only);
+  }
+  return found.length > 0 ? found : null;
+}
+
 // A greeting standing before a whole signal is said alongside it, not in it:
 // `hello, how are you` is a greeting and a question, and neither is part of
 // the other. Which words greet is the language's; that a greeting is its own
 // act is the brain's.
 function greeting(root, world) {
   const branch = root.branch || [];
-  const said = branch.filter((b) => joinedWhole(b, root));
   const communication = world && world.anchors ? world.anchors.communication : null;
-  const greets = branch.filter(
-    (b) => b.kind === 'thing' && communication != null && world.isA(conceptOf(b), communication),
-  );
+  if (communication == null) return null;
+  const greets = [];
+  const said = [];
+  for (const b of branch) {
+    const only = greetsOnly(b, world, communication);
+    if (only) greets.push(...only);
+    else if (joinedWhole(b, root)) said.push(b);
+  }
   if (greets.length === 0 || said.length !== 1) return null;
   // Only where what follows says something of its own. One greeting after
   // another is two greetings, not a greeting and a signal.
@@ -5476,19 +5515,38 @@ function structurePhrase(roots, langs) {
   // declares reads the whole signal is a hole allowed to stand as a thing in
   // its own right — otherwise a question naming what it asks after would be
   // swallowed by the asking word alone.
-  for (const standing of [false, true]) {
-    const memo = new Map();
-    for (const parse of parsesFrom(rules, start, tagged, 0, memo, standing)) {
-      if (parse.next !== tagged.length) continue;
-      const kids = (parse.tree.children || []).map((c) => leafOrPhrase(c, rules)).filter(Boolean);
-      return [
-        node(start, start, kids, {
-          text: tagged.map((t) => t.root.state.identity).join(' '),
-          ...(rules[start].whole ? { whole: true } : {}),
-          ...(rules[start].referent ? { referent: true } : {}),
-        }),
-      ];
+  const read = (words) => {
+    for (const standing of [false, true]) {
+      const memo = new Map();
+      for (const parse of parsesFrom(rules, start, words, 0, memo, standing)) {
+        if (parse.next !== words.length) continue;
+        const kids = (parse.tree.children || []).map((c) => leafOrPhrase(c, rules)).filter(Boolean);
+        return [
+          node(start, start, kids, {
+            text: words.map((t) => t.root.state.identity).join(' '),
+            ...(rules[start].whole ? { whole: true } : {}),
+            ...(rules[start].referent ? { referent: true } : {}),
+          }),
+        ];
+      }
     }
+    return null;
+  };
+
+  const whole = read(tagged);
+  if (whole) return whole;
+
+  // A word that joins stands between two things said. Where no reading places
+  // it, there was nothing for it to join — what it stood between was already
+  // one signal — and the signal is read without it. Which words join is the
+  // language's; that one no reading can place adds nothing is the brain's.
+  const joins = tagged.filter((t) => functionsOf(t.root).includes('join'));
+  const without = [...joins.map((j) => [j]), ...(joins.length > 1 ? [joins] : [])];
+  for (const dropped of without) {
+    const left = tagged.filter((t) => !dropped.includes(t));
+    if (left.length < 2) continue;
+    const found = read(left);
+    if (found) return found;
   }
   return roots;
 }

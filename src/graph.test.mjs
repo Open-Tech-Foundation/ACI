@@ -128,12 +128,18 @@ test("two directions read together are two axes", async () => {
   );
 });
 
+// Said with the words the world holds. Booking, cancelling and a flight were
+// authored into the world for this case alone and taken out again: the world
+// is not the brain's to add to, and the case is about the change, not the
+// vocabulary. A doing with a destination, changed, and something else done
+// after it that has no bearing on where the book is going.
 test("the latest change wins and the history keeps the rest", async () => {
   assertEquals(
     await said(
-      "anu booked a flight to delhi",
+      "anu is a person",
+      "anu sent a book to delhi",
       "anu changed the destination to mumbai",
-      "anu cancelled the booking",
+      "anu ate rice",
       "what is the destination?",
     ),
     "mumbai",

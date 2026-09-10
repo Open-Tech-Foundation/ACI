@@ -30,6 +30,34 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A greeting is still a greeting where a word joins it to what follows.**
+  `hello, how are you?` stopped being heard as a greeting the moment a comma
+  could stand between the two: the greeting was wrapped in a whole of its own
+  and the brain looked for it only as a bare word among the rest. It now finds
+  a greeting wherever it stands, since what greets and says nothing else greets
+  however a language chose to write it.
+
+- **A word that joins, that no reading can place, joins nothing.** `if x > 10,
+  then say big else say small` could not be read at all — nothing in the
+  language puts a joining word between a condition and what follows it. Where
+  no reading of the whole signal places such a word, there was nothing for it
+  to join, and the signal is read without it. Which words join is the
+  language's; that one nothing can be read with adds nothing is the brain's.
+
+- **A reach stops where one part of a signal ends and another begins.** `if z >
+  10 then wool else silk` counted ten wool: the ten is in the condition and the
+  wool is in what follows it, but the walk looking for what a count counts
+  steps over words that name nothing, and went straight past `then`. English
+  now says which of its words mark what follows a condition and what stands
+  instead, and no reach crosses one.
+
+- **A thing that is also a relation is counted, not drawn out of a
+  collection.** `a family has two sisters and one brother` lost the brother
+  and made both numbers into sisters. A sister is a thing and a relation both,
+  and the test for whether what stands next says something of a number asked
+  the world what its term may also be, rather than how the word stands here.
+  A word stands in one of the four ways of existing, and that is what is asked.
+
 - **How many of a part there are belongs to that part.** `into three groups`
   counts the groups and `two books into a box` counts the books; a count kept
   loose on the doing could not say which. The count also stood between the word
