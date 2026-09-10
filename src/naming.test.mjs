@@ -109,4 +109,14 @@ test("an instruction it will not follow is not kept", async () => {
   await forget();
 });
 
-
+test("what the signal says outranks what a name was waiting for", async () => {
+  await forget();
+  // English marks `x` as a word for giving a name to. Somebody using it in a
+  // claim has said otherwise, and what they said wins: nothing is given, and x
+  // is the one the claim is about.
+  const r = await brain("x is my friend", { from: 29 });
+  assertEquals(r.expression.name, "learn");
+  assert(r.learned != null, "and it is taken in, not quietly dropped");
+  assertEquals((await brain("what is x?")).expression.state.says, "person");
+  await forget();
+});

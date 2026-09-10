@@ -30,6 +30,14 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **What the signal says outranks what a name was waiting for.** `x is my
+  friend` answered `I understand` and took nothing in: English marks `x` as a
+  word for giving a name to, and the possessive standing after the joint was
+  read as the thing to give — so x was quietly bound to the sender and the
+  claim was lost. A word marking whose something is stands for nothing itself.
+  The claim now holds: `friend(x, me)`, with x a person because friendship has
+  one at either end.
+
 - **Every word for greeting is the one act of greeting.** `hey`, `welcome` and
   `greetings` were unheard; they are the same doing `hello` and `hi` already
   are, and English now says so. How formal each is belongs to the word, not to

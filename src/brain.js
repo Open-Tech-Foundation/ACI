@@ -6750,7 +6750,11 @@ function givings(roots, world, mood) {
     // Giving a name is done with the weakest joint there is: `x is 5` gives,
     // `x > 10` asks. So what stands next to the name must be that joint, and
     // what stands past it is what the name was given.
-    const rest = roots.slice(i + 1).filter((other) => stands(other, world));
+    // A word marking whose something is does not stand for anything itself —
+    // `my friend` gives a name a friend, never the one whose friend it is.
+    const rest = roots
+      .slice(i + 1)
+      .filter((other, at) => stands(other, world) && !isDeterminer(roots, i + 1 + at, world));
     if (rest.length < 2 || conceptOf(rest[0]) !== world.baseRelation) return;
     if (thought.marks !== 'named' && numberOf(rest[1], world) == null) return;
     // A name stands for something. What it is given must be something to
