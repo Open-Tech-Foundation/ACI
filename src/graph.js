@@ -799,6 +799,22 @@ function sameState(one, relation, object, world) {
   return of != null && of === quantityOn(object, world);
 }
 
+// Everything this conversation has put in a given ordering, either end of it.
+// Which things are in question is the conversation's to say: asked who arrived
+// first, nobody is asking about the days of the week, however plainly Monday
+// comes before Tuesday.
+function joinedBy(relation) {
+  const found = [];
+  for (const one of held.facts) {
+    if (one.said !== relation || one.denied) continue;
+    for (const part of one.parts) {
+      const term = termOf(part);
+      if (term != null && !found.includes(term)) found.push(term);
+    }
+  }
+  return found;
+}
+
 // What this conversation calls by a word. Somebody may call a pet `river`, and
 // the world goes on calling a river a river — but here, and until the
 // conversation ends, the word reaches the pet.
@@ -1001,6 +1017,7 @@ function serialize(world = against) {
     told,
     namedIn,
     standingIn,
+    joinedBy,
     amounts,
     ranking,
   };

@@ -728,14 +728,21 @@ function farEnd(term, world) {
   // than another stands in the ordering of youth as well — one fact, either
   // end. Reading only what was written down would find nothing at the end
   // nobody happened to speak from.
+  // Who is in question. This conversation says so where it has put anybody in
+  // that ordering — asked who arrived first, nobody is asking after the days
+  // of the week, however plainly Monday comes before Tuesday. Where the
+  // conversation has put nobody there, the world's own are all there is.
+  const spoken = graph ? graph.joinedBy(comparison) : [];
   const joined = new Set();
-  for (const t of world.data.terms) {
+  for (const t of spoken.length > 0 ? spoken.map((id) => ({ id })) : world.data.terms) {
     const beyond = world.related(t.id, comparison);
-    if (beyond.length === 0) continue;
+    if (beyond.length === 0 && !spoken.includes(t.id)) continue;
     joined.add(t.id);
-    for (const other of beyond) joined.add(other);
+    for (const other of beyond) if (spoken.length === 0 || spoken.includes(other)) joined.add(other);
   }
-  const unbeaten = [...joined].filter((id) => world.members(id, comparison).length === 0);
+  const unbeaten = [...joined].filter(
+    (id) => world.members(id, comparison).filter((of) => joined.has(of)).length === 0,
+  );
   return unbeaten.length === 1 ? unbeaten : [];
 }
 
@@ -3039,6 +3046,23 @@ function because(joined, world, mood, sent) {
     }
   }
 
+  // A question asking for the far end of an ordering and naming nobody to walk
+  // from is asking after the far end itself: `who arrived first` says only that
+  // somebody did, and which of them is first is the whole question. Nothing is
+  // said about arriving that the ordering does not already hold.
+  if (holes.length > 0 && terms.length === 0) {
+    for (const n of said) {
+      const far = farEnd(n, world);
+      if (far === undefined || far.length === 0) continue;
+      return [
+        withBranch(root, [
+          ...root.branch,
+          node('answer', 'link', [], { subject: null, relation: conceptOf(n), found: far }),
+        ]),
+      ];
+    }
+  }
+
   if (holes.length > 0 && terms.length >= 1) {
     const nodes = [];
     const asked = terms.flatMap((t) => membersFor(t, world, sent));
@@ -4509,6 +4533,18 @@ function partAsked(said, world, claims, side, sides) {
       world.linked(one, p.role).some((t) => t === p.of || world.isA(t, p.of));
     if (!known.every(plays)) continue;
     for (const t of world.linked(one, hole.role)) if (!found.includes(t)) found.push(t);
+  }
+  // Nobody is on record as having done it, and the question may still name an
+  // ordering: `who arrived first` asks after the first of them, and being told
+  // sara arrived before john says both that they arrived and which came first.
+  // So where the doing left nothing behind, the far end answers.
+  if (found.length === 0) {
+    for (const n of said) {
+      const far = farEnd(n, world);
+      if (far !== undefined && far.length > 0) {
+        return node('answer', 'link', [], { subject: action, relation: hole.role, found: far });
+      }
+    }
   }
   return node('answer', 'link', [], { subject: action, relation: hole.role, found });
 }

@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **An extreme is the far end of what is being spoken of.** `who arrived
+  first?` named nobody after a chain of arrivals. The walk gathered every term
+  the world holds in that ordering — days of the week among them — so several
+  were unbeaten and the brain would not choose. The conversation says who is in
+  question; where it has put nobody in that ordering, the world's own are still
+  all there is. And a question naming a doing now reaches the ordering: being
+  told sara arrived before john says both that they arrived and which came
+  first, so where the doing leaves nothing behind, the far end answers.
+
 - **Two units are one scale once the world says how they stand.** Five
   kilograms and ten grams did not compare. The world already held that an hour
   has sixty minutes and a minute sixty seconds; weight was missing its one
