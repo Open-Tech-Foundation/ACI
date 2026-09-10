@@ -6,6 +6,31 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **One of many already brought in.** A count brings in a collection — two dogs
+  are two dogs — and what the signal says next may speak of them one at a time.
+  `i have two dogs and one is white and another is grey` made bare things out
+  of the words themselves and hung the colours on those. Each one is now drawn
+  out of the collection and keeps what it was drawn from, so it is one of
+  *those* two rather than a dog standing loose beside them. A number counting
+  something has that thing next to it — `two dogs` — while a number standing on
+  its own has whatever is said of it next instead, and that is one drawn out.
+  `another` and `other` are the language's words for the same job.
+
+- **Many of a kind on the far end of a doing are that many things.** `i have
+  eight fruits and split them into three groups` now makes three groups, each
+  drawn from the eight, and says nothing about how many went into each —
+  because nobody did.
+
+### Fixed
+
+- **How many of a part there are belongs to that part.** `into three groups`
+  counts the groups and `two books into a box` counts the books; a count kept
+  loose on the doing could not say which. The count also stood between the word
+  saying which part this is and the thing itself, so the far end never got its
+  role at all — `split a cake into three pieces` lost its destination.
+
+### Added
+
 - **What two kinds hold is what makes them differ.** `a man is a woman?` said
   `I don't know`, and every denial the brain could make at the level of kinds
   rested on a `different` link written by hand, pair by pair — four of them on

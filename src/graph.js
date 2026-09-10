@@ -170,6 +170,15 @@ function fromUnderstood(roots, world, focus, marking, from) {
   // to introduce them. A thing an earlier signal brought in is mentioned
   // rather than called, and it is no less first for that.
   const made = new Map(calls.filter((call) => call.state.id != null).map((call) => [call.state.id, call]));
+  // The collection a kind was counted into, where this conversation holds one.
+  const drawnFrom = (kind) => {
+    if (kind == null) return null;
+    for (const one of held.nodes) {
+      if (one.count == null) continue;
+      if (one.term === kind || known(one, world) === kind) return one.id;
+    }
+    return null;
+  };
   for (const id of reached(roots)) {
     if (standing.has(id)) continue;
     const call = made.get(id);
@@ -208,6 +217,12 @@ function fromUnderstood(roots, world, focus, marking, from) {
           ? { called: call.state.word ?? call.state.name }
           : {}),
         ...(many ? { count: many.count } : {}),
+        // Where a thing was drawn from. One of two dogs is one of *those* two,
+        // not a dog standing loose beside them, so the collection it came out
+        // of is kept on it.
+        ...(call && call.state.made && call.state.of != null && drawnFrom(call.state.of) != null
+          ? { from: drawnFrom(call.state.of) }
+          : {}),
         // How it is, where the signal said so beside it. Counted, the thing
         // this signal made has an identity of its own while the quality was
         // said of the kind standing there — `two red cars` says red of cars —
@@ -359,10 +374,17 @@ function fromUnderstood(roots, world, focus, marking, from) {
     const { action, parts, not, when } = event.state;
     const roles = {};
     const properties = {};
+    // How many of a part there are belongs to that part. `split them into
+    // three groups` counts the groups, `put two books into a box` counts the
+    // books, and a count kept loose on the doing cannot say which.
+    const counts = {};
     for (const part of parts || []) {
       roles[part.role] = reach(part.of);
-      if (part.amount != null) properties.count = part.amount;
+      if (part.amount != null) counts[part.role] = part.amount;
     }
+    const a2 = (world && world.anchors) || {};
+    if (counts[a2.target] != null) properties.count = counts[a2.target];
+    else if (Object.keys(counts).length === 1) properties.count = Object.values(counts)[0];
     const primitive = doing(roles, world);
     put('actions', {
       of: primitive ?? action,
@@ -381,6 +403,35 @@ function fromUnderstood(roots, world, focus, marking, from) {
       denied: not === true,
       when: when ?? null,
     });
+
+    // Many of a kind on the far end of a doing are that many things. `split
+    // them into three groups` makes three groups, and each is drawn from what
+    // was split — how many went into each, nobody said, so nothing says it.
+    const into = roles[a2.destination];
+    const many = counts[a2.destination];
+    // What kind the far end is: the term itself where the world holds one, and
+    // otherwise the kind the signal made it from.
+    const asKind = (part) => {
+      if (part == null) return null;
+      const one = held.nodes.find((n) => n.id === part);
+      if (one) return known(one, world) ?? one.term;
+      return termOf(part);
+    };
+    const of = asKind(into);
+    if (of != null && many != null && many > 1) {
+      const whole = drawnFrom(asKind(roles[a2.target]));
+      const kind = world && world.term(of);
+      if (kind) {
+        for (let i = 0; i < many; i += 1) {
+          put('nodes', {
+            said: kind.name,
+            term: of,
+            made: of,
+            ...(whole ? { from: whole } : {}),
+          });
+        }
+      }
+    }
   }
 
   // Whose a thing is, said as the holding it is.
@@ -1026,6 +1077,7 @@ function serialize(world = against) {
     held.nodes.map(
       (one) =>
         `${one.id}  ${one.said.split('#')[0]}  type: ${type(known(one, world))}` +
+        (one.from ? `  of ${one.from}` : '') +
         (one.count != null ? `  × ${one.count}` : '') +
         (one.how ? `  {${Object.entries(one.how).map(([name, value]) => `${name}: ${spell(value)}`).join(', ')}}` : '') +
         (one.measures

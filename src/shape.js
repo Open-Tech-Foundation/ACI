@@ -28,6 +28,7 @@ const COGNITIVE_FUNCTIONS = [
   'encloses',
   'join',
   'modal',
+  'member',
   'modifier',
   'naming',
   'possessor',

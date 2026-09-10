@@ -1048,6 +1048,7 @@ function solve(roots, world, langs, mood, allocate) {
   // on a pointer that landed on nothing would still name something.
   const positioned = calledHere(contextual(roots, world), world, langs);
   const settled = pointingAgain(
+    drawn(
     described(
       calling(
         naming(
@@ -1066,6 +1067,11 @@ function solve(roots, world, langs, mood, allocate) {
         mood,
         allocate,
       ),
+      world,
+      langs,
+      mood,
+      allocate,
+    ),
       world,
       langs,
       mood,
@@ -1105,6 +1111,73 @@ function solve(roots, world, langs, mood, allocate) {
     if (marked) result.branch.push(node('mark', marked, []));
 
     return result;
+  });
+}
+
+// One of many already brought in.
+//
+// A count brings in a collection — two dogs are two dogs — and what the signal
+// says next may speak of them one at a time. `one is white and another is grey`
+// does not bring in two more things: it reaches into the two that are there and
+// takes them one apiece. Which words do the reaching is the language's to say;
+// a bare number does it too, since a number standing where a thing stands, with
+// a collection of a kind in reach, is that many of them.
+//
+// Each one drawn is a thing of the collection's kind, and what is said beside
+// it is said of it rather than of the number or of the kind.
+function drawn(roots, world, langs, mood, allocate) {
+  if (!world || mood !== 'tell' || typeof allocate !== 'function') return roots;
+  const a = world.anchors || {};
+  if (a.thing == null) return roots;
+  const thing = (n) => {
+    const of = conceptOf(n);
+    return of != null && world.isA(of, a.thing) && !world.isA(of, a.number);
+  };
+  // The collection: a count standing beside a kind.
+  let of = null;
+  for (const [i, n] of roots.entries()) {
+    const many = numberOf(n, world);
+    if (many == null || many < 2) continue;
+    const beside = nearestOver(roots, i, 1, thing, describing(world));
+    if (beside) {
+      of = conceptOf(beside);
+      break;
+    }
+  }
+  if (of == null) return roots;
+  const kind = world.term(of);
+  if (!kind) return roots;
+  // A word that reaches into what is there, or a number standing where a thing
+  // stands. A number counting something has that thing next to it — `two dogs`
+  // — while a number standing on its own has whatever is said of it next
+  // instead, and that is a number spoken of as a thing.
+  const stands = (n) => n != null && n.state.exists && conceptOf(n) != null;
+  const reaches = (n, i) => {
+    if (functionsOf(n).includes('member')) return true;
+    if (numberOf(n, world) == null) return false;
+    const next = nearestOver(roots, i, 1, stands);
+    return next != null && a.relation != null && world.isA(conceptOf(next), a.relation);
+  };
+  return roots.map((n, i) => {
+    if (!n.state.exists || findBranch(n, 'call') || !reaches(n, i)) return n;
+    const id = allocate();
+    const thought = thoughtOf(n) || {};
+    return withBranch(n, [
+      ...(n.branch || []).map((b) =>
+        b.kind === 'thought'
+          ? withBranch(b, b.branch, {
+              ...b.state,
+              thought: { ...thought, concept: id, wordKnown: true },
+            })
+          : b,
+      ),
+      node('call', `${kind.name}#${id}`, [], {
+        name: `${kind.name}#${id}`,
+        id,
+        of,
+        made: true,
+      }),
+    ]);
   });
 }
 
@@ -1894,10 +1967,10 @@ function markOf(roots, at, world, langs) {
 // article between. Walk away from the thing over words that name nothing, and
 // stop at the next thing: a marker never reaches past one. The walk itself is
 // `nearestOver` — a marker is simply a word with nothing else to find first.
-function markerFor(said, at, side, carries) {
+function markerFor(said, at, side, carries, over = null) {
   if (side !== 'before' && side !== 'after') return null;
   const step = side === 'before' ? 1 : -1;
-  return nearestOver(said, at, step, carries);
+  return nearestOver(said, at, step, carries, over);
 }
 
 // Word order comes from the language that recognized this signal, never from
@@ -2351,7 +2424,30 @@ function because(joined, world, mood, sent) {
       // How many of a kind a thing holds answers whether it holds one at all:
       // three apples is an apple, and none of them is not.
       const heldMany = counted == null ? world.held(holder, rel, object) : null;
-      const holds = counted != null
+      // The nearest rung that speaks, wins.
+      //
+      // A bird is warm and a penguin is not. Both stand on the ladder, and
+      // gathering every rung leaves the two side by side with the far one
+      // winning, so the penguin came out warm. What is said of the penguin is
+      // said of penguins, and the bird is not consulted: the walk climbs from
+      // the thing itself and stops at the first rung with anything to say.
+      // What a rung says of its own accord, without climbing any further: a
+      // rung that only inherits has said nothing, and the walk goes past it.
+      const saysHere = (rung) =>
+        world.linked(rung, rel).includes(object) ||
+        (rel === world.baseRelation &&
+          a.predication != null &&
+          world.linked(rung, a.predication).includes(object));
+      const nearestDenies = (() => {
+        for (const rung of upward(holder, world)) {
+          if (world.denies(rung, object, rel)) return true;
+          if (saysHere(rung)) return false;
+        }
+        return false;
+      })();
+      const holds = nearestDenies
+        ? false
+        : counted != null
         ? knownCount === counted
         : heldMany > 0 ||
           joins(holder, object, rel) ||
@@ -2367,7 +2463,7 @@ function because(joined, world, mood, sent) {
       // to find a path is none of those: not having reached a thing is not
       // holding anything against it.
       const kindFact = rel === world.baseRelation;
-      const heldDenied = upward(holder, world).some((rung) => world.denies(rung, object, rel));
+      const heldDenied = nearestDenies;
       const functionalObjects = new Set();
       if (world.functional(rel)) {
         for (const rung of upward(holder, world)) {
@@ -4132,7 +4228,14 @@ function operated(term, world) {
 // after it is what was done.
 function rolesIn(said, acting, claims, world, side, sides) {
   const a = world.anchors || {};
-  const of = (i) => markerFor(said, i, side, roleOn);
+  // How many of them there are stands between the word saying which part this
+  // is and the thing itself — `into three pieces` — and a count is not another
+  // part. Nor is a word saying how they are, so the reach steps over both.
+  const between = (n) =>
+    amountOf(n, world) != null ||
+    numberOf(n, world) != null ||
+    describing(world)(n);
+  const of = (i) => markerFor(said, i, side, roleOn, between);
   const parts = [];
   const taken = new Set();
 

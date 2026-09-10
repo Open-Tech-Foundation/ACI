@@ -117,7 +117,8 @@
           "across": "modifier"
         },
         "person": "third",
-        "number": "singular"
+        "number": "singular",
+        "functions": "member"
       }
     ],
     "ones": {
@@ -17986,6 +17987,31 @@
       ],
       "meaning": "female",
       "concept": 2978
+    },
+    "another": {
+      "pos": "pronoun",
+      "meaning": "another",
+      "functions": "member",
+      "person": "third",
+      "number": "singular"
+    },
+    "other": {
+      "pos": [
+        "pronoun",
+        "adjective"
+      ],
+      "meaning": "other",
+      "functions": "member",
+      "person": "third",
+      "number": "singular"
+    },
+    "split": {
+      "pos": [
+        "verb",
+        "noun"
+      ],
+      "meaning": "split",
+      "concept": 2980
     }
   },
   "unknown": {
