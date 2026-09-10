@@ -819,7 +819,7 @@ export function checkLanguage(data, where = 'language') {
       if (!info || typeof info.characters !== 'string' || info.characters === '') {
         fail(`${at} symbols.${type}`, 'characters must be a non-empty string');
       }
-      onlyKeys(info, ['characters', 'alone', 'figures', 'pos', 'point', 'places'], `${at} symbols.${type}`);
+      onlyKeys(info, ['characters', 'alone', 'ends', 'figures', 'pos', 'point', 'places'], `${at} symbols.${type}`);
       // Where the part below one begins, and how far this language writes it.
       if (info.point !== undefined && (typeof info.point !== 'string' || info.point.length !== 1)) {
         fail(`${at} symbols.${type}`, 'point, where present, must be one character');
@@ -838,6 +838,10 @@ export function checkLanguage(data, where = 'language') {
       // `cat` does not.
       if (info.alone !== undefined && info.alone !== true) {
         fail(`${at} symbols.${type}`, 'alone, where present, must be true');
+      }
+      // Marks that end what is being said, so one signal may hold several.
+      if (info.ends !== undefined && info.ends !== true) {
+        fail(`${at} symbols.${type}`, 'ends, where present, must be true');
       }
     }
   }

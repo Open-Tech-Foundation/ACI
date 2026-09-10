@@ -3257,7 +3257,15 @@ function because(joined, world, mood, sent) {
   // Where the scale is asked after and nothing stands on it, the question is
   // unanswered. What the thing *is* is a different question, and answering
   // that one instead — a rope is a tool — is answering something nobody asked.
-  if (holes.length > 0 && terms.length >= 1 && a.measure != null) {
+  if (
+    holes.length > 0 &&
+    terms.length >= 1 &&
+    a.measure != null &&
+    // A word marking an extreme is asking which of them is furthest along the
+    // scale, not how far along one of them is. `who is the oldest` is a
+    // question about an ordering, and the ordering answers it.
+    !said.some((n) => functionsOf(n).includes('extreme'))
+  ) {
     const on = new Set(
       said.flatMap((n) => {
         const of = conceptOf(n);
@@ -7143,6 +7151,38 @@ function tokenize(signal, langs) {
 
 function quote(s) {
   return /^[\p{L}\p{N}]+$/u.test(s) ? s : `"${s}"`;
+}
+
+// What a signal holds, where it holds more than one thing said.
+//
+// A mark that ends what is being said ends it: three sentences typed together
+// are three things said one after another, not one long one. Which marks end
+// are the language's to declare, and a mark inside a word ends nothing — the
+// point in `0.1` is not the end of anything. Where a signal holds one thing,
+// it comes back as it was given.
+//
+// The brain reads; acting on what it read is the runtime's, and taking these
+// in order, each against the world the one before it left, is acting.
+export function signalsIn(input, langs) {
+  const said = String(input ?? '');
+  if (!langs || langs.length === 0) return [said];
+  // A mark is a character no word is made of — that much needs no declaring,
+  // and a language that gives one to a word stops it ending anything. Which of
+  // its marks end what is being said, a language does declare.
+  const marks = langs.map((l) => (ch) => !l.isWordSymbol(ch));
+  const ends = langs.map((l) => (ch) => l.endsWhat(ch));
+  const closes = (ch) => marks.every((is) => is(ch)) && ends.some((is) => is(ch));
+  const held = [];
+  let piece = [];
+  for (const token of said.split(/\s+/).filter(Boolean)) {
+    piece.push(token);
+    if (closes(token[token.length - 1])) {
+      held.push(piece.join(' '));
+      piece = [];
+    }
+  }
+  if (piece.length > 0) held.push(piece.join(' '));
+  return held.length > 1 ? held : [said];
 }
 
 export { node, learningConflict };

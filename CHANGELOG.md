@@ -30,6 +30,16 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A signal may hold more than one thing said.** `Sara is older than Tom. Tom
+  is older than Mike. Who is the youngest?` came back `I don't know "Sara"`:
+  the full stops were taken off with the rest of the punctuation, leaving ten
+  words in a row that no reading could make a sentence of, so nothing was ever
+  named. English now says which of its marks end what is being said, and three
+  sentences typed together are three things said one after another — each taken
+  in turn, so the question is asked of the world the two before it left. A mark
+  inside a word still ends nothing: the point in `0.1` is not the end of
+  anything. What comes back is the answer to the last of them.
+
 - **A claim is said back whole.** `why is the door open?` answered `strong`.
   The claim standing behind it was on the record — the brain has been writing
   claims down as things since standing instructions needed two sides to hold —
@@ -60,6 +70,13 @@ All notable changes to this project are documented in this file.
   49ms to 0.1ms, and a learning turn from about 90ms to about 37ms.
 
 ### Fixed
+
+- **A superlative asks after the far end of an ordering, not after a
+  measurement.** `who is the oldest?` stopped answering: `old` is measured on
+  the scale of age, and a question naming a scale had just been made to answer
+  with what stands on that scale — which swallowed the question whole, since
+  nobody was measured. Asking which of them is furthest along is not asking how
+  far along one of them is, and the ordering answers it as it did before.
 
 - **A question about a scale is answered by what stands on it.** `how long is
   the rope?` said `tool` — a rope is a tool, which is a true answer to a

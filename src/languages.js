@@ -11,6 +11,8 @@ function buildLanguage(data) {
   const asking = charSet(symbols.question);
   const own = Object.values(symbols).map(charSet);
   const alone = Object.values(symbols).filter((set) => set && set.alone).map(charSet);
+  // The marks this language ends what is being said with.
+  const ending = Object.values(symbols).filter((set) => set && set.ends).map(charSet);
   const counted = Object.values(symbols).find((set) => set && set.figures);
   const counting = counted ? charsOf(counted.characters) : [];
   // Where the part below one begins, and how many places this language writes.
@@ -61,6 +63,7 @@ function buildLanguage(data) {
     isOwnSymbol: (ch) => own.some((set) => set.has(ch)),
     // A symbol that stands as a word of its own, wherever it falls.
     isLoneSymbol: (ch) => alone.some((set) => set.has(ch)),
+    endsWhat: (ch) => ending.some((set) => set.has(ch)),
     // Any number written out in the symbols this language counts in, in the
     // order it declared them. A term is not needed for it: a world that never
     // named ninety-nine can still be told the answer is 99.

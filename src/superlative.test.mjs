@@ -55,3 +55,26 @@ test("a noun filed red still restricts", async () => {
   assertEquals((await brain("is a pig dirty?")).expression.name, "affirm");
   await forget();
 });
+
+test("a superlative asks after the far end of an ordering", async () => {
+  await forget();
+  await brain("sara is older than tom");
+  await brain("tom is older than mike");
+  assertEquals((await brain("who is the oldest?")).expression.state.says, "sara");
+  assertEquals(
+    (await brain("who is the youngest?")).expression.state.says,
+    "mike",
+    "the same ordering read from the other end",
+  );
+  await forget();
+});
+
+test("asking which is furthest along is not asking how far along one is", async () => {
+  await forget();
+  // `old` is measured on the scale of age, and a question naming a scale is
+  // answered by what stands on it. This one names no thing to have been
+  // measured: it asks which of them is furthest, and the ordering answers.
+  await brain("nila is older than ravi");
+  assertEquals((await brain("who is the oldest?")).expression.state.says, "nila");
+  await forget();
+});

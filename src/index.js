@@ -13,7 +13,7 @@
 //
 // brain(input) takes ONLY the input. The brain's own signature never grows to
 // admit a new source; a new source is a new file in one of those directories.
-import { brainFrom } from './brain.js';
+import { brainFrom, signalsIn } from './brain.js';
 import { conversation } from './graph.js';
 import { fromSources, speaking } from './knowledge.js';
 import { openStore, seed, readWorld, write, forgetLearned } from './store.js';
@@ -114,7 +114,20 @@ export function openBrain(url) {
   // The circumstance of the signal — where it came from, where it went, what
   // was last spoken of — is the runtime's to supply, and it is optional: told
   // nothing, the brain does not guess who it is talking to.
+  // A signal may hold more than one thing said. The brain reads where each one
+  // ends; taking them in order is acting, and that is here. Each is a turn of
+  // its own, so the third sees the world the first two left — which is the
+  // whole point of saying them one after another.
   async function turn(input, circumstance) {
+    const held = await loaded();
+    const signals = signalsIn(input, held.languages);
+    if (signals.length < 2) return one(input, circumstance);
+    let last;
+    for (const signal of signals) last = await one(signal, circumstance);
+    return last;
+  }
+
+  async function one(input, circumstance) {
     const thread = (circumstance && circumstance.conversation) ?? ALONE;
     const held = threads.get(thread) || {};
     // Who spoke, and who was spoken to, arrive with each signal or not at

@@ -31,6 +31,10 @@
     "mark": {
       "characters": ",",
       "alone": true
+    },
+    "end": {
+      "characters": ". ! ?",
+      "ends": true
     }
   },
   "words": {
