@@ -30,6 +30,14 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Where asks after a place, however the place was said.** `the dog is under
+  the table` was taken in and `where is the dog?` said `I don't know`. English
+  had `where` standing for `in` alone, so nothing said with `on` or `under` was
+  ever looked at — and the world put its eleven ways of saying where under
+  `placement` as kinds, where no walk of the relation algebra reaches them.
+  `where` is which place, and in, on, under, inside, outside, beside, aside and
+  the four directions are narrower ways of saying it.
+
 - **What a pointer stands for is said of what it lands on.** English says `she`
   stands for a kind of thing, and the brain landed the pointer and threw that
   away: calling x `she` left x a bare thing. Somebody calling x `she` has said
