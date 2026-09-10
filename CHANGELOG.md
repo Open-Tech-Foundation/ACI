@@ -28,6 +28,21 @@ All notable changes to this project are documented in this file.
   drawn from the eight, and says nothing about how many went into each —
   because nobody did.
 
+### Changed
+
+- **A change is weighed against what it touches, not against everything known.**
+  Every fact the brain accepted was checked by re-deriving the whole world's
+  relation algebra from every term it holds — which relations run one way,
+  which are one relation said narrowly, what stands for the same thing — and
+  then walking all of it. That cost 49ms against 2929 terms and grew with
+  everything learned, so knowing more made learning slower, and a world of
+  propositions would have made it slower still. The world a change joins was
+  already whole: a fact bearing on nothing else cannot have made anything else
+  wrong. Every rule is the rule it was, and each now starts from the terms the
+  change names and the ends of the links it brings, asking the world for the
+  steps out from there rather than rebuilding them. Weighing one fact went from
+  49ms to 0.1ms, and a learning turn from about 90ms to about 37ms.
+
 ### Fixed
 
 - **A question about a scale is answered by what stands on it.** `how long is

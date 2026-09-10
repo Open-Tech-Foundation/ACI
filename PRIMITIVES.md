@@ -70,12 +70,17 @@ more world vocabulary.
   taken from the top of the authored world, and so is the next authored term;
   the seed upsert skipped the collision in silence, and a name the world later
   brought back stopped the brain opening at all.
-- [ ] Validate an accepted fact without rewalking the whole world. `checkWhole`
-  is O(world) and runs after every learned fact, so learning N facts costs
-  O(N²) validation: 44ms at 2822 terms, 183ms at 20k, 376ms at 40k, and today
-  42% of a turn. Phase 2 puts the world on that curve immediately, since a
-  proposition can only be an endpoint by being a term. **This is a blocker for
-  phase 2, not a performance note.**
+- [x] Validate an accepted fact without rewalking the whole world. The walk
+  was the brain's own, not the door's: `checkWhole` is already skipped for a
+  world read back unchanged, but every accepted fact was weighed by re-deriving
+  the whole world's relation algebra from every term — 49ms at 2929 terms, and
+  half of a learning turn. A change joins a world that was already whole, so
+  each rule now starts from what the change touches and asks the world for the
+  steps out from there: 0.1ms, and no longer growing with what is known. A
+  learning turn went from ~90ms to ~37ms. What remains on that turn is reading
+  the world back and rebuilding its indexes after a write, which is still
+  O(world) per fact — a rebuild rather than a re-derivation, and the next thing
+  to take out of the loop.
 - [ ] Decide what a derived fact does when the world denies it. `denies` reads
   authored `not` links; stored rules will produce facts no source authored, and
   the collision has no rule yet. Settle it before rules land, or the first

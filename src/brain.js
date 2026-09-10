@@ -5965,63 +5965,89 @@ export function brainFrom(input, knowledge, circumstance) {
   };
 }
 
-// Validate a whole proposed change against one immutable world. Individual
-// clauses cannot approve facts independently when their combination creates
-// a contradiction, reuses an identity, or closes a classification cycle.
+// Whether a change the brain proposes would leave the world unsound.
+//
+// The world the change joins was already whole. So what is walked is what the
+// change touches — the terms it names, the links it adds, and what the world
+// already holds about those — and nothing else: a fact bearing on nothing else
+// cannot have made anything else wrong. Weighing one fact by walking every
+// term is what made learning cost more the more there was to know.
+//
+// Every rule below is a rule the whole world is held to. Only where each one
+// starts from has changed, and the world is asked for the steps out from there
+// rather than having them rebuilt from all of it.
 function learningConflict(world, learned) {
   if (!world || !learned) return null;
-  const terms = new Map(world.data.terms.map((t) => [t.id, {
-    ...t,
-    links: (t.links || []).map((l) => ({ ...l })),
-  }]));
-  const names = new Map(world.data.terms.map((t) => [t.name, t.id]));
-  for (const proposed of learned.terms || []) {
-    const named = names.get(proposed.name);
-    if (named != null && named !== proposed.id) return `name ${proposed.name} already belongs to ${named}`;
-    const held = terms.get(proposed.id);
-    if (held && held.name !== proposed.name) return `term ${proposed.id} already names ${held.name}`;
-    if (!held) {
-      terms.set(proposed.id, { ...proposed, links: [] });
-      names.set(proposed.name, proposed.id);
+  const proposed = learned.terms || [];
+  if (proposed.length === 0) return null;
+  const a = world.anchors || {};
+
+  // What each term the change names would hold afterwards: what it holds now,
+  // and what the change adds to it.
+  const after = new Map();
+  const claimed = new Map();
+  for (const proposal of proposed) {
+    const standing = world.term(proposal.id);
+    if (standing && standing.name !== proposal.name) {
+      return `term ${proposal.id} already names ${standing.name}`;
     }
-    terms.get(proposed.id).links.push(...(proposed.links || []).map((l) => ({ ...l })));
+    const owner = claimed.get(proposal.name) ?? world.named(proposal.name);
+    if (owner != null && owner !== proposal.id) {
+      return `name ${proposal.name} already belongs to ${owner}`;
+    }
+    claimed.set(proposal.name, proposal.id);
+    const before = after.get(proposal.id) ?? standing;
+    after.set(proposal.id, {
+      ...(before || {}),
+      ...proposal,
+      links: [...((before && before.links) || []), ...(proposal.links || [])],
+    });
   }
+  const term = (id) => after.get(id) ?? world.term(id);
+  const links = (id) => term(id)?.links || [];
+  const arriving = proposed.flatMap((proposal) =>
+    (proposal.links || []).map((link) => ({ subject: proposal.id, link })),
+  );
 
   // A link may not point at a term that is not there, nor be made of one. Only
-  // what this change brings is looked at: the world it joins was already whole,
-  // and every term it could name is either in that world or arriving with it.
-  for (const proposed of learned.terms || []) {
-    for (const link of proposed.links || []) {
-      if (!terms.has(link.to)) return `link to unknown term ${link.to}`;
-      if (!terms.has(link.rel)) return `link by unknown term ${link.rel}`;
-    }
+  // what this change brings is looked at: every term it could name is either
+  // in the world it joins or arriving with it.
+  for (const { link } of arriving) {
+    if (term(link.to) == null) return `link to unknown term ${link.to}`;
+    if (term(link.rel) == null) return `link by unknown term ${link.rel}`;
   }
 
-  for (const term of terms.values()) {
+  // One term may not hold and deny the same thing, nor give it two counts.
+  for (const id of after.keys()) {
     const facts = new Map();
-    for (const link of term.links || []) {
+    for (const link of links(id)) {
       const key = `${link.rel}:${link.to}:${link.at ?? ''}`;
       const fact = facts.get(key);
-      if (fact && Boolean(fact.not) !== Boolean(link.not)) return `term ${term.id} both holds and denies ${key}`;
+      if (fact && Boolean(fact.not) !== Boolean(link.not)) {
+        return `term ${id} both holds and denies ${key}`;
+      }
       if (
         fact &&
         link.quantity !== undefined &&
         fact.quantity !== undefined &&
         fact.quantity !== link.quantity
-      ) return `term ${term.id} gives ${key} two quantities`;
+      ) return `term ${id} gives ${key} two quantities`;
       facts.set(key, link);
     }
   }
 
-  const same = (world.data.relations && world.data.relations.same) ?? world.anchors?.same;
-  const identityEdges = new Map([...terms.keys()].map((id) => [id, []]));
-  if (same != null) {
-    for (const term of terms.values()) {
-      for (const link of term.links || []) {
-        if (link.not || link.rel !== same) continue;
-        identityEdges.get(term.id).push(link.to);
-        identityEdges.get(link.to).push(term.id);
-      }
+  // Identity is an equivalence class over stored ids, not a merge. The world
+  // knows its own classes; a change may join two of them, and then the class
+  // is both together.
+  const sameRelation = (world.data.relations && world.data.relations.same) ?? a.same;
+  const joined = new Map();
+  if (sameRelation != null) {
+    for (const { subject, link } of arriving) {
+      if (link.not || link.rel !== sameRelation) continue;
+      if (!joined.has(subject)) joined.set(subject, []);
+      if (!joined.has(link.to)) joined.set(link.to, []);
+      joined.get(subject).push(link.to);
+      joined.get(link.to).push(subject);
     }
   }
   const identityCache = new Map();
@@ -6033,374 +6059,141 @@ function learningConflict(world, learned) {
       const here = pending.pop();
       if (found.has(here)) continue;
       found.add(here);
-      pending.push(...(identityEdges.get(here) || []));
+      for (const other of world.equivalents(here)) pending.push(other);
+      for (const other of joined.get(here) || []) pending.push(other);
     }
     for (const member of found) identityCache.set(member, found);
     return found;
   };
   const identityOf = (id) => Math.min(...identities(id));
-  const identityFacts = new Map();
-  for (const term of terms.values()) {
-    for (const link of term.links || []) {
-      let subject = identityOf(term.id);
-      let object = identityOf(link.to);
-      if (terms.get(link.rel)?.symmetric && subject > object) {
-        [subject, object] = [object, subject];
-      }
-      const key = `${subject}:${link.rel}:${object}:${link.at ?? ''}`;
-      const fact = identityFacts.get(key);
-      const substitutesIdentity = identities(term.id).size > 1 || identities(link.to).size > 1;
-      if (substitutesIdentity && fact && Boolean(fact.not) !== Boolean(link.not)) {
-        return `equivalent terms both hold and deny ${key}`;
-      }
-      if (
-        substitutesIdentity && fact && fact.quantity !== undefined && link.quantity !== undefined &&
-        fact.quantity !== link.quantity
-      ) return `equivalent terms give ${key} two quantities`;
-      identityFacts.set(key, link);
-    }
+
+  // Where the change reaches: the terms it names, the ends of the links it
+  // brings, and everything those stand for. A rule broken by this change is
+  // broken somewhere in here.
+  const reached = new Set();
+  for (const id of after.keys()) for (const member of identities(id)) reached.add(member);
+  for (const { subject, link } of arriving) {
+    for (const end of [subject, link.to]) for (const member of identities(end)) reached.add(member);
   }
 
-  const subrelation = world.anchors ? world.anchors.subrelation : null;
-  const relationParents = new Map([...terms.keys()].map((id) => [id, []]));
-  if (subrelation != null) {
-    for (const term of terms.values()) {
-      for (const link of term.links || []) {
-        if (!link.not && link.rel === subrelation) relationParents.get(term.id).push(link.to);
-      }
-    }
-  }
-  const relationAncestorCache = new Map();
-  const relationVariantCache = new Map();
-  const relationAncestors = (id) => {
-    if (relationAncestorCache.has(id)) return relationAncestorCache.get(id);
-    const found = new Set();
-    const pending = [id];
-    while (pending.length) {
-      const here = pending.pop();
-      if (found.has(here)) continue;
-      found.add(here);
-      pending.push(...(relationParents.get(here) || []));
-    }
-    relationAncestorCache.set(id, found);
-    return found;
-  };
-  const relationVariants = (id) => {
-    if (!relationVariantCache.has(id)) {
-      relationVariantCache.set(id, new Set(
-        [...terms.keys()].filter((candidate) => relationAncestors(candidate).has(id)),
-      ));
-    }
-    return relationVariantCache.get(id);
-  };
+  const subtype = a.subtype;
+  const instance = a.instance;
+  const predication = a.predication;
+  const classifies = (rel) => rel === world.baseRelation || rel === subtype || rel === instance;
 
-  const converseRelation = world.anchors ? world.anchors.converse : null;
-  const conversesOf = (relation) => {
-    const out = new Set();
-    if (converseRelation == null) return out;
-    for (const candidate of terms.values()) {
-      for (const link of candidate.links || []) {
-        if (link.not || link.rel !== converseRelation) continue;
-        if (candidate.id === relation) out.add(link.to);
-        if (link.to === relation) out.add(candidate.id);
-      }
-    }
-    return out;
-  };
-  const domain = world.anchors ? world.anchors.domain : null;
-  const range = world.anchors ? world.anchors.range : null;
-  const subtype = world.anchors ? world.anchors.subtype : null;
-  const instance = world.anchors ? world.anchors.instance : null;
-  const predication = world.anchors ? world.anchors.predication : null;
-  const classificationRelations = new Set(
-    [world.baseRelation, subtype, instance].filter((id) => id != null),
-  );
-  const constraintCache = new Map();
-  const declaredKinds = (relation, declaration) => {
-    const out = new Set();
-    if (declaration == null) return out;
-    for (const broader of relationAncestors(relation)) {
-      for (const link of terms.get(broader)?.links || []) {
-        if (!link.not && link.rel === declaration) out.add(link.to);
-      }
-    }
-    return out;
-  };
-  const constraintKinds = (relation, side) => {
-    const key = `${relation}:${side}`;
-    if (constraintCache.has(key)) return constraintCache.get(key);
-    const own = side === 'domain' ? domain : range;
-    const opposite = side === 'domain' ? range : domain;
-    const out = declaredKinds(relation, own);
-    for (const broader of relationAncestors(relation)) {
-      for (const converse of conversesOf(broader)) {
-        for (const kind of declaredKinds(converse, opposite)) out.add(kind);
-      }
-    }
-    constraintCache.set(key, out);
-    return out;
-  };
-  const isA = (start, target) => {
-    const seen = new Set();
-    const pending = [start];
-    while (pending.length) {
-      const here = pending.pop();
-      if (here === target) return true;
-      if (seen.has(here)) continue;
-      seen.add(here);
-      for (const link of terms.get(here)?.links || []) {
-        if (!link.not && classificationRelations.has(link.rel)) pending.push(link.to);
-      }
-    }
-    return false;
-  };
-  const impliedKind = (id, kind) => {
-    for (const term of terms.values()) {
-      for (const link of term.links || []) {
-        if (link.not) continue;
-        const implied = [];
-        if (term.id === id) implied.push(...constraintKinds(link.rel, 'domain'));
-        if (link.to === id) implied.push(...constraintKinds(link.rel, 'range'));
-        for (const found of implied) if (isA(found, kind)) return true;
-      }
-    }
-    return false;
-  };
-  for (const term of terms.values()) {
-    for (const link of term.links || []) {
-      if (link.not) continue;
-      for (const broader of relationAncestors(link.rel)) {
-        if (broader === link.rel) continue;
-        const sameMoment = (other) => (other.at ?? null) === (link.at ?? null);
-        if ((term.links || []).some(
-          (other) => other.not && other.rel === broader && other.to === link.to && sameMoment(other),
-        )) return `narrower relation ${link.rel} contradicts denied broader relation ${broader}`;
-        const object = terms.get(link.to);
-        if (
-          terms.get(broader)?.symmetric &&
-          object &&
-          (object.links || []).some(
-            (other) => other.not && other.rel === broader && other.to === term.id && sameMoment(other),
-          )
-        ) return `narrower relation ${link.rel} contradicts denied broader relation ${broader}`;
-        for (const back of conversesOf(broader)) {
-          if (object && (object.links || []).some(
-            (other) => other.not && other.rel === back && other.to === term.id && sameMoment(other),
-          )) return `narrower relation ${link.rel} contradicts denied broader relation ${broader}`;
-        }
-      }
-    }
-  }
-
-  for (const relation of terms.values()) {
-    if (!relation.symmetric) continue;
-    const variants = relationVariants(relation.id);
-    const facts = new Map();
-    for (const term of terms.values()) {
-      for (const link of term.links || []) {
-        if (!variants.has(link.rel) || (link.not && link.rel !== relation.id)) continue;
-        const ends = term.id <= link.to ? [term.id, link.to] : [link.to, term.id];
-        const key = `${ends[0]}:${ends[1]}:${link.at ?? ''}`;
-        const fact = facts.get(key);
-        if (fact && Boolean(fact.not) !== Boolean(link.not)) {
-          return `symmetric relation ${relation.id} both holds and denies ${key}`;
-        }
-        if (
-          fact &&
-          fact.quantity !== undefined &&
-          link.quantity !== undefined &&
-          fact.quantity !== link.quantity
-        ) return `symmetric relation ${relation.id} gives ${key} two quantities`;
-        facts.set(key, link);
-      }
-    }
-  }
-
-  for (const relation of terms.values()) {
-    if (!relation.irreflexive && !relation.asymmetric) continue;
-    const variants = relationVariants(relation.id);
-    for (const term of terms.values()) {
-      if ((term.links || []).some(
-        (link) => !link.not && variants.has(link.rel) && link.to === term.id,
-      )) return `irreflexive relation ${relation.id} relates ${term.id} to itself`;
-    }
-  }
-
-  for (const relation of terms.values()) {
-    if (!relation.reflexive) continue;
-    const required = [
-      ...constraintKinds(relation.id, 'domain'),
-      ...constraintKinds(relation.id, 'range'),
-    ];
-    for (const term of terms.values()) {
-      const eligible = required.length === 0 || required.every(
-        (kind) => isA(term.id, kind) || impliedKind(term.id, kind),
-      );
-      if (!eligible) continue;
-      if ((term.links || []).some(
-        (link) => link.not && link.rel === relation.id && link.to === term.id,
-      )) return `reflexive relation ${relation.id} denies its required self-link`;
-    }
-  }
-
-  for (const relation of terms.values()) {
-    if (!relation.functional) continue;
-    const bySubject = new Map([...terms.keys()].map((id) => [id, []]));
-    const variants = relationVariants(relation.id);
-    const converse = world.anchors ? world.anchors.converse : null;
-    const converses = new Set();
-    if (converse != null) {
-      for (const candidate of terms.values()) {
-        for (const link of candidate.links || []) {
-          if (link.not || link.rel !== converse) continue;
-          if (variants.has(candidate.id)) converses.add(link.to);
-          if (variants.has(link.to)) converses.add(candidate.id);
-        }
-      }
-    }
-    const add = (subject, link) => {
-      const normalizedSubject = identityOf(subject);
-      const normalizedLink = { ...link, to: identityOf(link.to) };
-      bySubject.get(normalizedSubject).push(normalizedLink);
-      if (relation.symmetric && normalizedSubject !== normalizedLink.to) {
-        bySubject.get(normalizedLink.to).push({ ...normalizedLink, to: normalizedSubject });
-      }
-    };
-    for (const term of terms.values()) {
-      for (const link of term.links || []) {
-        if (link.not) continue;
-        if (variants.has(link.rel)) add(term.id, link);
-        if (converses.has(link.rel)) add(link.to, { ...link, to: term.id });
-      }
-    }
-    for (const [subject, links] of bySubject) {
-      const timeless = new Set(links.filter((link) => link.at == null).map((link) => link.to));
-      const all = new Set(links.map((link) => link.to));
-      if (timeless.size > 1 || (timeless.size === 1 && all.size > 1)) {
-        return `functional relation ${relation.id} gives ${subject} competing objects`;
-      }
-      const byMoment = new Map();
-      for (const link of links) {
-        if (link.at == null) continue;
-        if (!byMoment.has(link.at)) byMoment.set(link.at, new Set());
-        byMoment.get(link.at).add(link.to);
-      }
-      for (const objects of byMoment.values()) {
-        if (objects.size > 1) {
-          return `functional relation ${relation.id} gives ${subject} competing objects at one moment`;
-        }
-      }
-    }
-  }
-
-  const is = world.baseRelation;
-  const visiting = new Set();
-  const visited = new Set();
-  const visit = (id) => {
-    if (visiting.has(id)) return true;
-    if (visited.has(id)) return false;
-    visiting.add(id);
-    const term = terms.get(id);
-    for (const link of (term && term.links) || []) {
-      if (!link.not && classificationRelations.has(link.rel) && visit(link.to)) return true;
-    }
-    visiting.delete(id);
-    visited.add(id);
-    return false;
-  };
-  for (const id of terms.keys()) if (visit(id)) return 'classification cycle';
-
-  for (const term of terms.values()) {
-    for (const link of term.links || []) {
-      if (link.rel === subtype && (term.individual || terms.get(link.to)?.individual)) {
-        return 'subtype must connect kinds';
-      }
-      if (link.rel === instance && (!term.individual || terms.get(link.to)?.individual)) {
-        return 'instance must connect an individual to a kind';
-      }
-      if (
-        link.rel === predication &&
-        (world.anchors.property == null || !isA(link.to, world.anchors.property))
-      ) return 'predication must name a property';
-    }
-  }
-
-  const relationKind = world.anchors ? world.anchors.relation : null;
-  for (const term of terms.values()) {
-    for (const link of term.links || []) {
-      if (link.not || (link.rel !== domain && link.rel !== range)) continue;
-      if (relationKind != null && !isA(term.id, relationKind)) {
-        return 'domain and range may only constrain relations';
-      }
-      if (terms.get(link.to)?.individual) return 'domain and range must name kinds, not individuals';
-    }
-  }
-
-  const inferredTypes = new Map();
+  // What the change itself says a term must be, through the kinds a relation
+  // declares for either of its ends.
+  const inferred = new Map();
   const infer = (id, kinds) => {
-    if (kinds.size === 0) return;
-    if (!inferredTypes.has(id)) inferredTypes.set(id, new Set());
-    for (const kind of kinds) inferredTypes.get(id).add(kind);
+    if (kinds.length === 0) return;
+    if (!inferred.has(id)) inferred.set(id, new Set());
+    for (const kind of kinds) inferred.get(id).add(kind);
   };
-  if (domain != null || range != null) {
-    for (const term of terms.values()) {
-      for (const link of term.links || []) {
-        if (link.not) continue;
-        infer(term.id, constraintKinds(link.rel, 'domain'));
-        infer(link.to, constraintKinds(link.rel, 'range'));
-      }
-    }
+  for (const { subject, link } of arriving) {
+    if (link.not) continue;
+    infer(subject, world.domains(link.rel));
+    infer(link.to, world.ranges(link.rel));
   }
-  const effectiveAncestors = (id) => {
+
+  // Everything a term is, once the change stands: what the world already says
+  // it is, what the change classifies it as, and what a relation's declared
+  // kinds make of it.
+  const kindsCache = new Map();
+  const walkKinds = (id, from) => {
     const found = new Set();
-    const pending = [id, ...(inferredTypes.get(id) || [])];
+    const pending = from;
     while (pending.length) {
       const here = pending.pop();
       if (found.has(here)) continue;
       found.add(here);
-      for (const link of terms.get(here)?.links || []) {
-        if (!link.not && classificationRelations.has(link.rel)) pending.push(link.to);
+      for (const kind of world.kinds(here)) pending.push(kind);
+      for (const link of links(here)) {
+        if (!link.not && classifies(link.rel)) pending.push(link.to);
       }
     }
     return found;
   };
-  const different = (world.data.relations && world.data.relations.different) ?? world.anchors?.different;
+  const kindsOf = (id) => {
+    if (!kindsCache.has(id)) kindsCache.set(id, walkKinds(id, [id, ...(inferred.get(id) || [])]));
+    return kindsCache.get(id);
+  };
+  // What a term is said to be, without what this very change would make of it.
+  // A link is not evidence for the shape it must itself have: what a relation
+  // declares of its ends cannot be what proves those ends fit.
+  const classifiedAs = (id) => walkKinds(id, [id]);
+
+  const different = (world.data.relations && world.data.relations.different) ?? a.different;
   const excluded = (left, right) => {
     if (left === right) return false;
     if (different != null) {
-      if ((terms.get(left)?.links || []).some(
-        (link) => !link.not && link.rel === different && link.to === right,
-      )) return true;
-      if ((terms.get(right)?.links || []).some(
-        (link) => !link.not && link.rel === different && link.to === left,
-      )) return true;
+      if (links(left).some((link) => !link.not && link.rel === different && link.to === right)) return true;
+      if (links(right).some((link) => !link.not && link.rel === different && link.to === left)) return true;
     }
-    for (const parent of (terms.get(left)?.links || [])
-      .filter((link) => !link.not && classificationRelations.has(link.rel))
-      .map((link) => link.to)) {
+    for (const link of links(left)) {
+      if (link.not || !classifies(link.rel)) continue;
       if (
-        terms.get(parent)?.disjoint &&
-        (terms.get(right)?.links || []).some(
-          (link) => !link.not && classificationRelations.has(link.rel) && link.to === parent,
-        )
+        term(link.to)?.disjoint &&
+        links(right).some((other) => !other.not && classifies(other.rel) && other.to === link.to)
       ) return true;
     }
     return false;
   };
-  for (const component of new Set([...identityCache.values()])) {
-    if (component.size < 2) continue;
+
+  // Equivalent representatives cannot disagree about one fact. Only a fact the
+  // change brings can start a disagreement.
+  for (const { subject, link } of arriving) {
+    const subjects = identities(subject);
+    const objects = identities(link.to);
+    if (subjects.size < 2 && objects.size < 2) continue;
+    const key = `${identityOf(subject)}:${link.rel}:${identityOf(link.to)}:${link.at ?? ''}`;
+    const disagrees = (other) => {
+      if (other === link || other.rel !== link.rel) return null;
+      if ((other.at ?? '') !== (link.at ?? '')) return null;
+      if (Boolean(other.not) !== Boolean(link.not)) return `equivalent terms both hold and deny ${key}`;
+      if (
+        other.quantity !== undefined &&
+        link.quantity !== undefined &&
+        other.quantity !== link.quantity
+      ) return `equivalent terms give ${key} two quantities`;
+      return null;
+    };
+    for (const member of subjects) {
+      for (const other of links(member)) {
+        if (!objects.has(other.to)) continue;
+        const wrong = disagrees(other);
+        if (wrong) return wrong;
+      }
+    }
+    if (!term(link.rel)?.symmetric) continue;
+    for (const member of objects) {
+      for (const other of links(member)) {
+        if (!subjects.has(other.to)) continue;
+        const wrong = disagrees(other);
+        if (wrong) return wrong;
+      }
+    }
+  }
+
+  // What one representative is, they all are — read whole for a class the
+  // change touches, since the rest were already sound.
+  const classes = new Map();
+  for (const id of reached) {
+    const component = identities(id);
+    if (component.size > 1) classes.set(identityOf(id), component);
+  }
+  for (const component of classes.values()) {
     const effective = new Set();
     const values = new Set();
     for (const member of component) {
-      if (terms.get(member)?.value !== undefined) values.add(terms.get(member).value);
-      for (const ancestor of effectiveAncestors(member)) effective.add(ancestor);
-      if ((terms.get(member)?.links || []).some(
-        (link) => link.not && link.rel === same && component.has(link.to),
+      if (term(member)?.value !== undefined) values.add(term(member).value);
+      for (const kind of kindsOf(member)) effective.add(kind);
+      if (links(member).some(
+        (link) => link.not && link.rel === sameRelation && component.has(link.to),
       )) return 'equivalent terms are explicitly denied as same';
     }
     for (const member of component) {
-      if ((terms.get(member)?.links || []).some(
-        (link) => link.not && classificationRelations.has(link.rel) && effective.has(link.to),
+      if (links(member).some(
+        (link) => link.not && classifies(link.rel) && effective.has(link.to),
       )) return 'equivalent terms contradict an inherited classification';
     }
     if (values.size > 1) return 'equivalent terms name different numeric values';
@@ -6410,11 +6203,14 @@ function learningConflict(world, learned) {
       }
     }
   }
-  for (const [id] of inferredTypes) {
-    const effective = effectiveAncestors(id);
+
+  // What a relation's declared kinds make of a term cannot be something that
+  // term is said not to be, or something exclusive of what it is.
+  for (const id of inferred.keys()) {
+    const effective = kindsOf(id);
     for (const rung of effective) {
-      for (const link of terms.get(rung)?.links || []) {
-        if (link.not && classificationRelations.has(link.rel) && effective.has(link.to)) {
+      for (const link of links(rung)) {
+        if (link.not && classifies(link.rel) && effective.has(link.to)) {
           return 'domain or range inference contradicts a denied classification';
         }
       }
@@ -6426,81 +6222,260 @@ function learningConflict(world, learned) {
     }
   }
 
-  if (subrelation != null) {
-    if (relationKind != null) {
-      for (const term of terms.values()) {
-        for (const link of term.links || []) {
-          if (
-            !link.not &&
-            link.rel === subrelation &&
-            (!isA(term.id, relationKind) || !isA(link.to, relationKind))
-          ) return 'subrelation endpoints must both be relations';
-        }
+  const sameMoment = (left, right) => (left.at ?? null) === (right.at ?? null);
+
+  // A narrower fact entails every broader one, so a denial of any broader
+  // proposition cannot stand beside it. Either half may be the one arriving,
+  // so both are looked for.
+  const contradicts = (subject, positive, object) => {
+    for (const broader of world.broader(positive.rel)) {
+      if (broader === positive.rel) continue;
+      if (links(subject).some(
+        (other) => other.not && other.rel === broader && other.to === object && sameMoment(other, positive),
+      )) return `narrower relation ${positive.rel} contradicts denied broader relation ${broader}`;
+      if (term(broader)?.symmetric && links(object).some(
+        (other) => other.not && other.rel === broader && other.to === subject && sameMoment(other, positive),
+      )) return `narrower relation ${positive.rel} contradicts denied broader relation ${broader}`;
+      for (const back of world.converses(broader)) {
+        if (links(object).some(
+          (other) => other.not && other.rel === back && other.to === subject && sameMoment(other, positive),
+        )) return `narrower relation ${positive.rel} contradicts denied broader relation ${broader}`;
       }
     }
-    const active = new Set();
-    const done = new Set();
-    const climb = (id) => {
-      if (active.has(id)) return true;
-      if (done.has(id)) return false;
-      active.add(id);
-      for (const link of terms.get(id)?.links || []) {
-        if (!link.not && link.rel === subrelation && climb(link.to)) return true;
-      }
-      active.delete(id);
-      done.add(id);
-      return false;
-    };
-    for (const id of terms.keys()) if (climb(id)) return 'subrelation cycle';
+    return null;
+  };
+  for (const { subject, link } of arriving) {
+    if (!link.not) {
+      const wrong = contradicts(subject, link, link.to);
+      if (wrong) return wrong;
+      continue;
+    }
+    // A denial arriving. What already holds, said more narrowly, would be
+    // contradicted by it — said of this term, or of the one it points at
+    // through a symmetric relation or one declared its converse.
+    for (const other of links(subject)) {
+      if (other.not) continue;
+      const wrong = contradicts(subject, other, other.to);
+      if (wrong) return wrong;
+    }
+    for (const other of links(link.to)) {
+      if (other.not) continue;
+      const wrong = contradicts(link.to, other, other.to);
+      if (wrong) return wrong;
+    }
   }
 
-  // Proposed links enter atomically, so asymmetric relations must be checked
-  // over the complete proposal as well as one clause at a time. A transitive
-  // asymmetric relation admits no cycle of any length.
-  for (const relation of terms.values()) {
-    if (!relation.asymmetric) continue;
-    const variants = relationVariants(relation.id);
-    const converse = world.anchors ? world.anchors.converse : null;
+  // A symmetric edge and its mirror are one proposition, and one proposition
+  // has one polarity and one count.
+  for (const relation of world.marked('symmetric')) {
+    const variants = new Set(world.narrower(relation));
+    const counts = (link) => variants.has(link.rel) && !(link.not && link.rel !== relation);
+    if (!arriving.some(({ link }) => counts(link))) continue;
+    const facts = new Map();
+    for (const id of reached) {
+      for (const link of links(id)) {
+        if (!counts(link)) continue;
+        const ends = id <= link.to ? [id, link.to] : [link.to, id];
+        const key = `${ends[0]}:${ends[1]}:${link.at ?? ''}`;
+        const fact = facts.get(key);
+        if (fact && Boolean(fact.not) !== Boolean(link.not)) {
+          return `symmetric relation ${relation} both holds and denies ${key}`;
+        }
+        if (
+          fact &&
+          fact.quantity !== undefined &&
+          link.quantity !== undefined &&
+          fact.quantity !== link.quantity
+        ) return `symmetric relation ${relation} gives ${key} two quantities`;
+        facts.set(key, link);
+      }
+    }
+  }
+
+  // Nothing stands to itself through a relation that says it cannot.
+  for (const relation of [...world.marked('irreflexive'), ...world.marked('asymmetric')]) {
+    const variants = new Set(world.narrower(relation));
+    for (const id of reached) {
+      if (links(id).some((link) => !link.not && variants.has(link.rel) && link.to === id)) {
+        return `irreflexive relation ${relation} relates ${id} to itself`;
+      }
+    }
+  }
+
+  // A relation that must hold of everything it may hold of cannot have its
+  // self-link denied by something it may hold of.
+  for (const relation of world.marked('reflexive')) {
+    const required = [...world.domains(relation), ...world.ranges(relation)];
+    for (const id of reached) {
+      if (!links(id).some((link) => link.not && link.rel === relation && link.to === id)) continue;
+      const kinds = kindsOf(id);
+      if (required.every((kind) => kinds.has(kind))) {
+        return `reflexive relation ${relation} denies its required self-link`;
+      }
+    }
+  }
+
+  // A relation that holds of one thing at a time may not be given two. Both
+  // ways of writing one — by the relation itself, and by one declared its
+  // converse — are the same fact and count once.
+  for (const relation of world.marked('functional')) {
+    const variants = new Set(world.narrower(relation));
     const converses = new Set();
-    if (converse != null) {
-      for (const candidate of terms.values()) {
-        for (const link of candidate.links || []) {
-          if (link.not || link.rel !== converse) continue;
-          if (variants.has(candidate.id)) converses.add(link.to);
-          if (variants.has(link.to)) converses.add(candidate.id);
+    for (const variant of variants) for (const other of world.converses(variant)) converses.add(other);
+    const subjects = new Set();
+    for (const { subject, link } of arriving) {
+      if (link.not) continue;
+      if (variants.has(link.rel)) subjects.add(identityOf(subject));
+      if (converses.has(link.rel)) subjects.add(identityOf(link.to));
+    }
+    // Said of one end, a symmetric fact is said of the other as well.
+    const backwards = [...converses, ...(term(relation)?.symmetric ? variants : [])];
+    for (const subject of subjects) {
+      const objects = [];
+      for (const member of identities(subject)) {
+        for (const link of links(member)) {
+          if (!link.not && variants.has(link.rel)) objects.push({ at: link.at, to: identityOf(link.to) });
+        }
+        for (const rel of backwards) {
+          const holders = new Set([
+            ...world.pointing(member, rel),
+            ...arriving
+              .filter(({ link }) => !link.not && link.rel === rel && link.to === member)
+              .map(({ subject: holder }) => holder),
+          ]);
+          for (const holder of holders) {
+            for (const link of links(holder)) {
+              if (link.not || link.rel !== rel || link.to !== member) continue;
+              objects.push({ at: link.at, to: identityOf(holder) });
+            }
+          }
+        }
+      }
+      const timeless = new Set(objects.filter((one) => one.at == null).map((one) => one.to));
+      const all = new Set(objects.map((one) => one.to));
+      if (timeless.size > 1 || (timeless.size === 1 && all.size > 1)) {
+        return `functional relation ${relation} gives ${subject} competing objects`;
+      }
+      const byMoment = new Map();
+      for (const one of objects) {
+        if (one.at == null) continue;
+        if (!byMoment.has(one.at)) byMoment.set(one.at, new Set());
+        byMoment.get(one.at).add(one.to);
+      }
+      for (const held of byMoment.values()) {
+        if (held.size > 1) {
+          return `functional relation ${relation} gives ${subject} competing objects at one moment`;
         }
       }
     }
-    const edges = new Map([...terms.values()].map((term) => [term.id, []]));
-    for (const term of terms.values()) {
-      for (const link of term.links || []) {
-        if (link.not) continue;
-        if (variants.has(link.rel)) edges.get(term.id).push(link.to);
-        if (converses.has(link.rel)) edges.get(link.to).push(term.id);
-      }
-    }
-    for (const [subject, objects] of edges) {
-      if (objects.includes(subject)) return `asymmetric relation ${relation.id} relates ${subject} to itself`;
-      if (objects.some((object) => (edges.get(object) || []).includes(subject))) {
-        return `asymmetric relation ${relation.id} holds both ways`;
-      }
-    }
-    if (!relation.transitive) continue;
-    const visiting = new Set();
-    const visited = new Set();
-    const cyclic = (id) => {
-      if (visiting.has(id)) return true;
-      if (visited.has(id)) return false;
-      visiting.add(id);
-      for (const next of edges.get(id) || []) if (cyclic(next)) return true;
-      visiting.delete(id);
-      visited.add(id);
-      return false;
-    };
-    for (const id of edges.keys()) if (cyclic(id)) return `asymmetric relation ${relation.id} has a cycle`;
   }
+
+  // Classification is a partial order: a kind cannot be one of itself through
+  // another. A cycle the change makes runs through a link the change brings,
+  // so the walk starts at one end of each and looks for the other.
+  for (const { subject, link } of arriving) {
+    if (link.not || !classifies(link.rel)) continue;
+    if (kindsOf(link.to).has(subject)) return 'classification cycle';
+  }
+
+  // What the world says a classifying link may join.
+  for (const { subject, link } of arriving) {
+    if (link.rel === subtype && (term(subject)?.individual || term(link.to)?.individual)) {
+      return 'subtype must connect kinds';
+    }
+    if (link.rel === instance && (!term(subject)?.individual || term(link.to)?.individual)) {
+      return 'instance must connect an individual to a kind';
+    }
+    if (
+      link.rel === predication &&
+      (a.property == null || !classifiedAs(link.to).has(a.property))
+    ) return 'predication must name a property';
+  }
+
+  // Only a relation may be given a domain or a range, and only kinds may be
+  // named as one.
+  const relationKind = a.relation;
+  for (const { subject, link } of arriving) {
+    if (link.not || (link.rel !== a.domain && link.rel !== a.range)) continue;
+    if (relationKind != null && !classifiedAs(subject).has(relationKind)) {
+      return 'domain and range may only constrain relations';
+    }
+    if (term(link.to)?.individual) return 'domain and range must name kinds, not individuals';
+  }
+
+  // A relation narrower than another is a relation, and no relation is
+  // narrower than itself through a chain of them.
+  const subrelation = a.subrelation;
+  for (const { subject, link } of arriving) {
+    if (link.not || link.rel !== subrelation) continue;
+    if (relationKind != null && (!classifiedAs(subject).has(relationKind) || !classifiedAs(link.to).has(relationKind))) {
+      return 'subrelation endpoints must both be relations';
+    }
+    const above = new Set();
+    const pending = [link.to];
+    while (pending.length) {
+      const here = pending.pop();
+      if (above.has(here)) continue;
+      above.add(here);
+      for (const broader of world.broader(here)) pending.push(broader);
+      for (const other of links(here)) {
+        if (!other.not && other.rel === subrelation) pending.push(other.to);
+      }
+    }
+    if (above.has(subject)) return 'subrelation cycle';
+  }
+
+  // A relation that runs one way cannot run both, nor round to where it
+  // started. The change brings the edge that would close it, so the walk goes
+  // out from where that edge points and looks for where it came from.
+  for (const relation of world.marked('asymmetric')) {
+    const variants = new Set(world.narrower(relation));
+    const converses = new Set();
+    for (const variant of variants) for (const other of world.converses(variant)) converses.add(other);
+    const brought = arriving.filter(
+      ({ link }) => !link.not && (variants.has(link.rel) || converses.has(link.rel)),
+    );
+    if (brought.length === 0) continue;
+    const forward = (id) => {
+      const out = [];
+      for (const link of links(id)) {
+        if (link.not) continue;
+        if (variants.has(link.rel)) out.push(link.to);
+      }
+      for (const converse of converses) {
+        for (const holder of world.pointing(id, converse)) out.push(holder);
+      }
+      for (const { subject, link } of arriving) {
+        if (link.not) continue;
+        if (converses.has(link.rel) && link.to === id) out.push(subject);
+      }
+      return out;
+    };
+    for (const { subject, link } of brought) {
+      const from = converses.has(link.rel) ? link.to : subject;
+      const to = converses.has(link.rel) ? subject : link.to;
+      if (from === to) return `asymmetric relation ${relation} relates ${from} to itself`;
+      if (forward(to).includes(from)) {
+        return term(relation)?.transitive && !forward(to).includes(from)
+          ? `asymmetric relation ${relation} has a cycle`
+          : `asymmetric relation ${relation} holds both ways`;
+      }
+      if (!term(relation)?.transitive) continue;
+      const seen = new Set();
+      const pending = [to];
+      while (pending.length) {
+        const here = pending.pop();
+        if (here === from) return `asymmetric relation ${relation} has a cycle`;
+        if (seen.has(here)) continue;
+        seen.add(here);
+        pending.push(...forward(here));
+      }
+    }
+  }
+
   return null;
 }
+
 
 // What this signal gave a name to. A word that stands for whatever it was
 // given, standing beside a term, is being given that term: `x is 5` says that

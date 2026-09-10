@@ -74,6 +74,21 @@ export function fromWorldData(source) {
     for (const member of equivalents(id)) if (first == null || member < first) first = member;
     return first;
   };
+  // A term by the name it was authored under, and which terms carry each
+  // characteristic a relation may have. Both are read whenever a change is
+  // weighed, and neither moves while this world stands.
+  const namedTerms = new Map();
+  const markedTerms = new Map();
+  const MARKS = ['symmetric', 'asymmetric', 'irreflexive', 'reflexive', 'functional', 'transitive'];
+  for (const term of terms.values()) {
+    if (typeof term.name === 'string' && !namedTerms.has(term.name)) namedTerms.set(term.name, term.id);
+    for (const mark of MARKS) {
+      if (!term[mark]) continue;
+      if (!markedTerms.has(mark)) markedTerms.set(mark, []);
+      markedTerms.get(mark).push(term.id);
+    }
+  }
+
   const converseBy = new Map();
   if (anchors.converse != null) {
     for (const relation of terms.values()) {
@@ -774,6 +789,18 @@ export function fromWorldData(source) {
     domains: (rel) => [...constraintKinds(rel, 'domain')],
     ranges: (rel) => [...constraintKinds(rel, 'range')],
     subrelationOf: (relation, broader) => relationAncestors(relation).has(broader),
+    // What the world already indexes about itself, for anyone weighing a
+    // change against it. A change joins a world that was already whole, so
+    // what has to be walked is what the change touches — and these are the
+    // steps out from it. Rebuilding them from every term is what made weighing
+    // one fact cost as much as the world it joins.
+    broader: (rel) => (rel == null ? [] : [...relationAncestors(rel)]),
+    converses: (rel) => (rel == null ? [] : [...(converseBy.get(rel) || [])]),
+    named: (name) => (typeof name === 'string' ? namedTerms.get(name) ?? null : null),
+    marked: (mark) => [...(markedTerms.get(mark) || [])],
+    // Who points here by exactly this relation, as written. Denials are not
+    // among them: nothing is indexed that was not so.
+    pointing: (id, rel) => [...(incoming.get(rel)?.get(id) || [])],
     // The narrower ways of saying one relation, the relation itself among
     // them. Holding is holding, but a count was written under one of its
     // words, and revising it writes under the same one.
