@@ -1116,7 +1116,14 @@ function serialize(world = against) {
             .map(([name, value], at) => (at === 0 ? spell(value) : `${name}: ${spell(value)}`))
             .join(', ')
         : Object.entries(one.roles)
-            .map(([role, value]) => `${part(Number(role))}: ${spell(value)}`)
+            // The same rule: whoever did it stands first and unnamed. Every
+            // other end is named, since its place cannot say which it is.
+            .sort(([role]) => (Number(role) === (world && world.anchors ? world.anchors.agent : null) ? -1 : 0))
+            .map(([role, value], at) =>
+              at === 0 && Number(role) === (world && world.anchors ? world.anchors.agent : null)
+                ? spell(value)
+                : `${part(Number(role))}: ${spell(value)}`,
+            )
             .join(', ');
       const when = one.time ? `  at ${one.time.amount} ${spell(one.time.unit)}` : '';
       // The same rule the facts are said by: a doing the brain knows of itself
