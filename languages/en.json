@@ -27,6 +27,10 @@
     },
     "question": {
       "characters": "?"
+    },
+    "mark": {
+      "characters": ",",
+      "alone": true
     }
   },
   "words": {
@@ -14617,12 +14621,26 @@
       "concept": 245,
       "names": false
     },
-    "both": {
-      "pos": "quantifier",
-      "meaning": "both",
-      "concept": 245,
-      "names": false
-    },
+    "both": [
+      {
+        "pos": "quantifier",
+        "meaning": "both",
+        "concept": 245,
+        "names": false,
+        "select": {
+          "before": [
+            "thing"
+          ]
+        }
+      },
+      {
+        "pos": "pronoun",
+        "meaning": "both",
+        "marks": "spoken",
+        "person": "third",
+        "number": "plural"
+      }
+    ],
     "either": {
       "pos": "quantifier",
       "meaning": "either",
@@ -18012,6 +18030,21 @@
       ],
       "meaning": "split",
       "concept": 2980
+    },
+    ",": {
+      "pos": "conjunction",
+      "meaning": "and",
+      "functions": "join"
+    },
+    "puppy": {
+      "pos": "noun",
+      "meaning": "puppy",
+      "concept": 2981
+    },
+    "color": {
+      "pos": "noun",
+      "meaning": "colour",
+      "concept": 185
     }
   },
   "unknown": {

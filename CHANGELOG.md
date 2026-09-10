@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A comma joins.** `the sky is blue, the grass is green` was not understood:
+  the comma came off before the brain saw it, leaving two clauses run together
+  with nothing between them. English now says the comma stands alone as a word
+  and says it means `and`, so the core still knows nothing about commas. A
+  reading may also turn on a thing standing after it, which is what tells
+  `both crows are birds` from `both are white`.
+
 - **One of many already brought in.** A count brings in a collection — two dogs
   are two dogs — and what the signal says next may speak of them one at a time.
   `i have two dogs and one is white and another is grey` made bare things out

@@ -1160,6 +1160,20 @@ function drawn(roots, world, langs, mood, allocate) {
   };
   return roots.map((n, i) => {
     if (!n.state.exists || findBranch(n, 'call') || !reaches(n, i)) return n;
+    // A word standing for every one of them speaks of the collection itself,
+    // and draws nothing out: `both are white` says it of the two, not of one
+    // of them and then the other.
+    if (a.all != null && conceptOf(n) === a.all) {
+      const thought = thoughtOf(n) || {};
+      return withBranch(
+        n,
+        (n.branch || []).map((b) =>
+          b.kind === 'thought'
+            ? withBranch(b, b.branch, { ...b.state, thought: { ...thought, concept: of, wordKnown: true } })
+            : b,
+        ),
+      );
+    }
     const id = allocate();
     const thought = thoughtOf(n) || {};
     return withBranch(n, [
@@ -1689,6 +1703,17 @@ function contextBefore(wanted, roots, at, world) {
     // A word pointing at somebody standing after it. `who am i` asks after a
     // name; `who is taller than sam` asks after whoever stands there.
     if (kind === 'pointer') return rest.some((n) => contextKind(n, 'pointer', world));
+    // A word standing for a thing after it. A word may say how many of
+    // something there are, or stand for that many of what was already brought
+    // in, and which it is turns on whether it says how many *of* anything.
+    if (kind === 'thing') {
+      const a = world ? world.anchors || {} : {};
+      return (
+        world != null &&
+        a.thing != null &&
+        rest.some((n) => conceptOf(n) != null && world.isA(conceptOf(n), a.thing))
+      );
+    }
     if (kind !== 'proposition' || !world) return false;
     const a = world.anchors || {};
     const things = rest.filter((n) => {
