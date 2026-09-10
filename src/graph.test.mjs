@@ -80,6 +80,18 @@ test("the first of a chain of arrivals", async () => {
   );
 });
 
+test("an extreme with nobody in the ordering answers nobody", async () => {
+  // The world orders the past before the present of its own accord, and
+  // nobody asking what happened first is asking after the past. Nothing in
+  // this conversation has happened, so there is nothing to answer with.
+  assertEquals(await verdict("what happened first?"), "unsure");
+  assertEquals(
+    await said("sara arrived before john", "what happened first?"),
+    "sara",
+    "and what this conversation put in the ordering answers",
+  );
+});
+
 test("a father of a father is a grandfather, and a sister shares him", async () => {
   assertEquals(
     await said(

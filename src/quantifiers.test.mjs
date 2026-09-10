@@ -113,3 +113,14 @@ test("a count on a kind is not added up across the world", async () => {
   await brain("a box has 4 balls", P);
   assertEquals((await brain("how many balls?", P)).expression.state.says, "four");
 });
+
+test("a word saying how many, with no amount behind it, settles nothing", async () => {
+  const brain = fresh();
+  await brain("kiran is a person");
+  await brain("kiran has 20 books");
+  // The world says `many` is a quantity and says no more. Whether twenty is
+  // many is not something the brain was told, and whether she holds a book at
+  // all is a different question.
+  assertEquals((await brain("does kiran have many books?")).expression.name, "unsure");
+  assertEquals((await brain("does kiran have a book?")).expression.name, "affirm");
+});

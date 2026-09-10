@@ -2548,8 +2548,24 @@ function because(joined, world, mood, sent) {
       // Some of a kind is not the kind. What the kind reaches, some of it
       // reaches; what it does not, some of it may still — one crow being
       // white is not crows being white, and nothing about crows says no.
-      const found =
-        howMany === a.some
+      // A word saying how many, that the brain can read no amount out of,
+      // leaves the claim unsettled. Many books is not a book: the world says
+      // `many` is a quantity and says no more, so whether she holds any at all
+      // answers a question nobody asked. Which words say how many is the
+      // language's; that one it cannot read settles nothing is the brain's.
+      const unread = said.some((n) => {
+        const of = conceptOf(n);
+        return (
+          of != null &&
+          a.quantity != null &&
+          world.isA(of, a.quantity) &&
+          world.valueOf(of) == null &&
+          ![a.all, a.some, a.none, a.neither, a.zero].includes(of)
+        );
+      });
+      const found = unread
+        ? 'absent'
+        : howMany === a.some
           ? holds || world.members(subject, world.baseRelation).some((one) => joins(one, object, rel))
             ? 'held'
             : 'absent'
@@ -3233,7 +3249,76 @@ function because(joined, world, mood, sent) {
     }
   }
 
+  // Asked how a thing stands on a scale, what answers is what it was measured
+  // at. A property says which scale it is of — long is of length — and so does
+  // a unit, so two metres answers a question asked with long. Both links are
+  // the world's; the brain walks them and measures nothing itself.
+  //
+  // Where the scale is asked after and nothing stands on it, the question is
+  // unanswered. What the thing *is* is a different question, and answering
+  // that one instead — a rope is a tool — is answering something nobody asked.
+  if (holes.length > 0 && terms.length >= 1 && a.measure != null) {
+    const on = new Set(
+      said.flatMap((n) => {
+        const of = conceptOf(n);
+        return of == null || markOn(n) === 'unknown' ? [] : world.linked(of, a.measure);
+      }),
+    );
+    if (on.size > 0) {
+      for (const term of terms) {
+        const subject = conceptOf(term);
+        if (subject == null || on.has(subject)) continue;
+        const bearer = world.oneOf(subject) ?? subject;
+        for (const { unit, amount } of valuesOn(subject, world)) {
+          if (!world.linked(unit, a.measure).some((scale) => on.has(scale))) continue;
+          const total = world.termFor(amount);
+          return [
+            withBranch(root, [
+              ...root.branch,
+              node('count', total == null ? 'beyond' : 'counted', [], {
+                of: unit,
+                held: bearer,
+                members: amount,
+                total,
+                when: a.now,
+              }),
+            ]),
+          ];
+        }
+      }
+      return [
+        withBranch(root, [
+          ...root.branch,
+          node('standing', 'absent', [], {
+            subject: conceptOf(terms[0]),
+            relation: a.measure,
+            object: null,
+            negated: false,
+          }),
+        ]),
+      ];
+    }
+  }
+
   if (holes.length > 0 && terms.length >= 1) {
+    // A word marking an extreme asks after the far end of an ordering, and
+    // that is the whole question. Whatever else the signal names says who is
+    // in question, not another question to be answered beside it: asked what
+    // happened first with nothing said to have happened, the answer is none —
+    // never what a happening is.
+    const extreme = said.find((n) => farEnd(n, world) !== undefined);
+    if (extreme) {
+      return [
+        withBranch(root, [
+          ...root.branch,
+          node('answer', 'link', [], {
+            subject: null,
+            relation: conceptOf(extreme),
+            found: farEnd(extreme, world),
+          }),
+        ]),
+      ];
+    }
     const nodes = [];
     const asked = terms.flatMap((t) => membersFor(t, world, sent));
     for (const [i, term] of asked.entries()) {
@@ -4305,6 +4390,9 @@ function rolesIn(said, acting, claims, world, side, sides) {
 
   said.forEach((n, i) => {
     if (i === acting || !claims(n) || isDeterminer(said, i, world)) return;
+    // A word marking an extreme plays no part in the doing: it says which of
+    // them is being asked after, not who did it.
+    if (functionsOf(n).includes('extreme')) return;
     const named = roleOn(of(i));
     if (!named || a[named] == null) return;
     parts.push({ role: a[named], of: conceptOf(n), amount: amountOf(n, world), mark: markAt(n), at: i });
@@ -4316,6 +4404,7 @@ function rolesIn(said, acting, claims, world, side, sides) {
   // the language's. Told nothing, the brain assigns no part by order at all.
   said.forEach((n, i) => {
     if (i === acting || taken.has(i) || !claims(n) || isDeterminer(said, i, world) || !sides) return;
+    if (functionsOf(n).includes('extreme')) return;
     const role = a[i < acting ? sides.before : sides.after];
     if (role != null) parts.push({ role, of: conceptOf(n), amount: amountOf(n, world), mark: markAt(n), at: i });
   });
@@ -4707,7 +4796,10 @@ function partAsked(said, world, claims, side, sides) {
   const of = (i) => markerFor(said, i, side, roleOn);
   const played = [];
   said.forEach((n, i) => {
-    if (i === acting || !asking(n)) return;
+    // A word marking an extreme plays no part in the doing. It says which of
+    // them is asked after — `who arrived first` names one arrival, not two —
+    // and taking it for a participant makes a doing nobody described.
+    if (i === acting || !asking(n) || functionsOf(n).includes('extreme')) return;
     const named = roleOn(of(i));
     const role =
       named && a[named] != null
@@ -4720,7 +4812,11 @@ function partAsked(said, world, claims, side, sides) {
   });
   const hole = played.find((p) => p.of == null);
   const known = played.filter((p) => p.of != null);
-  if (!hole || known.length === 0) return null;
+  // A question marking an extreme names one doing and asks which of them it
+  // was: `who arrived first` says only that somebody arrived, and nothing else
+  // in it has to name a part for the question to stand.
+  const marksExtreme = said.some((n) => farEnd(n, world) !== undefined);
+  if (!hole || (known.length === 0 && !marksExtreme)) return null;
 
   const action = conceptOf(said[acting]);
   const found = [];
@@ -4741,8 +4837,22 @@ function partAsked(said, world, claims, side, sides) {
   if (found.length === 0) {
     for (const n of said) {
       const far = farEnd(n, world);
-      if (far !== undefined && far.length > 0) {
-        return node('answer', 'link', [], { subject: action, relation: hole.role, found: far });
+      // Even where the ordering holds nobody. Asked what happened first with
+      // nothing said to have happened, the answer is none — the question is
+      // not then asked again some other way, which is how a happening itself
+      // came back as the answer.
+      //
+      // And a doing is asked after among what this conversation holds. Where
+      // it has put nobody in that ordering, what the world orders of its own
+      // accord is no answer: the past comes before the present, and nobody
+      // asking what happened first is asking after the past.
+      if (far !== undefined) {
+        const spoken = graph ? graph.joinedBy(conceptOf(n)) : [];
+        return node('answer', 'link', [], {
+          subject: action,
+          relation: hole.role,
+          found: far.filter((t) => spoken.includes(t)),
+        });
       }
     }
   }

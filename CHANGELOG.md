@@ -30,6 +30,29 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A question about a scale is answered by what stands on it.** `how long is
+  the rope?` said `tool` — a rope is a tool, which is a true answer to a
+  question nobody asked. A property says which scale it is of and so does a
+  unit, both in the world already, so two metres now answers a question asked
+  with `long` and three kilograms one asked with `heavy`. Where nothing stands
+  on the scale asked after, the question is unanswered: what a thing *is* is a
+  different question.
+
+- **An extreme is asked among what the conversation holds.** `what happened
+  first?` answered `past`, and it had two ways of getting there: the word
+  marking the extreme was taken for a part played in the doing, making a doing
+  nobody described, and the ordering it fell back on was the world's own, where
+  the past does come before the present. An extreme plays no part in a doing —
+  it says which of them is being asked after — and where this conversation has
+  put nobody in that ordering there is nobody to name.
+
+- **A word saying how many, with no amount behind it, settles nothing.** Asked
+  whether someone with one book has many books, the brain said yes: `many` fell
+  out of the question and what was left was whether she holds a book at all.
+  The world says `many` is a quantity and says no more, so a claim made with
+  one is neither held nor stood against — while a book she plainly has is
+  answered as ever.
+
 - **A greeting is still a greeting where a word joins it to what follows.**
   `hello, how are you?` stopped being heard as a greeting the moment a comma
   could stand between the two: the greeting was wrapped in a whole of its own

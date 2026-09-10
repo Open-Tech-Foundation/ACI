@@ -52,3 +52,24 @@ test("a number worked on is not a number beside a property", async () => {
   assertEquals((await brain("a cat is two?")).expression.name, "deny");
   await forget();
 });
+
+test("asked how a thing stands on a scale, what answers is what it measures", async () => {
+  await forget();
+  await brain("the rope is 2 metres long");
+  assertEquals((await brain("how long is the rope?")).expression.state.says, "two");
+  await brain("the rope weighs 3 kilograms");
+  assertEquals(
+    (await brain("how heavy is the rope?")).expression.state.says,
+    "three",
+    "the scale asked on picks which measurement answers",
+  );
+  await forget();
+});
+
+test("nothing measured on the scale asked leaves the question unanswered", async () => {
+  await forget();
+  // A rope is a tool, and that is a true answer to a question nobody asked.
+  await brain("a rope is a tool");
+  assertEquals((await brain("how long is the rope?")).expression.name, "unsure");
+  await forget();
+});
