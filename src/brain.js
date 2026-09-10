@@ -2097,18 +2097,32 @@ function judge(roots, world, mood, langs, sent) {
     // said, and saying is a person's until the runtime says otherwise — it
     // may say a device, another brain, anything the world holds.
     const { agent, person } = world.anchors || {};
-    const greeter = sent.from != null ? sent.from : person;
-    return greetings.map((one) => {
+    // Somebody did it, so somebody is in this conversation: one of them, not
+    // the kind they are. Where the runtime says who sent it, that is who; where
+    // it says nothing, a person, since saying is a person's until it says
+    // otherwise.
+    const kind = sent.from != null ? sent.from : person;
+    const who = kind == null ? null : sent.allocate();
+    const named = who == null
+      ? []
+      : [node('call', `${world.term(kind).name}#${who}`, [], {
+          name: `${world.term(kind).name}#${who}`,
+          id: who,
+          of: kind,
+          made: true,
+        })];
+    return greetings.map((one, i) => {
       const id = sent.allocate();
       return withBranch(one, [
         ...(one.branch || []),
+        ...(i === 0 ? named : []),
         node('event', `${world.term(conceptOf(one)).name}#${id}`, [], {
           id,
           action: conceptOf(one),
           at: when,
           when: null,
           not: false,
-          parts: greeter == null || agent == null ? [] : [{ role: agent, of: greeter, amount: null }],
+          parts: who == null || agent == null ? [] : [{ role: agent, of: who, amount: null }],
         }),
       ]);
     });
@@ -6949,7 +6963,13 @@ function learnedFrom(roots, world) {
     else if (value && typeof value === 'object') Object.values(value).forEach(reference);
   };
   const accepted = (n) => {
-    if (n.kind === 'learn' || n.kind === 'event' || n.kind === 'instruction') reference(n.state);
+    // A doing that says nothing about the world takes nothing into it — not
+    // the doing, and not the one who did it. They are this conversation's.
+    const saying =
+      n.kind === 'event' && world.isA(n.state.action, (world.anchors || {}).communication);
+    if (!saying && (n.kind === 'learn' || n.kind === 'event' || n.kind === 'instruction')) {
+      reference(n.state);
+    }
     (n.branch || []).forEach(accepted);
   };
   accepted(roots[0]);

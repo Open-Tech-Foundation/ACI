@@ -1120,12 +1120,13 @@ function serialize(world = against) {
             .join(', ');
       const when = one.time ? `  at ${one.time.amount} ${spell(one.time.unit)}` : '';
       // The same rule the facts are said by: a doing the brain knows of itself
-      // says its own name, and a doing the world holds says `doing`, with the
-      // doing itself as what it stands on.
+      // says its own name, and a doing the world holds says `action` — one of
+      // the four ways anything exists — with the doing itself as what it
+      // stands on.
       const own = typeof one.of === 'string';
       const does = own
         ? `${one.of}(${said})`
-        : `doing(${said}${said ? ', ' : ''}type: ${spell(one.of)})`;
+        : `action(${said}${said ? ', ' : ''}type: ${spell(one.of)})`;
       return `${one.id}  ${one.denied ? 'not ' : ''}${does}${when}${properties(one.properties)}`;
     }),
   );
