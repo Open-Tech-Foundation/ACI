@@ -192,6 +192,37 @@ words a language uses to voice them.
 | event A before event B with known timestamps | `affirm` from the shared temporal model |
 | one kilogram equals one thousand grams | `affirm` only through declared compatible-unit conversion |
 
+## Reported, not yet fixed
+
+Examples that came back wrong, with what each waits on.
+
+- `x is taller than nila` learns nothing, and `who is the tallest?` answers
+  `nila`. English declares `x`, `y`, `z` as nouns marked *named*, and the
+  name-giving rule requires what follows to be a number only for words nothing
+  knows — a word already marked *named* skips the check, so `x` is bound to the
+  relation `more-tall` itself. A name stands for something: what a name is
+  given must be a thing or an amount, never a joining. Small, and ready.
+
+- `x is my friend` records `holding(me, friend)` and a separate node for `x`,
+  with nothing joining them. Being somebody's friend is a relation between two
+  people; it is read here as having one, and a third node is made for the
+  friend itself. Waits on nothing but the reading.
+
+- `where is the apple now?` after `put one into a basket` answers `I don't
+  know`. The putting is on the record as a doing with a destination, and
+  nothing turns it into a placement. Waits on what a doing results in.
+
+- `how many times did i greet you?` is not understood, and `did i greet you?`
+  says `I don't know` with the greeting on the record. Nothing counts
+  occurrences of a doing, and a question marking the past is matched against a
+  coarse stamp rather than the moment the doing happened at. Waits on the
+  temporal foundation.
+
+- `what is mobile?` answers `toy`. The world holds one `mobile`, authored among
+  the toys; the phone sense is not there. Adding it makes the first English
+  word with two noun senses, which nothing settles without context. Waits on
+  word sense from context.
+
 ## Deferred, not forgotten
 
 - Component/material refinement remains tracked under roadmap phase 4.

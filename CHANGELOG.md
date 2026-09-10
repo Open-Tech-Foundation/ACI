@@ -30,6 +30,29 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Being somebody's friend is a relation between them, not a friend they
+  have.** `nila is my friend` made a friend-thing, gave it to the sender, and
+  filed nila as being that thing — `holding(me, friend)` beside a node for nila
+  with nothing joining them. A relation has two ends: where the world says the
+  word is a relation, whoever it belongs to is its other end, so the fact is
+  `friend(nila, me)`.
+
+  The world now says so. `friend` and `neighbour` are relations as well as
+  kinds of human, the way `sister` and `father` already were, and both run
+  both ways. Family and the rest are told apart by what they sit under —
+  `kinship` for father, mother, sibling, son, daughter and the rest,
+  `social-relation` for friend and neighbour — with a person at either end, so
+  `x is my father` makes x a person without anyone saying it. Nothing new was
+  needed in the brain: subrelation, symmetry, domain and range all already
+  said this.
+
+- **A name stands for something, and a joining is not something.** `x is
+  taller than nila` was read as giving `x` the name of the comparison itself:
+  nothing was learned, and `who is the tallest?` answered `nila`. English
+  declares `x`, `y` and `z` as placeholder names, and a word already marked
+  that way skipped the check that what follows is a value. `x is 5` gives; `x
+  is taller than nila` says something about x.
+
 - **Greeting somebody is a doing, and it happened.** `hi hi` was read as a
   greeting greeting a greeting: an act of communication was allowed to be the
   thing a doing was done to, so the brain wrote that down and answered `I

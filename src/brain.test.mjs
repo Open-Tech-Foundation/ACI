@@ -127,7 +127,8 @@ test("a bound signal gets one expression for the whole", async () => {
   assertEquals(r.expression.name, "greet");
   assertEquals(r.expression.state.says, "Hello!");
   assertEquals(r.expression.state.bound, true);
-  assertEquals(r.learned.terms.length, 2, "two greetings are two doings on the record");
+  assertEquals(r.roots.length, 2, "two greetings are two doings");
+  assertEquals(r.learned, null, "and nothing about the world was said, so nothing goes into it");
 });
 
 test("the whole expression keeps what was said about each thing", async () => {

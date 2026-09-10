@@ -1441,6 +1441,10 @@ function whose(roots, world, langs, mood, allocate) {
       return one === kind ? n : standingFor(n, one);
     }
     if (!world.isA(kind, a.thing) || world.isIndividual(kind)) return n;
+    // Being somebody's friend is not having a friend. Where the world says the
+    // word is a relation, the one it belongs to is the other end of it, and
+    // nothing is made to be owned.
+    if (a.relation != null && world.isA(kind, a.relation)) return n;
     const owner = owning(markerFor(roots, i, side, owning));
     if (owner == null) return n;
     const held = world
@@ -2080,37 +2084,37 @@ function worldNode(concept, world) {
 function judge(roots, world, mood, langs, sent) {
   if (!world || roots.length !== 1) return roots;
   const root = roots[0];
-  // Greeting somebody is a doing, and it happened. Nothing was done to
-  // anything — an act of communication is no thing — so it goes on the record
-  // as itself, with whoever sent it as the one who did it. One greeting is one
-  // doing and two are two, whether they stand alone or beside each other, and
-  // the conversation can be asked afterwards how many there were.
+  // Somebody is greeting me, and these are the words they said.
+  //
+  // That is the whole of it. Nothing is being said about the world, so nothing
+  // goes into the world; what happened is a doing this conversation holds, by
+  // whoever sent it. Who that is may not have been said — then it is a thing
+  // like any other thing nobody has described. Two greetings are two doings.
   const greetings = mood === 'tell' ? onlyGreetings(root, world) : null;
   if (greetings) {
     const when = world.now();
-    const { agent, target } = world.anchors || {};
-    // Greeting is said by somebody to somebody. Both are the runtime's to say,
-    // and where it says neither, that a greeting happened is still so.
-    const played = [
-      ...(sent.from != null && agent != null ? [{ role: agent, of: sent.from, amount: null }] : []),
-      ...(sent.to != null && target != null ? [{ role: target, of: sent.to, amount: null }] : []),
-    ];
+    // Where nothing says who sent it, somebody did. A signal is something
+    // said, and saying is a person's until the runtime says otherwise — it
+    // may say a device, another brain, anything the world holds.
+    const { agent, person } = world.anchors || {};
+    const greeter = sent.from != null ? sent.from : person;
     return greetings.map((one) => {
-      const action = conceptOf(one);
       const id = sent.allocate();
       return withBranch(one, [
         ...(one.branch || []),
-        node('event', `${world.term(action).name}#${id}`, [], {
+        node('event', `${world.term(conceptOf(one)).name}#${id}`, [], {
           id,
-          action,
+          action: conceptOf(one),
           at: when,
           when: null,
           not: false,
-          parts: played,
+          said: one.state.identity,
+          parts: greeter == null || agent == null ? [] : [{ role: agent, of: greeter, amount: null }],
         }),
       ]);
     });
   }
+
   if (root.kind === 'thing' || root.kind === 'void') return roots;
 
   // A signal joining whole clauses is read one at a time, not folded into one
@@ -3494,9 +3498,26 @@ function because(joined, world, mood, sent) {
     // once: every fact in one offering was denied alike.
     const negated = said.some(negatesOn);
 
+    // `nila is my friend` says friendship, and says it stands between nila and
+    // me. The joint the signal used is the weakest there is; the word standing
+    // after it is the relation itself, and whoever it belongs to is its other
+    // end. Which word says whose is the language's; that a relation has two
+    // ends is the brain's.
+    let joint = relation;
+    if (rights.length === 1 && a.relation != null && relation === world.baseRelation) {
+      const of = conceptOf(rights[0]);
+      const owner = said.find(
+        (n) => functionsOf(n).includes('possessor') && conceptOf(n) != null,
+      );
+      if (of != null && owner != null && world.isA(of, a.relation)) {
+        joint = of;
+        rights = [owner];
+      }
+    }
+
     // Every fact the signal offered, in the order it offered them.
     const pairs = lefts.flatMap((left) => rights.map((right) => [left, right]));
-    const offered = pairs.map(([left, right]) => factFor(left, right, negated, relation)).filter((ns) => ns.length > 0);
+    const offered = pairs.map(([left, right]) => factFor(left, right, negated, joint)).filter((ns) => ns.length > 0);
     if (offered.length === 0) return roots;
     return [withBranch(root, [...root.branch, ...asOneOffering(offered)])];
   }
@@ -6719,6 +6740,17 @@ function givings(roots, world, mood) {
     const rest = roots.slice(i + 1).filter((other) => stands(other, world));
     if (rest.length < 2 || conceptOf(rest[0]) !== world.baseRelation) return;
     if (thought.marks !== 'named' && numberOf(rest[1], world) == null) return;
+    // A name stands for something. What it is given must be something to
+    // stand for — a joining is not: `x is 5` gives x a value, `x is taller
+    // than nila` says something about x, and taking that for a giving binds
+    // the name to the comparison itself and loses the claim.
+    const a = world.anchors || {};
+    const given = conceptOf(rest[1]);
+    if (
+      given != null &&
+      numberOf(rest[1], world) == null &&
+      (world.isA(given, a.relation) || world.isA(given, a.action))
+    ) return;
     // A name holds what it was given, term or amount. No world names every
     // number, and a name given one the world has no word for holds it all the
     // same.
@@ -6980,7 +7012,12 @@ function learnedFrom(roots, world) {
       })),
     ...instructions.flatMap((i) => tookHold(i, world)),
     ...behind,
-    ...events.flatMap((e) => tookPlace(e, world)),
+    // A doing that says nothing about the world does not go into it. Greeting
+    // somebody is something that happened between the two of them, and this
+    // conversation is where it is held.
+    ...events
+      .filter((e) => !world.isA(e.state.action, (world.anchors || {}).communication))
+      .flatMap((e) => tookPlace(e, world)),
     ...learns.flatMap((l) => tookIn(l, world, naming)),
   ]);
   // The surface copula names the broad classification question. Memory keeps
