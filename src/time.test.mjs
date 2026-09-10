@@ -83,6 +83,9 @@ test("a time named is when it happened, not what it happened to", async () => {
 test("two units of one scale come to a number, however many steps apart", async () => {
   await forget();
   assertEquals((await brain("an hour has how many minutes?")).expression.state.says, "sixty");
+  // Said the short way round, where `in` puts the counted thing first.
+  assertEquals((await brain("how many days in a week?")).expression.state.says, "seven");
+  assertEquals((await brain("how many minutes in a day?")).expression.state.says, "1440");
   assertEquals(
     (await brain("a day has how many minutes?")).expression.state.says,
     "1440",

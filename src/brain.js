@@ -2952,12 +2952,24 @@ function because(joined, world, mood, sent) {
           relation: back,
         })),
       ];
+      // Two units of one scale stand in a fixed number to each other, and the
+      // brain walks the steps between them and multiplies — the same
+      // arithmetic that lets five kilograms and ten grams compare. A day is
+      // twenty-four hours and an hour sixty minutes, so a day is what the two
+      // come to together, and nobody has to write the third down.
+      const stepped = (w) =>
+        a.unit != null && world.isA(w.bearer, a.unit) && world.isA(w.of, a.unit)
+          ? unitsIn(w.bearer, w.of, world)
+          : null;
       const counts = (w) =>
         world.held(w.bearer, w.relation, w.of) != null ||
         heldUnder(w.bearer, w.of, world) != null ||
         // What a thing measures may be carried by what it holds rather than
         // written of the thing, and that end is the one that answers.
-        heldUnder(w.bearer, w.of, world, w.relation) != null;
+        heldUnder(w.bearer, w.of, world, w.relation) != null ||
+        // Or one end steps down to the other. Which end holds is settled by
+        // which end answers, and a walk of the steps answers.
+        stepped(w) != null;
       const way = ways.find(counts) ?? ways[0];
       // Asked after a kind it holds none of by name, but several kinds under
       // it, the count is all of those together: a shop of five bats and two
@@ -2972,20 +2984,11 @@ function because(joined, world, mood, sent) {
       // anything on purpose.
       const over = world.heldOver(way.bearer, way.relation, way.of);
       const back = whenIn(said, world) === a.past;
-      // Two units of one scale stand in a fixed number to each other, and the
-      // brain walks the steps between them and multiplies — the same
-      // arithmetic that lets five kilograms and ten grams compare. A day is
-      // twenty-four hours and an hour sixty minutes, so a day is what the two
-      // come to together, and nobody has to write the third down.
-      const stepped =
-        a.unit != null && world.isA(way.bearer, a.unit) && world.isA(way.of, a.unit)
-          ? unitsIn(way.bearer, way.of, world)
-          : null;
       const howMany = back
         ? over.length > 1
           ? over[over.length - 2].quantity
           : null
-        : world.held(way.bearer, way.relation, way.of) ?? under ?? stepped;
+        : world.held(way.bearer, way.relation, way.of) ?? under ?? stepped(way);
       const total = howMany == null ? null : world.termFor(howMany);
       return [
         withBranch(root, [
