@@ -4,6 +4,32 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- **One conversation, one graph.** The conversation graph was held once for the
+  whole process, so two brains over two worlds answered each other's questions
+  and forgot together: teaching only the first that a cat is taller than a dog
+  made the second answer `cat`, and telling the first to forget silenced it
+  again. Each brain now makes its own and hands it in with the rest of what it
+  knows, and the brain holds nothing between calls.
+
+- **A turn that fails to persist is not remembered.** The graph was filled
+  before the change it rests on was written, so a persistence error left the
+  conversation holding a fact the world never took in. Filling it is now held
+  back until the write has succeeded.
+
+- **A failed seed no longer damages what is stored.** Authored links were
+  deleted before the new ones were written, so a source the store would not
+  accept — two terms swapping names, say — left them deleted with nothing put
+  back. Everything the source has goes in first, and only what it no longer has
+  comes out after.
+
+- **What the authored source drops is dropped.** Seeding added and updated but
+  never reconciled removals, so a restarted store spoke a different world from
+  a fresh one built from the same files. Terms, links, anchors and relations
+  the source no longer says are now removed — except an authored term memory
+  still points at, which stays: dropping it would take the memory with it.
+
 ### Added
 
 - **A word said as a name is a name, whatever else it means.** `the dog is

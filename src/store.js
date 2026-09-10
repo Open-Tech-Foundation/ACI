@@ -116,8 +116,13 @@ export async function isEmpty(db) {
 // them, is the same writes in the same order.
 export async function seed(db, world) {
   const learned = 0;
-  await db.execute(sql`delete from link where learned = 0`);
   await stepAside(db, world);
+
+  // Everything the source has goes in first, and only what it no longer has
+  // comes out after. A seed that fails part way leaves the store holding what
+  // it held: the old way took the authored links out before writing the new
+  // ones, so a source the store would not accept — two terms swapping names,
+  // say — left the links deleted and nothing put back.
 
   await db.executeMany(
     sql`insert into term (id, name, value, symbol, individual, disjoint, transitive, asymmetric, symmetric, reflexive, irreflexive, functional, learned)
@@ -170,6 +175,70 @@ export async function seed(db, world) {
               on conflict (name) do update set term = excluded.term`,
       Object.entries(named),
     );
+  }
+
+  await tookOut(db, world);
+}
+
+// What the authored source no longer says.
+//
+// A world shrinks as well as grows: a link is moved, a term dropped, an anchor
+// renamed. Seeding put everything the source has in, and until this ran a
+// store kept for ever whatever any earlier source had said — so a restarted
+// store spoke a different world from a fresh one built from the same files.
+//
+// Only what was authored is ever taken out. What was learned is memory, and a
+// term memory still points at stays, whatever the source now says: the brain
+// would otherwise wake up holding facts about something that is not there.
+async function tookOut(db, world) {
+  const authored = new Set(world.terms.map((t) => t.id));
+  const said = new Set(
+    world.terms.flatMap((t) =>
+      (t.links || []).map((l) => `${t.id}|${l.rel}|${l.to}|${l.at ?? -1}|${l.not ? 1 : 0}`),
+    ),
+  );
+  const links = await rows(
+    db,
+    sql`select term, rel, target, moment, denied from link where learned = 0`,
+  );
+  for (const l of links) {
+    if (said.has(`${l.term}|${l.rel}|${l.target}|${l.moment}|${l.denied}`)) continue;
+    await db.execute(sql`delete from link
+      where learned = 0 and term = ${l.term} and rel = ${l.rel} and target = ${l.target}
+        and moment = ${l.moment} and denied = ${l.denied}`);
+  }
+
+  // A term nothing authored claims any more. Whether it can go depends on
+  // whether anything learned still reaches it.
+  const held = await rows(db, sql`select id from term where learned = 0`);
+  const gone = held.map((t) => t.id).filter((id) => !authored.has(id));
+  for (const id of gone) {
+    const [{ n }] = await rows(
+      db,
+      sql`select count(*) as n from link
+          where learned = 1 and (term = ${id} or rel = ${id} or target = ${id})`,
+    );
+    // Memory still points at it, so it stays. Dropping it would take the
+    // memory with it, and nothing authored is worth that.
+    if (n > 0) continue;
+    await db.execute(sql`delete from link where term = ${id} or rel = ${id} or target = ${id}`);
+    await db.execute(sql`delete from anchor where term = ${id}`);
+    await db.execute(sql`delete from relation where term = ${id}`);
+    await db.execute(sql`delete from term where id = ${id}`);
+  }
+
+  const named = Object.keys(world.anchors || {});
+  const bound = Object.keys(world.relations || {});
+  for (const [table, keep] of [['anchor', named], ['relation', bound]]) {
+    const have = await rows(
+      db,
+      table === 'anchor' ? sql`select name from anchor` : sql`select name from relation`,
+    );
+    for (const one of have) {
+      if (keep.includes(one.name)) continue;
+      if (table === 'anchor') await db.execute(sql`delete from anchor where name = ${one.name}`);
+      else await db.execute(sql`delete from relation where name = ${one.name}`);
+    }
   }
 }
 

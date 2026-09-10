@@ -14,7 +14,7 @@
 // brain(input) takes ONLY the input. The brain's own signature never grows to
 // admit a new source; a new source is a new file in one of those directories.
 import { brainFrom } from './brain.js';
-import { clear as forgetGraph } from './graph.js';
+import { conversation } from './graph.js';
 import { fromSources, speaking } from './knowledge.js';
 import { openStore, seed, readWorld, write, forgetLearned } from './store.js';
 
@@ -53,8 +53,14 @@ export function openBrain(url) {
   // Only the world moves. The languages were read once and checked once, and
   // are handed back as they are: a world that has grown is no reason to merge
   // and check every word of every language again.
-  const build = async (settled = false) =>
-    fromSources({ ...sources, world: await readWorld(store), settled });
+  // This brain's conversation. It belongs to the brain the way the store does,
+  // and goes into what is known so the brain reasons over its own and no other.
+  const talk = conversation();
+
+  const build = async (settled = false) => ({
+    ...fromSources({ ...sources, world: await readWorld(store), settled }),
+    graph: talk,
+  });
 
   async function assemble() {
     const { file } = await import('runtime:fs');
@@ -142,6 +148,8 @@ export function openBrain(url) {
     };
 
     await commit(result.learned);
+    // Written, so the conversation may remember it.
+    result.remember();
 
     // What it agreed to follow, brought round again now something has moved.
     // The brain holds no instruction; it is asked afresh, and where it can act
@@ -158,6 +166,7 @@ export function openBrain(url) {
       });
       if (again.told == null && again.expression.name !== "unsure") {
         await commit(again.learned);
+        again.remember();
         threads.set(thread, {
           spoken: result.spoken,
           focus: result.focus,
@@ -186,14 +195,16 @@ export function openBrain(url) {
   const forget = () => inTurn(async () => {
     threads.clear();
     // The conversation graph goes with the conversation.
-    forgetGraph();
+    talk.clear();
     if (!store) return;
     await forgetLearned(store);
     knowledgePromise = build();
     await knowledgePromise;
   });
 
-  return { brain, forget };
+  // What this brain's conversation holds, and how it says it. The graph is the
+  // brain's, so it is reached through the brain rather than through the module.
+  return { brain, forget, graph: talk.graph, serialize: talk.serialize, conversation: talk };
 }
 
 async function projectRoot(file) {

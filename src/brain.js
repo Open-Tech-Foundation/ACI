@@ -8,7 +8,11 @@
 // (see src/languages.js). It never knows a language's name.
 
 import { Decimal } from '@opentf/std';
-import { fromUnderstood, told, standingIn, namedIn as calledInConversation } from './graph.js';
+
+// The conversation this signal belongs to, for the length of one turn. Set on
+// the way in from what the runtime knows and never read outside a turn — the
+// graph itself belongs to the brain that was opened with it.
+let graph = null;
 
 const $ = Symbol.for('aci.node');
 
@@ -1176,7 +1180,7 @@ function calledHere(roots, world, langs) {
   return roots.map((n, i) => {
     const thought = thoughtOf(n);
     if (!thought || thought.figures) return n;
-    const here = calledInConversation(n.state.identity);
+    const here = graph ? graph.namedIn(n.state.identity) : null;
     if (here == null || here === thought.concept) return n;
     // The conversation says which thing; the world must still hold it, and
     // hold it under the word that was said. What another conversation called
@@ -3001,7 +3005,7 @@ function instructionFrom(when, so, world, langs, sent) {
       // where it is silent. Somebody named a moment ago is in the conversation
       // and not yet in the world, so a question about them reaches nothing
       // there.
-      const here = asksBack ? standingIn(subject, relation) : [];
+      const here = asksBack && graph ? graph.standingIn(subject, relation) : [];
       // Asked after something by name, what answers is whatever has one.
       // Being called something is a fact a thing holds, never a kind it is,
       // so asking whether it *is* a name turns every named thing away.
@@ -5343,6 +5347,11 @@ function grammarOf(root, langs) {
 export function brainFrom(input, knowledge, circumstance) {
   const langs = (knowledge && knowledge.languages) || [];
   const world = (knowledge && knowledge.world) || null;
+  // Which conversation this signal belongs to. One brain, one graph: reading a
+  // turn through to the end never gives way to another, so the brain knows
+  // which conversation it is reasoning in for as long as it takes, and nothing
+  // it holds outlives the call.
+  graph = (knowledge && knowledge.graph) || null;
 
   // Where the signal came from is the runtime's to say — a person, a device, a
   // service, or nothing said at all. Where it went is this brain, unless the
@@ -5407,7 +5416,19 @@ export function brainFrom(input, knowledge, circumstance) {
   // Which side of a word its markers stand on is the language's to declare;
   // the graph is told, and assumes no order of its own.
   const spoken = signalLanguage(thoughtRoots, langs);
-  fromUnderstood(judgedRoots, world, inReach, spoken ? spoken.data.marking : null, at.from);
+  // Held back until the change this turn proposes has been written. A turn
+  // that fails to persist did not happen, and the conversation must not
+  // remember what the world never took in.
+  const remember = () => {
+    if (!graph) return;
+    graph.fromUnderstood(
+      judgedRoots,
+      world,
+      inReach,
+      spoken ? spoken.data.marking : null,
+      at.from,
+    );
+  };
 
   const expressedRoots = express(judgedRoots, langs, world);
   return {
@@ -5416,6 +5437,7 @@ export function brainFrom(input, knowledge, circumstance) {
     roots: expressedRoots,
     expression: expression(expressedRoots, langs, mood, world, at),
     learned,
+    remember,
     spoken: spokenOf(judgedRoots, at, world),
     focus: inReach,
     names: namedIn(solvedRoots, { ...at, world, mood }),

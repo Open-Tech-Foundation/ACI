@@ -1,9 +1,7 @@
 import { test, assert, assertEquals } from 'runtime:test';
 import { openBrain } from './index.js';
 import {
-  graph, serialize,
   TRANSFER, PROPERTY_CHANGE, HOLDING, PLACEMENT, COMPARISON, ORDER, PROPERTY, KIND,
-  ranking, amounts,
 } from './graph.js';
 import { loadWorldFile } from './world.js';
 
@@ -11,7 +9,9 @@ import { loadWorldFile } from './world.js';
 // here is one signal in, and the graph the brain left behind. Nothing reads
 // the brain's own phases: what is checked is what the graph holds.
 
-const { brain, forget } = openBrain('sqlite::memory:');
+const opened = openBrain('sqlite::memory:');
+const { brain, forget, graph, serialize } = opened;
+const { ranking, amounts } = opened.conversation;
 const world = await loadWorldFile(new URL('../data/world.json', import.meta.url).pathname);
 
 const said = async (...lines) => {

@@ -4,9 +4,8 @@
 //
 // Nothing here builds or describes the graph. It calls serialize and prints it.
 import { openBrain } from './src/index.js';
-import { serialize } from './src/graph.js';
 
-const { brain } = openBrain('sqlite::memory:');
+const { brain, serialize } = openBrain('sqlite::memory:');
 const lines = (await import('runtime:process')).args;
 
 if (lines.length === 0) {

@@ -18,6 +18,21 @@
 // The graph holds no words. A concept is an id in the world, and how it is
 // spelled is the world's business, not this module's.
 
+export const TRANSFER = 'transfer';
+export const PROPERTY_CHANGE = 'property-change';
+export const HOLDING = 'holding';
+export const PLACEMENT = 'placement';
+export const COMPARISON = 'comparison';
+export const ORDER = 'order';
+export const PROPERTY = 'property';
+export const KIND = 'kind';
+export const MEASURE = 'measure';
+
+// One conversation, one graph. Two brains are two conversations over their own
+// worlds, and what one was told is nothing to the other — held in one place
+// they would answer each other's questions and forget together. The runtime
+// makes one of these per brain and hands it in with the rest of what is known.
+export function conversation() {
 const held = { nodes: [], facts: [], actions: [], rules: [] };
 const counted = { nodes: 0, facts: 0, actions: 0, rules: 0 };
 const KINDS = ['nodes', 'facts', 'actions', 'rules'];
@@ -42,7 +57,7 @@ let against = null;
 // said, a history there is anything to look back through.
 //
 // Called when a conversation ends, and never between two signals of one.
-export function clear() {
+function clear() {
   for (const kind of KINDS) {
     held[kind].length = 0;
     counted[kind] = 0;
@@ -53,7 +68,7 @@ export function clear() {
   against = null;
 }
 
-export function graph() {
+function graph() {
   return {
     ...Object.fromEntries(
       KINDS.map((kind) => [
@@ -75,7 +90,7 @@ function put(kind, entry) {
 //
 // Things first, then what stands between them and what happened to them: a
 // fact cannot reach a thing that is not there yet.
-export function fromUnderstood(roots, world, focus, marking, from) {
+function fromUnderstood(roots, world, focus, marking, from) {
   against = world;
   const calls = gather(roots, 'call');
   const links = gather(roots, 'learn').filter((one) => one.name === 'link');
@@ -442,15 +457,6 @@ export function fromUnderstood(roots, world, focus, marking, from) {
 // What the world does supply is which of its terms realizes a category the
 // brain owns, and it says so through its anchors — the same bridge the brain
 // already crosses for agent, target, source and destination.
-export const TRANSFER = 'transfer';
-export const PROPERTY_CHANGE = 'property-change';
-export const HOLDING = 'holding';
-export const PLACEMENT = 'placement';
-export const COMPARISON = 'comparison';
-export const ORDER = 'order';
-export const PROPERTY = 'property';
-export const KIND = 'kind';
-export const MEASURE = 'measure';
 
 // Which doing this is.
 //
@@ -546,7 +552,7 @@ function above(relation, world) {
 
 // The quantity a state is a state of. The world says which; where it says
 // nothing, the state is all there is.
-export const quantityOn = (state, world) => {
+const quantityOn = (state, world) => {
   const of = world.anchors && world.anchors.measure != null
     ? world.related(state, world.anchors.measure) || []
     : [];
@@ -722,7 +728,7 @@ function reached(roots, found = []) {
 //
 // This is what makes `is it hot` answerable at all, and it is the same shape
 // as one thing standing above another on a quantity.
-export function inState(thing, state, world = against, from) {
+function inState(thing, state, world = against, from) {
   const of = quantityOn(state, world);
   if (of == null) return null;
   const held = amounts(of, from).get(thing);
@@ -755,7 +761,7 @@ function bandOf(state, world) {
 // Exactly, and not nearly. A fact about one thing is not a fact about its kind
 // or about anything like it, and reaching for one would answer a question
 // nobody asked.
-export function told(subject, relation, object) {
+function told(subject, relation, object) {
   for (const one of held.facts) {
     if (one.said !== relation) continue;
     if (!same(one.parts[0], subject) || !same(one.parts[1], object)) continue;
@@ -767,7 +773,7 @@ export function told(subject, relation, object) {
 // What this conversation calls by a word. Somebody may call a pet `river`, and
 // the world goes on calling a river a river — but here, and until the
 // conversation ends, the word reaches the pet.
-export function namedIn(word) {
+function namedIn(word) {
   if (typeof word !== 'string') return null;
   const wanted = word.toLowerCase();
   for (let i = held.nodes.length - 1; i >= 0; i -= 1) {
@@ -779,7 +785,7 @@ export function namedIn(word) {
 
 // Everything this conversation put on the near side of a relation to a thing:
 // who stands taller than sam, rather than who sam stands taller than.
-export function standingIn(object, relation) {
+function standingIn(object, relation) {
   const found = [];
   for (const one of held.facts) {
     if (one.said !== relation || one.denied) continue;
@@ -814,7 +820,7 @@ const termOf = (part) => {
 // quantity of a thing's own is read off the thing; one taken from another
 // thing is read off the standing between them, and which thing it is taken
 // from has to be named — there is no distance without saying from what.
-export function amounts(quantity, from) {
+function amounts(quantity, from) {
   const found = new Map();
   for (const one of held.nodes) {
     for (const measure of one.measures || []) {
@@ -830,7 +836,7 @@ export function amounts(quantity, from) {
   return found;
 }
 
-export function ranking(quantity, moment) {
+function ranking(quantity, moment) {
   const below = new Map();
   for (const one of held.facts) {
     if (one.of !== COMPARISON || one.properties.on !== quantity) continue;
@@ -870,7 +876,7 @@ function gather(roots, kind, found = []) {
 // The graph, said back. Four headings, always, so an empty one says it is
 // empty rather than going missing. How a concept is spelled is the world's,
 // so it is handed in; told nothing, the graph says the id, which is still true.
-export function serialize(world = against) {
+function serialize(world = against) {
   const spell = (id) => {
     if (id == null) return '—';
     if (typeof id === 'string') return id;
@@ -955,4 +961,18 @@ export function serialize(world = against) {
   section('context', inReach.length ? [`focus: [${inReach.map(spell).join(', ')}]`] : []);
 
   return lines.join('\n');
+}
+
+  return {
+    clear,
+    graph,
+    fromUnderstood,
+    serialize,
+    inState,
+    told,
+    namedIn,
+    standingIn,
+    amounts,
+    ranking,
+  };
 }
