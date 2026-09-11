@@ -4,18 +4,6 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
-### Changed
-
-- **A state says which end of its scale it is.** Sixty-three relations each
-  carried a direction of their own — `more-tall` was a kind of `more`,
-  `more-short` a kind of `less` — which is the world saying in sixty-three
-  places something that belongs once, on the state. `tall` is the top of
-  height and `short` the bottom whatever language names them; that `taller`
-  reads the scale upward is English's to know, not the world's to repeat. The
-  direction is on the state now, and a comparison relation carries only which
-  state it compares. Said bare, `more` and `less` are the direction
-  themselves, and they still are.
-
 ### Added
 
 - **A scale is a scale of something.** `a lamp is brighter than a candle` left
@@ -39,7 +27,45 @@ All notable changes to this project are documented in this file.
   there is no space, no dirt and no sickness in the world to be a scale of,
   and a scale is not worth inventing a thing for.
 
+- **Asked who, only somebody answers.** `who is a heron?` came back unknown
+  with mira on the record as one. Three things were wrong under it, and all
+  three were reading English into the core. An article was counted a pointer —
+  anything marked was — so `a heron` made `who` the same question `who am i`
+  is, asking after a name. English then said `who` *joins by* the name
+  relation, where what it does is ask after somebody who has one. And a
+  question naming a word the brain has never met fell through to saying it did
+  not understand, though it had understood the question whole and simply had
+  nothing to find. `who is a heron?` is mira now, `what is a heron?` is still
+  a bird, `who is a cat?` is unknown because a mammal is nobody, and `who is
+  mira?` answers with what is known of her — told who already, the question is
+  not asking for another somebody.
+
+- **A fact answers from either of its ends.** `dev has 2 kettles` was held, and
+  `what does dev have?` said `kettle` while `who has kettles?` said `I don't
+  know` — the same fact, asked from the other side, and nothing came back. The
+  brain walked out from whatever the question named and never walked back to
+  it, except where the world had declared the relation one-way, which is why
+  `who is taller than dev?` alone worked. Direction was never the test. A fact
+  has two ends whatever the world says about it, so the brain now looks at
+  both and answers from whichever one is there: `who has kettles?` finds a
+  holder walking back and nothing walking out, because kettles hold nothing.
+  Where both ends answer — `mira is taller than dev`, `dev is taller than sam`
+  — which side of the joint the named thing stands on decides, the same way it
+  decides in a statement. `what is on the crate?`, `who has kettles?` and
+  `what is part of a cart?` are answered now, and everything already answered
+  from the near end is untouched.
+
 ### Changed
+
+- **A state says which end of its scale it is.** Sixty-three relations each
+  carried a direction of their own — `more-tall` was a kind of `more`,
+  `more-short` a kind of `less` — which is the world saying in sixty-three
+  places something that belongs once, on the state. `tall` is the top of
+  height and `short` the bottom whatever language names them; that `taller`
+  reads the scale upward is English's to know, not the world's to repeat. The
+  direction is on the state now, and a comparison relation carries only which
+  state it compares. Said bare, `more` and `less` are the direction
+  themselves, and they still are.
 
 - **Measuring runs one way, and a scale is one fact read from either end.**
   `a shed is colder than a hut` left `is a hut warmer than a shed?` unanswered,
@@ -81,34 +107,6 @@ All notable changes to this project are documented in this file.
   marks are gone, and all sixty-three order alike.
 
 ### Added
-
-- **Asked who, only somebody answers.** `who is a heron?` came back unknown
-  with mira on the record as one. Three things were wrong under it, and all
-  three were reading English into the core. An article was counted a pointer —
-  anything marked was — so `a heron` made `who` the same question `who am i`
-  is, asking after a name. English then said `who` *joins by* the name
-  relation, where what it does is ask after somebody who has one. And a
-  question naming a word the brain has never met fell through to saying it did
-  not understand, though it had understood the question whole and simply had
-  nothing to find. `who is a heron?` is mira now, `what is a heron?` is still
-  a bird, `who is a cat?` is unknown because a mammal is nobody, and `who is
-  mira?` answers with what is known of her — told who already, the question is
-  not asking for another somebody.
-
-- **A fact answers from either of its ends.** `dev has 2 kettles` was held, and
-  `what does dev have?` said `kettle` while `who has kettles?` said `I don't
-  know` — the same fact, asked from the other side, and nothing came back. The
-  brain walked out from whatever the question named and never walked back to
-  it, except where the world had declared the relation one-way, which is why
-  `who is taller than dev?` alone worked. Direction was never the test. A fact
-  has two ends whatever the world says about it, so the brain now looks at
-  both and answers from whichever one is there: `who has kettles?` finds a
-  holder walking back and nothing walking out, because kettles hold nothing.
-  Where both ends answer — `mira is taller than dev`, `dev is taller than sam`
-  — which side of the joint the named thing stands on decides, the same way it
-  decides in a statement. `what is on the crate?`, `who has kettles?` and
-  `what is part of a cart?` are answered now, and everything already answered
-  from the near end is untouched.
 
 - **A comma joins.** `the sky is blue, the grass is green` was not understood:
   the comma came off before the brain saw it, leaving two clauses run together
