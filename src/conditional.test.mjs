@@ -83,3 +83,46 @@ test("a chain is walked back a step at a time", async () => {
   assertEquals((await brain("why is a drum cold?")).expression.name, "unsure");
   await forget();
 });
+
+test("a rule naming a kind is about every one of that kind", async () => {
+  await forget();
+  await brain("if a bird is cold then a bell is red");
+  await brain("a wren is cold");
+  assertEquals((await brain("is a bell red?")).expression.name, "affirm", "a wren is a bird");
+  await forget();
+  await brain("if a drum is cold then a bell is red");
+  await brain("tom is a drum");
+  await brain("tom is cold");
+  assertEquals((await brain("is a bell red?")).expression.name, "affirm", "and so is tom a drum");
+  await forget();
+});
+
+test("what met the condition is what the consequence is about", async () => {
+  await forget();
+  await brain("if a thing is cold then it is red");
+  await brain("a drum is cold");
+  assertEquals((await brain("is the drum red?")).expression.name, "affirm");
+  assertEquals(
+    (await brain("is a bell red?")).expression.name,
+    "unsure",
+    "nothing was said of the bell, and a rule is not about everything at once",
+  );
+  await forget();
+});
+
+test("a rule that fired for something else says what happened, not what it said", async () => {
+  await forget();
+  await brain("if a drum is cold then a bell is red");
+  await brain("tom is a drum");
+  await brain("tom is cold");
+  assertEquals(
+    (await brain("why is a bell red?")).expression.state.says,
+    "tom is cold",
+    "it was tom who was cold; saying `a drum is cold` answers with the rule",
+  );
+  await forget();
+  await brain("if a thing is cold then it is red");
+  await brain("a drum is cold");
+  assertEquals((await brain("why is the drum red?")).expression.state.says, "a drum is cold");
+  await forget();
+});
