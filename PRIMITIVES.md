@@ -96,6 +96,11 @@ more world vocabulary.
   and the brain says that what it was told and what follows from what it was
   told disagree, so a wrong rule cannot hide behind the exception it makes.
   Nothing to build until rules land; the rule they must follow is this one.
+- [x] Make the ordering the scale's rather than the word's. Sixty-three
+  comparison relations, one per adjective, meant `hotter` and `warmer` were
+  two orderings on one scale and a chain said half in each reached nothing.
+  Forty collapse into fifteen; the twenty-three on no scale keep their own.
+  Direction is the state's and the end read from is the word's.
 - [x] Join a scale to the thing it is a scale of. `light`, `sound` and `heat`
   were held as kinds of energy and `temperature` as a property, with no
   relation able to say a property is a property of something — so `bright` and

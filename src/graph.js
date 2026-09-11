@@ -651,7 +651,13 @@ function standingOf(relation, object, world) {
 // speaking of one quantity and can be held together.
 const scaleOf = (relation, world) => {
   const on = (world.related(relation, world.anchors.compares) || [])[0];
-  return on == null ? null : quantityOn(on, world) ?? on;
+  if (on == null) return null;
+  // An ordering names its scale outright; a comparison the world put on no
+  // scale names the state, and the state's quantity is what it is compared on.
+  // A scale is what measures states — being a property tells it from nothing,
+  // since a state is a property too.
+  if (world.linked(on, world.anchors.measure).length > 0) return on;
+  return quantityOn(on, world) ?? on;
 };
 
 // Whether the near side of a comparison is the one with more. The world says
@@ -659,6 +665,9 @@ const scaleOf = (relation, world) => {
 // one read from either end is one fact.
 function above(relation, world) {
   const anchors = world.anchors || {};
+  // An ordering runs one way and carries no end of its own; a fact written on
+  // it already runs upward. Only a comparison named by a state reads from the
+  // end that state lies at.
   if (anchors.less != null && world.subrelationOf(relation, anchors.less)) return false;
   if (anchors.compares == null || anchors.toward == null) return true;
   const state = world.linked(relation, anchors.compares)[0];

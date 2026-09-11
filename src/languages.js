@@ -79,20 +79,22 @@ function buildLanguage(data) {
     // Another way this language writes a term, where it has one that is not
     // what the term is called.
     otherWordFor: (concept) => (concept == null ? null : written.get(concept) ?? null),
-    // The word that compares on one scale, where the language has one that is
-    // not what the comparing is called: bigger is more, on size. First word
-    // wins, the way a name does.
-    // The word this language has for a comparison. A comparison names the state
-    // it is made on, so the relation alone finds it: nothing has to be measured
-    // for the brain to say a comparison back, and one made on a state no scale
-    // measures is said the same way as one made on a state that is measured.
-    comparativeFor: (relation) => {
-      if (relation == null) return null;
+    // The word this language compares with, on a state. A language may list one
+    // outright — bigger — or make one out of the state's own word by the same
+    // ending it reads a comparison by, so a state it never listed a comparative
+    // for is still sayable. Listed wins; first word, the way a name does.
+    comparativeFor: (state) => {
+      if (state == null) return null;
+      let plain = null;
       for (const [word, entry] of Object.entries(data.words || {})) {
         const readings = Array.isArray(entry) ? entry : [entry];
-        if (readings.some((info) => info && info.concept === relation)) return word;
+        for (const info of readings) {
+          if (!info || info.concept !== state) continue;
+          if (functionsOf(info).includes('comparison')) return word;
+          if (plain == null) plain = word;
+        }
       }
-      return null;
+      return plain == null ? null : builtFrom(plain, data.derivations);
     },
     // Whether the language ever says one of the term: a word may stand bare,
     // with no article — gravity is a force, not a gravity.
@@ -396,4 +398,26 @@ export async function loadLanguageDirectory(dir) {
     langs.push(fromData(await file(`${dir}/${entry.name}`).json()));
   }
   return langs;
+}
+
+// A word the language never listed, made the way it reads one: the ending that
+// says a comparison, put back on the word it would have been taken off.
+function builtFrom(word, derivations) {
+  for (const rule of derivations || []) {
+    if (!functionList(rule.functions).includes('comparison')) continue;
+    if (typeof rule.ending !== 'string') continue;
+    const becomes = typeof rule.becomes === 'string' ? rule.becomes : '';
+    if (becomes !== '' && !word.endsWith(becomes)) continue;
+    return `${becomes === '' ? word : word.slice(0, -becomes.length)}${rule.ending}`;
+  }
+  return word;
+}
+
+function functionList(value) {
+  if (Array.isArray(value)) return value;
+  return typeof value === 'string' ? [value] : [];
+}
+
+function functionsOf(info) {
+  return functionList(info && info.functions);
 }

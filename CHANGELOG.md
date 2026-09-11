@@ -4,6 +4,27 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- **An ordering belongs to the scale, not to the word.** `a shed is hotter
+  than a hut` and `a hut is warmer than a barn` left `is a shed hotter than a
+  barn?` unanswered — two words for one scale were two unconnected orderings,
+  so a chain said half in each reached nothing. There were sixty-three of
+  them, one per adjective, each a relation of its own carrying only which
+  state it compared. The ordering is the scale's: forty of them collapse into
+  fifteen, one per scale, and hotter and warmer are one ordering read from one
+  end with cooler and colder the other. Twenty-three comparisons the world put
+  on no scale keep their own — that is what having no scale means.
+
+  Direction is no longer a relation's at all. The ordering runs one way and
+  the word chooses the end: `dev is shorter than mira` and `mira is taller
+  than dev` are one fact, written the way the ordering runs and turned round
+  when it is said back.
+
+  `old` sat on time and `young` on age, so `who is the oldest?` and `who is
+  the youngest?` asked two different orderings. Both are age now, and a unit
+  that measures time reads an age, since an age is a time.
+
 ### Added
 
 - **A scale is a scale of something.** `a lamp is brighter than a candle` left

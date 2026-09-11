@@ -17803,82 +17803,98 @@
     "bigger": {
       "pos": "verb",
       "meaning": "bigger",
-      "concept": 2876
+      "concept": 195,
+      "functions": "comparison"
     },
     "larger": {
       "pos": "verb",
       "meaning": "larger",
-      "concept": 2876
+      "concept": 195,
+      "functions": "comparison"
     },
     "newer": {
       "pos": "verb",
       "meaning": "newer",
-      "concept": 2908
+      "concept": 2733,
+      "functions": "comparison"
     },
     "wider": {
       "pos": "verb",
       "meaning": "wider",
-      "concept": 2902
+      "concept": 2727,
+      "functions": "comparison"
     },
     "smaller": {
       "pos": "verb",
       "meaning": "smaller",
-      "concept": 2877
+      "concept": 196,
+      "functions": "comparison"
     },
     "longer": {
       "pos": "verb",
       "meaning": "longer",
-      "concept": 2878
+      "concept": 197,
+      "functions": "comparison"
     },
     "shorter": {
       "pos": "verb",
       "meaning": "shorter",
-      "concept": 2879
+      "concept": 198,
+      "functions": "comparison"
     },
     "heavier": {
       "pos": "verb",
       "meaning": "heavier",
-      "concept": 2881
+      "concept": 200,
+      "functions": "comparison"
     },
     "lighter": {
       "pos": "verb",
       "meaning": "lighter",
-      "concept": 2882
+      "concept": 201,
+      "functions": "comparison"
     },
     "hotter": {
       "pos": "verb",
       "meaning": "hotter",
-      "concept": 2883
+      "concept": 208,
+      "functions": "comparison"
     },
     "colder": {
       "pos": "verb",
       "meaning": "colder",
-      "concept": 2884
+      "concept": 209,
+      "functions": "comparison"
     },
     "faster": {
       "pos": "verb",
       "meaning": "faster",
-      "concept": 2889
+      "concept": 2740,
+      "functions": "comparison"
     },
     "slower": {
       "pos": "verb",
       "meaning": "slower",
-      "concept": 2890
+      "concept": 2741,
+      "functions": "comparison"
     },
     "older": {
       "pos": "verb",
       "meaning": "older",
-      "concept": 2887
+      "concept": 2734,
+      "functions": "comparison"
     },
     "younger": {
       "pos": "verb",
       "meaning": "younger",
-      "concept": 2888
+      "concept": 2735,
+      "functions": "comparison"
     },
     "taller": {
       "pos": "verb",
       "meaning": "taller",
-      "concept": 2880
+      "concept": 199,
+      "functions": "comparison"
     },
     "grandfather": {
       "pos": "noun",

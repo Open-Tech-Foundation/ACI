@@ -208,3 +208,41 @@ test("strength is of force, wetness of water", async () => {
   );
   await forget();
 });
+
+test("one scale is one ordering, whatever word reaches it", async () => {
+  // `hotter` and `warmer` were two relations on one scale, so a chain said
+  // half in one and half in the other reached nothing.
+  assertEquals(
+    (await fresh(
+      "a shed is hotter than a hut",
+      "a hut is warmer than a barn",
+      "is a shed hotter than a barn?",
+    )).expression.name,
+    "affirm",
+  );
+  assertEquals(
+    (await fresh(
+      "a shed is hotter than a hut",
+      "a hut is warmer than a barn",
+      "is a shed warmer than a barn?",
+    )).expression.name,
+    "affirm",
+  );
+  await forget();
+});
+
+test("a comparison is said back with the word it was asked with", async () => {
+  await forget();
+  await brain("a lake is deeper than a pond");
+  // No language lists `deeper`; it is made the way it is read, by the ending
+  // that says a comparison.
+  assertEquals(
+    (await brain("is a lake deeper than a pond?")).expression.state.says,
+    "Yes. ✅ a lake is deeper than a pond.",
+  );
+  assertEquals(
+    (await brain("is a pond shallower than a lake?")).expression.state.says,
+    "Yes. ✅ a pond is shallower than a lake.",
+  );
+  await forget();
+});
