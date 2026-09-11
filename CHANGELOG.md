@@ -22,6 +22,19 @@ All notable changes to this project are documented in this file.
   kept, having no name to be asked for again, and forgetting drops every one
   that was.
 
+- **A session is what it was told, and the world is what was authored.** What
+  a session taught the brain was written into the world — the store every
+  session reads — so a fresh session already knew it:
+
+      [one]  i have 3 cats and 4 cows    I understand.
+      [two]  i have 3 cats and 4 cows    I know.        ← two was never told
+
+  Nothing a session is told reaches the world now. It goes to that session,
+  is kept with its graph under its uuid, and comes back with it when the
+  session is picked up again. The world is `data/world.json` and
+  `knowledge/*.json`, read at startup, one for everybody, and the only way it
+  grows is by someone editing a file.
+
 - **The words the world was missing for things that happen.** Seven kinds of
   event — wedding, robbery, interview, exam, party, match, outage, delay — the
   people who stand in them, and the doings their outcomes need: steal, marry,
@@ -166,6 +179,16 @@ All notable changes to this project are documented in this file.
   whatever stands after is what it was done to. Where nothing stands after,
   whoever did it is what the fact is about, which is what keeps `sara arrived
   before john` about sara and john.
+
+### Removed
+
+- **The world's half of the store.** The store held a copy of the authored
+  world so that what a session learned had somewhere durable to sit. A session
+  keeps its own now, so the copy had nothing left to do: the term, link, anchor
+  and relation tables are gone, and with them seeding, reading the world back,
+  writing a learned row, standing a learned id aside for an authored one, and
+  forgetting what was learned. 480 lines to 65. What the store keeps is a
+  session, by name.
 
 ### Changed
 

@@ -7,28 +7,33 @@
 //
 // Everything the brain knows is loaded here, once, by convention:
 //
-//   data/world.json    the world as authored — the seed, and the export format
+//   data/world.json    the world as authored
 //   languages/*.json   one file per language
 //   knowledge/*.json   anything taught on top of it, world-shaped
+//
+// Those three are the whole of the world, and it is read-only: the only way it
+// grows is by someone editing one of them. What a session is told is the
+// session's, and is kept with that session's graph.
 //
 // brain(input) takes ONLY the input. The brain's own signature never grows to
 // admit a new source; a new source is a new file in one of those directories.
 import { brainFrom, grownBy } from './brain.js';
 import { conversation } from './graph.js';
 import { fromSources, speaking } from './knowledge.js';
-import { openStore, seed, readWorld, write, forgetLearned, keepTalk, readTalk, forgetTalks } from './store.js';
+import { openStore, keepTalk, readTalk, forgetTalks } from './store.js';
 
 const LANGUAGES = 'languages';
 const KNOWLEDGE = 'knowledge';
 const WORLD = 'data/world.json';
 
-// One brain over one store. Anyone wanting a world of their own opens one —
-// a store in memory is a world nothing else can reach, which is what a test
+// One brain over one store. The store keeps sessions, not the world — a store
+// in memory is a set of sessions nothing else can reach, which is what a test
 // wants and what two brains on one machine want.
 export function openBrain(url) {
   let knowledgePromise = null;
   let sources = null;
   let store = null;
+  let authored = null;
 
   // One thing at a time at the store: a read left running blocks the next
   // write, and two answers at once would otherwise interleave.
@@ -47,20 +52,19 @@ export function openBrain(url) {
     return knowledgePromise;
   };
 
-  // The store keeps the world; the shape check reads it back the same way it
-  // reads any other source. Where it came from is not the brain's business,
-  // and it is validated all the same.
-  // Only the world moves. The languages were read once and checked once, and
-  // are handed back as they are: a world that has grown is no reason to merge
-  // and check every word of every language again.
-  const build = async (settled = false) =>
-    fromSources({ ...sources, world: await readWorld(store), settled });
+  // The world, as authored. It is read from the files and never written to:
+  // one world, the same for every session, and the only way it grows is by
+  // someone editing a file. What a session is told belongs to that session.
+  const build = async () => fromSources({ ...sources, world: authored });
 
   // A conversation is many signals over one graph, so the graph belongs to the
   // conversation and not to the brain. One brain may be holding several at
   // once — two people talking to it are two conversations over one world — and
   // what one was told is nothing to the other.
   const talks = new Map();
+  // What each session has been told, and the world that is the authored world
+  // plus it. A session reasons over its own; nothing it says reaches another.
+  const grown = new Map();
   const ALONE = Symbol('one thread');
 
   async function assemble() {
@@ -69,13 +73,7 @@ export function openBrain(url) {
     if (!root) throw new Error(`cannot find ${WORLD} — the brain has no world`);
 
     store = await open(root);
-    const authored = await file(`${root}${WORLD}`).json();
-    // Validate before the authored source is allowed to change persistent
-    // state. The same door checks it again after memory is assembled.
-    fromSources({ world: authored });
-    // Every open, not only the first: the authored world may have grown since
-    // this store was written, and what was learned is kept through it.
-    await seed(store, authored);
+    authored = await file(`${root}${WORLD}`).json();
 
     sources = {
       knowledge: await readAll(root, KNOWLEDGE),
@@ -114,7 +112,7 @@ export function openBrain(url) {
   // The graph this conversation has been filling. A named one is kept, so a
   // conversation the brain has not heard from — in this run or an earlier one —
   // is picked up where it was left rather than said again from the start.
-  async function pickUp(thread) {
+  async function pickUp(thread, base) {
     const already = talks.get(thread);
     if (already) return already;
     const talk = conversation();
@@ -126,6 +124,9 @@ export function openBrain(url) {
     // What a word in the next signal lands on comes back with it. A
     // conversation picked up mid-sentence still knows what `it` was.
     if (kept.thread) threads.set(thread, kept.thread);
+    // And what it was told: the authored world with this session's own on top
+    // of it, which is the world this session has been reasoning over.
+    if (kept.learned) grown.set(thread, { learned: kept.learned, world: grownBy(base, kept.learned) });
     return talk;
   }
 
@@ -135,7 +136,13 @@ export function openBrain(url) {
   async function settle(thread, talk, record) {
     threads.set(thread, record);
     if (thread === ALONE || !store) return;
-    await keepTalk(store, thread, { graph: talk.dump(), thread: record }, Date.now());
+    const mine = grown.get(thread);
+    await keepTalk(
+      store,
+      thread,
+      { graph: talk.dump(), thread: record, learned: mine ? mine.learned : null },
+      Date.now(),
+    );
   }
 
   // The circumstance of the signal — where it came from, where it went, what
@@ -147,8 +154,11 @@ export function openBrain(url) {
     // on the way, and a conversation kept in it cannot be read back before
     // there is a store to read it from.
     const known = await loaded();
-    const talk = await pickUp(thread);
+    const talk = await pickUp(thread, known.world);
     const held = threads.get(thread) || {};
+    // The world this session reasons over: the authored world, and whatever it
+    // has been told on top of it. Another session's is not in it.
+    const mine = () => ({ ...known, world: (grown.get(thread) || known).world, graph: talk });
     // Who spoke, and who was spoken to, arrive with each signal or not at
     // all: the runtime never carries them across signals. What was spoken of,
     // the names given, the focus list and the last language the brain actually
@@ -160,31 +170,24 @@ export function openBrain(url) {
       language: held.language ?? null,
       ...(circumstance || {}),
     };
-    const knowledge = { ...known, graph: talk };
-    const result = brainFrom(input, knowledge, said);
+    const result = brainFrom(input, mine(), said);
     const standing = [...(held.told || [])];
     if (result.told && !standing.includes(result.told)) standing.push(result.told);
-    // What the brain accepted, put where it will still be after the turn. A
-    // turn is not acknowledged until the complete proposed change is
-    // committed; persistence errors surface to the caller. One door for both
-    // ways a turn can reach a fact — stated outright, or reached at last by
-    // acting on something agreed to earlier — because they are the same fact.
-    const commit = async (accepted) => {
+    // What the brain accepted goes to the session it was told to, and nowhere
+    // else: the authored world does not move. One door for both ways a turn
+    // can reach a fact — stated outright, or reached at last by acting on
+    // something agreed to earlier — because they are the same fact.
+    const commit = (accepted) => {
       if (!accepted) return;
-      await write(store, accepted);
-      // The brain weighed this change against this world and accepted it, so
-      // the world it holds is the world plus that change: reading three
-      // thousand terms back out of the store to find the one that moved is
-      // work nobody asked for. The store still has it, and a brain that opens
-      // again reads it from there.
-      const was = await knowledgePromise;
-      const now = { ...was, world: grownBy(was.world, accepted) };
-      knowledgePromise = Promise.resolve(now);
-      await knowledgePromise;
+      const was = grown.get(thread) || { learned: { terms: [] }, world: known.world };
+      grown.set(thread, {
+        learned: { terms: [...(was.learned.terms || []), ...(accepted.terms || [])] },
+        world: grownBy(was.world, accepted),
+      });
     };
 
-    await commit(result.learned);
-    // Written, so the conversation may remember it.
+    commit(result.learned);
+    // Held, so the conversation may remember it.
     result.remember();
 
     // What it agreed to follow, brought round again now something has moved.
@@ -192,7 +195,7 @@ export function openBrain(url) {
     // on one at last, that is its answer.
     for (const instruction of standing) {
       if (instruction === String(input)) continue;
-      const again = brainFrom(instruction, { ...(await loaded()), graph: talk }, {
+      const again = brainFrom(instruction, mine(), {
         spoken: result.spoken,
         focus: result.focus,
         names: result.names,
@@ -201,7 +204,7 @@ export function openBrain(url) {
         to: said.to,
       });
       if (again.told == null && again.expression.name !== "unsure") {
-        await commit(again.learned);
+        commit(again.learned);
         again.remember();
         await settle(thread, talk, {
           spoken: result.spoken,
@@ -234,11 +237,9 @@ export function openBrain(url) {
     // and empty: a caller holding one is holding that conversation, and it is
     // the same conversation after it has been forgotten.
     for (const talk of talks.values()) talk.clear();
+    grown.clear();
     if (!store) return;
     await forgetTalks(store);
-    await forgetLearned(store);
-    knowledgePromise = build();
-    await knowledgePromise;
   });
 
   // What is reached through the brain is the unnamed thread — the conversation

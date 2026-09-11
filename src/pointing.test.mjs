@@ -78,13 +78,18 @@ test("two conversations over one world do not finish each other's sentences", as
   await forget();
 });
 
-test("what one conversation taught, every conversation knows", async () => {
+test("what one session was told is the session's, and no other's", async () => {
   await forget();
   await brain("a basket holds three apple", { conversation: "one" });
   assertEquals(
-    (await brain("a basket holds how many apples?", { conversation: "two" })).expression.state.says,
+    (await brain("a basket holds how many apples?", { conversation: "two" })).expression.name,
+    "unsure",
+    "the world is what was authored; a session is what it was told",
+  );
+  assertEquals(
+    (await brain("a basket holds how many apples?", { conversation: "one" })).expression.state.says,
     "three",
-    "the world is one, the threads are many",
+    "and the session that was told still knows it",
   );
   await forget();
 });
