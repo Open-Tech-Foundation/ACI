@@ -2340,6 +2340,57 @@ function instructionFrom(when, so, world, langs, sent) {
 // standing instruction are — and the reason is joined to what it is the reason
 // for. Nothing here is the fact either claim speaks of: a claim is a thing that
 // says something, not the saying of it.
+// A claim somebody holds. `i know that ice is a solid` says two things: that
+// ice is a solid, which the brain checks and does not take in — saying you
+// know something is not telling the brain it is so — and that the sender
+// knows it, which is a fact about the sender and the claim, and is the
+// brain's to keep.
+//
+// The claim is written down as a thing, the way one standing behind another
+// already is, and whoever holds it is joined to it by whatever the signal
+// joined them with. Which words join somebody to a claim is the language's;
+// that a claim is something a relation can reach is the brain's.
+function aboutClaim(root, spoken, verdict, world, mood, sent) {
+  if (mood !== 'tell' || !world || sent == null || sent.allocate == null) return [];
+  const a = world.anchors || {};
+  if (a.subject == null || a.object == null) return [];
+  const stood = verdict.find((n) => n.kind === 'standing');
+  if (!stood || stood.state.subject == null || stood.state.relation == null) return [];
+  // Knowing something is knowing something that is so. Where the brain stands
+  // against the claim it says so, and there is nothing about the sender to
+  // keep: they did not know it. Where it merely has not been told, what the
+  // sender said is a fact about the sender all the same.
+  if (stood.name === 'against') return [];
+  const outside = [];
+  const gather = (n) => {
+    if (n === spoken) return;
+    if (n.kind === 'thing') outside.push(n);
+    (n.branch || []).forEach(gather);
+  };
+  gather(root);
+  const joint = outside.find((n) => reaches(n, a.relation, world) && conceptOf(n) !== world.baseRelation);
+  if (joint == null) return [];
+  const holder = nearest(outside, outside.indexOf(joint), -1, (n) => conceptOf(n) != null);
+  if (holder == null) return [];
+  const of = conceptOf(holder);
+  const bearer = bearerOf(of, world, markAt(holder), sent.allocate);
+  if (bearer == null) return [];
+  return [
+    node('about', 'claim', [], {
+      holder: bearer.id,
+      of: bearer.made ? of : null,
+      relation: conceptOf(joint),
+      claimId: sent.allocate(),
+      claim: {
+        subject: stood.state.subject,
+        relation: stood.state.relation,
+        object: stood.state.object,
+        negated: Boolean(stood.state.negated),
+      },
+    }),
+  ];
+}
+
 function because(joined, world, mood, sent) {
   if (mood !== 'tell' || !world || sent == null || sent.allocate == null) return [];
   const a = world.anchors || {};
@@ -2383,7 +2434,12 @@ function because(joined, world, mood, sent) {
   const spoken = claimWithin(root);
   if (spoken) {
     const [checked] = judge([spoken], world, 'ask', langs, sent);
-    return [withBranch(root, [...root.branch, ...(checked.branch || []).filter(taken)])];
+    const verdict = (checked.branch || []).filter(taken);
+    return [withBranch(root, [
+      ...root.branch,
+      ...verdict,
+      ...aboutClaim(root, spoken, verdict, world, mood, sent),
+    ])];
   }
 
   const join = joinIn(root);
@@ -7281,12 +7337,14 @@ function learnedFrom(roots, world) {
   // belongs to neither half. It is looked for over the whole signal, before
   // the halves are taken one at a time.
   const reasons = [];
+  const about = [];
   const seek = (n) => {
     if (n.kind === 'cause') reasons.push(n);
+    if (n.kind === 'about') about.push(n);
     (n.branch || []).forEach(seek);
   };
   roots.forEach(seek);
-  const behind = reasons.flatMap((c) => stoodBehind(c, world));
+  const behind = [...reasons.flatMap((c) => stoodBehind(c, world)), ...about.flatMap((n) => heldAbout(n, world))];
 
   const together = roots.length > 1 ? roots : apart(roots, world);
   if (together) {
@@ -7316,7 +7374,8 @@ function learnedFrom(roots, world) {
     learns.length === 0 &&
     instructions.length === 0 &&
     called.length === 0 &&
-    causes.length === 0
+    causes.length === 0 &&
+    about.length === 0
   ) return null;
   // What was named in this signal is not in the world yet, so its name is
   // known here and nowhere else.
@@ -7481,6 +7540,36 @@ function awoken(roots, world, mood) {
     }
   }
   return follows.length === 0 ? roots : [withBranch(root, [...root.branch, ...follows])];
+}
+
+// A claim somebody holds, written down: the claim as a thing of its own, and
+// whoever holds it joined to it. The same shape one claim standing behind
+// another already takes — a claim is a thing a relation can reach, and it
+// does not matter which relation reaches it.
+function heldAbout(held, world) {
+  const a = world.anchors || {};
+  const { holder, of, relation, claimId, claim } = held.state;
+  return [
+    {
+      id: claimId,
+      name: `claim#${claimId}`,
+      individual: true,
+      links: [
+        { rel: world.baseRelation, to: claim.relation, ...(claim.negated ? { not: true } : {}) },
+        { rel: a.subject, to: claim.subject },
+        { rel: a.object, to: claim.object },
+      ],
+    },
+    {
+      id: holder,
+      name: world.term(holder) ? world.term(holder).name : `${world.term(of) ? world.term(of).name : 'thing'}#${holder}`,
+      ...(of == null ? {} : { individual: true }),
+      links: [
+        ...(of == null ? [] : [{ rel: world.baseRelation, to: of }]),
+        { rel: relation, to: claimId },
+      ],
+    },
+  ];
 }
 
 // One claim being so as the reason another is: both written down as things,

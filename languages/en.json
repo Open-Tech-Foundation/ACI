@@ -1451,18 +1451,40 @@
       "meaning": "have",
       "concept": 295
     },
-    "know": {
-      "pos": "verb",
-      "meaning": "know",
-      "concept": 285
-    },
-    "knows": {
-      "pos": "verb",
-      "meaning": "knows",
-      "concept": 285,
-      "person": "third",
-      "number": "singular"
-    },
+    "know": [
+      {
+        "pos": "verb",
+        "meaning": "know",
+        "concept": 3008,
+        "select": {
+          "before": "proposition"
+        }
+      },
+      {
+        "pos": "verb",
+        "meaning": "know",
+        "concept": 285
+      }
+    ],
+    "knows": [
+      {
+        "pos": "verb",
+        "meaning": "knows",
+        "concept": 3008,
+        "person": "third",
+        "number": "singular",
+        "select": {
+          "before": "proposition"
+        }
+      },
+      {
+        "pos": "verb",
+        "meaning": "knows",
+        "concept": 285,
+        "person": "third",
+        "number": "singular"
+      }
+    ],
     "plus": {
       "pos": "verb",
       "meaning": "plus",

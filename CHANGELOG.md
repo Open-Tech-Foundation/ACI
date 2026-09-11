@@ -4,6 +4,27 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **A claim is a thing a relation can reach.** `i know that ice is a solid`
+  was read and the claim checked, and then everything outside it was thrown
+  away — who said it, and what joined them to it. Only `because` ever reached
+  a claim, and only because the one reading that makes claims built both ends
+  of it itself.
+
+  The claim is written down as a thing now, the way one standing behind
+  another already was, and whoever holds it is joined to it by whatever the
+  signal joined them with. Saying you know something is still not telling the
+  brain it is so — nothing is said about ice — but that the sender knows it is
+  a fact about the sender, and the brain keeps it. Knowing is knowing
+  something that is so, so a claim the brain stands against leaves nothing to
+  keep: it says no, and that is all.
+
+  English gains a second reading of `know`, taken when a claim follows, and
+  the world gains the relation it names. Which words join somebody to a claim
+  is the language's; that a claim is something a relation can reach at all is
+  the brain's.
+
 ### Fixed
 
 - **A kind is no reason.** `why is the lamp broken?` answered `tool`, with

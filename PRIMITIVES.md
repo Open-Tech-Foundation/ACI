@@ -145,10 +145,14 @@ Every later primitive depends on trustworthy identity, typing and relations.
   because the wind is strong` already writes two `claim` terms, each holding
   `claim-subject`, `claim-object` and the relation it claims, and joins them
   by `cause`. Scope is not represented.
-- [ ] Make a proposition a legal endpoint of *any* relation. Only `cause` and
-  the instruction pair reach one today, and they are built by the two readings
-  that make claims; nothing general exists, and no language says one, so
-  `i know the door is open` is not read at all.
+- [x] Make a proposition a legal endpoint of *any* relation. A signal that
+  speaks of a claim now writes the claim down and joins whoever holds it to it
+  by whatever the signal joined them with. English says one with `know that`,
+  and the world holds the relation that names. What a relation over a claim
+  *means* — knowledge against belief, evidence, modality — remains phase 5's.
+- [ ] Ask back over a claim. `do i know that a mango is a fruit?` answers
+  about the mango rather than about the knowing: a question reaches the claim
+  and stops there, where a statement now reaches past it.
 - [ ] Store safe conditional rules and derive them deterministically with an
   inspectable proof path.
 - [ ] Add variables and quantifier scope without closed-world inference.
