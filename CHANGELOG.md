@@ -6,6 +6,19 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **How long something lasted can be asked back.** `the lecture lasted three
+  hours` was taken in and held, and asked how long the lecture was the brain
+  said it did not know — the fact was there and nothing could reach it. What
+  stood in the way is that a rope is long and a lecture is long, and the two
+  are not the same longness: `long` stood on length and on nothing else, so a
+  lecture measured in hours was measured on a quantity the question never
+  asked about.
+
+  A state may stand on more than one quantity, and which one a signal means is
+  the one its unit reads: metres say length, hours say time. `how long is the
+  rope?` is two metres and `how long was the lecture?` is three hours, and
+  neither had to be told which sort of long it was.
+
 - **Kinship runs both ways.** `tom is the father of sam` left the brain unable
   to say anything at all about sam: twelve of a hundred and eighty-six
   relations had a converse, and every kinship word hung straight off `kinship`

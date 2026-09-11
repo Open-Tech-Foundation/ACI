@@ -25,5 +25,10 @@ a shelf holds 4 stamps
 a shelf holds 6 stamps
 how many stamps does a shelf hold? => unsure
 
+# A rope is long and a lecture is long, and the two are not the same longness.
+# Which quantity is meant is the one the unit reads.
 the lecture lasted three hours
-how long was the lecture? ?> I don't know.
+how long was the lecture? => three hours
+
+the rope is 2 metres long
+how long is the rope? => two metres

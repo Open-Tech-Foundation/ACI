@@ -46,15 +46,28 @@ test("measure runs one way", () => {
   assertEquals(back, []);
 });
 
-test("a state is measured on exactly one scale", () => {
+test("a state stands on a quantity, and may stand on more than one", () => {
   const { measure, toward } = world.anchors;
-  const many = [];
-  for (const term of world.data.terms) {
-    if (world.linked(term.id, toward).length === 0) continue;
-    const scales = world.members(term.id, measure);
-    if (scales.length > 1) many.push(`${term.name}: ${scales.length}`);
-  }
-  assertEquals(many, []);
+  // Twenty-three states the world orders stand on no quantity at all — being
+  // tired is ordered without anything saying what tiredness is measured on —
+  // and until one does, a change between two of them is not read as a change.
+  const loose = world.data.terms.filter(
+    (term) => world.linked(term.id, toward).length > 0
+      && world.members(term.id, measure).length === 0,
+  );
+  assertEquals(loose.length, 23);
+
+  // A rope is long and a meeting is long, and the two are not the same
+  // longness. Which quantity is meant is settled by the unit it is said in:
+  // metres say length, hours say time.
+  const long = world.named("long");
+  const on = world.members(long, measure).map((one) => world.term(one).name).sort();
+  assertEquals(on, ["length", "time"]);
+  const metre = world.named("metre");
+  const hour = world.named("hour");
+  assertEquals(world.linked(metre, measure).includes(world.named("length")), true);
+  assertEquals(world.linked(metre, measure).includes(world.named("time")), false);
+  assertEquals(world.linked(hour, measure).includes(world.named("time")), true);
 });
 
 test("one ordering per scale, and no word has one of its own", () => {

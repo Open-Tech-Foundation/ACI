@@ -606,8 +606,11 @@ function measuring(roots, world) {
     for (const step of [1, -1]) {
       const beside = roots[at + step];
       if (!beside || absorbed.has(at + step)) continue;
-      const of = quantityOn(conceptOf(beside), world);
-      if (of == null || !serves.includes(of)) continue;
+      // A state may stand on more than one quantity — a rope is long and so is
+      // a meeting, and neither is long in the other's way — so which one is
+      // meant is the one this unit reads: metres say length, hours say time.
+      const of = quantitiesOn(conceptOf(beside), world).find((one) => serves.includes(one));
+      if (of == null) continue;
       measures.set(at, of);
       absorbed.add(at + step);
       break;
@@ -648,10 +651,17 @@ function measuring(roots, world) {
 // measures weight, and weight measures heavy — so what a state is measured on
 // is found by asking what measures it, never by reading a link off the state.
 function quantityOn(state, world) {
-  const a = world.anchors || {};
-  if (state == null || a.measure == null) return null;
-  const of = world.members(state, a.measure) || [];
+  const of = quantitiesOn(state, world);
   return of.length ? of[0] : null;
+}
+
+// Every quantity a state stands on. One state may stand on more than one — a
+// rope is long and a meeting is long, and the two are not the same longness —
+// and which of them is meant is settled by what else the signal said.
+function quantitiesOn(state, world) {
+  const a = world.anchors || {};
+  if (state == null || a.measure == null) return [];
+  return world.members(state, a.measure) || [];
 }
 
 // What a clause leaves unsaid, taken from what stands beside it.
