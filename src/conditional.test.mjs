@@ -156,3 +156,20 @@ test("somebody is some person", async () => {
   assertEquals((await brain("is tom red?")).expression.name, "affirm");
   await forget();
 });
+
+test("a condition about every one of a kind is one it cannot check", async () => {
+  await forget();
+  // Being told one person is busy is not being told they all are, and not
+  // being told of another is not being told there is none.
+  await brain("if everyone is busy then a lantern is bright");
+  await brain("mira is a person");
+  await brain("mira is busy");
+  assertEquals((await brain("is a lantern bright?")).expression.name, "unsure");
+  await forget();
+  // Said of some one of them, the same signals answer.
+  await brain("if someone is busy then a lantern is bright");
+  await brain("mira is a person");
+  await brain("mira is busy");
+  assertEquals((await brain("is a lantern bright?")).expression.name, "affirm");
+  await forget();
+});

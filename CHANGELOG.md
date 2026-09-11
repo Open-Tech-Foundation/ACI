@@ -22,6 +22,11 @@ All notable changes to this project are documented in this file.
 
   Some of a kind is still not all of it: `something is cold` says nothing
   about any particular thing, where `a thing is cold` makes every thing cold.
+  And a rule about every one of a kind is one the brain cannot tell has been
+  met — it would have to know there is no other, and it never does, since not
+  being told of one is not being told there is none. `if someone is busy` is
+  met by anybody busy; `if everyone is busy` is met by nothing it can check,
+  so it is not a rule it keeps.
 
 
 - **A rule naming a kind is about every one of that kind.** Every rule was

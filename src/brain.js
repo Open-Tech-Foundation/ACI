@@ -2324,14 +2324,20 @@ function instructionFrom(when, so, world, langs, sent) {
     const [seen] = judge([part], world, 'ask', langs, sent);
     const stood = (seen.branch || []).find((n) => n.kind === 'standing');
     if (!stood) return null;
-    const { subject, relation, object, negated } = stood.state;
+    const { subject, relation, object, negated, many } = stood.state;
     return subject == null || relation == null || object == null
       ? null
-      : { subject, relation, object, negated: Boolean(negated) };
+      : { subject, relation, object, negated: Boolean(negated), many: many ?? null };
   };
   const on = sideOf(when);
   const then = sideOf(so);
   if (!on || !then) return [];
+  // A condition about every one of a kind is one the brain cannot tell has
+  // been met. It would have to know there is no other, and it never does: not
+  // being told of one is not being told there is none. `if something is busy`
+  // is met by anything busy; `if everyone is busy` is met by nothing it can
+  // check, so the rule is not one it can keep.
+  if (a.all != null && on.many === a.all) return [];
   return [
     node('instruction', 'kept', [], {
       id: sent.allocate(),
@@ -2942,7 +2948,11 @@ function because(joined, world, mood, sent) {
       const asked = wording && wording.compares != null
         ? { compares: wording.compares, turned: directionOf(rel, world, said[at]) === a.less }
         : {};
-      const added = [node('standing', stands, [], { subject, relation: rel, object, negated: isDenied, ...asked })];
+      // How many of the kind the claim was about, where the signal said. Told
+      // nothing, nothing is added: a claim says what it says, and a field
+      // saying `nobody mentioned` is not part of it.
+      const scoped = howMany == null ? {} : { many: howMany };
+      const added = [node('standing', stands, [], { subject, relation: rel, object, negated: isDenied, ...scoped, ...asked })];
 
       // Offered a fact nothing it holds bears on, the brain takes it in unless
       // something stands against it. A reverse edge is contradictory only
