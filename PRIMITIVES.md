@@ -38,7 +38,7 @@ universe; the nature or essence of an entity may later be an ordinary relation.
 | Identity | Implemented | Stable term ids, named individuals, deterministic id allocation, self and contextual pointers. `same` is reflexive, symmetric and transitive; equivalent representatives substitute through classification, relations, denials and quantity state without copying facts. `different` is a general symmetric, irreflexive relation and numeric equality remains exact. | Rich identity criteria for changing objects and events belong with the later state/event foundations. |
 | Classification | Partial | Explicit transitive `subtype`, direct `instance` and non-classifying `predication` relations retain a compatible broad `is` surface; inherited positive and negative facts, disjoint kinds, cycle rejection, kind versus individual metadata, and open-world living/nonliving/unknown judgement. | Legacy authored classification edges remain accepted and interpreted during migration. General class intersection, union and complement are not represented. |
 | Relations | Partial | Direct, declared-transitive and subrelation walks; converse, symmetric, reflexive, irreflexive, functional, domain and range semantics; explicit denial, asymmetry and contradiction checks. | Inverse-functional semantics. |
-| Propositions and logic | Partial | Held, against and absent are distinct; negation is explicit; multi-fact learning is atomic; conjunction, immediate conditions and basic quantifier scope work. | A proposition cannot itself be the subject or object of knowledge. Stored rules, variables, implication chains, general disjunction, biconditionals and proof explanations are missing. |
+| Propositions and logic | Partial | Held, against and absent are distinct; negation is explicit; multi-fact learning is atomic; conjunction, immediate conditions and basic quantifier scope work. A claim is already a term of its own — subject, object, the relation it claims and its polarity — and `cause` relates one claim to another. | No relation but cause and the instruction pair reaches a claim, and no language says one: `i know the door is open` is not read. Stored rules, variables, implication chains, general disjunction, biconditionals and proof explanations are missing. |
 | Composition | Partial | Transitive strict `part` and converse `made-of`; atom, molecule, element and matter connect to the universe. | Component, material, member and portion are conflated. Direct part, cardinality, structural role and required versus optional parts are absent. |
 | Space | Partial | `in`, `on` and `under` facts; current placement with retained history; position labels such as left/right and near/far. | Binary spatial relations, containment topology, overlap/contact, distance values, reference frames and motion paths. `in` is currently also the converse of general holding. |
 | Time | Partial | Deterministic logical ticks, retained history, past/now/future, strict transitive before/after and coarse event time. | Duration, intervals, start/end, simultaneity, overlap, event-to-event order, exact temporal references and arbitrary historical queries. |
@@ -140,15 +140,15 @@ Every later primitive depends on trustworthy identity, typing and relations.
 
 ### 2. First-class propositions and rules
 
-- [ ] Represent a proposition as data with subject, relation, object, polarity
-  and scope. A link cannot be addressed, so a proposition is an endpoint only
-  by being a term: this needs its own anchors, and `checkWhole`'s
-  classification walk, domain/range inference and disjointness checks must all
-  be taught that a proposition's own links are not classification. Stored facts
-  keep the current link format; the proposition that names one is new.
-- [ ] Make a proposition a legal endpoint of any relation. Which relations mean
-  what over one — cause, knowledge, belief, evidence, modality — is phase 5's;
-  this phase only makes them expressible.
+- [x] Represent a proposition as data with subject, relation, object and
+  polarity. Done ahead of this plan and not recorded: `the door is open
+  because the wind is strong` already writes two `claim` terms, each holding
+  `claim-subject`, `claim-object` and the relation it claims, and joins them
+  by `cause`. Scope is not represented.
+- [ ] Make a proposition a legal endpoint of *any* relation. Only `cause` and
+  the instruction pair reach one today, and they are built by the two readings
+  that make claims; nothing general exists, and no language says one, so
+  `i know the door is open` is not read at all.
 - [ ] Store safe conditional rules and derive them deterministically with an
   inspectable proof path.
 - [ ] Add variables and quantifier scope without closed-world inference.
