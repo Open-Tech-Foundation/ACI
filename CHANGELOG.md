@@ -4,6 +4,25 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **Being able to do something is a fact about the thing.** `a wren can fly`
+  was held at arm's length, checked against what the brain already knew, and
+  dropped — so the brain held no ability at all, and the signal left it exactly
+  as it was. Every modal read the same way, and `can` is not `might`: one says
+  what a thing is able to do, and the other holds a claim out and asks.
+
+  What a thing can do is an ordinary fact and the world keeps it. `a bird can
+  fly` makes a wren and a heron able to fly and says nothing about a trout, and
+  `a wren can fly` says nothing about birds — not being told is still not being
+  told otherwise. `might` is unchanged: it says nothing about what a thing can
+  do, and is still checked and let go.
+
+  Which of the two a signal means is settled by a doing standing after the
+  word, so a language may now say that a word is picked out by one. And
+  something done is not one of a kind, so it takes no article: a wren can fly,
+  never a wren can a fly.
+
 ### Fixed
 
 - **What the brain says it did is what it did.** `a box holds 3 red balls and
