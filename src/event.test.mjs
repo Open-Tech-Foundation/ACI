@@ -82,3 +82,21 @@ test("where the doing stood is where each of them stood", async () => {
   assertEquals((await brain("where is arun?")).expression.state.says, "on a road");
   await forget();
 });
+
+test("a doing holds what came of it", async () => {
+  await fresh("a road became wet because a plank fell");
+  const graph = serialize();
+  assert(/property-change\(n1\)/.test(graph), `the road changed:\n${graph}`);
+  assert(/action\(n2, type: fall\[\d+\]\)\s+holds a1/.test(graph), `and the falling holds it:\n${graph}`);
+  await forget();
+});
+
+test("what a doing left behind is not said of the doer", async () => {
+  // `wet` stood after `became` and was read as describing whatever the next
+  // clause named, so the plank came out wet.
+  await fresh("a road became wet because a plank fell");
+  const graph = serialize();
+  assert(/n1  road.*wetness: wet/.test(graph), `the road is wet:\n${graph}`);
+  assert(!/n2  plank.*wetness/.test(graph), `and the plank is not:\n${graph}`);
+  await forget();
+});

@@ -96,6 +96,9 @@ function fromUnderstood(roots, world, focus, marking, from) {
   const links = gather(roots, 'learn').filter((one) => one.name === 'link');
   const events = gather(roots, 'event');
   const instructions = gather(roots, 'instruction');
+  // One occurrence being the reason another happened. The brain works out
+  // which is which; the graph only has to hang the one off the other.
+  const causes = gather(roots, 'cause');
   // What was claimed, whether or not the world had it already. A signal saying
   // something the brain knew still said it, and the conversation holds it.
   const claims = gather(roots, 'standing');
@@ -415,6 +418,9 @@ function fromUnderstood(roots, world, focus, marking, from) {
     const id = put('actions', {
       of: primitive ?? action,
       said: action,
+      // Which occurrence this is. A cause names the occurrences it joins, and
+      // without this there is no way back from one of those to its row.
+      did: event.state.id,
       // When it happened, where the signal said so. A doing stands on the same
       // quantity as anything else that has a time, so two of them compare.
       ...(event.state.time ? { time: event.state.time } : {}),
@@ -485,6 +491,24 @@ function fromUnderstood(roots, world, focus, marking, from) {
         }
       }
     }
+  }
+
+  // What came of it. A doing that caused something holds what it caused —
+  // another doing, a change, or a fact that came to stand — the same way it
+  // holds where it was. Nothing is copied: the row is already there, and being
+  // held is a doing pointing at it.
+  for (const cause of causes) {
+    const { reason, effect } = cause.state;
+    if (reason == null || reason.done == null) continue;
+    const one = held.actions.find((row) => row.did === reason.done);
+    if (!one) continue;
+    const came =
+      effect.done != null
+        ? (held.actions.find((row) => row.did === effect.done) || {}).id
+        : effect.claim
+          ? (held.facts.find((row) => row.key === triple(reach(effect.claim.subject), effect.claim.relation, reach(effect.claim.object))) || {}).id
+          : null;
+    if (came && !(one.holds || []).includes(came)) one.holds = [...(one.holds || []), came];
   }
 
   // Whose a thing is, said as the holding it is.
@@ -843,6 +867,12 @@ function determined(roots, marking, world, supposed = new Set()) {
             said.concept != null &&
             world.anchors.relation != null &&
             world.isA(said.concept, world.anchors.relation),
+          // A doing stands between two things the same way a relation does:
+          // what follows it was said of what came before it.
+          acts:
+            said.concept != null &&
+            world.anchors.action != null &&
+            world.isA(said.concept, world.anchors.action),
         });
       }
       walk(one.branch);
@@ -855,7 +885,7 @@ function determined(roots, marking, world, supposed = new Set()) {
   // language says its markers stand on.
   const nearest = (i, way) => {
     for (let at = i + way; at >= 0 && at < spoken.length; at += way) {
-      if (spoken[at].joins) continue;
+      if (spoken[at].joins || spoken[at].acts) continue;
       if (spoken[at].concept != null) return spoken[at].concept;
     }
     return null;
@@ -878,7 +908,8 @@ function determined(roots, marking, world, supposed = new Set()) {
       // side of it — `a drum is cold` is about the drum, and cannot be about
       // whatever the next clause goes on to name. Said with no joint between,
       // it describes the thing it stands beside.
-      const across = spoken[i - 1] && spoken[i - 1].joins ? nearest(i, -1) : null;
+      const across =
+        spoken[i - 1] && (spoken[i - 1].joins || spoken[i - 1].acts) ? nearest(i, -1) : null;
       const thing = across ?? about(i);
       if (thing != null && !supposed.has(`${thing}:${one.quality}`)) {
         const held = how.get(thing) || {};

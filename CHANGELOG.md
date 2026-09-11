@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A doing holds what came of it.** The brain already worked out that one
+  occurrence was the reason another happened and wrote the joining down, but
+  the conversation graph showed two unrelated rows. The causing doing now holds
+  what it caused — another doing, a change, or a fact that came to stand — the
+  same way it holds where it was. Nothing is copied; the row is already there,
+  and holding it is one row pointing at another.
+
 - **Several who did it are several.** `hema and arun spoke` wrote down one
   speaking, by arun — hema was read, made a thing of, and then written over,
   because a part of a doing held one thing and the second to play it replaced
@@ -98,6 +105,12 @@ All notable changes to this project are documented in this file.
   again reads it from there.
 
 ### Fixed
+
+- **What a doing left behind is not said of whoever comes next.** `a road
+  became wet because a plank fell` made the plank wet. A quality said after a
+  relation was already known to belong to what stood before the relation — `a
+  drum is cold` is about the drum — and a doing stands between two things the
+  same way a relation does. It is read that way now.
 
 - **A thing stands in one state at a time, and a later one is the one it is
   in.** Told a bell was hot and then cold, the brain held both. Told it was red
