@@ -1963,11 +1963,21 @@
       "meaning": "woman",
       "concept": 31
     },
-    "child": {
-      "pos": "noun",
-      "meaning": "child",
-      "concept": 32
-    },
+    "child": [
+      {
+        "pos": "noun",
+        "meaning": "child",
+        "concept": 32
+      },
+      {
+        "pos": "noun",
+        "meaning": "child of",
+        "concept": 3014,
+        "select": {
+          "before": "having"
+        }
+      }
+    ],
     "planet": {
       "pos": "noun",
       "meaning": "planet",

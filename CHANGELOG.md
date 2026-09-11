@@ -6,6 +6,19 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Kinship runs both ways.** `tom is the father of sam` left the brain unable
+  to say anything at all about sam: twelve of a hundred and eighty-six
+  relations had a converse, and every kinship word hung straight off `kinship`
+  with nothing between them, so being somebody's father reached neither being
+  their parent nor their being anybody's child.
+
+  Being somebody's father is being their parent, a parent read from the other
+  end is a child, and a son is one sort of child. So `is tom the parent of
+  sam?` and `is sam the child of tom?` both answer now, while `is sam the son
+  of tom?` stays unknown — which sort of child sam is was never said, and the
+  brain refuses the same guess it already refuses for `sister`. Husband and
+  wife are each other's other end, and a cousin's cousin is a cousin.
+
 - **A doing may leave the world standing differently.** `mira put the key into
   the drawer` was taken in, and then nobody knew where the key was: the putting
   went on the record as having happened and the key stayed exactly where it had

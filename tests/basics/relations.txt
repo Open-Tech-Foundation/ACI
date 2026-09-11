@@ -14,5 +14,24 @@ mira is the sister of nila
 is nila the sibling of mira? => affirm
 is nila the sister of mira? => unsure
 
+# Being somebody's father is being their parent, and a parent read from the
+# other end is a child. Which sort of child is not something being told about
+# the father says, so `son` stays unknown the way `sister` does.
 tom is the father of sam
-is sam the son of tom? ?> I don't know.
+is tom the parent of sam? => affirm
+is sam the child of tom? => affirm
+is sam the son of tom? => unsure
+
+mira is the mother of kiran
+is kiran the child of mira? => affirm
+
+ravi is the husband of nila
+is nila the wife of ravi? => affirm
+
+mira is the cousin of nila
+is nila the cousin of mira? => affirm
+
+tom is the father of sam
+sam is the father of alex
+maya is the sister of alex
+who is the grandfather of maya? => tom
