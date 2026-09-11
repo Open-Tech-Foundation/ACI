@@ -65,3 +65,20 @@ test("a relation between two doings is still the signal itself", async () => {
   );
   await forget();
 });
+
+test("several who did it are several, not the last of them", async () => {
+  await fresh("hema and arun spoke");
+  const graph = serialize();
+  assert(/action\(\[n1, n2\], type: speak/.test(graph), `both spoke:\n${graph}`);
+  await forget();
+});
+
+test("where the doing stood is where each of them stood", async () => {
+  await fresh("hema and arun spoke on a road");
+  const graph = serialize();
+  assert(/placement\(n1, n3\)/.test(graph), `hema is on the road:\n${graph}`);
+  assert(/placement\(n2, n3\)/.test(graph), `and so is arun:\n${graph}`);
+  assert(/holds f1, f2/.test(graph), `and the doing holds both:\n${graph}`);
+  assertEquals((await brain("where is arun?")).expression.state.says, "on a road");
+  await forget();
+});

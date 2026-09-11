@@ -399,7 +399,13 @@ function fromUnderstood(roots, world, focus, marking, from) {
     // books, and a count kept loose on the doing cannot say which.
     const counts = {};
     for (const part of parts || []) {
-      roles[part.role] = reach(part.of);
+      // Several playing one part are a list, not the last of them. Two people
+      // who spoke are two who spoke, and a doing said of both is one doing
+      // with both in it.
+      roles[part.role] =
+        roles[part.role] == null
+          ? reach(part.of)
+          : [...(Array.isArray(roles[part.role]) ? roles[part.role] : [roles[part.role]]), reach(part.of)];
       if (part.amount != null) counts[part.role] = part.amount;
     }
     const a2 = (world && world.anchors) || {};
@@ -434,21 +440,27 @@ function fromUnderstood(roots, world, focus, marking, from) {
     // Where a doing stood is where whoever did it stood: a tree that fell on
     // the road is on the road. One fact, claimed of the doer — and the doing
     // holds that same fact rather than a second copy of it.
-    const doer = (parts || []).find((p) => p.role === a2.agent) || (parts || []).find((p) => p.role === a2.target);
+    const byRole = (role) => (parts || []).filter((p) => p.role === role && p.of != null);
+    const doers = byRole(a2.agent).length > 0 ? byRole(a2.agent) : byRole(a2.target);
     for (const joint of event.state.joints || []) {
-      if (!doer || doer.of == null) continue;
-      claimed(doer.of, joint.relation, joint.of, null, not === true);
-      const one = held.actions.find((row) => row.id === id);
-      const fact = held.facts.find(
-        (row) => row.said === joint.relation && row.parts && row.parts[1] === reach(joint.of),
-      );
-      if (fact && !(one.holds || []).includes(fact.id)) one.holds = [...(one.holds || []), fact.id];
+      for (const doer of doers) {
+        claimed(doer.of, joint.relation, joint.of, null, not === true);
+        const one = held.actions.find((row) => row.id === id);
+        const fact = held.facts.find(
+          (row) =>
+            row.said === joint.relation &&
+            row.parts &&
+            row.parts[0] === reach(doer.of) &&
+            row.parts[1] === reach(joint.of),
+        );
+        if (fact && !(one.holds || []).includes(fact.id)) one.holds = [...(one.holds || []), fact.id];
+      }
     }
 
     // Many of a kind on the far end of a doing are that many things. `split
     // them into three groups` makes three groups, and each is drawn from what
     // was split — how many went into each, nobody said, so nothing says it.
-    const into = roles[a2.destination];
+    const into = only(roles[a2.destination]);
     const many = counts[a2.destination];
     // What kind the far end is: the term itself where the world holds one, and
     // otherwise the kind the signal made it from.
@@ -460,7 +472,7 @@ function fromUnderstood(roots, world, focus, marking, from) {
     };
     const of = asKind(into);
     if (of != null && many != null && many > 1) {
-      const whole = drawnFrom(asKind(roles[a2.target]));
+      const whole = drawnFrom(asKind(only(roles[a2.target])));
       const kind = world && world.term(of);
       if (kind) {
         for (let i = 0; i < many; i += 1) {
@@ -566,11 +578,16 @@ function fromUnderstood(roots, world, focus, marking, from) {
 // A property change is a value taken and nothing moved. That is the whole
 // difference between the two, and it is visible in the parts alone: one has
 // somewhere it went, the other has only what it became.
+// One of whatever plays a part, where several play it. The arithmetic of a
+// transfer runs on one end at a time; who else stood there is still in the
+// list.
+const only = (value) => (Array.isArray(value) ? value[0] : value);
+
 function doing(roles, world) {
   const anchors = (world && world.anchors) || {};
   const played = (role) => role != null && Object.hasOwn(roles, role);
   if (played(anchors.source) || played(anchors.destination)) return TRANSFER;
-  if (played(anchors.target) && isProperty(roles[anchors.target], world)) return PROPERTY_CHANGE;
+  if (played(anchors.target) && isProperty(only(roles[anchors.target]), world)) return PROPERTY_CHANGE;
   return null;
 }
 
@@ -601,7 +618,7 @@ function shifted(relation, to, world) {
       return true;
     }
     if (one.roles && one.roles[relation] != null) {
-      if (one.roles[relation] === to) return true;
+      if (only(one.roles[relation]) === to) return true;
       one.was = [...(one.was || []), { part: relation, of: one.roles[relation] }];
       one.roles = { ...one.roles, [relation]: to };
       return true;
@@ -624,7 +641,7 @@ function roleIn(relation, world) {
   for (let i = held.actions.length - 1; i >= 0; i -= 1) {
     const one = held.actions[i];
     if (where != null && one.parts && one.parts[where] != null) return termOf(one.parts[where]);
-    if (one.roles && one.roles[relation] != null) return termOf(one.roles[relation]);
+    if (one.roles && one.roles[relation] != null) return termOf(only(one.roles[relation]));
   }
   return null;
 }
@@ -635,7 +652,7 @@ function roleIn(relation, world) {
 // world's to say, through the anchors it already carries.
 function transferring(roles, properties, world) {
   const anchors = (world && world.anchors) || {};
-  const at = (role) => (role != null && Object.hasOwn(roles, role) ? roles[role] : null);
+  const at = (role) => (role != null && Object.hasOwn(roles, role) ? only(roles[role]) : null);
   return {
     parts: { doer: at(anchors.agent), from: at(anchors.source), to: at(anchors.destination) },
     properties: { thing: at(anchors.target), ...properties },
@@ -645,7 +662,7 @@ function transferring(roles, properties, world) {
 // What a property change is made of: the thing, and the value it took.
 function changing(roles, properties, world) {
   const anchors = (world && world.anchors) || {};
-  const at = (role) => (role != null && Object.hasOwn(roles, role) ? roles[role] : null);
+  const at = (role) => (role != null && Object.hasOwn(roles, role) ? only(roles[role]) : null);
   const took = at(anchors.target);
   // Which property took the value, not only the value. Turning red is a change
   // of colour, and the world says red is a colour before it is anything else.
@@ -1106,6 +1123,8 @@ function gather(roots, kind, found = []) {
 function serialize(world = against) {
   const spell = (id) => {
     if (id == null) return '—';
+    // Several of them, said as the list they are.
+    if (Array.isArray(id)) return `[${id.map(spell).join(', ')}]`;
     if (typeof id === 'string') return id;
     const name = world && world.term(id) ? world.term(id).name : null;
     // A made individual is held under the kind it was made from and the id it

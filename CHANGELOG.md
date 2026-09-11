@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Several who did it are several.** `hema and arun spoke` wrote down one
+  speaking, by arun — hema was read, made a thing of, and then written over,
+  because a part of a doing held one thing and the second to play it replaced
+  the first. A part now holds the list it was given, and a doing said of two
+  people is one doing with both in it. Where it happened somewhere, each of
+  them is placed there.
+
 - **A doing keeps what was said of it, and holds it.** `a plank fell on the
   floor` wrote down a plank on a floor and no falling at all: a relation named
   between two things was taken to be the whole of the signal, so the doing

@@ -4995,21 +4995,22 @@ function act(said, claims, world, side, sides, allocate) {
   // Where a doing stood is where whoever did it stood: a tree that fell on the
   // road is on the road, and somebody who lives in a city is in it. The doing
   // holds the same fact rather than a second copy of it.
-  const doer = parts.find((p) => p.role === a.agent) || parts.find((p) => p.role === a.target);
-  const placed = doer
-    ? joints
-        .filter((j) => !whenJoint(j))
-        .map((j) =>
-          node('learn', 'link', [], {
-            subject: doer.of,
-            relation: j.relation,
-            object: j.of,
-            quantity: null,
-            made: null,
-            not: denied,
-          }),
-        )
-    : [];
+  const playing = (role) => parts.filter((p) => p.role === role && p.of != null);
+  const doers = playing(a.agent).length > 0 ? playing(a.agent) : playing(a.target);
+  const placed = joints
+    .filter((j) => !whenJoint(j))
+    .flatMap((j) =>
+      doers.map((doer) =>
+        node('learn', 'link', [], {
+          subject: doer.of,
+          relation: j.relation,
+          object: j.of,
+          quantity: null,
+          made: null,
+          not: denied,
+        }),
+      ),
+    );
 
   // What the brain refuses did not happen, and it does not go on the record as
   // having happened. Where it simply cannot tell what followed, the event
