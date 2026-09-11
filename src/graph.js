@@ -123,7 +123,17 @@ function fromUnderstood(roots, world, focus, marking, from) {
   // A thing spoken of in particular is a thing, whether or not the world holds
   // one. `the sky is blue` speaks of the sky, and the next signal may point
   // back at it, so it is a node and not merely a concept two facts joined.
-  const { determined: particular, qualities } = determined(roots, marking, world);
+  // What an instruction is built out of stays inside the instruction: a claim
+  // put as a condition is not a claim made, and neither is what stands on it.
+  // Said of a thing, a quality is how that thing is — so a quality a rule only
+  // supposes is not how anything is yet, and is left where the rule holds it.
+  const supposed = new Set();
+  for (const one of instructions) {
+    for (const side of [one.state.on, one.state.then]) {
+      if (side) supposed.add(`${side.subject}:${side.object}`);
+    }
+  }
+  const { determined: particular, qualities } = determined(roots, marking, world, supposed);
   // Where the signal made one of a kind, that one is the thing spoken of. The
   // kind is not a second thing beside it.
   for (const call of calls) particular.delete(call.state.of);
@@ -368,6 +378,16 @@ function fromUnderstood(roots, world, focus, marking, from) {
     // a kind cannot be handed to one thing until there is a way to say a group,
     // and until then the count says everything the fact knows.
     claimed(subject, relation, object, from ? from.state.quantity : null, negated);
+  }
+
+  // What the brain worked out is as much a part of the conversation as what it
+  // was told. A fact a standing instruction reached arrives as something
+  // learned and never stood in the signal, so nothing else here would see it —
+  // and the bell would stay the colour it was before the rule fired.
+  for (const link of links) {
+    if (!link.state.following) continue;
+    const { subject, relation, object, quantity, not } = link.state;
+    claimed(subject, relation, object, quantity ?? null, Boolean(not));
   }
 
   for (const event of events) {
@@ -756,7 +776,7 @@ const triple = (subject, relation, object) => `${subject}|${relation}|${object}`
 // spoken of. Which side of the word it stands on is the language's to declare,
 // so nothing here assumes an order: the language says `after` or `before` and
 // the marker is read off whichever neighbour that names.
-function determined(roots, marking, world) {
+function determined(roots, marking, world, supposed = new Set()) {
   const spoken = [];
   const walk = (nodes) => {
     for (const one of nodes || []) {
@@ -778,6 +798,13 @@ function determined(roots, marking, world) {
           // A word standing beside a thing that says how it is, rather than
           // what it is.
           quality: isQuality(said.concept, world) ? said.concept : null,
+          // A word that holds between two things rather than standing beside
+          // one. A quality on the far side of one was said *of* what is on the
+          // near side, and describes nothing beyond it.
+          joins:
+            said.concept != null &&
+            world.anchors.relation != null &&
+            world.isA(said.concept, world.anchors.relation),
         });
       }
       walk(one.branch);
@@ -788,12 +815,14 @@ function determined(roots, marking, world) {
   const step = marking === 'before' ? -1 : 1;
   // The thing a word beside it is about: the nearest one on the side the
   // language says its markers stand on.
-  const about = (i) => {
-    for (let at = i + step; at >= 0 && at < spoken.length; at += step) {
+  const nearest = (i, way) => {
+    for (let at = i + way; at >= 0 && at < spoken.length; at += way) {
+      if (spoken[at].joins) continue;
       if (spoken[at].concept != null) return spoken[at].concept;
     }
     return null;
   };
+  const about = (i) => nearest(i, step);
 
   const found = new Set();
   const how = new Map();
@@ -807,8 +836,13 @@ function determined(roots, marking, world) {
     // stands beside, and it is held on the thing rather than put between two
     // things as a fact: how something is belongs to it.
     if (one.quality != null) {
-      const thing = about(i);
-      if (thing != null) {
+      // Said across a joint, the quality belongs to what stands on the other
+      // side of it — `a drum is cold` is about the drum, and cannot be about
+      // whatever the next clause goes on to name. Said with no joint between,
+      // it describes the thing it stands beside.
+      const across = spoken[i - 1] && spoken[i - 1].joins ? nearest(i, -1) : null;
+      const thing = across ?? about(i);
+      if (thing != null && !supposed.has(`${thing}:${one.quality}`)) {
         const held = how.get(thing) || {};
         held[qualityKind(one.quality, world)] = one.quality;
         how.set(thing, held);

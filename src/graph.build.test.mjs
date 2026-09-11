@@ -343,3 +343,25 @@ test("a bare name is the brain's own; the world's stands on it", async () => {
   );
   await forget();
 });
+
+test("a rule supposes; it does not say", async () => {
+  await forget();
+  await brain("if a drum is cold then a bell is red");
+  const { nodes, rules } = graph();
+  assertEquals(rules.length, 1, "the rule is what was said");
+  // Nothing is cold and nothing is red: the rule only says what would follow.
+  for (const one of nodes) assertEquals(one.how, undefined, one.said);
+  await forget();
+});
+
+test("what a rule reaches is how the thing is", async () => {
+  await forget();
+  await brain("if a drum is cold then a bell is red");
+  await brain("the drum is cold");
+  const { nodes } = graph();
+  const drum = nodes.find((one) => one.said === "drum");
+  const bell = nodes.find((one) => one.said === "bell");
+  assert(drum.how != null, "told, so the drum is cold");
+  assert(bell.how != null, "worked out, and the bell is red all the same");
+  await forget();
+});

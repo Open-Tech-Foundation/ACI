@@ -4,6 +4,24 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- **A rule supposes; it does not say.** `if a drum is cold then a bell is red`
+  left the graph holding a cold bell — the condition's quality landed on
+  whichever thing came next, which was the bell in the other half of the rule.
+  A quality was read as standing beside the thing it describes, the way it
+  does in `a red box`; said across a joint it belongs to what stands on the
+  other side of it, and it cannot reach past the joint into the next clause.
+
+  Both halves of a rule were then written onto their things as how those
+  things are, so the graph said the bell *was* red before anybody had said the
+  drum was cold. A rule says what would follow, and until it follows nothing
+  is so. And when it did follow, nothing showed: a fact the brain worked out
+  arrives as something learned rather than as something that stood in the
+  signal, and the conversation held only what stood. What the brain worked out
+  is as much a part of the conversation as what it was told, so the bell turns
+  red when the rule fires and not before.
+
 ### Added
 
 - **What the brain worked out, it can say what it stands on.** A standing
