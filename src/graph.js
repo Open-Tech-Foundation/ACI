@@ -1249,14 +1249,14 @@ function serialize(world = against) {
         : one.times
           ? `  at ${one.times.map(spell).join(', ')}`
           : '';
-      // The same rule the facts are said by: a doing the brain knows of itself
-      // says its own name, and a doing the world holds says `action` — one of
-      // the four ways anything exists — with the doing itself as what it
-      // stands on.
+      // A doing the brain knows of itself says its own name. Anything else is
+      // an event: whatever happened, of a type the world holds, with whoever
+      // took part in it, where and when it was, and what came of it hanging
+      // off it. There is no narrower thing to call it and no reason to.
       const own = typeof one.of === 'string';
       const does = own
         ? `${one.of}(${said})`
-        : `action(${said}${said ? ', ' : ''}type: ${spell(one.of)})`;
+        : `event(${said}${said ? ', ' : ''}type: ${spell(one.of)})`;
       const holds = one.holds ? `  holds ${one.holds.join(', ')}` : '';
       return `${one.id}  ${one.denied ? 'not ' : ''}${does}${when}${properties(one.properties)}${holds}`;
     }),

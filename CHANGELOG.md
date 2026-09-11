@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **An event says it is one.** A doing of a kind only the world holds was
+  written `action(...)`, by the same rule that writes a fact on a world
+  relation `relation(...)`: the brain had no primitive for it, so the row said
+  which of the four ways of existing it stood on. That row now carries the
+  type, whoever took part, where it was, when it was and what came of it, and
+  that is an event. It says `event(...)`.
+
 - **A doing holds what came of it.** The brain already worked out that one
   occurrence was the reason another happened and wrote the joining down, but
   the conversation graph showed two unrelated rows. The causing doing now holds

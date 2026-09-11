@@ -15,7 +15,7 @@ test("a doing keeps what was said of it", async () => {
   // tree fell on the road` wrote down a tree on a road and no falling at all.
   await fresh("a plank fell on the floor");
   const graph = serialize();
-  assert(/action\(n\d, type: fall/.test(graph), `a falling happened:\n${graph}`);
+  assert(/event\(n\d, type: fall/.test(graph), `a falling happened:\n${graph}`);
   assert(/placement\(n\d, n\d\)/.test(graph), `and it left a placement:\n${graph}`);
   await forget();
 });
@@ -26,7 +26,7 @@ test("the doing holds the fact said of it", async () => {
   const [, fact] = /(f\d)\s+placement/.exec(graph) || [];
   assert(fact != null, `there is a placement:\n${graph}`);
   assert(
-    new RegExp(`action\\(n\\d, type: [^)]*\\).*holds ${fact}`).test(graph),
+    new RegExp(`event\\(n\\d, type: [^)]*\\).*holds ${fact}`).test(graph),
     `and the doing holds it:\n${graph}`,
   );
   await forget();
@@ -69,7 +69,7 @@ test("a relation between two doings is still the signal itself", async () => {
 test("several who did it are several, not the last of them", async () => {
   await fresh("hema and arun spoke");
   const graph = serialize();
-  assert(/action\(\[n1, n2\], type: speak/.test(graph), `both spoke:\n${graph}`);
+  assert(/event\(\[n1, n2\], type: speak/.test(graph), `both spoke:\n${graph}`);
   await forget();
 });
 
@@ -87,7 +87,7 @@ test("a doing holds what came of it", async () => {
   await fresh("a road became wet because a plank fell");
   const graph = serialize();
   assert(/property-change\(n1\)/.test(graph), `the road changed:\n${graph}`);
-  assert(/action\(n2, type: fall\[\d+\]\)\s+holds a1/.test(graph), `and the falling holds it:\n${graph}`);
+  assert(/event\(n2, type: fall\[\d+\]\)\s+holds a1/.test(graph), `and the falling holds it:\n${graph}`);
   await forget();
 });
 
