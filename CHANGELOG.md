@@ -6,6 +6,26 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **What the question did not name, the answer says.** `how long is the mast?`
+  answered `six`, which says nothing: six of nothing is no length. What the
+  question names needs no repeating — asked how many stamps, four is the
+  answer, and asked how many hours make a day, twenty-four is — but the unit a
+  measure was taken in was never in the question at all. It is said now, in the
+  words the language has for more than one of it, which it had no way to make:
+  reading a word apart, several endings fit and only one leaves a word behind;
+  putting one together, nothing said which. A rule may now say what a word must
+  already end with, so `metre` takes an `s` and `box` an `es`.
+
+  Measured in one unit and asked for in another, the brain answers: the crate
+  weighed in kilograms weighs five thousand grams, because the world says a
+  kilogram is a thousand of them and the brain walks the steps — the same
+  arithmetic that already let five kilograms and ten grams compare. Nothing is
+  written down for it.
+
+  And `is an hour more than a minute?` said `a hour is moreer than a minute`. A
+  word that already compares needs no ending put on it.
+
+
 - **What stands behind something that happened.** `the fence fell because nila
   pushed it` was taken in and then had nothing behind it: asked why the fence
   fell, the brain said it did not know. `because` joined two claims and nothing

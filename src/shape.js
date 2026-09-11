@@ -957,8 +957,9 @@ export function checkLanguage(data, where = 'language') {
       // What the word must already end with for this ending to be the one it
       // takes. Reading a word apart, several endings may fit and only one
       // leaves a word behind; putting one together, nothing else says which.
-      if (rule.after !== undefined && (typeof rule.after !== 'string' || rule.after === '')) {
-        fail(r, 'after, where present, must be what the word ends with');
+      const ends = (v) => typeof v === 'string' && v !== '';
+      if (rule.after !== undefined && !(ends(rule.after) || (Array.isArray(rule.after) && rule.after.length > 0 && rule.after.every(ends)))) {
+        fail(r, 'after, where present, must be what the word ends with, or several');
       }
       // A contraction may deny what its stem says: `don't` is `do` denied.
       if (rule.negates !== undefined && rule.negates !== true) {

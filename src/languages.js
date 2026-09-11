@@ -83,7 +83,7 @@ function buildLanguage(data) {
     // outright — bigger — or make one out of the state's own word by the same
     // ending it reads a comparison by, so a state it never listed a comparative
     // for is still sayable. Listed wins; first word, the way a name does.
-    comparativeFor: (state) => {
+    comparativeFor: (state, compares) => {
       if (state == null) return null;
       let plain = null;
       for (const [word, entry] of Object.entries(data.words || {})) {
@@ -94,7 +94,9 @@ function buildLanguage(data) {
           if (plain == null) plain = word;
         }
       }
-      return plain == null ? null : builtFrom(plain, data.derivations);
+      // A word that already compares needs no ending putting on it: `more` is
+      // the comparison, not something to compare on.
+      return plain == null || plain === compares ? plain : builtFrom(plain, data.derivations);
     },
     // Whether the language ever says one of the term: a word may stand bare,
     // with no article — gravity is a force, not a gravity.
@@ -144,6 +146,18 @@ function buildLanguage(data) {
     // The word this language says a concept with when it is said of the past.
     // A language that marks time on its words has one; one that does not says
     // the same word either way, and the mark it does use is nothing here.
+    // The word this language says a concept with when it is said of more than
+    // one. A language that does not mark it says the same word either way.
+    manyWordFor: (concept) => {
+      if (concept == null) return null;
+      const one = named.get(concept) ?? null;
+      if (one == null) return null;
+      return builtWith(
+        one,
+        data.derivations,
+        (rule) => rule.of === 'noun' && rule.when === undefined && rule.functions === undefined,
+      );
+    },
     wordWhen: (concept, when) => {
       if (concept == null || when == null) return null;
       let plain = null;
@@ -434,8 +448,12 @@ function builtWith(word, derivations, wanted) {
   const rules = (derivations || []).filter(
     (rule) => wanted(rule) && typeof rule.ending === 'string',
   );
-  const fits = (rule) => typeof rule.after !== 'string' || word.endsWith(rule.after);
-  for (const rule of [...rules.filter((r) => typeof r.after === 'string'), ...rules]) {
+  const fits = (rule) => {
+    if (rule.after === undefined) return true;
+    const ends = Array.isArray(rule.after) ? rule.after : [rule.after];
+    return ends.some((end) => word.endsWith(end));
+  };
+  for (const rule of [...rules.filter((r) => r.after !== undefined), ...rules]) {
     if (!fits(rule)) continue;
     const becomes = typeof rule.becomes === 'string' ? rule.becomes : '';
     if (becomes !== '' && !word.endsWith(becomes)) continue;

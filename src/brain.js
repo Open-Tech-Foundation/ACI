@@ -2015,6 +2015,22 @@ function manyOf(said, at, world) {
   return found ? conceptOf(found) : null;
 }
 
+// How much of one unit a thing measures, whatever unit it was measured in. A
+// crate weighed in kilograms weighs so many grams, and the world says how many
+// grams make a kilogram: the brain walks the steps and multiplies, the same
+// arithmetic that lets five kilograms and ten grams compare. Nothing is
+// written down — one more way of saying it would be one more fact to keep.
+function measuredIn(bearer, unit, world) {
+  const a = world.anchors || {};
+  if (bearer == null || unit == null || a.unit == null || !world.isA(unit, a.unit)) return null;
+  for (const held of valuesOn(bearer, world)) {
+    if (held.unit === unit) return held.amount;
+    const steps = unitsIn(held.unit, unit, world);
+    if (steps != null) return exactly((x, y) => x.multiply(y))(held.amount, steps);
+  }
+  return null;
+}
+
 // How many of a kind a thing holds, counting everything it holds that is one
 // of that kind. Nothing says a thing holds `things`; it holds bats and balls,
 // and those are things.
@@ -3237,6 +3253,10 @@ function because(joined, world, mood, sent) {
           : null;
       const counts = (w) =>
         world.held(w.bearer, w.relation, w.of) != null ||
+        // Measured in one unit and asked for in another. The world says how
+        // many of the one make the other, and the brain multiplies — the same
+        // steps it walks to compare five kilograms against ten grams.
+        measuredIn(w.bearer, w.of, world) != null ||
         heldUnder(w.bearer, w.of, world) != null ||
         // What a thing measures may be carried by what it holds rather than
         // written of the thing, and that end is the one that answers.
@@ -3262,7 +3282,10 @@ function because(joined, world, mood, sent) {
         ? over.length > 1
           ? over[over.length - 2].quantity
           : null
-        : world.held(way.bearer, way.relation, way.of) ?? under ?? stepped(way);
+        : world.held(way.bearer, way.relation, way.of)
+          ?? under
+          ?? measuredIn(way.bearer, way.of, world)
+          ?? stepped(way);
       const total = howMany == null ? null : world.termFor(howMany);
       return [
         withBranch(root, [
@@ -3272,6 +3295,10 @@ function because(joined, world, mood, sent) {
             held: way.bearer,
             members: howMany,
             total,
+            // The question said what it wanted counted, so the answer does not
+            // say it again: asked how many hours make a day, twenty-four is
+            // the whole of it.
+            named: true,
             when: back ? a.past : a.now,
           }),
         ]),
@@ -5972,7 +5999,7 @@ function expression(roots, langs, mood, world, sent) {
         : sum
           ? numberSaid(sum.state.term, sum.state.value, langName, langs, world, written)
           : counted
-            ? numberSaid(counted.state.total, counted.state.members, langName, langs, world, written)
+            ? amountSaid(counted, langName, langs, world, written)
             : answered
       : wholeMeaning(intent, parts);
   // Where the brain is speaking of its own state, it hands over the term for
@@ -6218,8 +6245,14 @@ function claimSaid(stood, langName, langs, world) {
   // An ordering has no word of its own — a language says it with a state read
   // from one end, and the fact is written the way the ordering runs, so the
   // word for it is the state at the upper end.
+  // A signal may compare with a word for a state — bigger, on size — or name
+  // the comparing itself, and a word that already compares is said as it is.
+  const bare = a.more != null && (relation === a.more || relation === a.less);
   const comparing = isComparing(relation, world)
-    ? lang.comparativeFor(stood.state.compares ?? upperState(relation, world) ?? relation)
+    ? lang.comparativeFor(
+        stood.state.compares ?? upperState(relation, world) ?? relation,
+        bare ? termWord(relation, langName, langs, world) : null,
+      )
     : null;
   if (comparing != null) {
     return lang.express('compare', { subject: one, relation: comparing, object: other }) ?? '';
@@ -6227,6 +6260,26 @@ function claimSaid(stood, langName, langs, world) {
   const words = termWord(relation, langName, langs, world);
   if (words == null) return '';
   return lang.express('claim', { subject: one, relation: words, object: other }) ?? '';
+}
+
+// How much of something there is, said back. What the question named needs no
+// repeating — asked how many stamps, four is the answer, and asked how many
+// hours make a day, twenty-four is. What it did not name has to be said:
+// asked how long the mast is, `six` says nothing at all, because six of
+// nothing is no length. So the unit goes with the number, in the words the
+// language has for more than one of it.
+function amountSaid(counted, langName, langs, world, written) {
+  const many = numberSaid(
+    counted.state.total, counted.state.members, langName, langs, world, written,
+  );
+  const of = counted.state.of;
+  const a = world && world.anchors ? world.anchors : {};
+  if (counted.state.named) return many;
+  if (many == null || of == null || a.unit == null || !world.isA(of, a.unit)) return many;
+  const lang = (langs || []).find((l) => l.data.name === langName);
+  const unit = (counted.state.members === 1 ? null : lang && lang.manyWordFor(of))
+    ?? termWord(of, langName, langs, world, written);
+  return unit == null ? many : `${many} ${unit}`;
 }
 
 // A number the brain worked out. The world may have no term for it — nothing

@@ -56,11 +56,15 @@ test("a number worked on is not a number beside a property", async () => {
 test("asked how a thing stands on a scale, what answers is what it measures", async () => {
   await forget();
   await brain("the rope is 2 metres long");
-  assertEquals((await brain("how long is the rope?")).expression.state.says, "two");
+  assertEquals(
+    (await brain("how long is the rope?")).expression.state.says,
+    "two metres",
+    "two of nothing is no length",
+  );
   await brain("the rope weighs 3 kilograms");
   assertEquals(
     (await brain("how heavy is the rope?")).expression.state.says,
-    "three",
+    "three kilograms",
     "the scale asked on picks which measurement answers",
   );
   await forget();
@@ -71,5 +75,34 @@ test("nothing measured on the scale asked leaves the question unanswered", async
   // A rope is a tool, and that is a true answer to a question nobody asked.
   await brain("a rope is a tool");
   assertEquals((await brain("how long is the rope?")).expression.name, "unsure");
+  await forget();
+});
+
+test("what the question did not name, the answer says", async () => {
+  await forget();
+  await brain("the mast is 6 metres long");
+  assertEquals(
+    (await brain("how long is the mast?")).expression.state.says,
+    "six metres",
+    "six of nothing is no length",
+  );
+  await brain("the plank is 1 metre long");
+  assertEquals((await brain("how long is the plank?")).expression.state.says, "one metre");
+  await forget();
+});
+
+test("measured in one unit, asked for in another", async () => {
+  await forget();
+  await brain("the crate weighs 5 kilograms");
+  // The world says a kilogram is a thousand grams; nothing else is written.
+  assertEquals((await brain("how many grams does the crate weigh?")).expression.state.says, "5000");
+  assertEquals((await brain("how many kilograms does the crate weigh?")).expression.state.says, "5");
+  await forget();
+  await brain("a shelf holds 4 stamps");
+  assertEquals(
+    (await brain("how many grams does the shelf hold?")).expression.name,
+    "unsure",
+    "nothing weighed it",
+  );
   await forget();
 });

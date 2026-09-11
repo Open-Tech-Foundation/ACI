@@ -18243,7 +18243,14 @@
     {
       "ending": "es",
       "becomes": "",
-      "of": "noun"
+      "of": "noun",
+      "after": [
+        "s",
+        "x",
+        "z",
+        "ch",
+        "sh"
+      ]
     },
     {
       "ending": "s",
