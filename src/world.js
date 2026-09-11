@@ -280,9 +280,11 @@ export function fromWorldData(source) {
       const top = Math.max(...stamped.map((l) => l.at));
       return links.filter((l) => !Number.isInteger(l.at) || l.at === top);
     }
+    // Which quantity a state is a state of. Measuring runs one way — a scale
+    // measures its states — so what a state stands on is what measures it.
     const on = (id) => {
       if (anchors.measure == null) return null;
-      for (const l of terms.get(id)?.links || []) if (l.rel === anchors.measure) return l.to;
+      for (const scale of incoming.get(anchors.measure)?.get(id) || []) return scale;
       return null;
     };
     const latest = new Map();
@@ -688,6 +690,21 @@ export function fromWorldData(source) {
           for (const d of these) {
             for (const other of relatedBy(d, differentRel)) {
               if ([...those].some((candidate) => equivalents(candidate).has(other))) return true;
+            }
+          }
+        }
+      }
+      // A thing stands in one state per scale, so two states of one scale hold
+      // each other apart without anyone saying so pair by pair: a hut that is
+      // cool is not warm, and nothing had to be told that warm and cool are
+      // two of the same thing.
+      if (anchors.measure != null) {
+        const scalesOf = (id) => incoming.get(anchors.measure)?.get(id) || new Set();
+        for (const dx of xs) {
+          for (const one of scalesOf(dx)) {
+            for (const dy of ys) {
+              if (canonical(dx) === canonical(dy)) continue;
+              if (scalesOf(dy).has(one)) return true;
             }
           }
         }

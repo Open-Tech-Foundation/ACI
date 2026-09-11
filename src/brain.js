@@ -3665,12 +3665,23 @@ function because(joined, world, mood, sent) {
     const scalesNamed = (of) => {
       const measured = world.members(of, a.measure)
         .filter((scale) => a.property != null && world.isA(scale, a.property));
-      return measured.length > 0 ? measured : world.linked(of, a.measure);
+      if (measured.length > 0) return measured;
+      // A scale named outright is the scale, not the states it ranges over.
+      if (a.property != null && world.isA(of, a.property) && world.linked(of, a.measure).length > 0) {
+        return [of];
+      }
+      return world.linked(of, a.measure);
     };
+    // Only a scale something can be measured *on*. A scale with units is one
+    // a thing stands some amount along — how long, how heavy. One with none is
+    // a set of states a thing is in, and asking after it asks which state, not
+    // how much: what colour a car is, not how much colour it has.
+    const inUnits = (scale) =>
+      a.unit != null && world.standing(scale, a.measure).some((one) => world.isA(one, a.unit));
     const on = new Set(
       said.flatMap((n) => {
         const of = conceptOf(n);
-        return of == null || markOn(n) === 'unknown' ? [] : scalesNamed(of);
+        return of == null || markOn(n) === 'unknown' ? [] : scalesNamed(of).filter(inUnits);
       }),
     );
     if (on.size > 0) {
@@ -3787,11 +3798,12 @@ function because(joined, world, mood, sent) {
           ? world.related(t, a.name).length > 0 || world.symbolOf(t) != null
           : world.isA(t, of);
       // A hole says what kind of answer it will take, and the walk is narrowed
-      // to it — but only where what was named is not already of that kind.
-      // Asked who mira is, the brain has been told who, and what is wanted is
-      // what it knows of her; asked who a heron is, it has not been told, and
-      // only somebody answers.
-      const narrows = of != null && !fits(subject);
+      // to it. Asked after somebody by name, and what was named is already
+      // somebody, there is nothing left to narrow: the brain has been told who
+      // mira is, and what is wanted is what it knows of her, where asked who a
+      // heron is it has not been told and only somebody answers. Nothing else
+      // is like that — a red cat is not a colour, it has one.
+      const narrows = of != null && !(a.name != null && of === a.name && fits(subject));
       const wants = (t) => !narrows || fits(t);
       // Asked why something is so, what answers is what was said to be the
       // reason for it. The question is about the claim — that a drum is cold —
@@ -7735,7 +7747,12 @@ function learnedFrom(roots, world) {
   for (const term of terms) {
     for (const link of term.links) {
       if (link.rel !== world.baseRelation) continue;
-      link.rel = term.individual && Number.isInteger(link.at) && world.anchors.instance != null
+      // A state a thing stands in on some scale is stamped with when it came
+      // to be so — and a state is something a thing is *in*, never a kind it
+      // is one *of*: a red cat is not one of the reds. Anything else stamped
+      // is one of what it was made to be one of.
+      const inState = quantityOn(link.to, world) != null;
+      link.rel = !inState && term.individual && Number.isInteger(link.at) && world.anchors.instance != null
         ? world.anchors.instance
         : world.classificationRelation(
           term.id,

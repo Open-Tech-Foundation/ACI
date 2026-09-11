@@ -6,6 +6,26 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A thing stands in one state at a time, and a later one is the one it is
+  in.** Told a bell was hot and then cold, the brain held both. Told it was red
+  and then blue, it refused the second as a contradiction. Neither is right,
+  and which of the two happened turned only on whether the property had been
+  marked as holding its kinds apart.
+
+  Three things were under it. The walk that reads what a state stands on was
+  still reading `measure` the way round it ran before it was repaired, so no
+  state had a quantity and none of them superseded — a regression nothing
+  caught. Most properties never said which states they range over, so a change
+  of colour was not a change at all. And being stamped with when a state came
+  to be so was taken to mean the thing is one *of* it, where a red cat is not
+  one of the reds.
+
+  Two states of one scale now hold each other apart without anyone saying so
+  pair by pair: a hut that is cool is not warm, and — once the world says that
+  a substance is a gas, a liquid or a solid — water is not a solid and ice is
+  not a liquid.
+
+
 - **A thing may be more than one kind of thing.** Seven of thirty plainly true
   statements were not merely unknown but *contradicted*: `a cup is a
   container`, `a bottle is a container`, `a phone is a device`. Every kind of

@@ -13,9 +13,9 @@ async function fresh(...said) {
 
 test("a claim held at arm's length is not made", async () => {
   // Said outright it is taken in; held at arm's length it is not.
-  assert((await fresh("ice is a liquid")).learned != null);
+  assert((await fresh("ice is a medicine")).learned != null);
   assertEquals((await fresh("ice might be a liquid")).learned, null);
-  assertEquals((await fresh("ice might be a liquid", "ice is a liquid?")).expression.name, "unsure");
+  assertEquals((await fresh("ice might be a liquid", "ice is a medicine?")).expression.name, "unsure");
   await forget();
 });
 
@@ -35,7 +35,7 @@ test("shall holds a claim at arm's length the way might does", async () => {
 test("the brain cannot tell might from does-not-know", async () => {
   // It has no notion of what could be, only of what it holds, so what it says
   // is what it found.
-  assertEquals((await fresh("ice might be a liquid")).expression.name, "unsure");
+  assertEquals((await fresh("ice might be a medicine")).expression.name, "unsure");
   await forget();
 });
 

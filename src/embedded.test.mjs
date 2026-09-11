@@ -16,17 +16,17 @@ test("a claim spoken of is not a claim made", async () => {
   // Said outright, the brain takes it in. Spoken of, it does not — saying you
   // know something is not telling the brain it is so, and asserting it would
   // be putting words in the sender's mouth.
-  const told = await fresh("ice is a liquid");
+  const told = await fresh("ice is a medicine");
   assertEquals(told.expression.name, "learn");
   assert(told.learned != null, "said outright, it was taken in");
   const ICE = 72;
-  const LIQUID = 20;
+  const MEDICINE = 2804;
   assert(
-    told.learned.terms.some((t) => t.id === ICE && t.links.some((l) => l.to === LIQUID)),
-    "said outright, ice was made a liquid",
+    told.learned.terms.some((t) => t.id === ICE && t.links.some((l) => l.to === MEDICINE)),
+    "said outright, ice was made a medicine",
   );
 
-  const spoken = await fresh("i know that ice is a liquid");
+  const spoken = await fresh("i know that ice is a medicine");
   assert(
     !spoken.learned.terms.some((t) => t.id === ICE),
     "spoken of, nothing was said about ice",
@@ -45,7 +45,7 @@ test("a claim spoken of is not a claim made", async () => {
 test("a claim spoken of is still checked", async () => {
   assertEquals((await fresh("i know that a mango is a fruit")).expression.name, "understood");
   assertEquals((await fresh("i know that a mango is a hammer")).expression.name, "deny");
-  assertEquals((await fresh("i know that ice is a liquid")).expression.name, "unsure");
+  assertEquals((await fresh("i know that ice is a medicine")).expression.name, "unsure");
   await forget();
 });
 
@@ -65,7 +65,7 @@ test("what the brain reached about the claim stands on the tree", async () => {
 });
 
 test("nothing of the walking to the claim is kept, only what it came to", async () => {
-  const r = await fresh("i know that ice is a liquid");
+  const r = await fresh("i know that ice is a medicine");
   const kinds = (r.roots[0].branch || []).map((b) => b.kind);
   assert(!kinds.includes("learn"), "a claim spoken of teaches nothing");
   await forget();
@@ -74,7 +74,7 @@ test("nothing of the walking to the claim is kept, only what it came to", async 
 test("a signal with no claim spoken of is unchanged", async () => {
   assertEquals((await fresh("a mango is a fruit")).expression.name, "understood");
   assertEquals((await fresh("a mango is a hammer")).expression.name, "conflict");
-  const taught = await fresh("ice is a liquid");
+  const taught = await fresh("ice is a medicine");
   assert(taught.learned != null);
   await forget();
 });
