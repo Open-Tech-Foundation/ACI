@@ -51,6 +51,15 @@ const SCHEMA = [
         name text primary key,
         term integer not null references term(id)
       )`,
+  // A conversation, kept under the name it was given. What is in it is the
+  // graph and nothing else: a conversation is many signals over one graph, and
+  // the graph is the whole of what they came to. Kept so one may be picked up
+  // again without every signal being said a second time.
+  sql`create table if not exists talk (
+        id text primary key,
+        state text not null,
+        at integer not null default 0
+      )`,
   sql`create index if not exists link_by_term on link (term)`,
   sql`create index if not exists link_by_target on link (target, rel)`,
 ];
@@ -412,6 +421,32 @@ export async function write(db, learned) {
 export async function forgetLearned(db) {
   await db.execute(sql`delete from link where learned = 1`);
   await db.execute(sql`delete from term where learned = 1`);
+}
+
+// A conversation, by the name it was given. Only a named one is kept: a signal
+// that named none is in the unnamed thread, and there is nothing to come back
+// to.
+export async function keepTalk(db, id, state, at) {
+  await db.execute(
+    sql`insert into talk (id, state, at) values (${String(id)}, ${JSON.stringify(state)}, ${at ?? 0})
+        on conflict (id) do update set state = excluded.state, at = excluded.at`,
+  );
+}
+
+export async function readTalk(db, id) {
+  const [held] = await rows(db, sql`select state from talk where id = ${String(id)}`);
+  if (!held) return null;
+  try {
+    return JSON.parse(held.state);
+  } catch {
+    // A conversation that cannot be read back is a conversation that was
+    // never had. Better to begin again than to answer out of half of one.
+    return null;
+  }
+}
+
+export async function forgetTalks(db) {
+  await db.execute(sql`delete from talk`);
 }
 
 // Every link in one statement. A link a term already has is left as it is.

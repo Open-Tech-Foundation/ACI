@@ -6,6 +6,22 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A conversation holds its own graph, and is picked up where it was left.**
+  A conversation is many signals over one graph, so the graph belongs to the
+  conversation — not to the brain. One brain made one graph and handed it to
+  every thread, so a second conversation was handed the first one's, and
+  answered out of what it had never been told:
+
+      [one]  tom has 5 books        I understand.
+      [two]  what does tom have?    book          ← two never heard of tom
+
+  Each conversation now fills its own, and a named one is kept under its name:
+  the graph is the whole of what its signals came to, so keeping it is what
+  lets a conversation be taken up again — in this run or a later one — without
+  every signal being said a second time. A conversation that named none is not
+  kept, having no name to be asked for again, and forgetting drops every one
+  that was.
+
 - **The words the world was missing for things that happen.** Seven kinds of
   event — wedding, robbery, interview, exam, party, match, outage, delay — the
   people who stand in them, and the doings their outcomes need: steal, marry,

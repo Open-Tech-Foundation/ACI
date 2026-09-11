@@ -16,7 +16,7 @@
 import { brainFrom, grownBy } from './brain.js';
 import { conversation } from './graph.js';
 import { fromSources, speaking } from './knowledge.js';
-import { openStore, seed, readWorld, write, forgetLearned } from './store.js';
+import { openStore, seed, readWorld, write, forgetLearned, keepTalk, readTalk, forgetTalks } from './store.js';
 
 const LANGUAGES = 'languages';
 const KNOWLEDGE = 'knowledge';
@@ -53,14 +53,15 @@ export function openBrain(url) {
   // Only the world moves. The languages were read once and checked once, and
   // are handed back as they are: a world that has grown is no reason to merge
   // and check every word of every language again.
-  // This brain's conversation. It belongs to the brain the way the store does,
-  // and goes into what is known so the brain reasons over its own and no other.
-  const talk = conversation();
+  const build = async (settled = false) =>
+    fromSources({ ...sources, world: await readWorld(store), settled });
 
-  const build = async (settled = false) => ({
-    ...fromSources({ ...sources, world: await readWorld(store), settled }),
-    graph: talk,
-  });
+  // A conversation is many signals over one graph, so the graph belongs to the
+  // conversation and not to the brain. One brain may be holding several at
+  // once — two people talking to it are two conversations over one world — and
+  // what one was told is nothing to the other.
+  const talks = new Map();
+  const ALONE = Symbol('one thread');
 
   async function assemble() {
     const { file } = await import('runtime:fs');
@@ -109,13 +110,44 @@ export function openBrain(url) {
   // one is nothing to the other. A signal that names no conversation is in the
   // one unnamed thread.
   const threads = new Map();
-  const ALONE = Symbol('one thread');
+
+  // The graph this conversation has been filling. A named one is kept, so a
+  // conversation the brain has not heard from — in this run or an earlier one —
+  // is picked up where it was left rather than said again from the start.
+  async function pickUp(thread) {
+    const already = talks.get(thread);
+    if (already) return already;
+    const talk = conversation();
+    talks.set(thread, talk);
+    if (thread === ALONE || !store) return talk;
+    const kept = await readTalk(store, thread);
+    if (!kept) return talk;
+    talk.restore(kept.graph);
+    // What a word in the next signal lands on comes back with it. A
+    // conversation picked up mid-sentence still knows what `it` was.
+    if (kept.thread) threads.set(thread, kept.thread);
+    return talk;
+  }
+
+  // Everything the conversation came to, put where it will still be after this
+  // run. Only a named conversation: one that named none cannot be asked for
+  // again, so there is nothing to come back to.
+  async function settle(thread, talk, record) {
+    threads.set(thread, record);
+    if (thread === ALONE || !store) return;
+    await keepTalk(store, thread, { graph: talk.dump(), thread: record }, Date.now());
+  }
 
   // The circumstance of the signal — where it came from, where it went, what
   // was last spoken of — is the runtime's to supply, and it is optional: told
   // nothing, the brain does not guess who it is talking to.
   async function turn(input, circumstance) {
     const thread = (circumstance && circumstance.conversation) ?? ALONE;
+    // What is known before the conversation is picked up: the store is opened
+    // on the way, and a conversation kept in it cannot be read back before
+    // there is a store to read it from.
+    const known = await loaded();
+    const talk = await pickUp(thread);
     const held = threads.get(thread) || {};
     // Who spoke, and who was spoken to, arrive with each signal or not at
     // all: the runtime never carries them across signals. What was spoken of,
@@ -128,7 +160,7 @@ export function openBrain(url) {
       language: held.language ?? null,
       ...(circumstance || {}),
     };
-    const knowledge = await loaded();
+    const knowledge = { ...known, graph: talk };
     const result = brainFrom(input, knowledge, said);
     const standing = [...(held.told || [])];
     if (result.told && !standing.includes(result.told)) standing.push(result.told);
@@ -160,7 +192,7 @@ export function openBrain(url) {
     // on one at last, that is its answer.
     for (const instruction of standing) {
       if (instruction === String(input)) continue;
-      const again = brainFrom(instruction, await loaded(), {
+      const again = brainFrom(instruction, { ...(await loaded()), graph: talk }, {
         spoken: result.spoken,
         focus: result.focus,
         names: result.names,
@@ -171,7 +203,7 @@ export function openBrain(url) {
       if (again.told == null && again.expression.name !== "unsure") {
         await commit(again.learned);
         again.remember();
-        threads.set(thread, {
+        await settle(thread, talk, {
           spoken: result.spoken,
           focus: result.focus,
           names: result.names,
@@ -181,7 +213,7 @@ export function openBrain(url) {
         return again;
       }
     }
-    threads.set(thread, {
+    await settle(thread, talk, {
       spoken: result.spoken,
       focus: result.focus,
       names: result.names,
@@ -198,17 +230,25 @@ export function openBrain(url) {
 
   const forget = () => inTurn(async () => {
     threads.clear();
-    // The conversation graph goes with the conversation.
-    talk.clear();
+    // Every conversation goes, graph and all. The graphs themselves stay put
+    // and empty: a caller holding one is holding that conversation, and it is
+    // the same conversation after it has been forgotten.
+    for (const talk of talks.values()) talk.clear();
     if (!store) return;
+    await forgetTalks(store);
     await forgetLearned(store);
     knowledgePromise = build();
     await knowledgePromise;
   });
 
-  // What this brain's conversation holds, and how it says it. The graph is the
-  // brain's, so it is reached through the brain rather than through the module.
-  return { brain, forget, graph: talk.graph, serialize: talk.serialize, conversation: talk };
+  // What is reached through the brain is the unnamed thread — the conversation
+  // a signal that names no conversation is in. A named one is reached by
+  // naming it, the same way a signal does.
+  const alone = conversation();
+  talks.set(ALONE, alone);
+  const held = (named) => talks.get(named ?? ALONE) ?? null;
+
+  return { brain, forget, graph: alone.graph, serialize: alone.serialize, conversation: alone, held };
 }
 
 async function projectRoot(file) {

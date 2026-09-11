@@ -70,6 +70,38 @@ function clear() {
   against = null;
 }
 
+// What the conversation holds, as plain data. Everything here was put in by a
+// signal; nothing derived from the world is kept, so the world it is read back
+// against may have grown in the meantime and the graph still says the same.
+//
+// This is what a conversation is. Keeping it is what lets one be picked up
+// again without every signal being said a second time.
+function dump() {
+  return {
+    held: Object.fromEntries(KINDS.map((kind) => [kind, held[kind].map((one) => ({ ...one }))])),
+    counted: { ...counted },
+    inReach: [...inReach],
+    standing: [...standing],
+    counting: [...counting],
+    happenings: [...happenings],
+  };
+}
+
+// A conversation picked up where it was left. What comes back stands in for
+// everything said before, so whatever was here is dropped first.
+function restore(state) {
+  clear();
+  if (!state) return;
+  for (const kind of KINDS) {
+    for (const one of state.held?.[kind] ?? []) held[kind].push({ ...one });
+    counted[kind] = state.counted?.[kind] ?? held[kind].length;
+  }
+  inReach = [...(state.inReach ?? [])];
+  standing = new Map(state.standing ?? []);
+  counting = new Map(state.counting ?? []);
+  for (const [kind, row] of state.happenings ?? []) happenings.set(kind, row);
+}
+
 function graph() {
   return {
     ...Object.fromEntries(
@@ -1382,6 +1414,8 @@ function serialize(world = against) {
 
   return {
     clear,
+    dump,
+    restore,
     graph,
     fromUnderstood,
     serialize,
