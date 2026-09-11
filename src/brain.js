@@ -2459,9 +2459,13 @@ function because(joined, world, mood, sent) {
   // Asked *why* something is so, the question is about the claim and not about
   // the thing in it: it is not asking whether a drum is cold — that was said —
   // but what stands behind its being so. So the claim is looked for, and
-  // whatever was said to be the reason for it is the answer. Finding nothing,
-  // the question is left to be read the other ways it can be.
-  if (mood === 'ask' && a.cause != null && holes.some((n) => onOf(n) === a.cause)) {
+  // whatever was said to be the reason for it is the answer.
+  //
+  // Finding nothing, it does not know. What the thing is, or is one of, is an
+  // answer to a question nobody asked: asked why a lamp is broken with nothing
+  // said about it, `a tool` is true and is not a reason, and offering it would
+  // be answering something else.
+  if (a.cause != null && holes.some((n) => onOf(n) === a.cause)) {
     const parts = said
       .filter(
         (n) =>
@@ -2473,14 +2477,19 @@ function because(joined, world, mood, sent) {
     const behind = parts.length >= 2
       ? reasonFor(parts[0], parts[parts.length - 1], world)
       : [];
-    if (behind.length > 0) {
-      return [
-        withBranch(root, [
-          ...root.branch,
-          node('answer', 'link', [], { subject: parts[0], relation: a.cause, found: behind }),
-        ]),
-      ];
-    }
+    return [
+      withBranch(root, [
+        ...root.branch,
+        behind.length > 0
+          ? node('answer', 'link', [], { subject: parts[0], relation: a.cause, found: behind })
+          : node('standing', 'absent', [], {
+              subject: parts[0] ?? null,
+              relation: a.cause,
+              object: null,
+              negated: false,
+            }),
+      ]),
+    ];
   }
   // A hole may carry the kind it asks after rather than stand beside it: `how`
   // asks after the way a thing is, and there is no word beside it saying so.

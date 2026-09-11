@@ -106,7 +106,9 @@ test("when asks after when, and answering what a thing is is no answer", async (
   // `when is dinner` used to say `meal` — the kind of thing dinner is, which
   // is not when it is. Nobody has said when, so there is nothing to say.
   assertEquals((await fresh("when is dinner")).expression.name, "unsure");
-  assertEquals((await fresh("why is a cat")).expression.state.says, "mammal");
+  // And `why is a cat` said `mammal`, which is the same answer to the same
+  // question nobody asked. A kind is not a reason.
+  assertEquals((await fresh("why is a cat")).expression.name, "unsure");
   await forget();
 });
 

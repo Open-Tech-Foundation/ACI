@@ -4,6 +4,19 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- **A kind is no reason.** `why is the lamp broken?` answered `tool`, with
+  nothing said about the lamp at all. Asked why and finding no reason, the
+  brain left the signal to be read the other ways it could be — and the other
+  reading was a different question, `what is the lamp?`, whose answer is true
+  and is not what was asked. It is the only place the brain said something
+  misleading rather than saying it did not know. The same repair was already
+  made for `when is dinner`, which used to answer `meal`; `why` was left doing
+  it, and a test pinned it. Asked why, the brain answers with a reason or says
+  it does not know. A hole is what makes it a question, so the mark is nothing
+  to this: `why is the door open` answers without one.
+
 ### Changed
 
 - **An ordering belongs to the scale, not to the word.** `a shed is hotter
