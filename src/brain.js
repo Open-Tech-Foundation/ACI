@@ -3218,7 +3218,30 @@ function because(joined, world, mood, sent) {
 
   // A relation already joining two things is what the signal is about, and a
   // word that could also be read as a doing is not one here.
-  if (!(joint >= 0 && joined >= 2)) {
+  // Unless a doing stands before it. `a tree fell on the road` is a falling
+  // that happened on the road, not a tree that is on one: what follows the
+  // doing qualifies the doing. The relation still joins two things — it is
+  // the doing that is the near end of it, and the doing has to exist first.
+  // Except where the doing is one the world says brings that very relation
+  // about: `put it on the shelf` is the shelf it ends on, and the placement is
+  // the whole of what was said.
+  // Where and when, and nothing else: those are what any doing may carry. A
+  // relation that joins two occurrences — one arrival before another — is the
+  // signal itself, not a word about one of them.
+  const qualified =
+    joint >= 0 &&
+    a.action != null &&
+    a.placement != null &&
+    world.isA(conceptOf(said[joint]), a.placement) &&
+    said
+      .slice(0, joint)
+      .some(
+        (n) =>
+          reaches(n, a.action, world) &&
+          !(a.brings != null && world.linked(conceptOf(n), a.brings).length > 0),
+      );
+
+  if (!(joint >= 0 && joined >= 2) || qualified) {
     // Asked whether something happened, the brain looks through what it was
     // told happened. It does not put another one on the record: being asked is
     // not being told, and answering is not doing.
@@ -4849,7 +4872,8 @@ function act(said, claims, world, side, sides, allocate) {
   const named = acting >= 0 ? acting : said.findIndex((n) => operated(conceptOf(n), world));
   if (named < 0) return null;
 
-  const stood = rolesIn(said, named, claims, world, side, sides);
+  const joints = [];
+  const stood = rolesIn(said, named, claims, world, side, sides, joints);
   // Agreement with a denial (`neither did theo`): the `neither` term is never
   // a doer — it drops out, and a lone target left without an agent is the new
   // agent by inversion. Elsewhere the term claims like any other.
@@ -4944,7 +4968,15 @@ function act(said, claims, world, side, sides, allocate) {
   // itself — yesterday — is when it happened, and the doing holds it the same
   // way it holds which side of now it was on.
   const clock = parts.find((p) => timely(p) && p.amount != null) || null;
-  const times = parts.filter((p) => timely(p) && p.amount == null).map((p) => p.of);
+  // A phrase pointing at a time says when the doing was, whatever word opened
+  // it: in the evening and on monday are both whens, and the preposition is
+  // the language's business. So a joint whose far end is a time is not a place
+  // the doing stood in.
+  const whenJoint = (j) => !measuring && a.time != null && world.isA(j.of, a.time);
+  const times = [
+    ...parts.filter((p) => timely(p) && p.amount == null).map((p) => p.of),
+    ...joints.filter(whenJoint).map((j) => j.of),
+  ];
   const event = node('event', `${world.term(action).name}#${happened}`, [], {
     id: happened,
     action,
@@ -4954,13 +4986,36 @@ function act(said, claims, world, side, sides, allocate) {
     ...(times.length > 0 ? { times } : {}),
     not: denied,
     parts: parts.filter((part) => !timely(part)),
+    // Where it was, when it was, whatever else was said of it. Each of these
+    // is an ordinary fact with the doing itself at the near end — the doing
+    // holds them, and holding them is all an event is.
+    ...(joints.some((j) => !whenJoint(j)) ? { joints: joints.filter((j) => !whenJoint(j)) } : {}),
   });
+
+  // Where a doing stood is where whoever did it stood: a tree that fell on the
+  // road is on the road, and somebody who lives in a city is in it. The doing
+  // holds the same fact rather than a second copy of it.
+  const doer = parts.find((p) => p.role === a.agent) || parts.find((p) => p.role === a.target);
+  const placed = doer
+    ? joints
+        .filter((j) => !whenJoint(j))
+        .map((j) =>
+          node('learn', 'link', [], {
+            subject: doer.of,
+            relation: j.relation,
+            object: j.of,
+            quantity: null,
+            made: null,
+            not: denied,
+          }),
+        )
+    : [];
 
   // What the brain refuses did not happen, and it does not go on the record as
   // having happened. Where it simply cannot tell what followed, the event
   // stands: it was told something occurred, and that much is so.
   if (worked && worked.some((n) => n.kind === 'refuse')) return worked;
-  return [...called, event, ...(worked || []), ...left];
+  return [...called, event, ...placed, ...(worked || []), ...left];
 }
 
 // The operation a term is, where it is one at all. The world says which
@@ -4974,7 +5029,7 @@ function operated(term, world) {
 // and that is the language's to decide. What it does not say, the brain reads
 // off the order things were perceived in: before the action is who did it,
 // after it is what was done.
-function rolesIn(said, acting, claims, world, side, sides) {
+function rolesIn(said, acting, claims, world, side, sides, joints) {
   const a = world.anchors || {};
   // How many of them there are stands between the word saying which part this
   // is and the thing itself — `into three pieces` — and a count is not another
@@ -5001,10 +5056,45 @@ function rolesIn(said, acting, claims, world, side, sides) {
     taken.add(i);
   });
 
+  // A relation word standing after the doing plays no part in it. It opens a
+  // phrase — on the road, in the evening — and what follows is that phrase's
+  // far end, not the doing's. The doing carries the phrase; the phrase does
+  // not stand in place of the doing. A word already spoken for names a part
+  // and is left alone.
+  // A doing the world says brings something about ends somewhere: `put it on
+  // the table` says where the thing came to rest, not where the putting was.
+  // There the phrase is the doing's own far end and not a word about it.
+  const brings =
+    a.brings != null &&
+    acting >= 0 &&
+    world.linked(conceptOf(said[acting]), a.brings).length > 0;
+
+  const jointed = new Set();
+  if (joints && a.relation != null && !brings) {
+    said.forEach((n, i) => {
+      if (i <= acting || taken.has(i) || !reaches(n, a.relation, world)) return;
+      // The nearest thing after it, and no further: the phrase ends where the
+      // next one begins, so two phrases in a row do not both reach the last
+      // thing said.
+      let far = -1;
+      for (let j = i + 1; j < said.length && far < 0; j += 1) {
+        if (reaches(said[j], a.relation, world)) break;
+        if (conceptOf(said[j]) == null) continue;
+        if (isDeterminer(said, j, world) || taken.has(j) || jointed.has(j)) continue;
+        far = j;
+      }
+      if (far < 0) return;
+      jointed.add(i);
+      jointed.add(far);
+      joints.push({ relation: conceptOf(n), of: conceptOf(said[far]), at: i });
+    });
+  }
+
   // What no word says, the brain reads off the order things were perceived in —
   // but which side of the action is the doer is word order, and word order is
   // the language's. Told nothing, the brain assigns no part by order at all.
   said.forEach((n, i) => {
+    if (jointed.has(i)) return;
     if (i === acting || taken.has(i) || !claims(n) || isDeterminer(said, i, world) || !sides) return;
     if (functionsOf(n).includes('extreme') || greetsHere(n, world)) return;
     const role = a[i < acting ? sides.before : sides.after];

@@ -6,6 +6,24 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A doing keeps what was said of it, and holds it.** `a plank fell on the
+  floor` wrote down a plank on a floor and no falling at all: a relation named
+  between two things was taken to be the whole of the signal, so the doing
+  standing before it was dropped. `a plank fell in the evening` fared worse and
+  left nothing but the plank placed on a preposition.
+
+  A phrase after a doing says where or when the doing was. Where it points at a
+  place, the doing is held to have happened there; where it points at a time,
+  that is when it happened. The doer stands where the doing stood — a plank
+  that fell on the floor is on the floor — so one placement is written, of the
+  doer, and the doing *holds* that same fact. Nothing is stored twice, and an
+  event is a doing with the facts of it hanging off it.
+
+  A doing the world says brings a placement about is untouched: `hema put a mug
+  on a ledge` is still the ledge the mug ends on. So is a relation joining two
+  occurrences — `asha arrived before deepak` is an ordering, not an arrival
+  said to be somewhere.
+
 - **A condition and what stands on it, however english joins the two.** `if a
   drum is cold then a bell is red` was read and `if a drum is cold, a bell is
   red` was not, nor the same without anything between the halves at all. The

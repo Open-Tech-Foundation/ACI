@@ -406,12 +406,15 @@ function fromUnderstood(roots, world, focus, marking, from) {
     if (counts[a2.target] != null) properties.count = counts[a2.target];
     else if (Object.keys(counts).length === 1) properties.count = Object.values(counts)[0];
     const primitive = doing(roles, world);
-    put('actions', {
+    const id = put('actions', {
       of: primitive ?? action,
       said: action,
       // When it happened, where the signal said so. A doing stands on the same
       // quantity as anything else that has a time, so two of them compare.
       ...(event.state.time ? { time: event.state.time } : {}),
+      // When it was, said as a time of its own rather than a reading of a
+      // clock: in the evening is an evening, not an hour.
+      ...(event.state.times ? { times: event.state.times } : {}),
       // A primitive of the brain's own carries the brain's own parts. A doing
       // it does not yet know keeps the roles the world gave it, rather than
       // being forced into a shape that is not its.
@@ -423,6 +426,24 @@ function fromUnderstood(roots, world, focus, marking, from) {
       denied: not === true,
       when: when ?? null,
     });
+
+    // What was said of the doing itself — where it was, when it was — is an
+    // ordinary fact with the doing at the near end, and the doing holds it.
+    // Nothing new is needed for that: an action can be pointed at like
+    // anything else, and being held is where it is pointed from.
+    // Where a doing stood is where whoever did it stood: a tree that fell on
+    // the road is on the road. One fact, claimed of the doer — and the doing
+    // holds that same fact rather than a second copy of it.
+    const doer = (parts || []).find((p) => p.role === a2.agent) || (parts || []).find((p) => p.role === a2.target);
+    for (const joint of event.state.joints || []) {
+      if (!doer || doer.of == null) continue;
+      claimed(doer.of, joint.relation, joint.of, null, not === true);
+      const one = held.actions.find((row) => row.id === id);
+      const fact = held.facts.find(
+        (row) => row.said === joint.relation && row.parts && row.parts[1] === reach(joint.of),
+      );
+      if (fact && !(one.holds || []).includes(fact.id)) one.holds = [...(one.holds || []), fact.id];
+    }
 
     // Many of a kind on the far end of a doing are that many things. `split
     // them into three groups` makes three groups, and each is drawn from what
@@ -1173,7 +1194,11 @@ function serialize(world = against) {
                 : `${part(Number(role))}: ${spell(value)}`,
             )
             .join(', ');
-      const when = one.time ? `  at ${one.time.amount} ${spell(one.time.unit)}` : '';
+      const when = one.time
+        ? `  at ${one.time.amount} ${spell(one.time.unit)}`
+        : one.times
+          ? `  at ${one.times.map(spell).join(', ')}`
+          : '';
       // The same rule the facts are said by: a doing the brain knows of itself
       // says its own name, and a doing the world holds says `action` — one of
       // the four ways anything exists — with the doing itself as what it
@@ -1182,7 +1207,8 @@ function serialize(world = against) {
       const does = own
         ? `${one.of}(${said})`
         : `action(${said}${said ? ', ' : ''}type: ${spell(one.of)})`;
-      return `${one.id}  ${one.denied ? 'not ' : ''}${does}${when}${properties(one.properties)}`;
+      const holds = one.holds ? `  holds ${one.holds.join(', ')}` : '';
+      return `${one.id}  ${one.denied ? 'not ' : ''}${does}${when}${properties(one.properties)}${holds}`;
     }),
   );
   // A claim inside an instruction, said the way a fact is said.
