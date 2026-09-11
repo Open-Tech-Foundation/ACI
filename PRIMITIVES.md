@@ -177,7 +177,10 @@ semantics that rules cannot be written without.
 
 ### 4. Space and composition
 
-- [ ] Introduce binary spatial relations and containment/topology.
+- [~] Introduce binary spatial relations and containment/topology. `left of`
+  and `right of` are orderings, strict and running through by being ones, and
+  a relation the world classifies as an ordering no longer says so itself.
+  Containment, overlap, contact and the other axes are not represented.
 - [ ] Separate `component-of`, `made-of-material`, `member-of` and portions.
 - [ ] Distinguish direct part from transitive part.
 - [ ] Add composition cardinality and structural roles.
