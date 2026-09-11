@@ -4,6 +4,23 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **A scale is a scale of something.** `a lamp is brighter than a candle` left
+  `is a candle darker than a lamp?` unanswered, because nothing said bright
+  and dark were two ends of one thing. The brain already held `light` and
+  `sound` as kinds of energy, and `heat` beside them; it held `temperature` as
+  a property. What it never held was the rung between them — no relation said
+  what a property is a property of, so a scale and the thing it scales sat in
+  the same world unjoined. Brightness is how much light there is, loudness how
+  much sound, temperature how much heat. Said once, bright and dark are the
+  two ends of brightness the way hot and cold are the two ends of temperature,
+  and `darker` reads `brighter` backwards without being told.
+
+  Nothing here goes through seeing. A candle is dimmer than a lamp in an empty
+  room, so hanging bright and dark off perception would make the fact wait on
+  somebody to look at it. Light is the lower rung and the brain already had it.
+
 ### Changed
 
 - **Measuring runs one way, and a scale is one fact read from either end.**

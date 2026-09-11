@@ -93,3 +93,31 @@ test("two comparisons opposed on one scale are converse without being told", () 
   }
   assertEquals(told, []);
 });
+
+test("a scale says what it is a scale of", () => {
+  const of = world.named("property-of");
+  const measure = world.anchors.measure;
+  // Light and sound the brain already held, as kinds of energy. What was
+  // missing was the rung between a state and the thing it is a state of.
+  for (const [scale, thing] of [
+    ["brightness", "light"],
+    ["loudness", "sound"],
+    ["temperature", "heat"],
+  ]) {
+    assertEquals(world.linked(world.named(scale), of), [world.named(thing)]);
+  }
+  for (const [state, scale] of [
+    ["bright", "brightness"],
+    ["dark", "brightness"],
+    ["loud", "loudness"],
+    ["quiet", "loudness"],
+  ]) {
+    assertEquals(world.members(world.named(state), measure), [world.named(scale)]);
+  }
+});
+
+test("a scale is never a scale of itself", () => {
+  const of = world.named("property-of");
+  assertEquals(world.asymmetric(of), true);
+  assertEquals(world.irreflexive(of), true);
+});

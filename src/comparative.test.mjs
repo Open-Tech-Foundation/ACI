@@ -157,3 +157,37 @@ test("width, depth and thickness are not length", async () => {
   );
   await forget();
 });
+
+test("a scale is of something the brain already knows", async () => {
+  // Brightness is how much light there is, and the brain has held light as a
+  // kind of energy all along. Nothing here is about seeing: a candle is
+  // dimmer than a lamp in an empty room.
+  assertEquals(
+    (await fresh("a lamp is brighter than a candle", "is a candle darker than a lamp?"))
+      .expression.name,
+    "affirm",
+  );
+  assertEquals(
+    (await fresh("a drum is louder than a bell", "is a bell quieter than a drum?"))
+      .expression.name,
+    "affirm",
+  );
+  await forget();
+});
+
+test("what a scale orders, it orders strictly", async () => {
+  assertEquals(
+    (await fresh(
+      "a room is darker than a hall",
+      "a hall is darker than a yard",
+      "is a room darker than a yard?",
+    )).expression.name,
+    "affirm",
+  );
+  assertEquals(
+    (await fresh("a room is darker than a hall", "is a hall darker than a room?"))
+      .expression.name,
+    "deny",
+  );
+  await forget();
+});

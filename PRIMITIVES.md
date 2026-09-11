@@ -96,6 +96,12 @@ more world vocabulary.
   and the brain says that what it was told and what follows from what it was
   told disagree, so a wrong rule cannot hide behind the exception it makes.
   Nothing to build until rules land; the rule they must follow is this one.
+- [x] Join a scale to the thing it is a scale of. `light`, `sound` and `heat`
+  were held as kinds of energy and `temperature` as a property, with no
+  relation able to say a property is a property of something — so `bright` and
+  `dark` reached `state` and stopped, and `darker` could not read `brighter`
+  backwards. Not through seeing: a candle is dimmer than a lamp in an empty
+  room.
 - [x] Make `measure` run one way. It was authored in both directions at once —
   thirty-three links saying a state measures its scale, twenty saying a scale
   measures its states — and the brain read the second, which only five
