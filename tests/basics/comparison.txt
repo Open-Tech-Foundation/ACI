@@ -1,0 +1,20 @@
+# Standing further along something than another does.
+
+mira is taller than dev
+is mira taller than dev? => affirm
+is dev shorter than mira? => affirm
+is mira shorter than dev? => deny
+
+mira is taller than dev
+dev is taller than sam
+is mira taller than sam? => affirm
+who is the tallest? => mira
+
+a shed is hotter than a hut
+a hut is warmer than a barn
+is a shed hotter than a barn? => affirm
+is a shed warmer than a barn? => affirm
+
+a lake is deeper than a pond
+is a lake deeper than a pond? => Yes. ✅ a lake is deeper than a pond.
+is a pond shallower than a lake? => Yes. ✅ a pond is shallower than a lake.

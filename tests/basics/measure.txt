@@ -1,0 +1,22 @@
+# How much of something there is.
+
+the mast is 6 metres long
+how long is the mast? => six metres
+
+the plank is 1 metre long
+how long is the plank? => one metre
+
+the crate weighs 5 kilograms
+how many grams does the crate weigh? => 5000
+how many kilograms does the crate weigh? => 5
+
+a shelf holds 4 stamps
+how many stamps does the shelf hold? => four
+how many grams does the shelf hold? => unsure
+
+a shelf holds 4 stamps
+a shelf holds 6 stamps
+how many stamps does a shelf hold? ?> I don't know.
+
+the lecture lasted three hours
+how long was the lecture? ?> I don't know.

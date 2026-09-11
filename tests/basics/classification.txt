@@ -1,0 +1,22 @@
+# What a thing is, and what follows from it.
+
+a wren is a bird => understood
+is a wren an animal? => affirm
+is a wren a fish? => deny
+is a bird a wren? => unsure
+
+tilly is a heron
+is tilly an animal? => affirm
+what is tilly? => heron
+
+a cup is a container => learn
+is a cup an object? => affirm
+is a cup a vehicle? => unsure
+
+is water a liquid? => affirm
+is water a solid? => deny
+is ice a solid? => affirm
+is ice a liquid? => deny
+is ice a medicine? => unsure
+
+is a wren an existence? => affirm

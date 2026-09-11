@@ -1,0 +1,18 @@
+# What holds between two things, and how it runs.
+
+a wheel is part of a cart
+a cart is part of a train
+is a wheel part of a train? => affirm
+is a train part of a wheel? => deny
+is a wheel part of a wheel? => deny
+
+tom is the father of sam
+is tom the father of sam? => affirm
+who is the father of sam? => tom
+
+mira is the sister of nila
+is nila the sibling of mira? => affirm
+is nila the sister of mira? => unsure
+
+tom is the father of sam
+is sam the son of tom? ?> I don't know.

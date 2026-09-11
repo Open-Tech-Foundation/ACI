@@ -1,0 +1,17 @@
+# How many, and what arithmetic the brain does itself.
+
+a shelf holds 4 stamps
+the shelf holds how many stamps? => four
+
+mira has 4 keys
+mira has 6 keys
+how many keys does mira have? => six
+
+what is 2 plus 3? => answer
+is 3 more than 2? => affirm
+is 2 more than 3? => deny
+is 2 less than 3? => affirm
+
+a basket holds 10 apples
+rahul takes 3 apples from the basket
+how many apples does the basket hold? => seven

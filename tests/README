@@ -1,0 +1,25 @@
+The basics, as transcripts.
+
+    esdev tests/run.mjs                 every category
+    esdev tests/run.mjs state space     only those
+    pnpm basics                         the same as the first
+
+One file under basics is one category. A blank line starts a new conversation,
+so what one line settles stands for the next.
+
+    a wren is a bird
+    is a wren an animal? => affirm
+
+A line with no arrow is told and not checked. `=>` checks what the brain
+answered. `?>` records what it answers today where that is known to be wrong,
+so a category says both what works and what is still owed: an owed line that
+starts passing is reported, and one that keeps failing is not.
+
+What follows an arrow is the reply itself where the words matter, and the name
+of the verdict — affirm, deny, unsure, learn, answer, unknown, understood — where
+only the judgement does.
+
+These are not the unit tests under src. Those check one thing each against the
+brain's own parts; these check that the basics still answer the way they did,
+end to end, and they run in seconds. A change that breaks a basic shows up here
+first.

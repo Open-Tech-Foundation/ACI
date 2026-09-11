@@ -1,0 +1,20 @@
+# A claim spoken of rather than made, and what stands behind one.
+
+i know that a mango is a fruit => understood
+do i know that a mango is a fruit? => affirm
+do i know that a mango is a food? => unsure
+who knows that a mango is a fruit? => person
+
+do i know that a mango is a fruit? => unsure
+a mango is a fruit? => affirm
+
+i know that a mango is a hammer => deny
+
+the door is open because the wind is strong
+why is the door open? => a wind is strong
+
+nila sang because kiran arrived
+why did nila sing? => kiran arrived
+
+why is the lamp broken? => unsure
+why is a cat => unsure

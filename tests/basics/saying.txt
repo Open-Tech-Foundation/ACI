@@ -1,0 +1,8 @@
+# What the brain says it did is what it did.
+
+a box holds 3 red balls and 2 blue balls ?> I don't know.
+a drum is cold => I understand.
+mira is a heron => I understand.
+if a drum is cold then a bell is red => I understand.
+hello => Hello!
+asdf => I don't know "asdf".

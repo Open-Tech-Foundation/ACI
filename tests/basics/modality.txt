@@ -1,0 +1,15 @@
+# What a thing can do, and a claim held out rather than made.
+
+a wren can fly => learn
+can a wren fly? => affirm
+can a wren swim? => unsure
+
+a bird can fly
+can a heron fly? => affirm
+can a trout fly? => unsure
+
+a wren can fly
+can a bird fly? => unsure
+
+a cat might be a fish => deny
+a cat might swim => unsure

@@ -1,0 +1,26 @@
+# What follows from what, and what the brain can show for it.
+
+if a drum is cold then a bell is red => learn
+a drum is cold
+is a bell red? => affirm
+why is a bell red? => a drum is cold
+
+if a bird is cold then a bell is red
+a wren is cold
+is a bell red? => affirm
+
+if a thing is cold then it is red
+a drum is cold
+is the drum red? => affirm
+is a bell red? => unsure
+
+if something is cold then it is red
+a drum is cold
+is the drum red? => affirm
+
+if everyone is busy then a lantern is bright
+mira is a person
+mira is busy
+is a lantern bright? => unsure
+
+if it snows the path gets icy ?> I don't understand.

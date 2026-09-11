@@ -1,0 +1,9 @@
+# Being told something is not so is being told something.
+
+a wren is not a fish
+is a wren a fish? => deny
+
+a bell is not red
+is a bell red? => deny
+
+is a bell blue? => unsure

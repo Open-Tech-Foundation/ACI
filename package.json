@@ -13,6 +13,7 @@
   },
   "scripts": {
     "test": "esdev test",
+    "basics": "esdev tests/run.mjs",
     "build": "esdev build --lib src --out=dist",
     "dev": "esdev start --config=demo/esdev.json",
     "build:site": "esdev build --config=demo/esdev.json --minify"

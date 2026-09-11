@@ -1,0 +1,20 @@
+# The shapes a question comes in.
+
+is a cat an animal? => affirm
+is a cat a fish? => deny
+
+a wheel is part of a cart
+is a wheel part of a cart? => affirm
+a wheel is part of a cart? => affirm
+
+dev has 2 kettles
+what does dev have? => kettle
+who has kettles? => dev
+
+a car is red
+what colour is the car? => red
+the car is what => vehicle, red
+
+who has the telescope? => unsure
+when is dinner => unsure
+what is 2 plus 3? => answer

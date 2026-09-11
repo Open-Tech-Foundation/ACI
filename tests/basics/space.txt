@@ -1,0 +1,20 @@
+# Where a thing is, and how two of them stand to each other.
+
+the lamp is on the crate
+where is the lamp? => on a crate
+what is on the crate? => lamp
+
+the lamp is on the crate
+the lamp is in the sack
+where is the lamp? => in a sack
+
+a lamp is left of a crate
+a crate is left of a barrel
+is a lamp left of a barrel? => affirm
+is a barrel left of a lamp? => deny
+is a barrel right of a lamp? => affirm
+is a lamp left of a lamp? => deny
+
+x is left of y
+y is left of z
+x is left of z? => affirm

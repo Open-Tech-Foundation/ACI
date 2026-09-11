@@ -1,0 +1,21 @@
+# Something happening, and what it leaves behind.
+
+mira walked
+did mira walk? => affirm
+did mira jump? => unsure
+
+mira gave a key to kiran
+does kiran have a key? => affirm
+how many keys does kiran have? => one
+who has a key? => kiran
+does mira have a key? => unsure
+
+dev has 3 kettles
+dev gave 1 kettle to mira
+how many kettles does dev have? => two
+how many kettles does mira have? => one
+
+kiran put the coin into the purse
+where is the coin now? ?> I don't know.
+
+nila was at the fair ?> I don't understand.

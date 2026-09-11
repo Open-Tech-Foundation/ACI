@@ -1,0 +1,22 @@
+# What a thing is like, and that it may stop being so.
+
+a bell is red => learn
+is a bell red? => affirm
+what colour is the bell? => red
+
+a hut is warm
+a hut is cool
+is a hut cool? => affirm
+is a hut warm? => deny
+
+a bell is red
+a bell is blue => learn
+is a bell red? => deny
+is a bell blue? => affirm
+
+my cat is red
+what colour is my cat? => red
+what colour is your cat? => I don't know.
+
+a car is red
+what size is the car? => I don't know.

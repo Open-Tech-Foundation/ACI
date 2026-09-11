@@ -1,0 +1,9 @@
+# One thing being the same as another, and being told apart from it.
+
+is a wren a wren? => affirm
+is a wren different from a fish? => affirm
+
+mira is a heron
+what is mira? => heron
+who is a heron? => mira
+who is mira? => heron
