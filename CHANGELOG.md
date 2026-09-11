@@ -4,6 +4,17 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- **A fact taken in does not send the brain back to the store for the world.**
+  Every accepted fact was written to the store and then the whole world read
+  back out of it — three thousand terms and three and a half thousand links —
+  to find the one that had moved. The brain had just weighed that change
+  against that world and accepted it, so the world it holds is the world plus
+  the change, and it grows the one it has. A turn that learns something went
+  from 51ms to 34ms. The store still has the fact, and a brain that opens
+  again reads it from there.
+
 ### Fixed
 
 - **A thing stands in one state at a time, and a later one is the one it is

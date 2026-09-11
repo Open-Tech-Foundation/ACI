@@ -86,10 +86,11 @@ more world vocabulary.
   half of a learning turn. A change joins a world that was already whole, so
   each rule now starts from what the change touches and asks the world for the
   steps out from there: 0.1ms, and no longer growing with what is known. A
-  learning turn went from ~90ms to ~37ms. What remains on that turn is reading
-  the world back and rebuilding its indexes after a write, which is still
-  O(world) per fact — a rebuild rather than a re-derivation, and the next thing
-  to take out of the loop.
+  learning turn went from ~90ms to ~37ms. Reading the world back out of the
+  store has since gone too — the brain grows the world it already holds — and
+  what remains is rebuilding its indexes, 14ms of every 34ms turn and still
+  O(world) per fact. Indexes that grow with a change rather than being built
+  again are the next thing to take out of the loop.
 - [x] Decide what a derived fact does when the world denies it. Settled: a
   denial stands. What somebody said outweighs what the brain worked out, so a
   derived fact is never written over a denial and never answers in its place —

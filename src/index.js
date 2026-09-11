@@ -13,7 +13,7 @@
 //
 // brain(input) takes ONLY the input. The brain's own signature never grows to
 // admit a new source; a new source is a new file in one of those directories.
-import { brainFrom } from './brain.js';
+import { brainFrom, grownBy } from './brain.js';
 import { conversation } from './graph.js';
 import { fromSources, speaking } from './knowledge.js';
 import { openStore, seed, readWorld, write, forgetLearned } from './store.js';
@@ -140,10 +140,14 @@ export function openBrain(url) {
     const commit = async (accepted) => {
       if (!accepted) return;
       await write(store, accepted);
-      // The brain weighed this change against this world and accepted it; the
-      // store holds exactly what it weighed. Reading it back is not a new
-      // source, so it is built rather than walked again.
-      knowledgePromise = build(true);
+      // The brain weighed this change against this world and accepted it, so
+      // the world it holds is the world plus that change: reading three
+      // thousand terms back out of the store to find the one that moved is
+      // work nobody asked for. The store still has it, and a brain that opens
+      // again reads it from there.
+      const was = await knowledgePromise;
+      const now = { ...was, world: grownBy(was.world, accepted) };
+      knowledgePromise = Promise.resolve(now);
       await knowledgePromise;
     };
 

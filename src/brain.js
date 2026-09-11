@@ -6667,7 +6667,7 @@ function oneAfterAnother(wholes, knowledge, circumstance) {
 // while a signal is still being read. What the runtime does with the change is
 // the runtime's; this is only so the next thing said can be reasoned against
 // what the last one settled.
-function grownBy(world, learned) {
+export function grownBy(world, learned) {
   if (!world || !learned) return world;
   const terms = world.data.terms.map((term) => ({ ...term, links: [...(term.links || [])] }));
   const at = new Map(terms.map((term, i) => [term.id, i]));
