@@ -79,8 +79,11 @@ says so with the links it already carries.
 | `measure` | a quantity, an amount and a unit — three, never two |
 | `property` | the other side is a property; held **on** the thing |
 | `kind` | a classifying relation with a thing on the other side |
+| `member` | a placement whose far side is something that happened |
+| `event` | a doing of a kind the world holds under its `event`, or any doing the brain has no primitive for |
 
-All eight are settled, walked through one at a time against their own inputs.
+All eight were settled first, walked through one at a time against their own
+inputs. `member` and `event` came with the tenth section below.
 
 `order` was proposed and **dropped**: it is a comparison on time. Told `sara
 arrived before john` the brain ranks; told `alice arrived at 8 hour` it has a
@@ -826,6 +829,51 @@ condition lives on:
 
 A real action needs no matching and no clearing. It is recorded, and the thing
 simply stops answering the question.
+
+## An event is what it holds
+
+An event is not a tenth kind of relation. It is a row in `actions` — the one
+the brain has no narrower primitive for — and everything that belongs to it
+hangs off it by being *held*:
+
+    a robbery was at a shop at night
+    a shopkeeper and a robber were in the robbery
+    the robber stole money in the robbery
+
+    facts:
+      f1  placement(a1, n1)  {as: at[3039]}
+      f2  member(n2, a1)
+      f3  member(n3, a1)
+    actions:
+      a1  event([n2, n3], type: robbery[3016])  at night[216]  holds f1, f2, f3, a2
+      a2  event(n3, target: money[1134], type: steal[3031])
+
+Five things are said of it and not one of them is stored twice. The type is
+what the world holds it under. Whoever was in it stands first, as a list. Where
+it was is an ordinary placement with the event at the near end. When it was is
+the `when` any doing may carry. What came of it is another row — a doing, a
+change, or a fact — and the event holds that too.
+
+Three readings follow from the world alone, with no word consulted:
+
+- A kind the world holds under `event` is an **occurrence** of that kind when a
+  signal speaks of one, never a thing standing somewhere. One row per kind per
+  conversation, so a robbery told over three turns is one robbery.
+- Being in something that happened is **membership**, not placement — nobody
+  stands inside a robbery.
+- A doing said to be in one **happened inside it**: the event holds the doing,
+  and whoever did it was in the event.
+
+A doing with no event kind behind it — a plank falling — is the same row with
+the members slot empty. Where it happened somewhere, whoever did it stood
+there, so one placement is written of the doer and the doing holds that.
+
+### What is not built
+
+One occurrence per kind per conversation. Two weddings in one conversation
+would be one row, and pointing back at the first is the only reason the brain
+keeps a kind as the key. Telling them apart needs a way to say *which* one, and
+nothing says it yet.
 
 ## Actions can be pointed at
 
