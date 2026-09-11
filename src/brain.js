@@ -368,6 +368,7 @@ function recognizeLanguage(roots, langs) {
         when: word.when ?? null,
         names: word.names ?? null,
         groups: word.groups ?? null,
+        quantifies: word.quantifies ?? null,
         on: word.on ?? null,
         person: word.person ?? null,
         number: word.number ?? null,
@@ -477,6 +478,10 @@ function think(roots, langs, at, world) {
       // Which scale a word compares on, where it says so.
       on: word ? word.on ?? null : null,
       groups: word ? word.groups : null,
+      // How many of a kind a word speaks of, where the word says so itself.
+      // `some thing` puts the quantifier beside the kind; `something` carries
+      // it, and both say the same thing.
+      quantifies: word ? word.quantifies ?? null : null,
       // Who a word is said of, and how many. The language's to say; the brain
       // reads third-person pointers as not the speaker nor who was spoken to.
       person: word ? word.person ?? null : null,
@@ -2000,6 +2005,10 @@ function measured(said, world) {
 function manyOf(said, at, world) {
   const a = world.anchors || {};
   if (at < 0) return null;
+  // A word may carry how many of its kind it speaks of rather than have one
+  // standing beside it: `something` is `some thing` said in one word.
+  const own = thoughtOf(said[at]);
+  if (own && own.quantifies != null) return own.quantifies;
   const isMany = (n) =>
     n && n.state.exists && [a.all, a.some, a.none].includes(conceptOf(n));
   const found = nearestOver(said, at, -1, isMany) || nearestOver(said, at, 1, isMany);

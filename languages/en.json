@@ -18123,6 +18123,60 @@
       "concept": 617,
       "person": "third",
       "number": "singular"
+    },
+    "something": {
+      "pos": "noun",
+      "meaning": "something",
+      "concept": 2,
+      "quantifies": 1129
+    },
+    "anything": {
+      "pos": "noun",
+      "meaning": "anything",
+      "concept": 2,
+      "quantifies": 1129
+    },
+    "everything": {
+      "pos": "noun",
+      "meaning": "everything",
+      "concept": 2,
+      "quantifies": 245
+    },
+    "someone": {
+      "pos": "noun",
+      "meaning": "someone",
+      "concept": 29,
+      "quantifies": 1129
+    },
+    "somebody": {
+      "pos": "noun",
+      "meaning": "somebody",
+      "concept": 29,
+      "quantifies": 1129
+    },
+    "anyone": {
+      "pos": "noun",
+      "meaning": "anyone",
+      "concept": 29,
+      "quantifies": 1129
+    },
+    "anybody": {
+      "pos": "noun",
+      "meaning": "anybody",
+      "concept": 29,
+      "quantifies": 1129
+    },
+    "everyone": {
+      "pos": "noun",
+      "meaning": "everyone",
+      "concept": 29,
+      "quantifies": 245
+    },
+    "everybody": {
+      "pos": "noun",
+      "meaning": "everybody",
+      "concept": 29,
+      "quantifies": 245
     }
   },
   "unknown": {

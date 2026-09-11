@@ -6,6 +6,24 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A word may carry how many of its kind it speaks of.** `something` was no
+  word at all, so the brain did what it does with a word it has never met: it
+  took it for a name and made a thing called *something*. `if something is
+  cold then it is red` became a rule about that invention, and answered
+  `I understand` — which is worse than not reading it, because nothing said it
+  had gone wrong.
+
+  `something` is `some thing` said in one word, and the two words already
+  worked. A language may now say that a word carries its own quantifier rather
+  than have one standing beside it, the way a word may name a comparison
+  outright rather than leave its ending to say so. `something`, `anything`,
+  `everything`, `someone`, `somebody`, `anyone`, `anybody`, `everyone` and
+  `everybody` are English's words for it.
+
+  Some of a kind is still not all of it: `something is cold` says nothing
+  about any particular thing, where `a thing is cold` makes every thing cold.
+
+
 - **A rule naming a kind is about every one of that kind.** Every rule was
   about the very things it named. Told `if a bird is cold then a bell is red`
   and then that a wren is cold, the brain did nothing — a wren is a bird, and

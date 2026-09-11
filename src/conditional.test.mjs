@@ -126,3 +126,33 @@ test("a rule that fired for something else says what happened, not what it said"
   assertEquals((await brain("why is the drum red?")).expression.state.says, "a drum is cold");
   await forget();
 });
+
+test("a word may carry how many of its kind it speaks of", async () => {
+  await forget();
+  // `something` is `some thing` said in one word. It was no word at all, so
+  // the brain gave it a name and made the rule about the thing it had just
+  // invented — which looked as though it had understood.
+  await brain("if something is cold then it is red");
+  await brain("a drum is cold");
+  assertEquals((await brain("is the drum red?")).expression.name, "affirm");
+  assertEquals((await brain("is a bell red?")).expression.name, "unsure");
+  await forget();
+});
+
+test("some of a kind is not all of it", async () => {
+  await forget();
+  // Said of the kind, `a thing is cold` makes every thing cold. Said of some
+  // one of it, it says nothing about any particular one.
+  await brain("something is cold");
+  assertEquals((await brain("is a drum cold?")).expression.name, "unsure");
+  await forget();
+});
+
+test("somebody is some person", async () => {
+  await forget();
+  await brain("if somebody is cold then it is red");
+  await brain("tom is a person");
+  await brain("tom is cold");
+  assertEquals((await brain("is tom red?")).expression.name, "affirm");
+  await forget();
+});

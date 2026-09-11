@@ -1096,7 +1096,7 @@ function checkWord(info, w) {
   if (!info || typeof info !== 'object' || Array.isArray(info)) fail(w, 'must be an object');
   onlyKeys(
     info,
-    ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'person', 'number', 'on', 'bare', 'choice', 'proximity', 'select', 'functions', 'classifies', 'stands'],
+    ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'quantifies', 'person', 'number', 'on', 'bare', 'choice', 'proximity', 'select', 'functions', 'classifies', 'stands'],
     w,
   );
   // A word may be more than one part of speech — English says a walk and
@@ -1150,6 +1150,11 @@ function checkWord(info, w) {
   // A word may open or close a group, so what is inside it is worked first.
   if (info.groups !== undefined && info.groups !== 'open' && info.groups !== 'close') {
     fail(w, 'groups must be "open" or "close"');
+  }
+  // How many of its kind a word speaks of, where the word carries it rather
+  // than have a quantifier standing beside it.
+  if (info.quantifies !== undefined && !Number.isInteger(info.quantifies)) {
+    fail(w, 'quantifies must name a term');
   }
   if (info.negates !== undefined && info.negates !== true) {
     fail(w, 'negates, where present, must be true');
