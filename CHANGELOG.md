@@ -6,6 +6,19 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A condition and what stands on it, however english joins the two.** `if a
+  drum is cold then a bell is red` was read and `if a drum is cold, a bell is
+  red` was not, nor the same without anything between the halves at all. The
+  rule was kept, fired and walked back the moment the word `then` stood
+  between them, and was not read without it — so what was missing was the
+  reading and nothing else.
+
+  English says a comma may stand where `then` does, and that the two halves may
+  simply follow one another. A comma on its own still joins two claims rather
+  than making a rule: `the sky is blue, the grass is green` is two things said,
+  and `if the sky is blue, the grass is green` is one thing that follows from
+  another.
+
 - **How long something lasted can be asked back.** `the lecture lasted three
   hours` was taken in and held, and asked how long the lecture was the brain
   said it did not know — the fact was there and nothing could reach it. What

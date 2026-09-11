@@ -23,4 +23,20 @@ mira is a person
 mira is busy
 is a lantern bright? => unsure
 
-if it snows the path gets icy ?> I don't understand.
+# A condition and what stands on it, however english joins the two.
+if a drum is cold, a bell is red
+a drum is cold
+is a bell red? => affirm
+
+if a drum is cold a bell is red
+a drum is cold
+is a bell red? => affirm
+
+if something is wet, it is cold
+a sponge is wet
+is the sponge cold? => affirm
+
+# And a comma on its own still joins two claims rather than making a rule.
+the sky is blue, the grass is green
+is the sky blue? => affirm
+is the grass green? => affirm
