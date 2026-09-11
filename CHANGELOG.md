@@ -4,6 +4,26 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **A rule naming a kind is about every one of that kind.** Every rule was
+  about the very things it named. Told `if a bird is cold then a bell is red`
+  and then that a wren is cold, the brain did nothing — a wren is a bird, and
+  the condition was being matched word for word. A rule about drums did
+  nothing when tom, who is a drum, turned cold.
+
+  What is looked for now is anything that is one of what the condition names
+  and stands as it says, so a wren meets a rule about birds and tom meets one
+  about drums. And what met it is what the consequence is about: `if a thing
+  is cold then it is red` makes the drum red and says nothing about anything
+  else, which is the whole of what binding one thing across both halves of a
+  rule amounts to.
+
+  A rule that fired for something else says what happened rather than what it
+  said. Asked why the bell is red, the answer is `tom is cold` — the fact that
+  met the condition — where answering `a drum is cold` would hand back the
+  rule instead of what came about.
+
 ### Fixed
 
 - **A rule supposes; it does not say.** `if a drum is cold then a bell is red`

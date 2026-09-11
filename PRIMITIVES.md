@@ -158,7 +158,11 @@ Every later primitive depends on trustworthy identity, typing and relations.
   was missing was the path. A claim an instruction reaches is joined to the
   claim that met its condition, so a worked-out fact says what it followed
   from and a chain is walked back a step at a time.
-- [ ] Add variables and quantifier scope without closed-world inference.
+- [~] Add variables and quantifier scope without closed-world inference. A
+  rule naming a kind holds of every one of that kind, and what met its
+  condition is what its consequence is about — one thing bound across both
+  halves. Scope beyond that, and a variable standing where no kind is named,
+  are not represented.
 
 The two repairs above — incremental validation, and denial versus derivation —
 come first. The first is a cost that becomes structural here; the second is a
