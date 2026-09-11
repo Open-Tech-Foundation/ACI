@@ -3482,25 +3482,24 @@ function because(joined, world, mood, sent) {
       const pointed =
         markOn(term) === 'spoken' || markOn(term) === 'from' || markOn(term) === 'to';
       const of = asking.size === 1 && ![...asking].includes(a.cause) ? [...asking][0] : null;
-      // Which side the hole stands on says which way to walk. `who is taller
-      // than sam` asks after whoever stands above sam, and walking out from
-      // sam finds whoever he stands above instead — the same fact read from
-      // the wrong end. A hole before the thing asks who stands to it; a hole
-      // after asks what it stands to.
-      // Only where the two ends are not alike. A relation that runs one way —
-      // standing taller, coming before — reads differently from either end, so
-      // a hole standing before the thing asks after the far end rather than
-      // the near one. Where the relation says nothing about direction, there
-      // is no other end to ask after.
-      const asksBack =
-        relation != null &&
-        world.asymmetric(relation) &&
-        holes.some((hole) => said.indexOf(hole) < said.indexOf(term));
-      // What this conversation was told comes first, and the world answers
-      // where it is silent. Somebody named a moment ago is in the conversation
-      // and not yet in the world, so a question about them reaches nothing
-      // there.
-      const here = asksBack && graph ? graph.standingIn(subject, relation) : [];
+      // A fact has two ends, and a question names one of them. Which end the
+      // hole asks after is settled by what is actually there: walking out from
+      // the thing finds what it stands to, walking back finds what stands to
+      // it, and for most questions only one of the two comes back with
+      // anything. `who has kettles` finds a holder walking back and nothing
+      // walking out, because kettles hold nothing; `what is mira` is the
+      // other way round. Neither reading is the language's to give.
+      // Where both ends answer, which side of the joint the thing stands on
+      // decides, the same way it decides in a statement: in `mira is taller
+      // than dev` the one before the joint stands taller, so a thing after
+      // the joint is the far end and the hole is the near one.
+      // A hole that is itself the joint names no side — `where is the lamp`
+      // asks by placement and says nothing about ends — so the thing stays
+      // the near end, as a statement's first thing is.
+      // Where both ends are alike there is nothing else to ask after.
+      const jointSide =
+        said.indexOf(term) > at && holes.some((hole) => said.indexOf(hole) !== at);
+      const twoEnded = relation != null && !world.symmetric(relation);
       // Asked after something by name, what answers is whatever has one.
       // Being called something is a fact a thing holds, never a kind it is,
       // so asking whether it *is* a name turns every named thing away.
@@ -3513,14 +3512,21 @@ function because(joined, world, mood, sent) {
       // reason for it. The question is about the claim — that a drum is cold —
       // and not about the drum, so the claim itself is what is looked for, and
       // what is joined to it as its cause is what the answer is about.
-      let found = seeksOn && pointed
-        ? []
-        : [...new Set([
-            ...here,
-            ...(asksBack
-              ? world.standing(subject, relation)
-              : reached(subject, relation, world)),
-          ])].filter(wants);
+      const outward = seeksOn && pointed ? [] : reached(subject, relation, world).filter(wants);
+      // What this conversation was told comes first, and the world answers
+      // where it is silent. Somebody named a moment ago is in the conversation
+      // and not yet in the world, so a question about them reaches nothing
+      // there. Walked only where the walk out leaves the question open, or
+      // where the joint says the near end is what was asked for.
+      const backward =
+        !(seeksOn && pointed) && twoEnded && (outward.length === 0 || jointSide)
+          ? [...new Set([
+              ...(graph ? graph.standingIn(subject, relation) : []),
+              ...world.standing(subject, relation),
+            ])].filter(wants)
+          : [];
+      const asksBack = backward.length > 0;
+      let found = asksBack ? backward : outward;
       // The walk came back with nothing but the most generic kind: say the
       // thing itself instead — `chocolates`, known only as a thing, is answered
       // with its own name rather than `thing`. Specific answers (`animal` for a

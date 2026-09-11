@@ -6,6 +6,21 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A fact answers from either of its ends.** `dev has 2 kettles` was held, and
+  `what does dev have?` said `kettle` while `who has kettles?` said `I don't
+  know` — the same fact, asked from the other side, and nothing came back. The
+  brain walked out from whatever the question named and never walked back to
+  it, except where the world had declared the relation one-way, which is why
+  `who is taller than dev?` alone worked. Direction was never the test. A fact
+  has two ends whatever the world says about it, so the brain now looks at
+  both and answers from whichever one is there: `who has kettles?` finds a
+  holder walking back and nothing walking out, because kettles hold nothing.
+  Where both ends answer — `mira is taller than dev`, `dev is taller than sam`
+  — which side of the joint the named thing stands on decides, the same way it
+  decides in a statement. `what is on the crate?`, `who has kettles?` and
+  `what is part of a cart?` are answered now, and everything already answered
+  from the near end is untouched.
+
 - **A comma joins.** `the sky is blue, the grass is green` was not understood:
   the comma came off before the brain saw it, leaving two clauses run together
   with nothing between them. English now says the comma stands alone as a word

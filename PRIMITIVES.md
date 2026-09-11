@@ -230,8 +230,8 @@ Examples that came back wrong, with what each waits on.
 - `when did nila arrive?` says `I don't know` with the arrival on the record,
   its when written twice over — past, and yesterday by name. The question now
   asks after when and names the part it wants, and still nothing answers: the
-  walk that reads a doing's parts does not reach this one. Part of the class
-  where a question reaches the near end only.
+  walk that reads a doing's parts does not reach this one. A fact now answers
+  from either of its ends; a doing's parts still answer from one.
 
 - `there are seven days in a week` and `how many days are there in a week?` are
   not read, though `a week has seven days` and `how many days does a week have?`
@@ -257,8 +257,9 @@ Three things tell it from an ordinary doing, and one of the three is in.
   what completes it, which is the word-sense work that is parked.
 
 - **Extent, asked back — not in.** `how long was the meeting?` and every
-  phrasing of it come back unanswered, though the fact is held. Part of the
-  class where a question reaches the near end only.
+  phrasing of it come back unanswered, though the fact is held. What is left of
+  the near-end class: a fact answers from either end now, but what a doing
+  holds is not reached by asking after it.
 
 - **Membership — not started.** Being at a meeting is not doing it and not
   having it done to you. Nothing in the brain says a thing is one of those in
