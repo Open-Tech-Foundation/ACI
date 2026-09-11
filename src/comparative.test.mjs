@@ -35,7 +35,7 @@ test("the other way round is the other end of the same scale", async () => {
 });
 
 test("with no scale said, two scales that disagree are no answer", async () => {
-  const r = await fresh(...MEASURED, "a cow more a goat?");
+  const r = await fresh(...MEASURED, "is a cow more than a goat?");
   assertEquals(r.expression.name, "unsure", "heavier and smaller at once is not the comparison");
   await forget();
 });

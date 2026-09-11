@@ -130,10 +130,10 @@ test("a mark is what no word of the language is made of", async () => {
 });
 
 test("comparison is by value, and says no claim back about numbers", async () => {
-  assertEquals(await act("3 more 1?"), "affirm");
-  assertEquals(await says("3 more 1?"), "Yes. ✅");
-  assertEquals(await act("1 more 3?"), "deny");
-  assertEquals(await act("one less three?"), "affirm");
+  assertEquals(await act("is 3 more than 1?"), "affirm");
+  assertEquals(await says("is 3 more than 1?"), "Yes. ✅");
+  assertEquals(await act("is 1 more than 3?"), "deny");
+  assertEquals(await act("is one less than three?"), "affirm");
 });
 
 test("what a group holds is worked before what is outside it", async () => {

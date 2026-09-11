@@ -23,13 +23,13 @@ test("two number words side by side are one number", async () => {
 });
 
 test("a round one and a smaller one after it are added", async () => {
-  assertEquals((await fresh("twenty five more twenty?")).expression.name, "affirm");
-  assertEquals((await fresh("twenty five more ninety?")).expression.name, "deny");
+  assertEquals((await fresh("is twenty five more than twenty?")).expression.name, "affirm");
+  assertEquals((await fresh("is twenty five more than ninety?")).expression.name, "deny");
   await forget();
 });
 
 test("a smaller one before a round one multiplies it", async () => {
-  assertEquals((await fresh("two hundred more ninety nine?")).expression.name, "affirm");
+  assertEquals((await fresh("is two hundred more than ninety nine?")).expression.name, "affirm");
   assertEquals((await fresh("add two hundred and one")).expression.state.says, "201");
   await forget();
 });

@@ -760,13 +760,13 @@ test("a result the world has no term for is written, never named", async () => {
 });
 
 test("the brain compares two numbers", async () => {
-  assertEquals((await brain("one less three?")).expression.name, "affirm");
-  assertEquals((await brain("three more one?")).expression.name, "affirm");
-  assertEquals((await brain("one more three?")).expression.name, "deny");
+  assertEquals((await brain("is one less than three?")).expression.name, "affirm");
+  assertEquals((await brain("is three more than one?")).expression.name, "affirm");
+  assertEquals((await brain("is one more than three?")).expression.name, "deny");
 });
 
 test("comparison is decided by value, never by a link in the world", async () => {
-  const r = await brain("three more one?");
+  const r = await brain("is three more than one?");
   const truth = kind(r.roots[0], "standing");
   // Decided by the values, and nothing in the world was walked. A truth node
   // joins terms wherever it came from, so terms are what it keeps.

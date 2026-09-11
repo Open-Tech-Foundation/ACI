@@ -30,14 +30,14 @@ test("so goes with a state the way very does", async () => {
 });
 
 test("which is further along the scale is what the amounts say", async () => {
-  assertEquals((await fresh(...WEIGHED, "an apple more a stone?")).expression.name, "affirm");
-  assertEquals((await fresh(...WEIGHED, "a stone more an apple?")).expression.name, "deny");
+  assertEquals((await fresh(...WEIGHED, "is an apple more than a stone?")).expression.name, "affirm");
+  assertEquals((await fresh(...WEIGHED, "is a stone more than an apple?")).expression.name, "deny");
   await forget();
 });
 
 test("standing further along one way is standing less far the other", async () => {
-  assertEquals((await fresh(...WEIGHED, "a stone less an apple?")).expression.name, "affirm");
-  assertEquals((await fresh(...WEIGHED, "an apple less a stone?")).expression.name, "deny");
+  assertEquals((await fresh(...WEIGHED, "is a stone less than an apple?")).expression.name, "affirm");
+  assertEquals((await fresh(...WEIGHED, "is an apple less than a stone?")).expression.name, "deny");
   await forget();
 });
 
@@ -45,14 +45,14 @@ test("what a thing has been called decides nothing", async () => {
   // Calling the stone heavy and the apple light says nothing about which is
   // heavier: the names are regions of a scale, and which region a value falls
   // in depends on what it is read against.
-  const r = await fresh("a stone is heavy", "an apple is lightweight", "a stone more an apple?");
+  const r = await fresh("a stone is heavy", "an apple is lightweight", "is a stone more than an apple?");
   assertEquals(r.expression.name, "unsure");
   await forget();
 });
 
 test("a thing nothing has measured has no place on the scale", async () => {
-  assertEquals((await fresh("a stone more an apple?")).expression.name, "unsure");
-  assertEquals((await fresh("an apple weighs ten gram", "a stone more an apple?")).expression.name, "unsure",
+  assertEquals((await fresh("is a stone more than an apple?")).expression.name, "unsure");
+  assertEquals((await fresh("an apple weighs ten gram", "is a stone more than an apple?")).expression.name, "unsure",
     "one measured and one not is still nothing to compare");
   await forget();
 });
@@ -61,9 +61,9 @@ test("two units are one scale once the world says how they stand", async () => {
   // A kilogram is a thousand grams, and that is all the world says. What five
   // of one comes to against ten of the other the brain works out, the way it
   // works out anything else.
-  const r = await fresh("an apple weighs ten gram", "a stone weighs five kilogram", "a stone more an apple?");
+  const r = await fresh("an apple weighs ten gram", "a stone weighs five kilogram", "is a stone more than an apple?");
   assertEquals(r.expression.name, "affirm", "five kilograms is five thousand grams");
-  const back = await fresh("an apple weighs ten kilogram", "a stone weighs five gram", "a stone more an apple?");
+  const back = await fresh("an apple weighs ten kilogram", "a stone weighs five gram", "is a stone more than an apple?");
   assertEquals(back.expression.name, "deny", "and it reads the same the other way round");
   await forget();
 });
@@ -76,16 +76,16 @@ test("a unit says which property it is of", async () => {
 });
 
 test("a comparison is worked out, never taken in as a fact", async () => {
-  const r = await fresh(...WEIGHED, "an apple more a stone");
+  const r = await fresh(...WEIGHED, "an apple is more than a stone");
   assertEquals(r.expression.name, "affirm", "it worked it out from the amounts");
   assertEquals(r.learned, null, "and there was nothing to write down");
   await forget();
 });
 
 test("counting is the case where the world can already say which is greater", async () => {
-  assertEquals((await fresh("3 more 2?")).expression.name, "affirm");
-  assertEquals((await fresh("2 more 3?")).expression.name, "deny");
-  assertEquals((await fresh("2 less 3?")).expression.name, "affirm");
+  assertEquals((await fresh("is 3 more than 2?")).expression.name, "affirm");
+  assertEquals((await fresh("is 2 more than 3?")).expression.name, "deny");
+  assertEquals((await fresh("is 2 less than 3?")).expression.name, "affirm");
   await forget();
 });
 
