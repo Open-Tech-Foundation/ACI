@@ -15729,11 +15729,21 @@
         "when": "past"
       }
     ],
-    "can": {
-      "pos": "modal",
-      "meaning": "can",
-      "functions": "modal"
-    },
+    "can": [
+      {
+        "pos": "verb",
+        "meaning": "can",
+        "concept": 3012,
+        "select": {
+          "before": "doing"
+        }
+      },
+      {
+        "pos": "modal",
+        "meaning": "can",
+        "functions": "modal"
+      }
+    ],
     "bin": {
       "pos": "noun",
       "meaning": "bin",

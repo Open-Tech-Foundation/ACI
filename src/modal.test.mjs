@@ -48,17 +48,40 @@ test("every way of holding a claim at arm's length reads the same", async () => 
   await forget();
 });
 
-test("a modal joins a doing without taking it in", async () => {
-  // Ability is checked, never taken in: the brain has no capability
-  // knowledge, so an unobserved doing is unknown rather than denied.
+test("being able to do something is a fact about the thing", async () => {
+  // It used to be checked and dropped, so the brain held no ability at all
+  // and `a cat can swim` left it exactly as it was.
   const r = await fresh("a cat can swim");
-  assertEquals(r.expression.name, "unsure");
-  assertEquals(r.learned, null);
+  assertEquals(r.expression.name, "learn");
+  assert(r.learned != null, "what a thing can do is something it holds");
   await forget();
 });
 
-test("a fronted modal asks the same question", async () => {
+test("a fronted modal asks after what was told", async () => {
   assertEquals((await fresh("can a cat swim?")).expression.name, "unsure");
-  assertEquals((await fresh("can a cat swim?")).learned, null);
+  assertEquals((await fresh("can a cat swim?")).learned, null, "a question teaches nothing");
+  assertEquals((await fresh("a cat can swim", "can a cat swim?")).expression.name, "affirm");
+  await forget();
+});
+
+test("what a kind can do, one of it can", async () => {
+  assertEquals((await fresh("a bird can fly", "can a wren fly?")).expression.name, "affirm");
+  assertEquals(
+    (await fresh("a wren can fly", "can a bird fly?")).expression.name,
+    "unsure",
+    "and not the other way round",
+  );
+  assertEquals(
+    (await fresh("a bird can fly", "can a trout fly?")).expression.name,
+    "unsure",
+    "nothing said a trout could, and not being told is not being told it cannot",
+  );
+  await forget();
+});
+
+test("holding a claim at arm's length is not the same as being able", async () => {
+  // `might` says nothing about what a thing can do, and is still checked and
+  // dropped the way it always was.
+  assertEquals((await fresh("a cat might swim")).learned, null);
   await forget();
 });

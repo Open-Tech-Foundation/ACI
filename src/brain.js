@@ -1819,6 +1819,13 @@ function contextBefore(wanted, roots, at, world) {
     // A word pointing at somebody standing after it. `who am i` asks after a
     // name; `who is taller than sam` asks after whoever stands there.
     if (kind === 'pointer') return rest.some((n) => contextKind(n, 'pointer', world));
+    // Something done, standing after it. Which reading of a word is meant may
+    // turn on one: `can` holds a claim at arm's length, and before a doing it
+    // says a thing is able to do it.
+    if (kind === 'doing') {
+      const a = world ? world.anchors || {} : {};
+      return a.action != null && rest.some((n) => reaches(n, a.action, world));
+    }
     // A word saying one thing is of another, standing straight after. Which
     // reading of a word is meant may turn on it: `left` is a side of something,
     // and `left of` is one thing standing to another.
@@ -6250,10 +6257,14 @@ function claimSaid(stood, langName, langs, world) {
     // rather than counted (`a tuba is loud`, never `a loud`) — does not.
     // Object place only: what a thing has been called stays with the thing,
     // and learned properties must never unkind their bearer.
+    // One of a kind takes its article; what is not one does not — a name, a
+    // word the language says stands bare, a property in object place, or
+    // something done, which is not one of anything: a wren can fly, never a
+    // wren can a fly.
     const bare =
       (world && world.isIndividual(term)) ||
       lang.isBare(term) ||
-      (isObject && world && world.isA(term, a.property));
+      (isObject && world && (world.isA(term, a.property) || world.isA(term, a.action)));
     return bare ? word : `${lang.oneFor(word)} ${word}`;
   };
   const turned = Boolean(stood.state.turned);

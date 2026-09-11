@@ -113,7 +113,9 @@ test("a chain of comparisons between kinds, not things", async () => {
       "a bicycle is faster than walking",
       "is a car faster than walking?",
     ),
-    "Yes. ✅ a car is faster than a walk.",
+    // Something done is not one of a kind, so it takes no article. `walking`
+    // would be righter still, and the language cannot yet write one.
+    "Yes. ✅ a car is faster than walk.",
   );
 });
 
