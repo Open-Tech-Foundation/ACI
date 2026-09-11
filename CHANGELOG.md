@@ -6,6 +6,22 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **What the brain says it did is what it did.** `a box holds 3 red balls and
+  2 blue balls` answered `I understand` and took in nothing at all: the signal
+  made two things to hold what it said, said nothing either of them could hold,
+  and the things were dropped. Nothing was written, and the brain said it had
+  understood. The other way round, `if a drum is cold then a bell is red` said
+  `I don't know` while keeping the rule — both halves of a rule are held at
+  arm's length, so nothing stood, and keeping it is still taking something in.
+
+  A reply that does not follow what was taken in is the one thing a brain that
+  cannot make things up must never say, and it was saying it in both
+  directions. Two tests had pinned it, one of them in Hindi: `लूना बिल्ली है`
+  reads the name, joins it to nothing, writes nothing, and answered that it
+  understood. It says it does not, and the gap in that pack is on the record
+  rather than hidden behind a reply.
+
+
 - **What the question did not name, the answer says.** `how long is the mast?`
   answered `six`, which says nothing: six of nothing is no length. What the
   question names needs no repeating — asked how many stamps, four is the

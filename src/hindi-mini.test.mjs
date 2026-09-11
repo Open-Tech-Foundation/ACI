@@ -38,11 +38,14 @@ test('hindi what-question answers the direct kind', async () => {
   assertEquals(says(result), 'स्तनपायी');
 });
 
-test('hindi learns a new name and walks it like english', async () => {
+test('hindi reads a name and does not yet walk it like english', async () => {
   const { world, hindi } = await load();
   const knowledge = fromSources({ world, languages: [hindi] });
 
-  const learned = brainFrom('लूना बिल्ली है', knowledge);
-  assertEquals(learned.expression.name, 'learn');
-  assertEquals(says(learned), 'समझ गया।');
+  // The same signal in english — `luna is a cat` — comes to a claim and is
+  // written down. This pack reads the name and joins it to nothing, so nothing
+  // is taken in, and the brain says so rather than saying it understood.
+  const read = brainFrom('लूना बिल्ली है', knowledge);
+  assertEquals(read.learned, null, 'nothing was written down');
+  assertEquals(read.expression.name, 'unknown');
 });

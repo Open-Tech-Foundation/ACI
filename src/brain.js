@@ -5860,7 +5860,7 @@ function apart(roots, world) {
 
 // The brain's one act toward the whole signal, with what it said about each
 // thing kept underneath.
-function expression(roots, langs, mood, world, sent) {
+function expression(roots, langs, mood, world, sent, took = null) {
   // A signal that came to more than one verdict is composed, not re-judged as
   // one whole: each part already stands finished on its own. This is the one
   // new step — not perceiving several as one, but putting several already-
@@ -5895,6 +5895,9 @@ function expression(roots, langs, mood, world, sent) {
   const sum = bound ? findBranch(roots[0], 'sum') : null;
   const did = bound ? findBranch(roots[0], 'did') : null;
   const refused = bound ? findBranch(roots[0], 'refuse') : null;
+  // A rule the brain agreed to keep. Nothing in it stands — both halves are
+  // held at arm's length — and keeping it is still taking something in.
+  const kept = bound ? findBranch(roots[0], 'instruction') : null;
   // Understanding what someone feels, and holding it as theirs rather than as
   // the world's — which is what the record already is. So the act is only the
   // last step: it was said of whoever said it, and it stands at the bad pole.
@@ -5940,7 +5943,12 @@ function expression(roots, langs, mood, world, sent) {
         : 'deny'
     : agreed
       ? 'agree'
-      : gave || named
+      // What the brain says it did is what it did. A signal may make things to
+      // hold what it says and then say nothing they could hold — three red
+      // balls and two blue ones, with no fact between the box and either — and
+      // the things are dropped. Nothing was taken in, so `I understand` would
+      // be saying it took something in.
+      : (gave || named) && took !== false
       ? 'learn'
     : feeling
       ? feeling
@@ -5950,7 +5958,11 @@ function expression(roots, langs, mood, world, sent) {
         : stood.name === 'against'
           ? 'deny'
           : stood.name === 'absent'
-            ? 'unsure'
+            // And the other way round. A rule is taken in whole and both its
+            // halves are held at arm's length, so nothing stands — but a rule
+            // is something the brain now holds, and saying it does not know
+            // would be saying it kept nothing.
+            ? (kept ? 'learn' : 'unsure')
             : // What the brain worked out, it answers — asked or not. Told
               // that ten is more than two, saying it already knew is beside
               // the point: it did not know it, it worked it out.
@@ -6708,6 +6720,9 @@ export function brainFrom(input, knowledge, circumstance) {
   // What the signal left in reach, so a word in the next one has something to
   // land on. Worked out once and handed both to the graph and to the runtime.
   const inReach = focusOf(judgedRoots, at, world);
+  // What the signal named. A name is held by the conversation and never by the
+  // world, so a signal may take something in with nothing to write down.
+  const named = Object.keys(namedIn(solvedRoots, { ...at, world, mood }) || {});
   // Which side of a word its markers stand on is the language's to declare;
   // the graph is told, and assumes no order of its own.
   const spoken = signalLanguage(thoughtRoots, langs);
@@ -6730,7 +6745,10 @@ export function brainFrom(input, knowledge, circumstance) {
     input,
     language: spoken ? spoken.data.name : null,
     roots: expressedRoots,
-    expression: expression(expressedRoots, langs, mood, world, at),
+    expression: expression(
+      expressedRoots, langs, mood, world, at,
+      learned != null || named.length > 0,
+    ),
     learned,
     remember,
     spoken: spokenOf(judgedRoots, at, world),

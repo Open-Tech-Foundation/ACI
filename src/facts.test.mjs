@@ -44,3 +44,21 @@ test("the days and the months are in the order they come", async () => {
   assertEquals((await brain("january is a month?")).expression.name, "affirm");
   await forget();
 });
+
+test("what the brain says it did is what it did", async () => {
+  await forget();
+  // It made two things to hold what was said and then said nothing they could
+  // hold — three red balls and two blue ones, with no fact between the box and
+  // either — so the things were dropped and nothing was taken in. Saying `I
+  // understand` would be saying it took something in.
+  const empty = await brain("a box holds 3 red balls and 2 blue balls");
+  assertEquals(empty.learned, null);
+  assert(empty.expression.name !== "learn", "it kept nothing, and does not say it did");
+
+  // And the other way round: a rule is taken in whole while both its halves
+  // are held at arm's length, so nothing stands — and it is kept all the same.
+  const rule = await brain("if a drum is cold then a bell is red");
+  assert(rule.learned != null, "the rule is written down");
+  assertEquals(rule.expression.name, "learn");
+  await forget();
+});
