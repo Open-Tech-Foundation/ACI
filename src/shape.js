@@ -938,7 +938,7 @@ export function checkLanguage(data, where = 'language') {
     for (const rule of data.derivations) {
       const r = `${at} derivation`;
       if (!rule || typeof rule !== 'object') fail(r, 'must be an object');
-      onlyKeys(rule, ['ending', 'becomes', 'of', 'pos', 'when', 'negates', 'functions'], r);
+      onlyKeys(rule, ['ending', 'becomes', 'of', 'pos', 'when', 'after', 'negates', 'functions'], r);
       if (typeof rule.ending !== 'string' || rule.ending === '') {
         fail(r, 'ending must be a non-empty string');
       }
@@ -953,6 +953,12 @@ export function checkLanguage(data, where = 'language') {
       }
       if (rule.when !== undefined && (typeof rule.when !== 'string' || rule.when === '')) {
         fail(r, 'when, where present, must name when the ending puts the doing');
+      }
+      // What the word must already end with for this ending to be the one it
+      // takes. Reading a word apart, several endings may fit and only one
+      // leaves a word behind; putting one together, nothing else says which.
+      if (rule.after !== undefined && (typeof rule.after !== 'string' || rule.after === '')) {
+        fail(r, 'after, where present, must be what the word ends with');
       }
       // A contraction may deny what its stem says: `don't` is `do` denied.
       if (rule.negates !== undefined && rule.negates !== true) {
@@ -1096,7 +1102,7 @@ function checkWord(info, w) {
   if (!info || typeof info !== 'object' || Array.isArray(info)) fail(w, 'must be an object');
   onlyKeys(
     info,
-    ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'names', 'groups', 'quantifies', 'person', 'number', 'on', 'bare', 'choice', 'proximity', 'select', 'functions', 'classifies', 'stands'],
+    ['pos', 'meaning', 'concept', 'marks', 'negates', 'role', 'when', 'alone', 'names', 'groups', 'quantifies', 'person', 'number', 'on', 'bare', 'choice', 'proximity', 'select', 'functions', 'classifies', 'stands'],
     w,
   );
   // A word may be more than one part of speech — English says a walk and
@@ -1155,6 +1161,12 @@ function checkWord(info, w) {
   // than have a quantifier standing beside it.
   if (info.quantifies !== undefined && !Number.isInteger(info.quantifies)) {
     fail(w, 'quantifies must name a term');
+  }
+  // Whether the word can be said on its own. A language may have more than one
+  // word for a doing in one time, and only one of them stands alone: a thing
+  // has fallen, and it fell.
+  if (info.alone !== undefined && info.alone !== false) {
+    fail(w, 'alone, where present, must be false');
   }
   if (info.negates !== undefined && info.negates !== true) {
     fail(w, 'negates, where present, must be true');

@@ -141,6 +141,26 @@ function buildLanguage(data) {
       return [...held];
     },
     wordFor: (concept) => (concept == null ? null : named.get(concept) ?? null),
+    // The word this language says a concept with when it is said of the past.
+    // A language that marks time on its words has one; one that does not says
+    // the same word either way, and the mark it does use is nothing here.
+    wordWhen: (concept, when) => {
+      if (concept == null || when == null) return null;
+      let plain = null;
+      for (const [word, entry] of Object.entries(data.words || {})) {
+        const readings = Array.isArray(entry) ? entry : [entry];
+        for (const info of readings) {
+          if (!info || info.concept !== concept) continue;
+          // A word that cannot be said on its own is no answer: a thing has
+          // fallen, and it fell.
+          if (info.when === when && info.alone !== false) return word;
+          if (plain == null && info.when == null) plain = word;
+        }
+      }
+      // Listed nowhere, made the way it is read: the ending that puts a doing
+      // in that time, on the word it would have been taken off.
+      return plain == null ? null : builtWith(plain, data.derivations, (rule) => rule.when === when);
+    },
     grammar: data.grammar || {},
     // Which side of a marking word the thing it marks falls on. English puts it
     // after — `the basket`, `from the basket` — and another language need not.
@@ -403,9 +423,20 @@ export async function loadLanguageDirectory(dir) {
 // A word the language never listed, made the way it reads one: the ending that
 // says a comparison, put back on the word it would have been taken off.
 function builtFrom(word, derivations) {
-  for (const rule of derivations || []) {
-    if (!functionList(rule.functions).includes('comparison')) continue;
-    if (typeof rule.ending !== 'string') continue;
+  return builtWith(word, derivations, (rule) => functionList(rule.functions).includes('comparison'));
+}
+
+// Putting a word together is not reading one apart. Reading, several endings
+// may fit and only one leaves a word the language knows behind; writing, there
+// is nothing to look up, so the rule says what the word must already end with.
+// The one that says so is tried first: it is the narrower claim.
+function builtWith(word, derivations, wanted) {
+  const rules = (derivations || []).filter(
+    (rule) => wanted(rule) && typeof rule.ending === 'string',
+  );
+  const fits = (rule) => typeof rule.after !== 'string' || word.endsWith(rule.after);
+  for (const rule of [...rules.filter((r) => typeof r.after === 'string'), ...rules]) {
+    if (!fits(rule)) continue;
     const becomes = typeof rule.becomes === 'string' ? rule.becomes : '';
     if (becomes !== '' && !word.endsWith(becomes)) continue;
     return `${becomes === '' ? word : word.slice(0, -becomes.length)}${rule.ending}`;

@@ -2465,13 +2465,19 @@ function because(joined, world, mood, sent) {
   if (a.cause == null || a.subject == null || a.object == null) return [];
   const at = (joined.branch || []).findIndex((n) => functionsOf(n).includes('reason'));
   if (at < 0) return [];
+  // Either side may be something being so or something happening. A claim is
+  // written down as a thing when the cause is; a doing already is one, so what
+  // is wanted from it is which one it was.
   const sideOf = (n) => {
     const stood = n && (n.branch || []).find((b) => b.kind === 'standing');
-    if (!stood) return null;
-    const { subject, relation, object, negated } = stood.state;
-    return subject == null || relation == null || object == null
-      ? null
-      : { subject, relation, object, negated: Boolean(negated) };
+    if (stood) {
+      const { subject, relation, object, negated } = stood.state;
+      return subject == null || relation == null || object == null
+        ? null
+        : { claim: { subject, relation, object, negated: Boolean(negated) } };
+    }
+    const done = n && (n.branch || []).find((b) => b.kind === 'event');
+    return done && done.state.id != null ? { done: done.state.id } : null;
   };
   const wholes = (joined.branch || []).filter((b) => joinedWhole(b, joined));
   const before = wholes.filter((b) => (joined.branch || []).indexOf(b) < at);
@@ -2599,6 +2605,11 @@ function because(joined, world, mood, sent) {
       .filter(
         (n) =>
           markOn(n) !== 'unknown' &&
+          // A word marking the past points back at a doing already spoken of.
+          // It says when, not what the question is about: `why did the fence
+          // fall` asks after the fence and the falling, and the doing `did`
+          // reached back to is neither of them.
+          markOn(n) !== 'prior' &&
           conceptOf(n) != null &&
           conceptOf(n) !== world.baseRelation,
       )
@@ -4263,6 +4274,18 @@ function reasonFor(subject, object, world) {
   if (a.cause == null || a.subject == null || a.object == null) return [];
   if (subject == null || object == null) return [];
   const found = [];
+  // What stands behind something that happened. A doing is already a thing the
+  // world holds, so there is no claim to look for: the occurrence is looked
+  // for instead, by what was done and who did it, and what causes it answers.
+  if (a.agent != null && a.cause != null) {
+    for (const one of world.individualsOf(object)) {
+      const did = [...world.linked(one, a.agent), ...(a.target == null ? [] : world.linked(one, a.target))];
+      if (!did.includes(subject)) continue;
+      for (const behind of world.standing(one, a.cause)) {
+        if (!found.includes(behind)) found.push(behind);
+      }
+    }
+  }
   for (const claim of world.standing(subject, a.subject)) {
     if (!(world.related(claim, a.object) || []).includes(object)) continue;
     // What stands behind a claim is a claim, not a thing. Asked why the door
@@ -6047,6 +6070,8 @@ function spoken(answer, langName, langs, world, written) {
     .map((t) => {
       const claim = claimTermSaid(t, langName, langs, world);
       if (claim != null) return claim;
+      const done = doingSaid(t, langName, langs, world);
+      if (done != null) return done;
       const said = termWord(t, langName, langs, world, written);
       if (said == null) return null;
       return way == null ? said : `${way} ${asOne(t, said)}`;
@@ -6081,6 +6106,37 @@ function listing(langName, langs) {
 // in the frame the language gives for saying so.
 // A thing the world holds that says something — a claim — said back as what
 // it says. Anything else is said by its own word.
+// Something that happened, said back. An occurrence is a thing the world
+// holds, so a walk that finds one has found a doing and not a kind of doing:
+// answering `push` where somebody pushed a fence says what sort of thing
+// happened and never says what did. Who did it, what was done, and what it
+// was done to, in the frame the language gives for saying so.
+function doingSaid(id, langName, langs, world) {
+  const a = world && world.anchors ? world.anchors : {};
+  const lang = (langs || []).find((l) => l.data.name === langName);
+  if (!lang || id == null || a.action == null || a.agent == null) return null;
+  const [action] = world.linked(id, world.baseRelation).filter((k) => world.isA(k, a.action));
+  if (action == null) return null;
+  const [who] = world.linked(id, a.agent);
+  if (who == null) return null;
+  const [when] = a.when == null ? [] : world.linked(id, a.when);
+  const doer = termWord(who, langName, langs, world);
+  const did = (when != null ? lang.wordWhen(action, 'past') : null)
+    ?? termWord(action, langName, langs, world);
+  if (doer == null || did == null) return null;
+  const one = world.isIndividual(who) || lang.isBare(who) ? doer : `${lang.oneFor(doer)} ${doer}`;
+  const [to] = a.target == null ? [] : world.linked(id, a.target);
+  const other = to == null ? null : termWord(to, langName, langs, world);
+  const said = other == null
+    ? lang.express('did', { subject: one, relation: did })
+    : lang.express('didTo', {
+        subject: one,
+        relation: did,
+        object: world.isIndividual(to) || lang.isBare(to) ? other : `${lang.oneFor(other)} ${other}`,
+      });
+  return said ? said.trim().replace(/\.$/, '') : null;
+}
+
 function claimTermSaid(id, langName, langs, world) {
   const claim = world && world.claimOf ? world.claimOf(id) : null;
   if (!claim) return null;
@@ -7760,14 +7816,24 @@ function stoodBehind(cause, world) {
     name: `claim#${at}`,
     individual: true,
     links: [
-      { rel: world.baseRelation, to: side.relation, ...(side.negated ? { not: true } : {}) },
-      { rel: a.subject, to: side.subject },
-      { rel: a.object, to: side.object },
+      { rel: world.baseRelation, to: side.claim.relation, ...(side.claim.negated ? { not: true } : {}) },
+      { rel: a.subject, to: side.claim.subject },
+      { rel: a.object, to: side.claim.object },
     ],
   });
+  // A doing is already a thing the world holds — the occurrence itself — so
+  // nothing is written down for it but the joining. What is so has to be
+  // written down first: a claim is a thing that says something, and until it
+  // is one there is nothing for a cause to point at.
+  const side = (of, at) => (of.done != null ? [] : [claim(of, at)]);
+  const at = (of, made) => (of.done != null ? of.done : made);
+  const behind = side(reason, reasonId);
+  const joined = { rel: a.cause, to: at(effect, effectId) };
   return [
-    claim(effect, effectId),
-    { ...claim(reason, reasonId), links: [...claim(reason, reasonId).links, { rel: a.cause, to: effectId }] },
+    ...side(effect, effectId),
+    ...(behind.length > 0
+      ? [{ ...behind[0], links: [...behind[0].links, joined] }]
+      : [{ id: reason.done, name: world.term(reason.done) ? world.term(reason.done).name : `did#${reason.done}`, links: [joined] }]),
   ];
 }
 

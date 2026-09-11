@@ -4,6 +4,26 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- **What stands behind something that happened.** `the fence fell because nila
+  pushed it` was taken in and then had nothing behind it: asked why the fence
+  fell, the brain said it did not know. `because` joined two claims and nothing
+  else, and a doing is not a claim — it is already a thing the world holds, so
+  there was never anything to write down, only a joining that was never made.
+
+  Asked why, the brain now looks for the doing itself — by what was done and
+  who did it — and what caused it answers. Three things had to be put right
+  under that. A word marking the past points back at a doing already spoken of,
+  and `did` in `why did the fence fall` was being taken for one of the things
+  the question was about, so the question was asked of the wrong pair. A doing
+  found was said back as its kind — `push`, where somebody pushed a fence —
+  which says what sort of thing happened and never says what did. And the word
+  for it came out untensed, then came out as `fallen`, which cannot be said on
+  its own: English has more than one word for a doing in the past and the
+  language could not say which of them stands alone, nor how to put a past
+  ending on a word it had never listed one for.
+
 ### Added
 
 - **A word may carry how many of its kind it speaks of.** `something` was no
