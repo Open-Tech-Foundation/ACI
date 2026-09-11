@@ -47,6 +47,8 @@
     "magnitude": 578,
     "hold": 579,
     "placement": 585,
+    "event": 254,
+    "member": 2789,
     "converse": 590,
     "use": 591,
     "instrument": 592,

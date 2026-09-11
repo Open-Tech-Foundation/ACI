@@ -27,6 +27,7 @@ export const ORDER = 'order';
 export const PROPERTY = 'property';
 export const KIND = 'kind';
 export const MEASURE = 'measure';
+export const MEMBER = 'member';
 
 // One conversation, one graph. Two brains are two conversations over their own
 // worlds, and what one was told is nothing to the other — held in one place
@@ -64,6 +65,7 @@ function clear() {
   }
   standing = new Map();
   counting = new Map();
+  happenings.clear();
   inReach = [];
   against = null;
 }
@@ -324,11 +326,42 @@ function fromUnderstood(roots, world, focus, marking, from) {
     // above is said by the order of the two, never by a flag naming one of
     // them. Said the other way round — shorter rather than taller — the same
     // fact turns round with it.
+    // A happening said to be at a time is a happening that was then. It was
+    // not placed inside the evening the way a chair is placed inside a hall.
+    const anchors = world.anchors || {};
+    const here = held.actions.find((row) => row.id === reach(subject));
+    if (here && primitive === PLACEMENT && anchors.time != null && world.isA(object, anchors.time)) {
+      here.times = [...(here.times || []), object];
+      return;
+    }
+
+    // Being in something that happened is being one of the people it happened
+    // to, not standing inside a place. The world says which kinds are events;
+    // that being in one is membership is the brain's.
+    const into = happenings.get(object);
+    if (into != null && primitive === PLACEMENT) {
+      const one = held.actions.find((row) => row.id === into);
+      const fact = put('facts', {
+        key,
+        of: MEMBER,
+        said: relation,
+        parts: [reach(subject), into],
+        properties: {},
+        denied: denied === true,
+      });
+      if (one) {
+        const who = reach(subject);
+        if (!(one.members || []).includes(who)) one.members = [...(one.members || []), who];
+        one.holds = [...(one.holds || []), fact];
+      }
+      return;
+    }
+
     const parts =
       primitive === COMPARISON && !above(relation, world)
         ? [far, reach(subject)]
         : [reach(subject), far];
-    put('facts', {
+    const wrote = put('facts', {
       key,
       of: primitive ?? relation,
       said: relation,
@@ -344,6 +377,11 @@ function fromUnderstood(roots, world, focus, marking, from) {
       },
       denied: denied === true,
     });
+
+    // Said of something that happened — where it was, when it was — the
+    // happening holds it. An event is what it holds and nothing besides.
+    const happened = held.actions.find((row) => row.id === parts[0]);
+    if (happened) happened.holds = [...(happened.holds || []), wrote];
   };
 
   // Only what the signal claimed is a fact. Where a doing follows from it, the
@@ -449,6 +487,21 @@ function fromUnderstood(roots, world, focus, marking, from) {
     const byRole = (role) => (parts || []).filter((p) => p.role === role && p.of != null);
     const doers = byRole(a2.agent).length > 0 ? byRole(a2.agent) : byRole(a2.target);
     for (const joint of event.state.joints || []) {
+      // A doing said to be in something that happened is a doing that happened
+      // inside it: the meeting holds the speaking, and whoever spoke was in
+      // the meeting. It is not a speaking placed inside an object.
+      const inside = happenings.get(joint.of);
+      if (inside != null) {
+        const whole = held.actions.find((row) => row.id === inside);
+        if (whole) {
+          if (!(whole.holds || []).includes(id)) whole.holds = [...(whole.holds || []), id];
+          for (const doer of doers) {
+            const who = reach(doer.of);
+            if (!(whole.members || []).includes(who)) whole.members = [...(whole.members || []), who];
+          }
+        }
+        continue;
+      }
       for (const doer of doers) {
         claimed(doer.of, joint.relation, joint.of, null, not === true);
         const one = held.actions.find((row) => row.id === id);
@@ -820,10 +873,29 @@ function kindOf(id, world) {
 // is what the world holds it under.
 const named = (call) => call.state.name ?? String(call.state.id);
 
-// How a term is reached from the graph: as one of its nodes, as the kind a
-// quantity was of, or as a concept the world already had.
+// A kind of event spoken of is an occurrence of it. `a meeting` is not a
+// thing standing somewhere the way a hall is — it is something that happened,
+// and where it was, when it was and who was in it all hang off the happening
+// rather than off a thing. Which kinds are events is the world's to say.
+const happenings = new Map();
+
+function happening(id) {
+  if (happenings.has(id)) return happenings.get(id);
+  const row = put('actions', { of: id, said: id, roles: {}, properties: {}, denied: false });
+  happenings.set(id, row);
+  return row;
+}
+
+function isHappening(id) {
+  const anchors = (against && against.anchors) || {};
+  return anchors.event != null && against.isA(id, anchors.event) && !against.isIndividual(id);
+}
+
+// How a term is reached from the graph: as the happening it is, as one of its
+// nodes, as the kind a quantity was of, or as a concept the world already had.
 function reach(id) {
   if (id == null) return null;
+  if (isHappening(id)) return happening(id);
   if (standing.has(id)) return standing.get(id);
   if (counting.has(id)) return counting.get(id).of;
   return id;
@@ -1228,6 +1300,8 @@ function serialize(world = against) {
       // A primitive says its parts by name and in its own order; whoever did
       // it stands first, because a doing is somebody's before it is anything
       // else. A doing the brain does not yet know says the roles it was given.
+      // Whoever was in it stands first, the way whoever did it does.
+      const members = one.members ? `[${one.members.map(spell).join(', ')}]` : '';
       const said = one.parts
         ? Object.entries(one.parts)
             // Whoever or whatever the doing is of stands first and unnamed: a
@@ -1254,9 +1328,10 @@ function serialize(world = against) {
       // took part in it, where and when it was, and what came of it hanging
       // off it. There is no narrower thing to call it and no reason to.
       const own = typeof one.of === 'string';
+      const inside = members && said ? `${members}, ${said}` : members || said;
       const does = own
         ? `${one.of}(${said})`
-        : `event(${said}${said ? ', ' : ''}type: ${spell(one.of)})`;
+        : `event(${inside}${inside ? ', ' : ''}type: ${spell(one.of)})`;
       const holds = one.holds ? `  holds ${one.holds.join(', ')}` : '';
       return `${one.id}  ${one.denied ? 'not ' : ''}${does}${when}${properties(one.properties)}${holds}`;
     }),

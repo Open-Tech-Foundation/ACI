@@ -4010,6 +4010,12 @@ function because(joined, world, mood, sent) {
       }
     }
 
+    // A joint is never one of the things it joins. A second one after the
+    // first opens a phrase of its own — `in a hall in the evening` is a hall
+    // and an evening, not a hall, an `in` and an evening.
+    const things = rights.filter((n) => !(a.relation != null && reaches(n, a.relation, world)));
+    if (things.length > 0) rights = things;
+
     // Every fact the signal offered, in the order it offered them.
     const pairs = lefts.flatMap((left) => rights.map((right) => [left, right]));
     const offered = pairs.map(([left, right]) => factFor(left, right, negated, joint)).filter((ns) => ns.length > 0);
@@ -4997,8 +5003,12 @@ function act(said, claims, world, side, sides, allocate) {
   // holds the same fact rather than a second copy of it.
   const playing = (role) => parts.filter((p) => p.role === role && p.of != null);
   const doers = playing(a.agent).length > 0 ? playing(a.agent) : playing(a.target);
+  // A doing inside something that happened is not a doing somewhere: nobody
+  // stands inside a meeting. Whoever took part is a member of it, and that is
+  // the graph's to write.
+  const inHappening = (j) => a.event != null && world.isA(j.of, a.event);
   const placed = joints
-    .filter((j) => !whenJoint(j))
+    .filter((j) => !whenJoint(j) && !inHappening(j))
     .flatMap((j) =>
       doers.map((doer) =>
         node('learn', 'link', [], {
@@ -5384,9 +5394,17 @@ function restrictedIn(root, world) {
           t.state.contextual === true;
         const middles = kids.slice(1, -1);
         const headConcept = conceptOf(head);
+        // Neither a time nor a joint is a thing to be described. `a hall in
+        // the evening` is not a kind of evening with a hall about it, nor a
+        // kind of `in`: the phrase ends at the joint, and the evening says
+        // when.
+        const timely =
+          world != null &&
+          ((a.time != null && world.isA(headConcept, a.time)) ||
+            (a.relation != null && world.isA(headConcept, a.relation)));
         const isReferent = headConcept != null || findBranch(head, 'call') != null;
         const describing = middles.every((k) => functionsOf(k).includes('modifier'));
-        if ((isContextualPointer || isReferent) && describing) {
+        if (!timely && (isContextualPointer || isReferent) && describing) {
           middles.forEach((k) => restricted.add(k));
           if (middles.length > 0) narrowing.set(head, middles);
         }

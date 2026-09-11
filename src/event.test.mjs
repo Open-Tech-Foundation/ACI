@@ -100,3 +100,38 @@ test("what a doing left behind is not said of the doer", async () => {
   assert(!/n2  plank.*wetness/.test(graph), `and the plank is not:\n${graph}`);
   await forget();
 });
+
+test("a kind of event spoken of is an occurrence of it", async () => {
+  // `a meeting` is not a thing standing in a hall. It is something that
+  // happened, and where it was hangs off the happening.
+  await fresh("a meeting was in a hall");
+  const graph = serialize();
+  assert(/a1  event\(type: meeting\[\d+\]\)/.test(graph), `the meeting happened:\n${graph}`);
+  assert(/f1  placement\(a1, n1\)/.test(graph), `and it was in the hall:\n${graph}`);
+  await forget();
+});
+
+test("being in something that happened is being a member of it", async () => {
+  await fresh("an accident was on a road", "hema was in the accident");
+  const graph = serialize();
+  assert(/member\(n2, a1\)/.test(graph), `hema is in the accident:\n${graph}`);
+  assert(/event\(\[n2\], type: accident/.test(graph), `and the accident holds her:\n${graph}`);
+  await forget();
+});
+
+test("an event said to be at a time was then, not placed inside one", async () => {
+  await fresh("a meeting was in a hall in the evening");
+  const graph = serialize();
+  assert(/at evening/.test(graph), `the meeting was in the evening:\n${graph}`);
+  assert(/placement\(a1, n1\)/.test(graph), `and in the hall:\n${graph}`);
+  assert(!/placement\(a1, evening/.test(graph), `and not inside the evening:\n${graph}`);
+  await forget();
+});
+
+test("a doing inside something that happened is held by it", async () => {
+  await fresh("an accident was on a road", "a plank fell in the accident");
+  const graph = serialize();
+  assert(/a1  event\(\[n\d\], type: accident\[\d+\]\).*holds .*a2/.test(graph), `the accident holds the falling:\n${graph}`);
+  assert(/a2  event\(n\d, type: fall\[\d+\]\)/.test(graph), `and the falling is its own row:\n${graph}`);
+  await forget();
+});

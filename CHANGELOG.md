@@ -6,6 +6,37 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **An event is a thing that happened, with what belongs to it hanging off
+  it.** The brain could read a doing — somebody pushing something — but not an
+  occurrence spoken of as a noun. `a meeting was in a hall` placed the *kind*
+  meeting inside a hall the way a chair is placed, and `hema was in the
+  meeting` made a second, unrelated meeting and put her inside it.
+
+  A kind the world holds under `event` — a meeting, an accident, a birth — is
+  now an occurrence of that kind when a signal speaks of one, and it is a row
+  of its own. Where it was, when it was, who was in it and whatever happened
+  inside it all hang off that row:
+
+      a meeting was in a hall in the evening
+      hema was in the meeting
+      arun spoke in the meeting
+
+      facts:
+        f1  placement(a1, n1)  {as: in[586]}
+        f2  member(n2, a1)
+      actions:
+        a1  event([n2, n3], type: meeting[267])  at evening[519]  holds f1, f2, a2
+        a2  event(n3, type: speak[271])
+
+  Being in something that happened is being one of the people it happened to,
+  not standing inside a place — so it is membership, and `member` is what it
+  says. A happening said to be at a time was then, rather than placed inside
+  the evening. And a doing said to be in one is a doing that happened inside
+  it: the meeting holds the speaking, and whoever spoke was in the meeting.
+
+  No new way of relating was needed for any of it. The rows were already there
+  and an event is what it holds.
+
 - **An event says it is one.** A doing of a kind only the world holds was
   written `action(...)`, by the same rule that writes a fact on a world
   relation `relation(...)`: the brain had no primitive for it, so the row said
@@ -112,6 +143,12 @@ All notable changes to this project are documented in this file.
   again reads it from there.
 
 ### Fixed
+
+- **A phrase does not describe the phrase after it.** `a meeting was in a hall
+  in the evening` read `a hall in` as one described thing and then claimed the
+  meeting was in an `in`. Neither a time nor a joint is a thing to be
+  described, and a joint is never one of the things a fact holds between — a
+  second one after the first opens a phrase of its own.
 
 - **What a doing left behind is not said of whoever comes next.** `a road
   became wet because a plank fell` made the plank wet. A quality said after a
