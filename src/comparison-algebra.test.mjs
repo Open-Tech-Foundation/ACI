@@ -123,3 +123,24 @@ test("a scale is never a scale of itself", () => {
   assertEquals(world.asymmetric(of), true);
   assertEquals(world.irreflexive(of), true);
 });
+
+test("a state says which end of its scale it is, and the comparison is never told", () => {
+  const toward = world.anchors.toward;
+  const { more, less, compares } = world.anchors;
+  assertEquals(world.linked(world.named("tall"), toward), [more]);
+  assertEquals(world.linked(world.named("short"), toward), [less]);
+  assertEquals(world.linked(world.named("dark"), toward), [less]);
+  // The relation compares a state and says nothing else about direction.
+  const told = comparisons().filter((term) =>
+    (term.links || []).some(
+      (link) => link.rel === world.named("subrelation") && [more, less].includes(link.to),
+    ),
+  );
+  assertEquals(told.map((term) => term.name), []);
+  // Every one of them still knows which way it reads, through its state.
+  const lost = comparisons().filter((term) => {
+    const state = (term.links || []).find((link) => link.rel === compares).to;
+    return world.linked(state, toward).length === 0;
+  });
+  assertEquals(lost.map((term) => term.name), []);
+});

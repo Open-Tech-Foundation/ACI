@@ -660,7 +660,10 @@ const scaleOf = (relation, world) => {
 function above(relation, world) {
   const anchors = world.anchors || {};
   if (anchors.less != null && world.subrelationOf(relation, anchors.less)) return false;
-  return true;
+  if (anchors.compares == null || anchors.toward == null) return true;
+  const state = world.linked(relation, anchors.compares)[0];
+  if (state == null) return true;
+  return world.linked(state, anchors.toward)[0] !== anchors.less;
 }
 
 // The quantity a state is a state of. Measuring runs one way — a metre

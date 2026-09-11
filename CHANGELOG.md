@@ -4,6 +4,18 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- **A state says which end of its scale it is.** Sixty-three relations each
+  carried a direction of their own — `more-tall` was a kind of `more`,
+  `more-short` a kind of `less` — which is the world saying in sixty-three
+  places something that belongs once, on the state. `tall` is the top of
+  height and `short` the bottom whatever language names them; that `taller`
+  reads the scale upward is English's to know, not the world's to repeat. The
+  direction is on the state now, and a comparison relation carries only which
+  state it compares. Said bare, `more` and `less` are the direction
+  themselves, and they still are.
+
 ### Added
 
 - **A scale is a scale of something.** `a lamp is brighter than a candle` left

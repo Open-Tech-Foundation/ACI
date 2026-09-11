@@ -796,9 +796,29 @@ function farEnd(term, world) {
 // Whether a relation compares at all, and which way it runs. A comparison made
 // on a state is declared narrower than `more` or than `less`, so asking the
 // broader relation answers for every one of them without naming any.
+// Comparing is being further along something. A signal may say so bare — more,
+// less — or say it through a state, and a relation that compares a state is
+// comparing just as much.
 function isComparing(relation, world) {
   const a = world.anchors || {};
-  return toward(relation, a.more, world) || toward(relation, a.less, world);
+  if (relation == null) return false;
+  if (toward(relation, a.more, world) || toward(relation, a.less, world)) return true;
+  return a.compares != null && world.linked(relation, a.compares).length > 0;
+}
+
+// Which way along its scale a comparison reads. A state lies at one end of the
+// scale it is measured on — tall at the top of height, short at the bottom —
+// and a comparison on that state reads the scale from that end. The relation
+// is never told: it compares a state, and the state already says. Said bare,
+// the relation is the direction.
+function directionOf(relation, world) {
+  const a = world.anchors || {};
+  if (relation == null) return null;
+  if (toward(relation, a.less, world)) return a.less;
+  if (toward(relation, a.more, world)) return a.more;
+  if (a.compares == null || a.toward == null) return null;
+  const state = world.linked(relation, a.compares)[0];
+  return state == null ? null : world.linked(state, a.toward)[0] ?? null;
 }
 
 function toward(relation, broader, world) {
@@ -4022,7 +4042,7 @@ function alongScale(left, right, relation, world, on) {
   // heavier and cooler at once, and neither of those is the comparison.
   if (found.length === 0 || found.some((x) => x !== found[0])) return null;
 
-  const holds = toward(relation, a.more, world) ? found[0] : !found[0];
+  const holds = directionOf(relation, world) === a.less ? !found[0] : found[0];
   return node('standing', holds ? 'held' : 'against', [], {
     subject: conceptOf(left),
     relation,
@@ -4207,7 +4227,7 @@ function calculate(said, at, relation, world) {
     }
     const compared = numericCompare(left, right);
     if (Number.isNaN(compared)) return null;
-    const holds = toward(relation, a.more, world) ? compared > 0 : compared < 0;
+    const holds = directionOf(relation, world) === a.less ? compared < 0 : compared > 0;
     // The terms compared, not the numbers they name: a standing joins terms
     // wherever it comes from, and what is said back is said in words.
     return node('standing', holds ? 'held' : 'against', [], {

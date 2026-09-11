@@ -127,9 +127,9 @@ export function fromWorldData(source) {
       if (state == null) continue;
       const scale = [...(incoming.get(anchors.measure)?.get(state) || [])][0];
       if (scale == null) continue;
-      const along = outgoing.get(subrelationRel)?.get(relation.id) || new Set();
-      const down = anchors.less != null && along.has(anchors.less);
-      const up = anchors.more != null && along.has(anchors.more);
+      const along = [...(outgoing.get(anchors.toward)?.get(state) || [])][0];
+      const down = anchors.less != null && along === anchors.less;
+      const up = anchors.more != null && along === anchors.more;
       if (!down && !up) continue;
       if (!byScale.has(scale)) byScale.set(scale, { up: [], down: [] });
       byScale.get(scale)[down ? 'down' : 'up'].push(relation.id);
