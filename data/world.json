@@ -29928,8 +29928,6 @@
     {
       "id": 2876,
       "name": "more-big",
-      "transitive": true,
-      "asymmetric": true,
       "links": [
         {
           "rel": 294,
@@ -29952,8 +29950,6 @@
     {
       "id": 2877,
       "name": "more-small",
-      "transitive": true,
-      "asymmetric": true,
       "links": [
         {
           "rel": 294,
@@ -29972,8 +29968,6 @@
     {
       "id": 2878,
       "name": "more-long",
-      "transitive": true,
-      "asymmetric": true,
       "links": [
         {
           "rel": 294,
@@ -29996,8 +29990,6 @@
     {
       "id": 2879,
       "name": "more-short",
-      "transitive": true,
-      "asymmetric": true,
       "links": [
         {
           "rel": 294,
@@ -30016,8 +30008,6 @@
     {
       "id": 2880,
       "name": "more-tall",
-      "transitive": true,
-      "asymmetric": true,
       "links": [
         {
           "rel": 294,
@@ -30040,8 +30030,6 @@
     {
       "id": 2881,
       "name": "more-heavy",
-      "transitive": true,
-      "asymmetric": true,
       "links": [
         {
           "rel": 294,
@@ -30064,8 +30052,6 @@
     {
       "id": 2882,
       "name": "more-light-weight",
-      "transitive": true,
-      "asymmetric": true,
       "links": [
         {
           "rel": 294,
@@ -30084,8 +30070,6 @@
     {
       "id": 2883,
       "name": "more-hot",
-      "transitive": true,
-      "asymmetric": true,
       "links": [
         {
           "rel": 294,
@@ -30108,8 +30092,6 @@
     {
       "id": 2884,
       "name": "more-cold",
-      "transitive": true,
-      "asymmetric": true,
       "links": [
         {
           "rel": 294,
@@ -30128,8 +30110,6 @@
     {
       "id": 2885,
       "name": "more-warm",
-      "transitive": true,
-      "asymmetric": true,
       "links": [
         {
           "rel": 294,
@@ -30152,8 +30132,6 @@
     {
       "id": 2886,
       "name": "more-cool",
-      "transitive": true,
-      "asymmetric": true,
       "links": [
         {
           "rel": 294,
@@ -30172,8 +30150,6 @@
     {
       "id": 2887,
       "name": "more-old",
-      "transitive": true,
-      "asymmetric": true,
       "links": [
         {
           "rel": 294,
@@ -30196,8 +30172,6 @@
     {
       "id": 2888,
       "name": "more-young",
-      "transitive": true,
-      "asymmetric": true,
       "links": [
         {
           "rel": 294,
@@ -30216,8 +30190,6 @@
     {
       "id": 2889,
       "name": "more-fast",
-      "transitive": true,
-      "asymmetric": true,
       "links": [
         {
           "rel": 294,
@@ -30240,8 +30212,6 @@
     {
       "id": 2890,
       "name": "more-slow",
-      "transitive": true,
-      "asymmetric": true,
       "links": [
         {
           "rel": 294,

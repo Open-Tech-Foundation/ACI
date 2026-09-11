@@ -80,10 +80,20 @@ export function fromWorldData(source) {
   const namedTerms = new Map();
   const markedTerms = new Map();
   const MARKS = ['symmetric', 'asymmetric', 'irreflexive', 'reflexive', 'functional', 'transitive'];
+  // A relation that compares a state. Comparing is an ordering by what it is:
+  // nothing is further along than itself, and what is further along than
+  // something further along again is further along than both. So the world
+  // never says so of a comparison — it says only which state is compared, and
+  // the algebra follows. Said of each one instead, it would be said sixty
+  // times and forgotten most of them.
+  const comparing = (id) =>
+    anchors.compares != null && (outgoing.get(anchors.compares)?.get(id)?.size ?? 0) > 0;
+  const carries = (term, mark) =>
+    Boolean(term[mark]) || ((mark === 'asymmetric' || mark === 'transitive') && comparing(term.id));
   for (const term of terms.values()) {
     if (typeof term.name === 'string' && !namedTerms.has(term.name)) namedTerms.set(term.name, term.id);
     for (const mark of MARKS) {
-      if (!term[mark]) continue;
+      if (!carries(term, mark)) continue;
       if (!markedTerms.has(mark)) markedTerms.set(mark, []);
       markedTerms.get(mark).push(term.id);
     }
@@ -549,7 +559,7 @@ export function fromWorldData(source) {
     const relation = terms.get(rel);
     const found = new Set();
     partialBy.set(key, found);
-    if (relation && relation.transitive) {
+    if (relation && carries(relation, 'transitive')) {
       const pending = [id];
       const seen = new Set([id]);
       while (pending.length) {
@@ -774,17 +784,24 @@ export function fromWorldData(source) {
     isIndividual: (id) => {
       return [...equivalents(id)].some((representative) => terms.get(representative)?.individual);
     },
-    // Asymmetry is declared on the relation term. The engine reads the
-    // property, never the relation's name: temporal order and any other strict
-    // ordering receive the same contradiction semantics.
-    asymmetric: (rel) => Boolean(terms.get(rel)?.asymmetric),
+    // Asymmetry is declared on the relation term, or follows from what the
+    // relation is. The engine reads the property, never the relation's name:
+    // temporal order and any other strict ordering receive the same
+    // contradiction semantics.
+    asymmetric: (rel) => {
+      const term = terms.get(rel);
+      return term != null && carries(term, 'asymmetric');
+    },
     // Symmetry is likewise a property of the relation term. One authored fact
     // can therefore be read from either endpoint without storing its mirror.
     symmetric: (rel) => Boolean(terms.get(rel)?.symmetric),
     reflexive: (rel) => Boolean(terms.get(rel)?.reflexive),
     // Asymmetry entails irreflexivity; an explicit declaration gives the same
     // self-contradiction without imposing direction on distinct endpoints.
-    irreflexive: (rel) => Boolean(terms.get(rel)?.irreflexive || terms.get(rel)?.asymmetric),
+    irreflexive: (rel) => {
+      const term = terms.get(rel);
+      return term != null && (Boolean(term.irreflexive) || carries(term, 'asymmetric'));
+    },
     functional: (rel) => Boolean(terms.get(rel)?.functional),
     domains: (rel) => [...constraintKinds(rel, 'domain')],
     ranges: (rel) => [...constraintKinds(rel, 'range')],

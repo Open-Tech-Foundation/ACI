@@ -4,6 +4,21 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- **Comparing is an ordering by what it is, so the world stops saying so.**
+  `a lake is deeper than a pond` and `a pond is deeper than a puddle` left
+  `is a lake deeper than a puddle?` unanswered, where the same three signals
+  about what is *bigger* answered. Nothing was wrong with the reasoning: the
+  world carries sixty-three comparisons, each a relation of its own, and
+  `transitive` and `asymmetric` had been written onto fifteen of them by hand
+  and forgotten on the other forty-eight. Nothing is further along than
+  itself, and what is further along than something further along again is
+  further along than both — that is what comparing *is*, and it is the same
+  for every scale there could be. So the world says only which state a
+  comparison compares, and the algebra follows from that. The thirty copied
+  marks are gone, and all sixty-three order alike.
+
 ### Added
 
 - **Asked who, only somebody answers.** `who is a heron?` came back unknown

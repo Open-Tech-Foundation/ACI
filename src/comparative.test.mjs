@@ -101,3 +101,32 @@ test("which of two, where the world names neither number", async () => {
   );
   await forget();
 });
+
+test("comparing is an ordering, whatever the world said about it", async () => {
+  // `more-deep` was never marked transitive or asymmetric; `more-big` was.
+  // Being a comparison is what says so, so both answer alike.
+  assertEquals(
+    (await fresh(
+      "a lake is deeper than a pond",
+      "a pond is deeper than a puddle",
+      "is a lake deeper than a puddle?",
+    )).expression.name,
+    "affirm",
+  );
+  assertEquals(
+    (await fresh(
+      "a lake is deeper than a pond",
+      "is a pond deeper than a lake?",
+    )).expression.name,
+    "deny",
+  );
+  await forget();
+});
+
+test("nothing is further along than itself", async () => {
+  assertEquals(
+    (await fresh("a lake is deeper than a lake?")).expression.name,
+    "deny",
+  );
+  await forget();
+});
