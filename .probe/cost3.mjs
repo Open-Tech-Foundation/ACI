@@ -1,0 +1,20 @@
+const { file, readDir } = await import('runtime:fs');
+const root = new URL('../', import.meta.url).pathname;
+const mark = async (name, work) => {
+  const t = performance.now();
+  const out = await work();
+  console.log(`${name.padEnd(26)} ${(performance.now() - t).toFixed(0)} ms`);
+  return out;
+};
+const authored = await mark('read data/world.json', () => file(`${root}data/world.json`).json());
+const { fromSources, speaking } = await import('../src/knowledge.js');
+await mark('validate world (shape)', async () => fromSources({ world: authored }));
+const names = (await readDir(`${root}languages`)).filter((e) => e.isFile && e.name.endsWith('.json'));
+const packs = [];
+for (const n of names) packs.push(await file(`${root}languages/${n.name}`).json());
+await mark('read + check languages', async () => speaking(packs));
+const { openStore, seed, readWorld } = await import('../src/store.js');
+const store = await mark('open store', () => openStore('sqlite::memory:'));
+await mark('seed store', () => seed(store, authored));
+const back = await mark('read world back', () => readWorld(store));
+await mark('validate again (build)', async () => fromSources({ world: back, settled: true }));

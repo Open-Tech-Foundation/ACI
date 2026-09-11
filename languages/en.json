@@ -16537,7 +16537,8 @@
     },
     "at": {
       "pos": "preposition",
-      "meaning": "at"
+      "meaning": "at",
+      "concept": 3039
     },
     "about": {
       "pos": "preposition",
@@ -18242,6 +18243,139 @@
       "meaning": "everybody",
       "concept": 29,
       "quantifies": 245
+    },
+    "wedding": {
+      "pos": "noun",
+      "meaning": "wedding",
+      "concept": 3015
+    },
+    "robbery": {
+      "pos": "noun",
+      "meaning": "robbery",
+      "concept": 3016
+    },
+    "interview": {
+      "pos": "noun",
+      "meaning": "interview",
+      "concept": 3017
+    },
+    "exam": {
+      "pos": "noun",
+      "meaning": "exam",
+      "concept": 3018
+    },
+    "party": {
+      "pos": "noun",
+      "meaning": "party",
+      "concept": 3019
+    },
+    "match": {
+      "pos": "noun",
+      "meaning": "match",
+      "concept": 3020
+    },
+    "outage": {
+      "pos": "noun",
+      "meaning": "outage",
+      "concept": 3021
+    },
+    "delay": {
+      "pos": "noun",
+      "meaning": "delay",
+      "concept": 3022
+    },
+    "passenger": {
+      "pos": "noun",
+      "meaning": "passenger",
+      "concept": 3023
+    },
+    "resident": {
+      "pos": "noun",
+      "meaning": "resident",
+      "concept": 3024
+    },
+    "pedestrian": {
+      "pos": "noun",
+      "meaning": "pedestrian",
+      "concept": 3025
+    },
+    "robber": {
+      "pos": "noun",
+      "meaning": "robber",
+      "concept": 3026
+    },
+    "shopkeeper": {
+      "pos": "noun",
+      "meaning": "shopkeeper",
+      "concept": 3027
+    },
+    "candidate": {
+      "pos": "noun",
+      "meaning": "candidate",
+      "concept": 3028
+    },
+    "interviewer": {
+      "pos": "noun",
+      "meaning": "interviewer",
+      "concept": 3029
+    },
+    "couple": {
+      "pos": "noun",
+      "meaning": "couple",
+      "concept": 3030
+    },
+    "electricity": {
+      "pos": "noun",
+      "meaning": "electricity",
+      "concept": 3038
+    },
+    "steal": {
+      "pos": "verb",
+      "meaning": "steal",
+      "concept": 3031
+    },
+    "marry": {
+      "pos": "verb",
+      "meaning": "marry",
+      "concept": 3032
+    },
+    "complete": {
+      "pos": "verb",
+      "meaning": "complete",
+      "concept": 3033
+    },
+    "select": {
+      "pos": "verb",
+      "meaning": "select",
+      "concept": 3034
+    },
+    "block": {
+      "pos": "verb",
+      "meaning": "block",
+      "concept": 3035
+    },
+    "damage": {
+      "pos": "verb",
+      "meaning": "damage",
+      "concept": 3036
+    },
+    "celebrate": {
+      "pos": "verb",
+      "meaning": "celebrate",
+      "concept": 3037
+    },
+    "stole": {
+      "pos": "verb",
+      "meaning": "stole",
+      "concept": 3031,
+      "when": "past"
+    },
+    "stolen": {
+      "pos": "verb",
+      "meaning": "stolen",
+      "concept": 3031,
+      "when": "past",
+      "alone": false
     }
   },
   "unknown": {

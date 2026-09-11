@@ -207,6 +207,9 @@ function fromUnderstood(roots, world, focus, marking, from) {
     // is theirs, so they stand in the conversation like anything else spoken
     // of. Without this `i have a car` had the car belong to the kind `person`.
     if (!call && !(world && world.isIndividual(id)) && !particular.has(id) && id !== from) continue;
+    // A kind of event is not a thing beside the other things. It is something
+    // that happened, and it stands among what happened.
+    if (isHappening(id)) continue;
     // `the father of sam` says which one, but a father is what stands between
     // two people, not a third person beside them.
     if (!call && world && world.anchors.relation != null && world.isA(id, world.anchors.relation)) continue;
@@ -338,7 +341,7 @@ function fromUnderstood(roots, world, focus, marking, from) {
     // Being in something that happened is being one of the people it happened
     // to, not standing inside a place. The world says which kinds are events;
     // that being in one is membership is the brain's.
-    const into = happenings.get(object);
+    const into = happenings.get(kindHappened(object));
     if (into != null && primitive === PLACEMENT) {
       const one = held.actions.find((row) => row.id === into);
       const fact = put('facts', {
@@ -453,7 +456,10 @@ function fromUnderstood(roots, world, focus, marking, from) {
     if (counts[a2.target] != null) properties.count = counts[a2.target];
     else if (Object.keys(counts).length === 1) properties.count = Object.values(counts)[0];
     const primitive = doing(roles, world);
-    const id = put('actions', {
+    // A doing that is itself a kind of event is that event happening, not a
+    // second row beside it: `a robbery was in a shop` and `a shopkeeper was in
+    // the robbery` speak of one robbery.
+    const row = {
       of: primitive ?? action,
       said: action,
       // Which occurrence this is. A cause names the occurrences it joins, and
@@ -475,7 +481,19 @@ function fromUnderstood(roots, world, focus, marking, from) {
           : { roles, properties }),
       denied: not === true,
       when: when ?? null,
-    });
+    };
+    const already = isHappening(action) ? happening(action) : null;
+    const id = already ?? put('actions', row);
+    if (already) {
+      // What this signal added, kept beside what was already known of it.
+      const one = held.actions.find((r) => r.id === already);
+      for (const [name, value] of Object.entries(row)) {
+        if (value == null || (Array.isArray(value) && value.length === 0)) continue;
+        if (name === 'roles' || name === 'properties') one[name] = { ...(one[name] || {}), ...value };
+        else if (name === 'times') one.times = [...new Set([...(one.times || []), ...value])];
+        else if (one[name] == null || name === 'of' || name === 'said') one[name] = value;
+      }
+    }
 
     // What was said of the doing itself — where it was, when it was — is an
     // ordinary fact with the doing at the near end, and the doing holds it.
@@ -490,7 +508,7 @@ function fromUnderstood(roots, world, focus, marking, from) {
       // A doing said to be in something that happened is a doing that happened
       // inside it: the meeting holds the speaking, and whoever spoke was in
       // the meeting. It is not a speaking placed inside an object.
-      const inside = happenings.get(joint.of);
+      const inside = happenings.get(kindHappened(joint.of));
       if (inside != null) {
         const whole = held.actions.find((row) => row.id === inside);
         if (whole) {
@@ -879,16 +897,27 @@ const named = (call) => call.state.name ?? String(call.state.id);
 // rather than off a thing. Which kinds are events is the world's to say.
 const happenings = new Map();
 
+// Which happening a term names. A kind of event names one, and so does a thing
+// made of that kind — `the robbery` said a turn later is the robbery already
+// spoken of, not a second one beside it.
+function kindHappened(id) {
+  const anchors = (against && against.anchors) || {};
+  if (!against || anchors.event == null || id == null) return null;
+  if (!against.isA(id, anchors.event)) return null;
+  if (!against.isIndividual(id)) return id;
+  return against.linked(id, against.baseRelation).find((k) => against.isA(k, anchors.event)) ?? null;
+}
+
 function happening(id) {
-  if (happenings.has(id)) return happenings.get(id);
-  const row = put('actions', { of: id, said: id, roles: {}, properties: {}, denied: false });
-  happenings.set(id, row);
+  const kind = kindHappened(id) ?? id;
+  if (happenings.has(kind)) return happenings.get(kind);
+  const row = put('actions', { of: kind, said: kind, roles: {}, properties: {}, denied: false });
+  happenings.set(kind, row);
   return row;
 }
 
 function isHappening(id) {
-  const anchors = (against && against.anchors) || {};
-  return anchors.event != null && against.isA(id, anchors.event) && !against.isIndividual(id);
+  return kindHappened(id) != null;
 }
 
 // How a term is reached from the graph: as the happening it is, as one of its
@@ -931,7 +960,13 @@ function determined(roots, marking, world, supposed = new Set()) {
           concept: call ? call.state.id : entity && entity.state ? entity.state.concept : null,
           // A word standing beside a thing that says how it is, rather than
           // what it is.
-          quality: isQuality(said.concept, world) ? said.concept : null,
+          // A time is no way for a thing to be. `at night` says when, and a
+          // shop is not night-coloured for standing in one.
+          quality:
+            isQuality(said.concept, world) &&
+            !(world.anchors.time != null && world.isA(said.concept, world.anchors.time))
+              ? said.concept
+              : null,
           // A word that holds between two things rather than standing beside
           // one. A quality on the far side of one was said *of* what is on the
           // near side, and describes nothing beyond it.

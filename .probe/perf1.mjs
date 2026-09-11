@@ -1,0 +1,18 @@
+import { openStore, seed, readWorld, write } from '../src/store.js';
+import { fromSources } from '../src/knowledge.js';
+import { fromWorldData } from '../src/world.js';
+import { checkWorld, checkWhole } from '../src/shape.js';
+const { file } = await import('runtime:fs');
+const root = '/media/G/WD_LINUX_FILES/projects/g/ACI/';
+const authored = await file(root + 'data/world.json').json();
+const store = await openStore('sqlite::memory:');
+await seed(store, authored);
+const t = (name, fn) => { const s = Date.now(); const r = fn(); console.log(name, Date.now() - s, 'ms'); return r; };
+const ta = async (name, fn) => { const s = Date.now(); const r = await fn(); console.log(name, Date.now() - s, 'ms'); return r; };
+const w = await ta('readWorld', () => readWorld(store));
+console.log('terms', w.terms.length);
+t('checkWorld', () => checkWorld(w, 'world'));
+t('checkWhole', () => checkWhole(w, null));
+t('fromWorldData', () => fromWorldData(w));
+t('fromSources settled', () => fromSources({ world: w, settled: true }));
+t('fromSources unsettled', () => fromSources({ world: w }));

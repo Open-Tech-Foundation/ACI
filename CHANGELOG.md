@@ -6,6 +6,26 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **The words the world was missing for things that happen.** Seven kinds of
+  event — wedding, robbery, interview, exam, party, match, outage, delay — the
+  people who stand in them, and the doings their outcomes need: steal, marry,
+  complete, select, block, damage, celebrate. So:
+
+      a robbery was at a shop at night
+      a shopkeeper and a robber were in the robbery
+      the robber stole money in the robbery
+
+      a1  event([n2, n3], type: robbery[3016])  at night[216]  holds f1, f2, f3, a2
+            f1  placement(a1, n1)  {as: at[3039]}
+            f2  member(n2, a1)
+            f3  member(n3, a1)
+            a2  event(n3, target: money[1134], type: steal[3031])
+
+- **Being at something is standing somewhere.** `at` was a preposition with
+  nothing behind it, so `nila was at the fair` said nothing and `an apple is at
+  a table` was read as a claim that an apple is a table. It is a placement, the
+  way `in` and `on` are.
+
 - **An event is a thing that happened, with what belongs to it hanging off
   it.** The brain could read a doing — somebody pushing something — but not an
   occurrence spoken of as a noun. `a meeting was in a hall` placed the *kind*
@@ -143,6 +163,10 @@ All notable changes to this project are documented in this file.
   again reads it from there.
 
 ### Fixed
+
+- **A time is no way for a thing to be.** `a robbery was at a shop at night`
+  left the shop night-coloured: a time read as a quality of whatever stood
+  beside it. A time says when.
 
 - **A phrase does not describe the phrase after it.** `a meeting was in a hall
   in the evening` read `a hall in` as one described thing and then claimed the

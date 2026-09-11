@@ -135,3 +135,34 @@ test("a doing inside something that happened is held by it", async () => {
   assert(/a2  event\(n\d, type: fall\[\d+\]\)/.test(graph), `and the falling is its own row:\n${graph}`);
   await forget();
 });
+
+test("one event, however many signals speak of it", async () => {
+  await fresh(
+    "a robbery was at a shop at night",
+    "a shopkeeper and a robber were in the robbery",
+    "the robber stole money in the robbery",
+  );
+  const graph = serialize();
+  assert(
+    (graph.match(/type: robbery/g) || []).length === 1,
+    `there is one robbery:\n${graph}`,
+  );
+  assert(/a1  event\(\[n2, n3\], type: robbery\[\d+\]\)  at night\[\d+\]/.test(graph), `with both in it, at night:\n${graph}`);
+  assert(/placement\(a1, n1\)/.test(graph), `at the shop:\n${graph}`);
+  assert(/holds f1, f2, f3, a2/.test(graph), `holding all of it:\n${graph}`);
+  assert(/a2  event\(n3, target: money\[\d+\], type: steal/.test(graph), `and the stealing inside it:\n${graph}`);
+  await forget();
+});
+
+test("being at a place is a placement", async () => {
+  assertEquals((await fresh("nila was at a fair", "where is nila?")).expression.state.says, "at fair");
+  await forget();
+});
+
+test("a time is no way for a thing to be", async () => {
+  await fresh("an exam was at a school at night");
+  const graph = serialize();
+  assert(!/n1  school.*period/.test(graph), `the school is not night-coloured:\n${graph}`);
+  assert(/at night/.test(graph), `the exam was at night:\n${graph}`);
+  await forget();
+});

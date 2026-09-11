@@ -1,0 +1,10 @@
+globalThis.EDBG = 1;
+import { openBrain } from '../src/index.js';
+const b = openBrain('sqlite::memory:');
+await b.brain('sara is before john');
+await b.brain('john is before mike');
+console.log('=>', (await b.brain('who is the first?')).expression?.state?.says);
+const c = openBrain('sqlite::memory:');
+await c.brain('tom is taller than sam');
+await c.brain('sam is taller than john');
+console.log('=>', (await c.brain('who is the tallest?')).expression?.state?.says);

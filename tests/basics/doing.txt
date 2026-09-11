@@ -27,4 +27,5 @@ mira put the key into the drawer
 mira put the key into the box
 where is the key? => in a box
 
-nila was at the fair ?> I don't understand.
+nila was at the fair
+where is nila? => at fair
