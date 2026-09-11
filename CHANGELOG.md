@@ -4,6 +4,24 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **A doing may leave the world standing differently.** `mira put the key into
+  the drawer` was taken in, and then nobody knew where the key was: the putting
+  went on the record as having happened and the key stayed exactly where it had
+  been. Some doings change nothing but the record that they happened; others
+  leave something behind, and which of them do is the world's to say. It says
+  that putting brings about being in, so the key is in the drawer afterwards
+  and stays there until something moves it.
+
+  Said the other way — `nila put the lamp on the table` — it was not read as a
+  doing at all, and put **nila** on the table as well as the lamp. A doing
+  among the things on one side of a joint is not one of the things it holds
+  between, and it splits that side: whoever stands before it did it, and
+  whatever stands after is what it was done to. Where nothing stands after,
+  whoever did it is what the fact is about, which is what keeps `sara arrived
+  before john` about sara and john.
+
 ### Changed
 
 - **A fact taken in does not send the brain back to the store for the world.**
