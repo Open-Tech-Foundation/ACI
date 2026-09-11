@@ -91,7 +91,8 @@
     "week": 217,
     "month": 218,
     "year": 219,
-    "toward": 2992
+    "toward": 2992,
+    "follows": 3009
   },
   "relations": {
     "is": 294,
@@ -31368,6 +31369,17 @@
         {
           "rel": 2867,
           "to": 29
+        }
+      ]
+    },
+    {
+      "id": 3009,
+      "name": "follows-from",
+      "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
         }
       ]
     }

@@ -6,6 +6,24 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **What the brain worked out, it can say what it stands on.** A standing
+  instruction already fired — told `if a drum is cold then a bell is red` and
+  then that a drum is cold, the brain answered that a bell is red — and asked
+  *why*, it said it did not know. A fact it reached itself stood on nothing it
+  could show, which is the one thing a brain that cannot make things up must
+  never be: taken on trust.
+
+  The claim an instruction reaches is joined to the claim that met its
+  condition, so `why is a bell red?` answers `a drum is cold`. A chain is
+  walked back a step at a time — `why is a cup blue?` is `a bell is red`, and
+  that in turn is `a drum is cold`. What was told rather than worked out
+  stands on nothing, and the brain says so rather than inventing something for
+  it to stand on.
+
+  Both claims were already things the world held; only the joining was
+  missing. Asked why, the brain now looks for what caused a claim and for what
+  it followed from, and either answers.
+
 - **A claim is a thing a relation can reach.** `i know that ice is a solid`
   was read and the claim checked, and then everything outside it was thrown
   away — who said it, and what joined them to it. Only `because` ever reached

@@ -153,8 +153,11 @@ Every later primitive depends on trustworthy identity, typing and relations.
 - [x] Ask back over a claim. A question naming somebody holding one asks
   after the holding, not after what the claim says, and the hole may stand
   where the holder does.
-- [ ] Store safe conditional rules and derive them deterministically with an
-  inspectable proof path.
+- [x] Store safe conditional rules and derive them deterministically with an
+  inspectable proof path. Rules were already stored and already fired; what
+  was missing was the path. A claim an instruction reaches is joined to the
+  claim that met its condition, so a worked-out fact says what it followed
+  from and a chain is walked back a step at a time.
 - [ ] Add variables and quantifier scope without closed-world inference.
 
 The two repairs above — incremental validation, and denial versus derivation —

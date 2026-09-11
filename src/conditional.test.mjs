@@ -56,3 +56,30 @@ test("two claims put as condition and consequence are not two signals", async ()
   assertEquals(ruled.learned, null, "conditioned, neither is");
   await forget();
 });
+
+test("what the brain worked out, it can say what it stands on", async () => {
+  await forget();
+  await brain("if a drum is cold then a bell is red");
+  await brain("a drum is cold");
+  assertEquals((await brain("is a bell red?")).expression.name, "affirm");
+  assertEquals(
+    (await brain("why is a bell red?")).expression.state.says,
+    "a drum is cold",
+    "not that it holds, but what it followed from",
+  );
+  await forget();
+});
+
+test("a chain is walked back a step at a time", async () => {
+  await forget();
+  await brain("if a drum is cold then a bell is red");
+  await brain("if a bell is red then a cup is blue");
+  await brain("a drum is cold");
+  assertEquals((await brain("is a cup blue?")).expression.name, "affirm");
+  assertEquals((await brain("why is a cup blue?")).expression.state.says, "a bell is red");
+  assertEquals((await brain("why is a bell red?")).expression.state.says, "a drum is cold");
+  // Told, not worked out: it stands on nothing, and the brain does not invent
+  // something for it to stand on.
+  assertEquals((await brain("why is a drum cold?")).expression.name, "unsure");
+  await forget();
+});

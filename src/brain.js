@@ -4249,7 +4249,14 @@ function reasonFor(subject, object, world) {
     // What stands behind a claim is a claim, not a thing. Asked why the door
     // is open, what answers is that the wind is strong — the whole of it, and
     // not the strength on its own, which was never what was said.
-    for (const behind of world.standing(claim, a.cause)) {
+    // What a claim stands on: what was said to cause it, and what it followed
+    // from where the brain worked it out. Both are claims, and either answers
+    // why.
+    const under = [
+      ...world.standing(claim, a.cause),
+      ...(a.follows == null ? [] : world.linked(claim, a.follows)),
+    ];
+    for (const behind of under) {
       if (!found.includes(behind)) found.push(behind);
     }
   }
@@ -7406,7 +7413,17 @@ function learnedFrom(roots, world) {
     (n.branch || []).forEach(seek);
   };
   roots.forEach(seek);
-  const behind = [...reasons.flatMap((c) => stoodBehind(c, world)), ...about.flatMap((n) => heldAbout(n, world))];
+  const followed = [];
+  const walk = (n) => {
+    if (n.kind === 'learn' && n.state.following) followed.push(n.state.following);
+    (n.branch || []).forEach(walk);
+  };
+  roots.forEach(walk);
+  const behind = [
+    ...reasons.flatMap((c) => stoodBehind(c, world)),
+    ...about.flatMap((n) => heldAbout(n, world)),
+    ...stoodOn(followed, world),
+  ];
 
   const together = roots.length > 1 ? roots : apart(roots, world);
   if (together) {
@@ -7596,6 +7613,10 @@ function awoken(roots, world, mood) {
           quantity: null,
           made: null,
           not: then.not,
+          // What it followed from, kept with it. A fact the brain worked out
+          // rather than was told has something it stands on, and a brain that
+          // cannot say what that was is asking to be taken on trust.
+          following: { claim: thenId, from: onId },
         }),
       );
       more = true;
@@ -7632,6 +7653,20 @@ function heldAbout(held, world) {
       ],
     },
   ];
+}
+
+// What a worked-out fact stands on. Where a standing instruction has fired,
+// the claim it reached is joined to the claim that met its condition — both
+// are already things the world holds, and the joining is what lets the brain
+// say afterwards what a fact followed from rather than only that it holds.
+function stoodOn(followed, world) {
+  const a = world.anchors || {};
+  if (a.follows == null) return [];
+  return followed.map(({ claim, from }) => ({
+    id: claim,
+    name: world.term(claim) ? world.term(claim).name : `claim#${claim}`,
+    links: [{ rel: a.follows, to: from }],
+  }));
 }
 
 // One claim being so as the reason another is: both written down as things,
