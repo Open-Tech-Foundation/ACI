@@ -103,6 +103,8 @@ test("a scale says what it is a scale of", () => {
     ["brightness", "light"],
     ["loudness", "sound"],
     ["temperature", "heat"],
+    ["strength", "force"],
+    ["wetness", "water"],
   ]) {
     assertEquals(world.linked(world.named(scale), of), [world.named(thing)]);
   }

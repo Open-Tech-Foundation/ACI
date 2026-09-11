@@ -21,6 +21,12 @@ All notable changes to this project are documented in this file.
   room, so hanging bright and dark off perception would make the fact wait on
   somebody to look at it. Light is the lower rung and the brain already had it.
 
+  Strength and wetness join them: how much force, and how much water. Both
+  were already in the world, so `stronger`/`weaker` and `wetter`/`drier` read
+  each other backwards now. Fullness, cleanliness and health are not wired —
+  there is no space, no dirt and no sickness in the world to be a scale of,
+  and a scale is not worth inventing a thing for.
+
 ### Changed
 
 - **Measuring runs one way, and a scale is one fact read from either end.**

@@ -191,3 +191,20 @@ test("what a scale orders, it orders strictly", async () => {
   );
   await forget();
 });
+
+test("strength is of force, wetness of water", async () => {
+  // Both were already in the world; only the rung between them and the states
+  // was missing. Fullness, cleanliness and health are not wired: space, dirt
+  // and sickness are not there to be a scale of.
+  assertEquals(
+    (await fresh("a rope is stronger than a thread", "is a thread weaker than a rope?"))
+      .expression.name,
+    "affirm",
+  );
+  assertEquals(
+    (await fresh("a sponge is wetter than a cloth", "is a cloth drier than a sponge?"))
+      .expression.name,
+    "affirm",
+  );
+  await forget();
+});
