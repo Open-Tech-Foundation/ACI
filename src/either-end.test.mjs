@@ -69,3 +69,48 @@ test("a fact nothing stands at the near end of is unknown", async () => {
   assertEquals((await brain("who has stamps?")).expression.name, "unsure");
   await forget();
 });
+
+test("asked who, only somebody answers", async () => {
+  await forget();
+  await brain("mira is a heron");
+  // The kind is the far end of the fact and the individual is the near one,
+  // so `who` finds mira where `what` finds what a heron is.
+  assertEquals(await says("who is a heron?"), "mira");
+  assertEquals(await says("what is a heron?"), "bird");
+  await forget();
+});
+
+test("asked who, a kind is no answer", async () => {
+  await forget();
+  // Nothing is known to be a cat, and a mammal is not somebody.
+  assertEquals((await brain("who is a cat?")).expression.name, "unsure");
+  assertEquals(await says("what is a cat?"), "mammal");
+  await forget();
+});
+
+test("asked who somebody is, what is known of them answers", async () => {
+  await forget();
+  await brain("mira is a heron");
+  // Told who already, the question is not asking for another somebody.
+  assertEquals(await says("who is mira?"), "heron");
+  await forget();
+});
+
+test("an article says which one, never who", async () => {
+  await forget();
+  // `a` marks which heron is meant and stands for nobody, so it never makes
+  // `who` the name question that `who are you` is.
+  await brain("dev has 2 kettles");
+  assertEquals(await says("who has the kettle?"), "dev");
+  assertEquals(await says("who has a kettle?"), "dev");
+  await forget();
+});
+
+test("a question naming a word it never met still answers", async () => {
+  await forget();
+  // `telescope` is no word and no term. The question was understood whole;
+  // there is simply nothing to find.
+  assertEquals((await brain("who has the telescope?")).expression.name, "unsure");
+  assertEquals((await brain("who has the telescope")).expression.name, "unsure");
+  await forget();
+});

@@ -6,6 +6,19 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Asked who, only somebody answers.** `who is a heron?` came back unknown
+  with mira on the record as one. Three things were wrong under it, and all
+  three were reading English into the core. An article was counted a pointer —
+  anything marked was — so `a heron` made `who` the same question `who am i`
+  is, asking after a name. English then said `who` *joins by* the name
+  relation, where what it does is ask after somebody who has one. And a
+  question naming a word the brain has never met fell through to saying it did
+  not understand, though it had understood the question whole and simply had
+  nothing to find. `who is a heron?` is mira now, `what is a heron?` is still
+  a bird, `who is a cat?` is unknown because a mammal is nobody, and `who is
+  mira?` answers with what is known of her — told who already, the question is
+  not asking for another somebody.
+
 - **A fact answers from either of its ends.** `dev has 2 kettles` was held, and
   `what does dev have?` said `kettle` while `who has kettles?` said `I don't
   know` — the same fact, asked from the other side, and nothing came back. The

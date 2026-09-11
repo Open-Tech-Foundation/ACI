@@ -1791,7 +1791,12 @@ function contextAfter(wanted, across, roots, at, world) {
 
 function contextKind(n, kind, world) {
   const thought = thoughtOf(n);
-  if (kind === 'pointer') return thought && thought.marks != null;
+  // A word that stands for something, in place of naming it. Marking alone is
+  // not enough: an article marks which one is meant and never stands for it,
+  // so `a heron` is a heron and not somebody pointed at.
+  if (kind === 'pointer') {
+    return Boolean(thought && thought.marks != null) && !functionsOf(n).includes('determiner');
+  }
   if (kind === 'determiner') return functionsOf(n).includes('determiner');
   // A word standing for a unit. Which reading of a word is meant may turn on
   // one standing beside it: a clock that reads ten hours is measuring, where
@@ -3489,25 +3494,35 @@ function because(joined, world, mood, sent) {
       // anything. `who has kettles` finds a holder walking back and nothing
       // walking out, because kettles hold nothing; `what is mira` is the
       // other way round. Neither reading is the language's to give.
-      // Where both ends answer, which side of the joint the thing stands on
-      // decides, the same way it decides in a statement: in `mira is taller
-      // than dev` the one before the joint stands taller, so a thing after
-      // the joint is the far end and the hole is the near one.
+      // Where both ends answer, the thing named is the near end, as it is in a
+      // statement — asked what a heron is, the answer is a bird, not whoever
+      // happens to be one. Only a relation the world says runs one way reads
+      // from either end by where the thing stands: `mira is taller than dev`
+      // puts the taller one before the joint, so `who is taller than dev` asks
+      // after the end dev is not.
       // A hole that is itself the joint names no side — `where is the lamp`
       // asks by placement and says nothing about ends — so the thing stays
-      // the near end, as a statement's first thing is.
+      // the near end.
       // Where both ends are alike there is nothing else to ask after.
       const jointSide =
-        said.indexOf(term) > at && holes.some((hole) => said.indexOf(hole) !== at);
+        world.asymmetric(relation) &&
+        said.indexOf(term) > at &&
+        holes.some((hole) => said.indexOf(hole) !== at);
       const twoEnded = relation != null && !world.symmetric(relation);
       // Asked after something by name, what answers is whatever has one.
       // Being called something is a fact a thing holds, never a kind it is,
       // so asking whether it *is* a name turns every named thing away.
-      const wants = (t) =>
-        of == null ||
-        (a.name != null && of === a.name
+      const fits = (t) =>
+        a.name != null && of === a.name
           ? world.related(t, a.name).length > 0 || world.symbolOf(t) != null
-          : world.isA(t, of));
+          : world.isA(t, of);
+      // A hole says what kind of answer it will take, and the walk is narrowed
+      // to it — but only where what was named is not already of that kind.
+      // Asked who mira is, the brain has been told who, and what is wanted is
+      // what it knows of her; asked who a heron is, it has not been told, and
+      // only somebody answers.
+      const narrows = of != null && !fits(subject);
+      const wants = (t) => !narrows || fits(t);
       // Asked why something is so, what answers is what was said to be the
       // reason for it. The question is about the claim — that a drum is cold —
       // and not about the drum, so the claim itself is what is looked for, and
@@ -3540,6 +3555,13 @@ function because(joined, world, mood, sent) {
       ) {
         found = [subject];
       }
+      // Asked after somebody, and what was named is already somebody: where
+      // the walk comes back with nothing, they are the answer. `who is the
+      // grandfather of maya` found him by walking the relation, and what is
+      // left to say is who he is.
+      if (found.length === 0 && of != null && a.name != null && of === a.name && fits(subject)) {
+        found = [subject];
+      }
       // A place is where something stands to something else, so the way it
       // stands is half of it: asked where the dog is, `a table` is not the
       // place — `under a table` is. Only a place. What a thing holds, or is
@@ -3569,6 +3591,28 @@ function because(joined, world, mood, sent) {
       nodes.push(...among(mine, i, asked.length > 1));
     }
     return [withBranch(root, [...root.branch, ...nodes])];
+  }
+
+  // A question that names nothing the brain knows is still a question, and it
+  // is answered. `who has the telescope` is understood whole — a hole, a
+  // joint and a thing — and `telescope` is no word and no term, so there is
+  // nothing to walk out from and nothing to find. Not knowing is not the same
+  // as not having understood, and the brain says which. A hole is what makes
+  // it a question; whether the signal carried a mark saying so is nothing to
+  // this. Only where a word was met that is no word at all: a pointer that
+  // landed on nothing leaves no thing in the signal to be asking about, and
+  // that signal names nothing rather than asking something unanswerable.
+  const neverHeard = said.some((n) => {
+    const heard = thoughtOf(n);
+    return heard != null && heard.wordKnown === false;
+  });
+  if (holes.length > 0 && terms.length === 0 && neverHeard) {
+    return [
+      withBranch(root, [
+        ...root.branch,
+        node('answer', 'link', [], { subject: null, relation: null, found: [] }),
+      ]),
+    ];
   }
 
   // Two terms and a relation offer the brain a fact, and the brain lays it

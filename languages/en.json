@@ -9955,6 +9955,7 @@
         "pos": "interrogative",
         "meaning": "who",
         "marks": "unknown",
+        "on": 138,
         "select": {
           "position": "first"
         }
@@ -9963,7 +9964,7 @@
         "pos": "interrogative",
         "meaning": "who",
         "marks": "unknown",
-        "concept": 138
+        "on": 138
       }
     ],
     "how": {
