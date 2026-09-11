@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A question may turn its joint to the front over any relation.** `is a cat
+  an animal?` was read and `is a wheel part of a cart?` was not, nor `is tom
+  the father of sam?` — the commonest shape an english question takes, and it
+  worked over a kind and nowhere else. Said the other way round the brain
+  answered both, so nothing was missing but the reading: a signal may put two
+  things after its joint, and english could say so of a statement and not of a
+  question.
+
+
 - **Being able to do something is a fact about the thing.** `a wren can fly`
   was held at arm's length, checked against what the brain already knew, and
   dropped — so the brain held no ability at all, and the signal left it exactly
