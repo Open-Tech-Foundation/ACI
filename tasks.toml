@@ -10,6 +10,11 @@
 [tasks.test]
 run = "esdev test"
 
+# The basics, as transcripts. Takes a category or several — `tsr basics state
+# space` — and runs every one of them given none.
+[tasks.basics]
+run = "esdev tests/run.mjs"
+
 [tasks.dev]
 run = "esdev start --config=demo/esdev.json"
 
@@ -23,4 +28,4 @@ run = "esdev build --lib src --out=dist"
 run = "esdev build --config=demo/esdev.json --minify"
 
 [tasks.ci]
-deps = ["test", "build"]
+deps = ["basics", "test", "build"]

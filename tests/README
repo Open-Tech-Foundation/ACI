@@ -1,8 +1,7 @@
 The basics, as transcripts.
 
-    esdev tests/run.mjs                 every category
-    esdev tests/run.mjs state space     only those
-    pnpm basics                         the same as the first
+    tsr basics                          every category
+    tsr basics -- state space           only those
 
 One file under basics is one category. A blank line starts a new conversation,
 so what one line settles stands for the next.
