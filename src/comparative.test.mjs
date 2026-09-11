@@ -130,3 +130,30 @@ test("nothing is further along than itself", async () => {
   );
   await forget();
 });
+
+test("one scale is one fact, read from either end", async () => {
+  // Nothing joins warm to cold. They are two states of one scale pointing
+  // opposite ways along it, and that is the whole of what makes them converse.
+  assertEquals(
+    (await fresh("a shed is colder than a hut", "is a hut warmer than a shed?")).expression.name,
+    "affirm",
+  );
+  assertEquals(
+    (await fresh("a lane is narrower than a road", "is a road wider than a lane?")).expression.name,
+    "affirm",
+  );
+  assertEquals(
+    (await fresh("a wren is tinier than a crow", "is a crow bigger than a wren?")).expression.name,
+    "affirm",
+  );
+  await forget();
+});
+
+test("width, depth and thickness are not length", async () => {
+  // A scale that held all four made a wider thing a shallower one.
+  assertEquals(
+    (await fresh("a lane is narrower than a road", "is a road deeper than a lane?")).expression.name,
+    "unsure",
+  );
+  await forget();
+});

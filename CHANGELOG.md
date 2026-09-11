@@ -6,6 +6,32 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
+- **Measuring runs one way, and a scale is one fact read from either end.**
+  `a shed is colder than a hut` left `is a hut warmer than a shed?` unanswered,
+  though `is a hut hotter than a shed?` answered. Which two comparisons are
+  one fact said backwards was written down pair by pair, and a scale of six
+  states had two of its eight crossings. It does not need writing down: two
+  comparisons on one scale pointing opposite ways along it *are* one fact, and
+  the world already says which state each compares and which scale each state
+  is measured on.
+
+  Under that sat a defect. `measure` was authored in both directions at once —
+  thirty-three links saying a state measures its scale, twenty saying a scale
+  measures its states — and the brain read the second, which only five
+  properties carried. So forty-four of the sixty-three comparisons had no
+  scale at all, and of the nineteen that did, `taller`, `wider` and `longer`
+  all came back as *size*. A gram measures weight and weight measures heavy;
+  nothing is measured by what it measures. The thirty-three are turned round
+  onto the scales they belong to, six claims that contradicted them are gone,
+  and everything that reads a state's scale now asks what measures it.
+
+  `length` held four different quantities — how long, how wide, how deep and
+  how thick — so a wider thing would have come out a shallower one. Width,
+  depth and thickness are their own scales now. Seven words that name the low
+  end of a scale said they were the high end, and say the low end now, which
+  is what makes `tinier` and `bigger` the same fact at last. Thirteen authored
+  converses are gone; the three that cross scales stay authored.
+
 - **Comparing is an ordering by what it is, so the world stops saying so.**
   `a lake is deeper than a pond` and `a pond is deeper than a puddle` left
   `is a lake deeper than a puddle?` unanswered, where the same three signals

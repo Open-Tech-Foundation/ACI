@@ -100,14 +100,42 @@ export function fromWorldData(source) {
   }
 
   const converseBy = new Map();
+  const opposed = (one, other) => {
+    if (!converseBy.has(one)) converseBy.set(one, new Set());
+    if (!converseBy.has(other)) converseBy.set(other, new Set());
+    converseBy.get(one).add(other);
+    converseBy.get(other).add(one);
+  };
   if (anchors.converse != null) {
     for (const relation of terms.values()) {
       for (const other of outgoing.get(anchors.converse)?.get(relation.id) || []) {
-        if (!converseBy.has(relation.id)) converseBy.set(relation.id, new Set());
-        if (!converseBy.has(other)) converseBy.set(other, new Set());
-        converseBy.get(relation.id).add(other);
-        converseBy.get(other).add(relation.id);
+        opposed(relation.id, other);
       }
+    }
+  }
+
+  // Two comparisons on one scale, pointing opposite ways along it, are one
+  // fact read from its two ends: a is taller than b *is* b is shorter than a.
+  // The world says which state each compares and which state is measured on
+  // which scale; nothing has to say the pair as well. Said instead on each
+  // pair, it was said sixteen times and a scale of six states got two of its
+  // eight crossings — which is why `colder` and `warmer` were two facts.
+  if (anchors.compares != null && anchors.measure != null) {
+    const byScale = new Map();
+    for (const relation of terms.values()) {
+      const state = [...(outgoing.get(anchors.compares)?.get(relation.id) || [])][0];
+      if (state == null) continue;
+      const scale = [...(incoming.get(anchors.measure)?.get(state) || [])][0];
+      if (scale == null) continue;
+      const along = outgoing.get(subrelationRel)?.get(relation.id) || new Set();
+      const down = anchors.less != null && along.has(anchors.less);
+      const up = anchors.more != null && along.has(anchors.more);
+      if (!down && !up) continue;
+      if (!byScale.has(scale)) byScale.set(scale, { up: [], down: [] });
+      byScale.get(scale)[down ? 'down' : 'up'].push(relation.id);
+    }
+    for (const { up, down } of byScale.values()) {
+      for (const one of up) for (const other of down) opposed(one, other);
     }
   }
 

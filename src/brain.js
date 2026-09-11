@@ -639,10 +639,13 @@ function measuring(roots, world) {
 
 // The quantity a state is a state of. The world says which; where it says
 // nothing, the state is a state of nothing measurable.
+// Which quantity a state is a state of. Measuring runs one way — a gram
+// measures weight, and weight measures heavy — so what a state is measured on
+// is found by asking what measures it, never by reading a link off the state.
 function quantityOn(state, world) {
   const a = world.anchors || {};
   if (state == null || a.measure == null) return null;
-  const of = world.related(state, a.measure) || [];
+  const of = world.members(state, a.measure) || [];
   return of.length ? of[0] : null;
 }
 
@@ -3397,10 +3400,19 @@ function because(joined, world, mood, sent) {
     // question about an ordering, and the ordering answers it.
     !said.some((n) => functionsOf(n).includes('extreme'))
   ) {
+    // Which scale the question asks on. A state is measured on one — what
+    // measures it is the scale — and a unit measures several, so a signal
+    // naming either says which. Measuring runs one way, so the two are asked
+    // for the opposite way round.
+    const scalesNamed = (of) => {
+      const measured = world.members(of, a.measure)
+        .filter((scale) => a.property != null && world.isA(scale, a.property));
+      return measured.length > 0 ? measured : world.linked(of, a.measure);
+    };
     const on = new Set(
       said.flatMap((n) => {
         const of = conceptOf(n);
-        return of == null || markOn(n) === 'unknown' ? [] : world.linked(of, a.measure);
+        return of == null || markOn(n) === 'unknown' ? [] : scalesNamed(of);
       }),
     );
     if (on.size > 0) {

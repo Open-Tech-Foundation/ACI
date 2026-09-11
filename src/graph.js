@@ -663,11 +663,13 @@ function above(relation, world) {
   return true;
 }
 
-// The quantity a state is a state of. The world says which; where it says
-// nothing, the state is all there is.
+// The quantity a state is a state of. Measuring runs one way — a metre
+// measures height, and height measures tall — so what a state is a state of is
+// what measures it. The world says which; where it says nothing, the state is
+// all there is.
 const quantityOn = (state, world) => {
   const of = world.anchors && world.anchors.measure != null
-    ? world.related(state, world.anchors.measure) || []
+    ? world.members(state, world.anchors.measure) || []
     : [];
   return of.length ? of[0] : null;
 };

@@ -45,7 +45,7 @@ universe; the nature or essence of an entity may later be an ordinary relation.
 | State and change | Partial | Quantity and placement revisions are timestamped; latest state is selected; arithmetic actions produce before/after counts. | General value-at-time, transition, becomes, starts/stops, persistence, termination, preconditions and postconditions. Ordinary properties do not yet share one state model. |
 | Events and actions | Partial | Occurrence individuals with logical time and agent, target, source and destination roles; occurrence and participant questions. | Event identity, duration, event composition, goals, plans, capability, generic preconditions/results and multi-target effects. |
 | Causality | Partial | Generic transitive cause queries; selected actions map to arithmetic effects; physical force consequences are inferred. | Causes cannot relate proposition or event objects. Direct versus indirect cause, enabling, prevention, intervention, causal time and stored explanation are missing. |
-| Quantity | Partial | Exact arithmetic, order, comparisons, counts, all/some/none scope, integer state quantities and same-unit measurement comparison. | `many` and `few` have no relative semantics. Ranges, ratios, cardinality constraints, dimensions and unit conversion are missing. Thus the brain cannot infer “many parts.” |
+| Quantity | Partial | Exact arithmetic, order, comparisons, counts, all/some/none scope, integer state quantities and same-unit measurement comparison. A comparison's algebra and its converse follow from the scale it compares on, rather than being authored per word. | `many` and `few` have no relative semantics. Ranges, ratios, cardinality constraints, dimensions and unit conversion are missing. Thus the brain cannot infer “many parts.” |
 | Properties and measurement | Partial | Property/state/scale/unit terms, non-classifying property predication, relation-level domain/range typing and measured comparison on a shared unit. | A general attribute-value model, typed values, single-valued properties and conversions. Measured-state modeling is not yet unified with ordinary predication. |
 | Modality | Missing | Modal clauses are correctly held at arm's length and never asserted as facts. | Possible, impossible, necessary, actual and capable have no distinct semantics; all modal forms merely check current knowledge. |
 | Knowledge and evidence | Partial | Internal truth status, explicit denials, atomic checked memory, embedded-claim checking and sender-scoped opinions. | First-class claims, knower-specific knowledge/belief, evidence, source provenance, justification and reliability. |
@@ -96,6 +96,14 @@ more world vocabulary.
   and the brain says that what it was told and what follows from what it was
   told disagree, so a wrong rule cannot hide behind the exception it makes.
   Nothing to build until rules land; the rule they must follow is this one.
+- [x] Make `measure` run one way. It was authored in both directions at once —
+  thirty-three links saying a state measures its scale, twenty saying a scale
+  measures its states — and the brain read the second, which only five
+  properties carried. Forty-four of the sixty-three comparisons reached no
+  scale, and `taller`, `wider` and `longer` all reached `size`. A gram
+  measures weight and weight measures heavy; nothing is measured by what it
+  measures. `length` also held four quantities at once, and now width, depth
+  and thickness are their own.
 - [ ] Keep grammar/parser ordering risks deferred while language work is
   paused. They are deterministic for identical ordered data, but some choices
   still depend on authored alternative order.
