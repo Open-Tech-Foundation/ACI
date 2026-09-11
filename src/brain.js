@@ -3808,6 +3808,10 @@ function because(joined, world, mood, sent) {
           ? [...new Set([
               ...(graph ? graph.standingIn(subject, relation) : []),
               ...world.standing(subject, relation),
+              // Asked after a kind, anyone standing to one of that kind
+              // answers: whoever holds a key holds a key, and what they were
+              // handed was one key and not the kind.
+              ...world.individualsOf(subject).flatMap((one) => world.standing(one, relation)),
             ])].filter(wants)
           : [];
       const asksBack = backward.length > 0;
@@ -4842,11 +4846,15 @@ function act(said, claims, world, side, sides, allocate) {
         const id = allocate();
         const name = `${world.term(p.of).name}#${id}`;
         called.push(node('call', name, [], { name, id, of: p.of, made: true }));
-        return { ...p, of: id };
+        // What kind the one made is one of. The world does not hold it yet —
+        // it is being made here — so the only place to read it off is the
+        // making, and one of a kind handed over is one of that kind.
+        return { ...p, of: id, kind: p.of };
       })
   // How a thing was marked is a fact about the word, not about the part it
-  // played: what is kept is the role, the thing, and how much of it.
-  ).map(({ role, of, amount }) => ({ role, of, amount }));
+  // played: what is kept is the role, the thing, how much of it, and what it
+  // is one of where the signal made it.
+  ).map(({ role, of, amount, kind }) => ({ role, of, amount, kind }));
 
   const action = conceptOf(said[named]);
   // Refused before anything is worked out: what harms did not happen, and it
@@ -4995,19 +5003,30 @@ function work(action, parts, at, world, allocate) {
   if (operations.length === 0) return null;
 
   const target = parts.find((p) => p.role === a.target);
-  if (!target || target.amount == null) return null;
-  const amount = target.amount;
+  if (!target) return null;
+  // A thing handed over with no number said is one thing. `a key` is one key,
+  // and the one made to stand for it is one of its kind — so what passes is
+  // one of that kind, counted the way any other count is.
+  const one = target.amount != null
+    ? null
+    : target.kind ?? (world.isIndividual(target.of)
+      ? world.linked(target.of, world.baseRelation)[0] ?? null
+      : null);
+  const passed = one ?? target.of;
+  const amount = target.amount ?? (one == null ? null : 1);
+  if (amount == null) return null;
   // A part spoken of as one of its kind is answered by the one of it there is.
   const bearerOf = (part) => world.oneOf(part.of) ?? part.of;
 
   // One kind of holding passes. What Ravi *had*, Sam now *has* — the thing
   // moved, not the way of speaking about it — so whichever narrower word the
   // count was already written under at either end is the word it is written
-  // under at both. Where neither end has been spoken of, holding is the plain
-  // one.
+  // under at both. Where neither end has been spoken of, what passed between
+  // two of them is had: a key handed over is one the other has, and writing it
+  // under a word nobody asks by would be keeping it where it cannot be found.
   const ways = world.narrower(a.holding).filter((rel) => rel !== a.holding);
   const kept =
-    ways.find((rel) => parts.some((p) => world.held(bearerOf(p), rel, target.of) != null)) ?? a.hold;
+    ways.find((rel) => parts.some((p) => world.held(bearerOf(p), rel, passed) != null)) ?? a.has;
 
   const out = [];
   for (const op of operations) {
@@ -5023,7 +5042,7 @@ function work(action, parts, at, world, allocate) {
     if (!place) continue;
 
     const bearer = bearerOf(place);
-    const before = world.held(bearer, kept, target.of);
+    const before = world.held(bearer, kept, passed);
     // What passes between two ends is watched passing, so what arrived is what
     // this end holds even though nothing said what it held before — the way
     // anyone follows a thing going from one hand to another. Told later that
@@ -5042,7 +5061,7 @@ function work(action, parts, at, world, allocate) {
       action,
       operation: op,
       holder: bearer,
-      thing: target.of,
+      thing: passed,
       before: from,
       amount,
       after,
@@ -5060,12 +5079,12 @@ function work(action, parts, at, world, allocate) {
     const madeHere = [];
     let of = world
       .linked(bearer, kept)
-      .find((one) => world.isIndividual(one) && world.isA(one, target.of));
+      .find((held) => world.isIndividual(held) && world.isA(held, passed));
     if (of == null) {
       if (allocate == null) continue;
       const id = allocate();
-      const name = `${world.term(target.of).name}#${id}`;
-      madeHere.push(node('call', name, [], { name, id, of: target.of, made: true }));
+      const name = `${world.term(passed).name}#${id}`;
+      madeHere.push(node('call', name, [], { name, id, of: passed, made: true }));
       of = id;
     }
     out.push(

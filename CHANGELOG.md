@@ -4,6 +4,23 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- **A thing handed over with no number said is one thing.** `mira gave a key
+  to kiran` was taken in and moved nothing: what passes was worked out from a
+  count, and nobody had said one, so the giving went on the record and the key
+  stayed where it was. `a key` is one key, and the one made to stand for it is
+  one of its kind, so one of that kind passes and is counted like any other.
+
+  It was then written under a word nobody asks by. `has` and `hold` are two
+  narrower words for one thing and neither reaches the other, so a key written
+  as held could not be found by asking who had it. What passes between two of
+  them is had.
+
+  And asked who has a key, whoever holds one answers. The walk looked for
+  somebody standing to the kind, where what anybody was handed is one key and
+  never the kind itself.
+
 ### Added
 
 - **A question may turn its joint to the front over any relation.** `is a cat
