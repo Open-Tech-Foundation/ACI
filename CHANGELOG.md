@@ -6,6 +6,21 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A thing may be more than one kind of thing.** Seven of thirty plainly true
+  statements were not merely unknown but *contradicted*: `a cup is a
+  container`, `a bottle is a container`, `a phone is a device`. Every kind of
+  object was held apart from every other, so being a tool was taken to settle
+  that a cup is no container — and a bucket really is both.
+
+  What made the denial was one mark on `object` saying its sixty-six kinds are
+  mutually exclusive, which is not so. It is gone. Denial rests on what the
+  world actually holds apart — a thing is not an organism, a bird is not a
+  fish, a dog is not a plant — and where nothing holds two kinds apart the
+  brain says it does not know rather than saying no. Not being told a cup is no
+  vehicle is not being told it is not one, and an unsound no is worse than an
+  honest shrug.
+
+
 - **A thing handed over with no number said is one thing.** `mira gave a key
   to kiran` was taken in and moved nothing: what passes was worked out from a
   count, and nobody had said one, so the giving went on the record and the key

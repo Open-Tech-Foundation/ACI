@@ -562,7 +562,9 @@ test("identity is what the world says it is, not anything the engine holds", asy
   assertEquals((await brain("you are a machine?")).expression.name, "affirm");
   assertEquals((await brain("you have a memory?")).expression.name, "affirm");
   assertEquals((await brain("you are a computer?")).expression.name, "affirm");
-  assertEquals((await brain("you are a tool?")).expression.name, "deny");
+  // Nobody has said a machine is not a tool, and it may well be one. What is
+  // denied is what the world holds apart: a thing is not an organism.
+  assertEquals((await brain("you are a tool?")).expression.name, "unsure");
   assertEquals((await brain("you are an organism?")).expression.name, "deny");
 });
 
