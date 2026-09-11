@@ -5510,16 +5510,46 @@
       "meaning": "down",
       "concept": 313
     },
-    "left": {
+    "left of": {
       "pos": "noun",
-      "meaning": "left",
-      "concept": 314
+      "meaning": "left of",
+      "concept": 3010
     },
-    "right": {
+    "left": [
+      {
+        "pos": "noun",
+        "meaning": "left",
+        "concept": 314
+      },
+      {
+        "pos": "noun",
+        "meaning": "left of",
+        "concept": 3010,
+        "select": {
+          "before": "having"
+        }
+      }
+    ],
+    "right of": {
       "pos": "noun",
-      "meaning": "right",
-      "concept": 315
+      "meaning": "right of",
+      "concept": 3011
     },
+    "right": [
+      {
+        "pos": "noun",
+        "meaning": "right",
+        "concept": 315
+      },
+      {
+        "pos": "noun",
+        "meaning": "right of",
+        "concept": 3011,
+        "select": {
+          "before": "having"
+        }
+      }
+    ],
     "front": {
       "pos": "noun",
       "meaning": "front",

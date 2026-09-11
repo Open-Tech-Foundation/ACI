@@ -1819,6 +1819,14 @@ function contextBefore(wanted, roots, at, world) {
     // A word pointing at somebody standing after it. `who am i` asks after a
     // name; `who is taller than sam` asks after whoever stands there.
     if (kind === 'pointer') return rest.some((n) => contextKind(n, 'pointer', world));
+    // A word saying one thing is of another, standing straight after. Which
+    // reading of a word is meant may turn on it: `left` is a side of something,
+    // and `left of` is one thing standing to another.
+    if (kind === 'having') {
+      const a = world ? world.anchors || {} : {};
+      const next = rest[0];
+      return next != null && (conceptOf(next) === a.has || conceptOf(next) === a.hold);
+    }
     // A word standing for a thing after it. A word may say how many of
     // something there are, or stand for that many of what was already brought
     // in, and which it is turns on whether it says how many *of* anything.

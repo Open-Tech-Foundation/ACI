@@ -120,3 +120,20 @@ test("a state says which end of its scale it is", () => {
   });
   assertEquals(lost, []);
 });
+
+test("an ordering is strict by being one", () => {
+  // Nothing comes before itself, and what comes before something that comes
+  // before a third comes before that one too. The world said it on each
+  // ordering and forgot it on the next.
+  const order = world.anchors.order;
+  const orderings = world.data.terms.filter(
+    (term) => term.id !== order && world.isA(term.id, order),
+  );
+  assertEquals(orderings.length > 0, true, "the world holds orderings");
+  const loose = orderings.filter(
+    (term) => !(world.asymmetric(term.id) && world.irreflexive(term.id)),
+  );
+  assertEquals(loose.map((term) => term.name), []);
+  const told = orderings.filter((term) => term.transitive || term.asymmetric);
+  assertEquals(told.map((term) => term.name), []);
+});

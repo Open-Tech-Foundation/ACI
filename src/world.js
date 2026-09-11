@@ -88,8 +88,29 @@ export function fromWorldData(source) {
   // times and forgotten most of them.
   const comparing = (id) =>
     anchors.compares != null && (outgoing.get(anchors.compares)?.get(id)?.size ?? 0) > 0;
+  // A relation the world classifies as an ordering. Being an ordering is what
+  // makes a relation strict, the same way comparing a state is: nothing comes
+  // before itself, and what comes before something that comes before a third
+  // comes before that one too. Said on each ordering instead, it is said once
+  // per ordering and forgotten on the next.
+  const ordering = (id) => {
+    if (anchors.order == null || id === anchors.order) return false;
+    const seen = new Set();
+    const pending = [id];
+    while (pending.length) {
+      const here = pending.pop();
+      if (seen.has(here)) continue;
+      seen.add(here);
+      for (const up of outgoing.get(isRel)?.get(here) || []) {
+        if (up === anchors.order) return true;
+        pending.push(up);
+      }
+    }
+    return false;
+  };
   const carries = (term, mark) =>
-    Boolean(term[mark]) || ((mark === 'asymmetric' || mark === 'transitive') && comparing(term.id));
+    Boolean(term[mark]) ||
+    ((mark === 'asymmetric' || mark === 'transitive') && (comparing(term.id) || ordering(term.id)));
   for (const term of terms.values()) {
     if (typeof term.name === 'string' && !namedTerms.has(term.name)) namedTerms.set(term.name, term.id);
     for (const mark of MARKS) {

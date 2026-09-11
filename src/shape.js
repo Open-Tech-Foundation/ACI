@@ -1215,7 +1215,7 @@ function checkSelection(value, where, nested = false) {
   if (value.position !== undefined && value.position !== 'first') {
     fail(where, 'select.position must be "first"');
   }
-  checkContextKinds(value.before, ['denial', 'proposition', 'unit', 'pointer', 'thing'], `${where} select.before`);
+  checkContextKinds(value.before, ['denial', 'proposition', 'unit', 'pointer', 'thing', 'having'], `${where} select.before`);
   checkContextKinds(value.after, ['pointer', 'predicate', 'determiner'], `${where} select.after`);
   if (value.across !== undefined && value.across !== 'modifier') {
     fail(where, 'select.across must be "modifier"');

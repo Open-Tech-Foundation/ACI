@@ -29461,8 +29461,6 @@
     {
       "id": 2821,
       "name": "before",
-      "transitive": true,
-      "asymmetric": true,
       "links": [
         {
           "rel": 294,
@@ -29477,8 +29475,6 @@
     {
       "id": 2822,
       "name": "after",
-      "transitive": true,
-      "asymmetric": true,
       "links": [
         {
           "rel": 294,
@@ -31380,6 +31376,30 @@
         {
           "rel": 294,
           "to": 4
+        }
+      ]
+    },
+    {
+      "id": 3010,
+      "name": "left-of",
+      "links": [
+        {
+          "rel": 294,
+          "to": 249
+        },
+        {
+          "rel": 590,
+          "to": 3011
+        }
+      ]
+    },
+    {
+      "id": 3011,
+      "name": "right-of",
+      "links": [
+        {
+          "rel": 294,
+          "to": 249
         }
       ]
     }
