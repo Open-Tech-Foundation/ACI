@@ -150,9 +150,9 @@ Every later primitive depends on trustworthy identity, typing and relations.
   by whatever the signal joined them with. English says one with `know that`,
   and the world holds the relation that names. What a relation over a claim
   *means* — knowledge against belief, evidence, modality — remains phase 5's.
-- [ ] Ask back over a claim. `do i know that a mango is a fruit?` answers
-  about the mango rather than about the knowing: a question reaches the claim
-  and stops there, where a statement now reaches past it.
+- [x] Ask back over a claim. A question naming somebody holding one asks
+  after the holding, not after what the claim says, and the hole may stand
+  where the holder does.
 - [ ] Store safe conditional rules and derive them deterministically with an
   inspectable proof path.
 - [ ] Add variables and quantifier scope without closed-world inference.

@@ -25,6 +25,15 @@ All notable changes to this project are documented in this file.
   is the language's; that a claim is something a relation can reach at all is
   the brain's.
 
+  Asked back, too. `do i know that a mango is a fruit?` answered `yes, a
+  mango is a fruit` — which is true, and is an answer to a question nobody
+  asked: a mango is a fruit whatever anybody knows. The question reached the
+  claim and stopped there. It now asks after whoever holds it, so it is
+  unknown until somebody has said they know it, and a claim nobody wrote down
+  is one nobody holds. The hole may stand where the holder does — `who knows
+  that a mango is a fruit?` walks the same fact back — and a claim standing
+  where a thing would is said back as what it says, never as the thing it is.
+
 ### Fixed
 
 - **A kind is no reason.** `why is the lamp broken?` answered `tool`, with

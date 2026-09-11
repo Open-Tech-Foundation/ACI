@@ -2340,6 +2340,67 @@ function instructionFrom(when, so, world, langs, sent) {
 // standing instruction are — and the reason is joined to what it is the reason
 // for. Nothing here is the fact either claim speaks of: a claim is a thing that
 // says something, not the saying of it.
+// A claim asked about. `do i know that a mango is a fruit` is not asking
+// whether a mango is a fruit — it is asking whether somebody knows it, which
+// is a fact about them and the claim. So the claim is looked for among the
+// claims the world holds, and whoever the signal names is looked for standing
+// to it. A claim nobody has written down is one nobody holds.
+//
+// The hole may stand where the holder does: `who knows that a mango is a
+// fruit` asks after whoever stands there, and the same fact is walked back.
+function askedAbout(root, spoken, verdict, world) {
+  const a = world.anchors || {};
+  if (a.subject == null || a.object == null) return [];
+  const stood = verdict.find((n) => n.kind === 'standing');
+  if (!stood || stood.state.subject == null || stood.state.relation == null) return [];
+  const held = holdingOf(root, spoken, world);
+  if (held == null) return [];
+  const { joint, holder } = held;
+  const { subject, object, relation, negated } = stood.state;
+  // The claim the signal spoke of, where the world already wrote one down.
+  const written = world.standing(subject, a.subject).filter((claim) => {
+    if (!world.linked(claim, a.object).includes(object)) return false;
+    const of = world.claimOf(claim);
+    return of != null && of.relation === relation && of.not === Boolean(negated);
+  });
+  if (markOn(holder) === 'unknown') {
+    const found = written.flatMap((claim) => world.standing(claim, joint));
+    return [node('answer', 'link', [], { subject: null, relation: joint, found: [...new Set(found)] })];
+  }
+  const of = conceptOf(holder);
+  const ones = of == null ? [] : [of, ...world.individualsOf(of)];
+  const stands = written.some((claim) => ones.some((one) => world.linked(one, joint).includes(claim)));
+  return [
+    node('standing', stands ? 'held' : 'absent', [], {
+      subject: ones[0] ?? null,
+      relation: joint,
+      object: written[0] ?? null,
+      negated: false,
+    }),
+  ];
+}
+
+// Who a signal joins to a claim, and what joins them. Everything outside the
+// claim is the outer clause: the joint is the relation it names, and whoever
+// stands before it is the one holding the claim.
+function holdingOf(root, spoken, world) {
+  const a = world.anchors || {};
+  const outside = [];
+  const gather = (n) => {
+    if (n === spoken) return;
+    if (n.kind === 'thing') outside.push(n);
+    (n.branch || []).forEach(gather);
+  };
+  gather(root);
+  const at = outside.findIndex(
+    (n) => reaches(n, a.relation, world) && conceptOf(n) !== world.baseRelation,
+  );
+  if (at < 0) return null;
+  const holder = nearest(outside, at, -1, (n) => conceptOf(n) != null || markOn(n) === 'unknown');
+  if (holder == null) return null;
+  return { joint: conceptOf(outside[at]), holder };
+}
+
 // A claim somebody holds. `i know that ice is a solid` says two things: that
 // ice is a solid, which the brain checks and does not take in — saying you
 // know something is not telling the brain it is so — and that the sender
@@ -2361,17 +2422,9 @@ function aboutClaim(root, spoken, verdict, world, mood, sent) {
   // keep: they did not know it. Where it merely has not been told, what the
   // sender said is a fact about the sender all the same.
   if (stood.name === 'against') return [];
-  const outside = [];
-  const gather = (n) => {
-    if (n === spoken) return;
-    if (n.kind === 'thing') outside.push(n);
-    (n.branch || []).forEach(gather);
-  };
-  gather(root);
-  const joint = outside.find((n) => reaches(n, a.relation, world) && conceptOf(n) !== world.baseRelation);
-  if (joint == null) return [];
-  const holder = nearest(outside, outside.indexOf(joint), -1, (n) => conceptOf(n) != null);
-  if (holder == null) return [];
+  const held = holdingOf(root, spoken, world);
+  if (held == null) return [];
+  const { joint, holder } = held;
   const of = conceptOf(holder);
   const bearer = bearerOf(of, world, markAt(holder), sent.allocate);
   if (bearer == null) return [];
@@ -2379,7 +2432,7 @@ function aboutClaim(root, spoken, verdict, world, mood, sent) {
     node('about', 'claim', [], {
       holder: bearer.id,
       of: bearer.made ? of : null,
-      relation: conceptOf(joint),
+      relation: joint,
       claimId: sent.allocate(),
       claim: {
         subject: stood.state.subject,
@@ -2435,6 +2488,11 @@ function because(joined, world, mood, sent) {
   if (spoken) {
     const [checked] = judge([spoken], world, 'ask', langs, sent);
     const verdict = (checked.branch || []).filter(taken);
+    // Asked, the question is about whoever holds the claim and not about what
+    // the claim says. Where the signal names nobody holding it, the claim
+    // itself is all that was asked after.
+    const asked = mood === 'ask' ? askedAbout(root, spoken, verdict, world) : [];
+    if (asked.length > 0) return [withBranch(root, [...root.branch, ...asked])];
     return [withBranch(root, [
       ...root.branch,
       ...verdict,
@@ -6052,6 +6110,10 @@ function claimSaid(stood, langName, langs, world) {
   const a = world && world.anchors ? world.anchors : {};
   if (world && (world.isA(subject, a.number) || world.isA(object, a.number))) return '';
   const said = (term, isObject) => {
+    // A claim in place of a thing is said as what it says. `person know
+    // claim#12` is no answer; what the person knows is.
+    const within = claimTermSaid(term, langName, langs, world);
+    if (within != null) return within;
     const word = termWord(term, langName, langs, world);
     if (word == null) return null;
     // One of a kind takes its article; what is not one — a name, a word the

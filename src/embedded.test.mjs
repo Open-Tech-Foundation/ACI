@@ -100,3 +100,44 @@ test("knowing is knowing something that is so", async () => {
   assertEquals(wrong.learned, null);
   await forget();
 });
+
+test("asked about a claim, the question is about whoever holds it", async () => {
+  await forget();
+  // A mango is a fruit whatever anybody knows, so answering that is answering
+  // a question nobody asked. Nobody has said they know it.
+  assertEquals(
+    (await brain("do i know that a mango is a fruit?", { from: PERSON })).expression.name,
+    "unsure",
+  );
+  assertEquals(
+    (await brain("a mango is a fruit?", { from: PERSON })).expression.name,
+    "affirm",
+    "asked plainly, it is still about the mango",
+  );
+  await forget();
+});
+
+test("what was said of a claim is what answers about it", async () => {
+  await forget();
+  await brain("i know that a mango is a fruit", { from: PERSON });
+  assertEquals(
+    (await brain("do i know that a mango is a fruit?", { from: PERSON })).expression.name,
+    "affirm",
+  );
+  assertEquals(
+    (await brain("do i know that a mango is a food?", { from: PERSON })).expression.name,
+    "unsure",
+    "a claim nobody wrote down is one nobody holds",
+  );
+  await forget();
+});
+
+test("a hole may stand where the holder does", async () => {
+  await forget();
+  await brain("i know that a mango is a fruit", { from: PERSON });
+  assertEquals(
+    (await brain("who knows that a mango is a fruit?", { from: PERSON })).expression.state.says,
+    "person",
+  );
+  await forget();
+});
