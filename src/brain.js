@@ -3924,8 +3924,19 @@ function because(joined, world, mood, sent) {
     // john` relates sara and john, and the arriving is not a third party to
     // it. A side that is only a doing still stands — walking is faster than
     // running.
+    // A doing among the things on one side is how the fact was said, not one of
+    // the things it holds between. And it splits that side: whoever stands
+    // before it did it, and whatever stands after is what it was done to, so
+    // `nila put the lamp on the table` puts the lamp there and not nila.
+    // Where nothing stands after the doing, whoever did it is what the fact is
+    // about — sara arrived before john relates sara and john, and the arriving
+    // is not a third party to it.
     const notDoing = (list) => {
       if (list.length < 2) return list;
+      const doing = list.findIndex((n) => reaches(n, a.action, world));
+      if (doing < 0) return list;
+      const after = list.slice(doing + 1).filter((n) => !reaches(n, a.action, world));
+      if (after.length > 0) return after;
       const things = list.filter((n) => !reaches(n, a.action, world));
       return things.length > 0 ? things : list;
     };
@@ -4885,6 +4896,7 @@ function act(said, claims, world, side, sides, allocate) {
 
   const at = world.now();
   const worked = work(action, parts, at, world, allocate);
+  const left = brought(action, parts, world);
   // Nobody did an operation a signal named outright. Nothing happened to
   // anyone — only what a thing holds coming to something else — so there is
   // nothing that happened to put on the record.
@@ -4938,7 +4950,7 @@ function act(said, claims, world, side, sides, allocate) {
   // having happened. Where it simply cannot tell what followed, the event
   // stands: it was told something occurred, and that much is so.
   if (worked && worked.some((n) => n.kind === 'refuse')) return worked;
-  return worked ? [...called, event, ...worked] : [...called, event];
+  return [...called, event, ...(worked || []), ...left];
 }
 
 // The operation a term is, where it is one at all. The world says which
@@ -7775,6 +7787,35 @@ function stoodBy(condition, consequence, ids, sent) {
     from: sent.allocate(),
     wrote: { condition, consequence },
   };
+}
+
+// What a doing leaves behind. Some doings change nothing but the record that
+// they happened; others leave the world standing differently afterwards, and
+// which of them do is the world's to say. Putting a key into a drawer leaves
+// the key in the drawer — the doing is over and the key is still there — so
+// the world says what putting brings about and the brain writes it down.
+//
+// Only between what was done to and where it was done to: an action brings
+// its target to its destination, and with either of them unsaid there is
+// nothing for it to have brought about.
+function brought(action, parts, world) {
+  const a = world.anchors || {};
+  if (a.brings == null || a.target == null || a.destination == null) return [];
+  const relation = world.linked(action, a.brings)[0];
+  if (relation == null) return [];
+  const target = parts.find((p) => p.role === a.target);
+  const where = parts.find((p) => p.role === a.destination);
+  if (!target || !where || target.of == null || where.of == null) return [];
+  return [
+    node('learn', 'link', [], {
+      subject: target.of,
+      relation,
+      object: where.of,
+      quantity: null,
+      made: null,
+      not: false,
+    }),
+  ];
 }
 
 // Something that happened, in the one shape all knowledge takes. How much of

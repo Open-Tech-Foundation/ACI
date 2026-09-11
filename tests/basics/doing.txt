@@ -16,6 +16,15 @@ how many kettles does dev have? => two
 how many kettles does mira have? => one
 
 kiran put the coin into the purse
-where is the coin now? ?> I don't know.
+where is the coin? => in a purse
+what is in the purse? => coin
+
+nila put the lamp on the table
+where is the lamp? => on a table
+where is nila? => unsure
+
+mira put the key into the drawer
+mira put the key into the box
+where is the key? => in a box
 
 nila was at the fair ?> I don't understand.

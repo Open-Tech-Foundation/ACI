@@ -14,9 +14,16 @@ a shelf holds 4 stamps
 how many stamps does the shelf hold? => four
 how many grams does the shelf hold? => unsure
 
+# Said of one shelf twice, the later count is the one it holds. Said of `a`
+# shelf twice, that is two shelves, and which of them is being asked after is
+# not something the brain is in a position to guess.
+a shelf holds 4 stamps
+the shelf holds 6 stamps
+how many stamps does the shelf hold? => six
+
 a shelf holds 4 stamps
 a shelf holds 6 stamps
-how many stamps does a shelf hold? ?> I don't know.
+how many stamps does a shelf hold? => unsure
 
 the lecture lasted three hours
 how long was the lecture? ?> I don't know.
