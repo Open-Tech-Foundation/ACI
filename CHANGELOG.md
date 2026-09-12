@@ -249,6 +249,16 @@ All notable changes to this project are documented in this file.
   one naming the recipient are untouched, and so is a hole that is the only
   name in its doing.
 
+- **The last of an ordering answers where the first did.** `who arrived
+  last?` was unknown after `sara arrived before john`, where `who arrived
+  first?` already said `sara`. The far end of a bare ordering was never asked
+  for: an ordering told as `before` with no scale and no `toward` could only
+  be read from one of its ends, and the other had no word with anything to
+  find. The far end is now read through the ordering's declared converse, so
+  one fact serves both ends. `last` is now the far end the way `first` was the
+  near one — told of two, `who arrived last?` answers the one nothing stands
+  beyond.
+
 - **Campaign priorities documented.** `PRIMITIVES.md` gains a campaign-aligning
   statement: clean deterministic inputs — a canonical statement and a plain
   hole question — come first, and language- or phrase-specific constructs are

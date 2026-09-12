@@ -18054,6 +18054,15 @@
       "concept": 2821,
       "functions": "extreme"
     },
+    "last": {
+      "pos": [
+        "adjective",
+        "noun"
+      ],
+      "meaning": "last",
+      "concept": 2822,
+      "functions": "extreme"
+    },
     "beside": {
       "pos": "preposition",
       "meaning": "beside",

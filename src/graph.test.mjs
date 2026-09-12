@@ -81,6 +81,39 @@ test("the first of a chain of arrivals", async () => {
   );
 });
 
+test("the last of a chain of arrivals", async () => {
+  // The other end of the same ordering. `last` is an extreme the way `first`
+  // is; it reads the very end the ordering reaches, the one nothing stands
+  // beyond. The rows were told as `before`, so the two ends answer out of the
+  // same facts — the far end is only a matter of which way it is looked at.
+  assertEquals(
+    await said(
+      "sara arrived before john",
+      "john arrived before mike",
+      "mike arrived before alex",
+      "who arrived last?",
+    ),
+    "alex",
+  );
+  assertEquals(
+    await said("sara arrived before john", "who arrived last?"),
+    "john",
+    "and told of two, the one nothing stands beyond is the later",
+  );
+  assertEquals(
+    await said("sara arrived before john", "who arrived last?"),
+    "john",
+  );
+  assertEquals(
+    await said(
+      "sara arrived before john",
+      "john arrived before mike",
+      "who arrived last?",
+    ),
+    "mike",
+  );
+});
+
 test("an extreme with nobody in the ordering answers nobody", async () => {
   // The world orders the past before the present of its own accord, and
   // nobody asking what happened first is asking after the past. Nothing in

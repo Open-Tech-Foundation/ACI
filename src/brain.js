@@ -799,7 +799,7 @@ function farEnd(term, world) {
   // that ordering — asked who arrived first, nobody is asking after the days
   // of the week, however plainly Monday comes before Tuesday. Where the
   // conversation has put nobody there, the world's own are all there is.
-  const spoken = graph ? graph.joinedBy(comparison) : [];
+  const spoken = graph ? [comparison, ...bothWays(comparison, world)].flatMap((rel) => graph.joinedBy(rel)) : [];
   const joined = new Set();
   for (const t of spoken.length > 0 ? spoken.map((id) => ({ id })) : world.data.terms) {
     const beyond = world.related(t.id, comparison);
@@ -5644,12 +5644,15 @@ function partAsked(said, world, claims, side, sides) {
       // it has put nobody in that ordering, what the world orders of its own
       // accord is no answer: the past comes before the present, and nobody
       // asking what happened first is asking after the past.
-      if (far !== undefined) {
-        const spoken = graph ? graph.joinedBy(conceptOf(n)) : [];
+if (far !== undefined) {
+        const spoken = graph
+          ? [conceptOf(n), ...bothWays(conceptOf(n), world)].flatMap((rel) => graph.joinedBy(rel))
+          : [];
+        const fr = far.filter((t) => spoken.includes(t));
         return node('answer', 'link', [], {
           subject: action,
           relation: hole.role,
-          found: far.filter((t) => spoken.includes(t)),
+          found: fr,
         });
       }
     }
