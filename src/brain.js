@@ -5596,10 +5596,20 @@ function partAsked(said, world, claims, side, sides) {
           ? a[i < acting ? sides.before : sides.after]
           : null);
     if (role == null) return;
-    played.push({ role, of: markOn(n) === 'unknown' ? null : conceptOf(n) });
+    played.push({ role, of: markOn(n) === 'unknown' ? null : conceptOf(n), at: i, own, named });
   });
   const hole = played.find((p) => p.of == null);
   const known = played.filter((p) => p.of != null);
+  // A hole that names no part plays the part nothing else in the doing plays.
+  // `what does mira give` asks what was given, never mira — the fronted hole
+  // reads the other side of the doing when an agent already stands before it.
+  if (hole != null && hole.own == null && hole.named == null) {
+    const before = sides ? a[sides.before] : null;
+    if (before != null && hole.role === before && hole.at < acting && known.some((p) => p.role === before)) {
+      const after = sides && a[sides.after] != null ? a[sides.after] : null;
+      if (after != null) hole.role = after;
+    }
+  }
   // A question marking an extreme names one doing and asks which of them it
   // was: `who arrived first` says only that somebody arrived, and nothing else
   // in it has to name a part for the question to stand.

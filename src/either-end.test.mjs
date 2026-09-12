@@ -129,3 +129,16 @@ test("a place that is itself placed answers what stands in it, not where it stan
   assertEquals(await says("who is in the drawer?"), "flashlight");
   await forget();
 });
+
+test("asked what was given, the thing answers; asked who, the giver answers", async () => {
+  await forget();
+  await brain("mira gives a book to kiran");
+  // `who gives a book to kiran` asks the part nothing else plays — the giver.
+  // `what does mira give` fronts its hole over the doing; an agent already
+  // stands before the joint, so the hole reads the doing's other side: the
+  // thing given, never mira.
+  assertEquals(await says("who gives a book to kiran?"), "mira");
+  assertEquals(await says("what does mira give to kiran?"), "book");
+  assertEquals(await says("what does mira give?"), "book");
+  await forget();
+});

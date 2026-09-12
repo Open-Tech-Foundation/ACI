@@ -240,6 +240,15 @@ All notable changes to this project are documented in this file.
   the drawer answers, where a `where` hole is the joint and keeps the drawer
   the near end, so the wardrobe answers.
 
+- **Asked what was given, the thing answers; asked who, the giver answers.**
+  `what does mira give to kiran?` and `what does mira give?` answered mira —
+  the doing's hole sat before the joint, the same place the giver stood, and
+  both were read off it. A fronted hole reads the part nothing else in the
+  doing plays: an agent already stands before the joint, so the question is
+  after the doing's other side — what was given. The giver's question and the
+  one naming the recipient are untouched, and so is a hole that is the only
+  name in its doing.
+
 ### Removed
 
 - **The world's half of the store.** The store held a copy of the authored

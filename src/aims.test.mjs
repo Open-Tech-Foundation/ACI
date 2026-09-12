@@ -43,6 +43,9 @@ const AIMS = [
     [["i am happy"], "Good"],
     [["ravi is in chennai", "where is ravi"], "chennai"],
     [["the boy kicked the ball", "who kicked the ball"], "boy"],
+    [["mira gives a book to kiran", "who gives a book to kiran?"], "mira"],
+    [["mira gives a book to kiran", "what does mira give to kiran?"], "book"],
+    [["mira gives a book to kiran", "what does mira give?"], "book"],
   ]],
   ["holding a conversation", [
     [["i am blue", "what colour am i"], "blue"],
