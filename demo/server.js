@@ -22,7 +22,7 @@
 import { serve } from "runtime:http";
 import { file } from "runtime:fs";
 import { env } from "runtime:process";
-import { brain } from "../src/index.js";
+import { brain, graphOf } from "../src/index.js";
 
 // Port from PORT env (esdev start moves it and tells us via PORT), else default.
 const PORT = Number(env.PORT) || 4199;
@@ -133,6 +133,23 @@ const server = serve({ port: PORT }, async (request) => {
     const thread = conversation == null ? null : String(conversation);
     const result = await brain(String(q ?? ""), { ...(thread ? { conversation: thread } : {}), from: SENDER });
     return Response.json({ ...result, conversation: thread });
+  }
+
+  // The graph of a conversation, as it stands this moment — what the signals
+  // it was told have built so far. The same door the dream-boat uses,
+  // answered beside the talk that filled it rather than being kept by it.
+  if (url.pathname === "/graph" || url.pathname === "/graph/") {
+    if (request.method !== "POST") {
+      return new Response("method not allowed", { status: 405 });
+    }
+    let conversation;
+    try {
+      ({ conversation } = await request.json());
+    } catch {
+      return new Response("expected a JSON body of { conversation }", { status: 400 });
+    }
+    const thread = conversation == null ? null : String(conversation);
+    return Response.json({ graph: await graphOf(thread) });
   }
 
   const asset = await serveStatic(url);

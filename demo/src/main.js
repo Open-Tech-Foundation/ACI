@@ -50,6 +50,28 @@ define("x-ask", (el) => {
   let input = "";
   let pending = false;
   let error = null;
+  let showGraph = false;
+  let graphText = null;
+
+  // What the conversation has built, spoken as its world would. Fetched
+  // again after each turn, so the graph shown is the one the answers just
+  // came out of — live, not the last signal's parse.
+  async function refreshGraph() {
+    graphText = null;
+    update(el);
+    try {
+      const res = await fetch("/graph", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ conversation }),
+      });
+      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+      graphText = (await res.json()).graph;
+    } catch (e) {
+      graphText = `cannot read the graph — ${String(e.message || e)}`;
+    }
+    update(el);
+  }
 
   async function send() {
     const q = input.trim();
@@ -66,7 +88,8 @@ define("x-ask", (el) => {
         body: JSON.stringify({ q, conversation }),
       });
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-      turns = [...turns, { q, result: await res.json(), open: false }];
+      turns = [...turns, { q, result: await res.json() }];
+      if (showGraph) await refreshGraph();
     } catch (e) {
       error = String(e.message || e);
     }
@@ -83,12 +106,14 @@ define("x-ask", (el) => {
     keep(conversation);
     turns = [];
     error = null;
+    graphText = null;
     update(el);
   }
 
-  function toggle(turn) {
-    turn.open = !turn.open;
-    update(el);
+  function toggleGraph() {
+    showGraph = !showGraph;
+    if (showGraph && graphText == null) refreshGraph();
+    else update(el);
   }
 
   return () => html`
@@ -97,6 +122,9 @@ define("x-ask", (el) => {
         <h1>ACI</h1>
         <div class="thread">
           <span class="id">${conversation.slice(0, 8)}</span>
+          <button class="new" onclick=${toggleGraph}>
+            ${showGraph ? "Hide graph" : "Graph"}
+          </button>
           <button class="new" onclick=${fresh}>New</button>
         </div>
       </div>
@@ -116,18 +144,16 @@ define("x-ask", (el) => {
                     ? ` · ${turn.result.expression.state.language}`
                     : " · no language"}${turn.result.learned ? " · learned" : ""}
                 </span>
-                <button class="tab" onclick=${() => toggle(turn)}>
-                  ${turn.open ? "Hide tree" : "Tree"}
-                </button>
               </div>
-              ${turn.open
-                ? html`<pre class="tree">${render(turn.result.roots)}</pre>`
-                : ""}
             </div>
           `,
         )}
         ${pending ? html`<div class="turn pending">…</div>` : ""}
       </div>
+
+      ${showGraph
+        ? html`<pre class="graph">${graphText ?? "reading the graph…"}</pre>`
+        : ""}
 
       ${error ? html`<div class="error">${error}</div>` : ""}
 
@@ -148,88 +174,3 @@ define("x-ask", (el) => {
     </div>
   `;
 });
-
-function render(nodes) {
-  return (nodes || []).map((n) => renderNode(n)).join("");
-}
-
-function renderNode(node, prefix = "", connector = "", isLast = true) {
-  const label =
-    node.name && node.name !== node.kind ? `${node.kind} (${node.name})` : node.kind;
-  let out = prefix + connector + label + "\n";
-  const state = node.state;
-  const childPrefix = prefix + (connector === "" ? "" : isLast ? "   " : "│  ");
-  if (state && Object.keys(state).length) {
-    out += formatState(state, childPrefix + "   ");
-  }
-  (node.branch || []).forEach((child, i) => {
-    out += renderNode(
-      child,
-      childPrefix,
-      i === node.branch.length - 1 ? "└─ " : "├─ ",
-      i === node.branch.length - 1,
-    );
-  });
-  return out;
-}
-
-function formatState(state, indent) {
-  const lines = [];
-  if (typeof state.identity === "string") {
-    lines.push(`value: ${state.identity}`);
-  }
-  if (typeof state.exists === "boolean") {
-    lines.push(`exists: ${state.exists}`);
-  }
-  if (typeof state.charCount === "number") {
-    lines.push(`chars: ${state.charCount}`);
-  }
-  if (state.phonetics && state.phonetics.length) {
-    lines.push(
-      "phonetics: " +
-        state.phonetics.map((p) => `${p.char}${p.isVowel ? "(v)" : "(c)"}`).join(" "),
-    );
-  }
-  const match = state.matches && state.matches[0];
-  if (match) {
-    const lang = match.lang || "?";
-    const word = match.word
-      ? `${match.word.text} = ${match.word.meaning}`
-      : "word unknown";
-    lines.push(`lang: ${lang}`);
-    lines.push(`word: ${word}`);
-    if (match.roles && match.roles.length) {
-      lines.push(`roles: ${match.roles.join(", ")}`);
-    }
-  }
-  if (state.thought) {
-    const t = state.thought;
-    lines.push(`meaning: ${t.meaning ?? "—"}`);
-    lines.push(`pos: ${t.pos ?? "—"}`);
-    lines.push(`term: ${t.concept ?? "—"}`);
-  }
-  if (typeof state.concept === "number") {
-    lines.push(`term: ${state.concept}`);
-  }
-  if (typeof state.relation === "number") {
-    lines.push(`claim: ${state.subject} ${state.relation} ${state.object}`);
-  }
-  if (typeof state.language === "string") {
-    lines.push(`language: ${state.language}`);
-  }
-  if ("says" in state) {
-    lines.push(`says: ${state.says ?? "— (this language has no words for it)"}`);
-  }
-  if (Array.isArray(state.parts)) {
-    lines.push(`parts: ${state.parts.join(" + ")}`);
-  }
-  if (typeof state.text === "string") {
-    lines.push(`phrase: ${state.text}`);
-  }
-  return lines.length
-    ? lines
-        .filter((l) => l)
-        .map((l) => indent + "· " + l + "\n")
-        .join("")
-    : "";
-}

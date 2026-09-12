@@ -141,8 +141,8 @@ h1 {
   cursor: pointer;
 }
 
-.tree {
-  max-height: 22rem;
+.graph {
+  max-height: 24rem;
   overflow: auto;
   background: #111;
   border: 1px solid #222;

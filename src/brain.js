@@ -814,6 +814,35 @@ function farEnd(term, world) {
   return unbeaten.length === 1 ? unbeaten : [];
 }
 
+// A comparison word with nobody named on the other end asks which of those the
+// ordering joins stands at the end the word reads from: asked who is shorter
+// after only `tom is taller than sam` was said, the answer is the one the
+// ordering puts below — sam. The word's own direction says which end it reads,
+// short reading the low end and tall the high one. Like a far end, this is the
+// whole of the question; unlike one it never needs the word to be an extreme.
+// A comparison is only ever made in this conversation, so where the ordering
+// holds nobody nobody answers.
+function bareEnd(term, world) {
+  const a = world.anchors || {};
+  const thought = thoughtOf(term);
+  if (thought == null || thought.compares == null) return undefined;
+  const direction = directionOf(conceptOf(term), world, term);
+  if (direction == null) return undefined;
+  const scale = thought.on != null
+    ? thought.on
+    : (orderingOf(thought.compares, world) || {}).scale ?? null;
+  if (scale == null || !graph) return undefined;
+  const edges = graph.orderedOn(scale);
+  if (edges.length === 0) return undefined;
+  // The parts were already put the way the ordering runs — higher first — and
+  // the word chooses which end of that ordering is the answer.
+  const up = new Set(edges.map(([t]) => t));
+  const down = new Set(edges.map(([, b]) => b));
+  const fromBelow = direction === a.less;
+  const faces = edges.map((e) => (fromBelow ? e[1] : e[0]));
+  return [...new Set(faces)].filter((id) => !(fromBelow ? up.has(id) : down.has(id)));
+}
+
 // Whether a relation compares at all, and which way it runs. A comparison made
 // on a state is declared narrower than `more` or than `less`, so asking the
 // broader relation answers for every one of them without naming any.
@@ -3640,14 +3669,18 @@ function because(joined, world, mood, sent) {
   // from is asking after the far end itself: `who arrived first` says only that
   // somebody did, and which of them is first is the whole question. Nothing is
   // said about arriving that the ordering does not already hold.
+  // A comparison word standing alone asks the same way: `who is shorter?` names
+  // no one to compare against, and the end the word reads from is the answer.
   if (holes.length > 0 && terms.length === 0) {
     for (const n of said) {
       const far = farEnd(n, world);
-      if (far === undefined || far.length === 0) continue;
+      const bare = far === undefined ? bareEnd(n, world) : undefined;
+      const found = far !== undefined ? far : bare !== undefined ? bare : undefined;
+      if (found === undefined || found.length === 0) continue;
       return [
         withBranch(root, [
           ...root.branch,
-          node('answer', 'link', [], { subject: null, relation: conceptOf(n), found: far }),
+          node('answer', 'link', [], { subject: null, relation: conceptOf(n), found }),
         ]),
       ];
     }

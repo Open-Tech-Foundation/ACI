@@ -467,6 +467,30 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
       primitive === COMPARISON && !above(relation, world)
         ? [far, reach(subject)]
         : [reach(subject), far];
+    // A comparison that already stood is the one fact, however many words said
+    // it: `sam is shorter than tom` after `tom is taller than sam` is not a
+    // second row — it is that row's other end. The words are kept on it so a
+    // fact asked for in either still answers out of it, and the ordering reads
+    // the parts, which run the same way either way. A denial is still written
+    // below it, and answered against.
+    if (primitive === COMPARISON && !denied) {
+      const probe = held.facts.find(
+        (row) =>
+          row.stands === 'held' &&
+          row.of === COMPARISON &&
+          row.parts &&
+          row.parts[0] === parts[0] &&
+          row.parts[1] === parts[1] &&
+          row.properties &&
+          row.properties.on === scaleOf(relation, world),
+      );
+      if (probe) {
+        if (probe.said !== relation && !(probe.saidOther || []).includes(relation)) {
+          probe.saidOther = [...(probe.saidOther || []), relation];
+        }
+        return;
+      }
+    }
     const wrote = put('facts', {
       key,
       of: primitive ?? relation,
@@ -1231,7 +1255,7 @@ function told(subject, relation, object) {
       if (sameState(one, relation, object, against)) found = null;
       continue;
     }
-    if (one.said !== relation || !same(one.parts[1], object)) continue;
+    if (!says(one, relation) || !same(one.parts[1], object)) continue;
     // Said and not standing is not an answer either way.
     if (one.stands === 'conflict') continue;
     found = one.stands;
@@ -1264,7 +1288,7 @@ function sameState(one, relation, object, world) {
 function joinedBy(relation) {
   const found = [];
   for (const one of held.facts) {
-    if (one.said !== relation || one.stands !== 'held') continue;
+    if (!says(one, relation) || one.stands !== 'held') continue;
     for (const part of one.parts) {
       const term = termOf(part);
       if (term != null && !found.includes(term)) found.push(term);
@@ -1286,12 +1310,29 @@ function namedIn(word) {
   return null;
 }
 
+// A comparison the conversation made on a scale, as an ordered pair: the thing
+// standing above, and the thing standing below. The parts were put that way
+// round when the fact was written, so which way the fact was said — taller
+// rather than shorter — makes no difference here.
+function orderedOn(scale) {
+  const found = [];
+  for (const one of held.facts) {
+    if (one.stands !== 'held' || !one.properties || one.properties.on !== scale) continue;
+    if (one.parts.length < 2) continue;
+    const above = termOf(one.parts[0]);
+    const below = termOf(one.parts[1]);
+    if (above == null || below == null) continue;
+    found.push([above, below]);
+  }
+  return found;
+}
+
 // Everything this conversation put on the near side of a relation to a thing:
 // who stands taller than sam, rather than who sam stands taller than.
 function standingIn(object, relation) {
   const found = [];
   for (const one of held.facts) {
-    if (one.said !== relation || one.stands !== 'held') continue;
+    if (!says(one, relation) || one.stands !== 'held') continue;
     if (!same(one.parts[1], object)) continue;
     const term = termOf(one.parts[0]);
     if (term != null && !found.includes(term)) found.push(term);
@@ -1308,6 +1349,12 @@ const termOf = (part) => {
   const one = held.nodes.find((node) => node.id === part);
   return one ? one.term : null;
 };
+
+// Whether a fact was said with a word. A comparison folded into the fact that
+// already stood keeps every word it was said with, so a fact asked for in
+// either direction — taller as well as shorter — answers out of the one row.
+const says = (row, relation) =>
+  row.said === relation || (Array.isArray(row.saidOther) && row.saidOther.includes(relation));
 
 // Where each thing stands on a quantity, worked out from what was said.
 //
@@ -1519,6 +1566,7 @@ function serialize(world = against) {
     namedIn,
     standingIn,
     joinedBy,
+    orderedOn,
     roleIn: (relation) => roleIn(relation, against),
     amounts,
     ranking,

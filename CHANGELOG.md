@@ -211,6 +211,24 @@ All notable changes to this project are documented in this file.
   whoever did it is what the fact is about, which is what keeps `sara arrived
   before john` about sara and john.
 
+- **A comparison with nobody named on the other end asks which end it reads.**
+  `who is shorter?` after only `tom is taller than sam` was said read as two
+  loose words — a named thing and a relation — and came back answered unknown,
+  because a question that names nobody to walk from was only asked of the far
+  end of an ordering, and only when a word said it as an extreme. A bare
+  comparison is the same question: the word's own direction says which end it
+  reads, short reading the low end and tall the high one, and the end that
+  nothing stands beyond on that side is the answer. Where the conversation has
+  compared nothing on that scale, it still says unknown.
+
+- **The one comparison is one row, however its ends are said.** Re-saying a
+  comparison the conversation already held wrote a second row beside the
+  first: `sam is shorter than tom` after `tom is taller than sam` is that same
+  fact — the parts of it already ran the same way round — and the graph held
+  it twice, once per word. It stands once now, holding the words it was said
+  with, so a fact asked for in either direction still answers out of the one
+  row.
+
 ### Removed
 
 - **The world's half of the store.** The store held a copy of the authored
@@ -356,6 +374,12 @@ All notable changes to this project are documented in this file.
   And asked who has a key, whoever holds one answers. The walk looked for
   somebody standing to the kind, where what anybody was handed is one key and
   never the kind itself.
+
+- **A measurement denied is no longer what a thing measures.** A fact against was
+  only recorded in the graph: the world still held the quantity.  Asking how tall
+  Tom was after `tom is not 2 metre tall` returned two metres.  The latest
+  quantity link is now authoritative — a denial replaces the earlier positive
+  claim, and the answer says so.
 
 ### Added
 

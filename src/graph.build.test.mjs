@@ -402,3 +402,16 @@ test("asking about an event does not make it happen", async () => {
   assertEquals(graph().nodes.length, 0, 'and nothing was brought standing into the conversation');
   await forget();
 });
+
+test("one comparison stands as one row, however its ends are said", async () => {
+  // The other end of a comparison that already stands is not a second row:
+  // `sam is shorter than tom` after `tom is taller than sam` is that same
+  // fact, however many words said it. The ordering runs the same way either
+  // way, so the parts of the one row answer both askings.
+  const held = await said('tom is taller than sam', 'sam is shorter than tom', 'tom is taller than sam');
+  assertEquals(held.facts.length, 1, 'never a second row for saying the same comparison again');
+  const [fact] = held.facts;
+  assertEquals(fact.of, COMPARISON);
+  assertEquals(fact.stands, 'held');
+  assertEquals(fact.parts, ['n1', 'n2'], 'and the parts still run the same way round');
+});

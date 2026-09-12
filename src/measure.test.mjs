@@ -70,6 +70,17 @@ test("asked how a thing stands on a scale, what answers is what it measures", as
   await forget();
 });
 
+test("a measurement denied is no longer what the thing measures", async () => {
+  await forget();
+  await brain("the rope is 2 metres long");
+  await brain("the rope is not 2 metres long");
+  assertEquals((await brain("how long is the rope?")).expression.name, "unsure");
+  // A later denial of a later measurement leaves the earlier one standing.
+  await brain("the rope is 3 metres long");
+  assertEquals((await brain("how long is the rope?")).expression.state.says, "three metres");
+  await forget();
+});
+
 test("nothing measured on the scale asked leaves the question unanswered", async () => {
   await forget();
   // A rope is a tool, and that is a true answer to a question nobody asked.

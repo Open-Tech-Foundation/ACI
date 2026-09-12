@@ -246,3 +246,44 @@ test("a comparison is said back with the word it was asked with", async () => {
   );
   await forget();
 });
+
+test("a comparison with nobody named on the other end asks for the end it reads", async () => {
+  // Told only that tom is taller than sam, `who is shorter?` is sam: the one
+  // the ordering puts below. The word's own direction says which end it reads.
+  await forget();
+  await brain("tom is taller than sam");
+  assertEquals((await brain("who is shorter?")).expression.state.says, "sam");
+  await forget();
+});
+
+test("the more end of a bare comparison answers the high end", async () => {
+  await forget();
+  await brain("tom is taller than sam");
+  assertEquals((await brain("who is taller?")).expression.state.says, "tom");
+  await forget();
+});
+
+test("a bare comparison reads the ordering, not the word it was said with", async () => {
+  // Said the other way round — sam is shorter than tom — the fact is the same,
+  // so the bare question finds the same ends.
+  await forget();
+  await brain("sam is shorter than tom");
+  assertEquals((await brain("who is shorter?")).expression.state.says, "sam");
+  assertEquals((await brain("who is taller?")).expression.state.says, "tom");
+  await forget();
+});
+
+test("a bare comparison answers across a whole chain", async () => {
+  await forget();
+  await brain("tom is taller than sam");
+  await brain("sam is taller than john");
+  assertEquals((await brain("who is taller?")).expression.state.says, "tom");
+  assertEquals((await brain("who is shorter?")).expression.state.says, "john");
+  await forget();
+});
+
+test("a bare comparison with nothing compared says nothing", async () => {
+  assertEquals((await fresh("who is shorter?")).expression.name, "unknown");
+  assertEquals((await fresh("who is taller?")).expression.name, "unknown");
+  await forget();
+});

@@ -278,6 +278,17 @@ export function openBrain(url) {
     await forgetTalks(store);
   });
 
+  // The conversation's graph, spoken as its world would. The world it is read
+  // against is the one this brain knows, and a conversation the brain is not
+  // holding is picked up from the store first, so what is said is what is kept.
+  const graphOf = (named) => inTurn(async () => {
+    const thread = named == null ? null : String(named);
+    const known = await loaded();
+    const talk = await pickUp(thread == null ? ALONE : thread);
+    talk.worldOf(known.world);
+    return talk.serialize();
+  });
+
   // What is reached through the brain is the unnamed thread — the conversation
   // a signal that names no conversation is in. A named one is reached by
   // naming it, the same way a signal does.
@@ -285,7 +296,7 @@ export function openBrain(url) {
   talks.set(ALONE, alone);
   const held = (named) => talks.get(named ?? ALONE) ?? null;
 
-  return { brain, forget, graph: alone.graph, serialize: alone.serialize, conversation: alone, held };
+  return { brain, forget, graph: alone.graph, serialize: alone.serialize, conversation: alone, held, graphOf };
 }
 
 async function projectRoot(file) {
@@ -331,3 +342,4 @@ async function readAll(root, dir) {
 const here = openBrain();
 export const brain = (input, circumstance) => here.brain(input, circumstance);
 export const forget = () => here.forget();
+export const graphOf = (named) => here.graphOf(named);

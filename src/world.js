@@ -617,7 +617,7 @@ export function fromWorldData(source) {
     const latest = new Map();
     for (const subject of equivalents(id)) {
       for (const l of terms.get(subject)?.links || []) {
-        if (l.not || !ways.has(l.rel) || !amount(l.quantity)) continue;
+        if (!ways.has(l.rel) || !amount(l.quantity)) continue;
         if (!equivalents(object).has(l.to) && !reaches(l.to, isRel).has(object)) continue;
         const which = canonical(l.to);
         const had = latest.get(which);
@@ -625,6 +625,8 @@ export function fromWorldData(source) {
       }
     }
     if (latest.size === 0) return null;
+    // The latest word was that it holds none of it.
+    if ([...latest.values()].some((l) => l.not)) return null;
     // An amount that is not whole is written out, and stays written out: adding
     // it as a machine counts would give the nearest thing a double can hold and
     // not what was said. One of them is the answer as it stands; several the
