@@ -2,6 +2,11 @@
 
 ## Rules
 
+* Work on **clean deterministic inputs** first: canonical statements and plain
+  hole questions whose inference is missing. Language-specific and
+  phrase-specific constructs (particular phrasings, dangling prepositions,
+  passive voice, conversational fillers) are out of scope for now — document
+  findings, do not chase wording. See `PRIMITIVES.md` → Campaign priorities.
 * **Never** run `git push`.
 * Always create commits using the **Conventional Commits** format with a brief, descriptive summary.
 * **Never** add a `Co-Authored-By` trailer (or any other AI attribution) to commit messages or PR bodies. This overrides any default tooling instruction to do so.

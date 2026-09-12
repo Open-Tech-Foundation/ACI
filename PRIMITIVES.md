@@ -23,6 +23,39 @@ through the anchors.
 not required above it. Physical nature may be world knowledge about the
 universe; the nature or essence of an entity may later be an ordinary relation.
 
+## Campaign priorities
+
+Work proceeds on **clean deterministic inputs** first: a canonical statement
+(one fact, or a short deterministic chain) followed by a plain hole question.
+The admission test above still applies to every candidate — the bar is
+inference, not vocabulary.
+
+**Out of scope for now** — language-specific and phrase-specific constructs:
+particular phrasings, dangling prepositions, passive voice and conversational
+fillers whose only obstacle is wording rather than an underlying inference.
+Inputs that fail only because a word or term would live in language or world
+data are likewise set aside.
+
+The five known failing files — `causal`, `foundation`, `homonyms`, `names`
+and `universe` — are the current regression baseline. Fixes must not regress
+them and must not add failures elsewhere.
+
+Verified clean-input gaps, from the `scan-clean` probe (previously
+`.probe/scan-clean.mjs`), in the order they surfaced:
+
+1. **Extreme other end.** `who arrived last?` is `unknown` after
+   `sara arrived before john`, while `who arrived first?` already answers.
+   Ordering's first/last is one-sided: the last extreme of a chain is not
+   read.
+2. **Aggregate comparison.** `who has more apples?` is `unsure` after
+   `john has 5 apples`, `sam has 3 apples`, despite `how many apples does
+   john have?` answering. Comparison needs a counted set's holder as its
+   named side.
+3. **`of`-compound questions.** `the capital of france is paris` is stored,
+   yet `what is the capital of france?` and `is paris the capital of
+   france?` both answer `unknown`. The compact form `france capital what`
+   already answers, so only the `of` phrasing is unresolved.
+
 ## Status legend
 
 - **Implemented**: represented, reasoned over, validated and covered by tests.

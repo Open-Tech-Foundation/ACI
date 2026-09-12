@@ -249,6 +249,13 @@ All notable changes to this project are documented in this file.
   one naming the recipient are untouched, and so is a hole that is the only
   name in its doing.
 
+- **Campaign priorities documented.** `PRIMITIVES.md` gains a campaign-aligning
+  statement: clean deterministic inputs — a canonical statement and a plain
+  hole question — come first, and language- or phrase-specific constructs are
+  out of scope for now. The three verified clean-input gaps (`who arrived
+  last?`, `who has more apples?`, and the `of`-compound capital question) are
+  tracked there, and `AGENTS.md` now states the same ordering rule.
+
 ### Removed
 
 - **The world's half of the store.** The store held a copy of the authored
