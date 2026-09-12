@@ -235,13 +235,14 @@ function voice(data, intent, vars, named) {
   const form = data.expressions ? data.expressions[intent] : null;
   if (typeof form !== 'string') return null;
   const speech = data.speech || {};
-  const agreeing = (key) => key in speech && speech[key] && typeof speech[key] === 'object';
+  const own = (key) => Object.hasOwn(speech, key);
+  const agreeing = (key) => own(key) && speech[key] && typeof speech[key] === 'object';
 
   // Everything that stands on its own first, so that what agrees with what
   // follows has something to look at.
   const filled = form.replace(/\{(\w+)\}/g, (whole, key) => {
     if (agreeing(key)) return whole;
-    if (key in speech) return speech[key];
+    if (own(key)) return speech[key];
     const v = vars ? vars[key] : null;
     if (typeof v === 'number') return named.get(v) ?? '';
     return v == null ? '' : String(v);

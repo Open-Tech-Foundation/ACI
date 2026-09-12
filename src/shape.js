@@ -60,6 +60,17 @@ function onlyKeys(data, allowed, where) {
   }
 }
 
+// A name a source may call one of its keys. A map keyed by a word, a symbol,
+// a relation, an anchor, a grammar symbol or a parser position may not name
+// anything that sits on a plain object's prototype — `__proto__`, `constructor`
+// and `prototype` — because those would not be keys of a living map but the
+// shape of the map itself, and a source naming them could reach farther than
+// the map it bounded. Every source passes this door, so every key is safe here.
+const UNSAFE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+function checkKey(key, where) {
+  if (UNSAFE_KEYS.has(key)) fail(where, `"${key}" is not a name a source may give`);
+}
+
 // ---------------------------------------------------------------------------
 // World, and knowledge files, which take the same shape — a knowledge file is
 // simply a world that expects to be merged into another.
@@ -167,6 +178,7 @@ export function checkWorld(data, where = 'world') {
       fail(where, 'relations must be an object');
     }
     for (const [name, id] of Object.entries(data.relations)) {
+      checkKey(name, `${where} relations`);
       if (!isId(id)) fail(`${where} relation "${name}"`, 'must be a term id');
     }
   }
@@ -176,6 +188,7 @@ export function checkWorld(data, where = 'world') {
       fail(where, 'anchors must be an object');
     }
     for (const [name, id] of Object.entries(data.anchors)) {
+      checkKey(name, `${where} anchors`);
       if (!isId(id)) fail(`${where} anchor "${name}"`, 'must be a term id');
     }
   }
@@ -816,6 +829,7 @@ export function checkLanguage(data, where = 'language') {
   if (data.symbols !== undefined) {
     if (!data.symbols || typeof data.symbols !== 'object') fail(at, 'symbols must be an object');
     for (const [type, info] of Object.entries(data.symbols)) {
+      checkKey(type, `${at} symbols`);
       if (!info || typeof info.characters !== 'string' || info.characters === '') {
         fail(`${at} symbols.${type}`, 'characters must be a non-empty string');
       }
@@ -860,11 +874,13 @@ export function checkLanguage(data, where = 'language') {
   if (data.syntax !== undefined) {
     if (!data.syntax || typeof data.syntax !== 'object') fail(at, 'syntax must be an object');
     for (const [position, functions] of Object.entries(data.syntax)) {
+      checkKey(position, `${at} syntax`);
       if (position === '') fail(`${at} syntax`, 'parser positions must be non-empty strings');
       checkFunctions(functions, `${at} syntax "${position}"`);
     }
   }
   for (const [word, entry] of Object.entries(data.words || {})) {
+    checkKey(word, `${at} words`);
     const w = `${at} word "${word}"`;
     if (!entry || typeof entry !== 'object') fail(w, 'must be an object');
     // A word may name more than one thing — a saw is a tool, and it is also
@@ -893,6 +909,7 @@ export function checkLanguage(data, where = 'language') {
     if (!data.parts || typeof data.parts !== 'object') fail(at, 'parts must be an object');
     onlyKeys(data.parts, ['before', 'after'], `${at} parts`);
     for (const [side, role] of Object.entries(data.parts)) {
+      checkKey(side, `${at} parts`);
       if (typeof role !== 'string' || role === '') {
         fail(`${at} parts "${side}"`, 'must name the part a thing on that side plays');
       }
@@ -972,6 +989,7 @@ export function checkLanguage(data, where = 'language') {
   if (data.speech !== undefined) {
     if (!data.speech || typeof data.speech !== 'object') fail(at, 'speech must be an object');
     for (const [role, form] of Object.entries(data.speech)) {
+      checkKey(role, `${at} speech`);
       // The refinements of an entity are brain primitives. A language may
       // give each one words, but it may neither add another refinement nor
       // leave a malformed label for the brain to interpret.
@@ -1010,6 +1028,7 @@ export function checkLanguage(data, where = 'language') {
       fail(at, 'expressions must be an object');
     }
     for (const [intent, form] of Object.entries(data.expressions)) {
+      checkKey(intent, `${at} expressions`);
       if (typeof form !== 'string') fail(`${at} expression "${intent}"`, 'must be a string');
     }
   }
@@ -1074,6 +1093,7 @@ function checkGrammar(grammar, at) {
     fail(`${at} grammar`, 'rules must be an object');
   }
   for (const [symbol, rule] of Object.entries(grammar.rules || {})) {
+    checkKey(symbol, `${at} grammar rules`);
     const r = `${at} grammar rule "${symbol}"`;
     if (!rule || typeof rule !== 'object') fail(r, 'must be an object');
     onlyKeys(rule, ['rules', 'whole', 'referent', 'completes'], r);

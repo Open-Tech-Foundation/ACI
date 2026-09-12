@@ -234,6 +234,45 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A denial says no to one claim, and nothing about the thing.** `the sky is
+  not blue` was read as a colour of the sky and written onto it the way `the
+  sky is blue` was: the thing, and what was denied of it, differed only in a
+  mark, so a build that had been told both held *blue* as how the sky is and
+  *not blue* as how the sky is, and either could answer. A denial is a claim
+  about the claim it denies, not about the thing — it stands as a fact
+  against, and where the thing carried the quality or measure before, the
+  denial takes it off.
+
+- **A count beyond the machine's reach is refused, not raised.** Doubling a
+  number so large the machine reaches it only in scientific notation read
+  `1e+300` back as exact and raised. It is refused now, cleanly, and the brain
+  that refused it goes on: an act with no exact answer is declined, and
+  nothing raised is stored.
+
+- **What is held, held together, is each amount added exactly.** Two things
+  each holding half a litre held, all told, `0.50.5` — the counts were joined
+  as text. They are added as amounts now, at any scale and mixed scales: a
+  half and a half are one, a tenth and two tenths three tenths, and nothing is
+  a hair beside it.
+
+- **A prototype name is not a name.** A source that named a relation, an
+  anchor or a word `__proto__` (or `constructor`, or `prototype`) wrote a
+  value onto the prototype of the structures the sorters held, and the world
+  came to include anything with a prototype. Those three are no name to give
+  anything in a world or a language — a collision to guard against at the
+  door, not at every read.
+
+- **A question about a happening does not make it happen.** Asking `when did a
+  robbery happen?` wrote a new happening into the conversation: the reach that
+  settles what the next word is about made a happening out of a term spoken of
+  being a kind of event, and one was sat down beside the claims even though
+  only a question spoke of it. Focus now reaches only what already stands, and
+  a question claims nothing — neither facts nor events.
+
+- **A conversation is read before it is cached.** A session picked up under
+  its name was cached first and read second, so a risen read-by-name left the
+  stale empty conversation in the cache. It reads it now, then caches it.
+
 - **A time is no way for a thing to be.** `a robbery was at a shop at night`
   left the shop night-coloured: a time read as a quality of whatever stood
   beside it. A time says when.

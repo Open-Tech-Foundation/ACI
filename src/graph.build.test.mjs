@@ -389,3 +389,16 @@ test("asking claims nothing", async () => {
   assertEquals(held.facts.length, 1, 'the one thing that was actually said');
   assert(held.nodes.some((one) => one.said === 'tom'), 'and tom is still here to be asked about');
 });
+
+test("asking about an event does not make it happen", async () => {
+  // A question works out what it was asked by reaching through what stands in
+  // the conversation. Where nothing stands, the reaching has nowhere to land —
+  // but what was said to it is what it holds, and a question never makes an
+  // event of its own: only what was claimed as having happened happened.
+  await forget();
+  await brain('when did a robbery happen?');
+  const { actions } = graph();
+  assertEquals(actions.length, 0, 'no event was written for asking');
+  assertEquals(graph().nodes.length, 0, 'and nothing was brought standing into the conversation');
+  await forget();
+});

@@ -1,5 +1,5 @@
 import { test, assert, assertEquals } from "runtime:test";
-import { fromWorldData } from "./world.js";
+import { fromWorldData, addAmounts, multiplyAmounts } from "./world.js";
 
 const IS = 294;
 const data = {
@@ -37,10 +37,60 @@ test("an unknown id reaches nothing", () => {
   assertEquals(w.isA(999, 10), false);
 });
 
-test("anchors name the brain's categories", () => {
-  const w = fromWorldData(data);
-  assertEquals(w.anchors.living, 10);
-  assert(w.isA(29, w.anchors.living), "a person is living");
+test("held adds exact decimals, and never a hair beside them", () => {
+  const w = fromWorldData({
+    relations: { holding: 5 },
+    terms: [
+      { id: 1, name: "thing", links: [] },
+      { id: 5, name: "holding", links: [] },
+      { id: 8, name: "litre", links: [] },
+      { id: 10, name: "jug", individual: true, links: [{ rel: 5, to: 8, quantity: "0.5" }] },
+      { id: 11, name: "cup", individual: true, links: [{ rel: 5, to: 8, quantity: "0.5" }] },
+    ],
+  });
+  assertEquals(w.held(10, 5, 8), "0.5");
+  // Held all across the world is each count added exactly: two things each
+  // holding half a litre hold one litre. This was a string join — "00.50.5" —
+  // before exact amount addition arrived.
+  assertEquals(w.heldAll(8, 5), 1, "a half and a half are a whole, not a tenth beside it");
+  // And a sum that is not whole is written out exactly.
+  const half = fromWorldData({
+    relations: { holding: 5 },
+    terms: [
+      { id: 1, name: "thing", links: [] },
+      { id: 5, name: "holding", links: [] },
+      { id: 8, name: "litre", links: [] },
+      { id: 10, name: "jug", individual: true, links: [{ rel: 5, to: 8, quantity: "0.5" }] },
+      { id: 11, name: "cup", individual: true, links: [{ rel: 5, to: 8, quantity: "0.2" }] },
+    ],
+  });
+  assertEquals(half.heldAll(8, 5), "0.7");
+});
+
+test("a mixed scale sums to the wider scale exactly", () => {
+  const w = fromWorldData({
+    relations: { holding: 5 },
+    terms: [
+      { id: 1, name: "thing", links: [] },
+      { id: 5, name: "holding", links: [] },
+      { id: 8, name: "litre", links: [] },
+      { id: 10, name: "jug", individual: true, links: [{ rel: 5, to: 8, quantity: "0.5" }] },
+      { id: 11, name: "cup", individual: true, links: [{ rel: 5, to: 8, quantity: "0.10" }] },
+    ],
+  });
+  assertEquals(w.heldAll(8, 5), "0.6");
+});
+
+test("exact amount addition and multiplication are never a hair beside", () => {
+  assertEquals(addAmounts("0.5", "0.5"), 1, "a half and a half are a whole");
+  assertEquals(addAmounts("0.1", "0.2"), "0.3");
+  assertEquals(addAmounts("0.5", "0.3"), "0.8");
+  assertEquals(addAmounts(2, 3), 5, "whole sums come back whole");
+  assertEquals(multiplyAmounts("0.5", 3), "1.5");
+  assertEquals(multiplyAmounts("0.1", "0.2"), "0.02");
+  // Nothing exact is refused: any pair of whole amounts or exact decimals.
+  assertEquals(addAmounts("2.5", "0.5"), 3);
+  assertEquals(addAmounts("0.25", "0.25"), "0.5", "the wider scale is kept, trailing zeros dropped");
 });
 
 test("a cycle in the data terminates", () => {

@@ -457,6 +457,41 @@ test("classification cycles are refused at the knowledge door", () => {
   assert(msg.includes("classification cycle"), msg);
 });
 
+test("a prototype name is not a name a source may give", () => {
+  for (const key of ["__proto__", "constructor", "prototype"]) {
+    const rel = refuses("prototype relation name", {
+      world: {
+        relations: { is: 1, [key]: 2 },
+        terms: [
+          { id: 1, name: "is", links: [] },
+          { id: 2, name: "relation", links: [] },
+        ],
+      },
+    });
+    assert(rel.includes(key), `${key} relation: ${rel}`);
+    const anchor = refuses("prototype anchor name", {
+      world: { anchors: { [key]: 1 }, terms: [{ id: 1, name: "thing", links: [] }] },
+    });
+    assert(anchor.includes(key), `${key} anchor: ${anchor}`);
+  }
+});
+
+test("a prototype name is not a word in any language", () => {
+  for (const key of ["__proto__", "constructor", "prototype"]) {
+    const msg = refuses("prototype word", {
+      world: { relations: {}, terms: [] },
+      languages: [
+        {
+          name: "test",
+          symbols: { letter: { characters: "x" } },
+          words: { [key]: { pos: "word", meaning: "x" } },
+        },
+      ],
+    });
+    assert(msg.includes(key), `${key} word: ${msg}`);
+  }
+});
+
 test("asymmetric relations reject invalid declarations and cycles", () => {
   const relation = (asymmetric, links = []) => ({
     relations: { is: 1 },

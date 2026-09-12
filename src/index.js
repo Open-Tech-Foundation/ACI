@@ -113,9 +113,16 @@ export function openBrain(url) {
     const already = talks.get(thread);
     if (already) return already;
     const talk = conversation();
-    talks.set(thread, talk);
-    if (thread === ALONE || !store) return talk;
+    if (thread === ALONE || !store) {
+      talks.set(thread, talk);
+      return talk;
+    }
     const kept = await readTalk(store, thread);
+    // A conversation that could not be read is not remembered as read. Caches
+    // are for a conversation that came back; a talk that failed to load would
+    // otherwise stand in the way of the stored one, and the next signal that
+    // came to it would find an empty conversation where a full one was kept.
+    talks.set(thread, talk);
     if (!kept) return talk;
     talk.restore(kept.graph);
     // What a word in the next signal lands on comes back with it. A

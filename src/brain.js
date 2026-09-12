@@ -8,7 +8,7 @@
 // (see src/languages.js). It never knows a language's name.
 
 import { Decimal } from '@opentf/std';
-import { fromWorldData, grownBy } from './world.js';
+import { fromWorldData, grownBy, addAmounts, multiplyAmounts } from './world.js';
 import { UNITS, unitsIn as stepsInTime } from './calendar.js';
 
 // The conversation this signal belongs to, for the length of one turn. Set on
@@ -2072,7 +2072,7 @@ function heldUnder(bearer, kind, world, under = null) {
     for (const of of world.linked(bearer, relation)) {
       if (of === kind || !world.isA(of, kind)) continue;
       const many = world.held(bearer, relation, of);
-      if (many != null) total = (total ?? 0) + many;
+      if (many != null) total = total == null ? many : addAmounts(total, many);
     }
   }
   if (total != null || under == null || a.holding == null) return total;
@@ -2087,7 +2087,7 @@ function heldUnder(bearer, kind, world, under = null) {
     const many = world.held(bearer, a.holding, of);
     if (many == null) continue;
     const each = measureOf(of, kind, world, under);
-    if (each != null) total = (total ?? 0) + many * each;
+    if (each != null) total = total == null ? multiplyAmounts(many, each) : addAmounts(total, multiplyAmounts(many, each));
   }
   return total;
 }
@@ -3425,7 +3425,7 @@ function because(joined, world, mood, sent) {
       const kind = conceptOf(things[0]);
       const howMany = each.some((many) => many == null)
         ? null
-        : each.reduce((sum, many) => sum + many, 0);
+        : each.reduce((sum, many) => (sum == null ? many : addAmounts(sum, many)), null);
       // Something is being spoken of, so the question is about it. Where it
       // holds none of what was asked after, the brain does not know — it does
       // not go and count what it holds of its own instead. Whoever is talking
@@ -4728,7 +4728,7 @@ const OPERATIONS = [
   ['sine', 1, (x) => Math.sin(Number(x))],
   ['cosine', 1, (x) => Math.cos(Number(x))],
   ['tangent', 1, (x) => finite(Math.tan(Number(x)))],
-  ['magnitude', 1, (x) => exactValue(new Decimal(x).abs())],
+  ['magnitude', 1, (x) => whole((d) => d.abs(), x)],
   ['double', 1, (x) => whole((d) => d.multiply(2), x)],
   ['halve', 1, (x) => whole((d) => d.divide(2), x)],
 ];
@@ -4736,7 +4736,16 @@ const OPERATIONS = [
 function exactValue(value) {
   const text = value.toString();
   if (!text.includes('.')) {
-    const integer = BigInt(text);
+    // Not every decimal is an integer the machine can reach: something read
+    // off a chained operation may be so large it falls back to exponent
+    // notation, and that is no integer at all. Where there is no integer
+    // there is no exact value, so it is refused rather than raised.
+    let integer;
+    try {
+      integer = BigInt(text);
+    } catch {
+      return null;
+    }
     if (integer >= BigInt(Number.MIN_SAFE_INTEGER) && integer <= BigInt(Number.MAX_SAFE_INTEGER)) {
       return Number(integer);
     }

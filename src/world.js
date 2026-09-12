@@ -6,6 +6,55 @@
 // The brain owns the categories (living, person); the world says which term
 // realizes each one, via `anchors`. That is the whole bridge.
 
+// Adding amounts the machine counted exactly. Arithmetic on amounts is exact:
+// a half and two halves are three halves and a tenth and two tenths are three
+// tenths, never the nearest thing a double can hold. An amount is a whole
+// number or an exact decimal written out, and the sum is written the same two
+// ways: a whole sum is a whole number, anything else an exact decimal.
+const amountDigits = (value) => {
+  if (Number.isInteger(value)) return { digits: BigInt(value), scale: 0 };
+  if (typeof value === 'string' && /^-?\d+\.\d+$/.test(value)) {
+    const [whole, frac] = value.split('.');
+    const sign = whole.startsWith('-') ? -1n : 1n;
+    return { digits: sign * BigInt((sign < 0n ? whole.slice(1) : whole) + frac), scale: frac.length };
+  }
+  return null;
+};
+
+const bringTogether = ({ digits, scale }) => {
+  if (scale === 0) return digits;
+  return digits * BigInt(10) ** BigInt(scale);
+};
+
+export function addAmounts(left, right) {
+  const a = amountDigits(left);
+  const b = amountDigits(right);
+  if (a == null || b == null) return null;
+  const scale = Math.max(a.scale, b.scale, 0);
+  const ten = BigInt(10) ** BigInt(scale);
+  const sum = bringTogether({ digits: a.digits, scale: scale - a.scale }) + bringTogether({ digits: b.digits, scale: scale - b.scale });
+  if (sum % ten === 0n) return Number(sum / ten);
+  const negative = sum < 0n;
+  const text = (negative ? -sum : sum).toString().padStart(scale + 1, '0');
+  const frac = text.slice(-scale).replace(/0+$/, '');
+  return `${negative ? '-' : ''}${text.slice(0, text.length - scale)}.${frac}`;
+}
+
+export function multiplyAmounts(left, right) {
+  const a = amountDigits(left);
+  const b = amountDigits(right);
+  if (a == null || b == null) return null;
+  const product = a.digits * b.digits;
+  const scale = a.scale + b.scale;
+  const ten = BigInt(10) ** BigInt(scale);
+  if (scale === 0) return Number(product);
+  if (product % ten === 0n) return Number(product / ten);
+  const negative = product < 0n;
+  const text = (negative ? -product : product).toString().padStart(scale + 1, '0');
+  const frac = text.slice(-scale).replace(/0+$/, '');
+  return `${negative ? '-' : ''}${text.slice(0, text.length - scale)}.${frac}`;
+}
+
 export function fromWorldData(source) {
   // One order, whichever door the world came through. A file authors its terms
   // in whatever order reads well; a store hands them back by id. Nothing that
@@ -964,7 +1013,7 @@ export function fromWorldData(source) {
         for (const of of related(t.id, rel)) {
           if (!reaches(of, isRel).has(kind)) continue;
           const many = heldBy(t.id, rel, of);
-          if (many != null) total = (total ?? 0) + many;
+          if (many != null) total = total == null ? many : addAmounts(total, many);
         }
       }
       return total;

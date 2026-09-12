@@ -361,11 +361,16 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
     // changed. Where the doing is a transfer the brain already holds its ends
     // as its own, so the change goes there and what it was before stays behind
     // it.
-    if (rolePlayed(relation, world) && shifted(relation, reach(object), world)) return;
+    if (!denied && rolePlayed(relation, world) && shifted(relation, reach(object), world)) return;
     const primitive = standingOf(relation, reach(object), world);
     // How much of something a thing is, is the thing's own — it belongs on it
     // the way a colour does, not between it and the unit. Which quantity it is
     // of, the unit says.
+    //
+    // A denial is not how a thing is. `the sky is not blue` said nothing about
+    // the sky that stands; what was said was that blue does not stand between
+    // the sky and the world, so it is written as a fact against — never on the
+    // thing as if it were blue.
     if (primitive === MEASURE && quantity != null) {
       const one = held.nodes.find((node) => node.id === reach(subject));
       if (one) {
@@ -382,8 +387,17 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
           waiting.push({ subject: reach(subject), of, amount: quantity, unit: object });
           return;
         }
-        one.measures = [...(one.measures || []), { of, amount: quantity, unit: object }];
-        return;
+        // A denial is not how much a thing is: `tom is not 2 metre tall` said
+        // nothing that stands on tom. What was said was that the measure does
+        // not stand, and it is written below as a fact against — never on the
+        // thing as if it did. Where the thing carried that measure before, the
+        // denial takes it off.
+        if (denied) {
+          one.measures = (one.measures || []).filter((m) => m.of !== of || m.unit !== object);
+        } else {
+          one.measures = [...(one.measures || []), { of, amount: quantity, unit: object }];
+          return;
+        }
       }
     }
     // How a thing is belongs to it. Said beside it — a red box — it was
@@ -391,11 +405,20 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
     // between the two as a fact, so the same claim landed in two places and
     // which one depended on where English put the word. It goes on the thing
     // either way now, and there is one place to look.
+    // A denial is not how a thing is. `the sky is not blue` said nothing about
+    // the sky that stands; what was said was that blue does not stand between
+    // the sky and the world, so it stands below as a fact against — never on
+    // the thing as if it were blue. Where the thing carried that colour from
+    // a claim that stood before, the denial takes it off.
     if (primitive === PROPERTY) {
       const one = held.nodes.find((node) => node.id === reach(subject));
       if (one) {
-        one.how = { ...(one.how || {}), [qualityKind(object, world)]: object };
-        return;
+        if (denied) {
+          delete one.how?.[qualityKind(object, world)];
+        } else {
+          one.how = { ...(one.how || {}), [qualityKind(object, world)]: object };
+          return;
+        }
       }
     }
     // What is held is a thing of a kind, not a party to the fact: it is said
@@ -716,16 +739,32 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
     const one = held.facts.find((fact) => fact.key === key);
     return one ? one.id : null;
   };
+  // How something in reach is reached, where the signal only *spoke of* it.
+  // Most of what reaches is reached the usual way — as one of the graph's
+  // happenings, nodes or counts — but a happening is never made here. A
+  // question speaks of a robbery without claiming one, and making a happening
+  // out of it would write `a robbery was held` into a conversation that only
+  // asked. Where the graph already holds that happening it is reached as it;
+  // where it holds none, the concept itself is what was spoken of.
+  const focusReach = (id) => {
+    if (id == null) return null;
+    if (isHappening(id)) return happenings.get(kindHappened(id) ?? id) ?? id;
+    if (standing.has(id)) return standing.get(id);
+    if (counting.has(id)) return counting.get(id).of;
+    return id;
+  };
   for (const one of focus || []) {
     if (Number.isInteger(one)) bring(recorded(one));
-    else if (one && Number.isInteger(one.term)) bring(reach(one.term));
-    else if (one && one.standing) bring(stated(one.standing) ?? reach(one.standing.subject));
+    else if (one && Number.isInteger(one.term)) bring(focusReach(one.term));
+    else if (one && one.standing) bring(stated(one.standing) ?? focusReach(one.standing.subject));
   }
   // Two different terms may be one thing in the graph, so what is in reach is
-  // settled after they are reached, not before.
+  // settled after they are reached, not before. The same focus-reaching is
+  // re-applied here: how a term was reached the first time is how it is
+  // reached again, so the reaching can never call a happening into being.
   inReach = [];
   for (const one of inSight) {
-    const found = typeof one === 'string' ? one : reach(one);
+    const found = typeof one === 'string' ? one : focusReach(one);
     if (found != null && !inReach.includes(found)) inReach.push(found);
   }
 

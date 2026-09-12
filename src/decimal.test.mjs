@@ -55,3 +55,16 @@ test("an operation is worked out, not joined across", async () => {
   assertEquals(await says("2+2 = 4?"), "Yes. ✅");
   await forget();
 });
+
+test("a chained value beyond the count is refused, not raised", async () => {
+  // `10 power 300` is a number the machine reaches only as `1e+300`. No exact
+  // value stands in that notation, so the doubling is refused — and a refusal
+  // must not break the store or the graph with a raised error.
+  await forget();
+  const refusal = await brain("double 10 power 300");
+  assert(refusal.expression.state.says.includes("don't know"), refusal.expression.state.says);
+  await brain("z is 7");
+  const again = await brain("z + z");
+  assertEquals(again.expression.state.says, "14", "the brain goes on after the refusal");
+  await forget();
+});
