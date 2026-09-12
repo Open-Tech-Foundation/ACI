@@ -18,6 +18,8 @@
 // The graph holds no words. A concept is an id in the world, and how it is
 // spelled is the world's business, not this module's.
 
+import { grownBy } from './world.js';
+
 export const TRANSFER = 'transfer';
 export const PROPERTY_CHANGE = 'property-change';
 export const HOLDING = 'holding';
@@ -52,6 +54,15 @@ let counting = new Map();
 // and asking the caller to find it again invites a different answer.
 let against = null;
 
+// What this conversation was told, in the shape the brain reasons over. The
+// same facts as the rows above and not a second set of them: the rows are what
+// was said, this is the world to somebody who was told it. Both are the
+// conversation's, kept together and kept nowhere else — the authored world
+// never moves, so a session that was told something holds it here or not at
+// all.
+let taken = { terms: [] };
+let grown = null;
+
 // A conversation at a time, not a signal at a time. What one signal put in is
 // still there when the next arrives — that is what makes tom still tom three
 // signals later, and what makes the facts and doings, in the order they were
@@ -68,6 +79,25 @@ function clear() {
   happenings.clear();
   inReach = [];
   against = null;
+  taken = { terms: [] };
+  grown = null;
+}
+
+// A fact this conversation took in. The world it reasons over grows by that
+// fact and no other, so what one session was told is nothing to the next.
+function took(fact, authored) {
+  if (!fact || !(fact.terms || []).length) return;
+  taken = { terms: [...taken.terms, ...fact.terms] };
+  grown = grownBy(grown ?? authored, fact);
+}
+
+// The world this conversation reasons over: the authored world, and what it
+// has been told standing in it.
+function worldOf(authored) {
+  if (grown) return grown;
+  if (!taken.terms.length) return authored;
+  grown = grownBy(authored, taken);
+  return grown;
 }
 
 // What the conversation holds, as plain data. Everything here was put in by a
@@ -80,6 +110,7 @@ function dump() {
   return {
     held: Object.fromEntries(KINDS.map((kind) => [kind, held[kind].map((one) => ({ ...one }))])),
     counted: { ...counted },
+    taken,
     inReach: [...inReach],
     standing: [...standing],
     counting: [...counting],
@@ -97,6 +128,10 @@ function restore(state) {
     counted[kind] = state.counted?.[kind] ?? held[kind].length;
   }
   inReach = [...(state.inReach ?? [])];
+  // Grown again from the authored world when it is next asked for: the world
+  // a session was picked up in may not be the world it was left in.
+  taken = state.taken ?? { terms: [] };
+  grown = null;
   standing = new Map(state.standing ?? []);
   counting = new Map(state.counting ?? []);
   for (const [kind, row] of state.happenings ?? []) happenings.set(kind, row);
@@ -1416,6 +1451,8 @@ function serialize(world = against) {
     clear,
     dump,
     restore,
+    took,
+    worldOf,
     graph,
     fromUnderstood,
     serialize,

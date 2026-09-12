@@ -8,7 +8,7 @@
 // (see src/languages.js). It never knows a language's name.
 
 import { Decimal } from '@opentf/std';
-import { fromWorldData } from './world.js';
+import { fromWorldData, grownBy } from './world.js';
 import { UNITS, unitsIn as stepsInTime } from './calendar.js';
 
 // The conversation this signal belongs to, for the length of one turn. Set on
@@ -6792,26 +6792,6 @@ function oneAfterAnother(wholes, knowledge, circumstance) {
     remember: () => done.forEach((answer) => answer.remember()),
     phases: last.phases,
   };
-}
-
-// The world as it stands with a change in it, built for the brain's own use
-// while a signal is still being read. What the runtime does with the change is
-// the runtime's; this is only so the next thing said can be reasoned against
-// what the last one settled.
-export function grownBy(world, learned) {
-  if (!world || !learned) return world;
-  const terms = world.data.terms.map((term) => ({ ...term, links: [...(term.links || [])] }));
-  const at = new Map(terms.map((term, i) => [term.id, i]));
-  for (const proposed of learned.terms || []) {
-    const found = at.get(proposed.id);
-    if (found === undefined) {
-      at.set(proposed.id, terms.length);
-      terms.push({ ...proposed, links: [...(proposed.links || [])] });
-    } else {
-      terms[found].links.push(...(proposed.links || []));
-    }
-  }
-  return fromWorldData({ ...world.data, terms });
 }
 
 // on the structured signal, so the brain replies to the whole and not only to

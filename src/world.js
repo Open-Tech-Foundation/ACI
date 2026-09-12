@@ -1048,3 +1048,22 @@ export async function loadWorldFile(path) {
   const { file } = await import('runtime:fs');
   return fromWorldData(await file(path).json());
 }
+
+// A world and what a conversation has been told, as one world. Nothing is
+// written: what comes back is the world plus the change, and the world handed
+// in is untouched — two sessions grow the same authored world their own way.
+export function grownBy(world, learned) {
+  if (!world || !learned) return world;
+  const terms = world.data.terms.map((term) => ({ ...term, links: [...(term.links || [])] }));
+  const at = new Map(terms.map((term, i) => [term.id, i]));
+  for (const proposed of learned.terms || []) {
+    const found = at.get(proposed.id);
+    if (found === undefined) {
+      at.set(proposed.id, terms.length);
+      terms.push({ ...proposed, links: [...(proposed.links || [])] });
+    } else {
+      terms[found].links.push(...(proposed.links || []));
+    }
+  }
+  return fromWorldData({ ...world.data, terms });
+}

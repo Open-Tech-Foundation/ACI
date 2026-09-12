@@ -22,6 +22,17 @@ All notable changes to this project are documented in this file.
   kept, having no name to be asked for again, and forgetting drops every one
   that was.
 
+- **One conversation, one thing kept.** What a session was told stood in two
+  places at once — the graph's rows, and a world-shaped set of terms the
+  runtime accumulated beside them. Two arrangements of the same facts, kept
+  apart, persisted apart, and able to drift.
+
+  The conversation holds both now, and is the only thing kept: the rows are
+  what was said, and the world it reasons over is that same telling seen from
+  the other side. Picking a session up again restores one object, and the world
+  it had grows back from the authored world when it is next asked for. The
+  runtime keeps no copy of either.
+
 - **A session is what it was told, and the world is what was authored.** What
   a session taught the brain was written into the world — the store every
   session reads — so a fresh session already knew it:
