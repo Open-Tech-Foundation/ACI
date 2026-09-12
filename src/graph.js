@@ -159,7 +159,7 @@ function put(kind, entry) {
 //
 // Things first, then what stands between them and what happened to them: a
 // fact cannot reach a thing that is not there yet.
-function fromUnderstood(roots, world, focus, marking, from) {
+function fromUnderstood(roots, world, focus, marking, from, mood) {
   against = world;
   const calls = gather(roots, 'call');
   const links = gather(roots, 'learn').filter((one) => one.name === 'link');
@@ -171,6 +171,18 @@ function fromUnderstood(roots, world, focus, marking, from) {
   // What was claimed, whether or not the world had it already. A signal saying
   // something the brain knew still said it, and the conversation holds it.
   const claims = gather(roots, 'standing');
+
+  // Whether what the signal said stands. A signal the brain refuses as
+  // inconsistent still said what it said, and the conversation holds that it
+  // was said — but it does not stand, and nothing answers out of it. Three
+  // standings and no fourth: held, against, and said but not standing.
+  const refused = gather(roots, 'refuse').length > 0;
+  const stands = (denied) => (refused ? 'conflict' : denied === true ? 'against' : 'held');
+
+  // Asking is not saying. A question brings in whatever it speaks of — a
+  // pointer in the next signal must have somewhere to land — but it claims
+  // nothing, and nothing it names becomes a fact of this conversation.
+  const asking = mood === 'ask';
 
   // Which quantity a measure was said to be of, where the signal said it. Two
   // metres tall is a height, and the unit could not have told us.
@@ -335,6 +347,7 @@ function fromUnderstood(roots, world, focus, marking, from) {
   const waiting = [];
   const said = new Set();
   const claimed = (subject, relation, object, quantity, denied) => {
+    if (asking) return;
     // A claim naming neither what it is about nor what it stands to says
     // nothing. Joining two things leaves one of these over the pair, and it is
     // not a third holding beside the two real ones.
@@ -417,7 +430,7 @@ function fromUnderstood(roots, world, focus, marking, from) {
         said: relation,
         parts: [reach(subject), into],
         properties: {},
-        denied: denied === true,
+        stands: stands(denied),
       });
       if (one) {
         const who = reach(subject);
@@ -445,7 +458,7 @@ function fromUnderstood(roots, world, focus, marking, from) {
         // the primitive says a thing stands somewhere and the world says where.
         ...(primitive === PLACEMENT ? { as: relation } : {}),
       },
-      denied: denied === true,
+      stands: stands(denied),
     });
 
     // Said of something that happened — where it was, when it was — the
@@ -546,7 +559,7 @@ function fromUnderstood(roots, world, focus, marking, from) {
         : primitive === PROPERTY_CHANGE
           ? changing(roles, properties, world)
           : { roles, properties }),
-      denied: not === true,
+      stands: stands(not),
       when: when ?? null,
     };
     const already = isHappening(action) ? happening(action) : null;
@@ -660,7 +673,7 @@ function fromUnderstood(roots, world, focus, marking, from) {
       said: world.anchors.holding,
       parts: [reach(whose), reach(of)],
       properties: {},
-      denied: false,
+      stands: stands(false),
     });
   }
 
@@ -978,7 +991,7 @@ function kindHappened(id) {
 function happening(id) {
   const kind = kindHappened(id) ?? id;
   if (happenings.has(kind)) return happenings.get(kind);
-  const row = put('actions', { of: kind, said: kind, roles: {}, properties: {}, denied: false });
+  const row = put('actions', { of: kind, said: kind, roles: {}, properties: {}, stands: 'held' });
   happenings.set(kind, row);
   return row;
 }
@@ -1180,7 +1193,9 @@ function told(subject, relation, object) {
       continue;
     }
     if (one.said !== relation || !same(one.parts[1], object)) continue;
-    found = one.denied ? 'against' : 'held';
+    // Said and not standing is not an answer either way.
+    if (one.stands === 'conflict') continue;
+    found = one.stands;
   }
   return found;
 }
@@ -1210,7 +1225,7 @@ function sameState(one, relation, object, world) {
 function joinedBy(relation) {
   const found = [];
   for (const one of held.facts) {
-    if (one.said !== relation || one.denied) continue;
+    if (one.said !== relation || one.stands !== 'held') continue;
     for (const part of one.parts) {
       const term = termOf(part);
       if (term != null && !found.includes(term)) found.push(term);
@@ -1237,7 +1252,7 @@ function namedIn(word) {
 function standingIn(object, relation) {
   const found = [];
   for (const one of held.facts) {
-    if (one.said !== relation || one.denied) continue;
+    if (one.said !== relation || one.stands !== 'held') continue;
     if (!same(one.parts[1], object)) continue;
     const term = termOf(one.parts[0]);
     if (term != null && !found.includes(term)) found.push(term);
@@ -1277,7 +1292,7 @@ function amounts(quantity, from) {
     }
   }
   for (const one of held.facts) {
-    if (one.of !== MEASURE || one.denied) continue;
+    if (one.of !== MEASURE || one.stands !== 'held') continue;
     if (one.properties.of !== quantity) continue;
     if (from != null && one.parts[1] !== from) continue;
     found.set(one.parts[0], one.properties.amount);
@@ -1289,7 +1304,7 @@ function ranking(quantity, moment) {
   const below = new Map();
   for (const one of held.facts) {
     if (one.of !== COMPARISON || one.properties.on !== quantity) continue;
-    if (one.denied) continue;
+    if (one.stands !== 'held') continue;
     const [over, under] = one.parts;
     if (over == null || under == null) continue;
     if (!below.has(over)) below.set(over, new Set());
@@ -1380,6 +1395,10 @@ function serialize(world = against) {
           : ''),
     ),
   );
+  // A row that was said and does not stand says so. It is not a denial: a
+  // denial says what was said is false, and this says two things were said
+  // that cannot both stand, so neither was taken in.
+  const aside = (one) => (one.stands === 'conflict' ? '  (said, not standing)' : '');
   section(
     'facts',
     held.facts.map((one) => {
@@ -1393,7 +1412,7 @@ function serialize(world = against) {
       const said = own
         ? `${one.of}(${ends})`
         : `relation(${ends}, type: ${spell(one.of)})`;
-      return `${one.id}  ${one.denied ? 'not ' : ''}${said}${properties(one.properties)}`;
+      return `${one.id}  ${one.stands === 'against' ? 'not ' : ''}${said}${properties(one.properties)}${aside(one)}`;
     }),
   );
   section(
@@ -1435,7 +1454,7 @@ function serialize(world = against) {
         ? `${one.of}(${said})`
         : `event(${inside}${inside ? ', ' : ''}type: ${spell(one.of)})`;
       const holds = one.holds ? `  holds ${one.holds.join(', ')}` : '';
-      return `${one.id}  ${one.denied ? 'not ' : ''}${does}${when}${properties(one.properties)}${holds}`;
+      return `${one.id}  ${one.stands === 'against' ? 'not ' : ''}${does}${when}${properties(one.properties)}${holds}${aside(one)}`;
     }),
   );
   // A claim inside an instruction, said the way a fact is said.

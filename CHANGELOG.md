@@ -22,6 +22,26 @@ All notable changes to this project are documented in this file.
   kept, having no name to be asked for again, and forgetting drops every one
   that was.
 
+- **A row says whether it stands, and asking claims nothing.** The graph
+  recorded what was said. It had no way to say what became of it, so a claim
+  the brain refused sat in the conversation looking exactly like one it had
+  taken in, and a question put its own claim in beside them:
+
+      tom is a bird      f1  kind(n1, bird[85])
+      tom is a fish      f2  kind(n1, fish[28])
+      is tom a fish?     f4  kind(n1, fish[28])   ← asked, never said
+
+  Three standings now, and no fourth: **held**, **against**, and said but not
+  standing. A conflict is not a denial — nothing says the second claim is
+  false, only that it and the first cannot both stand — so it is in the
+  conversation, in the order it was said, marked as not standing, and nothing
+  answers out of it. A question brings in whatever it speaks of, so the next
+  signal's pointer has somewhere to land, and claims none of it.
+
+  This is what a row needs before the conversation can be the only thing the
+  brain reasons over: until now the world knew what had been accepted and the
+  graph only knew what had been uttered.
+
 - **One conversation, one thing kept.** What a session was told stood in two
   places at once — the graph's rows, and a world-shaped set of terms the
   runtime accumulated beside them. Two arrangements of the same facts, kept

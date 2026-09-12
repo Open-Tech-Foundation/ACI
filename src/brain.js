@@ -6898,6 +6898,7 @@ export function brainFrom(input, knowledge, circumstance) {
       inReach,
       spoken ? spoken.data.marking : null,
       at.from,
+      mood,
     );
   };
 

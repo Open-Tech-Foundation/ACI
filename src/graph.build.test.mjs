@@ -365,3 +365,27 @@ test("what a rule reaches is how the thing is", async () => {
   assert(bell.how != null, "worked out, and the bell is red all the same");
   await forget();
 });
+
+test("a fact says whether it stands, and three ways are all there are", async () => {
+  const held = await said('tom is a bird', 'tom is not a cat');
+  assertEquals(held.facts.map((one) => one.stands), ['held', 'against']);
+});
+
+test("what the brain would not take in was still said, and does not stand", async () => {
+  const held = await said('tom is a bird', 'tom is a fish');
+  // Both were said and both are in the conversation, in the order they were
+  // said. A conflict is not a denial: nothing says the second is false, only
+  // that it and the first cannot both stand, so neither was taken in.
+  assertEquals(held.facts.length, 2);
+  assertEquals(held.facts[1].stands, 'conflict');
+  assert(serialize().includes('(said, not standing)'), serialize());
+});
+
+test("asking claims nothing", async () => {
+  // A question brings in whatever it speaks of — the next signal's pointer has
+  // to have somewhere to land — but it says nothing, so nothing it names is a
+  // fact of this conversation.
+  const held = await said('tom is a bird', 'is tom an animal?');
+  assertEquals(held.facts.length, 1, 'the one thing that was actually said');
+  assert(held.nodes.some((one) => one.said === 'tom'), 'and tom is still here to be asked about');
+});
