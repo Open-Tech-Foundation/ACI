@@ -34,6 +34,10 @@ export function openBrain(url) {
   let sources = null;
   let store = null;
   let authored = null;
+  // Whether what settles is written somewhere it stays: a store on disk, or a
+  // memory fallback that holds this run only. The cache may let a settled
+  // conversation go only where the store will give it back.
+  let durable = false;
 
   // One thing at a time at the store: a read left running blocks the next
   // write, and two answers at once would otherwise interleave.
@@ -63,6 +67,35 @@ export function openBrain(url) {
   // what one was told is nothing to the other.
   const talks = new Map();
   const ALONE = Symbol('one thread');
+  const touches = new Map();
+
+  // How many conversations the brain holds open at once. A conversation that
+  // settled is in the store, so it can be let go from the cache and picked up
+  // again from there the next time it is spoken to; how many are held open is
+  // a bound on the cache, not on how many there are. Where the store is only
+  // this run's memory, a conversation has nowhere else to go, and none is let
+  // go from there.
+  const KEEP = 64;
+  const touched = (thread) => {
+    if (talks.has(thread)) touches.set(thread, Date.now());
+  };
+  const letGo = () => {
+    if (!durable || talks.size <= KEEP) return;
+    let oldest = null;
+    let when = Infinity;
+    for (const key of talks.keys()) {
+      if (key === ALONE) continue;
+      const at = touches.get(key) ?? Infinity;
+      if (at < when) {
+        when = at;
+        oldest = key;
+      }
+    }
+    if (oldest == null) return;
+    touches.delete(oldest);
+    talks.delete(oldest);
+    threads.delete(oldest);
+  };
 
   async function assemble() {
     const { file } = await import('runtime:fs');
@@ -84,12 +117,21 @@ export function openBrain(url) {
   async function open(root) {
     const named = url ?? (await import('runtime:process')).env.ACI_STORE;
     if (!named) return openStore('sqlite::memory:');
-    if (named.startsWith('sqlite:')) return openStore(named);
+    if (named.startsWith('sqlite:')) {
+      // A file-backed store is where the cache may let a conversation go, so
+      // this run's cache is bounded there. One in memory — this run's own, or
+      // the fallback below — holds a conversation nowhere else, so none is let
+      // go from it: nothing that was named would survive.
+      durable = !named.includes(':memory:');
+      return openStore(named);
+    }
     const path = named.startsWith('/') ? named : `${root}${named}`;
     try {
+      durable = true;
       return await openStore(`sqlite:${path}`);
     } catch {
       console.warn(`cannot write ${path} — this run will not be remembered`);
+      durable = false;
       return openStore('sqlite::memory:');
     }
   }
@@ -111,10 +153,14 @@ export function openBrain(url) {
   // is picked up where it was left rather than said again from the start.
   async function pickUp(thread) {
     const already = talks.get(thread);
-    if (already) return already;
+    if (already) {
+      touched(thread);
+      return already;
+    }
     const talk = conversation();
     if (thread === ALONE || !store) {
       talks.set(thread, talk);
+      touched(thread);
       return talk;
     }
     const kept = await readTalk(store, thread);
@@ -123,6 +169,7 @@ export function openBrain(url) {
     // otherwise stand in the way of the stored one, and the next signal that
     // came to it would find an empty conversation where a full one was kept.
     talks.set(thread, talk);
+    touched(thread);
     if (!kept) return talk;
     talk.restore(kept.graph);
     // What a word in the next signal lands on comes back with it. A
@@ -138,6 +185,8 @@ export function openBrain(url) {
     threads.set(thread, record);
     if (thread === ALONE || !store) return;
     await keepTalk(store, thread, { graph: talk.dump(), thread: record }, Date.now());
+    touched(thread);
+    letGo();
   }
 
   // The circumstance of the signal — where it came from, where it went, what

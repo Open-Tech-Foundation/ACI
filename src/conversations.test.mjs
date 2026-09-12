@@ -100,3 +100,25 @@ test("the store keeps a conversation under its name and gives it back", async ()
   await forgetTalks(store);
   assertEquals(await readTalk(store, "c1"), null);
 });
+
+test("the brain holds a bounded number of conversations open", async () => {
+  // Only a store on disk can hold a conversation the cache lets go of, so the
+  // cache is bounded over one: 65 conversations come in, and keeping the last
+  // few open is enough — the earliest ones do not stack up in memory, since
+  // the store has every one of them.
+  const url = "sqlite:../data/eviction.db";
+  const here = openBrain(url);
+  await here.forget();
+  for (let i = 0; i < 66; i += 1) {
+    await here.brain(`tom has ${i + 1} books`, { conversation: `c${i}` });
+  }
+  assert(here.held("c0") == null, "the earliest conversations were let go from the cache");
+  assert(here.held("c1") == null, "and the next earliest too");
+  assert(here.held("c65") != null, "the newest one is still held open");
+
+  // Letting go lost nothing: the conversation comes back whole from the store
+  // the next time it is spoken to.
+  await here.brain("hello", { conversation: "c0" });
+  assert(here.held("c0").serialize().includes("book"), "the conversation the cache let go was picked up whole");
+  await here.forget();
+});

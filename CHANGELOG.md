@@ -273,6 +273,24 @@ All notable changes to this project are documented in this file.
   its name was cached first and read second, so a risen read-by-name left the
   stale empty conversation in the cache. It reads it now, then caches it.
 
+- **A store keeps the newer settlement.** Every signal settles its
+  conversation in the store, and a settlement carried an older time could
+  climb over one that was already put there — a talk this run settled earlier
+  landing after a later one, and the newer one was gone. The store hands back
+  to an older settlement only where no newer one stands: a newer record is
+  left as it is. The backend opens the file-backed store in WAL, so a reader
+  never blocks a writer.
+
+- **The brain holds a bounded number of conversations open.** Every
+  conversation it had ever reached was held in memory for the run, and every
+  thread's last circumstance with it — a server that had met a hundred
+  thousand kept all hundred thousand open. A settled conversation is in the
+  store, so how many are held open is a bound on the cache, not on how many
+  there are: the conversations reached least recently are let go, and the
+  next time one is spoken to it is picked up whole from the store. Where the
+  store is only this run's memory, nothing is let go — there is nowhere for a
+  conversation to go to.
+
 - **A time is no way for a thing to be.** `a robbery was at a shop at night`
   left the shop night-coloured: a time read as a quality of whatever stood
   beside it. A time says when.

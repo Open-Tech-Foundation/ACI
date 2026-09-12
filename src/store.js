@@ -7,6 +7,10 @@
 // stale or to be shared by two sessions that never met.
 //
 // The brain never comes here. It is handed what it knows and asks that.
+//
+// A settlement writes the record of a conversation at the time it settled, and
+// a settlement with an older time may not climb over a newer one. The backend
+// opens a file-backed store in WAL, so a reader never blocks a writer.
 
 import { connect, sqlite, sql } from 'runtime:db';
 
@@ -41,10 +45,20 @@ async function rows(db, statement) {
 // A conversation, by the name it was given. Only a named one is kept: a signal
 // that named none is in the unnamed thread, and there is nothing to come back
 // to.
+//
+// A conversation is settled at each of its signals, and the record keeps the
+// time it was settled at. Where two settlements reach the store at once — two
+// runs, or a stale turn catching up — the newer record stands, and an older
+// settlement may not climb over one that was already put there. The insert
+// adds the conversation where no record was, and on a conflict overwrites it
+// only where what stands is no newer than this settlement: an equal-time one
+// is the same turn and goes through, a strictly older one is a stale turn and
+// is left alone.
 export async function keepTalk(db, id, state, at) {
   await db.execute(
     sql`insert into talk (id, state, at) values (${String(id)}, ${JSON.stringify(state)}, ${at ?? 0})
-        on conflict (id) do update set state = excluded.state, at = excluded.at`,
+        on conflict (id) do update set state = excluded.state, at = excluded.at
+          where talk.at <= excluded.at`,
   );
 }
 
