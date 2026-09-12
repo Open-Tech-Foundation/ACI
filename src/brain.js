@@ -3855,6 +3855,19 @@ function because(joined, world, mood, sent) {
         world.asymmetric(relation) &&
         said.indexOf(term) > at &&
         holes.some((hole) => said.indexOf(hole) !== at);
+      // A hole that sits before a joint that is not the barest `is` names the
+      // near end, and the near end is what is asked after: `what is on the
+      // crate` asks what stands on it, and `what is in the drawer` what stands
+      // in it, never what the crate or the drawer itself stands on or in. A
+      // hole that is the joint (a `where`) names no side, and a hole before
+      // the barest `is` asks what the thing is — the far end.
+      const holeBefore =
+        relation !== world.baseRelation &&
+        relation != null &&
+        holes.some((hole) => {
+          const i = said.indexOf(hole);
+          return i !== at && i < at;
+        });
       const twoEnded = relation != null && !world.symmetric(relation);
       // Asked after something by name, what answers is whatever has one.
       // Being called something is a fact a thing holds, never a kind it is,
@@ -3882,7 +3895,7 @@ function because(joined, world, mood, sent) {
       // there. Walked only where the walk out leaves the question open, or
       // where the joint says the near end is what was asked for.
       const backward =
-        !(seeksOn && pointed) && twoEnded && (outward.length === 0 || jointSide)
+        !(seeksOn && pointed) && twoEnded && (outward.length === 0 || jointSide || holeBefore)
           ? [...new Set([
               ...(graph ? graph.standingIn(subject, relation) : []),
               ...world.standing(subject, relation),

@@ -114,3 +114,18 @@ test("a question naming a word it never met still answers", async () => {
   assertEquals((await brain("who has the telescope")).expression.name, "unsure");
   await forget();
 });
+
+test("a place that is itself placed answers what stands in it, not where it stands", async () => {
+  await forget();
+  await brain("the flashlight is in the drawer");
+  await brain("the drawer is in the wardrobe");
+  // Both ends answer: what stands in the drawer (a flashlight) and where the
+  // drawer itself stands (in a wardrobe). The hole `what` sits before the
+  // joint `in`, so the near end is asked after — what stands in the drawer.
+  // A `where` hole is the joint, names no side, and keeps the drawer the near
+  // end, so the place answers what the drawer stands in.
+  assertEquals(await says("what is in the drawer?"), "flashlight");
+  assertEquals(await says("where is the drawer?"), "in a wardrobe");
+  assertEquals(await says("who is in the drawer?"), "flashlight");
+  await forget();
+});

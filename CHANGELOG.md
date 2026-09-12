@@ -229,6 +229,17 @@ All notable changes to this project are documented in this file.
   with, so a fact asked for in either direction still answers out of the one
   row.
 
+- **A place that is itself placed still answers what stands in it.** Asked
+  `what is in the drawer?` where the drawer held a flashlight, the drawer
+  itself was doing all the asking was told to and the answer came back as what
+  the drawer was in — a wardrobe — the moment the drawer was said to stand in
+  one. A question names one end of a fact, and when the named end is also the
+  other end of another fact both ends answer: walking out finds the wardrobe,
+  walking back finds the flashlight. Which was asked for is the joint's: a
+  hole before a real joint asks after the near end, so the thing standing in
+  the drawer answers, where a `where` hole is the joint and keeps the drawer
+  the near end, so the wardrobe answers.
+
 ### Removed
 
 - **The world's half of the store.** The store held a copy of the authored
