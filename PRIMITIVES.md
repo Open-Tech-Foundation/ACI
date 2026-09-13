@@ -211,7 +211,36 @@ semantics that rules cannot be written without.
 
 ### 3. Unified time, state and change
 
-- [ ] Represent moments and intervals, duration, start/end and simultaneity.
+- [x] Represent moments and intervals, duration, start/end and simultaneity —
+  *the chrono*. An ordering the conversation holds now lives on a single chain
+  of moments, one member-set and one before-link each, and the pairwise `order`
+  fact row is no longer written (`feat(core): the chrono is the one store for
+  ordering, not order rows`). A moment rows may also carry an absolute `at`
+  (seconds since an arbitrary nought), so the calendar's own arithmetic
+  (`calendar.js`: `momentOf`, `calendarOf`, `UNITS`, `IN_SECONDS`) can say a
+  clock time and a duration against the same scale. Intervals below are two
+  moments whose `at`s differ; simultaneity is one moment with two members.
+- [ ] Read clock times into absolute moments. What exists today, probed:
+  `sara arrived in the morning` already writes `event(..., at morning[518])` on
+  the action row — the event carries its coarse period — and compound numerals
+  count (`ten thirty`→1030, `nine forty five`→945), so the pieces are in reach.
+  Missing: a reading that turns `at nine forty five in the morning` into a
+  minute-of-day on the chrono moment — the prepositional `at … in the
+  <morning|afternoon|evening>` complement on a doing does not attach — and one
+  that says it back (`what time did the backup finish?`). Two construction
+  gaps stand in the way of the canonical clock complaint `nine fifteen`, which
+  counts as `nine forty five` does: the compound numeral grammar does not pass
+  the teens (`nine fifteen`, `eleven fifteen` are `unknown` while `ten thirty`
+  and `nine forty five` count), and the answer-side numeral-to-saying path
+  spells `940` as `nine forty` rather than as `nine hours and forty minutes`.
+- [ ] Add durations, `start`/`end` and offsets. `ran for thirty five minutes`
+  needs a doing that is a stretch: its start moment and its end moment, and the
+  difference read as `how long did the backup run?`. `ten minutes after the
+  backup finished` is the same arithmetic run forward from a known `at`. The
+  vocabulary does not exist yet either (`started`, `began`, `finish`, `ended`,
+  `later` have no word entries; `end` is only the sentence terminator), so the
+  scenario's own doing words must be authored into the world before the
+  readings can.
 - [ ] Generalize quantity/placement history into value-at-time state.
 - [ ] Add transition, becomes, starts, stops and persistence semantics.
 - [ ] Connect event time and causal order to the same temporal model.

@@ -322,6 +322,16 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
+- **The time campaign now builds on the chrono.** PRIMITIVES's unified-time
+  section records how clock times, durations and offsets sit on the moment
+  chain — an absolute `at` on a moment row is already there, intervals are two
+  moments whose `at`s differ, and simultaneity is one moment with two members —
+  and what the next construction must do: a reading from `at nine forty five in
+  the morning` to a minute-of-day, one back to words, and the compound-numeral
+  gap where the teens (`nine fifteen`) fail to count though `nine forty five`
+  does. No engine code changed; the probe trail that maps the gap is in
+  PRIMITIVES.
+
 - **A fact taken in does not send the brain back to the store for the world.**
   Every accepted fact was written to the store and then the whole world read
   back out of it — three thousand terms and three and a half thousand links —
