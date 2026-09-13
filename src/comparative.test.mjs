@@ -287,3 +287,39 @@ test("a bare comparison with nothing compared says nothing", async () => {
   assertEquals((await fresh("who is taller?")).expression.name, "unknown");
   await forget();
 });
+
+test("more of a counted hold asks for the holder at the high end", async () => {
+  await forget();
+  await brain("john has 5 apples");
+  await brain("sam has 3 apples");
+  assertEquals((await brain("who has more apples?")).expression.state.says, "john");
+  assertEquals((await brain("who has fewer apples?")).expression.state.says, "sam");
+  // What a holder holds, and not the order it was said in, is the answer.
+  await forget();
+  await brain("sam has 3 apples");
+  await brain("john has 5 apples");
+  assertEquals((await brain("who has more apples?")).expression.state.says, "john");
+  await forget();
+});
+
+test("a counted hold ties answer with every holder at the end", async () => {
+  await forget();
+  await brain("john has 5 apples");
+  await brain("sam has 5 apples");
+  assertEquals((await brain("who has more apples?")).expression.state.says, "john, sam");
+  await forget();
+});
+
+test("a counted comparison with nothing held says nothing", async () => {
+  assertEquals((await fresh("who has more apples?")).expression.name, "unsure");
+  await forget();
+});
+
+test("a counted comparison is over the chain, not just the spoken two", async () => {
+  await forget();
+  await brain("john has 5 apples");
+  await brain("sam has 3 apples");
+  await brain("dev has 8 apples");
+  assertEquals((await brain("who has more apples?")).expression.state.says, "dev");
+  await forget();
+});

@@ -266,6 +266,17 @@ All notable changes to this project are documented in this file.
   last?`, `who has more apples?`, and the `of`-compound capital question) are
   tracked there, and `AGENTS.md` now states the same ordering rule.
 
+- **More of a counted hold answers the holder at the high end.** `who has more
+  apples?` was unsure — it read two ways at once, `who has more` (found
+  nothing, since no one holds the word `more`) and `who has apples` (found
+  everyone who holds any), and neither compared a single count. A comparison
+  word read over a counted hold now ranks the holders by what each holds and
+  asks for whichever the word reads: `more` for the top of the ordering and
+  `less` for the bottom, where several hold the same end amount all of them
+  answer, and where nothing is held by anyone there is no end and no answer.
+  The counts are read the way `how many` reads them, as `holding` rows, and
+  the holders are the conversation's first, then the world's.
+
 ### Removed
 
 - **The world's half of the store.** The store held a copy of the authored

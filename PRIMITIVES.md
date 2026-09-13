@@ -43,14 +43,13 @@ them and must not add failures elsewhere.
 Verified clean-input gaps, from the `scan-clean` probe (previously
 `.probe/scan-clean.mjs`), in the order they surfaced:
 
-1. **Extreme other end.** `who arrived last?` is `unknown` after
-   `sara arrived before john`, while `who arrived first?` already answers.
-   Ordering's first/last is one-sided: the last extreme of a chain is not
-   read.
-2. **Aggregate comparison.** `who has more apples?` is `unsure` after
+1. **Extreme other end.** _Fixed_ — `who arrived last?` answers the far end of
+   an ordering the way `who arrived first?` answers the near, read through the
+   ordering's declared converse (`last` joins `first` the other way round).
+2. **Aggregate comparison.** `who has more apples?` was `unsure` after
    `john has 5 apples`, `sam has 3 apples`, despite `how many apples does
-   john have?` answering. Comparison needs a counted set's holder as its
-   named side.
+   john have?` answering. Comparison now ranks a counted set's holders and
+   answers `more` from the top and `less` from the bottom of the held counts.
 3. **`of`-compound questions.** `the capital of france is paris` is stored,
    yet `what is the capital of france?` and `is paris the capital of
    france?` both answer `unknown`. The compact form `france capital what`

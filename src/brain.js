@@ -3805,6 +3805,51 @@ function because(joined, world, mood, sent) {
         ]),
       ];
     }
+    // A comparison word over a counted hold ranks the holders and asks for the
+    // end. `who has more apples` — who being asked, has heard, and a counted
+    // kind on it — is answered by the holder standing at the end the word
+    // reads from, never by the bare comparison word, which no one holds. Where
+    // several hold the same end amount, all of them answer; where nothing is
+    // held by anyone, there is no end and no answer.
+    const countedEnd = (() => {
+      const head = said.find((n) => {
+        const of = conceptOf(n);
+        return of === a.more || of === a.less;
+      });
+      if (a.holding == null || head == null || relation !== a.has) return undefined;
+      const kindOf = terms.find((n) => {
+        const of = conceptOf(n);
+        return (
+          of != null &&
+          of !== a.more &&
+          of !== a.less &&
+          world.isA(of, a.thing) &&
+          world.isA(of, a.relation) === false
+        );
+      });
+      if (kindOf == null) return undefined;
+      const kind = conceptOf(kindOf);
+      const heldOnes = [
+        ...(graph ? graph.standingIn(kind, a.has) : []),
+        ...world.standing(kind, a.holding),
+        ...world.individualsOf(kind).flatMap((one) => world.standing(one, a.holding)),
+      ];
+      const holders = [...new Set(heldOnes)];
+      if (holders.length === 0) return undefined;
+      const fromLess = conceptOf(head) === a.less;
+      const ranked = holders.map((one) => ({ one, n: world.held(one, a.holding, kind) ?? 0 }));
+      const end = fromLess
+        ? Math.min(...ranked.map((r) => r.n))
+        : Math.max(...ranked.map((r) => r.n));
+      const winner = ranked.filter((r) => r.n === end).map((r) => r.one);
+      return [
+        withBranch(root, [
+          ...root.branch,
+          node('answer', 'link', [], { subject: null, relation, found: winner }),
+        ]),
+      ];
+    })();
+    if (countedEnd != null) return countedEnd;
     const nodes = [];
     const asked = terms.flatMap((t) => membersFor(t, world, sent));
     for (const [i, term] of asked.entries()) {
