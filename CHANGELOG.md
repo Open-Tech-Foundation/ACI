@@ -6,6 +6,16 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Asked *when*, the brain reads the doing's time off the record.** A time
+  said of a doing is kept on the doing itself — `at 10 hour[220]`,
+  `at morning[518]` — never linked to the kind it is on the world's side, so
+  no walk finds it. A when-question now falls back to what the question names:
+  asked `when did the backup start?` after the morning claim, the answer is
+  `morning`, and what no time was ever told never answers — `when did the
+  server start?` stays `I don't know.` A clock reading still answers nothing
+  (an hour and how many of it become a phrase only in the reading's own voice),
+  which stays the campaign's next step.
+
 - **The operations vocabulary.** The time campaign's working example — a server
   and its backup, an update, a crash and a restart — had no words: `backup`,
   `update`, `crash`, `restart` and `finish` were unknown, and nothing of the

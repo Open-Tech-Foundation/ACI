@@ -5818,6 +5818,19 @@ if (far !== undefined) {
       }
     }
   }
+  // A time said of a doing is kept on the doing, never linked to the kind it
+  // is on the world's side, so no walk finds it. What was said of the very
+  // thing the question names reads off the record the conversation keeps, and
+  // the times its doings were told at are the answer: asked when the backup
+  // started, the morning it was started in. A clock reading — an hour and
+  // how many of it — answers what it is only where the number and the unit
+  // can be said together, which is the reading's to do and not this walk's.
+  if (hole.role === a.when && found.length === 0) {
+    const rows = graph ? graph.graph().actions : [];
+    const mine = rows.filter((r) => known.some((p) => r.of != null && world.isA(r.of, p.of)));
+    const times = [...new Set(mine.flatMap((r) => r.times ?? []))];
+    found.push(...times);
+  }
   return node('answer', 'link', [], { subject: action, relation: hole.role, found });
 }
 
