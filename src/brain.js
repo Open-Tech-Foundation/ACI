@@ -5174,7 +5174,36 @@ function act(said, claims, world, side, sides, allocate) {
   // How much of a time — eight hours — is a reading of the clock. A time
   // itself — yesterday — is when it happened, and the doing holds it the same
   // way it holds which side of now it was on.
-  const clock = parts.find((p) => timely(p) && p.amount != null) || null;
+  //
+  // Where a doing carries more than one amount of time — ten hours and
+  // fifteen minutes — it is one reading, not two: both are the same scale, the
+  // smaller subdivided, so they join into the smallest of them, the way the
+  // clock's reading is said. A single amount stands as it was said.
+  const clockParts = parts.filter((p) => timely(p) && p.amount != null);
+  const time = (() => {
+    if (clockParts.length === 0) return null;
+    if (clockParts.length === 1) {
+      const one = clockParts[0];
+      return { amount: Number(one.amount), unit: one.of };
+    }
+    const scale = (term) => {
+      const unit = UNITS.find((name) => a[name] === term);
+      const at = unit == null ? -1 : UNITS.indexOf(unit);
+      return at < 0 ? -1 : at;
+    };
+    const target = clockParts.reduce((w, p) => (scale(p.of) < scale(w.of) ? p : w), clockParts[0]);
+    const halves = clockParts.map((p) => {
+      const many = unitsIn(p.of, target.of, world);
+      return many == null ? null : Number(many) * Number(p.amount);
+    });
+    // A scale with no way between two of its units never joins; the first of
+    // them is all there is to say.
+    if (halves.some((v) => v == null)) {
+      const one = clockParts[0];
+      return { amount: Number(one.amount), unit: one.of };
+    }
+    return { amount: halves.reduce((sum, v) => sum + v, 0), unit: target.of };
+  })();
   // A phrase pointing at a time says when the doing was, whatever word opened
   // it: in the evening and on monday are both whens, and the preposition is
   // the language's business. So a joint whose far end is a time is not a place
@@ -5189,7 +5218,7 @@ function act(said, claims, world, side, sides, allocate) {
     action,
     at,
     when: whenIn(said, world),
-    ...(clock ? { time: { amount: clock.amount, unit: clock.of } } : {}),
+    ...(time ? { time } : {}),
     ...(times.length > 0 ? { times } : {}),
     not: denied,
     parts: parts.filter((part) => !timely(part)),

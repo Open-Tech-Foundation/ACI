@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A doing's clock reading joins its parts into one.** `at ten hours and
+  fifteen minutes` is one reading, not two: the parts land on the event row as
+  a single measure in the smallest of their units — `at 615 minute[221]` — by
+  way of the units the brain shares with every scale (an hour is sixty
+  minutes, a minute sixty seconds). A single amount — `at ten hours` —
+  stands as it was said, and two units a scale gives no way between never
+  join, so nothing near enough is ever said. The reading is now on the record
+  whole, minutes of the day, ready for the clock to read back.
+
 - **Asked *when*, the brain reads the doing's time off the record.** A time
   said of a doing is kept on the doing itself — `at 10 hour[220]`,
   `at morning[518]` — never linked to the kind it is on the world's side, so

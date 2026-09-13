@@ -48,20 +48,20 @@ test("re-offering the ordering the other way round is refused", async () => {
   await forget();
 });
 
-test("a doing may carry a clock measure on its at", async () => {
+test("a doing's clock reading joins its hours and minutes", async () => {
   // `at ten hours and fifteen minutes` is spoken as a measure on the doing —
   // the event's `at` row carries the count, ready for the calendar to read as
-  // seconds of the day. That reading is the next construction; this test pins
-  // the surface it builds on.
+  // seconds of the day. Two amounts of one scale are one reading: they join
+  // into the smallest of them, the way the clock's reading is said.
   await fresh("the backup started at ten hours and fifteen minutes");
   const graph = serialize();
   assert(
-    /event\([^\n]*\)\s+at 10 hour\[220\]/.test(graph),
-    `ten hours stood as the at:\n${graph}`,
+    /event\([^\n]*\)\s+at 615 minute\[221\]/.test(graph),
+    `ten hours and fifteen minutes joined into one reading in minutes:\n${graph}`,
   );
   assert(
-    !/at 10 hour\[220\].*15 minute/.test(graph),
-    `the quarter-hour does not yet join the at — that join is the clock reading`,
+    !/at 15 minute/.test(graph),
+    `the parts do not stand as two readings:\n${graph}`,
   );
   await forget();
 });
