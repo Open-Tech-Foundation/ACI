@@ -17,7 +17,9 @@ All notable changes to this project are documented in this file.
   and re-offering it the other way round is refused with the timeline
   untouched, exactly as any ordering claim is. The scenario's ordering half is
   now speakable end to end; its clock times and durations remain the campaign's
-  next step.
+  next step. A clock measure already settles on the row — `the backup started
+  at ten hours and fifteen minutes` writes `at 10 hour[220]` — pinning the
+  surface the clock reading builds on, quarter hours not yet joined.
 
 - **The chrono: one timeline, and no duplicate store.** An ordering claim was
   remembered as a pairwise fact row, one per telling — `morning is before

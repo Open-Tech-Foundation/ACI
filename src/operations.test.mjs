@@ -47,3 +47,21 @@ test("re-offering the ordering the other way round is refused", async () => {
   assert(order.join(" > ") === "server[2585] > backup[3043]", `the timeline is untouched:\n${graph}`);
   await forget();
 });
+
+test("a doing may carry a clock measure on its at", async () => {
+  // `at ten hours and fifteen minutes` is spoken as a measure on the doing —
+  // the event's `at` row carries the count, ready for the calendar to read as
+  // seconds of the day. That reading is the next construction; this test pins
+  // the surface it builds on.
+  await fresh("the backup started at ten hours and fifteen minutes");
+  const graph = serialize();
+  assert(
+    /event\([^\n]*\)\s+at 10 hour\[220\]/.test(graph),
+    `ten hours stood as the at:\n${graph}`,
+  );
+  assert(
+    !/at 10 hour\[220\].*15 minute/.test(graph),
+    `the quarter-hour does not yet join the at — that join is the clock reading`,
+  );
+  await forget();
+});

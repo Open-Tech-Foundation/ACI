@@ -222,25 +222,32 @@ semantics that rules cannot be written without.
   moments whose `at`s differ; simultaneity is one moment with two members.
 - [ ] Read clock times into absolute moments. What exists today, probed:
   `sara arrived in the morning` already writes `event(..., at morning[518])` on
-  the action row — the event carries its coarse period — and compound numerals
-  count (`ten thirty`→1030, `nine forty five`→945), so the pieces are in reach.
-  Missing: a reading that turns `at nine forty five in the morning` into a
-  minute-of-day on the chrono moment — the prepositional `at … in the
-  <morning|afternoon|evening>` complement on a doing does not attach — and one
-  that says it back (`what time did the backup finish?`). Two construction
-  gaps stand in the way of the canonical clock complaint `nine fifteen`, which
-  counts as `nine forty five` does: the compound numeral grammar does not pass
-  the teens (`nine fifteen`, `eleven fifteen` are `unknown` while `ten thirty`
-  and `nine forty five` count), and the answer-side numeral-to-saying path
-  spells `940` as `nine forty` rather than as `nine hours and forty minutes`.
+  the action row — the event carries its coarse period — and an `at` measure
+  lands on the row too: `the backup started at ten hours and fifteen minutes`
+  writes `at 10 hour[220]`, so a doing already carries a clockable count. A
+  clock reading like `the clock reads ten hours and fifteen minutes` holds both
+  `time: 10 hour` and `time: 15 minute` on the node, so the composition
+  `calendar.js` needs is already spoken by the engine in pieces; what a reading
+  has yet to do is join hours and minutes into one minute-of-day, add the
+  morning/afternoon offset, place that on the chrono moment's `at`, and say it
+  back (`when did the backup start?` answers nothing today). Construction notes:
+  the compound numeral grammar does not pass the teens (`nine fifteen`,
+  `eleven fifteen` are `unknown` while `ten thirty` and `nine forty five`
+  count), the `when` interrogative (concept 567) has no answering path, and the
+  answer-side numeral-to-saying path spells a quantity as figures rather than
+  as hours and minutes.
 - [ ] Add durations, `start`/`end` and offsets. `ran for thirty five minutes`
   needs a doing that is a stretch: its start moment and its end moment, and the
   difference read as `how long did the backup run?`. `ten minutes after the
   backup finished` is the same arithmetic run forward from a known `at`. The
-  vocabulary does not exist yet either (`started`, `began`, `finish`, `ended`,
-  `later` have no word entries; `end` is only the sentence terminator), so the
-  scenario's own doing words must be authored into the world before the
-  readings can.
+  ordering half is speakable now — the operations vocabulary (backup, update,
+  crash, restart, finish) is authored, each doing records its event, and
+  `the server started before the backup` stands once on the chrono with the
+  reverse refused (`feat(core): the operations vocabulary records its doings on
+  the chrono`). What remains is the stretch itself: `ran for` and `took` parse
+  but claim nothing standing today, and `end` is only the sentence terminator —
+  `started`, `began`, `ended` and `later` are words the stretch reading must
+  live on.
 - [ ] Generalize quantity/placement history into value-at-time state.
 - [ ] Add transition, becomes, starts, stops and persistence semantics.
 - [ ] Connect event time and causal order to the same temporal model.
