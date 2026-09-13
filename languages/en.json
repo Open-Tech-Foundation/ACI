@@ -15,7 +15,7 @@
       "places": 10
     },
     "sign": {
-      "characters": "+ - = < > * / × ÷ ^ %",
+      "characters": "+ - = < > * / \u00d7 \u00f7 ^ %",
       "alone": true
     },
     "group": {
@@ -1513,7 +1513,7 @@
       "concept": 568,
       "names": false
     },
-    "×": {
+    "\u00d7": {
       "pos": "verb",
       "meaning": "times",
       "concept": 568,
@@ -1758,7 +1758,7 @@
       "concept": 569,
       "names": false
     },
-    "÷": {
+    "\u00f7": {
       "pos": "verb",
       "meaning": "divide",
       "concept": 569,
@@ -18385,6 +18385,89 @@
       "concept": 3031,
       "when": "past",
       "alone": false
+    },
+    "backup": {
+      "pos": "noun",
+      "meaning": "backup",
+      "concept": 3043
+    },
+    "backups": {
+      "pos": "noun",
+      "meaning": "backups",
+      "concept": 3043
+    },
+    "update": {
+      "pos": "noun",
+      "meaning": "update",
+      "concept": 3044
+    },
+    "updates": {
+      "pos": "noun",
+      "meaning": "updates",
+      "concept": 3044
+    },
+    "finish": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "finish",
+      "concept": 3040
+    },
+    "finishes": {
+      "pos": "verb",
+      "meaning": "finishes",
+      "concept": 3040,
+      "person": "third",
+      "number": "singular"
+    },
+    "finished": {
+      "pos": "verb",
+      "meaning": "finished",
+      "concept": 3040,
+      "when": "past"
+    },
+    "crash": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "crash",
+      "concept": 3041
+    },
+    "crashes": {
+      "pos": "verb",
+      "meaning": "crashes",
+      "concept": 3041,
+      "person": "third",
+      "number": "singular"
+    },
+    "crashed": {
+      "pos": "verb",
+      "meaning": "crashed",
+      "concept": 3041,
+      "when": "past"
+    },
+    "restart": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "restart",
+      "concept": 3042
+    },
+    "restarts": {
+      "pos": "verb",
+      "meaning": "restarts",
+      "concept": 3042,
+      "person": "third",
+      "number": "singular"
+    },
+    "restarted": {
+      "pos": "verb",
+      "meaning": "restarted",
+      "concept": 3042,
+      "when": "past"
     }
   },
   "unknown": {
@@ -18548,12 +18631,12 @@
     "compare": " {subject} is {relation} than {object}.",
     "did": " {subject} {relation}.",
     "didTo": " {subject} {relation} {object}.",
-    "affirm": "Yes. ✅{meaning}",
-    "deny": "No. ❌",
+    "affirm": "Yes. \u2705{meaning}",
+    "deny": "No. \u274c",
     "answer": "{meaning}",
     "unsure": "{self} don't {relation}.",
-    "empathy": "Sorry. 😔",
-    "glad": "Good. 🙂",
+    "empathy": "Sorry. \ud83d\ude14",
+    "glad": "Good. \ud83d\ude42",
     "unheard": "{self} don't {relation} \"{meaning}\".",
     "unknown": "I don't understand.",
     "agree": "Ok.",
@@ -18563,7 +18646,7 @@
     "request": "Please.",
     "offer": "Would you like {meaning}?",
     "compliment": "That's nice.",
-    "conflict": "Conflict. ⚠{meaning}"
+    "conflict": "Conflict. \u26a0{meaning}"
   },
   "grammar": {
     "start": "sentence",

@@ -6,6 +6,19 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **The operations vocabulary.** The time campaign's working example — a server
+  and its backup, an update, a crash and a restart — had no words: `backup`,
+  `update`, `crash`, `restart` and `finish` were unknown, and nothing of the
+  scene could be said. The world now holds them — finish, crash and restart as
+  motions beside run and arrive, backup and update as processes — and English
+  says them (inflected and past like any other verb). Each records its doing,
+  and an ordering over them stands once on the chrono: `the server started
+  before the backup` writes no pairwise row, holds the starting on the record,
+  and re-offering it the other way round is refused with the timeline
+  untouched, exactly as any ordering claim is. The scenario's ordering half is
+  now speakable end to end; its clock times and durations remain the campaign's
+  next step.
+
 - **The chrono: one timeline, and no duplicate store.** An ordering claim was
   remembered as a pairwise fact row, one per telling — `morning is before
   afternoon` wrote `order(morning, afternoon)`, and every position asked for
