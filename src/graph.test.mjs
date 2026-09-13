@@ -114,6 +114,20 @@ test("the last of a chain of arrivals", async () => {
   );
 });
 
+test("an ordering over a doing says both of them did it", async () => {
+  // `sara arrived before john` relates sara and john, but the arriving is not
+  // a third party to it — it happened to each of them, and being told the
+  // ordering is being told both arrived. The arrival stays on the record as a
+  // happening of its own alongside the ordering that put the two in order.
+  assertEquals(await said("sara arrived before john", "did sara arrive?"), "Yes. ✅");
+  assertEquals(await said("sara arrived before john", "did john arrive?"), "Yes. ✅");
+  assertEquals(
+    await said("sara arrived before john", "who arrived first?"),
+    "sara",
+    "and the ordering still reads its far end from the two of them",
+  );
+});
+
 test("an extreme with nobody in the ordering answers nobody", async () => {
   // The world orders the past before the present of its own accord, and
   // nobody asking what happened first is asking after the past. Nothing in

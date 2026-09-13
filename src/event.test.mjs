@@ -66,6 +66,15 @@ test("a relation between two doings is still the signal itself", async () => {
   await forget();
 });
 
+test("an ordering over a doing puts both doings on the record", async () => {
+  await fresh("asha arrived before deepak");
+  const graph = serialize();
+  assert(/event\(n1, type: arrive/.test(graph), `asha's arrival happened:\n${graph}`);
+  assert(/event\(n2, type: arrive/.test(graph), `and deepak's did too:\n${graph}`);
+  assert(/order\(n1, n2\)/.test(graph), `the ordering between them still stands:\n${graph}`);
+  await forget();
+});
+
 test("several who did it are several, not the last of them", async () => {
   await fresh("hema and arun spoke");
   const graph = serialize();

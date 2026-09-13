@@ -54,6 +54,14 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
    yet `what is the capital of france?` and `is paris the capital of
    france?` both answer `unknown`. The compact form `france capital what`
    already answers, so only the `of` phrasing is unresolved.
+4. **A doing inside an ordering.** _Fixed_ — `sara arrived before john`
+   related sara to john and never recorded that either arrived, so `did sara
+   arrive?` answered `I don't know` in a conversation that had just said so.
+   An ordering whose word sits on a doing now keeps the happening for each of
+   them — who did it, where (told no place, the brain's own **somewhere**),
+   and when — beside the ordering that still reads its two ends. The far-end
+   readings (`who arrived first/last?`) that the ordering answered before are
+   unchanged.
 
 ## Status legend
 

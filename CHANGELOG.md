@@ -277,6 +277,18 @@ All notable changes to this project are documented in this file.
   The counts are read the way `how many` reads them, as `holding` rows, and
   the holders are the conversation's first, then the world's.
 
+- **An ordering over a doing records the doing itself.** `sara arrived before
+  john` was read only as an ordering between sara and john: it said one came
+  before the other, and never that either had happened — `did sara arrive?`
+  answered *I don't know* out of a conversation that had just said so. An
+  ordering whose word sits on a doing now puts the happening on the record too:
+  each of the two has a happening of their own holding who did it, where
+  (told no place, the happening is **somewhere**, a term of the brain's own)
+  and at the time it was said, while the ordering between the two of them
+  still stands and still reads its far end. Asked who arrived first or whether
+  anyone arrived at all, there is a happening to read; asked what the ordering
+  joined, the two of them answer as before.
+
 ### Removed
 
 - **The world's half of the store.** The store held a copy of the authored
@@ -299,6 +311,14 @@ All notable changes to this project are documented in this file.
   again reads it from there.
 
 ### Fixed
+
+- **A barest `is` answers whatever stands in it, not whatever stands inside
+  it.** `what is existence?` was answered with thing and property — the four
+  modes beneath it, never what existence is. Asked what the top of the
+  classification ladder is, nothing that hangs under it is it. A root with
+  kinds folded under it now answers nothing, while who-questions still answer
+  with the people standing to a kind: told `mira is a heron`, `who is a
+  heron?` answers mira.
 
 - **A denial says no to one claim, and nothing about the thing.** `the sky is
   not blue` was read as a colour of the sky and written onto it the way `the

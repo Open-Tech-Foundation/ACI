@@ -1,0 +1,17 @@
+{
+  "anchors": {
+    "somewhere": 3099
+  },
+  "terms": [
+    {
+      "id": 3099,
+      "name": "somewhere",
+      "links": [
+        {
+          "rel": 294,
+          "to": 11
+        }
+      ]
+    }
+  ]
+}

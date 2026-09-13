@@ -3934,13 +3934,30 @@ function because(joined, world, mood, sent) {
       // and not about the drum, so the claim itself is what is looked for, and
       // what is joined to it as its cause is what the answer is about.
       const outward = seeksOn && pointed ? [] : reached(subject, relation, world).filter(wants);
+      // Asked what the barest is-sentence leaves open, nothing that stands in
+      // the thing is what it is: `what is existence` answers nothing, and
+      // thing and property answer to it rather than it to them. The backward
+      // walk answers other relations — holding, placement — and for the barest
+      // is what it would hand back is whoever stands inside, never what the
+      // thing itself is.
+      // Asked what the barest is-sentence leaves open, nothing that stands in
+      // the thing is what it is: `what is existence` answers nothing, and
+      // thing and property answer to it rather than it to them. The backward
+      // walk answers other relations — holding, placement — and for the barest
+      // is what it would hand back is whoever stands inside, never what the
+      // thing itself is. Where what stands inside are individuals — someone
+      // told to be a heron — the question is who-asking, and they answer.
+      const barestRoot =
+        relation === world.baseRelation &&
+        outward.length === 0 &&
+        world.standing(subject, relation).some((t) => !world.isIndividual(t));
       // What this conversation was told comes first, and the world answers
       // where it is silent. Somebody named a moment ago is in the conversation
       // and not yet in the world, so a question about them reaches nothing
       // there. Walked only where the walk out leaves the question open, or
       // where the joint says the near end is what was asked for.
       const backward =
-        !(seeksOn && pointed) && twoEnded && (outward.length === 0 || jointSide || holeBefore)
+        !barestRoot && !(seeksOn && pointed) && twoEnded && (outward.length === 0 || jointSide || holeBefore)
           ? [...new Set([
               ...(graph ? graph.standingIn(subject, relation) : []),
               ...world.standing(subject, relation),
@@ -4064,8 +4081,88 @@ function because(joined, world, mood, sent) {
       const things = list.filter((n) => !reaches(n, a.action, world));
       return things.length > 0 ? things : list;
     };
+    const hadDoing = (list) => list.some((n) => reaches(n, a.action, world));
+    const preLefts = lefts;
+    const preRights = rights;
     lefts = notDoing(lefts);
     rights = notDoing(rights);
+    // An ordering over what happened: `sara arrived before john` says the two
+    // arrivals stood one before the other. The ordering keeps ordering the two
+    // of them, but each arrival itself goes on the record too — a happening of
+    // the word's own, holding who did it and somewhere, and at a time when one
+    // was said. Asked who arrived first, or whether anyone arrived at all, there
+    // is a happening to read. Everything else an ordering joins stays as it was:
+    // only where the ordering's word sat on a doing does the doing happen here.
+    const orderingDoing =
+      mood === 'tell' &&
+      a.order != null &&
+      (relation === a.order || world.isA(relation, a.order) || world.subrelationOf(relation, a.order)) &&
+      lefts.length === 1 &&
+      rights.length === 1 &&
+      a.agent != null &&
+      !said.some(negatesOn) &&
+      (hadDoing(preLefts) || hadDoing(preRights));
+    const done = orderingDoing
+      ? preLefts.find((n) => reaches(n, a.action, world)) ??
+        preRights.find((n) => reaches(n, a.action, world))
+      : null;
+    const arrivals = [];
+    if (done != null) {
+      const allocate = sent.allocate;
+      const act = conceptOf(done);
+      const when = whenIn(said, world);
+      const atNow = world.now();
+      // A thing spoken of as one of its kind is that one, made like any doing
+      // would make it: `a man arrived before a boy` makes the man and the boy,
+      // and the happening is theirs.
+      const calls = [];
+      const who = (n) => {
+        const concept = conceptOf(n);
+        if (concept == null) return null;
+        if (!world.isA(concept, a.thing) || world.isIndividual(concept)) return concept;
+        const id = allocate();
+        const name = `${world.term(concept).name}#${id}`;
+        calls.push(node('call', name, [], { name, id, of: concept, made: true }));
+        return id;
+      };
+      const event = (concept) => {
+        const id = allocate();
+        return node('event', `${world.term(act).name}#${id}`, [], {
+          id,
+          action: act,
+          at: atNow,
+          when,
+          not: false,
+          parts: [{ role: a.agent, of: concept, amount: null }],
+        });
+      };
+      const lWho = who(lefts[0]);
+      const rWho = who(rights[0]);
+      if (lWho != null && rWho != null) {
+        const lDone = event(lWho);
+        const rDone = event(rWho);
+        arrivals.push(
+          ...calls,
+          lDone,
+          rDone,
+          // Where it happened. Told no place, the happening is somewhere — a
+          // shared term of the brain's own, so the record of where each one
+          // stood reads back somewhere rather than nothing.
+          ...(a.placement != null && a.somewhere != null
+            ? [lWho, rWho].map((of) =>
+                node('learn', 'link', [], {
+                  subject: of,
+                  relation: a.placement,
+                  object: a.somewhere,
+                  quantity: null,
+                  made: null,
+                  not: false,
+                }),
+              )
+            : []),
+        );
+      }
+    }
     // A plural pointer stands for every topic in focus, one apiece.
     lefts = lefts.flatMap((n) => membersFor(n, world, sent));
     rights = rights.flatMap((n) => membersFor(n, world, sent));
@@ -4110,8 +4207,12 @@ function because(joined, world, mood, sent) {
     // Every fact the signal offered, in the order it offered them.
     const pairs = lefts.flatMap((left) => rights.map((right) => [left, right]));
     const offered = pairs.map(([left, right]) => factFor(left, right, negated, joint)).filter((ns) => ns.length > 0);
-    if (offered.length === 0) return roots;
-    return [withBranch(root, [...root.branch, ...asOneOffering(offered)])];
+    if (offered.length === 0 && arrivals.length === 0) return roots;
+    // The ordering itself stands as it always did, and beside it the happenings
+    // the doing placed in that ordering — the ordering still reads the two ends,
+    // and the happenings are where the doing is remembered.
+    const besides = arrivals.length > 0 ? arrivals : [];
+    return [withBranch(root, [...root.branch, ...besides, ...asOneOffering(offered)])];
   }
 
   return roots;
@@ -5672,6 +5773,21 @@ function partAsked(said, world, claims, side, sides) {
       world.linked(one, p.role).some((t) => t === p.of || world.isA(t, p.of));
     if (!known.every(plays)) continue;
     for (const t of world.linked(one, hole.role)) if (!found.includes(t)) found.push(t);
+  }
+  // A question marking an extreme asks after one of them: `who arrived first`
+  // among several who did it is the far end of the ordering the word marks,
+  // and the rest of the doing held nobody there. Where the ordering holds
+  // nothing up there — several unbeaten, or the ones who did it never spoken
+  // of in it — every one of them stands, as it did before the ordering read.
+  for (const n of said) {
+    const far = farEnd(n, world);
+    if (far == null || far.length === 0) continue;
+    const farIn = found.filter((id) => far.includes(id));
+    if (farIn.length > 0) {
+      found.length = 0;
+      found.push(...farIn);
+    }
+    break;
   }
   // Nobody is on record as having done it, and the question may still name an
   // ordering: `who arrived first` asks after the first of them, and being told
