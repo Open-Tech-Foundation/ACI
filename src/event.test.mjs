@@ -71,7 +71,12 @@ test("an ordering over a doing puts both doings on the record", async () => {
   const graph = serialize();
   assert(/event\(n1, type: arrive/.test(graph), `asha's arrival happened:\n${graph}`);
   assert(/event\(n2, type: arrive/.test(graph), `and deepak's did too:\n${graph}`);
-  assert(/order\(n1, n2\)/.test(graph), `the ordering between them still stands:\n${graph}`);
+  // The chrono section is the single store for the ordering: the pairwise
+  // `order` row is no longer written. The participants sit as node ids inside
+  // the moments.
+  assert(!/order\(/.test(graph), `no pairwise order row remains:\n${graph}`);
+  assert(/members: \[n1\]/.test(graph), `asha is in the timeline:\n${graph}`);
+  assert(/members: \[n2\]/.test(graph), `and deepak is too:\n${graph}`);
   await forget();
 });
 

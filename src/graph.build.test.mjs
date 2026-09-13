@@ -189,7 +189,13 @@ test("one relation says both a property and a kind, told apart by the other side
 test("standings the world declares: holding, placement, order, comparison", async () => {
   assertEquals((await said('john has 5 apples')).facts[0].of, HOLDING);
   assertEquals((await said('the red box is inside the blue box')).facts[0].of, PLACEMENT);
-  assertEquals((await said('sara arrived before john')).facts[0].of, ORDER);
+
+  // An ordering claim leaves no pairwise fact row: the timeline is the store,
+  // with each end a member of one of its moments.
+  const ordered = await said('sara arrived before john');
+  for (const fact of ordered.facts) assert(fact.of !== ORDER, `the ordering is the chrono, not a row: ${fact.of}`);
+  assertEquals(ordered.moments.length, 2, 'two moments hold the two arrivals');
+  assertEquals(ordered.moments[1].before, ordered.moments[0].id, 'sara\'s moment precedes john\'s');
 
   const taller = await said('john is taller than sam');
   assertEquals(taller.facts[0].of, COMPARISON);

@@ -36,15 +36,15 @@ export const MEMBER = 'member';
 // they would answer each other's questions and forget together. The runtime
 // makes one of these per brain and hands it in with the rest of what is known.
 export function conversation() {
-const held = { nodes: [], facts: [], actions: [], rules: [] };
-const counted = { nodes: 0, facts: 0, actions: 0, rules: 0 };
-const KINDS = ['nodes', 'facts', 'actions', 'rules'];
+const held = { nodes: [], facts: [], actions: [], rules: [], moments: [] };
+const counted = { nodes: 0, facts: 0, actions: 0, rules: 0, moments: 0 };
+const KINDS = ['nodes', 'facts', 'actions', 'rules', 'moments'];
 
 // Not one of the kinds. Context is what a word in the next signal lands on —
 // what is still in reach, nearest first — and it is thrown away with the
 // conversation rather than being part of what is so.
 let inReach = [];
-const PREFIX = { nodes: 'n', facts: 'f', actions: 'a', rules: 'r' };
+const PREFIX = { nodes: 'n', facts: 'f', actions: 'a', rules: 'r', moments: 'm' };
 
 // Which node stands for which term of the world, and how many of its kind
 // each node that was said as a quantity stands for.
@@ -438,6 +438,33 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
     const here = held.actions.find((row) => row.id === reach(subject));
     if (here && primitive === PLACEMENT && anchors.time != null && world.isA(object, anchors.time)) {
       here.times = [...(here.times || []), object];
+      return;
+    }
+
+    // An ordering claim that stands is remembered as a chain of moments, not
+    // a pairwise fact row. The chrono is the single store; an `order` row is
+    // not left beside it, and every ordering read walks the chain instead.
+    // A denial leaves no mark on the timeline — it falls through to the row
+    // path below, which is how a said-but-against claim is held.
+    if (primitive === ORDER && !denied) {
+      // A refused offering claimed nothing that stands — neither the fact nor
+      // a place on the timeline.
+      if (!refused) {
+        const left = reach(subject);
+        const right = reach(object);
+        if (termOf(left) != null && termOf(right) != null && termOf(left) !== termOf(right)) {
+          // The relation runs forward or backward; whichever way, the earlier
+          // term is the one placed before the later on the chain.
+          const a2 = world.anchors || {};
+          const ways = new Set(world.symmetric(relation) ? [relation] : []);
+          if (a2.converse != null) {
+            for (const other of world.linked(relation, a2.converse)) ways.add(other);
+            for (const other of world.members(relation, a2.converse)) ways.add(other);
+          }
+          const reverse = ways.size > 0 && world.linked(relation, a2.converse).length === 0;
+          orderTerms(reverse ? right : left, reverse ? left : right, null);
+        }
+      }
       return;
     }
 
@@ -1286,6 +1313,14 @@ function sameState(one, relation, object, world) {
 // first, nobody is asking about the days of the week, however plainly Monday
 // comes before Tuesday.
 function joinedBy(relation) {
+  // An ordering the conversation held is the timeline: every term the chain
+  // holds is in that ordering, and none beside it is.
+  const a = against && against.anchors ? against.anchors : {};
+  if (a.order != null && relation != null &&
+      (relation === a.order || against.isA(relation, a.order) ||
+       against.subrelationOf(relation, a.order))) {
+    return chronoTerms();
+  }
   const found = [];
   for (const one of held.facts) {
     if (!says(one, relation) || one.stands !== 'held') continue;
@@ -1410,6 +1445,116 @@ function ranking(quantity, moment) {
   const found = new Map();
   for (const one of below.keys()) found.set(one, reaches(one).size + 1);
   return found;
+}
+
+// ---- the chrono: moments as a strict total order --------------------------
+//
+// One timeline and no duplicate store. An ordering claim that stands is
+// accepted by placing two terms into the chain; the pairwise order fact row it
+// would otherwise have left is never written, and every ordering read walks
+// the chain instead.
+
+function putMoment(members, beforeId, at) {
+  const id = PREFIX.moments + ++counted.moments;
+  held.moments.push({
+    id,
+    members: [...members],
+    before: beforeId ?? null,
+    ...(at == null ? {} : { at }),
+  });
+  return id;
+}
+
+function termMoment(term) {
+  // A member may stand as the world term or as the node this conversation
+  // gave it; either way it is the same thing standing there.
+  const both = new Set([term, standing.get(term) ?? term]);
+  for (let i = held.moments.length - 1; i >= 0; i -= 1) {
+    if (held.moments[i].members.some((m) => both.has(m))) return held.moments[i];
+  }
+  return null;
+}
+
+// The moment immediately before `m` in the chain (the one whose id is `m.before`).
+function momentBefore(m) {
+  return held.moments.find((x) => x.id === m.before) ?? null;
+}
+
+// The moment immediately after `m` (the first one whose `before` points at `m`).
+function momentAfter(m) {
+  return held.moments.find((x) => x.before === m.id) ?? null;
+}
+
+// The zero-based position of a moment in the chain, head = 0.
+function momentPosition(id) {
+  let cur = held.moments.find((m) => m.before === null) ?? null;
+  let pos = 0;
+  const seen = new Set();
+  while (cur && !seen.has(cur.id)) {
+    seen.add(cur.id);
+    if (cur.id === id) return pos;
+    cur = momentAfter(cur);
+    pos += 1;
+  }
+  return null;
+}
+
+// The full chain, head first.
+function chronoChain() {
+  const out = [];
+  let cur = held.moments.find((m) => m.before === null) ?? null;
+  const seen = new Set();
+  while (cur && !seen.has(cur.id)) {
+    seen.add(cur.id);
+    out.push(cur);
+    cur = momentAfter(cur);
+  }
+  return out;
+}
+
+// Unique terms in chain order.
+function chronoTerms() {
+  const seen = new Set();
+  const out = [];
+  for (const m of chronoChain()) {
+    for (const t of m.members) {
+      const term = termOf(t) ?? t;
+      if (!seen.has(term)) { seen.add(term); out.push(term); }
+    }
+  }
+  return out;
+}
+
+// Place `beforeTerm` strictly before `afterTerm` in the chain, merging into
+// existing positions where possible and refusing cycles.
+function orderTerms(beforeTerm, afterTerm, at) {
+  if (beforeTerm === afterTerm) return 'refuse';
+  let mb = termMoment(beforeTerm);
+  let ma = termMoment(afterTerm);
+  // Both already in the same moment → simultaneous; strict before is a cycle.
+  if (mb && ma && mb.id === ma.id) return 'refuse';
+  // Neither exists yet → create a two-link chain.
+  if (!mb && !ma) {
+    const left = putMoment([beforeTerm], null, at);
+    putMoment([afterTerm], left, null);
+    return 'ok';
+  }
+  // Only the earlier exists.
+  if (mb && !ma) {
+    putMoment([afterTerm], mb.id, at);
+    return 'ok';
+  }
+  if (!mb && ma) {
+    // Place the new moment just before `ma`.
+    const pred = momentBefore(ma);
+    const mid = putMoment([beforeTerm], pred ? pred.id : null, at);
+    ma.before = mid;
+    return 'ok';
+  }
+  // Both already present — accept only if `mb` is already strictly before `ma`.
+  const pb = momentPosition(mb.id);
+  const pa = momentPosition(ma.id);
+  return pb < pa ? 'ok' : 'refuse';
 }
 
 // Everything of one kind in the tree, in the order it was reached.
@@ -1547,6 +1692,10 @@ function serialize(world = against) {
   const claim = (side) =>
     side ? `${spell(side.relation)}(${spell(side.subject)}, ${spell(side.object)})` : '—';
   section('rules', held.rules.map((one) => `${one.id}  on ${claim(one.on)} -> ${claim(one.then)}`));
+  section('chrono', chronoChain().map((one) => {
+    const members = `[${one.members.map(spell).join(', ')}]`;
+    return `${one.id}  members: ${members}  before: ${one.before ?? 'null'}`;
+  }));
   section('context', inReach.length ? [`focus: [${inReach.map(spell).join(', ')}]`] : []);
 
   return lines.join('\n');
@@ -1570,5 +1719,12 @@ function serialize(world = against) {
     roleIn: (relation) => roleIn(relation, against),
     amounts,
     ranking,
+    // The timeline: the chain, its positions and its membership surface, for
+    // any reader that reasons over it directly.
+    chronoChain,
+    chronoTerms,
+    momentPosition,
+    termMoment,
+    orderTerms,
   };
 }

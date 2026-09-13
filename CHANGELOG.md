@@ -6,6 +6,27 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **The chrono: one timeline, and no duplicate store.** An ordering claim was
+  remembered as a pairwise fact row, one per telling — `morning is before
+  afternoon` wrote `order(morning, afternoon)`, and every position asked for
+  was walked back link by link. The graph now holds ordering place on a single
+  chain of **moments**: a claim that stands finds a moment for each of its two
+  ends and links them once in the strictly-ordered timeline, and the pairwise
+  `order` row is no longer written. `morning is before afternoon` leaves
+
+      chrono:
+        m1  members: [morning]  before: null
+        m2  members: [afternoon]  before: m1
+
+  A moment is a member-set plus a single before-link, so a thing, a happening
+  and a standing fact can share one moment — told together, they happen there.
+  The timeline is one store and one derivation: *before*, *after*, first and
+  last, and what stands between are all arithmetic on the chain, refused where
+  a new claim would close it into a cycle, and unchanged in the world-shaped
+  reads that already walked an ordering. A conversation that was told an
+  ordering keeps it for both answerings — who arrived first and whether either
+  arrived at all — from moments instead of rows.
+
 - **A conversation holds its own graph, and is picked up where it was left.**
   A conversation is many signals over one graph, so the graph belongs to the
   conversation — not to the brain. One brain made one graph and handed it to
