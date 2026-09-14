@@ -2744,6 +2744,68 @@ function because(joined, world, mood, sent) {
       const askedUnit = said
         .map((n) => conceptOf(n))
         .find((c) => c != null && (c === a.hour || c === a.minute || c === a.second));
+      // Saying the gap stands in a band — `did the crash happen more than two
+      // hours after the server started` — asks whether it does, and the answer
+      // is whether it does, never how wide the band is.
+      const band = (() => {
+        if (a.more == null || a.less == null) return null;
+        const compared = said.find((n) => conceptOf(n) === a.more || conceptOf(n) === a.less);
+        if (compared == null) return null;
+        const unit = said.find((n) => {
+          const c = conceptOf(n);
+          return c != null && (c === a.hour || c === a.minute || c === a.second);
+        });
+        const amountOfOr = (n) => {
+          const got = amountOf(n, world);
+          if (got != null) return got;
+          return (findBranch(n, 'quantity') || { state: {} }).state.value ?? null;
+        };
+        let many = unit == null ? null : amountOfOr(unit);
+        if (many == null && unit != null) {
+          const atUnit = said.indexOf(unit);
+          for (let i = atUnit - 1; i >= 0; i--) {
+            const m = amountOfOr(said[i]);
+            if (m != null) {
+              many = m;
+              break;
+            }
+            const c = conceptOf(said[i]);
+            if (c == null || c === a.more || c === a.less || c === a.measure || c === a.time) continue;
+            break;
+          }
+        }
+        const per = unit == null ? null : unitsIn(conceptOf(unit), a.minute, world);
+        if (many == null || per == null) return null;
+        return { more: conceptOf(compared) === a.more, minutes: many * per };
+      })();
+      if (band != null) {
+        if (at.every((v) => v != null)) {
+          const gap = Math.abs(at[0] - at[1]);
+          const held = band.more ? gap > band.minutes : gap < band.minutes;
+          return [
+            withBranch(root, [
+              ...root.branch,
+              node('standing', held ? 'held' : 'against', [], {
+                subject: null,
+                relation: null,
+                object: null,
+                negated: false,
+              }),
+            ]),
+          ];
+        }
+        return [
+          withBranch(root, [
+            ...root.branch,
+            node('standing', 'absent', [], {
+              subject: null,
+              relation: null,
+              object: null,
+              negated: false,
+            }),
+          ]),
+        ];
+      }
       // The question must ask in a clock's units — `how many minutes between
       // them` — for the gap to be the answer. Asked *when* one of them was,
       // `when did the crash happen after the server started`, the clock of the
@@ -3290,6 +3352,57 @@ function because(joined, world, mood, sent) {
   // named between two things is what the signal is about, and the joint is never one
   // of the things joined — so this is a claim about the action, not one of it
   // happening.
+  // When one doing is placed by how far it stands from another — `two hours
+  // after the server started` — a clock may be read for it from the clock of
+  // the other, and never anywhere else: what is read is off the record, and
+  // what is not on the record is not guessed.
+  const temporalOffset = (said, a, world, graph) => {
+    const unit = said.find((n) => {
+      const c = conceptOf(n);
+      return c != null && (c === a.hour || c === a.minute || c === a.second);
+    });
+    if (unit == null || a.minute == null) return null;
+    const many = amountOf(unit, world);
+    const per = unitsIn(conceptOf(unit), a.minute, world);
+    if (many == null || per == null) return null;
+    const span = many * per;
+    const order = said.find((n) => {
+      const c = conceptOf(n);
+      const name = c == null ? null : world.term(c)?.name;
+      return name === 'before' || name === 'after';
+    });
+    if (order == null) return null;
+    const at = said.indexOf(order);
+    const far = said
+      .slice(at + 1)
+      .map((n) => conceptOf(n))
+      .find((c) => c != null && c !== order && c !== a.measure && c !== a.time);
+    if (far == null) return null;
+    const clock = clockAt(far, said, a, world, graph);
+    if (clock == null) return null;
+    const base = clock.amount * unitsIn(clock.unit, a.minute, world);
+    const after = world.term(conceptOf(order))?.name === 'after';
+    return { amount: after ? base + span : base - span, unit: a.minute };
+  };
+  if (mood === 'tell') {
+    const offset = temporalOffset(said, a, world, graph);
+    if (offset != null) {
+      const done = act(
+        said,
+        claims,
+        world,
+        markingSide(said, langs),
+        partsSide(said, langs),
+        sent.allocate,
+      );
+      if (done) {
+        const event = done.find((n) => n.kind === 'event');
+        if (event) event.state.time = offset;
+        return [withBranch(root, [...root.branch, ...done])];
+      }
+    }
+  }
+
   const joint = namedRelation(said, world, claims, holes.length > 0);
   const joined = said.filter((n, i) => i !== joint && claims(n)).length;
 

@@ -43,6 +43,20 @@ All notable changes to this project are documented in this file.
   finished fifteen minutes before the crash answers `fifteen minutes` either
   way round. Where the record holds no clock for a doing, nothing answers.
 
+- **Told with an offset, a doing's clock derives from the one it is placed
+  by.** `the crash happened two hours after the server started` says a clock
+  for the crash off the server's: with the server's start on the record, the
+  crash answers eleven fifteen and the offset reads back two hours, and
+  `before` reads the other way. Where the doing placed has no clock on the
+  record, nothing is guessed and the doing simply happened.
+
+- **Whether a gap stands in a band answers as yes or no.** `did the crash
+  happen more than two hours after the server started?` compares the gap
+  between the two doings' clocks against the stated reach: 110 minutes is not
+  more than two hours, so it denies, and `more than 100 minutes` — or `less
+  than two hours` — affirms. The band is asked in any clock's units, words or
+  figures, and before-or-after reads the same gap either way.
+
 - **Asked *when* a doing's clock was read, the day-clock answers.** A clock
   reading on the record — `at 615 minute[221]` — is `when` the doing happened,
   and asked, the brain reads it back the way a day-clock is read: `ten

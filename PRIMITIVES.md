@@ -249,10 +249,12 @@ semantics that rules cannot be written without.
   it, and the span between two clocked doings answers as minutes (`how many
   minutes after the server started did the crash happen`) — with `feat(core):
   name the numbers twenty-one to ninety-nine` supplying the words a compound
-  minute needs. What still waits on the phase is the offset itself (`later`,
-  `N after X finished`), which reads as an ordering but never becomes the
-  doing's clock, and the band form (`more than N before/after X`), which does
-  not parse at all.
+  minute needs. The offset and the band are in too: `N before/after X started`
+  records the doing's clock on the record (shown above as part-of), and the
+  band `more than N before/after X` compares the gap and answers yes or no.
+  What still waits on the phase is the offset that stands without a clock to
+  read — `later`, and writing a clock when the placed doing was never told when
+  it happened.
 - [ ] Generalize quantity/placement history into value-at-time state.
 - [ ] Add transition, becomes, starts, stops and persistence semantics.
 - [ ] Connect event time and causal order to the same temporal model.
@@ -391,13 +393,26 @@ Examples that came back wrong, with what each waits on.
   gaps remain. A bare `before the crash` with no second doing alongside is not
   read: `how many minutes before the crash happened?` is `unknown`, and the
   `by how much` form (`the update finished before the crash by how much?`)
-  asks without naming a unit, so nothing spans it. And the band form does not
-  parse at all: `did the crash happen more than two hours after the server
-  started?` and `the update finished more than two hours before the crash?`
-  are not understood, and `is thirty minutes more than ten minutes?` does not
-  deem — comparisons work on bare numbers (`is one hundred ten more than
-  sixty?` affirms), not on measures. Waits on reading a `more than`-clause
-  that frames a connected pair.
+  asks without naming a unit, so nothing spans it.
+
+- The temporal clause and the band are in. A `more than N`-clause that frames a
+  connected pair is read at last, because English now says it: the grammar
+  admits a preposition over a subject and a verb (`after the server started`),
+  a quantity in front of the clause (`two hours after the server started`), and
+  the verb-comparative before the quantity (`more than two hours after the
+  server started`). With the grammar the deeming comes with it. Told `the
+  crash happened two hours after the server started`, the crash's clock derives
+  from the server's start and reads back (`eleven fifteen`, and the offset
+  reads back `two hours`), the same for `before`; with no clock for the placed
+  doing nothing is guessed. Asked `did the crash happen more than two hours
+  after the server started?` the gap is compared against the reach and the
+  answer is yes or no (`No. ❌`, while `more than 100 minutes` and `less than
+  two hours` affirm). One piece of the band family still waits: `is thirty
+  minutes more than ten minutes?` does not deem — comparisons that are not a
+  yes/no over a span still work only on bare numbers. And `the server restarted
+  twenty minutes later` and `the update started ten minutes after the backup`
+  still do not parse: `later` has no word, and the offset needs the source
+  doing's clock read off the record with nothing said about it happening.
 
 ## The event primitive, part built
 

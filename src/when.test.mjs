@@ -169,3 +169,87 @@ test("asked how far in minutes from a doing's end, the gap answers from its fini
     `asked from the end the same gap answers alike:\n${JSON.stringify(after.expression)}`,
   );
 });
+
+test("told when one doing was by offsetting from another, the doing answers the derived clock", async () => {
+  await fresh(
+    "the server started at nine hours and fifteen minutes",
+    "the crash happened two hours after the server started",
+  );
+  const when = await brain("when did the crash happen?");
+  assert(
+    when.expression.name === "answer",
+    `a clock reading answers:\n${JSON.stringify(when.expression)}`,
+  );
+  assert(
+    when.expression.state.says === "eleven fifteen",
+    `the clock derived from the offset answers:\n${JSON.stringify(when.expression)}`,
+  );
+  const how = await brain("how many hours after the server started did the crash happen?");
+  assert(
+    how.expression.name === "answer",
+    `a span answers:\n${JSON.stringify(how.expression)}`,
+  );
+  assert(
+    how.expression.state.says === "two hours",
+    `the named offset answers:\n${JSON.stringify(how.expression)}`,
+  );
+});
+
+test("told when one doing was by offsetting from another, the doing does not answer without a prior clock", async () => {
+  await fresh("the crash happened two hours after the server started");
+  const when = await brain("when did the crash happen?");
+  assert(
+    when.expression.name === "unsure",
+    `no clock to read answers not knowing:\n${JSON.stringify(when.expression)}`,
+  );
+});
+
+test("did the crash happen more than N after the server started — asks the band", async () => {
+  await fresh(
+    "the server started at nine hours and fifteen minutes",
+    "the crash happened at eleven hours and five minutes",
+  );
+  const yes = await brain("did the crash happen more than 100 minutes after the server started?");
+  assert(
+    yes.expression.name === "affirm",
+    `a gap beyond the band affirms:\n${JSON.stringify(yes.expression)}`,
+  );
+  assert(
+    yes.expression.state.says === "Yes. ✅",
+    `a gap beyond the band says yes:\n${JSON.stringify(yes.expression)}`,
+  );
+  const no = await brain("did the crash happen more than two hours after the server started?");
+  assert(
+    no.expression.name === "deny",
+    `a gap within the band denies:\n${JSON.stringify(no.expression)}`,
+  );
+  assert(
+    no.expression.state.says === "No. ❌",
+    `a gap within the band says no:\n${JSON.stringify(no.expression)}`,
+  );
+});
+
+test("did the crash happen less than N after the server started — asks the band", async () => {
+  await fresh(
+    "the server started at nine hours and fifteen minutes",
+    "the crash happened at eleven hours and five minutes",
+  );
+  const yes = await brain("did the crash happen less than two hours after the server started?");
+  assert(
+    yes.expression.name === "affirm",
+    `a gap below the band affirms:\n${JSON.stringify(yes.expression)}`,
+  );
+  assert(
+    yes.expression.state.says === "Yes. ✅",
+    `a gap below the band says yes:\n${JSON.stringify(yes.expression)}`,
+  );
+  const no = await brain("did the crash happen less than 100 minutes after the server started?");
+  assert(
+    no.expression.name === "deny",
+    `a gap at the band denies:\n${JSON.stringify(no.expression)}`,
+  );
+  assert(
+    no.expression.state.says === "No. ❌",
+    `a gap at the band says no:\n${JSON.stringify(no.expression)}`,
+  );
+});

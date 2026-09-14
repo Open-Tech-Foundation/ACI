@@ -19187,7 +19187,10 @@
           "interrogative",
           "interrogative quantifier noun",
           "preposition subject",
+          "preposition subject verb",
           "preposition interrogative",
+          "numeral noun preposition subject verb",
+          "verb preposition numeral noun preposition subject verb",
           "complement conjunction verbComplement",
           "complementizer sentence",
           "degree"
