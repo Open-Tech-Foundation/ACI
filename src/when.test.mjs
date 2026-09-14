@@ -82,3 +82,37 @@ test("told for so many minutes, the doing itself answers how long", async () => 
   const none = await brain("how long is the backup?");
   assert(none.expression.name !== "answer", `nothing told, no duration answers:\n${JSON.stringify(none.expression)}`);
 });
+
+test("asked when a doing finished, its start and what it ran answer", async () => {
+  await fresh(
+    "the server started at nine hours and fifteen minutes",
+    "the backup started at nine hours and forty minutes",
+    "the backup ran for 35 minutes",
+  );
+  const finish = await brain("when did the backup finish?");
+  assert(finish.expression.name === "answer", `a finish answers:\n${JSON.stringify(finish.expression)}`);
+  assert(
+    finish.expression.state.says === "ten fifteen",
+    `beginning plus what it went on answers:\n${JSON.stringify(finish.expression)}`,
+  );
+  const start = await brain("when did the backup start?");
+  assert(
+    start.expression.state.says === "nine forty",
+    `asked for the start, the start still answers:\n${JSON.stringify(start.expression)}`,
+  );
+});
+
+test("an hour-long run carries the finish over the hour", async () => {
+  await fresh("the backup started at nine hours and forty minutes", "the backup ran for 90 minutes");
+  const finish = await brain("when did the backup finish?");
+  assert(
+    finish.expression.state.says === "eleven ten",
+    `the finish crosses into the next hour:\n${JSON.stringify(finish.expression)}`,
+  );
+});
+
+test("a doing nothing ever ran answers no finish", async () => {
+  await fresh("the server started at nine hours and fifteen minutes", "the backup started at nine hours and forty minutes");
+  const finish = await brain("when did the update finish?");
+  assert(finish.expression.name !== "answer", `no doing on the record, no finish answers:\n${JSON.stringify(finish.expression)}`);
+});

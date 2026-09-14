@@ -5937,6 +5937,26 @@ if (far !== undefined) {
               UNITS.some((name) => a[name] === t.unit),
           ) ?? null;
     }
+    // A doing's end asked for before any end is on the record is its
+    // beginning, put forward by the time it went on: `when did the backup
+    // finish?` where a backup that started at nine forty ran for thirty-five
+    // minutes answers ten fifteen. The record holds the reading it began with
+    // and how long it went on, and the day it began, moved on by what it
+    // took, is the day it ended.
+    if (a.finish != null && said.some((n) => conceptOf(n) === a.finish) && clock != null) {
+      for (const r of mine) {
+        if (r.did == null || r.time == null || r.time.amount == null) continue;
+        let length = 0;
+        for (const unit of world.standing(a.time, a.measure)) {
+          const held = world.held(r.did, a.for, unit);
+          if (held == null) continue;
+          length += held * unitsIn(unit, r.time.unit, world);
+        }
+        if (length === 0) continue;
+        clock = { amount: r.time.amount + length, unit: r.time.unit };
+        break;
+      }
+    }
   }
   return node('answer', 'link', [], { subject: action, relation: hole.role, found, clock });
 }

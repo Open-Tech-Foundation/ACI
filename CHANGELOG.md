@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A doing's end answers from its beginning and what it went on.** Asked
+  `when did the backup finish?` where no end is on the record, the brain
+  reads the doing's start off the record and puts the time it went on forward
+  onto it: a backup that started at nine forty and ran for thirty-five
+  minutes finished at ten fifteen. Asked for the start, the start still
+  answers; crossed the hour the same way; and a doing nothing ever ran
+  answers no finish. A run told in any unit moves the reading as the world's
+  time does — ninety minutes is an hour and a half.
+
 - **How long a doing went on answers, told *for* so many minutes.** A doing
   told `ran for 35 minutes` holds the amount under the word it was told with —
   `backup#3100 {for: minute[221], quantity: 35}` — and a plain hole question
