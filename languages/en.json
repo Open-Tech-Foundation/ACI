@@ -19015,6 +19015,7 @@
         "whole": true,
         "rules": [
           "verb subject verbComplement",
+          "verb subject negation verbComplement",
           "verb sentence",
           "subject verb preposition subject",
           "conditional clause consequent subject",
@@ -19060,6 +19061,7 @@
         "whole": true,
         "rules": [
           "verb subject verbComplement",
+          "verb subject negation verbComplement",
           "verb sentence",
           "subject verb preposition subject",
           "conditional clause consequent subject",

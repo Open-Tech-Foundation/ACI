@@ -73,6 +73,13 @@ All notable changes to this project are documented in this file.
   before a minute is read. Numbers still compare as numbers, and `less than`
   reads the same conversion the same way.
 
+- **A yes/no question carrying a denial is read and answered as it stands.**
+  The sentence grammar now reads a `not` between a copular verb and its
+  complement in question form, so `is a cat not an animal?` after being told
+  the cat is an animal answers No, and `is the door not open?` after being
+  told the door is not open answers Yes. The denials standing in the world
+  decide the verdict the same way they do for a plain positive ask.
+
 - **Asked *when* a doing's clock was read, the day-clock answers.** A clock
   reading on the record — `at 615 minute[221]` — is `when` the doing happened,
   and asked, the brain reads it back the way a day-clock is read: `ten

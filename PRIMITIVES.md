@@ -50,10 +50,12 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
    `john has 5 apples`, `sam has 3 apples`, despite `how many apples does
    john have?` answering. Comparison now ranks a counted set's holders and
    answers `more` from the top and `less` from the bottom of the held counts.
-3. **`of`-compound questions.** `the capital of france is paris` is stored,
-   yet `what is the capital of france?` and `is paris the capital of
-   france?` both answer `unknown`. The compact form `france capital what`
-   already answers, so only the `of` phrasing is unresolved.
+3. **`of`-compound questions.** `the capital of france is paris` does not
+   parse at all (the tell itself answers `I don't understand`), and neither
+   do the asking forms. The compact form `france capital what` already
+   answers, and `the father of sam is bob` parses and answers correctly — so
+   the gap is in how the grammar reads the `of` phrase for certain nouns
+   (capital lacks the relation structure that `father` has). Not fixed.
 4. **A doing inside an ordering.** _Fixed_ — `sara arrived before john`
    related sara to john and never recorded that either arrived, so `did sara
    arrive?` answered `I don't know` in a conversation that had just said so.
@@ -62,6 +64,13 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
    and when — beside the ordering that still reads its two ends. The far-end
    readings (`who arrived first/last?`) that the ordering answered before are
    unchanged.
+5. **A yes/no question with `not`.** _Fixed_ — `is a cat not an animal?`
+   after being told the cat is an animal now answers `No`, and `is the door
+   not open?` after being told the door is not open answers `Yes`. The
+   sentence grammar now reads `verb subject negation verbComplement`, so the
+   negation between the copular verb and its complement is part of the
+   question, and the denial standing in the world decides the verdict the
+   same way a positive ask does.
 
 ## Status legend
 

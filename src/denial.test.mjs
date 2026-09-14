@@ -69,3 +69,19 @@ test("a denied property answers no where it is asked after", async () => {
   assertEquals(await verdict("the sky is not blue", "is the sky blue?"), "deny");
   assertEquals(await verdict("the sky is blue", "the sky is not blue", "is the sky blue?"), "deny");
 });
+
+test("a denial asked with not is read the same way it was told", async () => {
+  const verdict = async (...lines) => {
+    await forget();
+    let last;
+    for (const line of lines) last = await brain(line);
+    return last.expression.name;
+  };
+  // The world holds that a cat is an animal, so asking whether it is not is
+  // answered against — a denial asked is a denial judged.
+  assertEquals(await verdict("a cat is an animal", "is a cat not an animal?"), "deny");
+  assertEquals(await verdict("a cat is not a dog", "is a cat not a dog?"), "affirm");
+  assertEquals(await verdict("a cat is not a dog", "is a cat a dog?"), "deny");
+  assertEquals(await verdict("the door is not open", "is the door not open?"), "affirm");
+  assertEquals(await verdict("the sky is not blue", "is the sky not blue?"), "affirm");
+});
