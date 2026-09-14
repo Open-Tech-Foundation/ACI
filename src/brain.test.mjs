@@ -751,13 +751,13 @@ test("the sum is computed, not looked up", async () => {
 });
 
 test("a result the world has no term for is written, never named", async () => {
-  // Twenty-three is a number the brain can reach and English cannot say in one
-  // word; below zero the world has no term at all. Neither is invented — the
-  // sum stands beyond what the world names, and the language writes it out.
-  const sum = await brain("twenty plus three?");
+  // One hundred and ten is a number the brain can reach and English cannot say
+  // in one word; below zero the world has no term at all. Neither is invented —
+  // the sum stands beyond what the world names, and the language writes it out.
+  const sum = await brain("ninety plus twenty?");
   assertEquals(kind(sum.roots[0], "sum").name, "beyond");
-  assertEquals(kind(sum.roots[0], "sum").state.value, 23);
-  assertEquals(sum.expression.state.says, "23");
+  assertEquals(kind(sum.roots[0], "sum").state.value, 110);
+  assertEquals(sum.expression.state.says, "110");
   assertEquals((await brain("seven minus nine?")).expression.state.says, "-2");
 });
 

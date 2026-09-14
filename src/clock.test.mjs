@@ -38,7 +38,7 @@ test("a number beside a unit says how much, not how many", async () => {
 
 test("a day is counted in hours", async () => {
   await forget();
-  assertEquals(await says("a day has how many hours?"), "24");
+  assertEquals(await says("a day has how many hours?"), "twenty-four");
   await forget();
 });
 

@@ -271,6 +271,366 @@
       "meaning": "90",
       "concept": 557
     },
+    "twenty-one": {
+      "pos": "numeral",
+      "meaning": "21",
+      "concept": 54021
+    },
+    "twenty-two": {
+      "pos": "numeral",
+      "meaning": "22",
+      "concept": 54022
+    },
+    "twenty-three": {
+      "pos": "numeral",
+      "meaning": "23",
+      "concept": 54023
+    },
+    "twenty-four": {
+      "pos": "numeral",
+      "meaning": "24",
+      "concept": 54024
+    },
+    "twenty-five": {
+      "pos": "numeral",
+      "meaning": "25",
+      "concept": 54025
+    },
+    "twenty-six": {
+      "pos": "numeral",
+      "meaning": "26",
+      "concept": 54026
+    },
+    "twenty-seven": {
+      "pos": "numeral",
+      "meaning": "27",
+      "concept": 54027
+    },
+    "twenty-eight": {
+      "pos": "numeral",
+      "meaning": "28",
+      "concept": 54028
+    },
+    "twenty-nine": {
+      "pos": "numeral",
+      "meaning": "29",
+      "concept": 54029
+    },
+    "thirty-one": {
+      "pos": "numeral",
+      "meaning": "31",
+      "concept": 54031
+    },
+    "thirty-two": {
+      "pos": "numeral",
+      "meaning": "32",
+      "concept": 54032
+    },
+    "thirty-three": {
+      "pos": "numeral",
+      "meaning": "33",
+      "concept": 54033
+    },
+    "thirty-four": {
+      "pos": "numeral",
+      "meaning": "34",
+      "concept": 54034
+    },
+    "thirty-five": {
+      "pos": "numeral",
+      "meaning": "35",
+      "concept": 54035
+    },
+    "thirty-six": {
+      "pos": "numeral",
+      "meaning": "36",
+      "concept": 54036
+    },
+    "thirty-seven": {
+      "pos": "numeral",
+      "meaning": "37",
+      "concept": 54037
+    },
+    "thirty-eight": {
+      "pos": "numeral",
+      "meaning": "38",
+      "concept": 54038
+    },
+    "thirty-nine": {
+      "pos": "numeral",
+      "meaning": "39",
+      "concept": 54039
+    },
+    "forty-one": {
+      "pos": "numeral",
+      "meaning": "41",
+      "concept": 54041
+    },
+    "forty-two": {
+      "pos": "numeral",
+      "meaning": "42",
+      "concept": 54042
+    },
+    "forty-three": {
+      "pos": "numeral",
+      "meaning": "43",
+      "concept": 54043
+    },
+    "forty-four": {
+      "pos": "numeral",
+      "meaning": "44",
+      "concept": 54044
+    },
+    "forty-five": {
+      "pos": "numeral",
+      "meaning": "45",
+      "concept": 54045
+    },
+    "forty-six": {
+      "pos": "numeral",
+      "meaning": "46",
+      "concept": 54046
+    },
+    "forty-seven": {
+      "pos": "numeral",
+      "meaning": "47",
+      "concept": 54047
+    },
+    "forty-eight": {
+      "pos": "numeral",
+      "meaning": "48",
+      "concept": 54048
+    },
+    "forty-nine": {
+      "pos": "numeral",
+      "meaning": "49",
+      "concept": 54049
+    },
+    "fifty-one": {
+      "pos": "numeral",
+      "meaning": "51",
+      "concept": 54051
+    },
+    "fifty-two": {
+      "pos": "numeral",
+      "meaning": "52",
+      "concept": 54052
+    },
+    "fifty-three": {
+      "pos": "numeral",
+      "meaning": "53",
+      "concept": 54053
+    },
+    "fifty-four": {
+      "pos": "numeral",
+      "meaning": "54",
+      "concept": 54054
+    },
+    "fifty-five": {
+      "pos": "numeral",
+      "meaning": "55",
+      "concept": 54055
+    },
+    "fifty-six": {
+      "pos": "numeral",
+      "meaning": "56",
+      "concept": 54056
+    },
+    "fifty-seven": {
+      "pos": "numeral",
+      "meaning": "57",
+      "concept": 54057
+    },
+    "fifty-eight": {
+      "pos": "numeral",
+      "meaning": "58",
+      "concept": 54058
+    },
+    "fifty-nine": {
+      "pos": "numeral",
+      "meaning": "59",
+      "concept": 54059
+    },
+    "sixty-one": {
+      "pos": "numeral",
+      "meaning": "61",
+      "concept": 54061
+    },
+    "sixty-two": {
+      "pos": "numeral",
+      "meaning": "62",
+      "concept": 54062
+    },
+    "sixty-three": {
+      "pos": "numeral",
+      "meaning": "63",
+      "concept": 54063
+    },
+    "sixty-four": {
+      "pos": "numeral",
+      "meaning": "64",
+      "concept": 54064
+    },
+    "sixty-five": {
+      "pos": "numeral",
+      "meaning": "65",
+      "concept": 54065
+    },
+    "sixty-six": {
+      "pos": "numeral",
+      "meaning": "66",
+      "concept": 54066
+    },
+    "sixty-seven": {
+      "pos": "numeral",
+      "meaning": "67",
+      "concept": 54067
+    },
+    "sixty-eight": {
+      "pos": "numeral",
+      "meaning": "68",
+      "concept": 54068
+    },
+    "sixty-nine": {
+      "pos": "numeral",
+      "meaning": "69",
+      "concept": 54069
+    },
+    "seventy-one": {
+      "pos": "numeral",
+      "meaning": "71",
+      "concept": 54071
+    },
+    "seventy-two": {
+      "pos": "numeral",
+      "meaning": "72",
+      "concept": 54072
+    },
+    "seventy-three": {
+      "pos": "numeral",
+      "meaning": "73",
+      "concept": 54073
+    },
+    "seventy-four": {
+      "pos": "numeral",
+      "meaning": "74",
+      "concept": 54074
+    },
+    "seventy-five": {
+      "pos": "numeral",
+      "meaning": "75",
+      "concept": 54075
+    },
+    "seventy-six": {
+      "pos": "numeral",
+      "meaning": "76",
+      "concept": 54076
+    },
+    "seventy-seven": {
+      "pos": "numeral",
+      "meaning": "77",
+      "concept": 54077
+    },
+    "seventy-eight": {
+      "pos": "numeral",
+      "meaning": "78",
+      "concept": 54078
+    },
+    "seventy-nine": {
+      "pos": "numeral",
+      "meaning": "79",
+      "concept": 54079
+    },
+    "eighty-one": {
+      "pos": "numeral",
+      "meaning": "81",
+      "concept": 54081
+    },
+    "eighty-two": {
+      "pos": "numeral",
+      "meaning": "82",
+      "concept": 54082
+    },
+    "eighty-three": {
+      "pos": "numeral",
+      "meaning": "83",
+      "concept": 54083
+    },
+    "eighty-four": {
+      "pos": "numeral",
+      "meaning": "84",
+      "concept": 54084
+    },
+    "eighty-five": {
+      "pos": "numeral",
+      "meaning": "85",
+      "concept": 54085
+    },
+    "eighty-six": {
+      "pos": "numeral",
+      "meaning": "86",
+      "concept": 54086
+    },
+    "eighty-seven": {
+      "pos": "numeral",
+      "meaning": "87",
+      "concept": 54087
+    },
+    "eighty-eight": {
+      "pos": "numeral",
+      "meaning": "88",
+      "concept": 54088
+    },
+    "eighty-nine": {
+      "pos": "numeral",
+      "meaning": "89",
+      "concept": 54089
+    },
+    "ninety-one": {
+      "pos": "numeral",
+      "meaning": "91",
+      "concept": 54091
+    },
+    "ninety-two": {
+      "pos": "numeral",
+      "meaning": "92",
+      "concept": 54092
+    },
+    "ninety-three": {
+      "pos": "numeral",
+      "meaning": "93",
+      "concept": 54093
+    },
+    "ninety-four": {
+      "pos": "numeral",
+      "meaning": "94",
+      "concept": 54094
+    },
+    "ninety-five": {
+      "pos": "numeral",
+      "meaning": "95",
+      "concept": 54095
+    },
+    "ninety-six": {
+      "pos": "numeral",
+      "meaning": "96",
+      "concept": 54096
+    },
+    "ninety-seven": {
+      "pos": "numeral",
+      "meaning": "97",
+      "concept": 54097
+    },
+    "ninety-eight": {
+      "pos": "numeral",
+      "meaning": "98",
+      "concept": 54098
+    },
+    "ninety-nine": {
+      "pos": "numeral",
+      "meaning": "99",
+      "concept": 54099
+    },
     "hundred": {
       "pos": "numeral",
       "meaning": "100",

@@ -362,18 +362,15 @@ Examples that came back wrong, with what each waits on.
   `after`-clause naming another doing's end has no reading. Waits on
   composing offset + reading into a moment.
 
-- `the backup ran for thirty-five minutes` is not understood where the day
-  already holds two clock readings (`the server started at nine fifteen`,
-  `the backup started at nine forty`); digits — `for 35 minutes` — are. The
-  number-word compounding breaks the phrase beside the clock pattern. Waits
-  on the number-word system.
+- The numbers twenty-one through ninety-nine are now in the language and the
+  world (terms 54021–54099, ten-to-one compounds), so `thirty-five minutes`
+  and `ten 25` word and figure readings both join a clocked day. The gap they
+  left is closed: what reported the earlier entries is fixed. Remaining
+  number gaps still wait on the same machinery for 101+ and for `took`.
 
 - `the update took 25 minutes` loses the amount: `took` is the past of take
   (give/take 283), so the duration goes nowhere. The durative `took` sense is
   a second reading of one word; waits on word sense from context.
-
-- Clock readings whose minute has no single word are said in figures: `ten
-  25`, not `ten twenty-five`. English has no entry for `twenty-five`.
 
 - `the server restarted twenty minutes later` is not understood: no `later`
   word exists in the language data. Waits on the offset composition above.

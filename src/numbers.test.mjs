@@ -104,7 +104,7 @@ test("what is said back is said the way it was said", async () => {
 
 test("a number the world never named is still written out", async () => {
   assertEquals(await says("20 + 1"), "21");
-  assertEquals(await says("twenty plus three?"), "23");
+  assertEquals(await says("twenty plus three?"), "twenty-three");
   assertEquals(await says("100 - 1"), "99");
 });
 

@@ -92,8 +92,8 @@ test("which of two, where the world names neither number", async () => {
   await forget();
   // No world names every number. The comparison is worked out all the same,
   // and the amount that came out on top is the answer.
-  assertEquals((await brain("which is larger 45 or 54?")).expression.state.says, "54");
-  assertEquals((await brain("which is smaller, 45 or 54?")).expression.state.says, "45");
+  assertEquals((await brain("which is larger 145 or 154?")).expression.state.says, "154");
+  assertEquals((await brain("which is smaller, 145 or 154?")).expression.state.says, "145");
   assertEquals(
     (await brain("which is smaller, 8 or 0?")).expression.state.says,
     "zero",

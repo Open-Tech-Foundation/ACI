@@ -37,7 +37,7 @@ test("a smaller one before a round one multiplies it", async () => {
 test("a number the world never named is still counted", async () => {
   await forget();
   await brain("a box holds twenty five balls");
-  assertEquals((await brain("the box holds how many balls?")).expression.state.says, "25");
+  assertEquals((await brain("the box holds how many balls?")).expression.state.says, "twenty-five");
   await forget();
 });
 

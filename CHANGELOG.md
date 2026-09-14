@@ -6,6 +6,16 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **The numbers twenty-one to ninety-nine are named.** The world holds terms
+  for the tens and the ten-to-one compounds (54021–54099), chained in the
+  counting order and valued as the everyday numbers are, and English declares
+  their words (`twenty-five`, `fifty-four`). Answers that used to come back as
+  figures because nothing said them now come back by word — `a day has how
+  many hours?` answers `twenty-four`, and a clocked day said with a compound
+  minute joins whether the minute is words or figures: `ten twenty-five`
+  either way. Sums, comparisons and counts beyond one hundred still fall back
+  to being written out, as the world's naming stops there.
+
 - **A doing's end answers from its beginning and what it went on.** Asked
   `when did the backup finish?` where no end is on the record, the brain
   reads the doing's start off the record and puts the time it went on forward

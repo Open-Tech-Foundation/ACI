@@ -66,7 +66,7 @@ test("how long a thing ran answers, told for so many minutes", async () => {
   const long = await brain("how long is the backup?");
   assert(long.expression.name === "answer", `a duration answer:\n${JSON.stringify(long.expression)}`);
   assert(
-    long.expression.state.says === "35 minutes",
+    long.expression.state.says === "thirty-five minutes",
     `the minutes it was held for answer:\n${JSON.stringify(long.expression)}`,
   );
 });
@@ -75,12 +75,28 @@ test("told for so many minutes, the doing itself answers how long", async () => 
   await fresh("the backup ran for 35 minutes");
   const long = await brain("the backup is how long?");
   assert(
-    long.expression.state.says === "35 minutes",
+    long.expression.state.says === "thirty-five minutes",
     `the held-for amount answers the other way round too:\n${JSON.stringify(long.expression)}`,
   );
   await forget();
   const none = await brain("how long is the backup?");
   assert(none.expression.name !== "answer", `nothing told, no duration answers:\n${JSON.stringify(none.expression)}`);
+});
+
+test("a compound minute joins a clock reading, said as words or figures", async () => {
+  await fresh("the update started at ten hours and twenty-five minutes");
+  const word = await brain("when did the update start?");
+  assert(
+    word.expression.state.says === "ten twenty-five",
+    `a compound minute answers in words:\n${JSON.stringify(word.expression)}`,
+  );
+  await forget();
+  await fresh("the update started at ten hours and 25 minutes");
+  const figures = await brain("when did the update start?");
+  assert(
+    figures.expression.state.says === "ten twenty-five",
+    `the same reading said in figures answers alike:\n${JSON.stringify(figures.expression)}`,
+  );
 });
 
 test("asked when a doing finished, its start and what it ran answer", async () => {
