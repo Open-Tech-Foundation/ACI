@@ -4254,6 +4254,35 @@ function because(joined, world, mood, sent) {
           : [];
       const asksBack = backward.length > 0;
       let found = asksBack ? backward : outward;
+      // A hold this conversation told of sits on the thing it made for whoever
+      // holds — never on the authored kind: `the basket has three apples` was
+      // read from the basket's bearer and the authored basket links nothing.
+      // The bearer — the one of the kind, or any one of it — is what was told,
+      // and reading its links answers the hole. Where the bearer holds
+      // specifics, they take the place of a generic kind off the world's
+      // ladder (`container holds thing`), which is no answer to what it was
+      // told to hold.
+      if (
+        a.holding != null &&
+        (relation === a.has || relation === a.hold || world.subrelationOf(relation, a.holding))
+      ) {
+        const specific = [];
+        for (const bearer of [
+          subject,
+          ...(world.oneOf(subject) == null ? [] : [world.oneOf(subject)]),
+          ...world.individualsOf(subject),
+        ]) {
+          for (const t of world.linked(bearer, relation)) {
+            if (t !== subject && !specific.includes(t)) specific.push(t);
+          }
+        }
+        if (specific.length > 0) {
+          found = [
+            ...specific,
+            ...found.filter((t) => !specific.some((s) => world.isA(s, t))),
+          ];
+        }
+      }
       // The walk came back with nothing but the most generic kind: say the
       // thing itself instead — `chocolates`, known only as a thing, is answered
       // with its own name rather than `thing`. Specific answers (`animal` for a

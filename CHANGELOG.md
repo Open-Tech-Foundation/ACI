@@ -80,6 +80,17 @@ All notable changes to this project are documented in this file.
   told the door is not open answers Yes. The denials standing in the world
   decide the verdict the same way they do for a plain positive ask.
 
+- **A hold this conversation told of answers from whoever the brain made
+  hold it.** Telling `the basket has three apples` writes the hold on the
+  bearer the brain made for the basket, and the authored basket links
+  nothing — so `what does the basket have?` found no answer where the
+  ordinary walk reads. Asked a hold of a thing, the WHAT-reading now also
+  asks the bearer — the one of the kind, or any one of it — and answers what
+  it holds: `apple` for the basket, `rope, ball` where the box was told both.
+  Where the world's ladder answers only the generic `thing` a container
+  holds, the specifics this conversation told take its place. What it holds
+  answers the same question the count asks.
+
 - **Asked *when* a doing's clock was read, the day-clock answers.** A clock
   reading on the record — `at 615 minute[221]` — is `when` the doing happened,
   and asked, the brain reads it back the way a day-clock is read: `ten

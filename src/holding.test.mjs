@@ -116,3 +116,29 @@ test("what a thing has in it may have been said either way", async () => {
   assertEquals((await brain("the bucket has how many nails?")).expression.state.says, "two");
   await forget();
 });
+
+test("what a thing has answers out of what it was told to have", async () => {
+  await forget();
+  // A hold the conversation told of sits on the thing the brain made for the
+  // holder, never on the authored kind; asking what the holder has still reads
+  // it out. The kind's own links answer nothing — the bearer does.
+  await brain("the basket has three apple");
+  const r = await brain("what does the basket have?");
+  assertEquals(r.expression.name, "answer");
+  assertEquals(r.expression.state.says, "apple");
+  await forget();
+});
+
+test("what a thing has answers each kind it was told to have", async () => {
+  await forget();
+  await brain("the box has two balls and a rope");
+  assertEquals((await brain("what does the box have?")).expression.state.says, "rope, ball");
+  await forget();
+});
+
+test("a person's hold is answered the same way", async () => {
+  await forget();
+  await brain("sam has a book");
+  assertEquals((await brain("what does sam have?")).expression.state.says, "book");
+  await forget();
+});

@@ -57,20 +57,27 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
    the gap is in how the grammar reads the `of` phrase for certain nouns
    (capital lacks the relation structure that `father` has). Not fixed.
 4. **A doing inside an ordering.** _Fixed_ — `sara arrived before john`
-   related sara to john and never recorded that either arrived, so `did sara
-   arrive?` answered `I don't know` in a conversation that had just said so.
-   An ordering whose word sits on a doing now keeps the happening for each of
-   them — who did it, where (told no place, the brain's own **somewhere**),
-   and when — beside the ordering that still reads its two ends. The far-end
-   readings (`who arrived first/last?`) that the ordering answered before are
-   unchanged.
+    related sara to john and never recorded that either arrived, so `did sara
+    arrive?` answered `I don't know` in a conversation that had just said so.
+    An ordering whose word sits on a doing now keeps the happening for each of
+    them — who did it, where (told no place, the brain's own **somewhere**),
+    and when — beside the ordering that still reads its two ends. The far-end
+    readings (`who arrived first/last?`) that the ordering answered before are
+    unchanged.
 5. **A yes/no question with `not`.** _Fixed_ — `is a cat not an animal?`
-   after being told the cat is an animal now answers `No`, and `is the door
-   not open?` after being told the door is not open answers `Yes`. The
-   sentence grammar now reads `verb subject negation verbComplement`, so the
-   negation between the copular verb and its complement is part of the
-   question, and the denial standing in the world decides the verdict the
-   same way a positive ask does.
+    after being told the cat is an animal now answers `No`, and `is the door
+    not open?` after being told the door is not open answers `Yes`. The
+    sentence grammar now reads `verb subject negation verbComplement`, so the
+    negation between the copular verb and its complement is part of the
+    question, and the denial standing in the world decides the verdict the
+    same way a positive ask does.
+6. **A hold told of a thing, asked back.** _Fixed_ — `the basket has three
+   apples` writes the hold on the bearer the brain made for the basket, and
+   the authored basket links nothing, so `what does the basket have?` found
+   no answer. Asked a hold of a thing, the WHAT-reading now also reads the
+   bearer — the one of the kind, or any one of it — and answers what it
+   holds. Where the world's ladder answers only the generic `thing` a
+   container holds, the specifics this conversation told take its place.
 
 ## Status legend
 
