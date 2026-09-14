@@ -3771,6 +3771,30 @@ function because(joined, world, mood, sent) {
             ]),
           ];
         }
+        // A doing the record held for some time — the backup ran for thirty-five
+        // minutes — is not measured on a scale; its duration is kept under the
+        // word it was told with. Asked how long it went on, the amount it was
+        // held for answers, on the scale that names time.
+        if (a.for != null && on.has(a.time)) {
+          for (const unit of world.standing(a.time, a.measure)) {
+            if (a.unit != null && !world.isA(unit, a.unit)) continue;
+            const mount = world.held(bearer, a.for, unit);
+            if (mount == null) continue;
+            const total = world.termFor(mount);
+            return [
+              withBranch(root, [
+                ...root.branch,
+                node('count', total == null ? 'beyond' : 'counted', [], {
+                  of: unit,
+                  held: bearer,
+                  members: mount,
+                  total,
+                  when: a.now,
+                }),
+              ]),
+            ];
+          }
+        }
       }
       return [
         withBranch(root, [

@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **How long a doing went on answers, told *for* so many minutes.** A doing
+  told `ran for 35 minutes` holds the amount under the word it was told with —
+  `backup#3100 {for: minute[221], quantity: 35}` — and a plain hole question
+  reads it back: `how long is the backup?` answers `35 minutes`, the same both
+  ways round. Read the same question with nothing told, no duration answers.
+  The reading is on the time-scale: the asked unit stands among the world's
+  (an hour, a minute, a second), and the amount held for it answers.
+
 - **Asked *when* a doing's clock was read, the day-clock answers.** A clock
   reading on the record — `at 615 minute[221]` — is `when` the doing happened,
   and asked, the brain reads it back the way a day-clock is read: `ten
