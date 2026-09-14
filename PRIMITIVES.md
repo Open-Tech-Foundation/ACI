@@ -355,6 +355,29 @@ Examples that came back wrong, with what each waits on.
   word with two noun senses, which nothing settles without context. Waits on
   word sense from context.
 
+- `the update started ten minutes after the backup` reads and orders (`mine`,
+  the moment after), but `when did the update start?` still answers nothing:
+  the offset never becomes the doing's clock reading. `the update started ten
+  minutes *after the backup finished*` is not understood at all — an
+  `after`-clause naming another doing's end has no reading. Waits on
+  composing offset + reading into a moment.
+
+- `the backup ran for thirty-five minutes` is not understood where the day
+  already holds two clock readings (`the server started at nine fifteen`,
+  `the backup started at nine forty`); digits — `for 35 minutes` — are. The
+  number-word compounding breaks the phrase beside the clock pattern. Waits
+  on the number-word system.
+
+- `the update took 25 minutes` loses the amount: `took` is the past of take
+  (give/take 283), so the duration goes nowhere. The durative `took` sense is
+  a second reading of one word; waits on word sense from context.
+
+- Clock readings whose minute has no single word are said in figures: `ten
+  25`, not `ten twenty-five`. English has no entry for `twenty-five`.
+
+- `the server restarted twenty minutes later` is not understood: no `later`
+  word exists in the language data. Waits on the offset composition above.
+
 ## The event primitive, part built
 
 An event is a bounded stretch of time with people in it and doings inside it.
