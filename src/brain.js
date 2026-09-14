@@ -5850,17 +5850,71 @@ if (far !== undefined) {
   // A time said of a doing is kept on the doing, never linked to the kind it
   // is on the world's side, so no walk finds it. What was said of the very
   // thing the question names reads off the record the conversation keeps, and
-  // the times its doings were told at are the answer: asked when the backup
-  // started, the morning it was started in. A clock reading — an hour and
-  // how many of it — answers what it is only where the number and the unit
-  // can be said together, which is the reading's to do and not this walk's.
+  // only the thing the question names: asked when the backup started, what the
+  // server was told does not answer. A clock reading — a measure of the day —
+  // sits on the record whole and answers the same way a time does.
+  let clock = null;
   if (hole.role === a.when && found.length === 0) {
     const rows = graph ? graph.graph().actions : [];
-    const mine = rows.filter((r) => known.some((p) => r.of != null && world.isA(r.of, p.of)));
+    const nodes = graph ? graph.graph().nodes : null;
+    const nodeConcept = (v) => {
+      if (typeof v === 'number') return v;
+      if (typeof v === 'string' && nodes) {
+        const found = nodes.find((n) => n.id === v);
+        return found ? (found.of ?? found.term) ?? null : null;
+      }
+      return null;
+    };
+    const mine = rows.filter((r) =>
+      known.some((p) => {
+        // The doing is the row's: its own entity names it as well as the thing
+        // it was done to. A row whose `of` is the act itself — a doing kept as
+        // one of its kind — names only the kind of doing it was, and the act a
+        // doing was is every doing's kind and no question's key: the starts
+        // and backups are all one kind, and a question asks after one thing
+        // done, never after the kind of doing it was.
+        const actKind = (t) =>
+          t != null && a.action != null && world.isA(t, a.action) && !world.isIndividual(t);
+        const hits = (a, b) => (actKind(a) || actKind(b) ? a === b : world.isA(a, b));
+        const kindRow = actKind(r.of);
+        if (r.did != null && hits(r.did, p.of)) return true;
+        if (r.did != null && p.of != null && hits(p.of, r.did)) return true;
+        if (!kindRow && r.of != null && hits(r.of, p.of)) return true;
+        if (!kindRow && r.of != null && p.of != null && hits(p.of, r.of)) return true;
+        // The parts a doing was done among name it too: the row says who its
+        // parts were in its own words, and the question's named thing is one
+        // of them. Only the parts are asked for — the act every row shares
+        // names no row over another.
+        for (const v of Object.values(r.roles ?? {})) {
+          const c = nodeConcept(v);
+          if (c == null || actKind(c)) continue;
+          if (hits(c, p.of) || (p.of != null && hits(p.of, c))) return true;
+        }
+        return false;
+      }),
+    );
     const times = [...new Set(mine.flatMap((r) => r.times ?? []))];
     found.push(...times);
+    // A time-word told outright answers first — the morning it was started in
+    // says where on the day it stands, where a reading says only how far. The
+    // clock is read only where no time was ever told.
+    if (found.length === 0) {
+      clock =
+        mine
+          .map((r) => r.time)
+          .find(
+            (t) =>
+              t != null &&
+              t.amount != null &&
+              t.unit != null &&
+              // A reading stands on the clock: the seconds, minutes and hours
+              // the world's units hold are one scale, and that is what a clock
+              // reads — not a week, which is a length nothing tells the clock.
+              UNITS.some((name) => a[name] === t.unit),
+          ) ?? null;
+    }
   }
-  return node('answer', 'link', [], { subject: action, relation: hole.role, found });
+  return node('answer', 'link', [], { subject: action, relation: hole.role, found, clock });
 }
 
 // The part a word says the thing beside it plays in what happened. Which word
@@ -6543,6 +6597,14 @@ function spoken(answer, langName, langs, world, written) {
     const lang = (langs || []).find((candidate) => candidate.data.name === langName);
     return lang ? lang.classificationFor(answer.state.classification) : null;
   }
+  // A clock reading is a measure of the day, and it is said as the reading of
+  // the clock that gave it — ten fifteen — not as a count in the smallest of
+  // its units. The number and the unit were one phrase on the way in; they are
+  // one phrase on the way out.
+  if (answer.state.clock != null) {
+    const reading = clockSaid(answer.state.clock, langName, langs, world, written);
+    if (reading != null) return reading;
+  }
   const { found, through } = answer.state;
   const way = through == null ? null : termWord(through, langName, langs, world);
   // A place is said as a place — the way it holds, and the thing it holds to,
@@ -6744,6 +6806,43 @@ function amountSaid(counted, langName, langs, world, written) {
   const unit = (counted.state.members === 1 ? null : lang && lang.manyWordFor(of))
     ?? termWord(of, langName, langs, world, written);
   return unit == null ? many : `${many} ${unit}`;
+}
+
+// The reading of a clock, said back the way a day-clock is read. A measure
+// of the day sits on the record in the smallest of its units — six hundred
+// and fifteen minutes — and the clock that read it read ten hours and
+// fifteen minutes, which the day says as ten fifteen. The language numbers
+// each part; the brain only joins what the clock holds together.
+function clockSaid(clock, langName, langs, world, written) {
+  if (clock == null || world == null) return null;
+  const a = world.anchors || {};
+  const unit = UNITS.find((name) => a[name] === clock.unit) ?? null;
+  const base = unit == null ? null : stepsInTime(unit, 'second');
+  if (base == null) return null;
+  const total = Number(clock.amount) * base;
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const seconds = total % 60;
+  const number = (n) => numberSaid(world.termFor(n), n, langName, langs, world, written);
+  // Whole hours and the quarter-hour standing after them are the reading of
+  // the day — ten fifteen — with no unit in between. What is not such a
+  // reading is said as amounts of the units it is.
+  if (seconds === 0 && minutes > 0 && hours > 0) {
+    const hour = number(hours);
+    const minute = number(minutes);
+    return hour == null || minute == null ? null : `${hour} ${minute}`;
+  }
+  const lang = (langs || []).find((l) => l.data.name === langName);
+  const unitWord = (count, term) =>
+    (count === 1 ? null : lang && lang.manyWordFor(term)) ?? termWord(term, langName, langs, world, written);
+  const parts = [];
+  for (const [count, term] of [[hours, a.hour], [minutes, a.minute], [seconds, a.second]]) {
+    if (count <= 0) continue;
+    const many = number(count);
+    if (many == null) continue;
+    parts.push(`${many} ${unitWord(count, term)}`);
+  }
+  return parts.length === 0 ? null : parts.join(' ');
 }
 
 // A number the brain worked out. The world may have no term for it — nothing

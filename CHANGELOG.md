@@ -6,13 +6,21 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Asked *when* a doing's clock was read, the day-clock answers.** A clock
+  reading on the record — `at 615 minute[221]` — is `when` the doing happened,
+  and asked, the brain reads it back the way a day-clock is read: `ten
+  fifteen`, not `six hundred and fifteen minutes`. The reading is the doing's
+  own: asked when the server started, what the update's reading says never
+  answers, and a time-word told outright — `in the morning` — answers first,
+  where a reading says only how far along the day.
+
 - **A doing's clock reading joins its parts into one.** `at ten hours and
   fifteen minutes` is one reading, not two: the parts land on the event row as
   a single measure in the smallest of their units — `at 615 minute[221]` — by
   way of the units the brain shares with every scale (an hour is sixty
   minutes, a minute sixty seconds). A single amount — `at ten hours` —
   stands as it was said, and two units a scale gives no way between never
-  join, so nothing near enough is ever said. The reading is now on the record
+  join, so nothing near enough is ever said. The reading is on the record
   whole, minutes of the day, ready for the clock to read back.
 
 - **Asked *when*, the brain reads the doing's time off the record.** A time
@@ -21,9 +29,7 @@ All notable changes to this project are documented in this file.
   no walk finds it. A when-question now falls back to what the question names:
   asked `when did the backup start?` after the morning claim, the answer is
   `morning`, and what no time was ever told never answers — `when did the
-  server start?` stays `I don't know.` A clock reading still answers nothing
-  (an hour and how many of it become a phrase only in the reading's own voice),
-  which stays the campaign's next step.
+  server start?` stays `I don't know.`
 
 - **The operations vocabulary.** The time campaign's working example — a server
   and its backup, an update, a crash and a restart — had no words: `backup`,

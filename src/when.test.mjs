@@ -33,3 +33,30 @@ test("asked when what never had a time, the brain says it does not know", async 
   const when = await brain("when did the server start?");
   assert(when.expression.name === "unsure", `no record for that doing:\n${JSON.stringify(when.expression)}`);
 });
+
+test("asked when a doing's clock read, it answers the reading of the day", async () => {
+  await fresh("the backup started at ten hours and fifteen minutes");
+  const when = await brain("when did the backup start?");
+  assert(when.expression.name === "answer", `a clock reading answers:\n${JSON.stringify(when.expression)}`);
+  assert(
+    when.expression.state.says === "ten fifteen",
+    `the day-clock reading answers:\n${JSON.stringify(when.expression)}`,
+  );
+});
+
+test("a clock reading answers only the doing it was read of", async () => {
+  await fresh(
+    "the server started at five hours and forty minutes",
+    "the update started at ten hours and fifteen minutes",
+  );
+  const update = await brain("when did the update start?");
+  assert(
+    update.expression.state.says === "ten fifteen",
+    `the update's own reading answers:\n${JSON.stringify(update.expression)}`,
+  );
+  const server = await brain("when did the server start?");
+  assert(
+    server.expression.state.says === "five forty",
+    `the server's own reading answers:\n${JSON.stringify(server.expression)}`,
+  );
+});
