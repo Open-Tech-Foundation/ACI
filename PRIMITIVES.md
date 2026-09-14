@@ -244,10 +244,15 @@ semantics that rules cannot be written without.
   crash, restart, finish) is authored, each doing records its event, and
   `the server started before the backup` stands once on the chrono with the
   reverse refused (`feat(core): the operations vocabulary records its doings on
-  the chrono`). What remains is the stretch itself: `ran for` and `took` parse
-  but claim nothing standing today, and `end` is only the sentence terminator —
-  `started`, `began`, `ended` and `later` are words the stretch reading must
-  live on.
+  the chrono`). The stretch and its length are in too — `ran for` holds the
+  amount (`how long` reads it back), `when did it finish` composes start plus
+  it, and the span between two clocked doings answers as minutes (`how many
+  minutes after the server started did the crash happen`) — with `feat(core):
+  name the numbers twenty-one to ninety-nine` supplying the words a compound
+  minute needs. What still waits on the phase is the offset itself (`later`,
+  `N after X finished`), which reads as an ordering but never becomes the
+  doing's clock, and the band form (`more than N before/after X`), which does
+  not parse at all.
 - [ ] Generalize quantity/placement history into value-at-time state.
 - [ ] Add transition, becomes, starts, stops and persistence semantics.
 - [ ] Connect event time and causal order to the same temporal model.
@@ -374,6 +379,22 @@ Examples that came back wrong, with what each waits on.
 
 - `the server restarted twenty minutes later` is not understood: no `later`
   word exists in the language data. Waits on the offset composition above.
+
+- The span between two clocked doings now answers: `how many minutes after the
+  server started did the crash happen?` reads each doing's clock off the record
+  and answers `110 minutes` (nine fifteen to eleven five); asked of a doing's
+  end, the end is the other side of the gap (`how many minutes before the crash
+  did the update finish?` answers `fifteen minutes` from a start ten fifteen
+  plus a thirty-five minute run), and `by how much?` after a finished second
+  doing answers too. Two gaps remain. A bare `before the crash happened` with no
+  second doing alongside is not read: `how many minutes before the crash
+  happened?` is `unknown` — the question names no doing to hold the gap open
+  between. And the band form does not parse at all: `did the crash happen more
+  than two hours after the server started?` and `the update finished more than
+  two hours before the crash?` are not understood, and `is thirty minutes more
+  than ten minutes?` does not deem — comparisons work on bare numbers (`is one
+  hundred ten more than sixty?` affirms), not on measures. Waits on reading a
+  `more than`-clause that frames a connected pair.
 
 ## The event primitive, part built
 

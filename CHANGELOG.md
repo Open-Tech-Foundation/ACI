@@ -33,6 +33,16 @@ All notable changes to this project are documented in this file.
   The reading is on the time-scale: the asked unit stands among the world's
   (an hour, a minute, a second), and the amount held for it answers.
 
+- **How many minutes stood between two doings answers the gap.** Asked what a
+  before or after joins, the brain reads each doing's clock off the record —
+  `how many minutes after the server started did the crash happen?` answers
+  `110 minutes` (nine fifteen to eleven five). The question names the doings
+  on either side of the word, and the word between them is the signal itself;
+  nothing is looked up in the world, which links no part of a day to a thing.
+  Asked of a doing's end, the end is the other side of the gap: a update that
+  finished fifteen minutes before the crash answers `fifteen minutes` either
+  way round. Where the record holds no clock for a doing, nothing answers.
+
 - **Asked *when* a doing's clock was read, the day-clock answers.** A clock
   reading on the record — `at 615 minute[221]` — is `when` the doing happened,
   and asked, the brain reads it back the way a day-clock is read: `ten

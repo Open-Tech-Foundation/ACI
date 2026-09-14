@@ -132,3 +132,40 @@ test("a doing nothing ever ran answers no finish", async () => {
   const finish = await brain("when did the update finish?");
   assert(finish.expression.name !== "answer", `no doing on the record, no finish answers:\n${JSON.stringify(finish.expression)}`);
 });
+
+test("how many minutes stood between two clocked doings answers the gap", async () => {
+  await fresh(
+    "the crash happened at eleven hours and five minutes",
+    "the server started at nine hours and fifteen minutes",
+  );
+  const after = await brain("how many minutes after the server started did the crash happen?");
+  assert(after.expression.name === "answer", `a span answers:\n${JSON.stringify(after.expression)}`);
+  assert(
+    after.expression.state.says === "110 minutes",
+    `the minutes between the two doings answer:\n${JSON.stringify(after.expression)}`,
+  );
+  const before = await brain("how many minutes before the crash did the server start?");
+  assert(
+    before.expression.state.says === "110 minutes",
+    `the same gap asked the other way round answers alike:\n${JSON.stringify(before.expression)}`,
+  );
+});
+
+test("asked how far in minutes from a doing's end, the gap answers from its finish", async () => {
+  await fresh(
+    "the crash happened at eleven hours and five minutes",
+    "the update started at ten hours and fifteen minutes",
+    "the update ran for thirty-five minutes",
+  );
+  const before = await brain("how many minutes before the crash did the update finish?");
+  assert(before.expression.name === "answer", `a span to an end answers:\n${JSON.stringify(before.expression)}`);
+  assert(
+    before.expression.state.says === "fifteen minutes",
+    `the end, not the start, is the other end of the gap:\n${JSON.stringify(before.expression)}`,
+  );
+  const after = await brain("how many minutes after the update finished did the crash happen?");
+  assert(
+    after.expression.state.says === "fifteen minutes",
+    `asked from the end the same gap answers alike:\n${JSON.stringify(after.expression)}`,
+  );
+});

@@ -2529,6 +2529,58 @@ function aboutClaim(root, spoken, verdict, world, mood, sent) {
   ];
 }
 
+// The clock a doing stood at, read off the record the conversation keeps —
+// never off the world, which links no part of a day to a thing. The beginning
+// answers as it was told; where the signal asks after its end, the time it
+// went on is put forward from there. `null` where no row says the doing.
+function clockAt(term, said, a, world, graph) {
+  const rows = graph ? graph.graph().actions : [];
+  const nodes = graph ? graph.graph().nodes : null;
+  const nodeConcept = (v) => {
+    if (typeof v === 'number') return v;
+    if (typeof v === 'string' && nodes) {
+      const found = nodes.find((n) => n.id === v);
+      return found ? (found.of ?? found.term) ?? null : null;
+    }
+    return null;
+  };
+  const actKind = (t) => t != null && a.action != null && world.isA(t, a.action) && !world.isIndividual(t);
+  const hits = (x, y) => (actKind(x) || actKind(y) ? x === y : world.isA(x, y));
+  let clock = null;
+  let holder = null;
+  for (const r of rows) {
+    const did = r.did;
+    if (did == null) continue;
+    const kindRow = r.of != null && actKind(r.of);
+    const does = (v) => {
+      const c = nodeConcept(v);
+      if (c == null || actKind(c)) return false;
+      return hits(c, term) || (term != null && hits(term, c));
+    };
+    const matches =
+      does(did) ||
+      (!kindRow && r.of != null && does(r.of)) ||
+      Object.values(r.roles ?? {}).some((v) => does(v));
+    if (!matches) continue;
+    if (r.time == null || r.time.amount == null || !UNITS.some((name) => a[name] === r.time.unit)) continue;
+    clock = { amount: Number(r.time.amount), unit: r.time.unit };
+    holder = did;
+    break;
+  }
+  if (clock == null) return null;
+  const wantedEnd = a.finish != null && said.some((n) => n != null && conceptOf(n) === a.finish);
+  if (wantedEnd) {
+    let length = 0;
+    for (const unit of world.standing(a.time, a.measure)) {
+      const held = world.held(holder, a.for, unit);
+      if (held == null) continue;
+      length += held * unitsIn(unit, clock.unit, world);
+    }
+    if (length > 0) clock = { amount: clock.amount + length, unit: clock.unit };
+  }
+  return clock;
+}
+
 function because(joined, world, mood, sent) {
   if (mood !== 'tell' || !world || sent == null || sent.allocate == null) return [];
   const a = world.anchors || {};
@@ -2660,6 +2712,64 @@ function because(joined, world, mood, sent) {
     .map((hole) => nearestOver(said, said.indexOf(hole), 1, (n) => conceptOf(n) != null))
     .filter((n) => n != null && reaches(n, (world.anchors || {}).property, world));
   const asking = new Set(wanted.map((n) => conceptOf(n)));
+
+  // Asked how long stood between two doings — `how many minutes after the
+  // server started did the crash happen` — the gap between their clocks is the
+  // answer, and the record each holds is where that clock is read. The word
+  // the question asks on, before or after, is the signal itself; where the
+  // record holds a clock for the doing on each side of it, the two are enough
+  // and nothing is looked up in the world — the world links no part of a day
+  // to a thing.
+  if (mood === 'ask' && a.measure != null) {
+    const order = said
+      .map((n) => conceptOf(n))
+      .find((c) => {
+        const name = c == null ? null : world.term(c)?.name;
+        return name === 'before' || name === 'after';
+      });
+    const doings = [];
+    for (const n of said) {
+      const c = conceptOf(n);
+      if (c == null || c === order || c === a.measure || c === a.time) continue;
+      const clock = clockAt(c, said, a, world, graph);
+      if (clock == null) continue;
+      if (!doings.some((d) => d.concept === c)) doings.push({ concept: c, clock });
+    }
+    if (order != null && doings.length >= 2) {
+      const toMinutes = (cl) => {
+        const factor = unitsIn(cl.unit, a.minute, world);
+        return factor == null ? null : factor * cl.amount;
+      };
+      const at = doings.map((d) => toMinutes(d.clock));
+      if (at.every((v) => v != null)) {
+        let members = Math.abs(at[0] - at[1]);
+        let unit = a.minute;
+        const askedUnit = said
+          .map((n) => conceptOf(n))
+          .find((c) => c != null && (c === a.hour || c === a.minute || c === a.second));
+        if (askedUnit != null && askedUnit !== a.minute) {
+          const per = unitsIn(askedUnit, a.minute, world);
+          if (per != null && Number.isInteger(per) && members % per === 0) {
+            members /= per;
+            unit = askedUnit;
+          }
+        }
+        const total = world.termFor(members);
+        return [
+          withBranch(root, [
+            ...root.branch,
+            node('count', total == null ? 'beyond' : 'counted', [], {
+              of: unit,
+              held: doings[1].concept,
+              members,
+              total,
+              when: a.now,
+            }),
+          ]),
+        ];
+      }
+    }
+  }
 
   // Asked *why* something is so, the question is about the claim and not about
   // the thing in it: it is not asking whether a drum is cold — that was said —
