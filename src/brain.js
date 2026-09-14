@@ -2741,13 +2741,17 @@ function because(joined, world, mood, sent) {
         return factor == null ? null : factor * cl.amount;
       };
       const at = doings.map((d) => toMinutes(d.clock));
-      if (at.every((v) => v != null)) {
+      const askedUnit = said
+        .map((n) => conceptOf(n))
+        .find((c) => c != null && (c === a.hour || c === a.minute || c === a.second));
+      // The question must ask in a clock's units — `how many minutes between
+      // them` — for the gap to be the answer. Asked *when* one of them was,
+      // `when did the crash happen after the server started`, the clock of the
+      // one is the answer; the gap between them is a different question.
+      if (askedUnit != null && at.every((v) => v != null)) {
         let members = Math.abs(at[0] - at[1]);
         let unit = a.minute;
-        const askedUnit = said
-          .map((n) => conceptOf(n))
-          .find((c) => c != null && (c === a.hour || c === a.minute || c === a.second));
-        if (askedUnit != null && askedUnit !== a.minute) {
+        if (askedUnit !== a.minute) {
           const per = unitsIn(askedUnit, a.minute, world);
           if (per != null && Number.isInteger(per) && members % per === 0) {
             members /= per;

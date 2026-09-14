@@ -385,16 +385,19 @@ Examples that came back wrong, with what each waits on.
   and answers `110 minutes` (nine fifteen to eleven five); asked of a doing's
   end, the end is the other side of the gap (`how many minutes before the crash
   did the update finish?` answers `fifteen minutes` from a start ten fifteen
-  plus a thirty-five minute run), and `by how much?` after a finished second
-  doing answers too. Two gaps remain. A bare `before the crash happened` with no
-  second doing alongside is not read: `how many minutes before the crash
-  happened?` is `unknown` — the question names no doing to hold the gap open
-  between. And the band form does not parse at all: `did the crash happen more
-  than two hours after the server started?` and `the update finished more than
-  two hours before the crash?` are not understood, and `is thirty minutes more
-  than ten minutes?` does not deem — comparisons work on bare numbers (`is one
-  hundred ten more than sixty?` affirms), not on measures. Waits on reading a
-  `more than`-clause that frames a connected pair.
+  plus a thirty-five minute run). The question must ask in a clock's units —
+  asked *when* one of the doings was (`when did the crash happen after the
+  server started`) the gap is a different question and does not answer. Two
+  gaps remain. A bare `before the crash` with no second doing alongside is not
+  read: `how many minutes before the crash happened?` is `unknown`, and the
+  `by how much` form (`the update finished before the crash by how much?`)
+  asks without naming a unit, so nothing spans it. And the band form does not
+  parse at all: `did the crash happen more than two hours after the server
+  started?` and `the update finished more than two hours before the crash?`
+  are not understood, and `is thirty minutes more than ten minutes?` does not
+  deem — comparisons work on bare numbers (`is one hundred ten more than
+  sixty?` affirms), not on measures. Waits on reading a `more than`-clause
+  that frames a connected pair.
 
 ## The event primitive, part built
 
