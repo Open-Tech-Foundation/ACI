@@ -389,11 +389,16 @@ Examples that came back wrong, with what each waits on.
   did the update finish?` answers `fifteen minutes` from a start ten fifteen
   plus a thirty-five minute run). The question must ask in a clock's units —
   asked *when* one of the doings was (`when did the crash happen after the
-  server started`) the gap is a different question and does not answer. Two
-  gaps remain. A bare `before the crash` with no second doing alongside is not
-  read: `how many minutes before the crash happened?` is `unknown`, and the
-  `by how much` form (`the update finished before the crash by how much?`)
-  asks without naming a unit, so nothing spans it.
+  server started`) the *clock of the one the question names* is the answer
+  (`eleven hours`), the doing in the sentence's own subject read off the tree
+  since the walk puts the focus first. Two gaps remain, both phrase-specific.
+  A bare `before the crash` with no second doing alongside is not read: `how
+  many minutes before the crash happened?` is `unknown`. And the `by how much`
+  form (`the update finished before the crash by how much?`) trails three
+  words — by, how, much — with no concepts and no grammar rule, so the
+
+  sentence does not parse into anything a span can name; it is noted and
+  left.
 
 - The temporal clause and the band are in. A `more than N`-clause that frames a
   connected pair is read at last, because English now says it: the grammar
@@ -404,15 +409,19 @@ Examples that came back wrong, with what each waits on.
   crash happened two hours after the server started`, the crash's clock derives
   from the server's start and reads back (`eleven fifteen`, and the offset
   reads back `two hours`), the same for `before`; with no clock for the placed
-  doing nothing is guessed. Asked `did the crash happen more than two hours
-  after the server started?` the gap is compared against the reach and the
-  answer is yes or no (`No. ❌`, while `more than 100 minutes` and `less than
-  two hours` affirm). One piece of the band family still waits: `is thirty
-  minutes more than ten minutes?` does not deem — comparisons that are not a
-  yes/no over a span still work only on bare numbers. And `the server restarted
-  twenty minutes later` and `the update started ten minutes after the backup`
-  still do not parse: `later` has no word, and the offset needs the source
-  doing's clock read off the record with nothing said about it happening.
+  doing nothing is guessed. The offset also reads where the grammar rule was
+  already there without it: `the update started ten minutes after the backup`
+  answers nine fifty from a backup told to start at nine forty — the `numeral
+  noun preposition subject` form has no verb of its own, but the placed doing
+  carries one. Asked `did the crash happen more than two hours after the
+  server started?` the gap is compared against the reach and the answer is
+  yes or no (`No. ❌`, while `more than 100 minutes` and `less than two hours`
+  affirm). And measures compare on their scale at last: `is thirty minutes
+  more than ten minutes?` affirms, `are two hours more than one hundred
+  minutes?` affirms (the units convert before the numbers are read), `is
+  thirty minutes less than one hour?` affirms. One piece of the family still
+  waits: `the server restarted twenty minutes later` does not parse — `later`
+  has no word in the language data.
 
 ## The event primitive, part built
 

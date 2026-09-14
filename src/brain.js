@@ -2806,10 +2806,44 @@ function because(joined, world, mood, sent) {
           ]),
         ];
       }
+      // Asked *when* one of the two was — `when did the crash happen after
+      // the server started` — the clock of the one the question names is the
+      // answer, not the gap between them: the word before/after only places it
+      // against the other. The question asks about the doing in the sentence's
+      // own subject — not the one inside the before/after clause — and the
+      // walk `said` puts the conversation's focus first, so the subject is
+      // read off the tree the walk came from.
+      if (
+        a.when != null &&
+        band == null &&
+        said.some((n) => conceptOf(n) === a.when) &&
+        at.every((v) => v != null)
+      ) {
+        const inSubject = ((node, out = []) => {
+          if (node.kind === 'thing') out.push(conceptOf(node));
+          for (const child of node.branch || []) inSubject(child, out);
+          return out;
+        });
+        const sentence = (root.branch || []).find((b) => b.kind === 'sentence');
+        const subject = sentence ? (sentence.branch || []).find((b) => b.kind === 'subject') : null;
+        const subjects = subject ? inSubject(subject) : [];
+        const ask = doings.find((d) => subjects.includes(d.concept)) ?? doings[0];
+        const clock = { amount: at[doings.indexOf(ask)], unit: a.minute };
+        return [
+          withBranch(root, [
+            ...root.branch,
+            node('answer', 'clock', [], {
+              subject: ask.concept,
+              relation: a.when,
+              found: [clock],
+              clock,
+            }),
+          ]),
+        ];
+      }
       // The question must ask in a clock's units — `how many minutes between
-      // them` — for the gap to be the answer. Asked *when* one of them was,
-      // `when did the crash happen after the server started`, the clock of the
-      // one is the answer; the gap between them is a different question.
+      // them` — for the gap to be the answer. The gap between them is a
+      // different question from the clock of either.
       if (askedUnit != null && at.every((v) => v != null)) {
         let members = Math.abs(at[0] - at[1]);
         let unit = a.minute;
@@ -3807,7 +3841,7 @@ function because(joined, world, mood, sent) {
   // them. Told nothing it could not work, the parts are answered one apiece,
   // as before.
   if (holes.length > 0 && terms.length >= 2 && said.some(choiceOn) && !said.some(negatesOn)) {
-    if (isComparing(relation, world)) {
+  if (isComparing(relation, world)) {
       const op = said[at];
       const stood = (x, y) => calculate([x, op, y], 1, relation, world);
       const beats = (x, y) => {
@@ -4982,6 +5016,19 @@ function calculate(said, at, relation, world) {
     });
   }
 
+  // A comparison put in a copular question — `is thirty minutes more than
+  // ten minutes?` — does not rest on the verb that asks it: the `is` does
+  // not compare, and the more or less inside does. Where the word the claim
+  // rests on does not compare but a comparing word stands inside, the
+  // comparison is that inner word, made the same way it would be bare.
+  if (!isComparing(relation, world)) {
+    const inner = said.findIndex((n) => isComparing(conceptOf(n), world));
+    if (inner >= 0) {
+      at = inner;
+      relation = conceptOf(said[inner]);
+    }
+  }
+
   if (isComparing(relation, world)) {
     // Each side is worked out on its own, the way two sides asked to be the
     // same are: what is compared is what each side comes to, not the nearest
@@ -4990,9 +5037,6 @@ function calculate(said, at, relation, world) {
     const after = working(said.slice(at + 1), world, true);
     const left = before ? before.value : valueBeside(said, at, -1, world);
     const right = after ? after.value : valueBeside(said, at, 1, world);
-    // Two numbers are the case where the world can already say which is
-    // greater. Where they are not numbers, they may still stand on one scale,
-    // and being further along it is the same thing said without counting.
     if (left == null || right == null) {
       // The things compared, not the words joining them: `a cow is heavier than
       // a goat` names two relations and neither is one of the things.
@@ -5005,6 +5049,36 @@ function calculate(said, at, relation, world) {
         onOf(said[at]),
         said[at],
       );
+    }
+    // Two measures on one scale compare along it: `two hours is more than one
+    // hundred minutes` is the same as saying 120 > 100, but the comparison
+    // must read the unit and not just the number to get there. Where each
+    // side has a unit the world can convert, furtherAlong does the work.
+    const readMeasure = (slice) => {
+      let unit = null;
+      for (const n of slice) {
+        const c = conceptOf(n);
+        if (c != null && (c === a.hour || c === a.minute || c === a.second)) { unit = c; break; }
+      }
+      if (unit == null || a.measure == null) return null;
+      if (!world.linked(unit, a.measure).length) return null;
+      const value = working(slice, world, true);
+      if (value == null) return null;
+      return { amount: value.value, unit };
+    };
+    const leftMeasure = readMeasure(said.slice(0, at));
+    const rightMeasure = readMeasure(said.slice(at + 1));
+    if (leftMeasure != null && rightMeasure != null) {
+      const cmp = furtherAlong(leftMeasure, rightMeasure, world);
+      if (cmp == null || cmp === 0) return null;
+      const holds = directionOf(relation, world, said[at]) === a.less ? cmp < 0 : cmp > 0;
+      return node('standing', holds ? 'held' : 'against', [], {
+        subject: world.termFor(leftMeasure.amount),
+        relation,
+        object: world.termFor(rightMeasure.amount),
+        worked: true,
+        ...wordUsed(said[at]),
+      });
     }
     const compared = numericCompare(left, right);
     if (Number.isNaN(compared)) return null;

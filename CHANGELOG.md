@@ -57,6 +57,22 @@ All notable changes to this project are documented in this file.
   than two hours` — affirms. The band is asked in any clock's units, words or
   figures, and before-or-after reads the same gap either way.
 
+- **Asked *when* one of two clocked doings stood, its own clock answers.**
+  `when did the crash happen after the server started?` reads the crash's
+  clock off the record, not the gap between them: the crash that happened at
+  eleven when the server started at nine answers `eleven hours`, and asked the
+  other way round a server that started at nine still answers `nine hours`.
+  The doing the question asks about is the sentence's own subject — read off
+  the tree, since the walk puts the conversation's focus first — not the doing
+  the before/after clause names.
+
+- **Two measures compare along their scale, converted where units differ.**
+  `is thirty minutes more than ten minutes?` answers yes, `are two hours more
+  than one hundred minutes?` answers yes too — the units are put on one scale
+  before the comparison reads them, so two hours is one hundred twenty minutes
+  before a minute is read. Numbers still compare as numbers, and `less than`
+  reads the same conversion the same way.
+
 - **Asked *when* a doing's clock was read, the day-clock answers.** A clock
   reading on the record — `at 615 minute[221]` — is `when` the doing happened,
   and asked, the brain reads it back the way a day-clock is read: `ten

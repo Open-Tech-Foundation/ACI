@@ -204,6 +204,22 @@ test("told when one doing was by offsetting from another, the doing does not ans
   );
 });
 
+test("an offset that names the source doing without a doing words of its own still reads its clock", async () => {
+  await fresh(
+    "the backup started at nine hours and forty minutes",
+    "the update started ten minutes after the backup",
+  );
+  const when = await brain("when did the update start?");
+  assert(
+    when.expression.name === "answer",
+    `a clock reading answers:\n${JSON.stringify(when.expression)}`,
+  );
+  assert(
+    when.expression.state.says === "nine fifty",
+    `the clock derived from the backup's start answers:\n${JSON.stringify(when.expression)}`,
+  );
+});
+
 test("did the crash happen more than N after the server started — asks the band", async () => {
   await fresh(
     "the server started at nine hours and fifteen minutes",
@@ -251,5 +267,61 @@ test("did the crash happen less than N after the server started — asks the ban
   assert(
     no.expression.state.says === "No. ❌",
     `a gap at the band says no:\n${JSON.stringify(no.expression)}`,
+  );
+});
+
+test("asked when one of two clocked doings stood relative to the other, its own clock answers", async () => {
+  await fresh(
+    "the server started at nine hours",
+    "the crash happened at eleven hours",
+  );
+  const crash = await brain("when did the crash happen after the server started?");
+  assert(crash.expression.name === "answer", `a clock reading answers:\n${JSON.stringify(crash.expression)}`);
+  assert(
+    crash.expression.state.says === "eleven hours",
+    `the crash's own clock answers, not the gap:\n${JSON.stringify(crash.expression)}`,
+  );
+  const server = await brain("when did the server start before the crash?");
+  assert(
+    server.expression.state.says === "nine hours",
+    `the server's own clock answers asked the other way round:\n${JSON.stringify(server.expression)}`,
+  );
+  await forget();
+  await fresh(
+    "the server started at nine hours",
+    "the crash happened at eleven hours",
+  );
+  const refined = await fresh(
+    "the server started at nine hours during the night",
+    "the crash happened at eleven hours",
+  );
+  const night = await brain("when did the crash happen after the server started?");
+  assert(
+    night.expression.state.says === "eleven hours",
+    `the clock answers even where the other doing had more said of it:\n${JSON.stringify(night.expression)}`,
+  );
+});
+
+test("two measures compare along their scale, converted where units differ", async () => {
+  const yes = await fresh("is thirty minutes more than ten minutes?");
+  assert(yes.expression.name === "affirm", `more minutes affirms:\n${JSON.stringify(yes.expression)}`);
+  assert(
+    yes.expression.state.says === "Yes. ✅",
+    `thirty minutes is more than ten:\n${JSON.stringify(yes.expression)}`,
+  );
+  const no = await fresh("is thirty minutes more than forty minutes?");
+  assert(
+    no.expression.name === "deny",
+    `fewer minutes denies:\n${JSON.stringify(no.expression)}`,
+  );
+  const across = await fresh("are two hours more than one hundred minutes?");
+  assert(
+    across.expression.name === "affirm",
+    `hours and minutes converted before comparing:\n${JSON.stringify(across.expression)}`,
+  );
+  const under = await fresh("is thirty minutes less than one hour?");
+  assert(
+    under.expression.name === "affirm",
+    `less than reads the converted hour too:\n${JSON.stringify(under.expression)}`,
   );
 });
