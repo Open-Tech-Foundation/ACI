@@ -57,6 +57,23 @@ test("being able to do something is a fact about the thing", async () => {
   await forget();
 });
 
+test("being unable is a fact the same way", async () => {
+  // `cannot` and `can't` are one word for `can not`, and all three deny the
+  // ability where `can` would affirm it.
+  for (const word of ["can not", "cannot", "can't"]) {
+    assertEquals((await fresh(`a bird ${word} swim`)).expression.name, "learn", word);
+    assertEquals((await fresh(`a bird ${word} swim`, "can a bird swim?")).expression.name, "deny", word);
+    assertEquals((await fresh(`a bird ${word} swim`, `a bird ${word} swim?`)).expression.name, "affirm", word);
+  }
+  await forget();
+});
+
+test("asking an untold unable is an honest unsure", async () => {
+  assertEquals((await fresh("a bird can't swim?")).expression.name, "unsure");
+  assertEquals((await fresh("a bird cannot swim?")).expression.name, "unsure");
+  await forget();
+});
+
 test("a fronted modal asks after what was told", async () => {
   assertEquals((await fresh("can a cat swim?")).expression.name, "unsure");
   assertEquals((await fresh("can a cat swim?")).learned, null, "a question teaches nothing");

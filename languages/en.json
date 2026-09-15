@@ -16114,6 +16114,40 @@
         "functions": "modal"
       }
     ],
+    "cannot": [
+      {
+        "pos": "verb",
+        "meaning": "can",
+        "concept": 3012,
+        "select": {
+          "before": "doing"
+        },
+        "negates": true
+      },
+      {
+        "pos": "modal",
+        "meaning": "can",
+        "functions": "modal",
+        "negates": true
+      }
+    ],
+    "can't": [
+      {
+        "pos": "verb",
+        "meaning": "can",
+        "concept": 3012,
+        "select": {
+          "before": "doing"
+        },
+        "negates": true
+      },
+      {
+        "pos": "modal",
+        "meaning": "can",
+        "functions": "modal",
+        "negates": true
+      }
+    ],
     "bin": {
       "pos": "noun",
       "meaning": "bin",

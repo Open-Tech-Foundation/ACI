@@ -6,6 +6,16 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **The contracted modal denial is read.** `a bird cannot swim` used to answer
+  `I don't understand` while `a bird can not swim` learned and `can a bird
+  swim?` denied. Taking the `n't` ending off `can't` had left `ca` — the `n`
+  of the contraction has merged into the vowel — and `cannot` is no stem of
+  anything, so neither spelling was reached. Now `cannot` and `can't` are
+  their own words, each carrying the two readings of `can` with the denial on
+  both: before a doing they say a thing cannot do it, and the claim is
+  learned the way `can not` is. `a bird cannot swim` is taken in, `can a bird
+  swim?` denies, and asked of an untouched ability the brain says `unsure`.
+
 - **A count of a thing is never negative.** Told `sam has -2 apples` the brain
   used to take it in and answer `-2` — holding minus five of a thing is no
   state the world holds. A static count below zero is now refused (`No. ❌`)

@@ -158,6 +158,20 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
     read below zero — `the temperature is -5 degrees` answers — since a
     temperature is a measure, not a count.
 
+13. **The contracted modal denial is read.** `a bird cannot swim` used to
+    answer `I don't understand` while `a bird can not swim` learned and
+    `can a bird swim?` then denied. The split goes through the claim-denial
+    path, but `can't` was never reached: the `n't` derivation takes the
+    ending off, and taking `n't` off `can't` leaves `ca` — the `n` of the
+    contraction has merged into the vowel. And `cannot` is no stem of
+    anything, so nothing derived it. English's two spellings of the denial
+    are now their own words: `cannot` and `can't` each carry the two
+    readings of `can`, with the denial on both, so before a doing they say
+    a thing cannot do it and the claim reads (and is learned) the way
+    `can not` is. `a bird cannot swim` is taken in, `can a bird swim?`
+    denies, and asked of an untouched ability the brain says the honest
+    `unsure`.
+
 Following the same triage and noted, not fixed — the newest scan's findings,
 each with its root, and each outside the clean-inference bar:
 
@@ -181,14 +195,6 @@ each with its root, and each outside the clean-inference bar:
   paris`) and the trailing preposition; `is a wheel part of a bicycle?`
   affirms, so the inference is whole and the obstacle is the grammar of the
   stranded preposition. Documented above (item 3).
-- **Contracted modal denial (`a bird cannot swim` → `I don't understand`,
-  while `a bird can not swim` learns and `can a bird swim?` then denies).**
-  Morphology in the language's keeping: `can not` goes through the
-  claim-denial path; a contracted token has no grammar slot for the modal
-  that also carries the denial — `can't` does not parse either, and a
-  single-reading `cannot` cannot carry the verb's `select` through the
-  language shape-check. The variable is English's contraction, not an
-  inference underneath it.
 - **Stative vs transitive `because` (`the door is open because the wind is
   strong` works; `the bell rings because bob pressed the button` does not).**
   The because-clause grammar admits a predicate-adjective clause after the
