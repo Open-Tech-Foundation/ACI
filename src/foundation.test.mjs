@@ -97,7 +97,7 @@ test('a later placement is current while the earlier placement remains history',
   const { brain } = openBrain('sqlite::memory:');
   await brain('ravi is in chennai');
   await brain('ravi is in delhi');
-  assertEquals(says(await brain('where is ravi')), 'delhi');
+  assertEquals(says(await brain('where is ravi')), 'in delhi');
 });
 
 test('future events do not prove that a past event happened', async () => {

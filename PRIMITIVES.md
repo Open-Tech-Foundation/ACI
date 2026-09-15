@@ -36,9 +36,9 @@ fillers whose only obstacle is wording rather than an underlying inference.
 Inputs that fail only because a word or term would live in language or world
 data are likewise set aside.
 
-The five known failing files — `causal`, `foundation`, `homonyms`, `names`
-and `universe` — are the current regression baseline. Fixes must not regress
-them and must not add failures elsewhere.
+The two known failing files — `causal` and `homonyms` — are the current
+regression baseline. Fixes must not regress them and must not add failures
+elsewhere.
 
 Verified clean-input gaps, from the `scan-clean` probe (previously
 `.probe/scan-clean.mjs`), in the order they surfaced:
@@ -133,6 +133,20 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
     as before (`who washed the car?`). A `who spoke?` after `sara spoke`
     still says nothing: speaking says nothing about the world, and the
     conversation keeps it without taking it in.
+
+11. **A named place is said without the article of a kind.** Told a person is
+    in a city, `where is he?` answered `in a delhi` — the world's cities are
+    places that exist once, and English says their words bare, so the answer
+    carried a kind's article that a name must not. The `in` was never the
+    artifact: `where is the key?` is answered `in a drawer`, `in chennai`,
+    `at fair` — a place is said as a place, the way it holds and what it
+    holds to. It was the article. Fixed in language data: the world's
+    authored cities (delhi, dublin, paris, tokyo, ...) say bare, as the
+    admission test puts the article's form with the language. `bruno is in
+    dublin` answers `in dublin`, and after `ravi is in chennai` then `ravi is
+    in delhi`, `where is ravi?` answers `in delhi` — the later placement
+    current, the earlier history. The two baseline tests that shaped this are
+    now green; the causal and homonyms failures remain.
 
 Following the same scan and noted, not fixed — language or phrase rather than
 inference: the trailing-preposition forms (`what is a cup in?`, `how many

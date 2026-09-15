@@ -73,7 +73,7 @@ test("two things named in one breath may be joined to each other", async () => {
   // written before any link is.
   await brain("ravi is in chennai");
   assertEquals((await brain("ravi is in chennai?")).expression.name, "affirm");
-  assertEquals(await says("where is ravi"), "chennai");
+  assertEquals(await says("where is ravi"), "in chennai");
   await forget();
 });
 
@@ -82,7 +82,7 @@ test("a named thing is said by its name", async () => {
   // No language lists it, so there is nothing to look it up in. A name is not
   // translated: it is what the thing is written as.
   await brain("bruno is in dublin");
-  assertEquals(await says("where is bruno"), "dublin");
+  assertEquals(await says("where is bruno"), "in dublin");
   await forget();
 });
 

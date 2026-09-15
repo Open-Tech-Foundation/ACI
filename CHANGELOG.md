@@ -6,6 +6,16 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A named place is said without the article of a kind.** The world's cities
+  — delhi, dublin, paris, tokyo and the rest — are places that exist once, and
+  English says their words bare; what follows is not `a delhi`. Asked
+  `where is bruno?` after `bruno is in dublin`, the brain answers `in dublin`,
+  and a later placement supersedes the earlier on the record: after `ravi is
+  in chennai` and `ravi is in delhi`, `where is ravi?` answers `in delhi`. A
+  place is still said as a place — the way it holds and the thing it holds to
+  (`in a drawer`, `under a table`) — and a place the conversation made for an
+  unknown word reads the same way (`ravi is in chennai` answers `in chennai`).
+
 - **The numbers twenty-one to ninety-nine are named.** The world holds terms
   for the tens and the ten-to-one compounds (54021–54099), chained in the
   counting order and valued as the everyday numbers are, and English declares

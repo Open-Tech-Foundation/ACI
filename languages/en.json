@@ -17075,7 +17075,8 @@
     "paris": {
       "pos": "noun",
       "meaning": "paris",
-      "concept": 1401
+      "concept": 1401,
+      "bare": true
     },
     "french": {
       "pos": "noun",
@@ -17090,7 +17091,8 @@
     "tokyo": {
       "pos": "noun",
       "meaning": "tokyo",
-      "concept": 1404
+      "concept": 1404,
+      "bare": true
     },
     "japanese": {
       "pos": "noun",
@@ -17105,7 +17107,8 @@
     "delhi": {
       "pos": "noun",
       "meaning": "delhi",
-      "concept": 1407
+      "concept": 1407,
+      "bare": true
     },
     "hindi": {
       "pos": "noun",
@@ -17120,7 +17123,8 @@
     "beijing": {
       "pos": "noun",
       "meaning": "beijing",
-      "concept": 1410
+      "concept": 1410,
+      "bare": true
     },
     "chinese": {
       "pos": "noun",
@@ -17135,7 +17139,8 @@
     "berlin": {
       "pos": "noun",
       "meaning": "berlin",
-      "concept": 1413
+      "concept": 1413,
+      "bare": true
     },
     "german": {
       "pos": "noun",
@@ -17150,7 +17155,8 @@
     "rome": {
       "pos": "noun",
       "meaning": "rome",
-      "concept": 1416
+      "concept": 1416,
+      "bare": true
     },
     "italian": {
       "pos": "noun",
@@ -17165,7 +17171,8 @@
     "madrid": {
       "pos": "noun",
       "meaning": "madrid",
-      "concept": 1419
+      "concept": 1419,
+      "bare": true
     },
     "spanish": {
       "pos": "noun",
@@ -17180,7 +17187,8 @@
     "moscow": {
       "pos": "noun",
       "meaning": "moscow",
-      "concept": 1422
+      "concept": 1422,
+      "bare": true
     },
     "russian": {
       "pos": "noun",
@@ -17195,7 +17203,8 @@
     "cairo": {
       "pos": "noun",
       "meaning": "cairo",
-      "concept": 1425
+      "concept": 1425,
+      "bare": true
     },
     "arabic": {
       "pos": "noun",
@@ -17210,7 +17219,8 @@
     "nairobi": {
       "pos": "noun",
       "meaning": "nairobi",
-      "concept": 1428
+      "concept": 1428,
+      "bare": true
     },
     "swahili": {
       "pos": "noun",
@@ -17225,7 +17235,8 @@
     "brasilia": {
       "pos": "noun",
       "meaning": "brasilia",
-      "concept": 1431
+      "concept": 1431,
+      "bare": true
     },
     "portuguese": {
       "pos": "noun",
@@ -17240,7 +17251,8 @@
     "ottawa": {
       "pos": "noun",
       "meaning": "ottawa",
-      "concept": 1434
+      "concept": 1434,
+      "bare": true
     },
     "australia": {
       "pos": "noun",
@@ -17250,7 +17262,8 @@
     "canberra": {
       "pos": "noun",
       "meaning": "canberra",
-      "concept": 1436
+      "concept": 1436,
+      "bare": true
     },
     "thailand": {
       "pos": "noun",
@@ -17260,7 +17273,8 @@
     "bangkok": {
       "pos": "noun",
       "meaning": "bangkok",
-      "concept": 1438
+      "concept": 1438,
+      "bare": true
     },
     "thai": {
       "pos": "noun",
@@ -17275,7 +17289,8 @@
     "athens": {
       "pos": "noun",
       "meaning": "athens",
-      "concept": 1441
+      "concept": 1441,
+      "bare": true
     },
     "greek": {
       "pos": "noun",
@@ -17285,7 +17300,8 @@
     "ankara": {
       "pos": "noun",
       "meaning": "ankara",
-      "concept": 1443
+      "concept": 1443,
+      "bare": true
     },
     "turkish": {
       "pos": "noun",
@@ -17300,7 +17316,8 @@
     "warsaw": {
       "pos": "noun",
       "meaning": "warsaw",
-      "concept": 1446
+      "concept": 1446,
+      "bare": true
     },
     "polish": {
       "pos": "noun",
@@ -17315,7 +17332,8 @@
     "stockholm": {
       "pos": "noun",
       "meaning": "stockholm",
-      "concept": 1449
+      "concept": 1449,
+      "bare": true
     },
     "swedish": {
       "pos": "noun",
@@ -17330,7 +17348,8 @@
     "oslo": {
       "pos": "noun",
       "meaning": "oslo",
-      "concept": 1452
+      "concept": 1452,
+      "bare": true
     },
     "norwegian": {
       "pos": "noun",
@@ -17345,7 +17364,8 @@
     "lisbon": {
       "pos": "noun",
       "meaning": "lisbon",
-      "concept": 1455
+      "concept": 1455,
+      "bare": true
     },
     "korea": {
       "pos": "noun",
@@ -17355,7 +17375,8 @@
     "seoul": {
       "pos": "noun",
       "meaning": "seoul",
-      "concept": 1457
+      "concept": 1457,
+      "bare": true
     },
     "korean": {
       "pos": "noun",
@@ -17370,7 +17391,8 @@
     "hanoi": {
       "pos": "noun",
       "meaning": "hanoi",
-      "concept": 1460
+      "concept": 1460,
+      "bare": true
     },
     "vietnamese": {
       "pos": "noun",
@@ -17385,7 +17407,8 @@
     "jakarta": {
       "pos": "noun",
       "meaning": "jakarta",
-      "concept": 1463
+      "concept": 1463,
+      "bare": true
     },
     "indonesian": {
       "pos": "noun",
@@ -17400,7 +17423,8 @@
     "abuja": {
       "pos": "noun",
       "meaning": "abuja",
-      "concept": 1466
+      "concept": 1466,
+      "bare": true
     },
     "peru": {
       "pos": "noun",
@@ -17410,7 +17434,8 @@
     "lima": {
       "pos": "noun",
       "meaning": "lima",
-      "concept": 1468
+      "concept": 1468,
+      "bare": true
     },
     "chile": {
       "pos": "noun",
@@ -17420,7 +17445,8 @@
     "santiago": {
       "pos": "noun",
       "meaning": "santiago",
-      "concept": 1470
+      "concept": 1470,
+      "bare": true
     },
     "cuba": {
       "pos": "noun",
@@ -17430,7 +17456,8 @@
     "havana": {
       "pos": "noun",
       "meaning": "havana",
-      "concept": 1472
+      "concept": 1472,
+      "bare": true
     },
     "iran": {
       "pos": "noun",
@@ -17440,7 +17467,8 @@
     "tehran": {
       "pos": "noun",
       "meaning": "tehran",
-      "concept": 1474
+      "concept": 1474,
+      "bare": true
     },
     "persian": {
       "pos": "noun",
@@ -17455,7 +17483,8 @@
     "baghdad": {
       "pos": "noun",
       "meaning": "baghdad",
-      "concept": 1477
+      "concept": 1477,
+      "bare": true
     },
     "nepal": {
       "pos": "noun",
@@ -17465,7 +17494,8 @@
     "kathmandu": {
       "pos": "noun",
       "meaning": "kathmandu",
-      "concept": 1479
+      "concept": 1479,
+      "bare": true
     },
     "nepali": {
       "pos": "noun",
@@ -17480,7 +17510,8 @@
     "helsinki": {
       "pos": "noun",
       "meaning": "helsinki",
-      "concept": 1482
+      "concept": 1482,
+      "bare": true
     },
     "finnish": {
       "pos": "noun",
@@ -17495,7 +17526,8 @@
     "copenhagen": {
       "pos": "noun",
       "meaning": "copenhagen",
-      "concept": 1485
+      "concept": 1485,
+      "bare": true
     },
     "danish": {
       "pos": "noun",
@@ -17510,7 +17542,8 @@
     "vienna": {
       "pos": "noun",
       "meaning": "vienna",
-      "concept": 1488
+      "concept": 1488,
+      "bare": true
     },
     "ireland": {
       "pos": "noun",
@@ -17520,7 +17553,8 @@
     "dublin": {
       "pos": "noun",
       "meaning": "dublin",
-      "concept": 1490
+      "concept": 1490,
+      "bare": true
     },
     "monday": {
       "pos": "noun",
