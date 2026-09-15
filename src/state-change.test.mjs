@@ -1,0 +1,58 @@
+import { test, assert, assertEquals } from "runtime:test";
+import { openBrain } from "./index.js";
+
+const { brain, forget, serialize } = openBrain("sqlite::memory:");
+
+async function fresh(...said) {
+  await forget();
+  for (const s of said) await brain(s);
+  return serialize();
+}
+const says = async (q) => (await brain(q)).expression.state.says;
+
+test("a state taken is a state change, and it keeps the state left behind", async () => {
+  const graph = await fresh("the coffee is hot", "the coffee got cold");
+  assert(/state-change\(n1\)\s+\{temperature: cold\[\d+\], was: hot\[\d+\]\}/.test(graph), graph);
+});
+
+test("the thing stands in the state it took, not the one it left", async () => {
+  const graph = await fresh("the coffee is hot", "the coffee got cold");
+  assert(/n1  coffee.*\{temperature: cold\[\d+\]\}/.test(graph), graph);
+  assertEquals(await says("is the coffee cold?"), "Yes. ✅ a coffee is cold.");
+  assertEquals(await says("is the coffee hot?"), "No. ❌");
+});
+
+test("what a thing was is still on the record after it has moved on", async () => {
+  const graph = await fresh("the coffee is hot", "the coffee got cold");
+  assert(/was: hot\[\d+\]/.test(graph), `the coffee was hot:\n${graph}`);
+});
+
+test("a state nothing stood in before has nothing it was", async () => {
+  const graph = await fresh("the porch became wet");
+  assert(/state-change\(n1\)\s+\{wetness: wet\[\d+\]\}/.test(graph), graph);
+  assert(!/was:/.test(graph), `nothing was said of before:\n${graph}`);
+});
+
+test("a feeling is a state, and taking a new one leaves the old", async () => {
+  await fresh("ravi is angry", "ravi became afraid");
+  assertEquals(await says("is ravi afraid?"), "Yes. ✅ ravi is fear.");
+  assertEquals(await says("is ravi angry?"), "No. ❌");
+});
+
+test("a property is not a state, and changing one is not the other", async () => {
+  const graph = await fresh("the lamp is red", "the lamp turned blue");
+  assert(/property-change\(n1\)\s+\{colour: blue\[\d+\]\}/.test(graph), graph);
+});
+
+test("a dimension holds one value at a time without anyone saying so", async () => {
+  // Nobody declares anger and fear to be different. One feeling at a time is
+  // what a dimension means.
+  await fresh("meera is angry", "meera became afraid");
+  assertEquals(await says("is meera angry?"), "No. ❌");
+});
+
+test("a state of one kind is left alone by a state of another", async () => {
+  await fresh("the sack is open", "the sack became wet");
+  assertEquals(await says("is the sack open?"), "Yes. ✅ a sack is open.");
+  assertEquals(await says("is the sack wet?"), "Yes. ✅ a sack is wet.");
+});

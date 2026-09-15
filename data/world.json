@@ -2,6 +2,7 @@
   "anchors": {
     "thing": 2,
     "property": 3,
+    "state": 188,
     "relation": 4,
     "action": 5,
     "living": 10,

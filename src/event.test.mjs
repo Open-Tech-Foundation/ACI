@@ -100,7 +100,9 @@ test("where the doing stood is where each of them stood", async () => {
 test("a doing holds what came of it", async () => {
   await fresh("a road became wet because a plank fell");
   const graph = serialize();
-  assert(/property-change\(n1\)/.test(graph), `the road changed:\n${graph}`);
+  // Wet is a state of the road, not a property of it, so what happened to it
+  // is a state change.
+  assert(/state-change\(n1\)/.test(graph), `the road changed:\n${graph}`);
   assert(/event\(n2, type: fall\[\d+\]\)\s+holds a1/.test(graph), `and the falling holds it:\n${graph}`);
   await forget();
 });

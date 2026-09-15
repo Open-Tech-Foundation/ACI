@@ -22,6 +22,7 @@ import { grownBy } from './world.js';
 
 export const TRANSFER = 'transfer';
 export const PROPERTY_CHANGE = 'property-change';
+export const STATE_CHANGE = 'state-change';
 export const HOLDING = 'holding';
 export const PLACEMENT = 'placement';
 export const COMPARISON = 'comparison';
@@ -632,7 +633,9 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
         ? transferring(roles, properties, world)
         : primitive === PROPERTY_CHANGE
           ? changing(roles, properties, world)
-          : { roles, properties }),
+          : primitive === STATE_CHANGE
+            ? stateChanging(roles, properties, world, not === true)
+            : { roles, properties }),
       stands: stands(not),
       when: when ?? null,
     };
@@ -852,6 +855,12 @@ function doing(roles, world) {
   const anchors = (world && world.anchors) || {};
   const played = (role) => role != null && Object.hasOwn(roles, role);
   if (played(anchors.source) || played(anchors.destination)) return TRANSFER;
+  // A state change and a property change are both a value taken and nothing
+  // moved, and they are not the same thing. A property is what a thing is —
+  // its colour, its size — and it seldom changes. A state is how it is now,
+  // and changing is what a state is for: it has a value it left as surely as
+  // one it took, and what it left is worth keeping.
+  if (played(anchors.target) && isState(only(roles[anchors.target]), world)) return STATE_CHANGE;
   if (played(anchors.target) && isProperty(only(roles[anchors.target]), world)) return PROPERTY_CHANGE;
   return null;
 }
@@ -934,6 +943,46 @@ function changing(roles, properties, world) {
   return {
     parts: { thing: at(anchors.agent) },
     properties: { ...(took == null ? {} : { [qualityKind(took, world)]: took }), ...properties },
+  };
+}
+
+// What a state change is made of: the thing, the state it took, and the state
+// it left. The one it left is not worked out later from the history — by then
+// the thing has moved on — it is read off the thing at the moment it changes
+// and kept here. The thing itself then stands in the new state, so what it is
+// now is asked of the thing and what it was is asked of this.
+function stateChanging(roles, properties, world, denied) {
+  const anchors = (world && world.anchors) || {};
+  const at = (role) => (role != null && Object.hasOwn(roles, role) ? only(roles[role]) : null);
+  const thing = at(anchors.agent);
+  const gained = at(anchors.target);
+  const on = gained == null ? null : qualityKind(gained, world);
+  const one = held.nodes.find((node) => node.id === thing);
+  // What it was, read off the thing before it moves on. The same state told
+  // again is no change and leaves nothing to have been.
+  const standing = one && on != null ? (one.how || {})[on] ?? null : null;
+  const was = standing === gained ? null : standing;
+  // A change that did not happen leaves the thing where it was. Only one that
+  // stands moves it on.
+  if (!denied && one && on != null && gained != null) {
+    one.how = { ...(one.how || {}), [on]: gained };
+    // The thing stands in the new state, and standing in it is a fact about it
+    // like any other. Told outright, the conversation would have taken it in;
+    // changed into, it is the same standing and is taken in the same way, so
+    // whatever is asked of the thing is answered from one place. The state it
+    // left goes as it arrives — a dimension holds one value at a time.
+    const term = termOf(thing);
+    if (term != null && anchors.predication != null) {
+      took({ terms: [{ id: term, links: [{ rel: anchors.predication, to: gained }] }] }, world);
+    }
+  }
+  return {
+    parts: { thing },
+    properties: {
+      ...(on == null ? {} : { [on]: gained }),
+      ...(was == null ? {} : { was }),
+      ...properties,
+    },
   };
 }
 
@@ -1023,6 +1072,9 @@ const isQuality = (id, world) =>
 
 const isProperty = (id, world) =>
   id != null && world && world.anchors.property != null && world.isA(id, world.anchors.property);
+
+const isState = (id, world) =>
+  id != null && world && world.anchors.state != null && world.isA(id, world.anchors.state);
 
 const classifies = (relation, world) => {
   const anchors = world.anchors || {};
@@ -1586,11 +1638,21 @@ function serialize(world = against) {
   // nothing goes looking for a word for it. Which is which is named here
   // rather than guessed at, because both are integers and they do not look
   // any different.
-  const CONCEPTS = new Set(['thing', 'on', 'as', 'of', 'unit', 'colour', 'state', 'position', 'size', 'height', 'weight', 'temperature', 'speed', 'time', 'length', 'distance']);
+  const SLOTS = new Set(['thing', 'on', 'as', 'of', 'unit', 'was']);
+  // A property's value is a term and is said as one; a count is a number and
+  // nothing goes looking for a word for it. Both are integers, so which is
+  // which is not guessed at: a slot named for a property the world holds —
+  // colour, temperature, openness — carries a term, and the world says which
+  // names those are rather than a list here going stale as it grows.
+  const named = (name) => {
+    if (SLOTS.has(name)) return true;
+    const term = world && world.named ? world.named(name) : null;
+    return term != null && world.anchors.property != null && world.isA(term, world.anchors.property);
+  };
   const properties = (of) => {
     const said = Object.entries(of || {})
       .filter(([, value]) => value != null)
-      .map(([name, value]) => `${name}: ${CONCEPTS.has(name) ? spell(value) : value}`);
+      .map(([name, value]) => `${name}: ${named(name) ? spell(value) : value}`);
     return said.length ? `  {${said.join(', ')}}` : '';
   };
   // The part a thing played in a doing is a role, not something said. It is

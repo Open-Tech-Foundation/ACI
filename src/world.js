@@ -1123,8 +1123,42 @@ export function grownBy(world, learned) {
       at.set(proposed.id, terms.length);
       terms.push({ ...proposed, links: [...(proposed.links || [])] });
     } else {
-      terms[found].links.push(...(proposed.links || []));
+      for (const link of proposed.links || []) supersede(terms[found].links, link, world);
     }
   }
   return fromWorldData({ ...world.data, terms });
+}
+
+// A thing is one temperature at a time, and one openness, and one feeling.
+// That is what a dimension is: its values are alternatives to one another, so
+// the newest takes the place of the one before it rather than standing beside
+// it. Nothing else is exclusive — a thing said to be a heron is still a bird,
+// and one said to be red is still big — so only a value on a dimension
+// displaces, and only another value on that same dimension.
+function supersede(links, link, world) {
+  const on = dimensionOf(link.to, world);
+  if (on != null) {
+    for (let i = links.length - 1; i >= 0; i -= 1) {
+      const held = links[i];
+      if (held.rel !== link.rel || held.to === link.to) continue;
+      if (dimensionOf(held.to, world) === on) links.splice(i, 1);
+    }
+  }
+  links.push(link);
+}
+
+// Which dimension a value lies on: what measures it, or failing that what it
+// is a kind of. A value on no dimension — anything that is not a property at
+// all — has none, and displaces nothing.
+function dimensionOf(id, world) {
+  const anchors = (world && world.anchors) || {};
+  if (id == null || anchors.property == null || !world.isA(id, anchors.property)) return null;
+  if (anchors.measure != null) {
+    const of = world.members(id, anchors.measure) || [];
+    if (of.length) return of[0];
+  }
+  for (const kind of world.kinds(id) || []) {
+    if (kind !== id && kind !== anchors.property) return kind;
+  }
+  return anchors.property;
 }
