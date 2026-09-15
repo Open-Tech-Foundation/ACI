@@ -2007,23 +2007,21 @@
     },
     "so": [
       {
-        "pos": [
-          "conjunction",
-          "degree"
-        ],
+        "pos": "conjunction",
         "meaning": "so",
-        "functions": "join"
+        "concept": 247,
+        "functions": [
+          "join",
+          "result"
+        ],
+        "select": {
+          "before": "thing"
+        }
       },
       {
         "pos": "degree",
         "meaning": "so",
-        "marks": "idea",
-        "select": {
-          "after": [
-            "pointer",
-            "predicate"
-          ]
-        }
+        "marks": "idea"
       }
     ],
     "hold": {
@@ -18924,6 +18922,51 @@
       "meaning": "restarted",
       "concept": 3042,
       "when": "past"
+    },
+    "since": {
+      "pos": "conjunction",
+      "meaning": "since",
+      "concept": 247,
+      "functions": [
+        "join",
+        "reason"
+      ]
+    },
+    "therefore": {
+      "pos": "conjunction",
+      "meaning": "therefore",
+      "concept": 247,
+      "functions": [
+        "join",
+        "result"
+      ]
+    },
+    "thus": {
+      "pos": "conjunction",
+      "meaning": "thus",
+      "concept": 247,
+      "functions": [
+        "join",
+        "result"
+      ]
+    },
+    "hence": {
+      "pos": "conjunction",
+      "meaning": "hence",
+      "concept": 247,
+      "functions": [
+        "join",
+        "result"
+      ]
+    },
+    "as": {
+      "pos": "conjunction",
+      "meaning": "as",
+      "concept": 247,
+      "functions": [
+        "join",
+        "reason"
+      ]
     }
   },
   "unknown": {

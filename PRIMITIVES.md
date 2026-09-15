@@ -172,6 +172,43 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
     denies, and asked of an untouched ability the brain says the honest
     `unsure`.
 
+14. **A doing on the far end of an ordering happens as itself.** `a plank fell
+    after a meeting` records the falling and, beside it, the meeting *falling*
+    — `event(a1, type: fall[262])`. An ordering whose word sits on a doing puts
+    a happening on each of its two ends, and both ends are given the near
+    side's verb. Where the two ends really do share the verb that is right —
+    `sara arrived before john` is two arrivals — but a meeting does not fall.
+    The far end should happen as what it is: the meeting is an event of its
+    own, already on the record, and the ordering should place that happening
+    rather than invent a second one of the near side's kind. Not fixed. The
+    neighbouring case where the far end is an amount of time is fixed — a unit
+    that measures time is never a party to an ordering, and one doing told how
+    long after keeps one happening and carries the amount.
+
+15. **A reason clause standing first loses its word.** `since a plank fell, a
+    road is wet` is taken in and both sides are recorded, but the joining is
+    not: the leading conjunction is stripped before the tree is built, so
+    nothing carries the reason function and the two clauses stand side by side
+    with no cause between them. The same is true of `because a plank fell, a
+    road is wet`. Said the other way round — `a road is wet since a plank
+    fell` — the joining reads and the reason's row holds the effect's. Adding
+    a `conjunction clause sentence` rule changes nothing, because the word is
+    gone before the rule is reached. Not fixed. What is quietly wrong rather
+    than merely missing is that the signal answers `I understand` while
+    dropping what the word said.
+
+16. **A reason said as a thing rather than a clause.** `a road is wet because
+    of a plank` and `the delay was due to traffic` name the reason with a noun,
+    not a clause. `because of` is read today as `because` followed by `of`, so
+    it leaves `cause(road, plank)` — the wrong way round, since the plank
+    caused the wetness and not the road the plank — and a stray second row on
+    `wet` beside it. `due to` is not read at all: `due` becomes a thing of its
+    own. Both want the reason to be a thing standing against a claim, which is
+    a side the cause primitive does not yet have — it knows a reason that is
+    something being so and a reason that is something happening. Not fixed.
+    The clause-joining words are whole: because, since, as, so, therefore,
+    thus and hence all reach the one primitive.
+
 Following the same triage and noted, not fixed — the newest scan's findings,
 each with its root, and each outside the clean-inference bar:
 

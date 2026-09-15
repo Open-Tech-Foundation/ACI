@@ -36,6 +36,7 @@ const COGNITIVE_FUNCTIONS = [
   'naming',
   'possessor',
   'reason',
+  'result',
 ];
 
 function isId(v) {

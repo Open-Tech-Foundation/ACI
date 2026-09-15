@@ -2585,8 +2585,17 @@ function because(joined, world, mood, sent) {
   if (mood !== 'tell' || !world || sent == null || sent.allocate == null) return [];
   const a = world.anchors || {};
   if (a.cause == null || a.subject == null || a.object == null) return [];
-  const at = (joined.branch || []).findIndex((n) => functionsOf(n).includes('reason'));
+  // Which side the reason is on is the word's, and the language says so. Some
+  // words put the reason after them — `because a plank fell` — and some put
+  // what came of it — `so a road is wet`. One joining either way is the same
+  // joining: a reason and what came of it, told in the order the word chose.
+  const branch = joined.branch || [];
+  const at = branch.findIndex((n) => {
+    const fns = functionsOf(n);
+    return fns.includes('reason') || fns.includes('result');
+  });
   if (at < 0) return [];
+  const reasonFollows = functionsOf(branch[at]).includes('reason');
   // Either side may be something being so or something happening. A claim is
   // written down as a thing when the cause is; a doing already is one, so what
   // is wanted from it is which one it was.
@@ -2604,8 +2613,10 @@ function because(joined, world, mood, sent) {
   const wholes = (joined.branch || []).filter((b) => joinedWhole(b, joined));
   const before = wholes.filter((b) => (joined.branch || []).indexOf(b) < at);
   const after = wholes.filter((b) => (joined.branch || []).indexOf(b) > at);
-  const effect = sideOf(before[before.length - 1]);
-  const reason = sideOf(after[0]);
+  const near = sideOf(before[before.length - 1]);
+  const far = sideOf(after[0]);
+  const effect = reasonFollows ? near : far;
+  const reason = reasonFollows ? far : near;
   if (!effect || !reason) return [];
   return [
     node('cause', 'because', [], {

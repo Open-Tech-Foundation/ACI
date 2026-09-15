@@ -6,6 +6,17 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Seven words for one joining.** A reason and what came of it was reachable
+  by one word only — `because`. The joining itself never depended on the word:
+  which side the reason was said on is the word's business, and the brain's is
+  that there is a reason and there is what came of it. English now says both
+  ways round. `since` and `as` put the reason after them, as `because` does;
+  `so`, `therefore`, `thus` and `hence` put what came of it after them instead.
+  All seven leave one shape — the reason's row holding the effect's — and both
+  sides are still said in their own right. `so` keeps its other reading: where
+  nothing follows it, it still stands for the last idea, so `is it so?` and
+  `i think so` answer as they did.
+
 - **How long after a doing was is when it was, not a second doing.** `a plank
   fell after 5 minutes` used to order the falling against the minutes: the
   ordering put a happening on each end, so the unit itself fell, and `minute`
