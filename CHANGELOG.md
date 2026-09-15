@@ -109,6 +109,14 @@ All notable changes to this project are documented in this file.
   the kind, the climb the count always read: `what has apples?` answers the
   basket.
 
+- **A name asked back what it was given answers it.** `sam is three` binds the
+  word `sam` to the conversation's three — a name belongs to the conversation,
+  so nothing is written to the world for it, and the runtime hands the binding
+  back. Asked `is sam three?`, the brain reads it back: the very amount
+  affirms, another denies (`is sam nine?`, `sam is six?`), and a name asked a
+  term it never held — `is sam a cat?` — answers nothing, being only what it
+  was given; comparisons, other names and ungiven names read as before.
+
 - **Asked *when* a doing's clock was read, the day-clock answers.** A clock
 
 - **Asked *when* a doing's clock was read, the day-clock answers.** A clock

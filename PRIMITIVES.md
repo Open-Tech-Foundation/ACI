@@ -101,6 +101,24 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
    the far side reads back: `is the table under the book?` affirms, and
    `what is under the book?` answers the table. The world's `different`
    between on and under still denies a thing on a table being under it.
+8. **A name, asked what it was given.** `sam is three` binds the word `sam` to
+   the conversation's three — nothing is written to the world — and the ask
+   `is sam three?` answered `unknown`, having no claim to read and never
+   checking the binding the runtime handed back. Fixed: asked with the word it
+   was given, the brain reads the binding the way the signal that made it did —
+   `is sam three?` affirms, `is sam nine?` and `sam is six?` deny, and a term
+   asked of a number name (`is sam a cat?`) is not the read and says nothing.
+   Only a number read is answered; the identity read (`is sam sam?`) is a
+   separate surface.
+
+Following the same scan and noted, not fixed — language or phrase rather than
+inference: the trailing-preposition forms (`what is a cup in?`, `how many
+apples are in the basket?` — the dangling preposition the `of` notes above
+describe); hyponym exclusion (`is a mammal a cat?` answers an honest
+`unsure`, there being no exclusion reply); the age words `older`/`younger`,
+which are language data without right companions yet; and the
+indefinite-article container (`a basket has four apples` reads once `the` is
+said).
 
 ## Status legend
 

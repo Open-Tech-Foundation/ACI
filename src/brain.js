@@ -2701,6 +2701,16 @@ function because(joined, world, mood, sent) {
     return [withBranch(root, [...root.branch, node('named', 'name', [], { gave })])];
   }
 
+  // A name this conversation gave may be asked back for what it was given:
+  // after `sam is three`, `is sam three?` affirms and `is sam nine?` denies.
+  // The binding belongs to the conversation, so nothing stands behind it in
+  // the world — the runtime handed the binding back, and it answers on its
+  // own, the same read the signal that gave it made. Only a number read is
+  // answered: a name given a term is a thing to be introduced, not a value
+  // to be compared.
+  const askedBack = namedBack(root, world, mood, sent);
+  if (askedBack) return [withBranch(root, [...root.branch, askedBack])];
+
   // A hole is a word standing for what the signal does not say — not merely a
   // word with no term behind it, which every article and preposition is. The
   // language marks which of its words do that.
@@ -8337,6 +8347,54 @@ function givings(roots, world, mood) {
     });
   });
   return out;
+}
+
+// A name this conversation gave, asked what it was given. `sam is three` bound
+// the word sam to the conversation's three; asked `is sam three?`, the binding
+// the runtime handed back answers on its own — a name holds what it was given,
+// and nothing in the world is written for it. Only a number complement is read
+// back; asked of another amount it denies, and a name given a term is a thing
+// to be introduced, never a value to be compared.
+function namedBack(root, world, mood, sent) {
+  if (mood !== 'ask' || !sent || !sent.names) return null;
+  const a = world.anchors || {};
+  const predicate = findBranch(root, 'predicate');
+  const joint = predicate && (predicate.branch || []).find((b) => b.kind === 'thing');
+  const jt = joint ? conceptOf(joint) : null;
+  // A comparison joins with more, less or an ordering word; reading the name's
+  // number as an equality is not the comparison's read, which answers with its
+  // own algebra. The verb to be shows no term on a fronted question, and it is
+  // the word these asks make with: both are read here.
+  if (
+    jt != null &&
+    (jt === a.more ||
+      jt === a.less ||
+      (a.order != null && (jt === a.order || world.isA(jt, a.order) || world.subrelationOf(jt, a.order))))
+  ) {
+    return null;
+  }
+  const subject = findBranch(root, 'subject');
+  const who = subject && (subject.branch || []).find((b) => b.kind === 'thing');
+  if (!who || !who.state || who.state.identity == null) return null;
+  const binding = sent.names[who.state.identity];
+  if (!binding || (binding.of == null && binding.value == null)) return null;
+  const completer = completing(root);
+  const what = completer && (completer.branch || []).find((b) => b.kind === 'thing');
+  if (!what) return null;
+  const given = conceptOf(what);
+  const number = numberOf(what, world);
+  const isNumber = number != null || (given != null && a.number != null && world.isA(given, a.number));
+  if (!isNumber) return null;
+  const same =
+    (binding.of != null && given === binding.of) ||
+    (number != null && binding.value != null && number === binding.value);
+  return node('standing', same ? 'held' : 'against', [], {
+    subject: null,
+    relation: null,
+    object: null,
+    negated: false,
+    worked: true,
+  });
 }
 
 // What the signal was about, so that the signal after it may point back at it.

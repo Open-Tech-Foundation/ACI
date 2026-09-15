@@ -121,3 +121,30 @@ test("what the signal says outranks what a name was waiting for", async () => {
   assertEquals((await brain("what is x?")).expression.name, "unsure");
   await forget();
 });
+
+test("a name asked back what it was given answers it", async () => {
+  await forget();
+  await brain("sam is three");
+  assertEquals((await brain("is sam three?", "c")).expression.name, "affirm",
+    "the binding it was given answers the word it was given");
+  assertEquals((await brain("is sam nine?", "c")).expression.name, "deny",
+    "another amount is not what it was given");
+  assertEquals((await brain("sam is six?", "c")).expression.name, "deny",
+    "subject-first asks the same way");
+  await forget();
+});
+
+test("a name asked a term it was not given is not answered by the binding", async () => {
+  await forget();
+  await brain("sam is three");
+  assertEquals((await brain("is sam a cat?", "c")).expression.name, "unknown",
+    "a number name holds no term to answer a kind with");
+  await forget();
+});
+
+test("a name none gave answers nothing", async () => {
+  await forget();
+  assertEquals((await brain("is mara three?", "c")).expression.name, "unknown",
+    "no binding stands for a name no signal gave");
+  await forget();
+});
