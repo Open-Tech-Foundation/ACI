@@ -100,6 +100,17 @@ All notable changes to this project are documented in this file.
   side the same way: `the lamp is under the crate` makes `is the crate on the
   lamp?` affirm.
 
+- **A count of a kind is read as holding the kind, from either side.** The
+  basket `has three apples` keeps three made apple-things on its bearer, and
+  the authored basket links nothing — so asks of the basket gap were not
+  only WHAT questions. Now the yes/no reading finds the bearer's hold for the
+  kind (`does the basket have any apples?` affirms, and a count of a kind is
+  a hold of it), and whoever stands to the one thing of the kind stands to
+  the kind, the climb the count always read: `what has apples?` answers the
+  basket.
+
+- **Asked *when* a doing's clock was read, the day-clock answers.** A clock
+
 - **Asked *when* a doing's clock was read, the day-clock answers.** A clock
   reading on the record — `at 615 minute[221]` — is `when` the doing happened,
   and asked, the brain reads it back the way a day-clock is read: `ten

@@ -783,7 +783,17 @@ export function fromWorldData(source) {
       if (id == null || rel == null) return [];
       const out = new Set();
       for (const t of terms.values()) {
-        if (relatedBy(t.id, rel).has(id)) out.add(canonical(t.id));
+        for (const next of relatedBy(t.id, rel)) {
+          // What stands to a thing is one end of the fact; what stands to a
+          // thing *of* a kind is an end of the same kind of fact — whoever
+          // holds a key holds a key, however the key was told: directly as a
+          // kind, or as one thing of it that the brain made and counted.
+          // `heldBy` climbs the same way, so a count and a holder agree.
+          if (equivalents(id).has(next) || reaches(next, isRel).has(id)) {
+            out.add(canonical(t.id));
+            break;
+          }
+        }
       }
       return [...out];
     },

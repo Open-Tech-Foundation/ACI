@@ -3042,10 +3042,7 @@ function because(joined, world, mood, sent) {
       // rel named — or by the other end of it, where the world says one
       // rel is another the other way round. Being in a thing and its
       // holding you are one fact, and the brain has it either way it is told.
-      const joins = (from, to, rel) =>
-        rel === world.baseRelation
-          ? world.isA(from, to, rel)
-          : upward(from, world).some((rung) => world.isA(rung, to, rel));
+      const joins = (from, to, rel) => joinsOn(from, to, rel, world);
       const knownCount = counted == null ? null : world.held(holder, rel, object);
       // How many of a kind a thing holds answers whether it holds one at all:
       // three apples is an apple, and none of them is not.
@@ -3481,10 +3478,7 @@ function because(joined, world, mood, sent) {
     const triple = idea ? idea.standing : null;
     if (triple && triple.subject != null && triple.relation != null) {
       const { subject, relation: rel, object } = triple;
-      const joins = (from, to, r) =>
-        r === world.baseRelation
-          ? world.isA(from, to, r)
-          : upward(from, world).some((rung) => world.isA(rung, to, r));
+      const joins = (from, to, r) => joinsOn(from, to, r, world);
       const holds =
         joins(subject, object, rel) ||
         bothWays(rel, world).some((back) => joins(object, subject, back)) ||
@@ -4999,6 +4993,30 @@ function bothWays(relation, world) {
     for (const other of world.members(relation, a.converse)) ways.add(other);
   }
   return [...ways];
+}
+
+// Whether one thing joins another by a relation, the way a joining is read: up
+// the kinds of the first, then — where the relation is a holding — on the
+// bearer the brain made for whoever holds. `the basket has three apples` was
+// read from the basket's bearer and the authored basket links nothing, so asks
+// of the kind only answer from the bearer. A thing the bearer holds that is
+// one of the object is the object itself, the same climb the count reads.
+function joinsOn(from, to, rel, world) {
+  const a = world.anchors || {};
+  if (rel == null) return false;
+  if (rel === world.baseRelation) return world.isA(from, to, rel);
+  if (upward(from, world).some((rung) => world.isA(rung, to, rel))) return true;
+  if (a.holding != null && (rel === a.holding || world.subrelationOf(rel, a.holding))) {
+    for (const bearer of [
+      from,
+      ...(world.oneOf(from) == null ? [] : [world.oneOf(from)]),
+      ...world.individualsOf(from),
+    ]) {
+      if (world.linked(bearer, rel).some((x) => world.isA(x, to))) return true;
+      if (world.held(bearer, rel, to) != null) return true;
+    }
+  }
+  return false;
 }
 
 // The relations the world says are a different one from this. Two things

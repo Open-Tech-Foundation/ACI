@@ -142,3 +142,17 @@ test("a person's hold is answered the same way", async () => {
   assertEquals((await brain("what does sam have?")).expression.state.says, "book");
   await forget();
 });
+
+test("a counting hold answers for its bearer and is asked after the kind", async () => {
+  await forget();
+  // The count sits on the bearer the brain made, and the apple it holds is one
+  // thing of the apple kind — so asked of the kind, the bearer answers: is
+  // there any, it affirms, and whoever holds the one holds the kind.
+  await brain("the basket has three apple");
+  assertEquals((await brain("does the basket have apples?")).expression.name, "affirm",
+    "a count of a kind is a hold of it");
+  assertEquals((await brain("does the basket have any apples?")).expression.name, "affirm");
+  assertEquals((await brain("what has apples?")).expression.name, "answer",
+    "whoever holds the thing of the kind holds the kind");
+  await forget();
+});

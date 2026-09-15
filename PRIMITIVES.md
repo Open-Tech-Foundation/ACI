@@ -87,6 +87,13 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
    bearer — the one of the kind, or any one of it — and answers what it
    holds. Where the world's ladder answers only the generic `thing` a
    container holds, the specifics this conversation told take its place.
+   The same bearer sat behind every side of the hole, not just the WHAT:
+   `does the basket have any apples?` answered `unsure`, and `what has
+   apples?` nothing. The yes/no verdict and the holder walk read the bearer
+   the way the count always did — a basket of three apples holds an apple —
+   so `what has apples?` answers the basket, `who has a book?` answers sam
+   (`who` names somebody, so a thing never answers it), and a count of a
+   kind is a hold of it.
 7. **A placement asked from the place's side.** _Fixed_ — `the book is on
    the table` then `is the table under the book?` answered `unsure`, though
    `the book` on the table *is* the table under the book. The world declares
