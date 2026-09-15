@@ -56,6 +56,15 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
    answers, and `the father of sam is bob` parses and answers correctly — so
    the gap is in how the grammar reads the `of` phrase for certain nouns
    (capital lacks the relation structure that `father` has). Not fixed.
+   The `part`/`made-of` members of the family are the same trade, but from
+   the word `of`: English maps the preposition `of` to the `has` relation,
+   so `is the car made of the wheel?` parses as a holding (`car has wheel`)
+   and answers `unsure`, `what is the wheel part of?` does not parse at all,
+   and `the wheel is not part of the car` neither. The inference underneath
+   is whole — the world declares `part converse made-of`, and asking with the
+   declared word `made-of` affirms from the far side (`is the car made-of the
+   wheel?` after `the wheel is part of the car`). What blocks each of these is
+   the word `of` and the fronted/trailing phrase, not the converse.
 4. **A doing inside an ordering.** _Fixed_ — `sara arrived before john`
     related sara to john and never recorded that either arrived, so `did sara
     arrive?` answered `I don't know` in a conversation that had just said so.
@@ -78,6 +87,13 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
    bearer — the one of the kind, or any one of it — and answers what it
    holds. Where the world's ladder answers only the generic `thing` a
    container holds, the specifics this conversation told take its place.
+7. **A placement asked from the place's side.** _Fixed_ — `the book is on
+   the table` then `is the table under the book?` answered `unsure`, though
+   `the book` on the table *is* the table under the book. The world declares
+   `on converse under` the way it already declared `in converse hold`, and
+   the far side reads back: `is the table under the book?` affirms, and
+   `what is under the book?` answers the table. The world's `different`
+   between on and under still denies a thing on a table being under it.
 
 ## Status legend
 

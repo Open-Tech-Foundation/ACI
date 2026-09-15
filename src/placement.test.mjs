@@ -71,6 +71,22 @@ test("the other end is said once and read both ways", async () => {
   await forget();
 });
 
+test("on and under are one placement read from the place's side too", async () => {
+  await forget();
+  // `on converse under` reads an on-fact as under from the far side, so the
+  // thing stood on answers what stands under it — the book on the table means
+  // the table is under the book — without pretending the book is under it,
+  // which the world's `different` still denies.
+  await brain("the book is on the table");
+  assertEquals((await brain("is the table under the book?")).expression.name, "affirm");
+  assertEquals((await brain("is the book under the table?")).expression.name, "deny",
+    "a thing on a table is not under it");
+  await forget();
+  await brain("the lamp is under the crate");
+  assertEquals((await brain("is the crate on the lamp?")).expression.name, "affirm");
+  await forget();
+});
+
 test("what a thing is does not change by standing somewhere", async () => {
   await forget();
   await brain("an apple is on a table");

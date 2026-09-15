@@ -91,6 +91,15 @@ All notable changes to this project are documented in this file.
   holds, the specifics this conversation told take its place. What it holds
   answers the same question the count asks.
 
+- **A placement said of a thing answers from the place's own side.** The
+  world declares `on converse under` the way it always said `in converse
+  hold`, so `the book is on the table` reads back as `the table is under the
+  book` — asked, it affirms, and `what is under the book?` answers the
+  table — while a thing on a table is still not under it, which the world's
+  `different` between on and under denies. Under-facts answer from their own
+  side the same way: `the lamp is under the crate` makes `is the crate on the
+  lamp?` affirm.
+
 - **Asked *when* a doing's clock was read, the day-clock answers.** A clock
   reading on the record — `at 615 minute[221]` — is `when` the doing happened,
   and asked, the brain reads it back the way a day-clock is read: `ten
