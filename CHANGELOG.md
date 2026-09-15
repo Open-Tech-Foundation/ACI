@@ -6,6 +6,27 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **How long after a doing was is when it was, not a second doing.** `a plank
+  fell after 5 minutes` used to order the falling against the minutes: the
+  ordering put a happening on each end, so the unit itself fell, and `minute`
+  went on the timeline as a moment. A unit that measures time cannot fall or
+  arrive or stand in an order. One doing told how long after now keeps one
+  happening and carries the amount — `event(n1, type: fall[262]) after 5
+  minute[221]` — and `the coffee got cold after 5 minutes` stays about the one
+  coffee the conversation already holds. An ordering that really does join two
+  doings is untouched: `the crash happened two hours after the server started`
+  still orders them and still says how far apart they were.
+
+- **Two things said to have stood at one time stand in one moment.** `the
+  coffee was hot when it arrived` answered `I don't understand` — English had
+  `when` only as the word that opens a question, so the clause joining a state
+  to a doing reached nothing. `when` is now also the word that joins two of
+  them, and the question-opening reading is picked by its place at the front of
+  the signal, so `when did the backup start?` answers as it did. Both sides are
+  taken in — it was hot, and it arrived — and the chrono holds the pair
+  together: `m1 members: [f1, a1]`. Being at the same time is an order like
+  being before or after, and it is kept where order is kept.
+
 - **How a thing is, is a fact about it.** A quality used to be written onto
   the node — `n1 sky {colour: blue}` — and nowhere else, so it had no place in
   the order things were said in and no history there was anything to read. A

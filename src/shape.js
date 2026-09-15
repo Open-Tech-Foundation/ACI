@@ -32,6 +32,7 @@ const COGNITIVE_FUNCTIONS = [
   'modal',
   'member',
   'modifier',
+  'moment',
   'naming',
   'possessor',
   'reason',

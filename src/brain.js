@@ -2617,6 +2617,37 @@ function because(joined, world, mood, sent) {
   ];
 }
 
+// Two things said to have stood at one time. `the coffee was hot when it
+// arrived` says both — it was hot, and it arrived — and on top of that says
+// they were so together. That togetherness is a fact about the two of them and
+// about neither one alone, so it is kept where the order of things is kept,
+// as one moment holding both.
+function together(joined, world, mood, sent) {
+  if (mood !== 'tell' || !world || sent == null || sent.allocate == null) return [];
+  const at = (joined.branch || []).findIndex((n) => functionsOf(n).includes('moment'));
+  if (at < 0) return [];
+  // Either side may be something being so or something happening, and which
+  // it is decides what there is to point at afterwards.
+  const sideOf = (n) => {
+    const stood = n && (n.branch || []).find((b) => b.kind === 'standing');
+    if (stood) {
+      const { subject, relation, object, negated } = stood.state;
+      return subject == null || relation == null || object == null
+        ? null
+        : { claim: { subject, relation, object, negated: Boolean(negated) } };
+    }
+    const done = n && (n.branch || []).find((b) => b.kind === 'event');
+    return done && done.state.id != null ? { done: done.state.id } : null;
+  };
+  const wholes = (joined.branch || []).filter((b) => joinedWhole(b, joined));
+  const before = wholes.filter((b) => (joined.branch || []).indexOf(b) < at);
+  const after = wholes.filter((b) => (joined.branch || []).indexOf(b) > at);
+  const one = sideOf(before[before.length - 1]);
+  const other = sideOf(after[0]);
+  if (!one || !other) return [];
+  return [node('moment', 'when', [], { sides: [one, other] })];
+}
+
 // A word may hold a claim at arm's length rather than make it: `a cat might
   // be an animal` says nothing is so, it says what might be. The brain checks
   // it, which is what being asked does, and takes nothing in. It cannot tell
@@ -2662,7 +2693,11 @@ function because(joined, world, mood, sent) {
     // second is the reason for the first, which is a fact about the two
     // claims rather than about either drum. Which side is the reason the
     // language says: English puts it after the word.
-    return [instead(root, join, withBranch(judged, [...judged.branch, ...because(judged, world, mood, sent)]))];
+    return [instead(root, join, withBranch(judged, [
+      ...judged.branch,
+      ...because(judged, world, mood, sent),
+      ...together(judged, world, mood, sent),
+    ]))];
   }
 
   const greeted = greeting(root, world);
@@ -4456,8 +4491,6 @@ const holderAsk = said.find(
     const hadDoing = (list) => list.some((n) => reaches(n, a.action, world));
     const preLefts = lefts;
     const preRights = rights;
-    lefts = notDoing(lefts);
-    rights = notDoing(rights);
     // An ordering over what happened: `sara arrived before john` says the two
     // arrivals stood one before the other. The ordering keeps ordering the two
     // of them, but each arrival itself goes on the record too — a happening of
@@ -4465,10 +4498,80 @@ const holderAsk = said.find(
     // was said. Asked who arrived first, or whether anyone arrived at all, there
     // is a happening to read. Everything else an ordering joins stays as it was:
     // only where the ordering's word sat on a doing does the doing happen here.
+    // So long after a thing is not a second thing that happened. `a plank fell
+    // after five minutes` orders the falling against no other doing: the
+    // minutes are how long, never who, and a unit that measures time cannot
+    // arrive or fall or be ordered against. A day of the week can — it is a
+    // time and not a unit of one.
+    const saysHowLong = (n) => {
+      const concept = conceptOf(n);
+      return (
+        concept != null &&
+        a.unit != null &&
+        a.measure != null &&
+        a.time != null &&
+        world.isA(concept, a.unit) &&
+        world.linked(concept, a.measure).includes(a.time)
+      );
+    };
+    // Only an ordering can be mistaken for one. `ran for thirty-five minutes`
+    // says how long it went on and orders it against nothing, and that reading
+    // is already whole.
+    const ordering =
+      a.order != null &&
+      (relation === a.order || world.isA(relation, a.order) || world.subrelationOf(relation, a.order));
+    // And only where the ordering has nothing else to order against. `the crash
+    // happened two hours after the server started` orders two doings and says
+    // how far apart they were; there the amount is a gap between them, not when
+    // the one of them was. One doing and an amount of time is the other case.
+    const howLong =
+      ordering &&
+      [...preLefts, ...preRights].some(saysHowLong) &&
+      [...preLefts, ...preRights].filter((n) => reaches(n, a.action, world)).length === 1;
+    // Said how long after, there is one doing and not two standing in an order.
+    // The falling happened, and how long after is when it happened — so the
+    // happening is recorded on its own and the amount rides on it, and nothing
+    // is ordered against a unit.
+    if (howLong) {
+      const both = [...preLefts, ...preRights];
+      const act = both.find((n) => reaches(n, a.action, world));
+      const unit = both.find(saysHowLong);
+      const amount = amountIn(root);
+      if (act == null || unit == null || amount == null) return roots;
+      // Whoever or whatever it happened to, and what it became: a thing plays
+      // the doer, anything else the doing was said of plays the far part. The
+      // concepts stand as they are — a thing the conversation already holds is
+      // the same thing, and making a new one of it would lose which coffee is
+      // meant.
+      const parts = [];
+      for (const n of both) {
+        if (n === act || n === unit) continue;
+        const of = conceptOf(n);
+        if (of == null) continue;
+        const role = a.thing != null && world.isA(of, a.thing) ? a.agent : a.target;
+        if (role != null) parts.push({ role, of, amount: null });
+      }
+      if (parts.length === 0) return roots;
+      const doing = conceptOf(act);
+      const id = sent.allocate();
+      return [withBranch(root, [
+        ...root.branch,
+        node('event', `${world.term(doing).name}#${id}`, [], {
+          id,
+          action: doing,
+          at: sent.at ?? null,
+          when: whenIn(said, world),
+          not: false,
+          parts,
+          time: { amount, unit: conceptOf(unit), after: true },
+        }),
+      ])];
+    }
+    lefts = notDoing(lefts);
+    rights = notDoing(rights);
     const orderingDoing =
       mood === 'tell' &&
-      a.order != null &&
-      (relation === a.order || world.isA(relation, a.order) || world.subrelationOf(relation, a.order)) &&
+      ordering &&
       lefts.length === 1 &&
       rights.length === 1 &&
       a.agent != null &&
@@ -6390,6 +6493,18 @@ function roleOn(n) {
 // Which side of now the signal put what it says on. That there are sides is the
 // brain's — past, now, future, and nothing between them to weigh; which word
 // says so is the language's, and which term each side is, is the world's.
+// The number a signal counted with, wherever in it the counting was said.
+function amountIn(root) {
+  const found = [];
+  const walk = (n) => {
+    if (!n) return;
+    if (n.kind === 'quantity' && n.state && n.state.value != null) found.push(n.state.value);
+    for (const c of n.branch || []) walk(c);
+  };
+  walk(root);
+  return found.length ? found[0] : null;
+}
+
 function whenIn(said, world) {
   const a = world.anchors || {};
   for (const n of said) {

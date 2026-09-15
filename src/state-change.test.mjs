@@ -62,3 +62,36 @@ test("a state of one kind is left alone by a state of another", async () => {
   assertEquals(await says("is the sack open?"), "Yes. ✅ a sack is open.");
   assertEquals(await says("is the sack wet?"), "Yes. ✅ a sack is wet.");
 });
+
+test("how long after a doing was is when it was, never a second doing", async () => {
+  // `after five minutes` used to order the falling against the minutes: a
+  // second falling whose doer was the unit, and the unit itself on the
+  // timeline. A unit that measures time cannot fall.
+  const graph = await fresh("a plank fell after 5 minutes");
+  assert(/a1  event\(n1, type: fall\[\d+\]\)\s+after 5 minute\[\d+\]/.test(graph), graph);
+  assertEquals((graph.match(/^  a\d/gm) || []).length, 1, `one falling:\n${graph}`);
+  assert(!/minute\[\d+\]\]\s+before/.test(graph), `and no unit on the timeline:\n${graph}`);
+});
+
+test("a state change told how long after keeps the thing it is about", async () => {
+  const graph = await fresh("the coffee is hot", "the coffee got cold after 5 minutes");
+  assert(/a1  state-change\(n1\)\s+after 5 minute\[\d+\]/.test(graph), graph);
+  assertEquals((graph.match(/^  n\d/gm) || []).length, 1, `one coffee:\n${graph}`);
+});
+
+test("an ordering between two doings still says how far apart they were", async () => {
+  await fresh("the crash happened two hours after the server started");
+  assertEquals((await brain("when did the crash happen?")).expression.name, "unsure");
+});
+
+test("two things said to have stood at one time stand in one moment", async () => {
+  const graph = await fresh("the coffee was hot when it arrived");
+  assert(/f1  property\(n1, hot\[\d+\]\)/.test(graph), `it was hot:\n${graph}`);
+  assert(/a1  event\(n1, type: arrive\[\d+\]\)/.test(graph), `and it arrived:\n${graph}`);
+  assert(/m1  members: \[f1, a1\]/.test(graph), `both at one moment:\n${graph}`);
+});
+
+test("when still asks when where it opens the signal", async () => {
+  await fresh("the backup started in the morning");
+  assertEquals((await brain("when did the backup start?")).expression.state.says, "morning");
+});

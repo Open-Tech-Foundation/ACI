@@ -169,6 +169,7 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
   // One occurrence being the reason another happened. The brain works out
   // which is which; the graph only has to hang the one off the other.
   const causes = gather(roots, 'cause');
+  const moments = gather(roots, 'moment');
   // What was claimed, whether or not the world had it already. A signal saying
   // something the brain knew still said it, and the conversation holds it.
   const claims = gather(roots, 'standing');
@@ -779,6 +780,25 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
           ? (held.facts.find((row) => row.key === triple(reach(effect.claim.subject), effect.claim.relation, reach(effect.claim.object))) || {}).id
           : null;
     if (came && !(one.holds || []).includes(came)) one.holds = [...(one.holds || []), came];
+  }
+
+  // Two things said to have stood at one time stand in one moment. The chrono
+  // is where the order of things is kept, and being at the same time is an
+  // order like being before or after — one moment holding both, rather than
+  // either of them pointing at the other.
+  for (const one of moments) {
+    const rowOf = (side) => {
+      if (!side) return null;
+      if (side.done != null) return (held.actions.find((row) => row.did === side.done) || {}).id ?? null;
+      if (!side.claim) return null;
+      const key = triple(reach(side.claim.subject), side.claim.relation, reach(side.claim.object));
+      const row = held.facts.find((f) => f.key === key);
+      return row ? row.id : null;
+    };
+    const both = (one.state.sides || []).map(rowOf).filter((id) => id != null);
+    if (both.length < 2) continue;
+    const last = chronoChain();
+    putMoment(both, last.length ? last[last.length - 1].id : null, null);
   }
 
   // Whose a thing is, said as the holding it is.
@@ -1789,8 +1809,10 @@ function serialize(world = against) {
                 : `${part(Number(role))}: ${spell(value)}`,
             )
             .join(', ');
+      // A clock reading says when it was; an amount of time says how long after
+      // whatever came before it. They are not the same and are not said alike.
       const when = one.time
-        ? `  at ${one.time.amount} ${spell(one.time.unit)}`
+        ? `  ${one.time.after ? 'after' : 'at'} ${one.time.amount} ${spell(one.time.unit)}`
         : one.times
           ? `  at ${one.times.map(spell).join(', ')}`
           : '';

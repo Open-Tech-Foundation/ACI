@@ -10378,12 +10378,26 @@
       "meaning": "which",
       "marks": "unknown"
     },
-    "when": {
-      "pos": "interrogative",
-      "meaning": "when",
-      "marks": "unknown",
-      "concept": 567
-    },
+    "when": [
+      {
+        "pos": "interrogative",
+        "meaning": "when",
+        "marks": "unknown",
+        "concept": 567,
+        "select": {
+          "position": "first"
+        }
+      },
+      {
+        "pos": "conjunction",
+        "meaning": "when",
+        "concept": 567,
+        "functions": [
+          "join",
+          "moment"
+        ]
+      }
+    ],
     "why": {
       "pos": "interrogative",
       "meaning": "why",
