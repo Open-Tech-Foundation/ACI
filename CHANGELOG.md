@@ -6,24 +6,36 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
-- **A state change is its own doing, and it keeps the state left behind.** A
-  value taken used to be one thing — `property-change` — whether what changed
-  was the lamp's colour or the coffee's warmth. They are not one thing. A
-  property is what a thing *is* and seldom changes; a state is how it *is
-  now*, and changing is what a state is for. `the coffee got cold` after `the
-  coffee is hot` now records `state-change(n1) {temperature: cold[209], was:
-  hot[208]}` — the coffee stands in the new state and what it was is still on
-  the record, so `is the coffee hot?` denies while what it was when it arrived
-  is there to be read. A change into a state nothing stood in before has
-  nothing it was. Colour, size and the rest still take a `property-change`.
+- **How a thing is, is a fact about it.** A quality used to be written onto
+  the node — `n1 sky {colour: blue}` — and nowhere else, so it had no place in
+  the order things were said in and no history there was anything to read. A
+  count never worked that way: `holding(n1, book) {count: 5}` is a fact row,
+  and the row before it is still standing. A quality is now the same: `the sky
+  is blue` leaves `property(n1, blue[203])`, `a red box` leaves the very same
+  fact rather than a second shape to look in, and what a thing is like now is
+  the latest standing one of them on each dimension, worked out when it is
+  asked for. There is one place the memory sits and one order to read it in.
+
+- **A state change is its own doing, and the fact it leaves is the present.**
+  A value taken used to be one thing — `property-change` — whether what
+  changed was the lamp's colour or the coffee's warmth. A property is what a
+  thing *is*; a state is how it *is now*, and changing is what a state is for.
+  `the coffee is hot` then `the coffee got cold` now holds all three parts
+  apart: `property(n1, hot[208])` and `property(n1, cold[209])` in the order
+  they were said, and `state-change(n1) {temperature: cold[209]}` for the
+  turning. The coffee answers cold and denies hot, and that it was hot when it
+  arrived is still on the record. Colour, size and the rest still take a
+  `property-change`.
 
 - **A dimension holds one value at a time.** Told `ravi is angry` and then
   `ravi became afraid`, the brain answered `Yes` to `is ravi angry?` — anger
   and fear are nowhere declared different, and nothing had taken the anger
   away. Values on one dimension are alternatives to one another: that is what
-  a dimension is, and nobody has to say it pair by pair. The newest takes the
-  place of the one before on its own dimension and on no other — a sack can be
-  open and wet at once, and a thing said to be a heron is still a bird.
+  a dimension is, and nobody has to say it pair by pair. Which dimension a
+  quality lies on is the world's to say, and it says so one way everywhere —
+  by what measures the quality, or by what the quality is a kind of. The
+  newest takes the place of the one before on its own dimension and on no
+  other: a sack can be open and wet at once, and a heron is still a bird.
 
 - **Open and closed are states, not doings.** The world held `open` and
   `close` only as work — beside eat, cut and wash — so `the door is closed`

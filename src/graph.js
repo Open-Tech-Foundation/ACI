@@ -274,6 +274,10 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
     }
     return null;
   };
+  // How each thing is, where the signal said so beside it. Held until claiming
+  // is under way, so that a quality said beside a thing and one said of it
+  // leave the very same fact.
+  const besides = [];
   for (const id of reached(roots)) {
     if (standing.has(id)) continue;
     const call = made.get(id);
@@ -325,13 +329,20 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
         // this signal made has an identity of its own while the quality was
         // said of the kind standing there — `two red cars` says red of cars —
         // so what was said of the kind is said of the one made from it.
-        ...(qualities.has(id)
-          ? { how: qualities.get(id) }
-          : call && call.state.of != null && qualities.has(call.state.of)
-            ? { how: qualities.get(call.state.of) }
-            : {}),
       }),
     );
+    // How it is, where the signal said so beside it — `a red box`. Said of it
+    // instead — `the box is red` — it is the same claim, so it leaves the same
+    // fact and there is one place to look for it. Counted, the thing this
+    // signal made has an identity of its own while the quality was said of the
+    // kind standing there — `two red cars` says red of cars — so what was said
+    // of the kind is said of the one made from it.
+    const beside = qualities.has(id)
+      ? qualities.get(id)
+      : call && call.state.of != null && qualities.has(call.state.of)
+        ? qualities.get(call.state.of)
+        : null;
+    if (beside) besides.push([id, Object.values(beside)]);
   }
 
   // A claim put as a condition is not a claim made. What an instruction is
@@ -411,17 +422,7 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
     // the sky and the world, so it stands below as a fact against — never on
     // the thing as if it were blue. Where the thing carried that colour from
     // a claim that stood before, the denial takes it off.
-    if (primitive === PROPERTY) {
-      const one = held.nodes.find((node) => node.id === reach(subject));
-      if (one) {
-        if (denied) {
-          delete one.how?.[qualityKind(object, world)];
-        } else {
-          one.how = { ...(one.how || {}), [qualityKind(object, world)]: object };
-          return;
-        }
-      }
-    }
+
     // What is held is a thing of a kind, not a party to the fact: it is said
     // by the kind the world holds it under, the same way a doing says what
     // moved. Whoever holds it is a party, and that is a node.
@@ -579,6 +580,25 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
     claimed(subject, relation, object, from ? from.state.quantity : null, negated);
   }
 
+  // A quality said beside a thing is claimed of it, so that `a red box` and
+  // `the box is red` leave one fact and not two shapes to look in. Said both
+  // ways in one signal it is still one claim, so what was said of the thing
+  // outright is not written down a second time.
+  const predicates = world && world.anchors ? world.anchors.predication : null;
+  if (predicates != null) {
+    for (const [id, values] of besides) {
+      for (const value of values) {
+        const already = held.facts.some(
+          (one) =>
+            one.of === PROPERTY &&
+            (one.parts[0] === id || termOf(one.parts[0]) === id) &&
+            (one.parts[1] === value || termOf(one.parts[1]) === value),
+        );
+        if (!already) claimed(id, predicates, value, null, false);
+      }
+    }
+  }
+
   // What the brain worked out is as much a part of the conversation as what it
   // was told. A fact a standing instruction reached arrives as something
   // learned and never stood in the signal, so nothing else here would see it —
@@ -608,6 +628,7 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
       if (part.amount != null) counts[part.role] = part.amount;
     }
     const a2 = (world && world.anchors) || {};
+    const anchors2 = a2;
     if (counts[a2.target] != null) properties.count = counts[a2.target];
     else if (Object.keys(counts).length === 1) properties.count = Object.values(counts)[0];
     const primitive = doing(roles, world);
@@ -634,11 +655,32 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
         : primitive === PROPERTY_CHANGE
           ? changing(roles, properties, world)
           : primitive === STATE_CHANGE
-            ? stateChanging(roles, properties, world, not === true)
+            ? stateChanging(roles, properties, world)
             : { roles, properties }),
       stands: stands(not),
       when: when ?? null,
     };
+    // A thing that changed into a state stands in it, and standing in a state
+    // is a fact about the thing like any other. The change says it happened;
+    // the fact says how the thing is now. Neither is worked out from the
+    // other and neither is written twice: the action is the history, the
+    // latest fact is the present, and the one before it is what it was.
+    if (primitive === STATE_CHANGE && predicates != null) {
+      const thing = row.parts ? row.parts.thing : null;
+      const gained = anchors2.target != null ? only(roles[anchors2.target]) : null;
+      const term = thing == null ? null : termOf(thing) ?? thing;
+      if (term != null && gained != null) {
+        claimed(term, predicates, gained, null, not === true);
+        // Told outright, the standing would have been taken into the world
+        // this conversation reasons over. Changed into, it is the same
+        // standing and goes the same way, so there is one surface to reason
+        // over and it never disagrees with the record. The state it left goes
+        // as this arrives: a dimension holds one value at a time.
+        if (not !== true) {
+          took({ terms: [{ id: term, links: [{ rel: predicates, to: gained }] }] }, world);
+        }
+      }
+    }
     const already = isHappening(action) ? happening(action) : null;
     const id = already ?? put('actions', row);
     if (already) {
@@ -951,38 +993,14 @@ function changing(roles, properties, world) {
 // the thing has moved on — it is read off the thing at the moment it changes
 // and kept here. The thing itself then stands in the new state, so what it is
 // now is asked of the thing and what it was is asked of this.
-function stateChanging(roles, properties, world, denied) {
+function stateChanging(roles, properties, world) {
   const anchors = (world && world.anchors) || {};
   const at = (role) => (role != null && Object.hasOwn(roles, role) ? only(roles[role]) : null);
-  const thing = at(anchors.agent);
   const gained = at(anchors.target);
   const on = gained == null ? null : qualityKind(gained, world);
-  const one = held.nodes.find((node) => node.id === thing);
-  // What it was, read off the thing before it moves on. The same state told
-  // again is no change and leaves nothing to have been.
-  const standing = one && on != null ? (one.how || {})[on] ?? null : null;
-  const was = standing === gained ? null : standing;
-  // A change that did not happen leaves the thing where it was. Only one that
-  // stands moves it on.
-  if (!denied && one && on != null && gained != null) {
-    one.how = { ...(one.how || {}), [on]: gained };
-    // The thing stands in the new state, and standing in it is a fact about it
-    // like any other. Told outright, the conversation would have taken it in;
-    // changed into, it is the same standing and is taken in the same way, so
-    // whatever is asked of the thing is answered from one place. The state it
-    // left goes as it arrives — a dimension holds one value at a time.
-    const term = termOf(thing);
-    if (term != null && anchors.predication != null) {
-      took({ terms: [{ id: term, links: [{ rel: anchors.predication, to: gained }] }] }, world);
-    }
-  }
   return {
-    parts: { thing },
-    properties: {
-      ...(on == null ? {} : { [on]: gained }),
-      ...(was == null ? {} : { was }),
-      ...properties,
-    },
+    parts: { thing: at(anchors.agent) },
+    properties: { ...(on == null ? {} : { [on]: gained }), ...properties },
   };
 }
 
@@ -1346,7 +1364,26 @@ function told(subject, relation, object) {
 function state(one, world) {
   if (!world) return false;
   if (one.of === PLACEMENT) return true;
-  return one.of === PROPERTY && quantityOn(termOf(one.parts[1]), world) != null;
+  // A quality that lies on a dimension is a state of it, and a thing is in one
+  // state of a dimension at a time. Which dimension is the world's to say, and
+  // it says so the same way everywhere — by what measures the value, or by
+  // what the value is a kind of. A quality on no dimension of its own is not a
+  // state and stands beside whatever else was said.
+  return one.of === PROPERTY && dimension(termOf(one.parts[1]), world) != null;
+}
+
+// The dimension a quality lies on: what measures it, or what it is a kind of.
+// The bare root is no dimension — being a property is not being a colour.
+function dimension(quality, world) {
+  if (quality == null || !world) return null;
+  const property = (world.anchors || {}).property ?? null;
+  if (property == null || !world.isA(quality, property)) return null;
+  const on = quantityOn(quality, world);
+  if (on != null) return on;
+  for (const kind of world.kinds(quality) || []) {
+    if (kind !== quality && kind !== property) return kind;
+  }
+  return null;
 }
 
 // Whether a later fact is about the same state — the same placement, or the
@@ -1356,8 +1393,8 @@ function sameState(one, relation, object, world) {
   if (one.of === PLACEMENT) {
     return world.anchors.placement != null && world.isA(relation, world.anchors.placement);
   }
-  const of = quantityOn(termOf(one.parts[1]), world);
-  return of != null && of === quantityOn(object, world);
+  const of = dimension(termOf(one.parts[1]), world);
+  return of != null && of === dimension(object, world);
 }
 
 // Everything this conversation has put in a given ordering, either end of it.
@@ -1499,6 +1536,24 @@ function ranking(quantity, moment) {
   return found;
 }
 
+// How a thing is, read off what was said about it. Nothing is written down
+// twice: a quality is a fact like any other, and what a thing is like now is
+// the latest standing one of them on each dimension. A denial takes the
+// dimension back off — said not to be blue, it has no colour anybody gave it.
+function howOf(node) {
+  const out = {};
+  for (const one of held.facts) {
+    if (one.of !== PROPERTY || one.stands === 'conflict') continue;
+    if (!same(one.parts[0], node)) continue;
+    const value = termOf(one.parts[1]) ?? one.parts[1];
+    const on = qualityKind(value, against);
+    if (on == null) continue;
+    if (one.stands === 'against') delete out[on];
+    else out[on] = value;
+  }
+  return out;
+}
+
 // ---- the chrono: moments as a strict total order --------------------------
 //
 // One timeline and no duplicate store. An ordering claim that stands is
@@ -1638,7 +1693,7 @@ function serialize(world = against) {
   // nothing goes looking for a word for it. Which is which is named here
   // rather than guessed at, because both are integers and they do not look
   // any different.
-  const SLOTS = new Set(['thing', 'on', 'as', 'of', 'unit', 'was']);
+  const SLOTS = new Set(['thing', 'on', 'as', 'of', 'unit']);
   // A property's value is a term and is said as one; a count is a number and
   // nothing goes looking for a word for it. Both are integers, so which is
   // which is not guessed at: a slot named for a property the world holds —
@@ -1680,7 +1735,9 @@ function serialize(world = against) {
         `${one.id}  ${one.said.split('#')[0]}  type: ${type(known(one, world))}` +
         (one.from ? `  of ${one.from}` : '') +
         (one.count != null ? `  × ${one.count}` : '') +
-        (one.how ? `  {${Object.entries(one.how).map(([name, value]) => `${name}: ${spell(value)}`).join(', ')}}` : '') +
+        (Object.keys(howOf(one.id)).length
+          ? `  {${Object.entries(howOf(one.id)).map(([name, value]) => `${name}: ${spell(value)}`).join(', ')}}`
+          : '') +
         (one.measures
           ? `  {${one.measures
               .map((held) => `${held.of == null ? '?' : part(held.of)}: ${held.amount} ${spell(held.unit)}`)

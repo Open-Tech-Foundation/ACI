@@ -10,9 +10,11 @@ async function fresh(...said) {
 }
 const says = async (q) => (await brain(q)).expression.state.says;
 
-test("a state taken is a state change, and it keeps the state left behind", async () => {
+test("a state told is a fact, and taking a new one is a change", async () => {
   const graph = await fresh("the coffee is hot", "the coffee got cold");
-  assert(/state-change\(n1\)\s+\{temperature: cold\[\d+\], was: hot\[\d+\]\}/.test(graph), graph);
+  assert(/f1  property\(n1, hot\[\d+\]\)/.test(graph), `it was hot:\n${graph}`);
+  assert(/f2  property\(n1, cold\[\d+\]\)/.test(graph), `and it is cold:\n${graph}`);
+  assert(/a1  state-change\(n1\)\s+\{temperature: cold\[\d+\]\}/.test(graph), `and it changed:\n${graph}`);
 });
 
 test("the thing stands in the state it took, not the one it left", async () => {
@@ -22,15 +24,19 @@ test("the thing stands in the state it took, not the one it left", async () => {
   assertEquals(await says("is the coffee hot?"), "No. ❌");
 });
 
-test("what a thing was is still on the record after it has moved on", async () => {
+test("what a thing was is the fact standing before the latest", async () => {
+  // Nothing is written twice. The order the facts were said in is the history,
+  // the way it already is for a count, and the change says when it turned.
   const graph = await fresh("the coffee is hot", "the coffee got cold");
-  assert(/was: hot\[\d+\]/.test(graph), `the coffee was hot:\n${graph}`);
+  const facts = graph.match(/property\(n1, \w+\[\d+\]\)/g) || [];
+  assertEquals(facts.length, 2);
+  assert(/hot/.test(facts[0]) && /cold/.test(facts[1]), `hot, then cold:\n${graph}`);
 });
 
-test("a state nothing stood in before has nothing it was", async () => {
+test("a state nothing stood in before leaves one fact and no history", async () => {
   const graph = await fresh("the porch became wet");
   assert(/state-change\(n1\)\s+\{wetness: wet\[\d+\]\}/.test(graph), graph);
-  assert(!/was:/.test(graph), `nothing was said of before:\n${graph}`);
+  assertEquals((graph.match(/property\(n1,/g) || []).length, 1, graph);
 });
 
 test("a feeling is a state, and taking a new one leaves the old", async () => {

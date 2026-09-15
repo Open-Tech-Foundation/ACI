@@ -62,10 +62,13 @@ test("a thing spoken of in particular is a thing, and stays in reach", async () 
   // next signal may point back at it, which is what makes it a node.
   assertEquals(held.nodes.length, 1);
   assertEquals(held.nodes[0].said, 'sky');
-  // How a thing is belongs to it, so nothing stands between the sky and blue.
-  assertEquals(held.nodes[0].how.colour, 203);
-  assertEquals(held.facts, []);
-  assertEquals(held.context.focus, ['n1']);
+  // How a thing is is a fact about it, kept where every other fact is kept, so
+  // there is one place to look and one order to read them in.
+  assertEquals(held.facts.length, 1);
+  assertEquals(held.facts[0].of, PROPERTY);
+  assertEquals(held.facts[0].parts[1], 203);
+  // The fact is in reach beside the thing it is about, the way any fact is.
+  assertEquals(held.context.focus, ['n1', 'f1']);
 });
 
 test("a doing carries the part each thing played in it", async () => {
@@ -178,8 +181,8 @@ test("a doing that moves something is a transfer; one that takes a value is not"
 
 test("one relation says both a property and a kind, told apart by the other side", async () => {
   const blue = await said('the sky is blue');
-  assertEquals(blue.facts, [], 'how a thing is is held on it, not between two');
-  assertEquals(blue.nodes[0].how.colour, 203);
+  assertEquals(blue.facts[0].of, PROPERTY, 'how a thing is is a fact about it');
+  assertEquals(blue.facts[0].parts[1], 203);
 
   const animal = await said('all cats are animals');
   assertEquals(animal.facts[0].of, KIND);
@@ -364,11 +367,12 @@ test("what a rule reaches is how the thing is", async () => {
   await forget();
   await brain("if a drum is cold then a bell is red");
   await brain("the drum is cold");
-  const { nodes } = graph();
+  const { nodes, facts } = graph();
   const drum = nodes.find((one) => one.said === "drum");
   const bell = nodes.find((one) => one.said === "bell");
-  assert(drum.how != null, "told, so the drum is cold");
-  assert(bell.how != null, "worked out, and the bell is red all the same");
+  const how = (one) => facts.some((f) => f.of === PROPERTY && f.parts[0] === one.id);
+  assert(how(drum), "told, so the drum is cold");
+  assert(how(bell), "worked out, and the bell is red all the same");
   await forget();
 });
 

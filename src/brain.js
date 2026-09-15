@@ -4036,18 +4036,10 @@ const holderAsk = said.find(
     );
     const one = terms.length === 1 ? conceptOf(terms[0]) : null;
     if (holderAsk && one != null && a.property != null && world.isA(one, a.property)) {
-      // A predication stands two ways in the graph: a fact for an existing
-      // thing (`the fire is red`), and an attribute on the thing named for a
-      // new one (`sara is tall` writes tall beside sara). Read both.
-      const fromFacts = graph ? graph.standingIn(one, world.baseRelation) : [];
-      const fromNodes = graph
-        ? graph
-            .graph()
-            .nodes.filter((n) => n.how && Object.values(n.how).includes(one))
-            .map((n) => n.term)
-            .filter((t) => t != null && t !== one)
-        : [];
-      const beside = [...fromFacts, ...fromNodes.filter((t) => !fromFacts.includes(t))];
+      // A predication stands one way in the graph, whether the thing was
+      // already there (`the fire is red`) or the signal named it (`sara is
+      // tall`): a fact about the thing, kept where every other fact is kept.
+      const beside = graph ? graph.standingIn(one, world.baseRelation) : [];
       if (beside.length > 0) {
         return [
           withBranch(root, [
