@@ -4015,6 +4015,39 @@ function because(joined, world, mood, sent) {
         return of == null || markOn(n) === 'unknown' ? [] : scalesNamed(of).filter(inUnits);
       }),
     );
+    // A who or what asked of a property this conversation told answers the
+    // thing that holds it, not the scale the property measures on: after
+    // `sara is tall`, `who is tall?` answers sara. The measure reading is for
+    // how far along a scale a thing stands; handed a holder question there is
+    // nothing to read it on, and the walk answers instead.
+const holderAsk = said.find(
+      (n) =>
+        markOn(n) === 'unknown' &&
+        (n.name === 'who' || n.name === 'what' || n.name === 'which'),
+    );
+    const one = terms.length === 1 ? conceptOf(terms[0]) : null;
+    if (holderAsk && one != null && a.property != null && world.isA(one, a.property)) {
+      // A predication stands two ways in the graph: a fact for an existing
+      // thing (`the fire is red`), and an attribute on the thing named for a
+      // new one (`sara is tall` writes tall beside sara). Read both.
+      const fromFacts = graph ? graph.standingIn(one, world.baseRelation) : [];
+      const fromNodes = graph
+        ? graph
+            .graph()
+            .nodes.filter((n) => n.how && Object.values(n.how).includes(one))
+            .map((n) => n.term)
+            .filter((t) => t != null && t !== one)
+        : [];
+      const beside = [...fromFacts, ...fromNodes.filter((t) => !fromFacts.includes(t))];
+      if (beside.length > 0) {
+        return [
+          withBranch(root, [
+            ...root.branch,
+            node('answer', 'link', [], { subject: null, relation: null, found: beside }),
+          ]),
+        ];
+      }
+    }
     if (on.size > 0) {
       for (const term of terms) {
         const subject = conceptOf(term);
@@ -4285,6 +4318,26 @@ function because(joined, world, mood, sent) {
             ...specific,
             ...found.filter((t) => !specific.some((s) => world.isA(s, t))),
           ];
+        }
+      }
+      // A predication this conversation told stands to a thing at the being
+      // word, and asked who or what holds it, that thing answers: after `the
+      // fire is red`, `what is red?` answers the fire. Only a property is read
+      // this way — the far end of a kind is what it is, and a conversation
+      // holding it is not the answer. The conversation's own facts sit in
+      // front of the nature the world's ladder walks (`colour` for red), and a
+      // fresh question, where nobody holds it, keeps the nature: the authored
+      // world never answers for a thing this conversation told.
+      if (
+        !asksBack &&
+        graph != null &&
+        relation === world.baseRelation &&
+        a.property != null &&
+        world.isA(subject, a.property)
+      ) {
+        const beside = graph.standingIn(subject, relation);
+        if (beside.length > 0) {
+          found = [...beside, ...found.filter((t) => !beside.includes(t))];
         }
       }
       // The walk came back with nothing but the most generic kind: say the

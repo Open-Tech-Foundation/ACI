@@ -117,6 +117,14 @@ All notable changes to this project are documented in this file.
   term it never held — `is sam a cat?` — answers nothing, being only what it
   was given; comparisons, other names and ungiven names read as before.
 
+- **A property asked who or what holds it answers the conversation's thing.**
+  After `the fire is red`, asked `what is red?`, the brain reads the thing that
+  holds red in this conversation — `fire` — and falls back to what red itself
+  is (`colour, property`) where nothing holds it. A state given to a new thing
+  reads the same way: `sara is tall`, `who is tall?` answers `sara`, and asked
+  fresh, nothing answers. What a kind is answers from the world as before —
+  `what is a heron?` is `bird`, not the conversation that holds a heron.
+
 - **Asked *when* a doing's clock was read, the day-clock answers.** A clock
 
 - **Asked *when* a doing's clock was read, the day-clock answers.** A clock

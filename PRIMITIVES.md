@@ -111,6 +111,18 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
    Only a number read is answered; the identity read (`is sam sam?`) is a
    separate surface.
 
+9. **A property, asked who or what holds it.** `the fire is red` writes a
+   predication the conversation holds, but `what is red?` read the nature of
+   red up the world's ladder (`colour, property`) and never the conversation's
+   holder — the engine knew the fire stood to red, only the reader did not
+   look for it. Fixed: asked with `who`, `what`, or `which`, a property tells
+   the thing this conversation put it on: `the fire is red`, `what is red?`
+   answers `fire`; `sara is tall`, `who is tall?` answers `sara`. A fresh
+   question — nobody holds it — still reads the nature (`colour, property`).
+   A kind keeps the far-end reading: `what is a heron?` is `bird`, not
+   `mira`, the thing holding it. Two holders both show (`fire, door`), and
+   the measure reader asks the same way.
+
 Following the same scan and noted, not fixed — language or phrase rather than
 inference: the trailing-preposition forms (`what is a cup in?`, `how many
 apples are in the basket?` — the dangling preposition the `of` notes above
