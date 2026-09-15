@@ -123,6 +123,17 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
    `mira`, the thing holding it. Two holders both show (`fire, door`), and
    the measure reader asks the same way.
 
+10. **A who-word before an intransitive doing.** `sara arrived` put sara on
+    the record as the arrival's doer, but `who arrived?` answered `I don't
+    understand.` — an intransitive doing has no part but its doer, and the
+    question-namer required another part to read at all. Fixed: a who-word
+    alone before the doing reads the doing's own doer — `who arrived?`
+    answers `sara`, and `sara, john` when two arrived. A doing whose doer was
+    never told (asked fresh) answers nothing, and who-asks with a target read
+    as before (`who washed the car?`). A `who spoke?` after `sara spoke`
+    still says nothing: speaking says nothing about the world, and the
+    conversation keeps it without taking it in.
+
 Following the same scan and noted, not fixed — language or phrase rather than
 inference: the trailing-preposition forms (`what is a cup in?`, `how many
 apples are in the basket?` — the dangling preposition the `of` notes above

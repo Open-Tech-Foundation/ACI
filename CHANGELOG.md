@@ -125,6 +125,13 @@ All notable changes to this project are documented in this file.
   fresh, nothing answers. What a kind is answers from the world as before —
   `what is a heron?` is `bird`, not the conversation that holds a heron.
 
+- **A who-word before an intransitive doing asks who did it.** `sara arrived`
+  writes the arrival on the record with sara at its near end, and asked `who
+  arrived?` the brain reads the doing's doer back — `sara`, or `sara, john`
+  when two arrived. A transitive doing reads the same way as it always did
+  (`who washed the car?`), and a who-word asked of a doing nobody did answers
+  nothing, as a doing never done is not its doer's to hold.
+
 - **Asked *when* a doing's clock was read, the day-clock answers.** A clock
 
 - **Asked *when* a doing's clock was read, the day-clock answers.** A clock

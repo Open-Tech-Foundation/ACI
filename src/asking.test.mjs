@@ -144,3 +144,25 @@ test("every word for greeting is the one act of greeting", async () => {
   }
   await forget();
 });
+
+test("a doing that itself holds its doer answers a who-word alone", async () => {
+  assertEquals((await fresh("sara arrived", "who arrived")).expression.state.says, "sara");
+  assertEquals((await fresh("sara ran", "who ran")).expression.state.says, "sara");
+  await forget();
+});
+
+test("every who did it, in the order they did", async () => {
+  assertEquals((await fresh("sara arrived", "john arrived", "who arrived")).expression.state.says, "sara, john");
+  await forget();
+});
+
+test("who nothing was told to have done answers nothing", async () => {
+  assertEquals((await fresh("who arrived")).expression.state.says, "I don't know.");
+  await forget();
+});
+
+test("a who-word still asks the part it stands before when a target exists", async () => {
+  assertEquals((await fresh("sara washed the car", "who washed the car")).expression.state.says, "sara");
+  assertEquals((await fresh("sara washed the car", "what did sara wash")).expression.state.says, "I don't know.");
+  await forget();
+});

@@ -6224,7 +6224,14 @@ function partAsked(said, world, claims, side, sides) {
   // was: `who arrived first` says only that somebody arrived, and nothing else
   // in it has to name a part for the question to stand.
   const marksExtreme = said.some((n) => farEnd(n, world) !== undefined);
-  if (!hole || (known.length === 0 && !marksExtreme)) return null;
+  if (!hole) return null;
+  // A who-word alone before an intransitive doing asks after its doer
+  // (`who arrived?`): nothing else in it names a part, yet the doing itself
+  // holds one. How-long and when asks name the part they ask after
+  // (hole.own) and are answered by their own readers; so is any other word.
+  const alone = known.length === 0 && !marksExtreme;
+  const asksDoer = hole.own == null && said[hole.at].name === 'who';
+  if (alone && !asksDoer) return null;
 
   const action = conceptOf(said[acting]);
   const found = [];
