@@ -117,3 +117,13 @@ test("measured in one unit, asked for in another", async () => {
   );
   await forget();
 });
+
+test("a measure may read below zero where a count may not", async () => {
+  await forget();
+  // A temperature is a measure, not a count: what is refused below zero is the
+  // holding of a negative number of things, never the scale beneath.
+  const told = await brain("the temperature is -5 degrees");
+  assertEquals(told.expression.name, "learn");
+  assert(told.learned != null, "a measure below zero is taken in");
+  await forget();
+});

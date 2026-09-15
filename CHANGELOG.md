@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A count of a thing is never negative.** Told `sam has -2 apples` the brain
+  used to take it in and answer `-2` — holding minus five of a thing is no
+  state the world holds. A static count below zero is now refused (`No. ❌`)
+  where it is told; zero and positive counts stand as ever, a measure may read
+  below zero (`the temperature is -5 degrees` still answers), and a transfer
+  drawn past what a holder has is still refused by the transfer's own bounds.
+
 - **A named place is said without the article of a kind.** The world's cities
   — delhi, dublin, paris, tokyo and the rest — are places that exist once, and
   English says their words bare; what follows is not `a delhi`. Asked

@@ -148,6 +148,53 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
     current, the earlier history. The two baseline tests that shaped this are
     now green; the causal and homonyms failures remain.
 
+12. **A count of a thing is never negative.** Told `sam has -2 apples` the
+    brain took it in and answered `-2` — holding minus five of a thing is no
+    state the world holds, and a static count below zero is where the random
+    world refuses it: a transfer may leave a holder with less than it began,
+    but the state of holding is never counted below zero. Fixed in the
+    fact-teller: a negative count told over a holding relation is refused
+    (`No. ❌`). Zero and positive counts stand as ever; a measure may still
+    read below zero — `the temperature is -5 degrees` answers — since a
+    temperature is a measure, not a count.
+
+Following the same triage and noted, not fixed — the newest scan's findings,
+each with its root, and each outside the clean-inference bar:
+
+- **Identity between names (`tom is sam`).** The engine reads `X is Y` as
+  classification by design — `tom is sam` makes sam a kind that tom is one
+  of, and `is sam a person?` then answers `unsure`, which is correct under
+  that reading. English's identity reading of an un-articled name after `is`
+  is a semantic expansion, not a missing inference; there is no corpus
+  phrasing yet, and the tests that vary it (the baseline homonyms failure
+  and the naming tests) would have to be re-tuned. Told fresh with both
+  names bare (`tom is sam` with no prior noun), the sentence does not parse
+  at all — the same naming-grammar gap as the `of` compounds. Not chased.
+- **Composite placement (`the book is on the desk`, `the desk is in the
+  room`, `is the book in the room?` → `unsure`).** The walk composes nothing
+  across heterogeneous placements; reading a composed placement needs a
+  world-declared composition (on ◦ in ⇒ in) the way converse and subrelation
+  are declared, plus a chained read. That is a feature of its own, in the
+  world's keeping — physics, not core, and not a one-hop gap.
+- **`of`-stranding (`what is a wheel part of?` → `I don't understand`).**
+  The `of` topic already covers the compound (`the capital of france is
+  paris`) and the trailing preposition; `is a wheel part of a bicycle?`
+  affirms, so the inference is whole and the obstacle is the grammar of the
+  stranded preposition. Documented above (item 3).
+- **Contracted modal denial (`a bird cannot swim` → `I don't understand`,
+  while `a bird can not swim` learns and `can a bird swim?` then denies).**
+  Morphology in the language's keeping: `can not` goes through the
+  claim-denial path; a contracted token has no grammar slot for the modal
+  that also carries the denial — `can't` does not parse either, and a
+  single-reading `cannot` cannot carry the verb's `select` through the
+  language shape-check. The variable is English's contraction, not an
+  inference underneath it.
+- **Stative vs transitive `because` (`the door is open because the wind is
+  strong` works; `the bell rings because bob pressed the button` does not).**
+  The because-clause grammar admits a predicate-adjective clause after the
+  word, not a full past-tense transitive doing with its object. Grammar, in
+  the language's keeping.
+
 Following the same scan and noted, not fixed — language or phrase rather than
 inference: the trailing-preposition forms (`what is a cup in?`, `how many
 apples are in the basket?` — the dangling preposition the `of` notes above

@@ -3198,6 +3198,15 @@ function because(joined, world, mood, sent) {
       let holdsWhat = object;
       const holdingSomething =
         a.holding != null && (rel === a.holding || world.subrelationOf(rel, a.holding));
+      // A count of a thing is never negative: holding five is holding five,
+      // and minus five of them is not a state the world holds — nothing holds
+      // a negative number of things. A transfer may leave a holder with less
+      // than it began, but a static count below zero is refused where it is
+      // told. Measures may read below zero — a temperature is no count — and
+      // are untouched among these.
+      if (mood === 'tell' && counted != null && counted < 0 && !isDenied && holdingSomething) {
+        return [node('refuse', 'countless', [], { subject, object })];
+      }
       if (
         mood === 'tell' &&
         counted != null &&

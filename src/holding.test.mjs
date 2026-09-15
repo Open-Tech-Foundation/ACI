@@ -143,6 +143,24 @@ test("a person's hold is answered the same way", async () => {
   await forget();
 });
 
+test("a count of a thing is never negative", async () => {
+  await forget();
+  // Holding five is holding five; minus five of them is no state the world
+  // holds, and a static count below zero is refused where it is told.
+  assertEquals((await brain("sam has -2 apples")).expression.name, "deny");
+  await forget();
+});
+
+test("zero and a positive count are still holds", async () => {
+  await forget();
+  await brain("sam has 2 apples");
+  assertEquals((await brain("how many apples does sam have?")).expression.state.says, "two");
+  await forget();
+  await brain("sam has 0 apples");
+  assertEquals((await brain("how many apples does sam have?")).expression.state.says, "zero");
+  await forget();
+});
+
 test("a counting hold answers for its bearer and is asked after the kind", async () => {
   await forget();
   // The count sits on the bearer the brain made, and the apple it holds is one
