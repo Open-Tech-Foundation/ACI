@@ -15,7 +15,7 @@
       "places": 10
     },
     "sign": {
-      "characters": "+ - = < > * / \u00d7 \u00f7 ^ %",
+      "characters": "+ - = < > * / × ÷ ^ %",
       "alone": true
     },
     "group": {
@@ -1873,7 +1873,7 @@
       "concept": 568,
       "names": false
     },
-    "\u00d7": {
+    "×": {
       "pos": "verb",
       "meaning": "times",
       "concept": 568,
@@ -2118,7 +2118,7 @@
       "concept": 569,
       "names": false
     },
-    "\u00f7": {
+    "÷": {
       "pos": "verb",
       "meaning": "divide",
       "concept": 569,
@@ -8684,12 +8684,19 @@
       "when": "past",
       "alone": false
     },
-    "closed": {
-      "pos": "verb",
-      "meaning": "closed",
-      "concept": 540,
-      "when": "past"
-    },
+    "closed": [
+      {
+        "pos": "adjective",
+        "meaning": "closed",
+        "concept": 3047
+      },
+      {
+        "pos": "verb",
+        "meaning": "closed",
+        "concept": 540,
+        "when": "past"
+      }
+    ],
     "cooking": {
       "pos": "noun",
       "meaning": "cooking",
@@ -10333,14 +10340,21 @@
       "meaning": "catch",
       "concept": 538
     },
-    "open": {
-      "pos": [
-        "noun",
-        "verb"
-      ],
-      "meaning": "open",
-      "concept": 539
-    },
+    "open": [
+      {
+        "pos": "adjective",
+        "meaning": "open",
+        "concept": 3046
+      },
+      {
+        "pos": [
+          "noun",
+          "verb"
+        ],
+        "meaning": "open",
+        "concept": 539
+      }
+    ],
     "close": {
       "pos": [
         "noun",
@@ -19059,12 +19073,12 @@
     "compare": " {subject} is {relation} than {object}.",
     "did": " {subject} {relation}.",
     "didTo": " {subject} {relation} {object}.",
-    "affirm": "Yes. \u2705{meaning}",
-    "deny": "No. \u274c",
+    "affirm": "Yes. ✅{meaning}",
+    "deny": "No. ❌",
     "answer": "{meaning}",
     "unsure": "{self} don't {relation}.",
-    "empathy": "Sorry. \ud83d\ude14",
-    "glad": "Good. \ud83d\ude42",
+    "empathy": "Sorry. 😔",
+    "glad": "Good. 🙂",
     "unheard": "{self} don't {relation} \"{meaning}\".",
     "unknown": "I don't understand.",
     "agree": "Ok.",
@@ -19074,7 +19088,7 @@
     "request": "Please.",
     "offer": "Would you like {meaning}?",
     "compliment": "That's nice.",
-    "conflict": "Conflict. \u26a0{meaning}"
+    "conflict": "Conflict. ⚠{meaning}"
   },
   "grammar": {
     "start": "sentence",

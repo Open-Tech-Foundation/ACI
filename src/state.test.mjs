@@ -162,3 +162,28 @@ test("told what was done, it says it took it in — not the number", async () =>
   assertEquals((await brain("take two lamps from the crate")).expression.name, "learn");
   assertEquals(await says("the crate holds how many lamps?"), "four", "asked, it says it");
 });
+
+test("open and closed are states a thing is in, not doings it did", async () => {
+  await brain("the hatch is closed");
+  assertEquals(await says("is the hatch closed?"), "Yes. ✅ hatch is closed.");
+  assertEquals(await says("is the hatch open?"), "No. ❌");
+});
+
+test("a state told again takes the place of the one before it", async () => {
+  await brain("the shutter is closed");
+  await brain("the shutter is open");
+  assertEquals(await says("is the shutter open?"), "Yes. ✅ shutter is open.");
+  assertEquals(await says("is the shutter closed?"), "No. ❌");
+});
+
+test("a state of one kind leaves a state of another alone", async () => {
+  await brain("the sack is open");
+  await brain("the sack is wet");
+  assertEquals(await says("is the sack open?"), "Yes. ✅ a sack is open.");
+  assertEquals(await says("is the sack wet?"), "Yes. ✅ a sack is wet.");
+});
+
+test("opening is still something somebody does", async () => {
+  await brain("ravi opened the crate");
+  assertEquals(await says("did ravi open the crate?"), "Yes. ✅");
+});

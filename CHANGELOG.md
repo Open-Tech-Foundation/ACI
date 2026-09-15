@@ -6,6 +6,18 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Open and closed are states, not doings.** The world held `open` and
+  `close` only as work — beside eat, cut and wash — so `the door is closed`
+  left nothing on the door and fell to a loose `is` fact instead. Told twice,
+  both stood at once, and `is the door closed?` still answered `Yes` after
+  being told it was open. The world now holds `openness` the way it holds
+  `wetness`: a dimension over two states, `opened` and `closed`, held apart
+  from one another, and each brought about by the doing of the same name.
+  English says both as adjectives. A door, a valve or a sack now carries its
+  openness on itself, a later telling takes the place of the one before, and
+  a state of one kind leaves a state of another alone — a sack can be open
+  and wet at once. Opening is still something somebody does.
+
 - **The contracted modal denial is read.** `a bird cannot swim` used to answer
   `I don't understand` while `a bird can not swim` learned and `can a bird
   swim?` denied. Taking the `n't` ending off `can't` had left `ca` — the `n`
