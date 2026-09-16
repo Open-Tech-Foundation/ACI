@@ -3142,10 +3142,17 @@ const holderAsk = said.find(
       a.agent != null &&
       !said.some(negatesOn) &&
       (hadDoing(preLefts) || hadDoing(preRights));
-    const done = orderingDoing
-      ? preLefts.find((n) => reaches(n, a.action, world)) ??
-        preRights.find((n) => reaches(n, a.action, world))
+    // Each side's own doing, where it said one. `a man arrived before a boy`
+    // says one doing and both sides share it; `nila arrived after the plank
+    // fell` says two, and giving the plank nila's arriving throws away the
+    // falling the signal was told and puts a doing on the record nobody said.
+    const doneLeft = orderingDoing
+      ? preLefts.find((n) => reaches(n, a.action, world)) ?? null
       : null;
+    const doneRight = orderingDoing
+      ? preRights.find((n) => reaches(n, a.action, world)) ?? null
+      : null;
+    const done = doneLeft ?? doneRight;
     const arrivals = [];
     if (done != null) {
       const allocate = sent.allocate;
@@ -3165,22 +3172,29 @@ const holderAsk = said.find(
         calls.push(node('call', name, [], { name, id, of: concept, made: true }));
         return id;
       };
-      const event = (concept) => {
+      const event = (concept, said_) => {
         const id = allocate();
-        return node('event', `${world.term(act).name}#${id}`, [], {
+        const of = conceptOf(said_) ?? act;
+        return node('event', `${world.term(of).name}#${id}`, [], {
           id,
-          action: act,
+          action: of,
           at: atNow,
           when,
           not: false,
-          parts: [{ role: a.agent, of: concept, amount: null }],
+          // A side that is a doing itself is the happening, and nobody in the
+          // signal did it: `a plank fell after a meeting` says a meeting
+          // happened, not that the meeting met.
+          parts: concept == null ? [] : [{ role: a.agent, of: concept, amount: null }],
         });
       };
-      const lWho = who(lefts[0]);
-      const rWho = who(rights[0]);
-      if (lWho != null && rWho != null) {
-        const lDone = event(lWho);
-        const rDone = event(rWho);
+      // A side that names a doing is that doing, and there is nobody to make
+      // one of.
+      const itself = (n) => reaches(n, a.action, world);
+      const lWho = itself(lefts[0]) ? null : who(lefts[0]);
+      const rWho = itself(rights[0]) ? null : who(rights[0]);
+      if ((lWho != null || itself(lefts[0])) && (rWho != null || itself(rights[0]))) {
+        const lDone = event(lWho, itself(lefts[0]) ? lefts[0] : doneLeft ?? done);
+        const rDone = event(rWho, itself(rights[0]) ? rights[0] : doneRight ?? done);
         arrivals.push(
           ...calls,
           lDone,
@@ -3189,7 +3203,7 @@ const holderAsk = said.find(
           // shared term of the brain's own, so the record of where each one
           // stood reads back somewhere rather than nothing.
           ...(a.placement != null && a.somewhere != null
-            ? [lWho, rWho].map((of) =>
+            ? [lWho, rWho].filter((of) => of != null).map((of) =>
                 node('learn', 'link', [], {
                   subject: of,
                   relation: a.placement,

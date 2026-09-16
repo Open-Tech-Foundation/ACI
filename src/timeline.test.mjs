@@ -126,3 +126,33 @@ test("two clocks order two doings for a yes or no, with nobody declaring it", as
   assertEquals(await says("did omar arrive before nadia?"), "No. ❌");
   assertEquals(await says("did omar arrive after nadia?"), "Yes. ✅ omar after nadia.");
 });
+
+test("each side of an ordering keeps its own doing", async () => {
+  // `the dog ran after the child sang` says two doings, and the far side was
+  // being given the near side's: the child ran, and the singing was thrown
+  // away. Two things went on the record that nobody said, and one that was
+  // said went nowhere.
+  const graph = await fresh("the dog ran after the child sang");
+  assert(/a1  event\(n1, type: run\[\d+\]\)/.test(graph), graph);
+  assert(/a2  event\(n2, type: singing\[\d+\]\)/.test(graph), `the child sang:\n${graph}`);
+  assertEquals(await says("did the dog run?"), "Yes. ✅");
+  assertEquals(await says("did the child sing?"), "Yes. ✅");
+  assertEquals(await says("did the child run?"), "I don't know.");
+  assertEquals(await says("what happened first?"), "child");
+});
+
+test("one doing said once is still both sides'", async () => {
+  // Nothing on the far side says a doing of its own, so the one doing said is
+  // what each of them did.
+  await fresh("a man arrived before a boy");
+  assertEquals(await says("did the boy arrive?"), "Yes. ✅");
+});
+
+test("a doing named as a thing is the happening, and did nothing to itself", async () => {
+  // `a meeting` is a doing with nobody doing it. It was going on the record
+  // twice — once as itself and once as falling — and then as its own doer.
+  const graph = await fresh("a plank fell after a meeting");
+  assert(/a1  event\(type: meeting\[\d+\]\)/.test(graph), `the meeting happened:\n${graph}`);
+  assert(/a2  event\(n1, type: fall\[\d+\]\)/.test(graph), graph);
+  assert(!/type: fall\[\d+\]\)[\s\S]*type: fall\[\d+\]\)/.test(graph), `the meeting did not fall:\n${graph}`);
+});

@@ -220,6 +220,8 @@ reading selection wants settling before the reader can be.
   sweeps it in: after `how many baskets does omar have?`, `do they have
   baskets?` is one apiece over the holders *and* the baskets, and comes back
   unsure.
+- `a man arrived before a boy` answers `who arrived first?` with `man, boy` —
+  both of them, where the signal put one before the other.
 - Containment: nothing says one doing happened inside another, so `nila spoke
   during the meeting` has nowhere to put the during.
 - A comparison told of two things that carry no measures is placed by the
@@ -230,13 +232,12 @@ reading selection wants settling before the reader can be.
   missing is a kind saying which scales it stands on — a person has a height,
   a meeting has a length of time — which is also what `which is longer?` wants
   when the pair is not named.
-- **A doing ordered against another takes the wrong doing.** `nila arrived
-  after the plank fell` records nila arriving *and the plank arriving*: the far
-  side of the ordering is given the near side's doing and its own is thrown
-  away. `a plank fell after a meeting` records the meeting *falling*, and
-  orders nothing at all. The chrono comes out right in the clause case, so
-  `what happened first?` answers — a record malformed while every answer reads.
-  This is the next one to take.
+- A doing named as a thing is ordered against nothing: `a plank fell after a
+  meeting` records both doings correctly now and leaves the chrono empty. The
+  chain is written from an ordering claim between two *things*, and a doing is
+  no thing. Where a doing is told with a clock the moment already holds the
+  doing itself, so the chrono takes either — what is missing is the ordering
+  claim reaching it.
 - A told cause is not read: `the storm delayed the ferry` comes back
   unknown, though `why` answers where a doing brought a state about.
 

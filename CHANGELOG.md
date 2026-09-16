@@ -97,6 +97,25 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Each side of an ordering keeps its own doing.** `nila arrived after the
+  plank fell` put nila arriving on the record, and the plank *arriving* beside
+  it — the far side of the ordering was given the near side's doing, and the
+  falling it had been told was thrown away. `did the plank arrive?` said yes
+  and `did the plank fall?` said it did not know, both of them backwards. One
+  doing was found for the whole signal and copied onto both sides; where a
+  signal says one — `a man arrived before a boy` — that is right, and where it
+  says two it is a doing nobody mentioned. Each side now takes the doing it was
+  told, and falls back on the other's only where it said none.
+
+  A doing named as a thing is the happening itself. `a plank fell after a
+  meeting` had the meeting on the record twice — once as itself and once as
+  falling — and then, with the falling gone, as its own doer, a meeting that
+  met. A meeting is a doing with nobody doing it, and stands as that.
+
+  The order was right through all of it, so `what happened first?` answered and
+  nothing looked wrong. It is the record that was wrong, and the next question
+  asked of those doings would have got the invented one.
+
 - **The brain does not say it knows nothing and then answer.** `sofia is the
   sister of ilan` / `whose sister is sofia?` replied `I don't know. sofia` —
   two readings reaching the end and both speaking. Traced to two things, and
