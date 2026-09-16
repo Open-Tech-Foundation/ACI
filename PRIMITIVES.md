@@ -222,6 +222,21 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
     how-much reading to ask the graph, not for the derived amount to be written
     into the world beside the told ones.
 
+18. **A closed set, assigned one to one.** Three owners, three pets, each owner
+    exactly one and no two the same; told who does *not* own what, name who
+    owns the third. The brain holds every denial it is given and draws nothing
+    from them, because what it lacks is not a word but a primitive: that a set
+    is closed, that its members are assigned one to one, and that eliminating
+    all but one leaves that one. Elimination over a closed set is the whole of
+    the inference, and the puzzle is three rounds of it — Bob is neither dog
+    nor fish, so Bob is the cat; Alice is not the cat and the cat is taken, so
+    Alice is dog or fish; Charlie takes what is left. Not built. Worth settling
+    first whether deterministic constraint propagation belongs in the engine at
+    all, or whether the narrow case — as many slots as fillers, denials
+    eliminating — is the closed subset to build. Separately and smaller: the
+    puzzle is one problem stated across four sentences, and the brain reads one
+    signal at a time.
+
 Following the same triage and noted, not fixed — the newest scan's findings,
 each with its root, and each outside the clean-inference bar:
 
