@@ -86,3 +86,26 @@ test("the smaller group is drawn from the bigger, whichever was said first", asy
   assert(/g1  apple  type: apple\[\d+\]  of g2  × 3/.test(graph), `three out of five:\n${graph}`);
   assert(/g2  apple  type: apple\[\d+\]\s+× 5/.test(graph), graph);
 });
+
+test("what somebody was told to hold came out of nobody", async () => {
+  // Two holders, one kind, and neither group was drawn from the other: priya's
+  // six lanterns are not six of anybody's, and kabir's three are not three of
+  // priya's, however alike the two are. Nobody said they were.
+  const graph = await fresh("priya has 6 lanterns", "kabir has 3 lanterns");
+  assert(/g1  lantern  type: lantern\[\d+\]\s+× 6/.test(graph), graph);
+  assert(/g2  lantern  type: lantern\[\d+\]\s+× 3/.test(graph), graph);
+  assert(!/of g\d/.test(graph), `neither came out of the other:\n${graph}`);
+});
+
+test("everyone the question names on the holder's side is counted", async () => {
+  await fresh("priya has 6 lanterns", "kabir has 3 lanterns");
+  assertEquals(await says("how many lanterns do priya and kabir have?"), "nine");
+  // And each of them still answers for themselves.
+  assertEquals(await says("how many lanterns does priya have?"), "six");
+  assertEquals(await says("how many lanterns does kabir have?"), "three");
+});
+
+test("a third holder joins the same count", async () => {
+  await fresh("priya has 6 lanterns", "kabir has 3 lanterns", "nila has 2 lanterns");
+  assertEquals(await says("how many lanterns do priya, kabir and nila have?"), "eleven");
+});

@@ -376,7 +376,6 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
         // is drawn from nobody — mira's one kettle is not one of dev's three,
         // however alike they are.
         ...(() => {
-          if (several) return {};
           if (!call || !call.state.made || call.state.of == null) return {};
           // Said outright that somebody holds them. A holding that follows
           // from a doing is another matter: what was given came out of what
@@ -391,6 +390,11 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
                 world.isA(link.state.relation, a2.holding) ||
                 world.subrelationOf(link.state.relation, a2.holding)),
           );
+          // Told outright that somebody holds them, a group came out of
+          // nobody: arun's four ropes are not four of meera's seven, however
+          // alike the two are. Said so, `from` stands at nothing and stays
+          // there — which is not the same as its never having been settled.
+          if (several) return fresh ? { from: null } : {};
           const group = fresh ? null : drawnFrom(call.state.of);
           return group == null ? {} : { from: group };
         })(),
@@ -419,7 +423,8 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
   // three, and the order they were said in says nothing about which. A group
   // is drawn from the smallest one of its kind that is bigger than it.
   for (const one of held.groups) {
-    if (one.from != null) continue;
+    // Settled already, either at a group it came out of or at nothing.
+    if (one.from !== undefined) continue;
     let bigger = null;
     for (const other of held.groups) {
       if (other === one || other.count <= one.count) continue;

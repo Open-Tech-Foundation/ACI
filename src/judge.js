@@ -1972,16 +1972,48 @@ function together(joined, world, mood, sent) {
           ?? under
           ?? measuredIn(way.bearer, way.of, world)
           ?? stepped(way);
-      const total = howMany == null ? null : world.termFor(howMany);
+      // Everyone the question named on the bearer's side is a bearer. Asked
+      // how many ropes meera and arun have, the question is one count over two
+      // holders and the answer is what each of them holds, added up. Reading
+      // one of them and dropping the other answers a question nobody asked —
+      // and answers it with a number that looks like an answer. The same walk
+      // already adds across a togetherness on the other side, where one holder
+      // holds two kinds; this is that walk from the other end.
+      const others = back
+        ? []
+        : things
+            .map((n) => one(conceptOf(n)))
+            .filter(
+              (of, i, all) =>
+                of != null &&
+                of !== way.bearer &&
+                of !== way.of &&
+                all.indexOf(of) === i &&
+                counts({ bearer: of, of: way.of, relation: way.relation }),
+            );
+      const eachBearer = others.length > 0 && howMany != null
+        ? [
+            ...others.map((of) => ({ of, value: world.held(of, way.relation, way.of) })),
+            { of: way.bearer, value: howMany },
+          ]
+        : null;
+      const summed = eachBearer == null
+        ? howMany
+        : eachBearer.reduce((sum, one_) => sum + one_.value, 0);
+      const total = summed == null ? null : world.termFor(summed);
       return [
         withBranch(root, [
           ...root.branch,
           node('count', total == null ? 'beyond' : 'counted', [], {
             of: way.of,
-            held: way.bearer,
-            members: howMany,
+            held: eachBearer == null ? way.bearer : null,
+            members: summed,
             total,
-            ...(parts.length > 1 ? { made: parts } : {}),
+            ...(eachBearer != null
+              ? { made: eachBearer }
+              : parts.length > 1
+                ? { made: parts }
+                : {}),
             // The question said what it wanted counted, so the answer does not
             // say it again: asked how many hours make a day, twenty-four is
             // the whole of it.

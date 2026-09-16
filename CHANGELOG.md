@@ -97,6 +97,25 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Everyone the question names on the holder's side is counted.** `meera has
+  7 ropes` / `arun has 4 ropes` / `how many ropes do meera and arun have?`
+  answered **four**. One of the two named holders did nothing in the reading
+  and the answer came back regardless — the worst kind of fault the brain has,
+  since nobody reading *four* can tell half the question was dropped. The count
+  now reads every holder the question names and adds what each of them holds:
+  eleven, and the composition says so — `meera → 7`, `arun → 4`, `sum → 11`.
+  The same walk already added across a togetherness on the other side, where
+  one holder holds two kinds; this is that walk from the other end.
+
+- **What somebody was told to hold came out of nobody.** Every group of a kind
+  was drawn from the smallest bigger group of that kind, whoever held it, so
+  arun's four ropes went down as four of meera's seven. Nobody said that. A
+  group told outright as somebody's holding is now drawn from nothing and stays
+  there, while what a doing moved still comes out of what it was moved from —
+  `sam gives 2 books to jerry` is still two of sam's five. The rule was already
+  written on the path that makes a single thing, in as many words: mira's one
+  kettle is not one of dev's three. The group path never had it.
+
 - **A word on two scales is placed by what it is said of.** `long` is length
   and `long` is time, and nothing chose between them. It is now carried as
   both: every scale the state stands on that something compares along is one
