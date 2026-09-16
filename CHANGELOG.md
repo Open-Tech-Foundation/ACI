@@ -6,6 +6,17 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
+- **A change writes no fact, and the reading applies it.** `the coffee got
+  cold` wrote a fact saying the coffee is cold, beside the change that said it
+  turned — one thing said twice, and the fact was one nobody had been told. The
+  facts are what the conversation was told and never move; the actions are what
+  happened; and how a thing stands now follows from the two, the way what
+  somebody holds after a giving already followed from what they were told to
+  hold and what was given away. Told hot and then cooled, the graph holds
+  `property(n1, hot[208])` and `state-change(n1) {temperature: cold[209]}` and
+  nothing else — `is the coffee cold?` affirms, `is the coffee hot?` denies,
+  and `was the coffee hot?` affirms, none of them written down anywhere.
+
 - **Every end of a doing that was counted names a group.** `sam bought 3 apples
   from 2 shops` held neither count where it belonged: the apples were a kind
   with a number beside them — the shape holding had just shed — and the two

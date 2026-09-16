@@ -12,8 +12,10 @@ const says = async (q) => (await brain(q)).expression.state.says;
 
 test("a state told is a fact, and taking a new one is a change", async () => {
   const graph = await fresh("the coffee is hot", "the coffee got cold");
-  assert(/f1  property\(n1, hot\[\d+\]\)/.test(graph), `it was hot:\n${graph}`);
-  assert(/f2  property\(n1, cold\[\d+\]\)/.test(graph), `and it is cold:\n${graph}`);
+  // What was told stays as it was told; the change is what happened. How the
+  // coffee is now is neither of them written down — it follows from the two.
+  assert(/f1  property\(n1, hot\[\d+\]\)/.test(graph), `it was told hot:\n${graph}`);
+  assertEquals((graph.match(/property\(n1,/g) || []).length, 1, `and nothing else:\n${graph}`);
   assert(/a1  state-change\(n1\)\s+\{time: done, temperature: cold\[\d+\]\}/.test(graph), `and it changed:\n${graph}`);
 });
 
@@ -24,19 +26,21 @@ test("the thing stands in the state it took, not the one it left", async () => {
   assertEquals(await says("is the coffee hot?"), "No. ❌");
 });
 
-test("what a thing was is the fact standing before the latest", async () => {
-  // Nothing is written twice. The order the facts were said in is the history,
-  // the way it already is for a count, and the change says when it turned.
+test("what a thing was is the fact, and what it is follows from the change", async () => {
+  // Nothing is written twice: the told fact is what it was, the change is what
+  // happened, and what it is now is read off the two.
   const graph = await fresh("the coffee is hot", "the coffee got cold");
   const facts = graph.match(/property\(n1, \w+\[\d+\]\)/g) || [];
-  assertEquals(facts.length, 2);
-  assert(/hot/.test(facts[0]) && /cold/.test(facts[1]), `hot, then cold:\n${graph}`);
+  assertEquals(facts.length, 1);
+  assert(/hot/.test(facts[0]), `what it was:\n${graph}`);
+  assert(/n1  coffee.*\{temperature: cold\[\d+\]\}/.test(graph), `what it is:\n${graph}`);
 });
 
-test("a state nothing stood in before leaves one fact and no history", async () => {
+test("a state nothing stood in before is the change and nothing else", async () => {
   const graph = await fresh("the porch became wet");
   assert(/state-change\(n1\)\s+\{time: done, wetness: wet\[\d+\]\}/.test(graph), graph);
-  assertEquals((graph.match(/property\(n1,/g) || []).length, 1, graph);
+  assertEquals((graph.match(/property\(n1,/g) || []).length, 0, `nobody told it anything:\n${graph}`);
+  assert(/n1  porch.*\{wetness: wet\[\d+\]\}/.test(graph), `and it is wet all the same:\n${graph}`);
 });
 
 test("a feeling is a state, and taking a new one leaves the old", async () => {
@@ -94,4 +98,17 @@ test("two things said to have stood at one time stand in one moment", async () =
 test("when still asks when where it opens the signal", async () => {
   await fresh("the backup started in the morning");
   assertEquals((await brain("when did the backup start?")).expression.state.says, "morning");
+});
+
+test("a change writes no fact, and the reading applies it", async () => {
+  // The facts are what the conversation was told and never move; the actions
+  // are what happened; how a thing stands now follows from the two — the same
+  // way what somebody holds after a giving follows from what they were told to
+  // hold and what was given away.
+  const graph = await fresh("the sack is open", "the sack became wet");
+  assertEquals((graph.match(/property\(n1,/g) || []).length, 1, `only what was told:\n${graph}`);
+  assert(/f1  property\(n1, opened\[\d+\]\)/.test(graph), graph);
+  assert(/a1  state-change\(n1\)\s+\{time: done, wetness: wet\[\d+\]\}/.test(graph), graph);
+  assertEquals(await says("is the sack wet?"), "Yes. ✅ a sack is wet.");
+  assertEquals(await says("is the sack open?"), "Yes. ✅ a sack is open.");
 });

@@ -715,8 +715,19 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
   // outright is not written down a second time.
   const predicates = world && world.anchors ? world.anchors.predication : null;
   if (predicates != null) {
+    // A state a change reached is the change's and not a fact beside it. `the
+    // porch became wet` says the becoming happened; that the porch is wet
+    // follows from it, and writing it down would say one thing twice.
+    const reached = new Set(
+      events.flatMap((event) =>
+        (event.state.parts || [])
+          .filter((part) => part.role === (world.anchors || {}).target)
+          .map((part) => part.of),
+      ),
+    );
     for (const [id, values] of besides) {
       for (const value of values) {
+        if (reached.has(value)) continue;
         const already = held.facts.some(
           (one) =>
             one.of === PROPERTY &&
@@ -800,25 +811,21 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
       time: when != null && a3.future != null && when === a3.future ? 'scheduled' : 'done',
       ...(row.properties || {}),
     };
-    // A thing that changed into a state stands in it, and standing in a state
-    // is a fact about the thing like any other. The change says it happened;
-    // the fact says how the thing is now. Neither is worked out from the
-    // other and neither is written twice: the action is the history, the
-    // latest fact is the present, and the one before it is what it was.
-    if (primitive === STATE_CHANGE && predicates != null) {
+    // A change leaves no fact behind it. What was told stands and never moves;
+    // what happened is the doing; and how a thing is now follows from the two
+    // — the way what somebody holds after a giving follows from what they were
+    // told to hold and what was given away. Writing the state the change
+    // reached would be saying the same thing twice, in a fact nobody was told.
+    //
+    // The world this conversation reasons over is another matter: a reading
+    // that asks it must find the thing as it now is, so the standing goes
+    // there, where it is not a second record but the surface the readings walk.
+    if (primitive === STATE_CHANGE && predicates != null && not !== true) {
       const thing = row.parts ? row.parts.thing : null;
       const gained = anchors2.target != null ? only(roles[anchors2.target]) : null;
       const term = thing == null ? null : termOf(thing) ?? thing;
       if (term != null && gained != null) {
-        claimed(term, predicates, gained, null, not === true);
-        // Told outright, the standing would have been taken into the world
-        // this conversation reasons over. Changed into, it is the same
-        // standing and goes the same way, so there is one surface to reason
-        // over and it never disagrees with the record. The state it left goes
-        // as this arrives: a dimension holds one value at a time.
-        if (not !== true) {
-          took({ terms: [{ id: term, links: [{ rel: predicates, to: gained }] }] }, world);
-        }
+        took({ terms: [{ id: term, links: [{ rel: predicates, to: gained }] }] }, world);
       }
     }
     const already = isHappening(action) ? happening(action) : null;
@@ -1579,6 +1586,13 @@ function bandOf(state, world) {
 // nobody asked.
 function told(subject, relation, object, here) {
   const of = here ? hereOf(subject) : null;
+  // What a change since has made of it. A fact stays as it was told; what
+  // happened afterwards is the doing, and how the thing stands now follows
+  // from the two — the way what somebody holds after a giving follows from
+  // what they were told to hold and what was given away. Nothing about the
+  // state the change reached is written down, so it is read from the change.
+  const changed = changedInto(subject, of, object);
+  if (changed != null) return changed;
   let found = null;
   for (const one of held.facts) {
     if (!same(one.parts[0], subject) && one.parts[0] !== of) continue;
@@ -1598,6 +1612,27 @@ function told(subject, relation, object, here) {
     found = one.stands;
   }
   return found;
+}
+
+// Whether a change has put this thing into the state asked after, or out of
+// it. Read backwards, because the latest is what stands: the first change
+// touching the dimension in question settles it, and older ones are history.
+function changedInto(subject, here, object) {
+  const dim = dimension(object, against);
+  if (dim == null) return null;
+  for (let i = held.actions.length - 1; i >= 0; i -= 1) {
+    const one = held.actions[i];
+    if (one.of !== STATE_CHANGE || one.stands !== 'held') continue;
+    const thing = one.parts ? one.parts.thing : null;
+    if (thing == null) continue;
+    if (!same(thing, subject) && thing !== here) continue;
+    for (const value of Object.values(one.properties || {})) {
+      if (typeof value !== 'number') continue;
+      if (dimension(value, against) !== dim) continue;
+      return value === object ? 'held' : 'against';
+    }
+  }
+  return null;
 }
 
 // Whether a fact is one that a later one supersedes.
@@ -1896,6 +1931,20 @@ function muchOf(node) {
 // dimension back off — said not to be blue, it has no colour anybody gave it.
 function howOf(node) {
   const out = {};
+  // What a change since has made of it, laid over what was told. The facts say
+  // what the conversation was told and never move; how the thing is now is the
+  // told facts with what happened to them applied.
+  const since = {};
+  for (const one of held.actions) {
+    if (one.of !== STATE_CHANGE || one.stands !== 'held') continue;
+    const thing = one.parts ? one.parts.thing : null;
+    if (thing == null || !same(thing, node)) continue;
+    for (const value of Object.values(one.properties || {})) {
+      if (typeof value !== 'number') continue;
+      const on = qualityKind(value, against);
+      if (on != null) since[on] = value;
+    }
+  }
   for (const one of held.facts) {
     if (one.of !== PROPERTY || one.stands === 'conflict') continue;
     if (!same(one.parts[0], node)) continue;
@@ -1905,7 +1954,7 @@ function howOf(node) {
     if (one.stands === 'against') delete out[on];
     else out[on] = value;
   }
-  return out;
+  return { ...out, ...since };
 }
 
 // ---- the chrono: moments as a strict total order --------------------------
@@ -2126,6 +2175,15 @@ function reasonOf(subject, relation, object) {
     if (!same(one.parts[0], subject) && one.parts[0] !== of) continue;
     if (!says(one, relation) || !same(one.parts[1], object)) continue;
     const came = one.reason ?? broughtAbout(one.parts[0], object);
+    if (came == null) continue;
+    const row = held.actions.find((r) => r.id === came) ?? held.facts.find((r) => r.id === came);
+    if (row) return row;
+  }
+  // Nobody was told it, and it came of a change. The state a change reached is
+  // the change's own, so the change is where the asking arrives.
+  for (const node of [of, subject]) {
+    if (node == null) continue;
+    const came = broughtAbout(node, object);
     if (came == null) continue;
     const row = held.actions.find((r) => r.id === came) ?? held.facts.find((r) => r.id === came);
     if (row) return row;
