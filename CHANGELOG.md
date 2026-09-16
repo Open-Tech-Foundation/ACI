@@ -97,6 +97,24 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A fact answers from either of its ends, never from the wrong one.** `the
+  coin is in the jar` / `what is in the coin?` answered **jar**. `omar is
+  taller than nila` / `who is taller than omar?` answered **nila**, the one he
+  is taller than. `arun is the father of meera` / `who is the father of arun?`
+  answered **meera**. Every relation in the brain was being read as though it
+  ran both ways, wherever the right end came back with nothing.
+
+  Which end a hole asks after was already settled — the joint says which side
+  the thing named stands on — but the walk out was taken whenever the walk back
+  came back empty, and a question asked from the end a relation runs *to* is
+  exactly the question whose walk back is empty. Where the signal says which
+  end is asked after, that stands, and nothing found is nothing said. Asked who
+  the father of arun is, the brain does not know; asked what is in the coin, it
+  does not know; asked who is taller than omar, it does not know. Every one of
+  them still answers from the other end. The standing questions were right all
+  along — `is meera the father of arun?` was never yes — so this was the hole
+  reading alone, reading a fact from whichever end had something on it.
+
 - **A pointer reaches somebody the conversation named and never classified.**
   `devi has 5 baskets` / `omar has 6 baskets` / `how many baskets do they
   have?` answered **six**. A plural pointer already stood for every topic in

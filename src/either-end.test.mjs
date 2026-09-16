@@ -142,3 +142,31 @@ test("asked what was given, the thing answers; asked who, the giver answers", as
   assertEquals(await says("what does mira give?"), "book");
   await forget();
 });
+
+test("the end the question names is the end it is asked from", async () => {
+  await forget();
+  await brain("the pebble is in the pouch");
+  assertEquals(await says("what is in the pouch?"), "pebble");
+  // Nothing is in the pebble. Saying `pouch` would answer the question turned
+  // round: a fact answers from either of its ends, never from the wrong one.
+  assertEquals(await says("what is in the pebble?"), "I don't know.");
+  await forget();
+});
+
+test("an ordering asked from the far end answers nothing, not the near one", async () => {
+  await forget();
+  await brain("ilan is taller than sofia");
+  assertEquals(await says("who is taller than sofia?"), "ilan");
+  assertEquals(await says("who is taller than ilan?"), "I don't know.");
+  await forget();
+});
+
+test("a relation asked from the end it runs to answers nothing", async () => {
+  await forget();
+  await brain("arun is the father of meera");
+  assertEquals(await says("who is the father of meera?"), "arun");
+  // Arun has no father here, and meera is not his: she is the one he is
+  // father to, which is the same fact read backwards.
+  assertEquals(await says("who is the father of arun?"), "I don't know.");
+  await forget();
+});

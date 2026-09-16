@@ -25,7 +25,11 @@ const worldData = {
   { id: 20, name: "wash", links: [{ rel: IS, to: 3 }] },
   { id: 21, name: "burn", links: [{ rel: IS, to: 3 }, { rel: IS, to: 4 }] },
   { id: 22, name: "crush", links: [{ rel: IS, to: 3 }, { rel: CAUSE, to: 23 }] },
-  { id: 23, name: "ache", links: [{ rel: IS, to: 1 }, { rel: IS, to: 4 }] },
+  // An ache has a wheel in it. Said this way round because the language puts
+  // the target after the verb, so `what has wheel` asks what holds the wheel
+  // and is answered by walking back from it — never by reading the same fact
+  // from the end the question was asked from.
+  { id: 23, name: "ache", links: [{ rel: IS, to: 1 }, { rel: IS, to: 4 }, { rel: HAS, to: 10 }] },
   ],
 };
 

@@ -2853,8 +2853,20 @@ const holderAsk = said.find(
               return many !== 0;
             })
           : [];
+      // Where the signal says which end the hole asks after, that stands, and
+      // a walk that comes back with nothing is an empty answer rather than a
+      // reason to read the fact from the other end. Asked who the father of
+      // arun is, nobody is, and saying the one arun is the father of answers
+      // the question turned round — `what is in the coin?` answered `jar`, and
+      // `who is taller than omar?` answered the one he is taller than.
+      // Only where the thing named stands on the far side of the joint. `what
+      // is in the coin?` puts the coin there and asks what stands in it; `what
+      // is the film's name?` puts the film on this side and asks what the film
+      // has, which is the walk out. A hole before the joint alone does not
+      // tell the two apart.
+      const decided = jointSide || (holeBefore && said.indexOf(term) > at);
       const asksBack = backward.length > 0;
-      let found = asksBack ? backward : outward;
+      let found = asksBack ? backward : decided ? [] : outward;
       // A hold this conversation told of sits on the thing it made for whoever
       // holds — never on the authored kind: `the basket has three apples` was
       // read from the basket's bearer and the authored basket links nothing.
@@ -2921,7 +2933,11 @@ const holderAsk = said.find(
       // the walk comes back with nothing, they are the answer. `who is the
       // grandfather of maya` found him by walking the relation, and what is
       // left to say is who he is.
-      if (found.length === 0 && of != null && a.name != null && of === a.name && fits(subject)) {
+      // Not where the signal already said which end the hole asks after. Asked
+      // who the father of arun is and finding nobody, arun is not the answer:
+      // the question was about somebody else, and he is the one it was asked
+      // from.
+      if (!decided && found.length === 0 && of != null && a.name != null && of === a.name && fits(subject)) {
         found = [subject];
       }
       // A place is where something stands to something else, so the way it
