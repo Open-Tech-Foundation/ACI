@@ -246,6 +246,26 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
     itself. Not fixed, and it is the saying and not the finding: the reason is
     reached, and only the words for it are wrong.
 
+20. **A hole standing first asks after nothing.** `sam ate what?` answers
+    `apple`; `what did sam eat?` answers `I don't know`, and the two are one
+    question. The doing is on the record with both its parts — the doer answers
+    (`who ate the apple?` says sam) and the whole of it verifies (`did sam eat
+    an apple?` affirms) — so nothing is missing from the memory. What fails is
+    the part a fronted hole is taken to play: the reader gives each word a part
+    by which side of the doing it stands on, and where the signal's shape hands
+    it no sides to read, neither the hole nor the doer is given one and the
+    question asks after nothing. The flip that already exists for this — a hole
+    before the doing reads the far part where a doer already stands before it —
+    never runs, because the parts were never assigned. Not fixed, and it is the
+    same for every doing: `what did sam give?`, `what did mira build?`.
+
+21. **What has so much of a quantity.** `what is blue?` answers `sky`, and
+    `what is 2 metres long?` answers `1 metre` — a number where a thing was
+    asked for. A quality's holder is read off the conversation's facts, and a
+    measure's is not, though a measure is now a fact of exactly the same shape.
+    Not fixed. It is the last of the readings that look somewhere other than
+    the graph.
+
 Following the same triage and noted, not fixed — the newest scan's findings,
 each with its root, and each outside the clean-inference bar:
 
