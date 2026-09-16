@@ -2,6 +2,9 @@
 
 ## Rules
 
+* Read **`INTERNALS.md`** first — what stands, what is open, and the decisions
+  taken. `PRIMITIVES.md` is the foundation audit; `spec.md` is how the engine
+  is built.
 * Work on **clean deterministic inputs** first: canonical statements and plain
   hole questions whose inference is missing. Language-specific and
   phrase-specific constructs (particular phrasings, dangling prepositions,

@@ -645,6 +645,10 @@ understand → think → solve → structure → judge → express
   perceive    recall   infer    parse      check   reply
 ```
 
+The phases live in `src/brain.js`, except judging — every reading the brain has
+— which is `src/judge.js`. The node and the walks over it, which every phase
+shares, are `src/node.js`.
+
 `result` shape:
 
 ```js
@@ -921,9 +925,16 @@ wall, not a replacement — `unique (name)` on a term, foreign keys on both ends
 every link, and a unique link tuple.
 
 ```
-data/aci.db        the world, seeded once from the json below
-data/world.json    the world as authored — the seed, and the export format
+data/aci.db          the world, seeded once from the json below
+data/world.json      the generic world — the ladder, relations and anchors
+knowledge/*.json     one world's contents, a file to a domain, merged at startup
 ```
+
+The authored world holds nothing particular: the ladder every world needs for
+the primitives to bite — thing, place, action, property — the relations, and
+the anchors that name them. Cities, birds and tools live in packs, and a brain
+built for one purpose takes the packs it needs. `loadWorld()` / `worldData()`
+in `src/world.js` assemble both the way the runtime does.
 
 The authored world is **laid down again on every open**, not only the first: a
 world grows — a term added, a link moved, one renamed — and a store written
@@ -953,7 +964,21 @@ acknowledges knowledge that was not committed.
 
 ## Memory
 
-Two kinds, and they behave differently:
+Three memories, each holding its own kind of thing.
+
+| | holds | where |
+|---|---|---|
+| **world** | what is so in general | `data/world.json` + `knowledge/*.json` |
+| **graph** | what this conversation was told, and what happened | `src/graph.js` |
+| **working** | the steps taken to work something out, and their values | `src/working.js` |
+
+**Facts are what the conversation was told. Actions are what happened.
+Everything else is worked out when asked, and written nowhere.** A shop told it
+has a hundred and twenty apples and watched thirty leave has ninety — nobody
+said ninety, so it is no fact; it stands among the steps instead, each saying
+what it was worked from.
+
+Within the graph, two kinds of fact behave differently:
 
 | | what it is | when told otherwise |
 |---|---|---|
