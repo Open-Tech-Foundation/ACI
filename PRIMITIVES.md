@@ -340,6 +340,14 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
     two want the same treatment: a placement that follows from a doing, read
     off the doing rather than written down.
 
+26. **A state change told with a clock does not parse.** `the gate became open
+    at ten hours` answers `I don't understand`, though `the gate became open`
+    is taken in and `the tram arrived at ten hours` reads its clock. So two
+    changes cannot yet be told with the times they happened, and the timeline
+    has nothing to order them by but what was declared. The readings are ready
+    for it — which change is the latest is read off the chain — and the wording
+    is what stops it.
+
 Following the same triage and noted, not fixed — the newest scan's findings,
 each with its root, and each outside the clean-inference bar:
 

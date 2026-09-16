@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
+- **Which doing is the latest is the timeline's to say.** The readings that ask
+  what a thing is now, and what a state came of, took the latest doing to be
+  the last one mentioned — the order a conversation happens to say things in,
+  which is not the order they happened. They read the chain now, so a doing the
+  clock puts earlier is earlier however late it was mentioned. Where the
+  timeline places neither of two, the order they were said in stands for it,
+  there being nothing else to go on.
+
 - **A doing brings its state about.** `the door is closed` then `ravi opened
   the door` left the door closed: the world declares that an opening brings
   about being open, and nothing walked that link. A doing is now read for what

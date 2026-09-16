@@ -1614,6 +1614,25 @@ function told(subject, relation, object, here) {
   return found;
 }
 
+// The doings this conversation holds, latest last. When something happened is
+// the timeline's to say — it holds what was declared and what the clock said —
+// and the order a conversation happened to mention things in is not that. Only
+// where the timeline places neither of two doings does the order they were
+// said in stand for it, there being nothing else to go on.
+function inOrder() {
+  const chain = chronoTerms();
+  const at = (row) => {
+    const where = chain.indexOf(row.id);
+    return where < 0 ? null : where;
+  };
+  return [...held.actions].sort((one, other) => {
+    const a = at(one);
+    const b = at(other);
+    if (a == null || b == null) return 0;
+    return a - b;
+  });
+}
+
 // Whether a change has put this thing into the state asked after, or out of
 // it. Read backwards, because the latest is what stands: the first change
 // touching the dimension in question settles it, and older ones are history.
@@ -1639,8 +1658,9 @@ function changedInto(subject, here, object) {
       .map((role) => one.roles[role]);
     return played.flatMap((p) => (Array.isArray(p) ? p : [p])).filter((p) => p != null);
   };
-  for (let i = held.actions.length - 1; i >= 0; i -= 1) {
-    const one = held.actions[i];
+  const ordered = inOrder();
+  for (let i = ordered.length - 1; i >= 0; i -= 1) {
+    const one = ordered[i];
     if (one.stands !== 'held') continue;
     if (!whom(one).some((p) => same(p, subject) || p === here)) continue;
     for (const value of states(one)) {
@@ -2212,8 +2232,9 @@ function reasonOf(subject, relation, object) {
 // be — so a claim with nothing behind it of its own is asked of the change
 // that made it.
 function broughtAbout(thing, value) {
-  for (let i = held.actions.length - 1; i >= 0; i -= 1) {
-    const row = held.actions[i];
+  const ordered = inOrder();
+  for (let i = ordered.length - 1; i >= 0; i -= 1) {
+    const row = ordered[i];
     if (row.stands !== 'held' || row.reason == null) continue;
     if (!row.parts || row.parts.thing !== thing) continue;
     if (!Object.values(row.properties || {}).includes(value)) continue;
