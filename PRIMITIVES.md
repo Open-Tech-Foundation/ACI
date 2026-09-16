@@ -266,6 +266,28 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
     Not fixed. It is the last of the readings that look somewhere other than
     the graph.
 
+22. **A giving is not answerable as something that happened.** `sam gives 2
+    books to jerry` is on the record from every side but one: `who gave the
+    books?` answers sam, `who has the books?` answers jerry, `how many books
+    does jerry have?` answers two — and `did sam give books to jerry?` answers
+    `I don't know`. Every other doing verifies (`did sam eat an apple?`, `did
+    the plank fall?`), and so does the other transfer (`did hema put a mug on a
+    ledge?`) — but that one answers through the placement it left, `mug on
+    ledge`, not through the doing. A giving leaves a holding rather than a
+    placement, and nothing looks there. So a transfer is verified by what it
+    left behind and only one of the two things it can leave is looked for. Not
+    fixed.
+
+23. **A question about something that happened never reaches what stands to
+    it.** `hema is in the accident` writes `member(n2, a1)` and `is hema in the
+    accident?` affirms from it, but `who is in the accident?` answers `I don't
+    know` — and the same question over a thing works both ways (`what is in the
+    box?` answers the book). The reader that walks what stands to a thing is
+    never called for a happening: the question is routed to the readers that
+    look for parts played in a doing, which is the wrong question to ask of an
+    accident somebody was merely in. The reader itself now meets a happening at
+    its row, so what is missing is the routing and not the walk. Not fixed.
+
 Following the same triage and noted, not fixed — the newest scan's findings,
 each with its root, and each outside the clean-inference bar:
 

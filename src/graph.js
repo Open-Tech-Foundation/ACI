@@ -1576,10 +1576,29 @@ function orderedOn(scale) {
 // who stands taller than sam, rather than who sam stands taller than.
 function standingIn(object, relation) {
   const found = [];
+  // Something that happened stands as a row of its own, not as a term, so a
+  // question naming the happening has to be met at the row. Asked who was in
+  // the accident, the accident is that row and what stands to it is the answer.
+  const asRow = isHappening(object) ? happening(object) : null;
   for (const one of held.facts) {
     if (!says(one, relation) || one.stands !== 'held') continue;
-    if (!same(one.parts[1], object)) continue;
+    if (!same(one.parts[1], object) && one.parts[1] !== asRow) continue;
     const term = termOf(one.parts[0]);
+    if (term != null && !found.includes(term)) found.push(term);
+  }
+  return found;
+}
+
+// Who and what stood in something that happened. The happening keeps them as it
+// is told them — a person in an accident, a doing inside a robbery — so being
+// asked who was in it is reading back what it already holds.
+function membersOf(kind) {
+  const id = isHappening(kind) ? happening(kind) : null;
+  const row = id == null ? null : held.actions.find((one) => one.id === id);
+  if (!row) return [];
+  const found = [];
+  for (const one of row.members || []) {
+    const term = termOf(one) ?? one;
     if (term != null && !found.includes(term)) found.push(term);
   }
   return found;
@@ -2193,6 +2212,7 @@ function serialize(world = against) {
     chronoEnd,
     chronoBefore,
     reasonOf,
+    membersOf,
     stood,
     momentPosition,
     termMoment,
