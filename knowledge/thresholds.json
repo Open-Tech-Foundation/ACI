@@ -64,6 +64,28 @@
           "quantity": 0
         }
       ]
+    },
+    {
+      "id": 3051,
+      "name": "late",
+      "links": [
+        {
+          "rel": 2974,
+          "to": 221,
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "id": 3052,
+      "name": "early",
+      "links": [
+        {
+          "rel": 2975,
+          "to": 221,
+          "quantity": 0
+        }
+      ]
     }
   ]
 }

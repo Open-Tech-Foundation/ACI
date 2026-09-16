@@ -209,6 +209,19 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
     The clause-joining words are whole: because, since, as, so, therefore,
     thus and hence all reach the one primitive.
 
+17. **How much of a state a thing has, where nobody told it.** `is the coach
+    late?` answers from the gap between the moment a doing was set for and the
+    moment it happened, and `is the room hot?` from a temperature told of the
+    room — both worked out, neither stored. `how late is the coach?` does not
+    answer, though `how hot is the room?` does. The difference is where the
+    amount sits: a measure the conversation was told is written into the world
+    this conversation reasons over, and the how-much reading looks there, while
+    an amount the brain works out lives only in the graph. So the reading finds
+    the told ones and never the derived ones. Not fixed. It is the same seam as
+    the node slot was — one meaning with two homes — and the fix is for the
+    how-much reading to ask the graph, not for the derived amount to be written
+    into the world beside the told ones.
+
 Following the same triage and noted, not fixed — the newest scan's findings,
 each with its root, and each outside the clean-inference bar:
 

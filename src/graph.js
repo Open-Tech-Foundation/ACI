@@ -1383,7 +1383,10 @@ function reached(roots, found = []) {
 function inState(thing, state, world = against, from) {
   const of = quantityOn(state, world);
   if (of == null) return null;
-  const held = amounts(of, from).get(thing);
+  // Asked of a world term or of the node this conversation gave it; either way
+  // it is the same thing standing there.
+  const all = amounts(of, from);
+  const held = all.get(thing) ?? all.get(standing.get(thing));
   if (held == null) return null;
   const band = bandOf(state, world);
   if (band.above == null && band.below == null) return null;
@@ -1571,6 +1574,15 @@ const says = (row, relation) =>
 // from has to be named — there is no distance without saying from what.
 function amounts(quantity, from) {
   const found = new Map();
+  const a = (against && against.anchors) || {};
+  // How far past the moment it was set for a thing stood. Nobody is ever told
+  // this: a doing the brain expected and the doing that came are both on the
+  // timeline, and the gap between them is the whole of it. Being before the
+  // moment it was set for counts below nought, so one quantity says early and
+  // late alike.
+  if (a.lateness != null && quantity === a.lateness) {
+    for (const [who, gap] of lateness()) found.set(who, gap);
+  }
   for (const one of held.nodes) {
     for (const measure of one.measures || []) {
       if (measure.of === quantity) found.set(one.id, measure.amount);
@@ -1753,6 +1765,49 @@ function chronoTerms() {
       const term = whoDid(t) ?? termOf(t) ?? t;
       if (!seen.has(term)) { seen.add(term); out.push(term); }
     }
+  }
+  return out;
+}
+
+// How late each thing this conversation holds stood, in minutes.
+//
+// A doing set for a moment and a doing that happened are two rows of the same
+// kind by the same doer — that pairing is the expectation and what became of
+// it, and nothing else has to be written down to say so. Where several were
+// set, the last one told is the one in force: an expectation moved is the
+// expectation now.
+function lateness() {
+  const out = new Map();
+  const a = (against && against.anchors) || {};
+  if (a.minute == null) return out;
+  const minutes = (row) => {
+    const at = (row.properties || {}).at;
+    if (at == null || at.amount == null || at.unit == null) return null;
+    const named = (id) => (against.term(id) ? against.term(id).name : null);
+    const steps = unitsIn(named(at.unit), named(a.minute));
+    return steps == null ? null : Number(at.amount) * steps;
+  };
+  const doerOf = (row) => {
+    if (row.parts && row.parts.thing != null) return row.parts.thing;
+    const played = a.agent != null && row.roles ? row.roles[a.agent] : null;
+    const one = Array.isArray(played) ? played[0] : played;
+    return one ?? null;
+  };
+  for (const done of held.actions) {
+    if (done.stands !== 'held') continue;
+    if ((done.properties || {}).time !== 'done') continue;
+    const came = minutes(done);
+    const who = doerOf(done);
+    if (came == null || who == null) continue;
+    let set = null;
+    for (const row of held.actions) {
+      if (row.stands !== 'held' || (row.properties || {}).time !== 'scheduled') continue;
+      if (row.of !== done.of || doerOf(row) !== who) continue;
+      const meant = minutes(row);
+      if (meant != null) set = meant;
+    }
+    if (set == null) continue;
+    out.set(who, came - set);
   }
   return out;
 }

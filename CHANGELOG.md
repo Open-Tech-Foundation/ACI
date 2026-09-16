@@ -6,6 +6,23 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Late and early are worked out, not remembered.** Nothing in the graph says
+  late. Told `the coach will arrive at nine hours` and then `the coach arrived
+  at ten hours`, the brain holds two moments and reads the rest: `is the coach
+  late?` affirms, `is the coach early?` denies, and a thing that came at the
+  moment it was set for is neither. Told nothing about what was expected, there
+  is nothing to be late against and the brain says so. The gap is the quantity
+  — before the moment counts below nought, so one quantity says early and late
+  alike — and the world says where each state begins, the way it already says
+  what counts as hot.
+
+- **A state a thing is in by its quantity now answers.** The brain could work
+  out that a room at thirty-two degrees is hot, and nothing ever asked it: the
+  reading was built, exported and never called, so `is the room hot?` after
+  `the room is 32 degrees` said `I don't know`. It is now asked wherever a
+  claim is judged, which is what made late and early answerable at all — one
+  reading, serving every state the world puts a threshold on.
+
 - **Every doing says which time it is.** Whether a doing had happened was on
   the row and the print never said it, so a thing the brain expected and a
   thing it had seen read alike. A doing now carries one object saying

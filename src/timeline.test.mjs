@@ -73,3 +73,37 @@ test("a doing to come has not happened", async () => {
   await fresh("the ferry will arrive");
   assertEquals(await says("did the ferry arrive?"), "I don't know.");
 });
+
+test("late is read off the two moments, not remembered", async () => {
+  const graph = await fresh("the coach will arrive at nine hours", "the coach arrived at ten hours");
+  // Nothing says late anywhere. The two moments are the whole of it.
+  assert(!/late/.test(graph), `nothing stored:\n${graph}`);
+  assertEquals(await says("is the coach late?"), "Yes. ✅ a coach is late.");
+  assertEquals(await says("is the coach early?"), "No. ❌");
+});
+
+test("come before the moment it was set for, a thing is early", async () => {
+  await fresh("the ferry will arrive at nine hours", "the ferry arrived at eight hours");
+  assertEquals(await says("is the ferry early?"), "Yes. ✅ a ferry is early.");
+  assertEquals(await says("is the ferry late?"), "No. ❌");
+});
+
+test("come at the moment it was set for, a thing is neither", async () => {
+  await fresh("the tram will arrive at nine hours", "the tram arrived at nine hours");
+  assertEquals(await says("is the tram late?"), "No. ❌");
+  assertEquals(await says("is the tram early?"), "No. ❌");
+});
+
+test("with nothing expected there is nothing to be late against", async () => {
+  await fresh("the barge arrived at ten hours");
+  assertEquals(await says("is the barge late?"), "I don't know.");
+});
+
+test("a state a thing is in by its quantity answers without anyone saying it", async () => {
+  // The same reading late is: the world says where the state begins, and the
+  // quantity is read off the thing.
+  await fresh("the room is 32 degrees");
+  assertEquals(await says("is the room hot?"), "Yes. ✅ a room is hot.");
+  await fresh("the room is 10 degrees");
+  assertEquals(await says("is the room hot?"), "No. ❌");
+});

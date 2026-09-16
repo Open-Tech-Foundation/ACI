@@ -3146,8 +3146,14 @@ function together(joined, world, mood, sent) {
       // what is asked of it is arithmetic on those: monday comes before
       // tuesday because it stands first of the two, and nobody has to have
       // said so of that pair.
+      // A state a thing is in by how much of its quantity it has. The world
+      // says where the state begins and ends — what counts as hot, how far
+      // past the moment it was set for counts as late — and the quantity is
+      // read off the thing. Nobody has to have said the state itself.
+      const banded =
+        graph != null && rel === world.baseRelation ? graph.inState(holder, object, world) : null;
       const ordered = placedAgainst(holder, object, rel, world);
-      const holds = nearestDenies
+      const holds = banded === true ? true : nearestDenies
         ? false
         : counted != null
         ? knownCount === counted
@@ -3200,7 +3206,10 @@ function together(joined, world, mood, sent) {
       // zero stands against the claim that there is one, the way any other
       // count stands against a claim of a different one.
       const heldNone = heldMany === 0;
-      const opposed = ordered === false || functionalAgainst || constrainedAgainst || predicateAgainst || heldApart || (counted != null
+      // Read off its quantity and found outside the state's band, the thing is
+      // not in it: a room at ten degrees is not hot, and nobody said so.
+      const bandAgainst = banded === false;
+      const opposed = bandAgainst || ordered === false || functionalAgainst || constrainedAgainst || predicateAgainst || heldApart || (counted != null
         ? knownCount != null && knownCount !== counted
         : heldNone ||
           heldDenied ||
