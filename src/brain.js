@@ -800,6 +800,23 @@ function farEnd(term, world) {
   // of the week, however plainly Monday comes before Tuesday. Where the
   // conversation has put nobody there, the world's own are all there is.
   const spoken = graph ? [comparison, ...bothWays(comparison, world)].flatMap((rel) => graph.joinedBy(rel)) : [];
+  // Where the ordering asked after is the timeline, the timeline answers. It
+  // holds the order itself, so there is nothing to work out a second time from
+  // links the clock never wrote.
+  const timeline =
+    graph != null &&
+    a.order != null &&
+    comparison != null &&
+    (comparison === a.order || world.isA(comparison, a.order) || world.subrelationOf(comparison, a.order));
+  if (timeline) {
+    // Which end the word asks for is which way its ordering runs against the
+    // chain. `first` is the far end of before and reads the head; `last` is
+    // the same ordering read through its converse, and reads the tail.
+    const back =
+      bothWays(comparison, world).length > 0 && world.linked(comparison, a.converse).length === 0;
+    const end = graph.chronoEnd(!back);
+    if (end.length > 0) return end;
+  }
   const joined = new Set();
   for (const t of spoken.length > 0 ? spoken.map((id) => ({ id })) : world.data.terms) {
     const beyond = world.related(t.id, comparison);

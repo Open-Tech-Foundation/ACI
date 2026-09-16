@@ -19,6 +19,7 @@
 // spelled is the world's business, not this module's.
 
 import { grownBy } from './world.js';
+import { unitsIn } from './calendar.js';
 
 export const TRANSFER = 'transfer';
 export const PROPERTY_CHANGE = 'property-change';
@@ -632,7 +633,7 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
     const anchors2 = a2;
     if (counts[a2.target] != null) properties.count = counts[a2.target];
     else if (Object.keys(counts).length === 1) properties.count = Object.values(counts)[0];
-    const primitive = doing(roles, world);
+    const primitive = doing(roles, world, action);
     // A doing that is itself a kind of event is that event happening, not a
     // second row beside it: `a robbery was in a shop` and `a shopkeeper was in
     // the robbery` speak of one robbery.
@@ -782,6 +783,18 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
     if (came && !(one.holds || []).includes(came)) one.holds = [...(one.holds || []), came];
   }
 
+  // A doing told with a time stands on the timeline at that time. Until now the
+  // reading sat on the row and the chrono filled only where somebody declared
+  // an order, so the brain could be told two doings and both their clocks and
+  // still not know which came first.
+  for (const one of held.actions) {
+    if (one.stands === 'conflict') continue;
+    const at = clockAt(one.time, world);
+    if (at == null) continue;
+    const already = held.moments.some((m) => m.members.includes(one.id));
+    if (!already) placeByClock(one.id, at);
+  }
+
   // Two things said to have stood at one time stand in one moment. The chrono
   // is where the order of things is kept, and being at the same time is an
   // order like being before or after — one moment holding both, rather than
@@ -913,10 +926,20 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
 // list.
 const only = (value) => (Array.isArray(value) ? value[0] : value);
 
-function doing(roles, world) {
+function doing(roles, world, action) {
   const anchors = (world && world.anchors) || {};
   const played = (role) => role != null && Object.hasOwn(roles, role);
   if (played(anchors.source) || played(anchors.destination)) return TRANSFER;
+  // A value in the far part does not make the doing a changing. `arun woke
+  // late` says when he woke, not what he became, and reading it as a change
+  // threw the waking away — the row took the change's name and the verb was
+  // gone. Which of its doings are changings is the world's to say: a changing
+  // is the coming-to-be itself, and what it is said of is the value taken.
+  const changing =
+    action != null &&
+    anchors.becoming != null &&
+    (action === anchors.becoming || world.isA(action, anchors.becoming));
+  if (!changing) return null;
   // A state change and a property change are both a value taken and nothing
   // moved, and they are not the same thing. A property is what a thing is —
   // its colour, its size — and it seldom changes. A state is how it is now,
@@ -1240,6 +1263,16 @@ function determined(roots, marking, world, supposed = new Set()) {
             said.concept != null &&
             world.anchors.action != null &&
             world.isA(said.concept, world.anchors.action),
+          // But only a changing hands what follows it back to what came
+          // before. `the gate became open` says the gate is open; `arun woke
+          // late` does not say arun is late — late is how the waking was, and
+          // reading it back onto arun claims something nobody said. Which of
+          // its doings are changings the world says.
+          changes:
+            said.concept != null &&
+            world.anchors.becoming != null &&
+            (said.concept === world.anchors.becoming ||
+              world.isA(said.concept, world.anchors.becoming)),
         });
       }
       walk(one.branch);
@@ -1276,7 +1309,7 @@ function determined(roots, marking, world, supposed = new Set()) {
       // whatever the next clause goes on to name. Said with no joint between,
       // it describes the thing it stands beside.
       const across =
-        spoken[i - 1] && (spoken[i - 1].joins || spoken[i - 1].acts) ? nearest(i, -1) : null;
+        spoken[i - 1] && (spoken[i - 1].joins || spoken[i - 1].changes) ? nearest(i, -1) : null;
       const thing = across ?? about(i);
       if (thing != null && !supposed.has(`${thing}:${one.quality}`)) {
         const held = how.get(thing) || {};
@@ -1602,6 +1635,42 @@ function termMoment(term) {
   return null;
 }
 
+// A clock reading as one number, so two of them can be told apart. Which unit
+// is which the world says; how many of one make another the brain knows of
+// itself, because there is one time scale and every brain shares it.
+function clockAt(time, world) {
+  if (!time || time.amount == null || time.unit == null || !world) return null;
+  const named = (id) => (world.term(id) ? world.term(id).name : null);
+  const unit = named(time.unit);
+  if (unit == null) return null;
+  const second = world.anchors && world.anchors.second != null ? named(world.anchors.second) : 'second';
+  const steps = unitsIn(unit, second);
+  return steps == null ? null : Number(time.amount) * steps;
+}
+
+// Put a thing on the timeline at the moment its clock says, rather than where
+// it happened to be mentioned. Two doings told with their times are ordered by
+// the clock and nobody has to declare it; told the same time, they stand in one
+// moment, because that is what being at the same time is.
+function placeByClock(member, at) {
+  const chain = chronoChain();
+  for (const one of chain) {
+    if (one.at == null) continue;
+    if (one.at === at) {
+      if (!one.members.includes(member)) one.members.push(member);
+      return one.id;
+    }
+  }
+  const later = chain.find((one) => one.at != null && one.at > at);
+  if (!later) {
+    const last = chain.length ? chain[chain.length - 1] : null;
+    return putMoment([member], last ? last.id : null, at);
+  }
+  const id = putMoment([member], later.before, at);
+  later.before = id;
+  return id;
+}
+
 // The moment immediately before `m` in the chain (the one whose id is `m.before`).
 function momentBefore(m) {
   return held.moments.find((x) => x.id === m.before) ?? null;
@@ -1640,16 +1709,41 @@ function chronoChain() {
 }
 
 // Unique terms in chain order.
+//
+// A moment holds what stood at it, which may be a thing or a doing. Asked who
+// was first, a doing answers with whoever did it: being at a moment is what
+// the doer and the doing share, and the doer is what the question is after.
 function chronoTerms() {
   const seen = new Set();
   const out = [];
+  const whoDid = (id) => {
+    const row = held.actions.find((one) => one.id === id);
+    if (!row) return null;
+    const doer = row.parts ? row.parts.thing ?? row.parts.doer : null;
+    if (doer != null) return termOf(doer) ?? doer;
+    const agent = against && against.anchors ? against.anchors.agent : null;
+    const played = agent != null && row.roles ? row.roles[agent] : null;
+    const one = Array.isArray(played) ? played[0] : played;
+    return one == null ? null : termOf(one) ?? one;
+  };
   for (const m of chronoChain()) {
     for (const t of m.members) {
-      const term = termOf(t) ?? t;
+      const term = whoDid(t) ?? termOf(t) ?? t;
       if (!seen.has(term)) { seen.add(term); out.push(term); }
     }
   }
   return out;
+}
+
+// Which end of the timeline a thing stands at. The chain is the order — it was
+// built from what was declared and from what the clock said — so the end is
+// read off it rather than worked out again from links that may never have been
+// written. Told two doings and both their times, nobody declared anything and
+// the answer is still there.
+function chronoEnd(fromBelow) {
+  const terms = chronoTerms();
+  if (terms.length === 0) return [];
+  return [fromBelow ? terms[0] : terms[terms.length - 1]];
 }
 
 // Place `beforeTerm` strictly before `afterTerm` in the chain, merging into
@@ -1864,6 +1958,7 @@ function serialize(world = against) {
     // any reader that reasons over it directly.
     chronoChain,
     chronoTerms,
+    chronoEnd,
     momentPosition,
     termMoment,
     orderTerms,

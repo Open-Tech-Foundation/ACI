@@ -18967,6 +18967,52 @@
         "join",
         "reason"
       ]
+    },
+    "miss": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "miss",
+      "concept": 3048
+    },
+    "wake": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "wake",
+      "concept": 3049
+    },
+    "woke": {
+      "pos": "verb",
+      "meaning": "woke",
+      "concept": 3049,
+      "when": "past"
+    },
+    "late": {
+      "pos": [
+        "noun",
+        "adjective"
+      ],
+      "meaning": "late",
+      "concept": 3051
+    },
+    "early": {
+      "pos": [
+        "noun",
+        "adjective"
+      ],
+      "meaning": "early",
+      "concept": 3052
+    },
+    "leave": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "leave",
+      "concept": 3053
     }
   },
   "unknown": {

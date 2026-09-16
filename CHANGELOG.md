@@ -6,6 +6,28 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A doing told with a time stands on the timeline.** The clock reading sat on
+  the doing's row and the chrono filled only where somebody declared an order,
+  so the brain could be told two doings and both their clocks and still not
+  know which came first. A doing told with a time now takes a moment, placed by
+  what the clock says rather than by when it was mentioned: told `omar arrived
+  at ten hours` and then `nadia arrived at nine hours`, the nine stands at the
+  head. Two doings told the same time stand in one moment, because that is what
+  being at the same time is. And the end of an ordering is read off the chain
+  rather than worked out again from links the clock never wrote, so `who
+  arrived first?` answers `nadia` with nobody having declared anything. A
+  declared ordering still reads both its ends as before.
+
+- **Only a changing hands its complement back to the doer.** `arun woke late`
+  was read as arun *becoming* late: the row took the change's name, the waking
+  was thrown away, and `late` was written onto arun as a state he was in. Any
+  doing with a value in its far part was being read as a change, because the
+  brain had no way to tell a changing verb from any other. Which of its doings
+  are changings is now the world's to say — `become`, `get`, `turn` and `grow`
+  are changings, and a verb that is not one keeps its own name and its own
+  parts. `arun woke late` is a waking, `the gate became open` is still a state
+  change, and nothing is claimed about arun that nobody said.
+
 - **Seven words for one joining.** A reason and what came of it was reachable
   by one word only — `because`. The joining itself never depended on the word:
   which side the reason was said on is the word's business, and the brain's is
