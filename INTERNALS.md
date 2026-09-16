@@ -97,6 +97,10 @@ Reachable today, with a probe for each:
 - **Every scale alike.** The amount where a thing stands at one, the state
   where it does not. `what size is the ball?` is `small`.
 - **Kinds held.** Counted off the same walk that adds the things up.
+- **A fact from the end it is asked from.** `what is in the coin?`, `who is
+  taller than omar?` and `who is the father of arun?` come back unknown instead
+  of answering the question turned round. Where the signal says which end the
+  hole asks after, that stands, and nothing found is nothing said.
 - **A pointer for several.** `they` reaches every topic the conversation has
   spoken of, including somebody it named and never said a kind for, and the
   count behind it adds over as many holders as it is given.
@@ -148,6 +152,21 @@ not know and then says the answer. Two readings reached the end and both were
 expressed, where two surviving readings are supposed to be a conflict the brain
 says out loud, the same ladder it uses between languages and between word
 readings.
+
+Traced. The signal is read as two questions at once: one over `father`, which
+finds nothing, and one over `arun` with the barest `is`, which answers who he
+is. The second comes of `whose` being declared in the language as the name
+relation itself, so the hole asks after a name and the thing named answers
+itself — `whose` is not the word `name`, and saying it is, is what puts the
+stray answer there.
+
+Declaring `whose` a possessor hole instead was tried and backed out: the head
+it determines loses its concept, so `father` stops being a relation at all and
+the brain answers `arun` alone — one reading, still the wrong one, and no
+longer visibly confused, which is worse. A possessive determiner does not do
+that to `cat` in `my cat`. Two things wanted before this goes in: what a
+possessor hole does to its head, and the completeness rule — the answer stands
+on `arun` while `whose` and `father` do nothing, which is *Open — 2* exactly.
 
 **4. Closed-set elimination.**
 Three owners, three pets, one each; told who does not own what, name who owns
