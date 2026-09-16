@@ -97,6 +97,16 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Every scale answers alike, whether the world gives it units or not.** `what
+  colour is the ball?` answered `red` and `what size is the ball?` answered `I
+  don't know`, the ball having been told it is small. A scale with units was
+  read only as asking how far along it a thing stands; one without, only as
+  asking which state. Both are the same question. Where a thing stands at an
+  amount the amount answers, and where it stands in a state and at no amount
+  the state does: `what size is the ball?` is `small`, `what temperature is the
+  kettle?` is `hot`, and `how long is the drum?` is still three metres. Whose
+  thing is asked after stays part of the question.
+
 - **The hole says which word narrows and which answers.** `which fruit is
   yellow?` answered `food, banana, colour, property` — naming what the question
   asked *by* beside what it asked *for*. No rule about the word itself can tell

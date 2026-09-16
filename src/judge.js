@@ -2363,6 +2363,45 @@ function together(joined, world, mood, sent) {
         return scalesNamed(of).filter(inUnits);
       }),
     );
+    // Asked what scale a thing stands on, where it stands in a state of that
+    // scale and at no amount along it. A ball told it is small stands at no
+    // size anybody measured, and small is the size it is — the same answer a
+    // colour gives, which only reads because nothing measures colour in units.
+    // Which scale a state belongs to is the world's; that a state is an answer
+    // about its scale is the brain's.
+    const named = new Set(
+      said.flatMap((n, i) => {
+        const of = conceptOf(n);
+        if (of == null || markOn(n) === 'unknown' || qualifies.has(i)) return [];
+        return scalesNamed(of);
+      }),
+    );
+    // Whose thing is asked after is part of what was asked: my cat is not
+    // yours, and answering about mine answers a question nobody asked. Where
+    // the signal says whose, this reading leaves it to the one that knows.
+    const whoseAsked = said.some((n) => functionsOf(n).includes('possessor'));
+    if (holes.length > 0 && named.size > 0 && graph != null && !whoseAsked) {
+      for (const term of terms) {
+        const subject = conceptOf(term);
+        if (subject == null || named.has(subject)) continue;
+        // What it stands at, if anything: a thing measured answers with the
+        // amount, and this reading is for one that was never measured.
+        const bearer = world.oneOf(subject) ?? subject;
+        if ([...named].some((scale) => heldUnder(bearer, scale, world) != null)) continue;
+        const how = graph.howOf(subject) || [];
+        const held = [...new Set(how)].filter((state) =>
+          [...named].some((scale) => (quantityOn(state, world) ?? null) === scale),
+        );
+        if (held.length > 0) {
+          return [
+            withBranch(root, [
+              ...root.branch,
+              node('answer', 'link', [], { subject: null, relation: null, found: held }),
+            ]),
+          ];
+        }
+      }
+    }
     // A who or what asked of a property this conversation told answers the
     // thing that holds it, not the scale the property measures on: after
     // `sara is tall`, `who is tall?` answers sara. The measure reading is for

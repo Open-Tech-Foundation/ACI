@@ -2511,6 +2511,12 @@ function serialize(world = against) {
     chronoBefore,
     reasonOf,
     worked,
+    // How a thing is now, by dimension: what it was told, with what has
+    // happened to it since laid over.
+    howOf: (node) => {
+      const one = held.nodes.find((row) => row.id === node) ?? { id: hereOf(node) ?? node };
+      return Object.values(howOf(one.id));
+    },
     drawnGroup,
     metBefore,
     measuring,

@@ -19301,6 +19301,21 @@
       "meaning": "atlases",
       "concept": 3117,
       "number": "plural"
+    },
+    "wetness": {
+      "pos": "noun",
+      "meaning": "wetness",
+      "concept": 2991
+    },
+    "openness": {
+      "pos": "noun",
+      "meaning": "openness",
+      "concept": 3045
+    },
+    "lateness": {
+      "pos": "noun",
+      "meaning": "lateness",
+      "concept": 3050
     }
   },
   "unknown": {
