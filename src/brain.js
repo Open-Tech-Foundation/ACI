@@ -2968,9 +2968,19 @@ function together(joined, world, mood, sent) {
           conceptOf(n) !== world.baseRelation,
       )
       .map((n) => conceptOf(n));
-    const behind = parts.length >= 2
+    let behind = parts.length >= 2
       ? reasonFor(parts[0], parts[parts.length - 1], world)
       : [];
+    // What the conversation was told came of what. A reason the world holds is
+    // a claim reified; a reason this conversation was given may be a doing,
+    // and a doing is a row of the graph and no term of the world. So where the
+    // world says nothing, the graph is asked, and what it answers is the
+    // occurrence — which is a thing the world holds, once something happened.
+    if (behind.length === 0 && graph != null && parts.length >= 2) {
+      const row = graph.reasonOf(parts[0], world.baseRelation, parts[parts.length - 1]);
+      const of = row == null ? null : row.did ?? null;
+      if (of != null) behind = [of];
+    }
     return [
       withBranch(root, [
         ...root.branch,

@@ -19012,6 +19012,14 @@
       ],
       "meaning": "leave",
       "concept": 3053
+    },
+    "burst": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "burst",
+      "concept": 3054
     }
   },
   "unknown": {

@@ -12,6 +12,7 @@ async function fresh(...said) {
 // One joining, whichever word says it. A reason and what came of it, with the
 // reason's row holding the effect's — the word only chooses which side of it
 // the reason was said on.
+const says = async (q) => (await brain(q)).expression.state.says;
 const joined = (graph) => /f1  property\(n\d, wet\[\d+\]\)[^\n]*reason a1/.test(graph);
 
 test("a word that puts the reason after it joins the two", async () => {
@@ -42,4 +43,29 @@ test("so still stands for the last idea where nothing follows it", async () => {
 test("so after a doing word is still the idea, not a joining", async () => {
   await fresh("a banjo is big");
   assertEquals((await brain("i think so")).expression.name, "understood");
+});
+
+test("why a thing is so answers with the doing it came of", async () => {
+  await fresh("a road became wet because a plank fell");
+  assertEquals(await says("why is the road wet?"), "plank fell");
+});
+
+test("why reads the joining whichever word made it", async () => {
+  await fresh("a sack became wet since a pipe burst");
+  assertEquals(await says("why is the sack wet?"), "pipe burst");
+});
+
+test("why something happened answers with what it came of", async () => {
+  await fresh("a gate became open so a dog ran");
+  assert(/gate/.test(await says("why did the dog run?")), await says("why did the dog run?"));
+});
+
+test("a claim standing behind another still answers why", async () => {
+  await fresh("a road is wet because a drum is cold");
+  assertEquals(await says("why is the road wet?"), "a drum is cold");
+});
+
+test("with nothing behind it, why says so", async () => {
+  await fresh("the sky is blue");
+  assertEquals((await brain("why is the sky blue?")).expression.name, "unsure");
 });

@@ -6,6 +6,18 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Why a thing is so answers with the doing it came of.** Asked why, the brain
+  looked only for a reason the world held as a claim — so `a road is wet
+  because a drum is cold` answered and `a road became wet because a plank fell`
+  did not, though both had been told alike. A doing is a row of the graph and
+  no term of the world, so where the world says nothing the graph is now asked,
+  and it answers with what happened: `why is the road wet?` says `plank fell`.
+  The reason sits on the change rather than on the fact the change left, so a
+  claim with nothing behind it of its own is asked of the change that made it.
+  Why something *happened* reads the same way — `why did the dog run?` reaches
+  the gate's opening. Every word that joins a reason arrives here alike, and
+  with nothing behind it the brain still says so.
+
 - **What a doing made of a kind is reachable by that kind.** `a road became
   wet` makes a road of its own, and `the road` in the next signal made a second
   one — so the brain answered nothing about the first, and `is the road wet?`

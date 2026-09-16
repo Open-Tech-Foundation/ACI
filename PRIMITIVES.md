@@ -237,6 +237,15 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
     puzzle is one problem stated across four sentences, and the brain reads one
     signal at a time.
 
+19. **A doing said back reads awkwardly.** `why did the dog run?` after `a gate
+    became open so a dog ran` answers `gate became an open` — the right cause,
+    said badly. A change is put back into words as the occurrence it was, and
+    the state it took is said as though it were a thing that could be counted.
+    What a doing did is a frame English does not yet have: the answer wants to
+    be the claim the change left — `a gate is open` — rather than the changing
+    itself. Not fixed, and it is the saying and not the finding: the reason is
+    reached, and only the words for it are wrong.
+
 Following the same triage and noted, not fixed — the newest scan's findings,
 each with its root, and each outside the clean-inference bar:
 

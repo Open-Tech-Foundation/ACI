@@ -1884,6 +1884,52 @@ function lateness() {
   return out;
 }
 
+// What a claim this conversation holds came of. The row that stands for the
+// claim carries which row brought it about, and that row is the answer — a
+// doing where a doing did it, a claim where a claim did.
+function reasonOf(subject, relation, object) {
+  // Asked why something happened rather than why something is so. The doing is
+  // the row, and what it came of is on it.
+  for (let i = held.actions.length - 1; i >= 0; i -= 1) {
+    const row = held.actions[i];
+    if (row.stands !== 'held' || row.reason == null) continue;
+    if (row.of !== object && row.said !== object) continue;
+    const doer = row.parts ? row.parts.thing ?? row.parts.doer : null;
+    const played = against && against.anchors && against.anchors.agent != null && row.roles
+      ? row.roles[against.anchors.agent]
+      : null;
+    const who = doer ?? (Array.isArray(played) ? played[0] : played);
+    if (who != null && !same(who, subject)) continue;
+    const came = held.actions.find((r) => r.id === row.reason) ?? held.facts.find((r) => r.id === row.reason);
+    if (came) return came;
+  }
+  for (const one of held.facts) {
+    if (one.stands !== 'held') continue;
+    if (!same(one.parts[0], subject)) continue;
+    if (!says(one, relation) || !same(one.parts[1], object)) continue;
+    const came = one.reason ?? broughtAbout(one.parts[0], object);
+    if (came == null) continue;
+    const row = held.actions.find((r) => r.id === came) ?? held.facts.find((r) => r.id === came);
+    if (row) return row;
+  }
+  return null;
+}
+
+// What a change that put a thing in this state came of. A doing leaves a fact
+// behind it, and the fact says what is so while the doing says how it came to
+// be — so a claim with nothing behind it of its own is asked of the change
+// that made it.
+function broughtAbout(thing, value) {
+  for (let i = held.actions.length - 1; i >= 0; i -= 1) {
+    const row = held.actions[i];
+    if (row.stands !== 'held' || row.reason == null) continue;
+    if (!row.parts || row.parts.thing !== thing) continue;
+    if (!Object.values(row.properties || {}).includes(value)) continue;
+    return row.reason;
+  }
+  return null;
+}
+
 // Which end of the timeline a thing stands at. The chain is the order — it was
 // built from what was declared and from what the clock said — so the end is
 // read off it rather than worked out again from links that may never have been
@@ -2112,6 +2158,7 @@ function serialize(world = against) {
     chronoChain,
     chronoTerms,
     chronoEnd,
+    reasonOf,
     momentPosition,
     termMoment,
     orderTerms,
