@@ -1,7 +1,7 @@
 import { test, assert, assertEquals } from 'runtime:test';
 import { openBrain } from './index.js';
 import {
-  TRANSFER, PROPERTY_CHANGE, HOLDING, PLACEMENT, COMPARISON, ORDER, PROPERTY, KIND,
+  TRANSFER, PROPERTY_CHANGE, HOLDING, PLACEMENT, COMPARISON, ORDER, PROPERTY, KIND, MEASURE,
 } from './graph.js';
 import { loadWorldFile } from './world.js';
 
@@ -227,29 +227,35 @@ test("so much of something is not a kind of it", async () => {
   // The weakest claim a signal can make is being, and it was all the brain had
   // to go on, so the room came out as a degree. A unit with a number beside it
   // names a stronger claim than being.
-  assertEquals(held.facts, []);
-  const [room] = held.nodes;
+  // How much of a quantity a thing has is a fact about it like any other, and
+  // it is a measure and not a kind: the room is not a sort of degree.
+  assertEquals(held.facts[0].of, MEASURE);
   // A degree can be nothing but temperature, so the unit answers which
   // quantity by itself and nothing is guessed.
-  assertEquals(room.measures[0], { of: 186, amount: 30, unit: 623 });
+  assertEquals(held.facts[0].properties, { of: 186, amount: 30 });
+  assertEquals(held.facts[0].parts[1], 623, 'the unit is the far side');
 });
 
 test("a measure the brain cannot place is refused, not guessed at", async () => {
   // A metre serves a height, a length and a size alike, and nothing said
   // which. Choosing one would be a guess kept as fact.
   const open = await said('tom is 2 metre');
-  assertEquals(open.nodes[0].measures, undefined, 'nothing was taken in');
+  assertEquals(
+    open.facts.some((f) => f.of === MEASURE && f.properties.of != null),
+    false,
+    'nothing was taken in',
+  );
 
   // Said which, it is taken: tall is a state of height.
   const told = await said('tom is 2 metre tall');
-  assertEquals(told.nodes[0].measures[0], { of: 2970, amount: 2, unit: 621 });
+  assertEquals(told.facts[0].properties, { of: 2970, amount: 2 });
 });
 
 test("a measure belongs on the thing, and the unit says of what", async () => {
   const weighed = await said('the box weighs 5 kilogram');
   // A kilogram can be nothing but weight, so weight is what was said.
-  assertEquals(weighed.nodes[0].measures[0], { of: 184, amount: 5, unit: 620 });
-  assertEquals(weighed.facts, [], 'how much a thing is, is its own');
+  assertEquals(weighed.facts[0].properties, { of: 184, amount: 5 });
+  assertEquals(weighed.facts[0].parts[1], 620, 'the unit is the far side');
 });
 
 test("a comparison said the other way round turns the same fact round", async () => {

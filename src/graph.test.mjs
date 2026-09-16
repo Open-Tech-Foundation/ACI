@@ -1,11 +1,11 @@
-import { test, assertEquals } from "runtime:test";
+import { test, assert, assertEquals } from "runtime:test";
 import { openBrain } from "./index.js";
 
 // The ten cases the conversation graph is being landed against. See GRAPH.md.
 // Every assertion here is behavioural — what was said in, what came back out —
 // and nothing reads the stored shape. This file is red until the graph lands.
 
-const { brain, forget } = openBrain("sqlite::memory:");
+const { brain, forget, serialize } = openBrain("sqlite::memory:");
 
 async function said(...lines) {
   await forget();
@@ -206,4 +206,27 @@ test("the latest change wins and the history keeps the rest", async () => {
     ),
     "mumbai",
   );
+});
+
+test("a signal the brain could not read leaves nothing behind", async () => {
+  await forget();
+  await brain("there are 10 birds on a tree");
+  const graph = serialize();
+  assert(!/n\d|f\d|a\d/.test(graph), `nothing was taken in:\n${graph}`);
+});
+
+test("a number is no place", async () => {
+  await forget();
+  await brain("the train arrived at ten hours");
+  const graph = serialize();
+  assert(/\{at: 10 hour\[\d+\]/.test(graph), `the clock is on the doing:\n${graph}`);
+  assert(!/placement/.test(graph), `and the train stands nowhere:\n${graph}`);
+});
+
+test("how much of a quantity a thing has is a fact about it", async () => {
+  await forget();
+  await brain("the rope is 2 metres long");
+  const graph = serialize();
+  assert(/f1  measure\(n1, metre\[\d+\]\)\s+\{of: length\[\d+\], amount: 2\}/.test(graph), graph);
+  assert(/n1  rope.*\{length: 2 metre\[\d+\]\}/.test(graph), `and the thing reads it back:\n${graph}`);
 });

@@ -7877,8 +7877,12 @@ export function brainFrom(input, knowledge, circumstance) {
   // Held back until the change this turn proposes has been written. A turn
   // that fails to persist did not happen, and the conversation must not
   // remember what the world never took in.
+  // A signal the brain could not read leaves nothing behind. Half of one taken
+  // in is worse than none: the memory would hold what nobody was told, and
+  // every reading over it would be answering from a guess.
+  let read = true;
   const remember = () => {
-    if (!graph) return;
+    if (!graph || !read) return;
     graph.fromUnderstood(
       judgedRoots,
       world,
@@ -7890,14 +7894,16 @@ export function brainFrom(input, knowledge, circumstance) {
   };
 
   const expressedRoots = express(judgedRoots, langs, world);
+  const said = expression(
+    expressedRoots, langs, mood, world, at,
+    learned != null || named.length > 0,
+  );
+  read = said.name !== 'unknown';
   return {
     input,
     language: spoken ? spoken.data.name : null,
     roots: expressedRoots,
-    expression: expression(
-      expressedRoots, langs, mood, world, at,
-      learned != null || named.length > 0,
-    ),
+    expression: said,
     learned,
     remember,
     spoken: spokenOf(judgedRoots, at, world),

@@ -6,6 +6,26 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A signal the brain could not read leaves nothing behind.** `if it rains the
+  road gets wet` answered `I don't understand` and wrote `property(road, wet)`
+  into the memory all the same, so the graph held what nobody was told and
+  every reading over it was answering from a guess. A turn the brain could not
+  read now writes nothing.
+
+- **A number is no place.** `the train arrived at ten hours` left
+  `placement(n1, ten[123]) {as: at}` — the train standing at the number ten.
+  The clock was already on the doing, so the row was wrong and a second copy of
+  something already held. A placement whose far side is a number is not one.
+
+- **How much of a quantity a thing has is a fact about it.** A measure was
+  written onto the thing and nowhere else, so it had no place in the order
+  things were said in and a reading that walked the facts never found it — the
+  same split that qualities had. `the rope is 2 metres long` now leaves
+  `measure(n1, metre[621]) {of: length[2971], amount: 2}`, and what the thing
+  measures now is read back off the latest standing one on each quantity. The
+  amount is said once, and the unit is the far side of the fact rather than a
+  second copy inside it.
+
 - **Late and early are worked out, not remembered.** Nothing in the graph says
   late. Told `the coach will arrive at nine hours` and then `the coach arrived
   at ten hours`, the brain holds two moments and reads the rest: `is the coach

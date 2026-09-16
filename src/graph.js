@@ -406,12 +406,11 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
         // not stand, and it is written below as a fact against — never on the
         // thing as if it did. Where the thing carried that measure before, the
         // denial takes it off.
-        if (denied) {
-          one.measures = (one.measures || []).filter((m) => m.of !== of || m.unit !== object);
-        } else {
-          one.measures = [...(one.measures || []), { of, amount: quantity, unit: object }];
-          return;
-        }
+        // How much of a quantity a thing has is a fact about it, kept where
+        // every other fact is kept. Written onto the thing instead, it had no
+        // place in the order things were said in, and a reading that walked
+        // the facts never found it.
+        if (!denied) waiting.push({ subject: reach(subject), of, amount: quantity, unit: object });
       }
     }
     // How a thing is belongs to it. Said beside it — a red box — it was
@@ -447,6 +446,12 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
       };
       return;
     }
+
+    // A number is no place. `the train arrived at ten hours` reads a clock, and
+    // the clock is already on the doing — the train was never put anywhere, and
+    // a row saying it stood at the number ten is both wrong and a second copy
+    // of what the doing already holds.
+    if (primitive === PLACEMENT && anchors.number != null && world.isA(object, anchors.number)) return;
 
     // An ordering claim that stands is remembered as a chain of moments, not
     // a pairwise fact row. The chrono is the single store; an `order` row is
@@ -531,7 +536,9 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
       said: relation,
       parts,
       properties: {
-        ...(quantity == null ? {} : { count: quantity }),
+        // How many, where the fact counts. A measure says how much instead,
+        // and says it as an amount of a quantity — one number, not two.
+        ...(quantity == null || primitive === MEASURE ? {} : { count: quantity }),
         // A comparison is made on something. Which scale is the world's to
         // say, and without it `taller` is only a word.
         ...(primitive === COMPARISON ? { on: scaleOf(relation, world) } : {}),
@@ -854,7 +861,7 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
       (fact) => fact.of === MEASURE && fact.parts[0] === one.subject && fact.properties.of == null,
     );
     if (!on) continue;
-    on.properties = { ...on.properties, of: one.of, amount: one.amount, unit: one.unit };
+    on.properties = { ...on.properties, of: one.of, amount: one.amount };
   }
 
   for (const instruction of instructions) {
@@ -1623,6 +1630,22 @@ function ranking(quantity, moment) {
   return found;
 }
 
+// How much of each quantity a thing has, read off what was said about it. The
+// latest standing measure on each quantity is what it has now, the same way the
+// latest quality on each dimension is how it is.
+function muchOf(node) {
+  const out = {};
+  for (const one of held.facts) {
+    if (one.of !== MEASURE || one.stands !== 'held') continue;
+    if (!same(one.parts[0], node)) continue;
+    const of = one.properties.of;
+    if (of == null || one.properties.amount == null) continue;
+    const name = (against && against.term(of) ? against.term(of).name : null) ?? String(of);
+    out[name] = { amount: one.properties.amount, unit: termOf(one.parts[1]) ?? one.parts[1] };
+  }
+  return out;
+}
+
 // How a thing is, read off what was said about it. Nothing is written down
 // twice: a quality is a fact like any other, and what a thing is like now is
 // the latest standing one of them on each dimension. A denial takes the
@@ -1935,9 +1958,9 @@ function serialize(world = against) {
         (Object.keys(howOf(one.id)).length
           ? `  {${Object.entries(howOf(one.id)).map(([name, value]) => `${name}: ${spell(value)}`).join(', ')}}`
           : '') +
-        (one.measures
-          ? `  {${one.measures
-              .map((held) => `${held.of == null ? '?' : part(held.of)}: ${held.amount} ${spell(held.unit)}`)
+        (Object.keys(muchOf(one.id)).length
+          ? `  {${Object.entries(muchOf(one.id))
+              .map(([name, held]) => `${name}: ${held.amount} ${spell(held.unit)}`)
               .join(', ')}}`
           : ''),
     ),
