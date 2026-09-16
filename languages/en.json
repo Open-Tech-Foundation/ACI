@@ -19113,6 +19113,76 @@
       "meaning": "earned",
       "concept": 3101,
       "when": "past"
+    },
+    "quarter": {
+      "pos": "function",
+      "meaning": "quarter of",
+      "concept": 3107
+    },
+    "third": {
+      "pos": "function",
+      "meaning": "third of",
+      "concept": 3106
+    },
+    "fourth": {
+      "pos": "function",
+      "meaning": "fourth of",
+      "concept": 3107
+    },
+    "fifth": {
+      "pos": "function",
+      "meaning": "fifth of",
+      "concept": 3108
+    },
+    "tenth": {
+      "pos": "function",
+      "meaning": "tenth of",
+      "concept": 3111
+    },
+    "one-half": {
+      "pos": "function",
+      "meaning": "one-half of",
+      "concept": 3105
+    },
+    "one-third": {
+      "pos": "function",
+      "meaning": "one-third of",
+      "concept": 3106
+    },
+    "one-fourth": {
+      "pos": "function",
+      "meaning": "one-fourth of",
+      "concept": 3107
+    },
+    "one-quarter": {
+      "pos": "function",
+      "meaning": "one-quarter of",
+      "concept": 3107
+    },
+    "one-fifth": {
+      "pos": "function",
+      "meaning": "one-fifth of",
+      "concept": 3108
+    },
+    "one-tenth": {
+      "pos": "function",
+      "meaning": "one-tenth of",
+      "concept": 3111
+    },
+    "two-thirds": {
+      "pos": "function",
+      "meaning": "two-thirds of",
+      "concept": 3109
+    },
+    "three-quarters": {
+      "pos": "function",
+      "meaning": "three-quarters of",
+      "concept": 3110
+    },
+    "three-fourths": {
+      "pos": "function",
+      "meaning": "three-fourths of",
+      "concept": 3110
     }
   },
   "unknown": {

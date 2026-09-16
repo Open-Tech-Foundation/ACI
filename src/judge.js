@@ -3721,7 +3721,27 @@ function operates(term, world) {
   for (const [name, takes, work] of OPERATIONS) {
     if (term != null && term === a[name]) return { takes, work };
   }
+  // So many parts of so many. Which fractions a world names is its own — a
+  // half, a quarter, three-fifths — and what a fraction *is* is the brain's:
+  // the parts it takes over the whole it takes them from. Nothing here knows
+  // any fraction by name, and one the world has not named is not one.
+  const over = fractionOf(term, world);
+  if (over != null) {
+    return { takes: 1, work: (x) => exactly((v) => v.multiply(over.parts).divide(over.whole))(x, x) };
+  }
   return null;
+}
+
+// The parts and the whole of a fraction, where the world holds the term as one
+// and says both as numbers it can read.
+function fractionOf(term, world) {
+  const a = world.anchors || {};
+  if (term == null || a.fraction == null || a.parts == null || a.whole == null) return null;
+  if (!world.isA(term, a.fraction)) return null;
+  const parts = world.valueOf(world.linked(term, a.parts)[0]);
+  const whole = world.valueOf(world.linked(term, a.whole)[0]);
+  if (parts == null || whole == null || numericEqual(whole, 0)) return null;
+  return { parts, whole };
 }
 
 function valueBeside(said, from, step, world) {

@@ -19,6 +19,9 @@
     "zero": 124,
     "none": 246,
     "quantity": 190,
+    "fraction": 3102,
+    "parts": 3103,
+    "whole": 3104,
     "many": 243,
     "plus": 303,
     "minus": 304,
@@ -4772,6 +4775,36 @@
         {
           "rel": 294,
           "to": 2810
+        }
+      ]
+    },
+    {
+      "id": 3102,
+      "name": "fraction",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        }
+      ]
+    },
+    {
+      "id": 3103,
+      "name": "parts",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        }
+      ]
+    },
+    {
+      "id": 3104,
+      "name": "whole",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
         }
       ]
     },

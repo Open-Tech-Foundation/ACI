@@ -263,6 +263,17 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A fraction is so many parts of so many, and the engine names none of them.**
+  Halving was an operation of the core — a divide by two, written into the
+  engine — so a quarter, a third or three-fifths each needed one of their own,
+  and `what is one-fourth of 120?` came back `-119`, read as a subtraction. The
+  core now knows only what a fraction *is*: the parts it takes over the whole it
+  takes them from. Which fractions there are is the world's, said as two numbers
+  it already holds, and English says their words. `one-fourth of 120` is 30,
+  `two-thirds` 80, `three-quarters` 90, and a fraction the whole does not divide
+  is exact — a quarter of ten is 2.5. Halving and doubling still work, being
+  two fractions among the rest.
+
 - **Working memory: the steps of working something out.** A conversation now
   holds two memories. The graph holds what it was told and what happened; this
   holds the steps the brain took and what each came to. A shop told it has a
