@@ -6,6 +6,16 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A doing told plainly answers whether it happened.** `sam gives 2 books to
+  jerry` was on the record from every side but one — who gave them, who has
+  them, how many — and `did sam give books to jerry?` said `I don't know`. The
+  occurrence was there with all three of its parts; what refused it was the
+  time. A doing told in the present carries no time of its own, and the reading
+  demanded a past mark nobody had written, so a question asked with `did` could
+  never meet it. Asked whether something happened, what answers is that it did.
+  A doing told at another time still says so and is still refused, so `did the
+  train arrive?` after `the train will arrive` stays unknown.
+
 - **What stands at an amount answers with the thing.** `what is 2 metres long?`
   answered `1 metre` — a number where a thing was asked for. A quality's holder
   was read off the conversation's facts and a measure's was not, though a

@@ -276,8 +276,21 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
     ledge?`) — but that one answers through the placement it left, `mug on
     ledge`, not through the doing. A giving leaves a holding rather than a
     placement, and nothing looks there. So a transfer is verified by what it
-    left behind and only one of the two things it can leave is looked for. Not
-    fixed.
+    left behind and only one of the two things it can leave is looked for.
+    _Fixed_, and it was neither of those: a doing told plainly carries no time
+    of its own, and the reading refused it for want of a past mark nobody ever
+    wrote. `sam gives 2 books to jerry` is in the present and `did sam give`
+    asks of the past, so the two never met. Asked whether something happened,
+    what answers is that it did; a doing told at another time still says so and
+    is still refused. The other transfer answered all along through the
+    placement it left, which hid this.
+
+    One thing remains, and it belongs with the fronted hole: a name the
+    conversation has never met reaches nothing in a question and is dropped, so
+    `did sam give books to hema?` is read as `did sam give books?` and affirms.
+    Told who hema is first, it answers `I don't know` as it should, and so does
+    `did jerry give books to sam?` — the roles are read, the unmet name is
+    not.
 
 23. **A question about something that happened never reaches what stands to
     it.** `hema is in the accident` writes `member(n2, a1)` and `is hema in the

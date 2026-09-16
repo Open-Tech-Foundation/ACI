@@ -6374,6 +6374,7 @@ function happened(said, world, claims, side, sides) {
   const parts = rolesIn(said, acting, claims, world, side, sides).filter((p) => p.of != null);
   if (parts.length === 0) return null;
 
+
   const action = conceptOf(said[acting]);
   const expectedWhen = whenIn(said, world);
   const plays = (one, p) =>
@@ -6386,7 +6387,14 @@ function happened(said, world, claims, side, sides) {
       (one) =>
         world.isIndividual(one) &&
         !world.denies(one, action, world.baseRelation) &&
-        (expectedWhen == null || world.linked(one, a.when).includes(expectedWhen)) &&
+        // Asked whether something happened, what answers is that it did. A
+        // doing told plainly carries no time of its own, and refusing it for
+        // want of a mark nobody wrote answers from bookkeeping rather than
+        // from the record. One told at another time is a different matter and
+        // still says so.
+        (expectedWhen == null ||
+          world.linked(one, a.when).length === 0 ||
+          world.linked(one, a.when).includes(expectedWhen)) &&
         parts.every((p) => plays(one, p)),
     );
   // The standing is what was found, and nothing is said back: the claim frame

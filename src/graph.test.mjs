@@ -246,3 +246,10 @@ test("who stood in something that happened answers from what it holds", async ()
   assertEquals((await brain("who is in the accident?")).expression.state.says, "hema");
   assertEquals((await brain("is hema in the accident?")).expression.state.says, "Yes. ✅ hema in accident.");
 });
+
+test("a giving answers whether it happened", async () => {
+  await forget();
+  await brain("sam gives 2 books to jerry");
+  assertEquals((await brain("did sam give books to jerry?")).expression.state.says, "Yes. ✅");
+  assertEquals((await brain("did jerry give books to sam?")).expression.state.says, "I don't know.");
+});
