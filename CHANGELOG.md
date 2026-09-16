@@ -97,6 +97,14 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A word that says which one is not what the question asks after.** `what
+  colour is the small ball?` answered `I don't know` while `what colour is the
+  ball?` answered `red` — the same ball, one word apart. A quality standing
+  beside a thing says which one is meant: it is not among the things the
+  question is about, and not among the scales the question might be asking
+  along. With `small` in it the question was read as asking how much *size* the
+  ball had, which nobody asked.
+
 - **One thing handed on is held by whoever it reached.** `john gave the key to
   sam` recorded the giving and left nobody holding the key — `who has the key?`
   answered `I don't know`, while the counted form `john gave 2 keys to sam`

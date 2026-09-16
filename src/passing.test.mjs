@@ -33,3 +33,12 @@ test("a counted handing still reads as it did", async () => {
   assertEquals(await says("how many books does sam have?"), "three");
   assertEquals(await says("how many books does jerry have?"), "two");
 });
+
+test("a word that says which one is not what the question asks after", async () => {
+  await forget();
+  await brain("the ball is red");
+  await brain("the ball is small");
+  assertEquals(await says("what colour is the small ball?"), "red");
+  assertEquals(await says("what colour is the ball?"), "red");
+  assertEquals(await says("is the small ball red?"), "Yes. ✅ a ball is red.");
+});

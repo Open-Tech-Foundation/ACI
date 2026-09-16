@@ -2306,10 +2306,14 @@ function together(joined, world, mood, sent) {
     // how much: what colour a car is, not how much colour it has.
     const inUnits = (scale) =>
       a.unit != null && world.standing(scale, a.measure).some((one) => world.isA(one, a.unit));
+    // A word that says which thing is meant says nothing about what is asked
+    // after it: `the small ball` is a ball, and the question is still about
+    // its colour and not about its size.
     const on = new Set(
-      said.flatMap((n) => {
+      said.flatMap((n, i) => {
         const of = conceptOf(n);
-        return of == null || markOn(n) === 'unknown' ? [] : scalesNamed(of).filter(inUnits);
+        if (of == null || markOn(n) === 'unknown' || qualifies.has(i)) return [];
+        return scalesNamed(of).filter(inUnits);
       }),
     );
     // A who or what asked of a property this conversation told answers the
