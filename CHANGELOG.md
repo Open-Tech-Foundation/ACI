@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Asked what a word names, both are the answer.** Where nothing says which
+  cricket is meant, `what is a cricket?` answers `sport, insect` — the brain
+  holds both and says both, rather than taking one and leaving out what it
+  knows. It is not a conflict: a word that names two things names two things.
+  Settled by the signal or by what came before, only the one settled on
+  answers, and a word of one reading is untouched. Only a reading that names a
+  thing is reached this way — a word that is also a doing is not a second thing
+  it might be.
+
 - **A word that stands for two things is settled by what it is said with.** The
   brain carried both readings of such a word all along and nothing ever chose
   between them for two nouns: it took whichever was declared first, so a

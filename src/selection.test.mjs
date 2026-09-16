@@ -38,3 +38,21 @@ test("a word of one reading is untouched by any of it", async () => {
   await brain("a wren is a bird");
   assertEquals(await says("is a wren an animal?"), "Yes. ✅ a wren is an animal.");
 });
+
+test("a word that names two things is both, where nothing says which", async () => {
+  // Not a conflict: the brain holds both and says both. Where the signal or
+  // the conversation settles it, only the one it settled on answers.
+  await forget();
+  assertEquals(await says("what is a cricket?"), "sport, insect");
+  await forget();
+  await brain("a cricket is a sport");
+  assertEquals(await says("what is a cricket?"), "sport");
+  await forget();
+  await brain("a cricket is an insect");
+  assertEquals(await says("what is a cricket?"), "insect");
+});
+
+test("a word of one reading answers with the one thing it is", async () => {
+  await forget();
+  assertEquals(await says("what is a wren?"), "bird");
+});

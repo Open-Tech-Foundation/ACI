@@ -2651,11 +2651,18 @@
       "meaning": "photo",
       "concept": 2809
     },
-    "score": {
-      "pos": "noun",
-      "meaning": "score",
-      "concept": 2810
-    },
+    "score": [
+      {
+        "pos": "noun",
+        "meaning": "score",
+        "concept": 2810
+      },
+      {
+        "pos": "verb",
+        "meaning": "score",
+        "concept": 3061
+      }
+    ],
     "clothes": {
       "pos": "noun",
       "meaning": "clothes",
@@ -5586,14 +5593,21 @@
       "meaning": "work",
       "concept": 257
     },
-    "run": {
-      "pos": [
-        "noun",
-        "verb"
-      ],
-      "meaning": "run",
-      "concept": 258
-    },
+    "run": [
+      {
+        "pos": [
+          "noun",
+          "verb"
+        ],
+        "meaning": "run",
+        "concept": 258
+      },
+      {
+        "pos": "noun",
+        "meaning": "run",
+        "concept": 3060
+      }
+    ],
     "walk": {
       "pos": [
         "noun",
@@ -18219,7 +18233,7 @@
     "played": {
       "pos": "verb",
       "meaning": "played",
-      "concept": 2850,
+      "concept": 2671,
       "when": "past"
     },
     "remembered": {
@@ -19048,6 +19062,17 @@
       ],
       "meaning": "burst",
       "concept": 3054
+    },
+    "player": {
+      "pos": "noun",
+      "meaning": "player",
+      "concept": 3059
+    },
+    "scored": {
+      "pos": "verb",
+      "meaning": "scored",
+      "concept": 3061,
+      "when": "past"
     }
   },
   "unknown": {

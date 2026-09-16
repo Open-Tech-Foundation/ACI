@@ -935,7 +935,7 @@ function compared(roots, world) {
     if (world.linked(thought.concept, a.compares).length > 0) {
       const held = { ...thought, on: scaleOf(thought.concept) };
       return withBranch(n, n.branch.map((b) =>
-        b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: held }) : b,
+        b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: held, settled: true }) : b,
       ));
     }
     if (!functionList(thought).includes('comparison')) return n;
@@ -2004,7 +2004,7 @@ function settle(roots, world) {
     return withBranch(
       n,
       n.branch.map((b) =>
-        b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: held[0] }) : b,
+        b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: held[0], settled: true }) : b,
       ),
     );
   });
@@ -2029,7 +2029,7 @@ function settle(roots, world) {
         return withBranch(
           n,
           n.branch.map((b) =>
-            b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: other }) : b,
+            b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: other, settled: true }) : b,
           ),
         );
       });
@@ -2048,7 +2048,7 @@ function settle(roots, world) {
     return withBranch(
       n,
       n.branch.map((b) =>
-        b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: held }) : b,
+        b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: held, settled: true }) : b,
       ),
     );
   });
@@ -4400,7 +4400,35 @@ const holderAsk = said.find(
     })();
     if (countedEnd != null) return countedEnd;
     const nodes = [];
-    const asked = terms.flatMap((t) => membersFor(t, world, sent));
+    // A word the signal left standing for two things is asked after both. What
+    // a cricket is, is what each cricket is — an insect and a sport — and
+    // answering from one of them would leave out something the brain holds.
+    // Nothing is chosen here: where the signal or the conversation settled it,
+    // there is only the one reading left to ask after.
+    const bothWaysOf = (t) => {
+      const thought = findBranch(t, 'thought');
+      const mine = thought && thought.state.ways ? thought.state.ways : null;
+      const now = thought && thought.state.thought ? thought.state.thought.concept : null;
+      // Settled, there is one reading and asking after the other would answer
+      // about something the signal said it did not mean.
+      if (!mine || mine.length < 2 || (thought && thought.state.settled)) return [t];
+      // Asked what a thing is, only a reading that names a thing is an answer.
+      // A word that is also a doing is not a second thing it might be.
+      return mine
+        .filter(
+          (w) =>
+            w &&
+            w.concept != null &&
+            w.concept !== now &&
+            a.thing != null &&
+            world.isA(w.concept, a.thing),
+        )
+        .map((w) => withBranch(t, t.branch.map((b) => (b.kind === 'thought'
+          ? withBranch(b, b.branch, { ...b.state, thought: w })
+          : b))))
+        .concat([t]);
+    };
+    const asked = terms.flatMap(bothWaysOf).flatMap((t) => membersFor(t, world, sent));
     for (const [i, term] of asked.entries()) {
       let subject = conceptOf(term);
       // A bare third-person pointer on speaker-side focus stands for what is
