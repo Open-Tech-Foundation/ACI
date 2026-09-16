@@ -4152,6 +4152,25 @@ const holderAsk = said.find(
         (n.name === 'who' || n.name === 'what' || n.name === 'which'),
     );
     const one = terms.length === 1 ? conceptOf(terms[0]) : null;
+    // Asked who or what stood in something that happened. A happening is a row
+    // of the graph and no term of the world, so the walk that finds what stands
+    // to a thing has to be pointed at it by name — and the readers this
+    // question is otherwise given look for parts played in a doing, which is
+    // not what somebody merely in an accident played.
+    if (holderAsk && graph != null && a.member != null) {
+      const inside = terms
+        .map((t) => conceptOf(t))
+        .filter((t) => t != null)
+        .flatMap((t) => graph.standingIn(t, a.member));
+      if (inside.length > 0) {
+        return [
+          withBranch(root, [
+            ...root.branch,
+            node('answer', 'link', [], { subject: null, relation: null, found: inside }),
+          ]),
+        ];
+      }
+    }
     if (holderAsk && one != null && a.property != null && world.isA(one, a.property)) {
       // A predication stands one way in the graph, whether the thing was
       // already there (`the fire is red`) or the signal named it (`sara is
@@ -4162,6 +4181,35 @@ const holderAsk = said.find(
           withBranch(root, [
             ...root.branch,
             node('answer', 'link', [], { subject: null, relation: null, found: beside }),
+          ]),
+        ];
+      }
+    }
+    // Asked which thing stands at an amount, rather than how much a thing
+    // stands at. The words are nearly the same — `how long is the rope` and
+    // `what is 2 metres long` — and only one of them names a hole where the
+    // thing goes. Answered by what measures it, the way a quality is answered
+    // by what holds it.
+    if (holderAsk && graph != null) {
+      const unit = said
+        .map((n) => conceptOf(n))
+        .find((t) => t != null && a.unit != null && world.isA(t, a.unit));
+      const amount = said
+        .map((n) => (conceptOf(n) == null ? null : world.valueOf(conceptOf(n))))
+        .find((v) => v != null);
+      // Asked with an amount, only a thing standing at that amount answers.
+      // Nothing standing there is not knowing, never the amount back — that
+      // would answer a question nobody asked.
+      if (unit != null && amount != null) {
+        const holders = graph.measuring(unit, amount);
+        return [
+          withBranch(root, [
+            ...root.branch,
+            holders.length > 0
+              ? node('answer', 'link', [], { subject: null, relation: null, found: holders })
+              : node('standing', 'absent', [], {
+                  subject: null, relation: null, object: null, negated: false,
+                }),
           ]),
         ];
       }
@@ -6420,6 +6468,16 @@ function partAsked(said, world, claims, side, sides) {
   if (alone && !asksDoer) return null;
 
   const action = conceptOf(said[acting]);
+  // Somebody merely in something that happened played no part in it: hema was
+  // in the accident and did not accident anybody. Asked who was in it, what
+  // the happening holds is the answer, and looking for parts played would find
+  // nothing and say so — which is not the same as nothing being there.
+  if (graph != null && hole.own == null) {
+    const inside = graph.membersOf(action);
+    if (inside.length > 0) {
+      return node('answer', 'link', [], { subject: null, relation: null, found: inside });
+    }
+  }
   const found = [];
   for (const one of world.members(action, world.baseRelation)) {
     if (!world.isIndividual(one)) continue;

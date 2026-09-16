@@ -1589,6 +1589,22 @@ function standingIn(object, relation) {
   return found;
 }
 
+// What measures so much in a unit. `what is 2 metres long` asks which thing
+// stands at that amount, and the measures this conversation was told are where
+// it is written — the same walk a quality's holder gets, over an amount rather
+// than a value.
+function measuring(unit, amount) {
+  const found = [];
+  for (const one of held.facts) {
+    if (one.of !== MEASURE || one.stands !== 'held') continue;
+    if (termOf(one.parts[1]) !== unit && one.parts[1] !== unit) continue;
+    if (amount != null && Number(one.properties.amount) !== Number(amount)) continue;
+    const term = termOf(one.parts[0]);
+    if (term != null && !found.includes(term)) found.push(term);
+  }
+  return found;
+}
+
 // Who and what stood in something that happened. The happening keeps them as it
 // is told them — a person in an accident, a doing inside a robbery — so being
 // asked who was in it is reading back what it already holds.
@@ -2212,6 +2228,7 @@ function serialize(world = against) {
     chronoEnd,
     chronoBefore,
     reasonOf,
+    measuring,
     membersOf,
     stood,
     momentPosition,

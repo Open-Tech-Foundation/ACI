@@ -230,3 +230,19 @@ test("how much of a quantity a thing has is a fact about it", async () => {
   assert(/f1  measure\(n1, metre\[\d+\]\)\s+\{of: length\[\d+\], amount: 2\}/.test(graph), graph);
   assert(/n1  rope.*\{length: 2 metre\[\d+\]\}/.test(graph), `and the thing reads it back:\n${graph}`);
 });
+
+test("what stands at an amount answers with the thing, not the amount", async () => {
+  await forget();
+  await brain("the rope is 2 metres long");
+  assertEquals((await brain("what is 2 metres long?")).expression.state.says, "rope");
+  assertEquals((await brain("how long is the rope?")).expression.state.says, "two metres");
+  assertEquals((await brain("what is 5 metres long?")).expression.state.says, "I don't know.");
+});
+
+test("who stood in something that happened answers from what it holds", async () => {
+  await forget();
+  await brain("an accident was on a road");
+  await brain("hema is in the accident");
+  assertEquals((await brain("who is in the accident?")).expression.state.says, "hema");
+  assertEquals((await brain("is hema in the accident?")).expression.state.says, "Yes. ✅ hema in accident.");
+});

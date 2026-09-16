@@ -6,6 +6,21 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **What stands at an amount answers with the thing.** `what is 2 metres long?`
+  answered `1 metre` — a number where a thing was asked for. A quality's holder
+  was read off the conversation's facts and a measure's was not, though a
+  measure is a fact of the same shape. It answers `rope` now, and asked of no
+  thing that stands at the amount it says it does not know rather than handing
+  back the amount. `how long is the rope?` still answers `two metres`: the words
+  are nearly the same and only one of them names a hole where the thing goes.
+
+- **Who stood in something that happened answers from what it holds.** `who is
+  in the accident?` answered `I don't know` while `is hema in the accident?`
+  affirmed from the very same row. The question was given to the readers that
+  look for parts played in a doing, and somebody merely in an accident played
+  no part in it — so they found nothing and said so, which is not the same as
+  nothing being there. What the happening holds is the answer.
+
 - **What was said of one thing is no answer about the kind.** Reading the
   conversation's own facts made a claim about a particular thing answer a
   question about its kind: a spoon somebody called nice made spoons nice, and

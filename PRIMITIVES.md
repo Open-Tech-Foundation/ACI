@@ -259,12 +259,13 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
     never runs, because the parts were never assigned. Not fixed, and it is the
     same for every doing: `what did sam give?`, `what did mira build?`.
 
-21. **What has so much of a quantity.** `what is blue?` answers `sky`, and
-    `what is 2 metres long?` answers `1 metre` — a number where a thing was
-    asked for. A quality's holder is read off the conversation's facts, and a
-    measure's is not, though a measure is now a fact of exactly the same shape.
-    Not fixed. It is the last of the readings that look somewhere other than
-    the graph.
+21. **What has so much of a quantity.** _Fixed_ — `what is 2 metres long?`
+    answered `1 metre`, a number where a thing was asked for: a quality's
+    holder was read off the conversation's facts and a measure's was not,
+    though a measure is a fact of the same shape. It answers `rope` now, asked
+    of no thing that stands at the amount it says it does not know, and `how
+    long is the rope?` still answers `two metres` — the words are nearly the
+    same and only one of them names a hole where the thing goes.
 
 22. **A giving is not answerable as something that happened.** `sam gives 2
     books to jerry` is on the record from every side but one: `who gave the
