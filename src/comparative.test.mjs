@@ -323,3 +323,30 @@ test("a counted comparison is over the chain, not just the spoken two", async ()
   assertEquals((await brain("who has more apples?")).expression.state.says, "dev");
   await forget();
 });
+
+// A state may be measured on more than one scale. `long` is one: a wall is
+// long and so is a wait. Which scale the comparison reads on cannot be
+// whichever the world happens to list first.
+const WALLED = ["the fence is 8 metres long", "the wall is 12 metres long"];
+
+test("a comparison reads on a scale that carries an ordering", async () => {
+  // Both are measured in metres on length, and length is the only one of the
+  // scales holding `long` that anything compares along.
+  assertEquals((await fresh(...WALLED, "is the wall longer than the fence?")).expression.name, "affirm");
+  assertEquals((await fresh(...WALLED, "is the fence longer than the wall?")).expression.name, "deny");
+  await forget();
+});
+
+test("the far end of that scale reads the same fact back", async () => {
+  assertEquals((await fresh(...WALLED, "is the fence shorter than the wall?")).expression.name, "affirm");
+  await forget();
+});
+
+test("a comparison the world puts on no ordering answers nothing", async () => {
+  // Nothing was told, so there is nothing to compare — and a comparison that
+  // cannot be placed must not fall through to a plain check for a joining
+  // nobody made, which would deny it in both directions at once.
+  assertEquals((await fresh("is the wall longer than the fence?")).expression.name, "unsure");
+  assertEquals((await fresh("is the fence longer than the wall?")).expression.name, "unsure");
+  await forget();
+});

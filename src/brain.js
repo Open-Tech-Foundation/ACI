@@ -740,7 +740,17 @@ export function compared(roots, world) {
     // that comparison's declared converse, which the world supplies and the
     // brain never names.
     const ordering = orderingOf(state, world);
-    if (ordering == null) return n;
+    // A word that says it compares and has no ordering to compare along says
+    // nothing the brain can read. It is marked as that — unplaced — and never
+    // left to stand as the plain state it was made from, because a later
+    // reading would take the word for a quality and answer from it.
+    if (ordering == null) {
+      return withBranch(n, n.branch.map((b) =>
+        b.kind === 'thought'
+          ? withBranch(b, b.branch, { ...b.state, thought: { ...thought, unplaced: true } })
+          : b,
+      ));
+    }
     const compares = {
       ...thought,
       concept: ordering.relation,

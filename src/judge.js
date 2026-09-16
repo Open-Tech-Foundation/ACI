@@ -275,8 +275,16 @@ function directionOf(relation, world, said) {
 export function orderingOf(state, world) {
   const a = world.anchors || {};
   if (state == null || a.compares == null) return null;
-  const scale = a.measure == null ? null : world.members(state, a.measure)[0] ?? null;
-  const on = scale == null ? null : world.members(scale, a.compares)[0] ?? null;
+  // A state may be measured on more than one scale — a rope is long and so is
+  // a wait — and taking whichever the world happens to list first reads the
+  // rope's length along time. The scale to read a comparison on is one that
+  // carries an ordering: a scale nothing compares along has no further and no
+  // nearer, so nothing is said by standing on it.
+  const scales = a.measure == null ? [] : world.members(state, a.measure);
+  const ordered = scales
+    .map((of) => [of, world.members(of, a.compares)[0] ?? null])
+    .filter(([, along]) => along != null);
+  const [scale, on] = ordered[0] ?? [scales[0] ?? null, null];
   const relation = on ?? world.members(state, a.compares)[0] ?? null;
   if (relation == null) return null;
   return { relation, scale, toward: a.toward == null ? null : world.linked(state, a.toward)[0] ?? null };
@@ -888,6 +896,20 @@ function together(joined, world, mood, sent) {
   collect(root);
 
   const a = world.anchors || {};
+
+  // A word that says it compares, and that the world puts on no ordering,
+  // leaves the signal holding a word that neither asks nor constrains. Any
+  // reading that answers past it answers from a word it never read — the plain
+  // state the comparison was made from — and a denial reached that way says no
+  // to a question the brain never worked out. Nothing answers.
+  if (said.some((n) => (thoughtOf(n) || {}).unplaced)) {
+    return [withBranch(root, [...root.branch, node('standing', 'absent', [], {
+      subject: null,
+      relation: null,
+      object: null,
+      negated: false,
+    })])];
+  }
 
   // A choice can ask which primitive refinement the current topic has. The
   // language labels the offered alternatives; the world-derived entity node

@@ -97,6 +97,29 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A comparison is read on a scale something compares along.** `is the ladder
+  longer than the rope?` answered `No` — and so did `is the rope longer than
+  the ladder?`, the two denials standing side by side while the graph held
+  three metres and five. A state may be measured on more than one scale: a rope
+  is long and so is a wait, and `long` is on both length and time. The reading
+  took whichever the world listed first, got time, which nothing compares
+  along, and so read the rope's length along time and found no ordering at all.
+  The scale a comparison is read on is now one that carries an ordering — a
+  scale nothing compares along has no further and no nearer, so nothing is said
+  by standing on it. `is the wall longer than the fence?` reads along length
+  and answers, and the far end of the same fact, `is the fence shorter than the
+  wall?`, answers with it.
+
+- **A comparison that cannot be placed answers nothing.** This is what turned
+  the misread into a wrong answer. Where the word said it compares and no
+  ordering could be found for it, the word was left standing as the plain state
+  it was made from, and the next reading in the chain answered instead — a
+  check for a joining named `longer` that nobody had made, which denies. Asked
+  with nothing told at all, the brain said `No`. A word that says it compares
+  and has nowhere to compare is now marked as that, and no reading answers past
+  it: every word must either ask or constrain, and one doing neither leaves the
+  reading incomplete.
+
 - **Every scale answers alike, whether the world gives it units or not.** `what
   colour is the ball?` answered `red` and `what size is the ball?` answered `I
   don't know`, the ball having been told it is small. A scale with units was
