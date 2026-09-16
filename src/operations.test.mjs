@@ -56,7 +56,7 @@ test("a doing's clock reading joins its hours and minutes", async () => {
   await fresh("the backup started at ten hours and fifteen minutes");
   const graph = serialize();
   assert(
-    /event\([^\n]*\)\s+at 615 minute\[221\]/.test(graph),
+    /event\([^\n]*\)\s+\{at: 615 minute\[221\]/.test(graph),
     `ten hours and fifteen minutes joined into one reading in minutes:\n${graph}`,
   );
   assert(

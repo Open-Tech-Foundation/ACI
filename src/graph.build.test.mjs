@@ -316,8 +316,8 @@ test("when a doing happened is held as a time, not as what it happened to", asyn
   // Arriving at eight hours is not arriving at an hour the way one arrives at
   // a station. The brain reads no word for it: the world says an hour measures
   // time, and that is the whole of how it knows.
-  assertEquals(held.actions[0].time, { amount: 8, unit: 220 });
-  assertEquals(held.actions[1].time, { amount: 9, unit: 220 });
+  assertEquals(held.actions[0].properties.at, { amount: 8, unit: 220 });
+  assertEquals(held.actions[1].properties.at, { amount: 9, unit: 220 });
   assertEquals(Object.values(held.actions[0].roles).length, 1, 'only the one who arrived');
 });
 

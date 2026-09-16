@@ -12,7 +12,7 @@ const says = async (q) => (await brain(q)).expression.state.says;
 
 test("a doing told with a time stands on the timeline", async () => {
   const graph = await fresh("the ferry arrived at eight hours");
-  assert(/a1  event\(n1, type: arrive\[\d+\]\)\s+at 8 hour/.test(graph), graph);
+  assert(/a1  event\(n1, type: arrive\[\d+\]\)\s+\{at: 8 hour/.test(graph), graph);
   assert(/m1  members: \[a1\]/.test(graph), `and it takes a moment:\n${graph}`);
 });
 
@@ -47,24 +47,24 @@ test("a declared ordering still reads its two ends", async () => {
   assertEquals(await says("who arrived last?"), "deepak");
 });
 
-test("a doing still to come says so, and one that happened does not", async () => {
+test("a doing says which time it is — the one it is set for, or the one it happened at", async () => {
   const soon = await fresh("the ferry will arrive");
-  assert(/a1  event\(n1, type: arrive\[\d+\]\)\s+to come/.test(soon), soon);
+  assert(/a1  event\(n1, type: arrive\[\d+\]\)\s+\{time: scheduled\}/.test(soon), soon);
   const done = await fresh("the ferry arrived");
-  assert(/a1  event\(n1, type: arrive\[\d+\]\)\s*$/m.test(done), `and a doing that happened is the plain case:\n${done}`);
+  assert(/a1  event\(n1, type: arrive\[\d+\]\)\s+\{time: done\}/.test(done), `and one that happened says so too:\n${done}`);
 });
 
 test("a doing to come may be told its time", async () => {
   // `will` stood as a verb of its own, so it took the doing's place and the
   // clock was read as how long the thing measured.
   const graph = await fresh("the ferry will arrive at nine hours");
-  assert(/a1  event\(n1, type: arrive\[\d+\]\)\s+at 9 hour\[\d+\]\s+to come/.test(graph), graph);
+  assert(/a1  event\(n1, type: arrive\[\d+\]\)\s+\{at: 9 hour\[\d+\], time: scheduled\}/.test(graph), graph);
 });
 
 test("what is expected and what happened stand as two moments", async () => {
   const graph = await fresh("the ferry will arrive at nine hours", "the ferry arrived at ten hours");
-  assert(/a1  event\(n1, type: arrive\[\d+\]\)\s+at 9 hour\[\d+\]\s+to come/.test(graph), `meant at nine:\n${graph}`);
-  assert(/a2  event\(n1, type: arrive\[\d+\]\)\s+at 10 hour\[\d+\]/.test(graph), `came at ten:\n${graph}`);
+  assert(/a1  event\(n1, type: arrive\[\d+\]\)\s+\{at: 9 hour\[\d+\], time: scheduled\}/.test(graph), `meant at nine:\n${graph}`);
+  assert(/a2  event\(n1, type: arrive\[\d+\]\)\s+\{at: 10 hour\[\d+\], time: done\}/.test(graph), `came at ten:\n${graph}`);
   assert(/m1  members: \[a1\]  before: null/.test(graph), `the nine stands first:\n${graph}`);
   assert(/m2  members: \[a2\]  before: m1/.test(graph), `and the ten after it:\n${graph}`);
 });

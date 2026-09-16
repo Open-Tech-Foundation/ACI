@@ -14,7 +14,7 @@ test("a state told is a fact, and taking a new one is a change", async () => {
   const graph = await fresh("the coffee is hot", "the coffee got cold");
   assert(/f1  property\(n1, hot\[\d+\]\)/.test(graph), `it was hot:\n${graph}`);
   assert(/f2  property\(n1, cold\[\d+\]\)/.test(graph), `and it is cold:\n${graph}`);
-  assert(/a1  state-change\(n1\)\s+\{temperature: cold\[\d+\]\}/.test(graph), `and it changed:\n${graph}`);
+  assert(/a1  state-change\(n1\)\s+\{time: done, temperature: cold\[\d+\]\}/.test(graph), `and it changed:\n${graph}`);
 });
 
 test("the thing stands in the state it took, not the one it left", async () => {
@@ -35,7 +35,7 @@ test("what a thing was is the fact standing before the latest", async () => {
 
 test("a state nothing stood in before leaves one fact and no history", async () => {
   const graph = await fresh("the porch became wet");
-  assert(/state-change\(n1\)\s+\{wetness: wet\[\d+\]\}/.test(graph), graph);
+  assert(/state-change\(n1\)\s+\{time: done, wetness: wet\[\d+\]\}/.test(graph), graph);
   assertEquals((graph.match(/property\(n1,/g) || []).length, 1, graph);
 });
 
@@ -47,7 +47,7 @@ test("a feeling is a state, and taking a new one leaves the old", async () => {
 
 test("a property is not a state, and changing one is not the other", async () => {
   const graph = await fresh("the lamp is red", "the lamp turned blue");
-  assert(/property-change\(n1\)\s+\{colour: blue\[\d+\]\}/.test(graph), graph);
+  assert(/property-change\(n1\)\s+\{time: done, colour: blue\[\d+\]\}/.test(graph), graph);
 });
 
 test("a dimension holds one value at a time without anyone saying so", async () => {
@@ -68,14 +68,14 @@ test("how long after a doing was is when it was, never a second doing", async ()
   // second falling whose doer was the unit, and the unit itself on the
   // timeline. A unit that measures time cannot fall.
   const graph = await fresh("a plank fell after 5 minutes");
-  assert(/a1  event\(n1, type: fall\[\d+\]\)\s+after 5 minute\[\d+\]/.test(graph), graph);
+  assert(/a1  event\(n1, type: fall\[\d+\]\)\s+\{after: 5 minute\[\d+\], time: done\}/.test(graph), graph);
   assertEquals((graph.match(/^  a\d/gm) || []).length, 1, `one falling:\n${graph}`);
   assert(!/minute\[\d+\]\]\s+before/.test(graph), `and no unit on the timeline:\n${graph}`);
 });
 
 test("a state change told how long after keeps the thing it is about", async () => {
   const graph = await fresh("the coffee is hot", "the coffee got cold after 5 minutes");
-  assert(/a1  state-change\(n1\)\s+after 5 minute\[\d+\]/.test(graph), graph);
+  assert(/a1  state-change\(n1\)\s+\{after: 5 minute\[\d+\], time: done/.test(graph), graph);
   assertEquals((graph.match(/^  n\d/gm) || []).length, 1, `one coffee:\n${graph}`);
 });
 

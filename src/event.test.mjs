@@ -43,7 +43,7 @@ test("where a doing stood is where the doer stood", async () => {
 test("a time phrase says when, never where", async () => {
   await fresh("a drum fell in the evening");
   const graph = serialize();
-  assert(/at evening/.test(graph), `the falling was in the evening:\n${graph}`);
+  assert(/times: evening/.test(graph), `the falling was in the evening:\n${graph}`);
   assert(!/placement/.test(graph), `and nothing was placed in one:\n${graph}`);
   await forget();
 });
@@ -103,7 +103,7 @@ test("a doing holds what came of it", async () => {
   // Wet is a state of the road, not a property of it, so what happened to it
   // is a state change.
   assert(/state-change\(n1\)/.test(graph), `the road changed:\n${graph}`);
-  assert(/event\(n2, type: fall\[\d+\]\)\s+holds a1/.test(graph), `and the falling holds it:\n${graph}`);
+  assert(/event\(n2, type: fall\[\d+\]\)[^\n]*holds a1/.test(graph), `and the falling holds it:\n${graph}`);
   await forget();
 });
 
@@ -138,7 +138,7 @@ test("being in something that happened is being a member of it", async () => {
 test("an event said to be at a time was then, not placed inside one", async () => {
   await fresh("a meeting was in a hall in the evening");
   const graph = serialize();
-  assert(/at evening/.test(graph), `the meeting was in the evening:\n${graph}`);
+  assert(/times: evening/.test(graph), `the meeting was in the evening:\n${graph}`);
   assert(/placement\(a1, n1\)/.test(graph), `and in the hall:\n${graph}`);
   assert(!/placement\(a1, evening/.test(graph), `and not inside the evening:\n${graph}`);
   await forget();
@@ -163,7 +163,7 @@ test("one event, however many signals speak of it", async () => {
     (graph.match(/type: robbery/g) || []).length === 1,
     `there is one robbery:\n${graph}`,
   );
-  assert(/a1  event\(\[n2, n3\], type: robbery\[\d+\]\)  at night\[\d+\]/.test(graph), `with both in it, at night:\n${graph}`);
+  assert(/a1  event\(\[n2, n3\], type: robbery\[\d+\]\)  \{time: done, times: night\[\d+\]\}/.test(graph), `with both in it, at night:\n${graph}`);
   assert(/placement\(a1, n1\)/.test(graph), `at the shop:\n${graph}`);
   assert(/holds f1, f2, f3, a2/.test(graph), `holding all of it:\n${graph}`);
   assert(/a2  event\(n3, target: money\[\d+\], type: steal/.test(graph), `and the stealing inside it:\n${graph}`);
@@ -179,6 +179,6 @@ test("a time is no way for a thing to be", async () => {
   await fresh("an exam was at a school at night");
   const graph = serialize();
   assert(!/n1  school.*period/.test(graph), `the school is not night-coloured:\n${graph}`);
-  assert(/at night/.test(graph), `the exam was at night:\n${graph}`);
+  assert(/times: night/.test(graph), `the exam was at night:\n${graph}`);
   await forget();
 });

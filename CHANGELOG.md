@@ -6,11 +6,17 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
-- **A doing still to come is held, and says so.** The row carried whether a
-  doing had happened all along and the print never said it, so a thing the
-  brain expected and a thing it had seen read alike. A doing still to come now
-  says `to come`, and one that happened is the plain case. A brain that cannot
-  tell what it expects from what it has seen cannot be surprised by either.
+- **Every doing says which time it is.** Whether a doing had happened was on
+  the row and the print never said it, so a thing the brain expected and a
+  thing it had seen read alike. A doing now carries one object saying
+  everything it holds about its time — the reading and which kind of time it
+  is: `{at: 9 hour[220], time: scheduled}` for the one it is set for,
+  `{at: 10 hour[220], time: done}` for the one it happened at. Told neither way
+  round, a doing happened, and it says so. A named time rides in the same place
+  (`{time: done, times: night[562]}`), and so does how long after
+  (`{after: 5 minute[221], time: done}`). Nothing about a doing's time is said
+  in more than one place, and nothing is left for a reader to infer from
+  silence.
 
 - **A doing to come may be told its time.** `the train will arrive at nine
   hours` lost the arriving entirely: `will` stood as a verb of its own, so it

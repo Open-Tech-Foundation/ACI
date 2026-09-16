@@ -441,7 +441,10 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
     const anchors = world.anchors || {};
     const here = held.actions.find((row) => row.id === reach(subject));
     if (here && primitive === PLACEMENT && anchors.time != null && world.isA(object, anchors.time)) {
-      here.times = [...(here.times || []), object];
+      here.properties = {
+        ...(here.properties || {}),
+        times: [...new Set([...((here.properties || {}).times || []), object])],
+      };
       return;
     }
 
@@ -643,12 +646,6 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
       // Which occurrence this is. A cause names the occurrences it joins, and
       // without this there is no way back from one of those to its row.
       did: event.state.id,
-      // When it happened, where the signal said so. A doing stands on the same
-      // quantity as anything else that has a time, so two of them compare.
-      ...(event.state.time ? { time: event.state.time } : {}),
-      // When it was, said as a time of its own rather than a reading of a
-      // clock: in the evening is an evening, not an hour.
-      ...(event.state.times ? { times: event.state.times } : {}),
       // A primitive of the brain's own carries the brain's own parts. A doing
       // it does not yet know keeps the roles the world gave it, rather than
       // being forced into a shape that is not its.
@@ -660,7 +657,24 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
             ? stateChanging(roles, properties, world)
             : { roles, properties }),
       stands: stands(not),
-      when: when ?? null,
+    };
+    // Every doing says which time it is: the one it is set for, or the one it
+    // happened at. Told neither way round, it happened — that is what saying a
+    // doing plainly is. The clock reading rides in the same place, so what a
+    // doing holds about its time is in one object and nowhere else.
+    const a3 = (world && world.anchors) || {};
+    const clock = event.state.time;
+    row.properties = {
+      // When it was, said as a time of its own rather than a reading of a
+      // clock: in the evening is an evening, not an hour.
+      ...(event.state.times ? { times: event.state.times } : {}),
+      ...(clock == null
+        ? {}
+        : clock.after
+          ? { after: { amount: clock.amount, unit: clock.unit } }
+          : { at: { amount: clock.amount, unit: clock.unit } }),
+      time: when != null && a3.future != null && when === a3.future ? 'scheduled' : 'done',
+      ...(row.properties || {}),
     };
     // A thing that changed into a state stands in it, and standing in a state
     // is a fact about the thing like any other. The change says it happened;
@@ -691,7 +705,12 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
       for (const [name, value] of Object.entries(row)) {
         if (value == null || (Array.isArray(value) && value.length === 0)) continue;
         if (name === 'roles' || name === 'properties') one[name] = { ...(one[name] || {}), ...value };
-        else if (name === 'times') one.times = [...new Set([...(one.times || []), ...value])];
+        else if (name === 'properties' && value.times)
+          one.properties = {
+            ...(one.properties || {}),
+            ...value,
+            times: [...new Set([...((one.properties || {}).times || []), ...value.times])],
+          };
         else if (one[name] == null || name === 'of' || name === 'said') one[name] = value;
       }
     }
@@ -789,7 +808,7 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
   // still not know which came first.
   for (const one of held.actions) {
     if (one.stands === 'conflict') continue;
-    const at = clockAt(one.time, world);
+    const at = clockAt(one.properties && one.properties.at, world);
     if (at == null) continue;
     const already = held.moments.some((m) => m.members.includes(one.id));
     if (!already) placeByClock(one.id, at);
@@ -1194,7 +1213,10 @@ function kindHappened(id) {
 function happening(id) {
   const kind = kindHappened(id) ?? id;
   if (happenings.has(kind)) return happenings.get(kind);
-  const row = put('actions', { of: kind, said: kind, roles: {}, properties: {}, stands: 'held' });
+  // A happening the signal spoke of has happened, like any doing said plainly.
+  const row = put('actions', {
+    of: kind, said: kind, roles: {}, properties: { time: 'done' }, stands: 'held',
+  });
   happenings.set(kind, row);
   return row;
 }
@@ -1821,7 +1843,13 @@ function serialize(world = against) {
   const properties = (of) => {
     const said = Object.entries(of || {})
       .filter(([, value]) => value != null)
-      .map(([name, value]) => `${name}: ${named(name) ? spell(value) : value}`);
+      .map(([name, value]) =>
+        Array.isArray(value)
+          ? `${name}: ${value.map(spell).join(', ')}`
+          : value && typeof value === 'object' && value.unit != null
+          ? `${name}: ${value.amount} ${spell(value.unit)}`
+          : `${name}: ${named(name) ? spell(value) : value}`,
+      );
     return said.length ? `  {${said.join(', ')}}` : '';
   };
   // The part a thing played in a doing is a role, not something said. It is
@@ -1905,11 +1933,6 @@ function serialize(world = against) {
             .join(', ');
       // A clock reading says when it was; an amount of time says how long after
       // whatever came before it. They are not the same and are not said alike.
-      const when = one.time
-        ? `  ${one.time.after ? 'after' : 'at'} ${one.time.amount} ${spell(one.time.unit)}`
-        : one.times
-          ? `  at ${one.times.map(spell).join(', ')}`
-          : '';
       // A doing the brain knows of itself says its own name. Anything else is
       // an event: whatever happened, of a type the world holds, with whoever
       // took part in it, where and when it was, and what came of it hanging
@@ -1920,13 +1943,7 @@ function serialize(world = against) {
         ? `${one.of}(${said})`
         : `event(${inside}${inside ? ', ' : ''}type: ${spell(one.of)})`;
       const holds = one.holds ? `  holds ${one.holds.join(', ')}` : '';
-      // Whether it has happened. A doing that has is the ordinary case and
-      // says nothing; one still to come says so, because a brain that cannot
-      // tell what it expects from what it has seen cannot be surprised by
-      // either. The row held this all along and the print did not say it.
-      const a2 = (world && world.anchors) || {};
-      const stood = one.when != null && a2.future != null && one.when === a2.future ? '  to come' : '';
-      return `${one.id}  ${one.stands === 'against' ? 'not ' : ''}${does}${when}${stood}${properties(one.properties)}${holds}${aside(one)}`;
+      return `${one.id}  ${one.stands === 'against' ? 'not ' : ''}${does}${properties(one.properties)}${holds}${aside(one)}`;
     }),
   );
   // A claim inside an instruction, said the way a fact is said.

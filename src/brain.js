@@ -2579,8 +2579,9 @@ function clockAt(term, said, a, world, graph) {
       (!kindRow && r.of != null && does(r.of)) ||
       Object.values(r.roles ?? {}).some((v) => does(v));
     if (!matches) continue;
-    if (r.time == null || r.time.amount == null || !UNITS.some((name) => a[name] === r.time.unit)) continue;
-    clock = { amount: Number(r.time.amount), unit: r.time.unit };
+    const at = (r.properties || {}).at;
+    if (at == null || at.amount == null || !UNITS.some((name) => a[name] === at.unit)) continue;
+    clock = { amount: Number(at.amount), unit: at.unit };
     holder = did;
     break;
   }
@@ -6467,7 +6468,7 @@ if (far !== undefined) {
         return false;
       }),
     );
-    const times = [...new Set(mine.flatMap((r) => r.times ?? []))];
+    const times = [...new Set(mine.flatMap((r) => (r.properties || {}).times ?? []))];
     found.push(...times);
     // A time-word told outright answers first — the morning it was started in
     // says where on the day it stands, where a reading says only how far. The
@@ -6475,7 +6476,7 @@ if (far !== undefined) {
     if (found.length === 0) {
       clock =
         mine
-          .map((r) => r.time)
+          .map((r) => (r.properties || {}).at)
           .find(
             (t) =>
               t != null &&
@@ -6495,15 +6496,16 @@ if (far !== undefined) {
     // took, is the day it ended.
     if (a.finish != null && said.some((n) => conceptOf(n) === a.finish) && clock != null) {
       for (const r of mine) {
-        if (r.did == null || r.time == null || r.time.amount == null) continue;
+        const at = (r.properties || {}).at;
+        if (r.did == null || at == null || at.amount == null) continue;
         let length = 0;
         for (const unit of world.standing(a.time, a.measure)) {
           const held = world.held(r.did, a.for, unit);
           if (held == null) continue;
-          length += held * unitsIn(unit, r.time.unit, world);
+          length += held * unitsIn(unit, at.unit, world);
         }
         if (length === 0) continue;
-        clock = { amount: r.time.amount + length, unit: r.time.unit };
+        clock = { amount: at.amount + length, unit: at.unit };
         break;
       }
     }
