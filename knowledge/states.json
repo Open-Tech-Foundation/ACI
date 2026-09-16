@@ -1,0 +1,1097 @@
+{
+  "terms": [
+    {
+      "id": 193,
+      "name": "pattern",
+      "links": [
+        {
+          "rel": 294,
+          "to": 182
+        }
+      ]
+    },
+    {
+      "id": 194,
+      "name": "structure",
+      "links": [
+        {
+          "rel": 294,
+          "to": 182
+        }
+      ]
+    },
+    {
+      "id": 224,
+      "name": "then",
+      "links": [
+        {
+          "rel": 294,
+          "to": 213
+        }
+      ]
+    },
+    {
+      "id": 225,
+      "name": "life",
+      "links": [
+        {
+          "rel": 294,
+          "to": 188
+        },
+        {
+          "rel": 251,
+          "to": 226
+        },
+        {
+          "rel": 2992,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 227,
+      "name": "sleep",
+      "links": [
+        {
+          "rel": 294,
+          "to": 188
+        },
+        {
+          "rel": 2992,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 228,
+      "name": "health",
+      "links": [
+        {
+          "rel": 294,
+          "to": 188
+        },
+        {
+          "rel": 2992,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 231,
+      "name": "love",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 232,
+      "name": "fear",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 233,
+      "name": "anger",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 234,
+      "name": "joy",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 235,
+      "name": "sadness",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 237,
+      "name": "comfort",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 240,
+      "name": "true",
+      "links": [
+        {
+          "rel": 294,
+          "to": 189
+        },
+        {
+          "rel": 251,
+          "to": 241
+        }
+      ]
+    },
+    {
+      "id": 241,
+      "name": "false",
+      "links": [
+        {
+          "rel": 294,
+          "to": 189
+        }
+      ]
+    },
+    {
+      "id": 242,
+      "name": "beautiful",
+      "links": [
+        {
+          "rel": 294,
+          "to": 189
+        }
+      ]
+    },
+    {
+      "id": 244,
+      "name": "few",
+      "links": [
+        {
+          "rel": 294,
+          "to": 190
+        }
+      ]
+    },
+    {
+      "id": 312,
+      "name": "up",
+      "links": [
+        {
+          "rel": 294,
+          "to": 191
+        },
+        {
+          "rel": 251,
+          "to": 313
+        }
+      ]
+    },
+    {
+      "id": 313,
+      "name": "down",
+      "links": [
+        {
+          "rel": 294,
+          "to": 191
+        }
+      ]
+    },
+    {
+      "id": 314,
+      "name": "left",
+      "links": [
+        {
+          "rel": 294,
+          "to": 191
+        },
+        {
+          "rel": 251,
+          "to": 315
+        }
+      ]
+    },
+    {
+      "id": 315,
+      "name": "right",
+      "links": [
+        {
+          "rel": 294,
+          "to": 191
+        }
+      ]
+    },
+    {
+      "id": 316,
+      "name": "front",
+      "links": [
+        {
+          "rel": 294,
+          "to": 191
+        },
+        {
+          "rel": 251,
+          "to": 317
+        }
+      ]
+    },
+    {
+      "id": 317,
+      "name": "back",
+      "links": [
+        {
+          "rel": 294,
+          "to": 191
+        }
+      ]
+    },
+    {
+      "id": 323,
+      "name": "mass",
+      "links": [
+        {
+          "rel": 294,
+          "to": 3
+        }
+      ]
+    },
+    {
+      "id": 518,
+      "name": "morning",
+      "links": [
+        {
+          "rel": 294,
+          "to": 212
+        }
+      ]
+    },
+    {
+      "id": 519,
+      "name": "evening",
+      "links": [
+        {
+          "rel": 294,
+          "to": 212
+        }
+      ]
+    },
+    {
+      "id": 520,
+      "name": "noon",
+      "links": [
+        {
+          "rel": 294,
+          "to": 212
+        }
+      ]
+    },
+    {
+      "id": 521,
+      "name": "midnight",
+      "links": [
+        {
+          "rel": 294,
+          "to": 212
+        }
+      ]
+    },
+    {
+      "id": 563,
+      "name": "nice",
+      "links": [
+        {
+          "rel": 294,
+          "to": 238
+        }
+      ]
+    },
+    {
+      "id": 564,
+      "name": "hurt",
+      "links": [
+        {
+          "rel": 294,
+          "to": 239
+        }
+      ]
+    },
+    {
+      "id": 580,
+      "name": "inside",
+      "links": [
+        {
+          "rel": 294,
+          "to": 191
+        },
+        {
+          "rel": 251,
+          "to": 581
+        },
+        {
+          "rel": 2828,
+          "to": 586
+        },
+        {
+          "rel": 294,
+          "to": 585
+        },
+        {
+          "rel": 2828,
+          "to": 585
+        }
+      ],
+      "transitive": true
+    },
+    {
+      "id": 581,
+      "name": "outside",
+      "links": [
+        {
+          "rel": 294,
+          "to": 191
+        },
+        {
+          "rel": 294,
+          "to": 585
+        },
+        {
+          "rel": 2828,
+          "to": 585
+        }
+      ]
+    },
+    {
+      "id": 582,
+      "name": "top",
+      "links": [
+        {
+          "rel": 294,
+          "to": 191
+        },
+        {
+          "rel": 251,
+          "to": 583
+        }
+      ]
+    },
+    {
+      "id": 583,
+      "name": "bottom",
+      "links": [
+        {
+          "rel": 294,
+          "to": 191
+        }
+      ]
+    },
+    {
+      "id": 584,
+      "name": "side",
+      "links": [
+        {
+          "rel": 294,
+          "to": 191
+        }
+      ]
+    },
+    {
+      "id": 1559,
+      "name": "shame",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 1560,
+      "name": "pride",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 1561,
+      "name": "envy",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 1562,
+      "name": "pity",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 1563,
+      "name": "guilt",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 2721,
+      "name": "cleanliness",
+      "links": [
+        {
+          "rel": 294,
+          "to": 188
+        },
+        {
+          "rel": 2992,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2746,
+      "name": "fresh",
+      "links": [
+        {
+          "rel": 294,
+          "to": 188
+        },
+        {
+          "rel": 2992,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2750,
+      "name": "free",
+      "links": [
+        {
+          "rel": 294,
+          "to": 188
+        },
+        {
+          "rel": 2992,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2751,
+      "name": "busy",
+      "links": [
+        {
+          "rel": 294,
+          "to": 188
+        },
+        {
+          "rel": 2992,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2752,
+      "name": "full",
+      "links": [
+        {
+          "rel": 294,
+          "to": 188
+        },
+        {
+          "rel": 2992,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2753,
+      "name": "empty",
+      "links": [
+        {
+          "rel": 294,
+          "to": 188
+        },
+        {
+          "rel": 2992,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2754,
+      "name": "dirty",
+      "links": [
+        {
+          "rel": 294,
+          "to": 188
+        },
+        {
+          "rel": 2992,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2755,
+      "name": "sure",
+      "links": [
+        {
+          "rel": 294,
+          "to": 188
+        },
+        {
+          "rel": 2992,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2756,
+      "name": "certain",
+      "links": [
+        {
+          "rel": 294,
+          "to": 188
+        },
+        {
+          "rel": 2992,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2757,
+      "name": "hungry",
+      "links": [
+        {
+          "rel": 294,
+          "to": 188
+        },
+        {
+          "rel": 2992,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2758,
+      "name": "thirsty",
+      "links": [
+        {
+          "rel": 294,
+          "to": 188
+        },
+        {
+          "rel": 2992,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2759,
+      "name": "tired",
+      "links": [
+        {
+          "rel": 294,
+          "to": 188
+        },
+        {
+          "rel": 2992,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2760,
+      "name": "sick",
+      "links": [
+        {
+          "rel": 294,
+          "to": 188
+        },
+        {
+          "rel": 2992,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2761,
+      "name": "ill",
+      "links": [
+        {
+          "rel": 294,
+          "to": 188
+        },
+        {
+          "rel": 2992,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2762,
+      "name": "ugly",
+      "links": [
+        {
+          "rel": 294,
+          "to": 189
+        }
+      ]
+    },
+    {
+      "id": 2763,
+      "name": "easy",
+      "links": [
+        {
+          "rel": 294,
+          "to": 189
+        }
+      ]
+    },
+    {
+      "id": 2764,
+      "name": "hard",
+      "links": [
+        {
+          "rel": 294,
+          "to": 189
+        }
+      ]
+    },
+    {
+      "id": 2765,
+      "name": "difficult",
+      "links": [
+        {
+          "rel": 294,
+          "to": 189
+        }
+      ]
+    },
+    {
+      "id": 2766,
+      "name": "simple",
+      "links": [
+        {
+          "rel": 294,
+          "to": 189
+        }
+      ]
+    },
+    {
+      "id": 2767,
+      "name": "rich",
+      "links": [
+        {
+          "rel": 294,
+          "to": 189
+        }
+      ]
+    },
+    {
+      "id": 2768,
+      "name": "poor",
+      "links": [
+        {
+          "rel": 294,
+          "to": 189
+        }
+      ]
+    },
+    {
+      "id": 2769,
+      "name": "sweet",
+      "links": [
+        {
+          "rel": 294,
+          "to": 189
+        }
+      ]
+    },
+    {
+      "id": 2770,
+      "name": "sour",
+      "links": [
+        {
+          "rel": 294,
+          "to": 189
+        }
+      ]
+    },
+    {
+      "id": 2771,
+      "name": "bitter",
+      "links": [
+        {
+          "rel": 294,
+          "to": 189
+        }
+      ]
+    },
+    {
+      "id": 2772,
+      "name": "salty",
+      "links": [
+        {
+          "rel": 294,
+          "to": 189
+        }
+      ]
+    },
+    {
+      "id": 2773,
+      "name": "safe",
+      "links": [
+        {
+          "rel": 294,
+          "to": 189
+        }
+      ]
+    },
+    {
+      "id": 2774,
+      "name": "dangerous",
+      "links": [
+        {
+          "rel": 294,
+          "to": 189
+        }
+      ]
+    },
+    {
+      "id": 2779,
+      "name": "soft",
+      "links": [
+        {
+          "rel": 294,
+          "to": 189
+        }
+      ]
+    },
+    {
+      "id": 2780,
+      "name": "clear",
+      "links": [
+        {
+          "rel": 294,
+          "to": 188
+        },
+        {
+          "rel": 2992,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2781,
+      "name": "fine",
+      "links": [
+        {
+          "rel": 294,
+          "to": 189
+        }
+      ]
+    },
+    {
+      "id": 2782,
+      "name": "ready",
+      "links": [
+        {
+          "rel": 294,
+          "to": 188
+        },
+        {
+          "rel": 2992,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2783,
+      "name": "wrong",
+      "links": [
+        {
+          "rel": 294,
+          "to": 189
+        }
+      ]
+    },
+    {
+      "id": 2784,
+      "name": "alone",
+      "links": [
+        {
+          "rel": 294,
+          "to": 188
+        },
+        {
+          "rel": 2992,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2800,
+      "name": "afternoon",
+      "links": [
+        {
+          "rel": 294,
+          "to": 212
+        }
+      ]
+    },
+    {
+      "id": 2801,
+      "name": "weekend",
+      "links": [
+        {
+          "rel": 294,
+          "to": 212
+        }
+      ]
+    },
+    {
+      "id": 2802,
+      "name": "holiday",
+      "links": [
+        {
+          "rel": 294,
+          "to": 212
+        }
+      ]
+    },
+    {
+      "id": 2803,
+      "name": "birthday",
+      "links": [
+        {
+          "rel": 294,
+          "to": 212
+        }
+      ]
+    },
+    {
+      "id": 2805,
+      "name": "headache",
+      "links": [
+        {
+          "rel": 294,
+          "to": 236
+        }
+      ]
+    },
+    {
+      "id": 2816,
+      "name": "flu",
+      "links": [
+        {
+          "rel": 294,
+          "to": 188
+        },
+        {
+          "rel": 2992,
+          "to": 305
+        }
+      ]
+    },
+    {
+      "id": 2829,
+      "name": "hate",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 2830,
+      "name": "surprise",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 2831,
+      "name": "excitement",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 2832,
+      "name": "boredom",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 2833,
+      "name": "loneliness",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 2834,
+      "name": "trust",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 2835,
+      "name": "worry",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 2836,
+      "name": "like",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 2838,
+      "name": "belief",
+      "links": [
+        {
+          "rel": 294,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 2842,
+      "name": "value",
+      "links": [
+        {
+          "rel": 294,
+          "to": 3
+        }
+      ]
+    },
+    {
+      "id": 2864,
+      "name": "today",
+      "links": [
+        {
+          "rel": 294,
+          "to": 187
+        }
+      ]
+    },
+    {
+      "id": 2865,
+      "name": "tomorrow",
+      "links": [
+        {
+          "rel": 294,
+          "to": 187
+        }
+      ]
+    },
+    {
+      "id": 2866,
+      "name": "yesterday",
+      "links": [
+        {
+          "rel": 294,
+          "to": 187
+        }
+      ]
+    },
+    {
+      "id": 2968,
+      "name": "beside",
+      "links": [
+        {
+          "rel": 294,
+          "to": 191
+        },
+        {
+          "rel": 294,
+          "to": 585
+        },
+        {
+          "rel": 251,
+          "to": 2969
+        },
+        {
+          "rel": 2828,
+          "to": 585
+        }
+      ]
+    },
+    {
+      "id": 2969,
+      "name": "aside",
+      "links": [
+        {
+          "rel": 294,
+          "to": 191
+        },
+        {
+          "rel": 294,
+          "to": 585
+        },
+        {
+          "rel": 2828,
+          "to": 585
+        }
+      ]
+    },
+    {
+      "id": 2972,
+      "name": "duration",
+      "links": [
+        {
+          "rel": 294,
+          "to": 3
+        }
+      ]
+    }
+  ]
+}

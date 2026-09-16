@@ -3,7 +3,7 @@ import { openBrain } from './index.js';
 import {
   TRANSFER, PROPERTY_CHANGE, HOLDING, PLACEMENT, COMPARISON, ORDER, PROPERTY, KIND, MEASURE,
 } from './graph.js';
-import { loadWorldFile } from './world.js';
+import { loadWorld } from './world.js';
 
 // The conversation graph, built from the very basic inputs upward. Every case
 // here is one signal in, and the graph the brain left behind. Nothing reads
@@ -12,7 +12,7 @@ import { loadWorldFile } from './world.js';
 const opened = openBrain('sqlite::memory:');
 const { brain, forget, graph, serialize } = opened;
 const { ranking, amounts } = opened.conversation;
-const world = await loadWorldFile(new URL('../data/world.json', import.meta.url).pathname);
+const world = await loadWorld();
 
 const said = async (...lines) => {
   await forget();

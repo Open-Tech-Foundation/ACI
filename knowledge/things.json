@@ -1,0 +1,2227 @@
+{
+  "terms": [
+    {
+      "id": 88,
+      "name": "earth",
+      "links": [
+        {
+          "rel": 294,
+          "to": 36
+        }
+      ]
+    },
+    {
+      "id": 89,
+      "name": "mountain",
+      "links": [
+        {
+          "rel": 294,
+          "to": 37
+        }
+      ]
+    },
+    {
+      "id": 90,
+      "name": "field",
+      "links": [
+        {
+          "rel": 294,
+          "to": 37
+        }
+      ]
+    },
+    {
+      "id": 103,
+      "name": "meaning",
+      "links": [
+        {
+          "rel": 294,
+          "to": 99
+        }
+      ]
+    },
+    {
+      "id": 104,
+      "name": "truth",
+      "links": [
+        {
+          "rel": 294,
+          "to": 99
+        }
+      ]
+    },
+    {
+      "id": 106,
+      "name": "law",
+      "links": [
+        {
+          "rel": 294,
+          "to": 99
+        }
+      ]
+    },
+    {
+      "id": 108,
+      "name": "question",
+      "links": [
+        {
+          "rel": 294,
+          "to": 99
+        }
+      ]
+    },
+    {
+      "id": 109,
+      "name": "answer",
+      "links": [
+        {
+          "rel": 294,
+          "to": 99
+        }
+      ]
+    },
+    {
+      "id": 111,
+      "name": "poem",
+      "links": [
+        {
+          "rel": 294,
+          "to": 105
+        }
+      ]
+    },
+    {
+      "id": 112,
+      "name": "picture",
+      "links": [
+        {
+          "rel": 294,
+          "to": 105
+        }
+      ]
+    },
+    {
+      "id": 126,
+      "name": "alphabet",
+      "links": [
+        {
+          "rel": 294,
+          "to": 101
+        }
+      ]
+    },
+    {
+      "id": 127,
+      "name": "society",
+      "links": [
+        {
+          "rel": 294,
+          "to": 293
+        }
+      ]
+    },
+    {
+      "id": 284,
+      "name": "think",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 309,
+      "name": "gravity",
+      "links": [
+        {
+          "rel": 294,
+          "to": 308
+        },
+        {
+          "rel": 247,
+          "to": 262
+        },
+        {
+          "rel": 247,
+          "to": 184
+        }
+      ]
+    },
+    {
+      "id": 1297,
+      "name": "garden",
+      "links": [
+        {
+          "rel": 294,
+          "to": 11
+        }
+      ]
+    },
+    {
+      "id": 1298,
+      "name": "park",
+      "links": [
+        {
+          "rel": 294,
+          "to": 11
+        }
+      ]
+    },
+    {
+      "id": 1299,
+      "name": "street",
+      "links": [
+        {
+          "rel": 294,
+          "to": 11
+        }
+      ]
+    },
+    {
+      "id": 1303,
+      "name": "yard",
+      "links": [
+        {
+          "rel": 294,
+          "to": 11
+        }
+      ]
+    },
+    {
+      "id": 1305,
+      "name": "court",
+      "links": [
+        {
+          "rel": 294,
+          "to": 11
+        }
+      ]
+    },
+    {
+      "id": 1306,
+      "name": "playground",
+      "links": [
+        {
+          "rel": 294,
+          "to": 11
+        }
+      ]
+    },
+    {
+      "id": 1369,
+      "name": "dance",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 1373,
+      "name": "line",
+      "links": [
+        {
+          "rel": 294,
+          "to": 7
+        }
+      ]
+    },
+    {
+      "id": 1375,
+      "name": "plan",
+      "links": [
+        {
+          "rel": 294,
+          "to": 7
+        }
+      ]
+    },
+    {
+      "id": 1376,
+      "name": "rule",
+      "links": [
+        {
+          "rel": 294,
+          "to": 7
+        }
+      ]
+    },
+    {
+      "id": 1377,
+      "name": "reason",
+      "links": [
+        {
+          "rel": 294,
+          "to": 7
+        }
+      ]
+    },
+    {
+      "id": 1380,
+      "name": "purpose",
+      "links": [
+        {
+          "rel": 294,
+          "to": 7
+        }
+      ]
+    },
+    {
+      "id": 1381,
+      "name": "method",
+      "links": [
+        {
+          "rel": 294,
+          "to": 7
+        }
+      ]
+    },
+    {
+      "id": 1382,
+      "name": "habit",
+      "links": [
+        {
+          "rel": 294,
+          "to": 7
+        }
+      ]
+    },
+    {
+      "id": 1383,
+      "name": "custom",
+      "links": [
+        {
+          "rel": 294,
+          "to": 7
+        }
+      ]
+    },
+    {
+      "id": 1384,
+      "name": "skill",
+      "links": [
+        {
+          "rel": 294,
+          "to": 7
+        }
+      ]
+    },
+    {
+      "id": 1385,
+      "name": "talent",
+      "links": [
+        {
+          "rel": 294,
+          "to": 7
+        }
+      ]
+    },
+    {
+      "id": 1387,
+      "name": "dream",
+      "links": [
+        {
+          "rel": 294,
+          "to": 7
+        }
+      ]
+    },
+    {
+      "id": 1388,
+      "name": "hope",
+      "links": [
+        {
+          "rel": 294,
+          "to": 7
+        }
+      ]
+    },
+    {
+      "id": 1390,
+      "name": "wish",
+      "links": [
+        {
+          "rel": 294,
+          "to": 7
+        }
+      ]
+    },
+    {
+      "id": 1391,
+      "name": "choice",
+      "links": [
+        {
+          "rel": 294,
+          "to": 7
+        }
+      ]
+    },
+    {
+      "id": 1392,
+      "name": "chance",
+      "links": [
+        {
+          "rel": 294,
+          "to": 7
+        }
+      ]
+    },
+    {
+      "id": 1393,
+      "name": "luck",
+      "links": [
+        {
+          "rel": 294,
+          "to": 7
+        }
+      ]
+    },
+    {
+      "id": 1394,
+      "name": "fate",
+      "links": [
+        {
+          "rel": 294,
+          "to": 7
+        }
+      ]
+    },
+    {
+      "id": 1395,
+      "name": "shadow",
+      "links": [
+        {
+          "rel": 294,
+          "to": 6
+        }
+      ]
+    },
+    {
+      "id": 1396,
+      "name": "world",
+      "links": [
+        {
+          "rel": 294,
+          "to": 6
+        }
+      ]
+    },
+    {
+      "id": 1491,
+      "name": "monday",
+      "links": [
+        {
+          "rel": 294,
+          "to": 215
+        },
+        {
+          "rel": 249,
+          "to": 1492
+        }
+      ]
+    },
+    {
+      "id": 1492,
+      "name": "tuesday",
+      "links": [
+        {
+          "rel": 294,
+          "to": 215
+        },
+        {
+          "rel": 249,
+          "to": 1493
+        }
+      ]
+    },
+    {
+      "id": 1493,
+      "name": "wednesday",
+      "links": [
+        {
+          "rel": 294,
+          "to": 215
+        },
+        {
+          "rel": 249,
+          "to": 1494
+        }
+      ]
+    },
+    {
+      "id": 1494,
+      "name": "thursday",
+      "links": [
+        {
+          "rel": 294,
+          "to": 215
+        },
+        {
+          "rel": 249,
+          "to": 1495
+        }
+      ]
+    },
+    {
+      "id": 1495,
+      "name": "friday",
+      "links": [
+        {
+          "rel": 294,
+          "to": 215
+        },
+        {
+          "rel": 249,
+          "to": 1496
+        }
+      ]
+    },
+    {
+      "id": 1496,
+      "name": "saturday",
+      "links": [
+        {
+          "rel": 294,
+          "to": 215
+        },
+        {
+          "rel": 249,
+          "to": 1497
+        }
+      ]
+    },
+    {
+      "id": 1497,
+      "name": "sunday",
+      "links": [
+        {
+          "rel": 294,
+          "to": 215
+        }
+      ]
+    },
+    {
+      "id": 1498,
+      "name": "january",
+      "links": [
+        {
+          "rel": 294,
+          "to": 218
+        },
+        {
+          "rel": 249,
+          "to": 1499
+        }
+      ]
+    },
+    {
+      "id": 1499,
+      "name": "february",
+      "links": [
+        {
+          "rel": 294,
+          "to": 218
+        },
+        {
+          "rel": 249,
+          "to": 1500
+        }
+      ]
+    },
+    {
+      "id": 1500,
+      "name": "march",
+      "links": [
+        {
+          "rel": 294,
+          "to": 218
+        },
+        {
+          "rel": 249,
+          "to": 1501
+        }
+      ]
+    },
+    {
+      "id": 1501,
+      "name": "april",
+      "links": [
+        {
+          "rel": 294,
+          "to": 218
+        },
+        {
+          "rel": 249,
+          "to": 1502
+        }
+      ]
+    },
+    {
+      "id": 1502,
+      "name": "may",
+      "links": [
+        {
+          "rel": 294,
+          "to": 218
+        },
+        {
+          "rel": 249,
+          "to": 1503
+        }
+      ]
+    },
+    {
+      "id": 1503,
+      "name": "june",
+      "links": [
+        {
+          "rel": 294,
+          "to": 218
+        },
+        {
+          "rel": 249,
+          "to": 1504
+        }
+      ]
+    },
+    {
+      "id": 1504,
+      "name": "july",
+      "links": [
+        {
+          "rel": 294,
+          "to": 218
+        },
+        {
+          "rel": 249,
+          "to": 1505
+        }
+      ]
+    },
+    {
+      "id": 1505,
+      "name": "august",
+      "links": [
+        {
+          "rel": 294,
+          "to": 218
+        },
+        {
+          "rel": 249,
+          "to": 1506
+        }
+      ]
+    },
+    {
+      "id": 1506,
+      "name": "september",
+      "links": [
+        {
+          "rel": 294,
+          "to": 218
+        },
+        {
+          "rel": 249,
+          "to": 1507
+        }
+      ]
+    },
+    {
+      "id": 1507,
+      "name": "october",
+      "links": [
+        {
+          "rel": 294,
+          "to": 218
+        },
+        {
+          "rel": 249,
+          "to": 1508
+        }
+      ]
+    },
+    {
+      "id": 1508,
+      "name": "november",
+      "links": [
+        {
+          "rel": 294,
+          "to": 218
+        },
+        {
+          "rel": 249,
+          "to": 1509
+        }
+      ]
+    },
+    {
+      "id": 1509,
+      "name": "december",
+      "links": [
+        {
+          "rel": 294,
+          "to": 218
+        }
+      ]
+    },
+    {
+      "id": 1511,
+      "name": "movie",
+      "links": [
+        {
+          "rel": 294,
+          "to": 105
+        }
+      ]
+    },
+    {
+      "id": 1512,
+      "name": "film",
+      "links": [
+        {
+          "rel": 294,
+          "to": 105
+        }
+      ]
+    },
+    {
+      "id": 1551,
+      "name": "song",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 1552,
+      "name": "tune",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 1553,
+      "name": "drum",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 1554,
+      "name": "guitar",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 1555,
+      "name": "piano",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 1556,
+      "name": "violin",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 1557,
+      "name": "flute",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 1558,
+      "name": "trumpet",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2537,
+      "name": "accordion",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2538,
+      "name": "bagpipes",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2539,
+      "name": "banjo",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2540,
+      "name": "bassoon",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2541,
+      "name": "cello",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2542,
+      "name": "clarinet",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2543,
+      "name": "cymbal",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2544,
+      "name": "harmonica",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2545,
+      "name": "harp",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2546,
+      "name": "oboe",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2547,
+      "name": "organ",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2548,
+      "name": "saxophone",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2549,
+      "name": "sitar",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2550,
+      "name": "tambourine",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2551,
+      "name": "trombone",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2552,
+      "name": "tuba",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2553,
+      "name": "ukulele",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2554,
+      "name": "xylophone",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2555,
+      "name": "cornet",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2556,
+      "name": "fife",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2557,
+      "name": "kazoo",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2558,
+      "name": "lyre",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2559,
+      "name": "mandolin",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2560,
+      "name": "maraca",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2561,
+      "name": "ocarina",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2562,
+      "name": "piccolo",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2563,
+      "name": "recorder",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2564,
+      "name": "timpani",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2565,
+      "name": "vibraphone",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2566,
+      "name": "zither",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2567,
+      "name": "dulcimer",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2568,
+      "name": "didgeridoo",
+      "links": [
+        {
+          "rel": 294,
+          "to": 110
+        }
+      ]
+    },
+    {
+      "id": 2602,
+      "name": "nebula",
+      "links": [
+        {
+          "rel": 294,
+          "to": 40
+        }
+      ]
+    },
+    {
+      "id": 2603,
+      "name": "nova",
+      "links": [
+        {
+          "rel": 294,
+          "to": 40
+        }
+      ]
+    },
+    {
+      "id": 2604,
+      "name": "constellation",
+      "links": [
+        {
+          "rel": 294,
+          "to": 40
+        }
+      ]
+    },
+    {
+      "id": 2605,
+      "name": "zodiac",
+      "links": [
+        {
+          "rel": 294,
+          "to": 40
+        }
+      ]
+    },
+    {
+      "id": 2785,
+      "name": "home",
+      "links": [
+        {
+          "rel": 294,
+          "to": 11
+        }
+      ]
+    },
+    {
+      "id": 2786,
+      "name": "area",
+      "links": [
+        {
+          "rel": 294,
+          "to": 11
+        }
+      ]
+    },
+    {
+      "id": 2790,
+      "name": "community",
+      "links": [
+        {
+          "rel": 294,
+          "to": 293
+        }
+      ]
+    },
+    {
+      "id": 2791,
+      "name": "team",
+      "links": [
+        {
+          "rel": 294,
+          "to": 293
+        }
+      ]
+    },
+    {
+      "id": 2797,
+      "name": "history",
+      "links": [
+        {
+          "rel": 294,
+          "to": 107
+        }
+      ]
+    },
+    {
+      "id": 2814,
+      "name": "government",
+      "links": [
+        {
+          "rel": 294,
+          "to": 293
+        }
+      ]
+    },
+    {
+      "id": 2837,
+      "name": "knowledge",
+      "links": [
+        {
+          "rel": 294,
+          "to": 2
+        }
+      ]
+    },
+    {
+      "id": 2839,
+      "name": "information",
+      "links": [
+        {
+          "rel": 294,
+          "to": 2
+        }
+      ]
+    },
+    {
+      "id": 2840,
+      "name": "problem",
+      "links": [
+        {
+          "rel": 294,
+          "to": 2
+        }
+      ]
+    },
+    {
+      "id": 2841,
+      "name": "solution",
+      "links": [
+        {
+          "rel": 294,
+          "to": 2
+        }
+      ]
+    },
+    {
+      "id": 2843,
+      "name": "culture",
+      "links": [
+        {
+          "rel": 294,
+          "to": 2
+        }
+      ]
+    },
+    {
+      "id": 2844,
+      "name": "cry",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2845,
+      "name": "feel",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2846,
+      "name": "forget",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2847,
+      "name": "help",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2848,
+      "name": "learn",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2849,
+      "name": "need",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2850,
+      "name": "play",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2851,
+      "name": "remember",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2852,
+      "name": "sing",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2853,
+      "name": "sit",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2854,
+      "name": "stand",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2855,
+      "name": "teach",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2856,
+      "name": "try",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2857,
+      "name": "want",
+      "links": [
+        {
+          "rel": 294,
+          "to": 5
+        }
+      ]
+    },
+    {
+      "id": 2891,
+      "name": "more-life",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 225
+        }
+      ]
+    },
+    {
+      "id": 2892,
+      "name": "more-sleep",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 227
+        }
+      ]
+    },
+    {
+      "id": 2893,
+      "name": "more-health",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 228
+        }
+      ]
+    },
+    {
+      "id": 2894,
+      "name": "more-feeling",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 229
+        }
+      ]
+    },
+    {
+      "id": 2895,
+      "name": "more-know",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 285
+        }
+      ]
+    },
+    {
+      "id": 2896,
+      "name": "more-cleanliness",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2721
+        }
+      ]
+    },
+    {
+      "id": 2917,
+      "name": "more-fresh",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2746
+        }
+      ]
+    },
+    {
+      "id": 2921,
+      "name": "more-free",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2750
+        }
+      ]
+    },
+    {
+      "id": 2922,
+      "name": "more-busy",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2751
+        }
+      ]
+    },
+    {
+      "id": 2923,
+      "name": "more-full",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2752
+        }
+      ]
+    },
+    {
+      "id": 2924,
+      "name": "more-empty",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2753
+        }
+      ]
+    },
+    {
+      "id": 2925,
+      "name": "more-dirty",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2754
+        }
+      ]
+    },
+    {
+      "id": 2926,
+      "name": "more-sure",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2755
+        }
+      ]
+    },
+    {
+      "id": 2927,
+      "name": "more-certain",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2756
+        }
+      ]
+    },
+    {
+      "id": 2928,
+      "name": "more-hungry",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2757
+        }
+      ]
+    },
+    {
+      "id": 2929,
+      "name": "more-thirsty",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2758
+        }
+      ]
+    },
+    {
+      "id": 2930,
+      "name": "more-tired",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2759
+        }
+      ]
+    },
+    {
+      "id": 2931,
+      "name": "more-sick",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2760
+        }
+      ]
+    },
+    {
+      "id": 2932,
+      "name": "more-ill",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2761
+        }
+      ]
+    },
+    {
+      "id": 2933,
+      "name": "more-clear",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2780
+        }
+      ]
+    },
+    {
+      "id": 2934,
+      "name": "more-ready",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2782
+        }
+      ]
+    },
+    {
+      "id": 2935,
+      "name": "more-alone",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2784
+        }
+      ]
+    },
+    {
+      "id": 2936,
+      "name": "more-flu",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2816
+        }
+      ]
+    },
+    {
+      "id": 2945,
+      "name": "sibling",
+      "symmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2828,
+          "to": 2983
+        }
+      ]
+    },
+    {
+      "id": 2947,
+      "name": "father-of-father",
+      "links": [
+        {
+          "rel": 2944,
+          "to": 2946
+        },
+        {
+          "rel": 2942,
+          "to": 503
+        },
+        {
+          "rel": 2943,
+          "to": 503
+        }
+      ]
+    },
+    {
+      "id": 2948,
+      "name": "father-of-sibling",
+      "links": [
+        {
+          "rel": 2944,
+          "to": 503
+        },
+        {
+          "rel": 2942,
+          "to": 503
+        },
+        {
+          "rel": 2943,
+          "to": 2945
+        }
+      ]
+    },
+    {
+      "id": 2949,
+      "name": "north",
+      "transitive": true,
+      "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 585
+        },
+        {
+          "rel": 2828,
+          "to": 585
+        }
+      ]
+    },
+    {
+      "id": 2950,
+      "name": "south",
+      "transitive": true,
+      "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 585
+        },
+        {
+          "rel": 590,
+          "to": 2949
+        },
+        {
+          "rel": 2828,
+          "to": 585
+        }
+      ]
+    },
+    {
+      "id": 2951,
+      "name": "east",
+      "transitive": true,
+      "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 585
+        },
+        {
+          "rel": 2828,
+          "to": 585
+        }
+      ]
+    },
+    {
+      "id": 2952,
+      "name": "west",
+      "transitive": true,
+      "asymmetric": true,
+      "links": [
+        {
+          "rel": 294,
+          "to": 585
+        },
+        {
+          "rel": 590,
+          "to": 2951
+        },
+        {
+          "rel": 2828,
+          "to": 585
+        }
+      ]
+    },
+    {
+      "id": 2953,
+      "name": "2949-then-2951",
+      "links": [
+        {
+          "rel": 2944,
+          "to": 2949
+        },
+        {
+          "rel": 2942,
+          "to": 2949
+        },
+        {
+          "rel": 2943,
+          "to": 2951
+        }
+      ]
+    },
+    {
+      "id": 2954,
+      "name": "2949-then-2952",
+      "links": [
+        {
+          "rel": 2944,
+          "to": 2949
+        },
+        {
+          "rel": 2942,
+          "to": 2949
+        },
+        {
+          "rel": 2943,
+          "to": 2952
+        }
+      ]
+    },
+    {
+      "id": 2955,
+      "name": "2950-then-2951",
+      "links": [
+        {
+          "rel": 2944,
+          "to": 2950
+        },
+        {
+          "rel": 2942,
+          "to": 2950
+        },
+        {
+          "rel": 2943,
+          "to": 2951
+        }
+      ]
+    },
+    {
+      "id": 2956,
+      "name": "2950-then-2952",
+      "links": [
+        {
+          "rel": 2944,
+          "to": 2950
+        },
+        {
+          "rel": 2942,
+          "to": 2950
+        },
+        {
+          "rel": 2943,
+          "to": 2952
+        }
+      ]
+    },
+    {
+      "id": 2957,
+      "name": "2951-then-2949",
+      "links": [
+        {
+          "rel": 2944,
+          "to": 2951
+        },
+        {
+          "rel": 2942,
+          "to": 2951
+        },
+        {
+          "rel": 2943,
+          "to": 2949
+        }
+      ]
+    },
+    {
+      "id": 2958,
+      "name": "2951-then-2950",
+      "links": [
+        {
+          "rel": 2944,
+          "to": 2951
+        },
+        {
+          "rel": 2942,
+          "to": 2951
+        },
+        {
+          "rel": 2943,
+          "to": 2950
+        }
+      ]
+    },
+    {
+      "id": 2959,
+      "name": "2952-then-2949",
+      "links": [
+        {
+          "rel": 2944,
+          "to": 2952
+        },
+        {
+          "rel": 2942,
+          "to": 2952
+        },
+        {
+          "rel": 2943,
+          "to": 2949
+        }
+      ]
+    },
+    {
+      "id": 2960,
+      "name": "2952-then-2950",
+      "links": [
+        {
+          "rel": 2944,
+          "to": 2952
+        },
+        {
+          "rel": 2942,
+          "to": 2952
+        },
+        {
+          "rel": 2943,
+          "to": 2950
+        }
+      ]
+    },
+    {
+      "id": 2993,
+      "name": "along-size",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 183
+        }
+      ]
+    },
+    {
+      "id": 2994,
+      "name": "along-weight",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 184
+        }
+      ]
+    },
+    {
+      "id": 2995,
+      "name": "along-temperature",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 186
+        }
+      ]
+    },
+    {
+      "id": 2997,
+      "name": "along-age",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 214
+        }
+      ]
+    },
+    {
+      "id": 2998,
+      "name": "along-speed",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 324
+        }
+      ]
+    },
+    {
+      "id": 2999,
+      "name": "along-height",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2970
+        }
+      ]
+    },
+    {
+      "id": 3000,
+      "name": "along-length",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2971
+        }
+      ]
+    },
+    {
+      "id": 3001,
+      "name": "along-width",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2984
+        }
+      ]
+    },
+    {
+      "id": 3002,
+      "name": "along-depth",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2985
+        }
+      ]
+    },
+    {
+      "id": 3003,
+      "name": "along-thickness",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2986
+        }
+      ]
+    },
+    {
+      "id": 3004,
+      "name": "along-brightness",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2988
+        }
+      ]
+    },
+    {
+      "id": 3005,
+      "name": "along-loudness",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2989
+        }
+      ]
+    },
+    {
+      "id": 3006,
+      "name": "along-strength",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2990
+        }
+      ]
+    },
+    {
+      "id": 3007,
+      "name": "along-wetness",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2875,
+          "to": 2991
+        }
+      ]
+    },
+    {
+      "id": 3008,
+      "name": "knowing",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2867,
+          "to": 29
+        }
+      ]
+    },
+    {
+      "id": 3010,
+      "name": "left-of",
+      "links": [
+        {
+          "rel": 294,
+          "to": 249
+        },
+        {
+          "rel": 590,
+          "to": 3011
+        }
+      ]
+    },
+    {
+      "id": 3011,
+      "name": "right-of",
+      "links": [
+        {
+          "rel": 294,
+          "to": 249
+        }
+      ]
+    },
+    {
+      "id": 3030,
+      "name": "couple",
+      "links": [
+        {
+          "rel": 294,
+          "to": 293
+        }
+      ]
+    },
+    {
+      "id": 3039,
+      "name": "at",
+      "links": [
+        {
+          "rel": 294,
+          "to": 585
+        },
+        {
+          "rel": 2828,
+          "to": 585
+        }
+      ]
+    }
+  ]
+}

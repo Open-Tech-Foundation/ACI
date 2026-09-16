@@ -6,6 +6,19 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
+- **The world is generic, and what fills it is knowledge.** `data/world.json`
+  held 3040 terms: the ladder the engine reads — thing, place, action, property,
+  the relations, the anchors — and, beside it, 2699 particulars of one
+  world: thirty-four cities, a hundred and fourteen birds, a hundred and
+  fourteen tools. Nothing in the engine ever names paris. The world now holds
+  the 414 terms that give a world its shape, and the rest are knowledge packs
+  under `knowledge/`, one to a domain — geography, birds, animals, plants,
+  food, people, tools, buildings, clothing, vehicles, games, materials, doings,
+  states, language, time. Every pack merges at startup, so a brain that loads
+  them all knows exactly what it knew before; one built for a single purpose
+  takes what it needs. The mechanism was already there and held eleven terms.
+
+
 - **Which doing is the latest is the timeline's to say.** The readings that ask
   what a thing is now, and what a state came of, took the latest doing to be
   the last one mentioned — the order a conversation happens to say things in,

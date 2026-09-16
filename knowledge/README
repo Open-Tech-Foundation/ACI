@@ -3,3 +3,12 @@
 # Every .json file here is world-shaped — { terms, relations, anchors } — and is
 # merged into data/world.json at startup. A file may add terms and may add links
 # to terms the world already has; it may not redefine one.
+#
+# The world under data/ is generic: the ladder every world must have for the
+# primitives to bite — thing, place, action, property — the relations, and the
+# anchors that name them. It holds no particular thing.
+#
+# What a particular world contains lives here, one file to a domain: the cities
+# and rivers in geography, the sparrows in birds, the hammers in tools. A brain
+# built for one purpose takes the packs it needs and leaves the rest, and none
+# of them is required — the engine reads the ladder, never a leaf.

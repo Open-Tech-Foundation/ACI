@@ -1,3 +1,4 @@
+import { worldData } from './world.js';
 import { test, assert, assertEquals } from "runtime:test";
 import { file } from "runtime:fs";
 import { brainFrom } from "./brain.js";
@@ -8,7 +9,7 @@ import { fromSources } from "./knowledge.js";
 const { brain, forget } = openBrain("sqlite::memory:");
 
 async function sourcesWithoutHeldForce() {
-  const world = await file(new URL("../data/world.json", import.meta.url).pathname).json();
+  const world = await worldData();
   const english = await file(new URL("../languages/en.json", import.meta.url).pathname).json();
   const universe = world.terms.find((term) => term.id === world.anchors.universe);
   const force = world.terms.find((term) =>

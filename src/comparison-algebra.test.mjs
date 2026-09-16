@@ -1,10 +1,10 @@
 import { test, assertEquals } from "runtime:test";
 import { fromSources } from "./knowledge.js";
 
-// The authored world, read the way the brain reads it.
-const { file } = await import("runtime:fs");
-const authored = await file(new URL("../data/world.json", import.meta.url).pathname).json();
-const { world } = fromSources({ world: authored });
+// The world as the brain assembles it: the generic world and every pack of
+// knowledge it has been given.
+import { worldData } from "./world.js";
+const { world } = fromSources({ world: await worldData() });
 
 const comparisons = () => {
   const compares = world.anchors.compares;

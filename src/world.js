@@ -1110,6 +1110,52 @@ export async function loadWorldFile(path) {
   return fromWorldData(await file(path).json());
 }
 
+// The whole world as the runtime assembles it: the generic world every brain
+// shares, and the knowledge one has been given, merged. The generic world is
+// the shape a world must have for the primitives to bite — the ladder, the
+// relations, the anchors — and a pack is one world's particulars. Nothing here
+// decides which packs there are; whoever builds a brain says so.
+export async function worldData(from = null) {
+  const { file, readDir } = await import('runtime:fs');
+  let root = from;
+  if (root == null) {
+    for (const up of ['../', '../../', './']) {
+      const here = new URL(up, import.meta.url).pathname;
+      try {
+        if (await file(`${here}data/world.json`).exists()) { root = here; break; }
+      } catch {
+        // not readable from here; try the next
+      }
+    }
+  }
+  if (root == null) throw new Error('cannot find data/world.json — there is no world');
+  const world = await file(`${root}data/world.json`).json();
+  const terms = [...world.terms];
+  let names = [];
+  try {
+    names = (await readDir(`${root}knowledge`))
+      .filter((one) => one.isFile && one.name.endsWith('.json'))
+      .map((one) => one.name)
+      .sort();
+  } catch {
+    names = [];
+  }
+  for (const name of names) {
+    const pack = await file(`${root}knowledge/${name}`).json();
+    for (const term of pack.terms || []) {
+      const held = terms.find((one) => one.id === term.id);
+      if (held) held.links = [...(held.links || []), ...(term.links || [])];
+      else terms.push({ ...term });
+    }
+  }
+  return { ...world, terms };
+}
+
+// The same, as a world ready to be walked.
+export async function loadWorld(from = null) {
+  return fromWorldData(await worldData(from));
+}
+
 // A world and what a conversation has been told, as one world. Nothing is
 // written: what comes back is the world plus the change, and the world handed
 // in is untouched — two sessions grow the same authored world their own way.

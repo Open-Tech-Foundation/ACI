@@ -1,0 +1,934 @@
+{
+  "terms": [
+    {
+      "id": 50,
+      "name": "house",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 51,
+      "name": "school",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 52,
+      "name": "temple",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 53,
+      "name": "shop",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 465,
+      "name": "hospital",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 466,
+      "name": "bridge",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 467,
+      "name": "tower",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 468,
+      "name": "market",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 910,
+      "name": "church",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 911,
+      "name": "mosque",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 912,
+      "name": "castle",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 913,
+      "name": "palace",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 914,
+      "name": "factory",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 915,
+      "name": "museum",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 916,
+      "name": "library",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 917,
+      "name": "theatre",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 918,
+      "name": "cinema",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 919,
+      "name": "hotel",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 920,
+      "name": "restaurant",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 921,
+      "name": "prison",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 922,
+      "name": "barn",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 923,
+      "name": "shed",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 924,
+      "name": "garage",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 925,
+      "name": "warehouse",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 926,
+      "name": "stadium",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 927,
+      "name": "office",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 928,
+      "name": "bank",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 929,
+      "name": "station",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 930,
+      "name": "airport",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 931,
+      "name": "lighthouse",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 932,
+      "name": "cottage",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 933,
+      "name": "cabin",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 934,
+      "name": "hut",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 935,
+      "name": "mansion",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 936,
+      "name": "monastery",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 937,
+      "name": "cathedral",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 1313,
+      "name": "flat",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 1314,
+      "name": "apartment",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 1316,
+      "name": "hall",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 1317,
+      "name": "kitchen",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 1318,
+      "name": "bathroom",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 1319,
+      "name": "bedroom",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 1320,
+      "name": "cellar",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 1321,
+      "name": "attic",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 1322,
+      "name": "balcony",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 1323,
+      "name": "porch",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 1526,
+      "name": "nursery",
+      "links": [
+        {
+          "rel": 294,
+          "to": 39
+        }
+      ]
+    },
+    {
+      "id": 1527,
+      "name": "study",
+      "links": [
+        {
+          "rel": 294,
+          "to": 39
+        }
+      ]
+    },
+    {
+      "id": 1528,
+      "name": "pantry",
+      "links": [
+        {
+          "rel": 294,
+          "to": 39
+        }
+      ]
+    },
+    {
+      "id": 2231,
+      "name": "abbey",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2232,
+      "name": "arcade",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2233,
+      "name": "bakery",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2234,
+      "name": "boutique",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2235,
+      "name": "bungalow",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2236,
+      "name": "casino",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2237,
+      "name": "chalet",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2238,
+      "name": "chapel",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2239,
+      "name": "dormitory",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2240,
+      "name": "forge",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2241,
+      "name": "gazebo",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2242,
+      "name": "greenhouse",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2243,
+      "name": "hangar",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2244,
+      "name": "inn",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2245,
+      "name": "kiosk",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2246,
+      "name": "lodge",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2247,
+      "name": "mill",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2248,
+      "name": "observatory",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2249,
+      "name": "pagoda",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2250,
+      "name": "pavilion",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2251,
+      "name": "pharmacy",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2252,
+      "name": "pier",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2253,
+      "name": "sauna",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2254,
+      "name": "silo",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2255,
+      "name": "stable",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2256,
+      "name": "synagogue",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2257,
+      "name": "tavern",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2258,
+      "name": "terminal",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2259,
+      "name": "villa",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2260,
+      "name": "windmill",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2261,
+      "name": "arena",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2262,
+      "name": "belfry",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2263,
+      "name": "cloister",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2264,
+      "name": "conservatory",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2265,
+      "name": "crematorium",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2266,
+      "name": "depot",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2267,
+      "name": "dispensary",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2268,
+      "name": "granary",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2269,
+      "name": "hospice",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2270,
+      "name": "manse",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2271,
+      "name": "outhouse",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2272,
+      "name": "rectory",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2273,
+      "name": "tollbooth",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    },
+    {
+      "id": 2274,
+      "name": "vicarage",
+      "links": [
+        {
+          "rel": 294,
+          "to": 15
+        }
+      ]
+    }
+  ]
+}

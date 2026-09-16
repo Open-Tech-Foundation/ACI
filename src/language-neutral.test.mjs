@@ -2,9 +2,10 @@ import { test, assertEquals } from 'runtime:test';
 import { file } from 'runtime:fs';
 import { brainFrom } from './brain.js';
 import { fromSources } from './knowledge.js';
+import { worldData } from './world.js';
 
 const load = async () => ({
-  world: await file(new URL('../data/world.json', import.meta.url).pathname).json(),
+  world: await worldData(),
   english: await file(new URL('../languages/en.json', import.meta.url).pathname).json(),
 });
 
