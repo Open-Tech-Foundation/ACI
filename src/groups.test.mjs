@@ -72,3 +72,17 @@ test("what a doing moved is drawn from what the doer had", async () => {
   const graph = await fresh("sam has 5 books", "sam gives 2 books to jerry");
   assert(/g2  book  type: book\[\d+\]  of g1  × 2/.test(graph), graph);
 });
+
+test("every end of a doing that was counted names a group", async () => {
+  const graph = await fresh("sam bought 3 apples from 2 shops");
+  assert(/g1  apple  type: apple\[\d+\]\s+× 3/.test(graph), graph);
+  assert(/g2  shop  type: shop\[\d+\]\s+× 2/.test(graph), graph);
+  assert(/transfer\(n1, from: g2, to: —\)\s+\{time: done, thing: g1\}/.test(graph), graph);
+  assert(!/count:/.test(graph), `no number is said twice:\n${graph}`);
+});
+
+test("the smaller group is drawn from the bigger, whichever was said first", async () => {
+  const graph = await fresh("john has 5 apples and he put three apples into a basket");
+  assert(/g1  apple  type: apple\[\d+\]  of g2  × 3/.test(graph), `three out of five:\n${graph}`);
+  assert(/g2  apple  type: apple\[\d+\]\s+× 5/.test(graph), graph);
+});

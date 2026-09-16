@@ -207,6 +207,26 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
     }
   }
 
+  // A part of a doing may be counted too, and is several of a kind the same
+  // way. `bought 3 apples from 2 shops` counts both its ends, and a doing that
+  // said only one of them would drop the other's number on the floor.
+  for (const event of events) {
+    for (const part of event.state.parts || []) {
+      if (part.amount == null || part.of == null) continue;
+      // A part names a kind where the signal singled out none of them, so the
+      // kind itself is what several of them are several of.
+      const made = calls.find((call) => call.state.id === part.of);
+      const of = made && made.state.of != null ? made.state.of : part.of;
+      // Where the signal already counted these — a giving counts what it gives
+      // once — there is nothing to count again.
+      const already = [...counting.values()].some(
+        (one) => one.of === of && one.count === part.amount,
+      );
+      if (part.amount < 2 || counting.has(part.of) || already) continue;
+      counting.set(part.of, { of, count: part.amount });
+    }
+  }
+
   // A thing spoken of in particular is a thing, whether or not the world holds
   // one. `the sky is blue` speaks of the sky, and the next signal may point
   // back at it, so it is a node and not merely a concept two facts joined.
@@ -302,7 +322,9 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
     // decides who it is talking to; but somebody said this, and what they said
     // is theirs, so they stand in the conversation like anything else spoken
     // of. Without this `i have a car` had the car belong to the kind `person`.
-    if (!call && !(world && world.isIndividual(id)) && !particular.has(id) && id !== from) continue;
+    // Several of a kind are something this conversation brought in, whether or
+    // not any one of them was singled out: three apples are three apples.
+    if (!call && !counting.has(id) && !(world && world.isIndividual(id)) && !particular.has(id) && id !== from) continue;
     // A kind of event is not a thing beside the other things. It is something
     // that happened, and it stands among what happened.
     if (isHappening(id)) continue;
@@ -348,6 +370,7 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
         // is drawn from nobody — mira's one kettle is not one of dev's three,
         // however alike they are.
         ...(() => {
+          if (several) return {};
           if (!call || !call.state.made || call.state.of == null) return {};
           // Said outright that somebody holds them. A holding that follows
           // from a doing is another matter: what was given came out of what
@@ -383,6 +406,21 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
         ? qualities.get(call.state.of)
         : null;
     if (beside) besides.push([id, Object.values(beside)]);
+  }
+
+  // Which group a smaller one came out of, settled once they are all in rather
+  // than as each arrives: three apples come out of five, never five out of
+  // three, and the order they were said in says nothing about which. A group
+  // is drawn from the smallest one of its kind that is bigger than it.
+  for (const one of held.groups) {
+    if (one.from != null) continue;
+    let bigger = null;
+    for (const other of held.groups) {
+      if (other === one || other.count <= one.count) continue;
+      if (known(other, world) !== known(one, world)) continue;
+      if (bigger == null || other.count < bigger.count) bigger = other;
+    }
+    if (bigger) one.from = bigger.id;
   }
 
   // A claim put as a condition is not a claim made. What an instruction is
@@ -1141,13 +1179,14 @@ function transferring(roles, properties, world) {
   // the kind and a number said over again. The group carries how many, so the
   // doing says which group and stops there.
   const group =
-    properties.count == null
+    held.groups.find((one) => one.id === moved) ??
+    (properties.count == null
       ? null
       : held.groups.find(
           (one) =>
             one.count === properties.count &&
             (one.term === moved || one.made === moved || one.of === moved),
-        );
+        ));
   const { count, ...rest } = properties;
   return {
     parts: { doer: at(anchors.agent), from: at(anchors.source), to: at(anchors.destination) },

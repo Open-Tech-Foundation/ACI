@@ -142,11 +142,17 @@ test("two clauses in one signal build one graph", async () => {
   assertEquals(held.nodes.map((one) => one.said.split('#')[0]), ['john', 'basket']);
   // A basket was said of in particular, so it is a thing; apples were a
   // quantity of a kind, so they are a group.
-  assertEquals(held.groups.map((one) => one.said.split('#')[0]), ['apple']);
+  // Five apples he holds, and three of them put in the basket — two groups of
+  // one kind, the smaller drawn out of the bigger.
+  assertEquals(held.groups.map((one) => one.said.split('#')[0]), ['apple', 'apple']);
+  assertEquals(held.groups.map((one) => one.count), [3, 5]);
+  assertEquals(held.groups[0].from, held.groups[1].id);
   assertEquals(held.nodes[1].of, 307);
   assertEquals(held.facts.length, 1);
   assertEquals(held.actions.length, 1);
-  assertEquals(held.actions[0].properties.count, 3);
+  // The group says how many; the doing names it and counts nothing.
+  assertEquals(held.actions[0].properties.thing, held.groups[0].id);
+  assertEquals(held.actions[0].properties.count, undefined);
 });
 
 test("a thing an earlier signal brought in is the same thing later", async () => {

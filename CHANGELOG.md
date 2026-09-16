@@ -6,6 +6,21 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
+- **Every end of a doing that was counted names a group.** `sam bought 3 apples
+  from 2 shops` held neither count where it belonged: the apples were a kind
+  with a number beside them — the shape holding had just shed — and the two
+  shops lost their number entirely, since only what moved was ever counted. A
+  part of a doing is several of a kind the same way anything else is, so both
+  ends are groups now and the doing names them: `transfer(n1, from: g2, to: —)
+  {thing: g1}`, with no number said twice.
+
+- **The smaller group is drawn from the bigger, whichever was said first.**
+  Which group another came out of was settled as each arrived, so `john has 5
+  apples and he put three apples into a basket` drew the five out of the three
+  — the three having been reached first. Three apples come out of five and
+  never five out of three; it is settled once they are all in, and the order
+  they were said in says nothing about it.
+
 - **What somebody holds is the group, said once.** `holding(n1, book[18])
   {count: 5}` named the kind and counted it beside a group that already said
   both. It is `holding(n1, g1)` now, and the group carries how many. A group
