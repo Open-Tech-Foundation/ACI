@@ -3167,8 +3167,26 @@ function together(joined, world, mood, sent) {
       // whatever the conversation put somewhere the world never heard of —
       // a thing it made of a kind, and everything since said about that one.
       const inTalk = graph ? graph.told(holder, rel, object) : null;
-      const ordered = placedAgainst(holder, object, rel, world);
-      const holds = banded === true || inTalk === 'held' ? true : nearestDenies
+      // Asked of the past, what is being asked after is what stood then, and
+      // the earlier facts are still on the record. `was the coffee hot` is a
+      // question about the coffee that was, and answering it from the coffee
+      // that is answers something nobody asked.
+      const before =
+        graph != null && a.past != null && whenIn(said, world) === a.past
+          ? graph.stood(holder, rel, object)
+          : false;
+      // Where the world holds no ordering between the two, the timeline may.
+      // Told two doings and both their clocks, nobody declared an order and
+      // there is still one — the chain is it.
+      const declared = placedAgainst(holder, object, rel, world);
+      const onChain =
+        declared == null && graph != null && a.order != null && rel != null &&
+        (rel === a.order || world.isA(rel, a.order) || world.subrelationOf(rel, a.order))
+          ? graph.chronoBefore(holder, object)
+          : null;
+      const back = bothWays(rel, world).length > 0 && world.linked(rel, a.converse).length === 0;
+      const ordered = declared ?? (onChain == null ? null : back ? !onChain : onChain);
+      const holds = banded === true || inTalk === 'held' || before ? true : nearestDenies
         ? false
         : counted != null
         ? knownCount === counted
@@ -3223,7 +3241,7 @@ function together(joined, world, mood, sent) {
       const heldNone = heldMany === 0;
       // Read off its quantity and found outside the state's band, the thing is
       // not in it: a room at ten degrees is not hot, and nobody said so.
-      const bandAgainst = banded === false || inTalk === 'against';
+      const bandAgainst = !before && (banded === false || inTalk === 'against');
       const opposed = bandAgainst || ordered === false || functionalAgainst || constrainedAgainst || predicateAgainst || heldApart || (counted != null
         ? knownCount != null && knownCount !== counted
         : heldNone ||
@@ -6456,14 +6474,20 @@ if (far !== undefined) {
   if (hole.role === a.when && found.length === 0) {
     const rows = graph ? graph.graph().actions : [];
     const nodes = graph ? graph.graph().nodes : null;
-    const nodeConcept = (v) => {
-      if (typeof v === 'number') return v;
+    // What a node answers to. A thing spoken of by its kind answers to the
+    // kind; one the conversation named answers to the name it was given, which
+    // is no term of the world and reaches nothing by climbing. Both are asked,
+    // because a question may name either.
+    const nodeConcepts = (v) => {
+      if (typeof v === 'number') return [v];
       if (typeof v === 'string' && nodes) {
         const found = nodes.find((n) => n.id === v);
-        return found ? (found.of ?? found.term) ?? null : null;
+        if (!found) return [];
+        return [...new Set([found.of, found.term].filter((one) => one != null))];
       }
-      return null;
+      return [];
     };
+    const nodeConcept = (v) => nodeConcepts(v)[0] ?? null;
     const mine = rows.filter((r) =>
       known.some((p) => {
         // The doing is the row's: its own entity names it as well as the thing
@@ -6485,9 +6509,11 @@ if (far !== undefined) {
         // of them. Only the parts are asked for — the act every row shares
         // names no row over another.
         for (const v of Object.values(r.roles ?? {})) {
-          const c = nodeConcept(v);
-          if (c == null || actKind(c)) continue;
-          if (hits(c, p.of) || (p.of != null && hits(p.of, c))) return true;
+          for (const c of nodeConcepts(v)) {
+            if (actKind(c)) continue;
+            if (c === p.of) return true;
+            if (hits(c, p.of) || (p.of != null && hits(p.of, c))) return true;
+          }
         }
         return false;
       }),

@@ -6,6 +6,27 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Asked of the past, what stood then answers.** `was the coffee hot?` after
+  the coffee went cold answered `No` — the reading took the latest state and
+  nothing earlier, which is right for `is` and answers a question nobody asked
+  for `was`. The earlier facts are still on the record and are exactly what the
+  question is after, so a past ask reads them. Asked of something that never
+  stood, the brain still says it does not know.
+
+- **A thing the conversation named answers for what it did.** `when did nadia
+  arrive?` said `I don't know` while `when did the train arrive?` answered, and
+  both had been told alike. A node was resolved only to the kind the world
+  holds it under, so a thing spoken of by its kind was found and one given a
+  name was not — a name is no term of the world and reaches nothing by
+  climbing. Both are asked now, because a question may name either.
+
+- **Two clocks order two doings for a yes or no.** `did nadia arrive before
+  omar?` said `I don't know` though the timeline had them in order, because the
+  verdict walked ordering links in the world and the clock never writes any.
+  Where the world holds no ordering between two things, the timeline is asked,
+  and it answers either way round — `did omar arrive after nadia?` reads the
+  same chain through the converse.
+
 - **Why a thing is so answers with the doing it came of.** Asked why, the brain
   looked only for a reason the world held as a claim — so `a road is wet
   because a drum is cold` answered and `a road became wet because a plank fell`

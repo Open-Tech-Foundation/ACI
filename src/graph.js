@@ -1884,6 +1884,20 @@ function lateness() {
   return out;
 }
 
+// Whether a claim ever stood, rather than whether it stands now. State is the
+// latest of it and nothing earlier — that is what makes `is the coffee hot`
+// answer from the last thing said — but asked of the past, the earlier ones are
+// exactly what is being asked after, and they are still on the record.
+function stood(subject, relation, object) {
+  for (const one of held.facts) {
+    if (one.stands !== 'held') continue;
+    if (!same(one.parts[0], subject)) continue;
+    if (!says(one, relation) || !same(one.parts[1], object)) continue;
+    return true;
+  }
+  return false;
+}
+
 // What a claim this conversation holds came of. The row that stands for the
 // claim carries which row brought it about, and that row is the answer — a
 // doing where a doing did it, a claim where a claim did.
@@ -1928,6 +1942,17 @@ function broughtAbout(thing, value) {
     return row.reason;
   }
   return null;
+}
+
+// Whether one thing stands before another on the timeline. The chain is the
+// order — built from what was declared and from what the clock said — so two
+// things told only their clocks are ordered here and nowhere else.
+function chronoBefore(one, other) {
+  const terms = chronoTerms();
+  const at = terms.indexOf(one);
+  const to = terms.indexOf(other);
+  if (at < 0 || to < 0 || at === to) return null;
+  return at < to;
 }
 
 // Which end of the timeline a thing stands at. The chain is the order — it was
@@ -2158,7 +2183,9 @@ function serialize(world = against) {
     chronoChain,
     chronoTerms,
     chronoEnd,
+    chronoBefore,
     reasonOf,
+    stood,
     momentPosition,
     termMoment,
     orderTerms,

@@ -107,3 +107,22 @@ test("a state a thing is in by its quantity answers without anyone saying it", a
   await fresh("the room is 10 degrees");
   assertEquals(await says("is the room hot?"), "No. ❌");
 });
+
+test("asked of the past, what stood then answers", async () => {
+  await fresh("the coffee is hot", "the coffee got cold");
+  assertEquals(await says("was the coffee hot?"), "Yes. ✅ a coffee is hot.");
+  assertEquals(await says("is the coffee hot?"), "No. ❌");
+  assertEquals(await says("was the coffee blue?"), "I don't know.");
+});
+
+test("a thing the conversation named answers when it did something", async () => {
+  await fresh("nadia arrived at nine hours");
+  assertEquals(await says("when did nadia arrive?"), "nine hours");
+});
+
+test("two clocks order two doings for a yes or no, with nobody declaring it", async () => {
+  await fresh("nadia arrived at nine hours", "omar arrived at ten hours");
+  assertEquals(await says("did nadia arrive before omar?"), "Yes. ✅ nadia before omar.");
+  assertEquals(await says("did omar arrive before nadia?"), "No. ❌");
+  assertEquals(await says("did omar arrive after nadia?"), "Yes. ✅ omar after nadia.");
+});
