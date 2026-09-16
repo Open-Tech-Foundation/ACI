@@ -19246,6 +19246,61 @@
       "meaning": "filled",
       "concept": 3114,
       "when": "past"
+    },
+    "kind": {
+      "pos": "noun",
+      "meaning": "kind",
+      "concept": 3115
+    },
+    "kinds": {
+      "pos": "noun",
+      "meaning": "kinds",
+      "concept": 3115,
+      "number": "plural"
+    },
+    "type": {
+      "pos": "noun",
+      "meaning": "type",
+      "concept": 3115
+    },
+    "types": {
+      "pos": "noun",
+      "meaning": "types",
+      "concept": 3115,
+      "number": "plural"
+    },
+    "sort": {
+      "pos": "noun",
+      "meaning": "sort",
+      "concept": 3115
+    },
+    "sorts": {
+      "pos": "noun",
+      "meaning": "sorts",
+      "concept": 3115,
+      "number": "plural"
+    },
+    "novel": {
+      "pos": "noun",
+      "meaning": "novel",
+      "concept": 3116
+    },
+    "novels": {
+      "pos": "noun",
+      "meaning": "novels",
+      "concept": 3116,
+      "number": "plural"
+    },
+    "atlas": {
+      "pos": "noun",
+      "meaning": "atlas",
+      "concept": 3117
+    },
+    "atlases": {
+      "pos": "noun",
+      "meaning": "atlases",
+      "concept": 3117,
+      "number": "plural"
     }
   },
   "unknown": {

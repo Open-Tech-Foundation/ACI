@@ -263,6 +263,14 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **How many kinds a thing holds.** Asked how many kinds a shelf holds, the
+  brain answered `I don't know` while answering how many books it holds without
+  trouble — and the composition showed why: the counting pair came out inverted,
+  `count(shelf, in: kind)`. Kinds are now counted off the same walk that adds
+  the things up, so four novels, three atlases and two lamps are seven books and
+  three kinds, and both answers come from one reading. Told nothing held, there
+  are no kinds to count and the brain says so.
+
 - **A composed answer shows what it was made of.** Asked how many fruits a
   basket holds, the brain added the apples and the mangoes and said thirteen,
   and nothing said which thirteen. A total now carries its parts, and

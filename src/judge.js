@@ -1886,6 +1886,39 @@ function together(joined, world, mood, sent) {
         // Or one end steps down to the other. Which end holds is settled by
         // which end answers, and a walk of the steps answers.
         stepped(w) != null;
+      // Asked how many *kinds* a thing holds, rather than how many things.
+      // The brain counts what it already gathers to add them up: five apples
+      // and eight mangoes are thirteen fruits and two kinds, and the two
+      // answers come off one walk. What the kinds are of is whatever else the
+      // question named, and where it named nothing else, whatever is held.
+      if (a.kind != null && (subject === a.kind || object === a.kind)) {
+        const bearer = one(subject === a.kind ? object : subject);
+        const sorts = [];
+        for (const relation of [named, ...bothWays(named, world)]) {
+          if (relation == null) continue;
+          for (const held of world.linked(bearer, relation)) {
+            const of = world.kinds(held)[0] ?? held;
+            if (!sorts.includes(of)) sorts.push(of);
+          }
+        }
+        if (sorts.length > 0) {
+          const total = world.termFor(sorts.length);
+          return [
+            withBranch(root, [
+              ...root.branch,
+              node('count', total == null ? 'beyond' : 'counted', [], {
+                of: a.kind,
+                held: bearer,
+                members: sorts.length,
+                total,
+                made: sorts.map((sort) => ({ of: sort, value: 1 })),
+                named: true,
+                when: a.now,
+              }),
+            ]),
+          ];
+        }
+      }
       const way = ways.find(counts) ?? ways[0];
       // Asked after a kind it holds none of by name, but several kinds under
       // it, the count is all of those together: a shop of five bats and two

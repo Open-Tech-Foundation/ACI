@@ -78,6 +78,7 @@
     "domain": 2867,
     "range": 2868,
     "subtype": 2869,
+    "kind": 3115,
     "instance": 2870,
     "predication": 2871,
     "compares": 2875,
@@ -4805,6 +4806,16 @@
         {
           "rel": 294,
           "to": 4
+        }
+      ]
+    },
+    {
+      "id": 3115,
+      "name": "kind",
+      "links": [
+        {
+          "rel": 294,
+          "to": 3
         }
       ]
     },
