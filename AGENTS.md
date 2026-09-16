@@ -17,3 +17,21 @@
   * Add end-to-end (E2E) tests when the change affects user-facing or integration behavior.
   * Cover relevant edge cases and error scenarios.
 * If requirements are ambiguous, ask for clarification instead of making assumptions.
+
+## Two ways of looking
+
+The engine is worked through both views, and both are checked on every change.
+
+    tsr graph   -- "a basket has 5 apples" "how many fruits ...?"
+    tsr compose -- "a basket has 5 apples" "how many fruits ...?"
+
+* **The memory graph** says what is held — nodes, groups, facts, actions, rules,
+  the timeline, and the working memory beside them. It shows whether the shape
+  is right.
+* **The composition flow** says what the brain did to answer — the call it made,
+  the holes that call had to fill, the rule each was filled by, and the order
+  they were worked in. It shows whether the derivation is right.
+
+An answer can be right with a wrong composition behind it, and a record can be
+malformed while every answer still reads. Neither view catches both; together
+they catch a fault before some later question exposes it.
