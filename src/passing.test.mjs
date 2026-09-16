@@ -42,3 +42,25 @@ test("a word that says which one is not what the question asks after", async () 
   assertEquals(await says("what colour is the ball?"), "red");
   assertEquals(await says("is the small ball red?"), "Yes. ✅ a ball is red.");
 });
+
+test("the hole says which word narrows and which answers", async () => {
+  // `fruit` narrows here and answers in `what is a wren?`. Nothing about the
+  // word says which; the hole does — asked for a thing, a property tells it
+  // apart and a kind restricts it.
+  await forget();
+  await brain("the apple is red");
+  await brain("the banana is yellow");
+  assertEquals(await says("which fruit is yellow?"), "banana");
+  assertEquals(await says("which fruit is red?"), "apple");
+  assertEquals(await says("what is yellow?"), "banana");
+  assertEquals(await says("what is a wren?"), "bird");
+});
+
+test("a question read whole that finds nothing knows of none", async () => {
+  await forget();
+  await brain("the crow is black");
+  await brain("the swan is white");
+  assertEquals(await says("which bird is white?"), "swan");
+  assertEquals(await says("which animal is black?"), "crow");
+  assertEquals(await says("which bird is yellow?"), "I don't know.");
+});

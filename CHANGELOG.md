@@ -97,6 +97,17 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **The hole says which word narrows and which answers.** `which fruit is
+  yellow?` answered `food, banana, colour, property` — naming what the question
+  asked *by* beside what it asked *for*. No rule about the word itself can tell
+  those apart: `fruit` narrows there and `bird` is the answer to `what is a
+  wren?`. What settles it is the hole. Asked for a thing, a property tells it
+  apart and a kind restricts it — so `which fruit is yellow?` answers `banana`,
+  `which fruit is red?` answers `apple`, and `what is a wren?` still answers
+  `bird`. Read that way the question is read whole, every word either asking or
+  narrowing; read whole and finding nothing, the brain knows of none rather
+  than climbing the ladder for something to say.
+
 - **A word that says which one is not what the question asks after.** `what
   colour is the small ball?` answered `I don't know` while `what colour is the
   ball?` answered `red` — the same ball, one word apart. A quality standing

@@ -2346,6 +2346,37 @@ const holderAsk = said.find(
         ];
       }
     }
+    // Asked for a thing, with a property to know it by and a kind to narrow it
+    // to: `which fruit is yellow?` wants the thing that is yellow and is a
+    // fruit. Which word does which is not said by the word — a kind answers
+    // `what is a wren?` and narrows here — it is said by the hole: asked for a
+    // thing, a property identifies and a kind restricts.
+    if (holderAsk && one == null && graph != null && a.property != null && a.thing != null) {
+      const byProperty = terms
+        .map((t) => conceptOf(t))
+        .filter((of) => of != null && world.isA(of, a.property));
+      const byKind = terms
+        .map((t) => conceptOf(t))
+        .filter((of) => of != null && !world.isA(of, a.property) && world.isA(of, a.thing));
+      if (byProperty.length === 1 && byKind.length >= 1) {
+        const holders = graph.standingIn(byProperty[0], world.baseRelation);
+        const of = holders.filter((held) => byKind.every((kind) => world.isA(held, kind)));
+        // The question was read whole — every word either asked or narrowed —
+        // so what it found is the answer, and finding nothing is knowing of
+        // none. Climbing the ladder instead would answer what the question
+        // asked by, which is not an answer to it.
+        return [
+          withBranch(root, [
+            ...root.branch,
+            of.length > 0
+              ? node('answer', 'link', [], { subject: null, relation: null, found: of })
+              : node('standing', 'absent', [], {
+                  subject: null, relation: null, object: null, negated: false,
+                }),
+          ]),
+        ];
+      }
+    }
     if (holderAsk && one != null && a.property != null && world.isA(one, a.property)) {
       // A predication stands one way in the graph, whether the thing was
       // already there (`the fire is red`) or the signal named it (`sara is
