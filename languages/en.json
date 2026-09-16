@@ -18621,13 +18621,21 @@
       "meaning": "female",
       "concept": 2978
     },
-    "another": {
-      "pos": "pronoun",
-      "meaning": "another",
-      "functions": "member",
-      "person": "third",
-      "number": "singular"
-    },
+    "another": [
+      {
+        "pos": "article",
+        "meaning": "another",
+        "marks": "new",
+        "functions": "determiner"
+      },
+      {
+        "pos": "pronoun",
+        "meaning": "another",
+        "functions": "member",
+        "person": "third",
+        "number": "singular"
+      }
+    ],
     "other": {
       "pos": [
         "pronoun",

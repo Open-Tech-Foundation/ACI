@@ -18,6 +18,18 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **One of a group is a thing drawn out of it.** `a basket has five fruits` and
+  then `one fruit is an apple` was refused as a classification cycle — read as
+  saying fruit is a sort of apple, which the world has the other way round. It
+  cannot mean that, and does mean one of those five is one. A kind claim that
+  runs the wrong way, about a kind this conversation holds several of, now
+  draws a thing out of the group and lands on that: `n2 fruit of g1` with
+  `kind(n2, apple[79])`. `another fruit is a mango` draws a second, and both
+  say which group they came from, so they are singled out of the five and not
+  added to them — the basket still holds five. Told nothing was counted of it,
+  the claim is refused as before.
+
+
 - **Asked what a word names, both are the answer.** Where nothing says which
   cricket is meant, `what is a cricket?` answers `sport, insect` — the brain
   holds both and says both, rather than taking one and leaving out what it

@@ -321,9 +321,13 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
     // Several of a kind, none of them singled out, is a group and not a thing.
     // A thing can be named and can carry what is true of it alone; a group has
     // a count instead, and what is drawn out of it becomes a thing of its own.
+    // One of a kind is a thing, however it was counted. A group is several of
+    // them with none singled out, and one singled out is exactly what a thing
+    // is — so the count has to be more than one before it is a group at all.
+    const several = many && many.count > 1;
     standing.set(
       id,
-      put(many ? 'groups' : 'nodes', {
+      put(several ? 'groups' : 'nodes', {
         said: call ? named(call) : term ? term.name : String(id),
         term: id,
         made: call ? call.state.of ?? null : null,
@@ -337,9 +341,14 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
         // Where a thing was drawn from. One of two dogs is one of *those* two,
         // not a dog standing loose beside them, so the collection it came out
         // of is kept on it.
-        ...(call && call.state.made && call.state.of != null && drawnFrom(call.state.of) != null
-          ? { from: drawnFrom(call.state.of) }
-          : {}),
+        // Where it was drawn from. A thing of a kind this conversation holds
+        // several of is one of those — `another fruit` is one of the five —
+        // so it says which group it came out of and is not counted beside it.
+        ...(() => {
+          const of = call && call.state.made && call.state.of != null ? call.state.of : id;
+          const group = drawnFrom(of);
+          return group == null ? {} : { from: group };
+        })(),
         // How it is, where the signal said so beside it. Counted, the thing
         // this signal made has an identity of its own while the quality was
         // said of the kind standing there — `two red cars` says red of cars —
@@ -439,6 +448,33 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
     // the thing as if it were blue. Where the thing carried that colour from
     // a claim that stood before, the denial takes it off.
 
+    // A kind claim that runs the wrong way, about a kind this conversation
+    // holds several of, is a claim about one of them. `a basket has five
+    // fruits` then `one fruit is an apple` cannot mean that fruit is a sort of
+    // apple — the world has it the other way round — and does mean that one of
+    // those five is. So one is drawn out of the group and the claim is about
+    // that one, which is what a thing is: a member singled out.
+    if (primitive === KIND && !denied && reach(subject) === subject) {
+      const group = drawnFrom(subject);
+      if (group != null && world.isA(object, subject) && object !== subject) {
+        const term = world.term(subject);
+        const drawn = put('nodes', {
+          said: term ? term.name : String(subject),
+          term: subject,
+          made: subject,
+          from: group,
+        });
+        put('facts', {
+          key: triple(drawn, relation, object),
+          of: KIND,
+          said: relation,
+          parts: [drawn, object],
+          properties: {},
+          stands: stands(false),
+        });
+        return;
+      }
+    }
     // What is held is a thing of a kind, not a party to the fact: it is said
     // by the kind the world holds it under, the same way a doing says what
     // moved. Whoever holds it is a party, and that is a node.
@@ -1968,6 +2004,13 @@ function lateness() {
   return out;
 }
 
+// The group this conversation holds several of a kind in, where it holds one.
+function drawnGroup(kind) {
+  if (kind == null) return null;
+  const one = held.groups.find((row) => row.term === kind || row.made === kind);
+  return one ? one.id : null;
+}
+
 // Whether a claim ever stood, rather than whether it stands now. State is the
 // latest of it and nothing earlier — that is what makes `is the coffee hot`
 // answer from the last thing said — but asked of the past, the earlier ones are
@@ -2288,6 +2331,7 @@ function serialize(world = against) {
     chronoEnd,
     chronoBefore,
     reasonOf,
+    drawnGroup,
     metBefore,
     measuring,
     membersOf,

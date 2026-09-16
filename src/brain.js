@@ -8060,7 +8060,23 @@ export function brainFrom(input, knowledge, circumstance) {
   judgedRoots = awoken(judgedRoots, world, mood, at);
   judgedRoots = saidByPointing(judgedRoots, world, mood);
   let learned = learnedFrom(judgedRoots, world);
-  const inconsistent = learningConflict(world, learned);
+  let inconsistent = learningConflict(world, learned);
+  // A kind claim that runs the wrong way, about a kind this conversation holds
+  // several of, is no cycle: it says one of them is of that kind. `a basket has
+  // five fruits` and then `one fruit is an apple` cannot mean fruit is a sort
+  // of apple, and does mean one of those five is one — which the graph writes
+  // as a thing drawn out of the group.
+  if (inconsistent === 'classification cycle' && graph != null) {
+    const drawn = (learned && learned.terms ? learned.terms : []).some((term) =>
+      (term.links || []).some(
+        (link) => graph.drawnGroup(term.id) != null && world.isA(link.to, term.id),
+      ),
+    );
+    if (drawn) {
+      inconsistent = null;
+      learned = null;
+    }
+  }
   if (inconsistent && judgedRoots.length === 1) {
     judgedRoots = [withBranch(judgedRoots[0], [
       ...judgedRoots[0].branch,

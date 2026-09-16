@@ -31,3 +31,23 @@ test("what each of them holds still reads", async () => {
   assertEquals(await says("how many books does sam have?"), "three");
   assertEquals(await says("how many books does jerry have?"), "two");
 });
+
+test("one of a group is a thing drawn out of it, and the group still says how many", async () => {
+  const graph = await fresh(
+    "a basket has five fruits",
+    "one fruit is an apple",
+    "another fruit is a mango",
+  );
+  assert(/g1  fruit  type: fruit\[\d+\]\s+× 5/.test(graph), graph);
+  assert(/n2  fruit  type: fruit\[\d+\]  of g1/.test(graph), `the apple is one of the five:\n${graph}`);
+  assert(/n3  fruit  type: fruit\[\d+\]  of g1/.test(graph), `and so is the mango:\n${graph}`);
+  assert(/f2  kind\(n2, apple\[\d+\]\)/.test(graph), graph);
+  assert(/f3  kind\(n3, mango\[\d+\]\)/.test(graph), graph);
+  // Two were singled out of five, not added to them.
+  assertEquals(await says("how many fruits does the basket have?"), "five");
+});
+
+test("a kind claim about a kind nothing was counted of is still a cycle", async () => {
+  await forget();
+  assertEquals((await brain("a fruit is an apple")).expression.state.says, "No. ❌");
+});
