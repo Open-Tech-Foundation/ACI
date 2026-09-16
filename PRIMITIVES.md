@@ -348,6 +348,48 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
     for it — which change is the latest is read off the chain — and the wording
     is what stops it.
 
+27. **A fraction cannot yet say how many a doing moved.** `what is one-fourth
+    of the apples?` answers 30 — the fraction is read, the group this
+    conversation holds is counted, and the arithmetic is exact. `the shop sold
+    one-fourth of the apples` is not read: the phrase has no shape in the
+    grammar, and given one it reads as a holding, the fraction standing as a
+    thing that holds apples. A numeral in that place works — `the shop sold 30
+    of the apples` is taken in — so what is missing is that a fraction standing
+    where a count stands is a count. The derivation is built and reachable; the
+    phrase that should feed it is not.
+
+28. **How many kinds, said with an `of` phrase.** `how many kinds does the
+    shelf have?` answers three, counted off the same walk that adds up how many
+    things it holds. `how many kinds of book does the shelf have?` does not:
+    the `of` phrase makes `kind` the holder and the counting pair comes out
+    inverted — the `of`-compound gap above, met from a new side. What is
+    missing is the restriction, not the counting.
+
+29. **A rule is fired where it is told, and what follows is written down.**
+    `if a drum is cold then a bell is red` is recorded twice — as `r1` in the
+    graph, and as an instruction in the world this conversation reasons over —
+    and only the second is ever read. Told the drum is cold, the rule fires at
+    once and writes `a bell is red` as a fact, which nobody said. That is the
+    rule kept everywhere else — facts are what was told, actions are what
+    happened, everything else is worked out when asked — and rules are where it
+    is still broken. A conclusion written at telling time also goes stale: deny
+    what it stood on and it stays put.
+
+    Reading the rules off the graph and applying them where a question needs
+    them was built and reverted. It works for the plain readings and for a rule
+    met by one of a kind; two things do not survive the move. A chain walked
+    back for `why` needs each step to name what the step before it stood on,
+    and a rule met by something else — tom, where the rule said a drum — must
+    answer `tom is cold` rather than the rule's own words. Both want a claim
+    about the thing that met the condition, and that claim is reified only when
+    the rule fires. Until there is a way to name a claim nobody wrote down, the
+    eager firing stands.
+
+30. **Why a thing is *not* so.** `why is a drum not cold?` answers `I don't
+    understand` — the why-reading has no shape for a denial. The denial itself
+    is reached and carries what it followed from, so nothing is missing from
+    the record; what is missing is the wording that asks after it.
+
 Following the same triage and noted, not fixed — the newest scan's findings,
 each with its root, and each outside the clean-inference bar:
 
