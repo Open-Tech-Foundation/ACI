@@ -146,38 +146,27 @@ not answer. Two complete readings surviving is a conflict, and the brain says
 so — the same ladder it already uses to choose between languages and between
 word readings.
 
-**3. Two readings both speaking at once.**
-`whose father is arun?` answers `I don't know. arun` — the brain says it does
-not know and then says the answer. Two readings reached the end and both were
-expressed, where two surviving readings are supposed to be a conflict the brain
-says out loud, the same ladder it uses between languages and between word
-readings.
+It cannot be checked from outside, and that was measured rather than guessed.
+Every question in the transcripts was taken and asked which of its words the
+verdict accounted for, and almost all of them came back with leftovers — `is`,
+`many`, `long`, and in several the holder itself. A verdict records the terms a
+reading arrived at, not the words it read: a count says it counted ropes for a
+holder, never that it consumed `have`. **Each reading has to declare what it
+consumed**, and that is the whole of this item.
 
-Traced. The signal is read as two questions at once: one over `father`, which
-finds nothing, and one over `arun` with the barest `is`, which answers who he
-is. The second comes of `whose` being declared in the language as the name
-relation itself, so the hole asks after a name and the thing named answers
-itself — `whose` is not the word `name`, and saying it is, is what puts the
-stray answer there.
+**3. The `whose` phrase.**
+`whose sister is sofia?` asks for the one whose sister she is, and the brain
+says it cannot read it. Reading it wants a possessor hole. Declaring `whose`
+one was tried and backed out — the head it determines loses its concept, so the
+sister stops being a relation at all, where a possessive determiner does not do
+that to `cat` in `my cat`. **What a possessor hole does to its head is what to
+settle first.**
 
-Both were taken out. `whose` asks after somebody, the way `who` does, and no
-longer names the name relation; and a reading that leaves a relation the signal
-named standing unused does not answer from the bare `is` beside it. The brain
-now says it cannot read the phrase, once.
-
-What is still owed is the phrase itself: `whose sister is sofia?` asks for the
-one whose sister she is, and reading it wants a possessor hole. Declaring
-`whose` one was tried and backed out — the head it determines loses its
-concept, so the sister stops being a relation at all. A possessive determiner
-does not do that to `cat` in `my cat`. What a possessor hole does to its head
-is the thing to settle first.
-
-The completeness rule behind all of this was measured rather than guessed:
-every question in the transcripts was checked for words its verdict did not
-account for, and almost all of them came back with leftovers — `is`, `many`,
-`long`, and the holder itself. The verdicts record the terms a reading arrived
-at, not the words it read, so completeness cannot be checked from outside. Each
-reading must say what it consumed, and that is what *Open — 2* is.
+What already went in: `whose` no longer names the name relation, which was
+making the signal two name questions at once, and a reading that leaves a
+relation the signal named standing unused no longer answers from the bare `is`
+beside it. The brain said `I don't know. sofia` — it knew nothing and answered
+anyway — and now says the one thing, once.
 
 **4. Closed-set elimination.**
 Three owners, three pets, one each; told who does not own what, name who owns
@@ -218,8 +207,6 @@ reading selection wants settling before the reader can be.
   became an open`.
 - A doing carrying two counted things keeps one count: `sam bought 3 apples
   from 2 shops` loses the two.
-- A doing on the far end of an ordering happens as itself: `a plank fell after
-  a meeting` records the meeting *falling*.
 - A state change told with a clock does not parse: `the gate became open at ten
   hours`.
 - `why is a drum not cold?` — the why-reading has no shape for a denial.
@@ -243,9 +230,13 @@ reading selection wants settling before the reader can be.
   missing is a kind saying which scales it stands on — a person has a height,
   a meeting has a length of time — which is also what `which is longer?` wants
   when the pair is not named.
-- One doing ordered against another is not read: `the ferry left before the
-  storm`. Two doings each with a clock are ordered; said as one sentence, the
-  ordering has nowhere to go.
+- **A doing ordered against another takes the wrong doing.** `nila arrived
+  after the plank fell` records nila arriving *and the plank arriving*: the far
+  side of the ordering is given the near side's doing and its own is thrown
+  away. `a plank fell after a meeting` records the meeting *falling*, and
+  orders nothing at all. The chrono comes out right in the clause case, so
+  `what happened first?` answers — a record malformed while every answer reads.
+  This is the next one to take.
 - A told cause is not read: `the storm delayed the ferry` comes back
   unknown, though `why` answers where a doing brought a state about.
 
