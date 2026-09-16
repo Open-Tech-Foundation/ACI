@@ -350,3 +350,14 @@ test("a comparison the world puts on no ordering answers nothing", async () => {
   assertEquals((await fresh("is the fence longer than the wall?")).expression.name, "unsure");
   await forget();
 });
+
+test("one word on two scales is placed by what it is said of", async () => {
+  // `long` is length and `long` is time. The wall and the fence stand on one
+  // of them, an hour and a minute on the other, and the two things asked
+  // about are the whole of what says which was meant.
+  assertEquals((await fresh(...WALLED, "is the wall longer than the fence?")).expression.name, "affirm");
+  assertEquals((await fresh("is an hour longer than a minute?")).expression.name, "affirm");
+  assertEquals((await fresh("is a minute longer than an hour?")).expression.name, "deny");
+  assertEquals((await fresh("is a week longer than a day?")).expression.name, "affirm");
+  await forget();
+});

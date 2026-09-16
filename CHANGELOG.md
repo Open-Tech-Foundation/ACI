@@ -97,6 +97,16 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A word on two scales is placed by what it is said of.** `long` is length
+  and `long` is time, and nothing chose between them. It is now carried as
+  both: every scale the state stands on that something compares along is one
+  way of reading the word, and the two things asked about settle which was
+  meant — a wall and a fence stand on length, an hour and a minute on time.
+  Two readings that agree are one answer; two that disagree are no answer, the
+  same as one scale's own readings. Time had no ordering at all, so `is an hour
+  longer than a minute?` could not be asked; the world now compares along it,
+  and a week is longer than a day without anyone saying so.
+
 - **A comparison is read on a scale something compares along.** `is the ladder
   longer than the rope?` answered `No` — and so did `is the rope longer than
   the ladder?`, the two denials standing side by side while the graph held

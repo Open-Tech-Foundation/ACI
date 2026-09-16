@@ -15,7 +15,7 @@ import {
   withBranch, findBranch, toString, quote, functionList, VERDICT,
 } from './node.js';
 import {
-  judge, measured, orderingOf, senseSound, senseVisual, toward,
+  judge, measured, orderingOf, orderingsOf, senseSound, senseVisual, toward,
   claimTermSaid,
   clockSaid,
   doingSaid,
@@ -739,7 +739,8 @@ export function compared(roots, world) {
     // whole of what the signal said. The other reading of the same fact is
     // that comparison's declared converse, which the world supplies and the
     // brain never names.
-    const ordering = orderingOf(state, world);
+    const orderings = orderingsOf(state, world);
+    const ordering = orderings[0] ?? null;
     // A word that says it compares and has no ordering to compare along says
     // nothing the brain can read. It is marked as that — unplaced — and never
     // left to stand as the plain state it was made from, because a later
@@ -758,6 +759,13 @@ export function compared(roots, world) {
       toward: ordering.toward,
       compares: state,
       names: false,
+      // Where the state is read on several scales alike, every one of them is
+      // carried, and what is being compared settles which is meant. A word
+      // cannot know whether a long thing is long in metres or in hours; the
+      // things it is said of already stand on one scale or the other.
+      among: orderings.length > 1
+        ? orderings.map((one) => ({ relation: one.relation, on: one.scale }))
+        : null,
     };
     return withBranch(n, n.branch.map((b) =>
       b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: compares }) : b,

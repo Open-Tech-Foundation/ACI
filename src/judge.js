@@ -272,22 +272,30 @@ function directionOf(relation, world, said) {
 // ordering is the scale's, so hotter and warmer are one ordering read from
 // one end, and cooler the same ordering read from the other. A state the
 // world puts on no scale is its own ordering and nothing else's.
-export function orderingOf(state, world) {
+export function orderingsOf(state, world) {
   const a = world.anchors || {};
-  if (state == null || a.compares == null) return null;
+  if (state == null || a.compares == null) return [];
+  const toward = a.toward == null ? null : world.linked(state, a.toward)[0] ?? null;
   // A state may be measured on more than one scale — a rope is long and so is
-  // a wait — and taking whichever the world happens to list first reads the
-  // rope's length along time. The scale to read a comparison on is one that
-  // carries an ordering: a scale nothing compares along has no further and no
-  // nearer, so nothing is said by standing on it.
+  // a wait — and each scale that carries an ordering is one way of reading the
+  // word. A scale nothing compares along has no further and no nearer, so
+  // nothing is said by standing on it and it is no reading at all. Which of
+  // the rest is meant is settled by what is being compared, not here.
   const scales = a.measure == null ? [] : world.members(state, a.measure);
-  const ordered = scales
-    .map((of) => [of, world.members(of, a.compares)[0] ?? null])
-    .filter(([, along]) => along != null);
-  const [scale, on] = ordered[0] ?? [scales[0] ?? null, null];
-  const relation = on ?? world.members(state, a.compares)[0] ?? null;
-  if (relation == null) return null;
-  return { relation, scale, toward: a.toward == null ? null : world.linked(state, a.toward)[0] ?? null };
+  const found = [];
+  for (const scale of scales) {
+    const along = world.members(scale, a.compares)[0] ?? null;
+    if (along != null) found.push({ relation: along, scale, toward });
+  }
+  if (found.length > 0) return found;
+  // A state the world puts on no ordered scale is its own ordering and
+  // nothing else's.
+  const own = world.members(state, a.compares)[0] ?? null;
+  return own == null ? [] : [{ relation: own, scale: scales[0] ?? null, toward }];
+}
+
+export function orderingOf(state, world) {
+  return orderingsOf(state, world)[0] ?? null;
 }
 
 export function toward(relation, broader, world) {
@@ -3596,9 +3604,28 @@ function calculate(said, at, relation, world) {
       // The things compared, not the words joining them: `a cow is heavier than
       // a goat` names two relations and neither is one of the things.
       const thing = (n) => conceptOf(n) != null && !world.isA(conceptOf(n), a.relation);
+      const leftThing = nearest(said, at, -1, thing);
+      const rightThing = nearest(said, at, 1, thing);
+      // A word read on several scales alike is placed by what it is said of.
+      // `longer` is length and it is time; the wall and the fence stand on one
+      // of those and the meeting and the concert on the other, and the two
+      // things asked about are what says which was meant. Where they stand on
+      // none of them, or on two that disagree, nothing is said.
+      const among = (thoughtOf(said[at]) || {}).among;
+      if (among && among.length > 1) {
+        const placed = among
+          .map((one) => alongScale(leftThing, rightThing, one.relation, world, one.on, said[at]))
+          .filter((one) => one != null);
+        // Two scales that both answer, and answer alike, are one answer; two
+        // that disagree are no answer, the same way one scale's own readings
+        // are. Nothing is placed by counting the readings — only by whether
+        // what they come to is one thing.
+        if (placed.length === 0 || placed.some((one) => one.name !== placed[0].name)) return null;
+        return placed[0];
+      }
       return alongScale(
-        nearest(said, at, -1, thing),
-        nearest(said, at, 1, thing),
+        leftThing,
+        rightThing,
         relation,
         world,
         onOf(said[at]),
