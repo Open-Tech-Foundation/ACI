@@ -126,7 +126,11 @@ test("a doing brings its state about, and the reading applies that too", async (
 
 test("which change is the latest is the timeline's to say", async () => {
   // The order a conversation mentions things in is not the order they
-  // happened. Where the timeline places them, it decides.
+  // happened. Told the cooling first and the heating second, the clock puts
+  // the heating earlier, so the coffee is cold.
+  await fresh("the coffee got cold at ten hours", "the coffee got hot at nine hours");
+  assertEquals(await says("is the coffee cold?"), "Yes. ✅ a coffee is cold.");
+  assertEquals(await says("is the coffee hot?"), "No. ❌");
   await fresh("the tram arrived at ten hours", "the bus arrived at nine hours");
   assertEquals(await says("who arrived first?"), "bus");
 });

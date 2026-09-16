@@ -1620,7 +1620,11 @@ function told(subject, relation, object, here) {
 // where the timeline places neither of two doings does the order they were
 // said in stand for it, there being nothing else to go on.
 function inOrder() {
-  const chain = chronoTerms();
+  // The moments themselves, not what stood at them. Asked who was first, a
+  // moment answers with whoever did it; asked which doing came first, the
+  // doing is what is wanted, and it is what the moment holds.
+  const chain = [];
+  for (const moment of chronoChain()) for (const one of moment.members) chain.push(one);
   const at = (row) => {
     const where = chain.indexOf(row.id);
     return where < 0 ? null : where;
