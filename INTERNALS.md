@@ -97,6 +97,9 @@ Reachable today, with a probe for each:
 - **Every scale alike.** The amount where a thing stands at one, the state
   where it does not. `what size is the ball?` is `small`.
 - **Kinds held.** Counted off the same walk that adds the things up.
+- **A pointer for several.** `they` reaches every topic the conversation has
+  spoken of, including somebody it named and never said a kind for, and the
+  count behind it adds over as many holders as it is given.
 - **A count over several holders.** `how many ropes do meera and arun have?`
   reads every holder the question names and adds what each holds. A group told
   as somebody's holding is drawn from nobody, so arun's four are not four of
@@ -139,14 +142,12 @@ not answer. Two complete readings surviving is a conflict, and the brain says
 so — the same ladder it already uses to choose between languages and between
 word readings.
 
-**3. A pointer standing for more than one.**
-`how many ropes do meera and arun have?` now answers eleven, but `how many
-ropes do they have?` still answers four: the pointer lands on one holder where
-the conversation has put two in front of it. A pointer that stands for several
-is one thing, and what it stands for is everyone it reaches — the count behind
-it already adds over as many holders as it is given. Nearby, and a different
-shape: `whose father is arun?` answers `I don't know. arun`, two readings both
-speaking at once.
+**3. Two readings both speaking at once.**
+`whose father is arun?` answers `I don't know. arun` — the brain says it does
+not know and then says the answer. Two readings reached the end and both were
+expressed, where two surviving readings are supposed to be a conflict the brain
+says out loud, the same ladder it uses between languages and between word
+readings.
 
 **4. Closed-set elimination.**
 Three owners, three pets, one each; told who does not own what, name who owns
@@ -198,6 +199,10 @@ reading selection wants settling before the reader can be.
   them.
 - Identity between names: `tom is sam` reads as classification by design, so
   `is sam a person?` answers unsure.
+- What a count was asked about joins the topics in focus, so a later `they`
+  sweeps it in: after `how many baskets does omar have?`, `do they have
+  baskets?` is one apiece over the holders *and* the baskets, and comes back
+  unsure.
 - Containment: nothing says one doing happened inside another, so `nila spoke
   during the meeting` has nowhere to put the during.
 - A comparison told of two things that carry no measures is placed by the

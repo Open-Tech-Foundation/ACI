@@ -38,3 +38,31 @@ test("they are answered one apiece", async () => {
   assertEquals(whole.branch.map((n) => n.name).sort(), ["absent", "held"]);
   await forget();
 });
+
+test("a pointer reaches somebody the conversation named and never classified", async () => {
+  // Nobody said what devi or omar is. Asking a pointer to know they are things
+  // before it may reach them drops exactly the names a conversation
+  // introduces, and the count behind it then answers for one of the two.
+  await forget();
+  await brain("devi has 5 baskets");
+  await brain("omar has 6 baskets");
+  const r = await brain("how many baskets do they have?");
+  assertEquals(r.expression.state.says, "eleven");
+  await forget();
+});
+
+test("a pointer for several counts as many holders as it stands for", async () => {
+  await forget();
+  await brain("devi has 5 baskets");
+  await brain("omar has 6 baskets");
+  await brain("ilan has 2 baskets");
+  assertEquals((await brain("how many baskets do they have?")).expression.state.says, "thirteen");
+  await forget();
+});
+
+test("a pointer for one still stands for one", async () => {
+  await forget();
+  await brain("devi has 5 baskets");
+  assertEquals((await brain("how many baskets does she have?")).expression.state.says, "five");
+  await forget();
+});

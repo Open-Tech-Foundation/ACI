@@ -1871,7 +1871,13 @@ function together(joined, world, mood, sent) {
   const quantity = said.find((n) => reaches(n, a.quantity, world));
   if (quantity && holes.length > 0) {
     const rel = namedRelation(said, world, claims, holes.length > 0);
-    const things = said.filter((n, i) => i !== rel && claims(n));
+    // A plural pointer stands for every topic in focus here as it does in a
+    // claim: asked how many ropes *they* have after two people were each told
+    // to hold some, the question names both of them. The count behind it adds
+    // over as many holders as it is given.
+    const things = said
+      .filter((n, i) => i !== rel && claims(n))
+      .flatMap((n) => membersFor(n, world, sent));
 
     // Asked how many of something a thing holds, the brain reads its state.
     if (rel >= 0 && things.length >= 2) {
@@ -5146,8 +5152,13 @@ function membersFor(term, world, sent) {
   // things spoken of.
   const members = focus.filter((id) => {
     if (typeof id !== 'number') return false;
-    const thing = world ? (world.anchors || {}).thing : null;
-    if (thing != null && world && !world.isA(id, thing)) return false;
+    // What is kept out is what a pointer cannot reach — a doing is repeated,
+    // not pointed at. What the world says nothing about is not kept out:
+    // somebody the conversation named and never said a kind for is still one
+    // of those spoken of, and asking to know they are a thing first drops
+    // exactly the names a conversation introduces.
+    const action = world ? (world.anchors || {}).action : null;
+    if (action != null && world && world.isA(id, action)) return false;
     if (sent.from != null && (id === sent.from || (world && world.isA(id, sent.from)))) return false;
     return !(sent.to != null && (id === sent.to || (world && world.isA(id, sent.to))));
   });

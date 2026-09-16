@@ -97,6 +97,17 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A pointer reaches somebody the conversation named and never classified.**
+  `devi has 5 baskets` / `omar has 6 baskets` / `how many baskets do they
+  have?` answered **six**. A plural pointer already stood for every topic in
+  focus, one apiece — but only for topics the world could say were things, and
+  a name a conversation introduces is classified as nothing at all. Nobody said
+  what devi is. What a pointer cannot reach is a doing, which is repeated
+  rather than pointed at; what the world says nothing about is not a reason to
+  drop it, and dropping it silently took exactly the names a conversation
+  brings in. The pointer now reaches them, the count behind it adds over as
+  many holders as it is given, and the answer is eleven.
+
 - **Everyone the question names on the holder's side is counted.** `meera has
   7 ropes` / `arun has 4 ropes` / `how many ropes do meera and arun have?`
   answered **four**. One of the two named holders did nothing in the reading
