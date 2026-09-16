@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
+- **A doing brings its state about.** `the door is closed` then `ravi opened
+  the door` left the door closed: the world declares that an opening brings
+  about being open, and nothing walked that link. A doing is now read for what
+  it brings about the same way a change is, so the door is open, is not closed,
+  and was closed — none of it written down, all of it from one told fact and
+  one doing. What this conversation holds outranks what the world holds in
+  general while it is read: the world says a door that was closed is closed,
+  and the conversation says somebody opened it since.
+
 - **A change writes no fact, and the reading applies it.** `the coffee got
   cold` wrote a fact saying the coffee is cold, beside the change that said it
   turned — one thing said twice, and the fact was one nobody had been told. The

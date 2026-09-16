@@ -328,6 +328,18 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
     to any domain: the count belongs beside the thing it was said with, and the
     row has one place for it.
 
+25. **A doing that moves a thing leaves it where it was.** `the book is on the
+    table` then `the book is in the drawer` answers `where is the book?` with
+    the drawer, as a later placement should — but `is the book on the table?`
+    still affirms, so the book is in two places at once. And `sam is in delhi`
+    then `sam went to paris` answers `in delhi`: the going records a doing and
+    nothing reads a placement out of it. A doing that brings a state about is
+    now applied where the world declares what it brings — an opening brings
+    about being open — but a going brings about being somewhere, and where it
+    goes is said by the doing's own end rather than declared on the verb. The
+    two want the same treatment: a placement that follows from a doing, read
+    off the doing rather than written down.
+
 Following the same triage and noted, not fixed — the newest scan's findings,
 each with its root, and each outside the clean-inference bar:
 

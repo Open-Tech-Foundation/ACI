@@ -3258,7 +3258,11 @@ function together(joined, world, mood, sent) {
           : null;
       const back = bothWays(rel, world).length > 0 && world.linked(rel, a.converse).length === 0;
       const ordered = declared ?? (onChain == null ? null : back ? !onChain : onChain);
-      const holds = banded === true || inTalk === 'held' || before ? true : nearestDenies
+      // What this conversation holds outranks what the world holds in general.
+      // The world says a door that was closed is closed; the conversation says
+      // somebody opened it since, and that is the later word on it.
+      const holds = inTalk === 'against' && !before ? false
+        : banded === true || inTalk === 'held' || before ? true : nearestDenies
         ? false
         : counted != null
         ? knownCount === counted

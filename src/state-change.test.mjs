@@ -112,3 +112,14 @@ test("a change writes no fact, and the reading applies it", async () => {
   assertEquals(await says("is the sack wet?"), "Yes. ✅ a sack is wet.");
   assertEquals(await says("is the sack open?"), "Yes. ✅ a sack is open.");
 });
+
+test("a doing brings its state about, and the reading applies that too", async () => {
+  // The world declares which of its doings bring what about — an opening
+  // brings about being open — and nothing about the door is written down
+  // except what it was told.
+  const graph = await fresh("the door is closed", "ravi opened the door");
+  assertEquals((graph.match(/property\(n1,/g) || []).length, 1, `only what was told:\n${graph}`);
+  assertEquals(await says("is the door open?"), "Yes. ✅ a door is open.");
+  assertEquals(await says("is the door closed?"), "No. ❌");
+  assertEquals(await says("was the door closed?"), "Yes. ✅ a door is closed.");
+});

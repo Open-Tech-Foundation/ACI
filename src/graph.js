@@ -1620,14 +1620,30 @@ function told(subject, relation, object, here) {
 function changedInto(subject, here, object) {
   const dim = dimension(object, against);
   if (dim == null) return null;
+  const a = (against && against.anchors) || {};
+  // What a doing left the thing in. A change says the state outright; any
+  // other doing says it through the world — an opening brings about being
+  // open, and which of its doings bring about what is the world's to declare.
+  const states = (one) => {
+    if (one.of === STATE_CHANGE) {
+      return Object.values(one.properties || {}).filter((v) => typeof v === 'number');
+    }
+    if (typeof one.of !== 'number' || a.brings == null) return [];
+    return against.linked(one.of, a.brings) || [];
+  };
+  // Whom it was done to, wherever the doing keeps them.
+  const whom = (one) => {
+    if (one.parts) return [one.parts.thing, one.parts.to, one.parts.doer].filter((p) => p != null);
+    const played = [a.target, a.agent]
+      .filter((role) => role != null && one.roles)
+      .map((role) => one.roles[role]);
+    return played.flatMap((p) => (Array.isArray(p) ? p : [p])).filter((p) => p != null);
+  };
   for (let i = held.actions.length - 1; i >= 0; i -= 1) {
     const one = held.actions[i];
-    if (one.of !== STATE_CHANGE || one.stands !== 'held') continue;
-    const thing = one.parts ? one.parts.thing : null;
-    if (thing == null) continue;
-    if (!same(thing, subject) && thing !== here) continue;
-    for (const value of Object.values(one.properties || {})) {
-      if (typeof value !== 'number') continue;
+    if (one.stands !== 'held') continue;
+    if (!whom(one).some((p) => same(p, subject) || p === here)) continue;
+    for (const value of states(one)) {
       if (dimension(value, against) !== dim) continue;
       return value === object ? 'held' : 'against';
     }
