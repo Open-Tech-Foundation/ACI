@@ -4,6 +4,30 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- **What a doing made of a kind is reachable by that kind.** `a road became
+  wet` makes a road of its own, and `the road` in the next signal made a second
+  one — so the brain answered nothing about the first, and `is the road wet?`
+  said `I don't know` with the answer sitting in front of it. Spoken of as the
+  one already met, where this conversation made exactly one thing of that kind,
+  that is the thing meant.
+
+- **The reading asks what the conversation was told.** A verdict was worked out
+  from the world the brain reasons over and never from the graph, so everything
+  a conversation put somewhere the world had not heard of — a thing it made of
+  a kind, and all that was since said about that one — was invisible to it. The
+  conversation's own facts are now asked alongside. A narrower relation answers
+  a broader ask while it does so: the world declares predication a kind of
+  being, so a thing said to be wet answers a question about what it is.
+
+- **A telling the brain could not place leaves nothing behind.** `if everyone
+  is busy then a lantern is bright` could not be held as an instruction, and
+  left both its sides standing as plain facts — so a lantern was bright because
+  a rule nobody could hold said it might be. Told something and left unsure of
+  it, the brain now writes nothing: the pieces it made along the way are not
+  claims anybody made.
+
 ### Added
 
 - **`holds` meant three things, and now means none.** A doing pointed at a list

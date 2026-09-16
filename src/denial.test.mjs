@@ -49,7 +49,7 @@ test("a denied measure is a fact against, never a height the thing stands at", a
   assertEquals(denied.of, MEASURE, "it stands as a measure fact");
   assertEquals(denied.stands, "against", "and it is against, never held");
   assertEquals(world.term(denied.parts[1]).name, "metre");
-  assertEquals(denied.properties.count, 2, "the quantity that was denied is kept beside it");
+  assertEquals(denied.properties.amount, 2, "the quantity that was denied is kept beside it");
 });
 
 test("a denial takes a measure off a thing that carried it before", async () => {

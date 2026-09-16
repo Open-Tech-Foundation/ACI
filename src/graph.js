@@ -220,7 +220,7 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
       if (side) supposed.add(`${side.subject}:${side.object}`);
     }
   }
-  const { determined: particular, qualities } = determined(roots, marking, world, supposed);
+  const { determined: particular, known: spokenBefore, qualities } = determined(roots, marking, world, supposed);
   // Where the signal made one of a kind, that one is the thing spoken of. The
   // kind is not a second thing beside it.
   for (const call of calls) particular.delete(call.state.of);
@@ -282,6 +282,17 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
   const besides = [];
   for (const id of reached(roots)) {
     if (standing.has(id)) continue;
+    // Spoken of as the one already met, where this conversation made exactly
+    // one thing of that kind: that is the thing meant. A doing makes a thing
+    // of its own — `a road became wet` makes a road — and without this the
+    // next signal's `the road` made a second one and asked about nothing.
+    if (spokenBefore.has(id)) {
+      const mine = held.nodes.filter((one) => one.made === id);
+      if (mine.length === 1) {
+        standing.set(id, mine[0].id);
+        continue;
+      }
+    }
     const call = made.get(id);
     // A thing, if this signal made one of it, if the world holds it as one, or
     // if the signal spoke of it in particular. A kind spoken of as a kind is
@@ -410,7 +421,9 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
         // every other fact is kept. Written onto the thing instead, it had no
         // place in the order things were said in, and a reading that walked
         // the facts never found it.
-        if (!denied) waiting.push({ subject: reach(subject), of, amount: quantity, unit: object });
+        // Denied or held, the amount is what was said. The row says which it
+        // is; losing the amount would leave a denial of nothing in particular.
+        waiting.push({ subject: reach(subject), of, amount: quantity, unit: object });
       }
     }
     // How a thing is belongs to it. Said beside it — a red box — it was
@@ -1340,12 +1353,16 @@ function determined(roots, marking, world, supposed = new Set()) {
   const about = (i) => nearest(i, step);
 
   const found = new Set();
+  const already = new Set();
   const how = new Map();
   for (let i = 0; i < spoken.length; i++) {
     const one = spoken[i];
     if (one.determiner && (one.marks === 'known' || one.marks === 'new')) {
       const thing = about(i);
       if (thing != null) found.add(thing);
+      // Spoken of as the one already spoken of, rather than as one of a kind.
+      // `the road` is a road this conversation has met; `a road` is another.
+      if (one.marks === 'known' && thing != null) already.add(thing);
     }
     // `a red box` is a box that is red. The quality is said of the thing it
     // stands beside, and it is held on the thing rather than put between two
@@ -1365,7 +1382,7 @@ function determined(roots, marking, world, supposed = new Set()) {
       }
     }
   }
-  return { determined: found, qualities: how };
+  return { determined: found, known: already, qualities: how };
 }
 
 // Which sort of quality it is: a colour, a size, a shape. The world says so —
@@ -1569,7 +1586,14 @@ function standingIn(object, relation) {
 
 // A node stands for a term of the world, so a claim about that term is a claim
 // about the node.
-const same = (part, term) => part === term || termOf(part) === term;
+const same = (part, term) => {
+  if (part === term || termOf(part) === term) return true;
+  // A thing this conversation made one of is that kind's one here. `a road
+  // became wet` makes a road, and a later signal asking of a road is asking
+  // of that one — while there is only one, and no guess where there are two.
+  const mine = held.nodes.filter((one) => one.made === term);
+  return mine.length === 1 && mine[0].id === part;
+};
 
 const termOf = (part) => {
   if (typeof part !== 'string') return part;
@@ -1580,8 +1604,15 @@ const termOf = (part) => {
 // Whether a fact was said with a word. A comparison folded into the fact that
 // already stood keeps every word it was said with, so a fact asked for in
 // either direction — taller as well as shorter — answers out of the one row.
-const says = (row, relation) =>
-  row.said === relation || (Array.isArray(row.saidOther) && row.saidOther.includes(relation));
+const says = (row, relation) => {
+  if (row.said === relation) return true;
+  if (Array.isArray(row.saidOther) && row.saidOther.includes(relation)) return true;
+  // Asked with the broader word, a narrower one answers: the world declares
+  // predication a kind of being, so a thing said to be blue answers a question
+  // about what it is. The narrowing is the world's; that one covers the other
+  // is the brain's.
+  return against != null && relation != null && against.subrelationOf(row.said, relation);
+};
 
 // Where each thing stands on a quantity, worked out from what was said.
 //

@@ -3152,8 +3152,13 @@ function together(joined, world, mood, sent) {
       // read off the thing. Nobody has to have said the state itself.
       const banded =
         graph != null && rel === world.baseRelation ? graph.inState(holder, object, world) : null;
+      // What this conversation was told. The graph is where a signal settles,
+      // and a reading that asks only the world it reasons over will miss
+      // whatever the conversation put somewhere the world never heard of —
+      // a thing it made of a kind, and everything since said about that one.
+      const inTalk = graph ? graph.told(holder, rel, object) : null;
       const ordered = placedAgainst(holder, object, rel, world);
-      const holds = banded === true ? true : nearestDenies
+      const holds = banded === true || inTalk === 'held' ? true : nearestDenies
         ? false
         : counted != null
         ? knownCount === counted
@@ -3208,7 +3213,7 @@ function together(joined, world, mood, sent) {
       const heldNone = heldMany === 0;
       // Read off its quantity and found outside the state's band, the thing is
       // not in it: a room at ten degrees is not hot, and nobody said so.
-      const bandAgainst = banded === false;
+      const bandAgainst = banded === false || inTalk === 'against';
       const opposed = bandAgainst || ordered === false || functionalAgainst || constrainedAgainst || predicateAgainst || heldApart || (counted != null
         ? knownCount != null && knownCount !== counted
         : heldNone ||
@@ -7898,7 +7903,11 @@ export function brainFrom(input, knowledge, circumstance) {
     expressedRoots, langs, mood, world, at,
     learned != null || named.length > 0,
   );
-  read = said.name !== 'unknown';
+  // Nor does one it read and could not place. Told something and left unsure
+  // of it, the brain took nothing in, and the pieces it made along the way are
+  // not claims anybody made — an instruction it could not hold as one would
+  // otherwise leave both its sides standing as facts.
+  read = said.name !== 'unknown' && !(mood === 'tell' && said.name === 'unsure');
   return {
     input,
     language: spoken ? spoken.data.name : null,
