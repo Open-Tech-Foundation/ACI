@@ -1345,10 +1345,15 @@ function together(joined, world, mood, sent) {
         ? knownCount === counted
         : ordered != null
         ? ordered
-        : heldMany > 0 ||
-          joins(holder, object, rel) ||
-          bothWays(rel, world).some((back) => joins(object, holder, back)) ||
-          forced(holder, object, rel, world);
+        // Counted at none, the claim is denied by the count itself: whoever
+        // gave away the only key they had has no key, and a link saying so is
+        // what says they have not.
+        : heldMany === 0
+          ? false
+          : heldMany > 0 ||
+            joins(holder, object, rel) ||
+            bothWays(rel, world).some((back) => joins(object, holder, back)) ||
+            forced(holder, object, rel, world);
       const reverseHolds =
         joins(object, holder, rel) ||
         bothWays(rel, world).some((back) => joins(holder, object, back));
@@ -2647,7 +2652,17 @@ const holderAsk = said.find(
               // answers: whoever holds a key holds a key, and what they were
               // handed was one key and not the kind.
               ...world.individualsOf(subject).flatMap((one) => world.standing(one, relation)),
-            ])].filter(wants)
+            ])].filter(wants).filter((one) => {
+              // Holding none of a thing is not holding it. Whoever gave away
+              // the only key they had has no key, and answering that they do
+              // would say what the count itself denies.
+              if (a.holding == null || !world.subrelationOf(relation, a.holding)) return true;
+              const many = world.held(one, relation, subject)
+                ?? world.individualsOf(subject)
+                  .map((of) => world.held(one, relation, of))
+                  .find((held) => held != null);
+              return many !== 0;
+            })
           : [];
       const asksBack = backward.length > 0;
       let found = asksBack ? backward : outward;
@@ -4048,7 +4063,9 @@ export function work(action, parts, at, world, allocate) {
     ? null
     : target.kind ?? (world.isIndividual(target.of)
       ? world.linked(target.of, world.baseRelation)[0] ?? null
-      : null);
+      // Spoken of as the one of its kind — `the key` — it is still one key,
+      // and one of a kind is what passes.
+      : target.of);
   const passed = one ?? target.of;
   const amount = target.amount ?? (one == null ? null : 1);
   if (amount == null) return null;

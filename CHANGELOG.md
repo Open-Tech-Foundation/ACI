@@ -97,6 +97,20 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **One thing handed on is held by whoever it reached.** `john gave the key to
+  sam` recorded the giving and left nobody holding the key — `who has the key?`
+  answered `I don't know`, while the counted form `john gave 2 keys to sam`
+  answered `sam`. A thing handed over with no number said is one thing, which
+  the arithmetic said in its own comment and only did where the thing was
+  already one of its kind. Now `john gave the key to sam` then `sam gave the
+  key to mary` answers `mary`, and asked again of sam the brain says he has
+  none — because he has none, which the count says.
+
+- **Holding none of a thing is not holding it.** Whoever gave away the only key
+  they had still answered `Yes` to having one, and still stood among the
+  answers to `who has the key?`. A count of none is what says they have not,
+  and both readings now read it.
+
 - **One of a group is a thing drawn out of it.** `a basket has five fruits` and
   then `one fruit is an apple` was refused as a classification cycle — read as
   saying fruit is a sort of apple, which the world has the other way round. It
