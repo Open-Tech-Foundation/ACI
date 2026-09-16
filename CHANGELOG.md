@@ -4,6 +4,18 @@ All notable changes to this project are documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- **Several of a kind are a group, not a thing.** A node stood for one thing
+  and for five books alike, so a count sat on a thing that was not one, and a
+  doing said the same books a second way beside it — the kind and a number,
+  over again. Groups are their own kind in the graph now: `g1 book × 5` is the
+  five, `g2 book × 2 of g1` is what was drawn out of them, and the giving names
+  that group and counts nothing — `transfer(n1, from: —, to: n2) {thing: g2}`.
+  What each of them holds reads as it did. A node is what can be pointed back
+  at and can carry what is true of it alone; a group is several of a kind with
+  none of them singled out, and says how many instead.
+
 ### Fixed
 
 - **Asked what a word names, both are the answer.** Where nothing says which

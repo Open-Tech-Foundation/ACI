@@ -38,15 +38,15 @@ export const MEMBER = 'member';
 // they would answer each other's questions and forget together. The runtime
 // makes one of these per brain and hands it in with the rest of what is known.
 export function conversation() {
-const held = { nodes: [], facts: [], actions: [], rules: [], moments: [] };
-const counted = { nodes: 0, facts: 0, actions: 0, rules: 0, moments: 0 };
-const KINDS = ['nodes', 'facts', 'actions', 'rules', 'moments'];
+const held = { nodes: [], groups: [], facts: [], actions: [], rules: [], moments: [] };
+const counted = { nodes: 0, groups: 0, facts: 0, actions: 0, rules: 0, moments: 0 };
+const KINDS = ['nodes', 'groups', 'facts', 'actions', 'rules', 'moments'];
 
 // Not one of the kinds. Context is what a word in the next signal lands on —
 // what is still in reach, nearest first — and it is thrown away with the
 // conversation rather than being part of what is so.
 let inReach = [];
-const PREFIX = { nodes: 'n', facts: 'f', actions: 'a', rules: 'r', moments: 'm' };
+const PREFIX = { nodes: 'n', groups: 'g', facts: 'f', actions: 'a', rules: 'r', moments: 'm' };
 
 // Which node stands for which term of the world, and how many of its kind
 // each node that was said as a quantity stands for.
@@ -270,8 +270,7 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
   // The collection a kind was counted into, where this conversation holds one.
   const drawnFrom = (kind) => {
     if (kind == null) return null;
-    for (const one of held.nodes) {
-      if (one.count == null) continue;
+    for (const one of held.groups) {
       if (one.term === kind || known(one, world) === kind) return one.id;
     }
     return null;
@@ -287,7 +286,7 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
     // of its own — `a road became wet` makes a road — and without this the
     // next signal's `the road` made a second one and asked about nothing.
     if (spokenBefore.has(id)) {
-      const mine = held.nodes.filter((one) => one.made === id);
+      const mine = brought().filter((one) => one.made === id);
       if (mine.length === 1) {
         standing.set(id, mine[0].id);
         continue;
@@ -319,9 +318,12 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
     // signal made is not in the world yet — the change is written after the
     // brain has answered — so until it lands there is nowhere else to ask.
     const many = counting.get(id);
+    // Several of a kind, none of them singled out, is a group and not a thing.
+    // A thing can be named and can carry what is true of it alone; a group has
+    // a count instead, and what is drawn out of it becomes a thing of its own.
     standing.set(
       id,
-      put('nodes', {
+      put(many ? 'groups' : 'nodes', {
         said: call ? named(call) : term ? term.name : String(id),
         term: id,
         made: call ? call.state.of ?? null : null,
@@ -799,7 +801,7 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
     // otherwise the kind the signal made it from.
     const asKind = (part) => {
       if (part == null) return null;
-      const one = held.nodes.find((n) => n.id === part);
+      const one = brought().find((n) => n.id === part);
       if (one) return known(one, world) ?? one.term;
       return termOf(part);
     };
@@ -1069,9 +1071,22 @@ function roleIn(relation, world) {
 function transferring(roles, properties, world) {
   const anchors = (world && world.anchors) || {};
   const at = (role) => (role != null && Object.hasOwn(roles, role) ? only(roles[role]) : null);
+  const moved = at(anchors.target);
+  // Several of a kind that moved are the group the signal made of them, not
+  // the kind and a number said over again. The group carries how many, so the
+  // doing says which group and stops there.
+  const group =
+    properties.count == null
+      ? null
+      : held.groups.find(
+          (one) =>
+            one.count === properties.count &&
+            (one.term === moved || one.made === moved || one.of === moved),
+        );
+  const { count, ...rest } = properties;
   return {
     parts: { doer: at(anchors.agent), from: at(anchors.source), to: at(anchors.destination) },
-    properties: { thing: at(anchors.target), ...properties },
+    properties: group ? { thing: group.id, ...rest } : { thing: moved, ...properties },
   };
 }
 
@@ -1548,8 +1563,9 @@ function joinedBy(relation) {
 function namedIn(word) {
   if (typeof word !== 'string') return null;
   const wanted = word.toLowerCase();
-  for (let i = held.nodes.length - 1; i >= 0; i -= 1) {
-    const one = held.nodes[i];
+  const all = brought();
+  for (let i = all.length - 1; i >= 0; i -= 1) {
+    const one = all[i];
     if (typeof one.called === 'string' && one.called.toLowerCase() === wanted) return one.term;
   }
   return null;
@@ -1646,6 +1662,11 @@ function membersOf(kind) {
 // about the node.
 const same = (part, term) => part === term || termOf(part) === term;
 
+// Everything this conversation brought in, whether one thing or several of a
+// kind. A reading that means `anything spoken of` walks both; one that means
+// `one thing` walks the nodes alone.
+const brought = () => [...held.nodes, ...held.groups];
+
 // The one thing this conversation made of a kind, where it made exactly one.
 // `a road became wet` makes a road, and `the road` in a later signal is that
 // road. Said of the kind at large it is no answer — one spoon being nice says
@@ -1654,13 +1675,13 @@ const same = (part, term) => part === term || termOf(part) === term;
 function hereOf(term) {
   if (term == null) return null;
   if (standing.has(term)) return standing.get(term);
-  const mine = held.nodes.filter((one) => one.made === term);
+  const mine = brought().filter((one) => one.made === term);
   return mine.length === 1 ? mine[0].id : null;
 }
 
 const termOf = (part) => {
   if (typeof part !== 'string') return part;
-  const one = held.nodes.find((node) => node.id === part);
+  const one = brought().find((node) => node.id === part);
   return one ? one.term : null;
 };
 
@@ -2133,6 +2154,23 @@ function serialize(world = against) {
     lines.push('');
   };
 
+  const saidAs = (one) =>
+    `${one.said.split('#')[0]}  type: ${type(known(one, world))}` +
+    (one.from ? `  of ${one.from}` : '') +
+    (Object.keys(howOf(one.id)).length
+      ? `  {${Object.entries(howOf(one.id)).map(([name, value]) => `${name}: ${spell(value)}`).join(', ')}}`
+      : '') +
+    (Object.keys(muchOf(one.id)).length
+      ? `  {${Object.entries(muchOf(one.id))
+          .map(([name, held]) => `${name}: ${held.amount} ${spell(held.unit)}`)
+          .join(', ')}}`
+      : '');
+  // Several of a kind, and how many. What is drawn out of one says which it
+  // came from, so the two are read together and neither is counted twice.
+  section(
+    'groups',
+    held.groups.map((one) => `${one.id}  ${saidAs(one)}  × ${one.count}`),
+  );
   section(
     'nodes',
     held.nodes.map(

@@ -1,0 +1,33 @@
+import { test, assert, assertEquals } from "runtime:test";
+import { openBrain } from "./index.js";
+
+const { brain, forget, serialize } = openBrain("sqlite::memory:");
+async function fresh(...said) {
+  await forget();
+  for (const s of said) await brain(s);
+  return serialize();
+}
+const says = async (q) => (await brain(q)).expression.state.says;
+
+test("several of a kind are a group, and one thing is a node", async () => {
+  const graph = await fresh("sam has 5 books");
+  assert(/g1  book  type: book\[\d+\]\s+× 5/.test(graph), graph);
+  assert(/n1  sam/.test(graph), graph);
+  assert(!/n\d  book/.test(graph), `the books are not a thing:\n${graph}`);
+});
+
+test("what is drawn out of a group says which group it came from", async () => {
+  const graph = await fresh("sam has 5 books", "sam gives 2 books to jerry");
+  assert(/g2  book  type: book\[\d+\]  of g1  × 2/.test(graph), graph);
+});
+
+test("a doing names the group and does not count it again", async () => {
+  const graph = await fresh("sam has 5 books", "sam gives 2 books to jerry");
+  assert(/transfer\(n1, from: —, to: n2\)\s+\{time: done, thing: g2\}/.test(graph), graph);
+});
+
+test("what each of them holds still reads", async () => {
+  await fresh("sam has 5 books", "sam gives 2 books to jerry");
+  assertEquals(await says("how many books does sam have?"), "three");
+  assertEquals(await says("how many books does jerry have?"), "two");
+});
