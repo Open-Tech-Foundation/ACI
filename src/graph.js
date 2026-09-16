@@ -20,6 +20,7 @@
 
 import { grownBy } from './world.js';
 import { unitsIn } from './calendar.js';
+import { working } from './working.js';
 
 export const TRANSFER = 'transfer';
 export const PROPERTY_CHANGE = 'property-change';
@@ -38,6 +39,10 @@ export const MEMBER = 'member';
 // they would answer each other's questions and forget together. The runtime
 // makes one of these per brain and hands it in with the rest of what is known.
 export function conversation() {
+// The stages of working something out. A conversation has two memories and
+// they hold different things: this one holds what it was told, and that one
+// holds what the brain worked out from it. Neither is written into the other.
+const worked = working();
 const held = { nodes: [], groups: [], facts: [], actions: [], rules: [], moments: [] };
 const counted = { nodes: 0, groups: 0, facts: 0, actions: 0, rules: 0, moments: 0 };
 const KINDS = ['nodes', 'groups', 'facts', 'actions', 'rules', 'moments'];
@@ -72,6 +77,7 @@ let grown = null;
 //
 // Called when a conversation ends, and never between two signals of one.
 function clear() {
+  worked.clear();
   for (const kind of KINDS) {
     held[kind].length = 0;
     counted[kind] = 0;
@@ -2504,6 +2510,7 @@ function serialize(world = against) {
     chronoEnd,
     chronoBefore,
     reasonOf,
+    worked,
     drawnGroup,
     metBefore,
     measuring,

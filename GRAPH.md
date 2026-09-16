@@ -464,6 +464,37 @@ over it. Everything below is written against the ten example inputs, and each
 part says whether it has been checked against the running engine or is still
 only proposed.
 
+## Three memories
+
+A conversation holds two of them, and the world is the third.
+
+    WORLD      what is so in general — the ladder every world must have, and
+               the packs of knowledge one has been given. It does not move.
+
+    GRAPH      what this conversation was told, and what happened in it. Facts
+               stay as they were told; actions are what occurred.
+
+    WORKING    the steps the brain took to work something out, and what each
+               came to. None of it was told.
+
+The third is what keeps the first two honest. A shop told it has a hundred and
+twenty apples and watched thirty leave has ninety — and nobody said ninety, so
+it is no fact and must not be written among them. It still has to stand
+somewhere while the next question is asked about it, and afterwards, so the
+brain can say what it was worked from. That is working memory.
+
+    working:
+      s1  told   shop  apple × 120
+      s2  moved  shop  apple ×  90  of s1
+
+A step says what kind of step it was, what it was worked from, what it is a
+quantity of, and what it came to. What it was worked from may be an earlier
+step or a row of the graph, so a chain reads back to what was actually said.
+
+Told none and nobody having said are two different steps and say so: a hand
+that watched thirty arrive, having never been spoken of as holding any, starts
+at `none` and not at `told`.
+
 ## The kinds of thing
 
     CONCEPTS   what is known before anyone speaks — apple, person, having,

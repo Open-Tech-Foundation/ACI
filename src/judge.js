@@ -16,6 +16,7 @@ import {
   $, node, taken, instead, numberOf, conceptOf, markOn, thoughtOf, functionsOf,
   withBranch, findBranch, toString, quote, functionList, VERDICT,
 } from './node.js';
+import { TOLD, NONE, MOVED } from './working.js';
 import {
   among,
   below,
@@ -4156,6 +4157,28 @@ export function work(action, parts, at, world, allocate) {
       after,
       term,
     });
+    // The step, kept where the steps are kept. What it came to was never told
+    // — nobody said ninety — so it is no fact, and it still has to stand
+    // somewhere while the next question asks about it. A step says what it was
+    // worked from, so the chain reads back to what was actually said.
+    if (graph != null && graph.worked && term != null) {
+      const started = graph.worked.latest(bearer, passed);
+      if (started == null && from != null) {
+        // Told how many, or none because nobody said any: the two are not the
+        // same and the step says which it was.
+        const how = world.held(bearer, kept, passed) == null ? NONE : TOLD;
+        graph.worked.put(how, { holder: bearer, thing: passed, value: from, from: [] });
+      }
+      const was = graph.worked.latest(bearer, passed);
+      graph.worked.put(MOVED, {
+        holder: bearer,
+        thing: passed,
+        value: after,
+        amount,
+        by: action,
+        from: was ? [was.id] : [],
+      });
+    }
     // A state the world cannot name is not a state the brain will hold. Taking
     // more than is there leaves what was there untouched.
     if (term == null) {

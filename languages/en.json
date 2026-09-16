@@ -19081,6 +19081,38 @@
       "meaning": "scored",
       "concept": 3061,
       "when": "past"
+    },
+    "rupee": {
+      "pos": "noun",
+      "meaning": "rupee",
+      "concept": 3100
+    },
+    "rupees": {
+      "pos": "noun",
+      "meaning": "rupees",
+      "concept": 3100,
+      "number": "plural"
+    },
+    "earn": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "earn",
+      "concept": 3101
+    },
+    "earns": {
+      "pos": "verb",
+      "meaning": "earns",
+      "concept": 3101,
+      "person": "third",
+      "number": "singular"
+    },
+    "earned": {
+      "pos": "verb",
+      "meaning": "earned",
+      "concept": 3101,
+      "when": "past"
     }
   },
   "unknown": {

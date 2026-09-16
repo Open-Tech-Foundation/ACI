@@ -263,6 +263,15 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Working memory: the steps of working something out.** A conversation now
+  holds two memories. The graph holds what it was told and what happened; this
+  holds the steps the brain took and what each came to. A shop told it has a
+  hundred and twenty apples and watched thirty leave has ninety — nobody said
+  ninety, so it is no fact, and it still has to stand somewhere while the next
+  question asks about it. Each step says what it was worked from, so a chain
+  reads back to what was actually said, and told-none is held apart from
+  nobody-having-said. It goes when the conversation goes.
+
 - **`holds` meant three things, and now means none.** A doing pointed at a list
   of rows with one word covering *what is inside it*, *what was said of it* and
   *what came of it* — three different relations on one field, so reading the
