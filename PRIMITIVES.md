@@ -312,8 +312,21 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
     box?` answers the book). The reader that walks what stands to a thing is
     never called for a happening: the question is routed to the readers that
     look for parts played in a doing, which is the wrong question to ask of an
-    accident somebody was merely in. The reader itself now meets a happening at
-    its row, so what is missing is the routing and not the walk. Not fixed.
+    accident somebody was merely in. _Fixed_ — somebody merely in something
+    that happened played no part in it, so looking for parts found nothing and
+    said so, which is not the same as nothing being there. What the happening
+    holds is the answer: `who is in the accident?` answers hema, and `who was in
+    the robbery?` names both who stood in it.
+
+24. **A doing that carries two counted things keeps one count.** `sam bought 3
+    apples in 2 shops` records the buying with both things in its far part and
+    a single `count: 2` — the three apples lose their number entirely, and
+    which of the two the count belongs to is never said. `a machine made 50
+    parts in 10 minutes` records no doing at all. One counted thing works —
+    `sam gives 2 books to jerry` keeps its two — so what is missing is that a
+    doing may count more than one of what it names. Nothing here is particular
+    to any domain: the count belongs beside the thing it was said with, and the
+    row has one place for it.
 
 Following the same triage and noted, not fixed — the newest scan's findings,
 each with its root, and each outside the clean-inference bar:
@@ -742,6 +755,16 @@ fact and a stray node for the number, where the same measure said as `the rope
 is 2 metres long` lands as a quality on the thing.
 
 ## Deferred, not forgotten
+
+- **Knowledge of a domain, pumped in from outside.** Answering `a player scored
+  50 runs in 10 balls` the way somebody who knows cricket would — what a run
+  is, what facing a ball means, what the two say together — is knowledge of a
+  game and not a primitive of the brain. It waits on a `rules` primitive solid
+  enough to be taught from outside, so that given the rules of a thing the
+  brain follows them to an answer. Until that stands, a domain's knowledge has
+  nowhere to live, and building any of it into the engine would be teaching the
+  core one world's particulars. The shape of that sentence is a separate matter
+  and is recorded above.
 
 - Component/material refinement remains tracked under roadmap phase 4.
 - `nature` remains world knowledge until its intended meaning is specified; it
