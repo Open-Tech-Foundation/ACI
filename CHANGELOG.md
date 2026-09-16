@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
+- **Judging is its own module.** Every reading the brain has — a verdict on a
+  claim, a hole to be filled, a doing to be looked for, an amount to be counted
+  — lived in one function of two and a half thousand lines, in a file of nine
+  and a half thousand. That phase and the ninety-eight helpers only it uses are
+  now `src/judge.js`, and what the other phases share with it is exported
+  rather than reachable by being in the same file. Nothing about what the brain
+  answers has changed; what has changed is that the readings can be seen.
+
 - **The node is its own module.** Everything in the brain is made of one shape
   — a kind, a name, its branches and its state — and every phase walks it. That
   shape and its walks now live in `src/node.js`, apart from any phase: it knows
