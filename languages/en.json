@@ -6069,11 +6069,18 @@
       "meaning": "rat",
       "concept": 345
     },
-    "bat": {
-      "pos": "noun",
-      "meaning": "bat",
-      "concept": 346
-    },
+    "bat": [
+      {
+        "pos": "noun",
+        "meaning": "bat",
+        "concept": 346
+      },
+      {
+        "pos": "noun",
+        "meaning": "bat",
+        "concept": 3056
+      }
+    ],
     "whale": {
       "pos": "noun",
       "meaning": "whale",
@@ -8501,11 +8508,18 @@
       "meaning": "season",
       "concept": 522
     },
-    "spring": {
-      "pos": "noun",
-      "meaning": "spring",
-      "concept": 524
-    },
+    "spring": [
+      {
+        "pos": "noun",
+        "meaning": "spring",
+        "concept": 524
+      },
+      {
+        "pos": "noun",
+        "meaning": "spring",
+        "concept": 3058
+      }
+    ],
     "summer": {
       "pos": "noun",
       "meaning": "summer",
@@ -11815,11 +11829,18 @@
       "meaning": "grasshopper",
       "concept": 737
     },
-    "cricket": {
-      "pos": "noun",
-      "meaning": "cricket",
-      "concept": 738
-    },
+    "cricket": [
+      {
+        "pos": "noun",
+        "meaning": "cricket",
+        "concept": 738
+      },
+      {
+        "pos": "noun",
+        "meaning": "cricket",
+        "concept": 3055
+      }
+    ],
     "locust": {
       "pos": "noun",
       "meaning": "locust",
@@ -12885,11 +12906,18 @@
       "meaning": "office",
       "concept": 927
     },
-    "bank": {
-      "pos": "noun",
-      "meaning": "bank",
-      "concept": 928
-    },
+    "bank": [
+      {
+        "pos": "noun",
+        "meaning": "bank",
+        "concept": 928
+      },
+      {
+        "pos": "noun",
+        "meaning": "bank",
+        "concept": 3057
+      }
+    ],
     "station": {
       "pos": "noun",
       "meaning": "station",
