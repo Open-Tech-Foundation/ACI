@@ -29,3 +29,7 @@ run = "esdev build --config=demo/esdev.json --minify"
 
 [tasks.ci]
 deps = ["basics", "test", "build"]
+
+# What the brain composed to reach an answer, as nested calls.
+[tasks.compose]
+run = "esdev compose.mjs"

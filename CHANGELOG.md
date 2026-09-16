@@ -266,22 +266,21 @@ All notable changes to this project are documented in this file.
 - **A composed answer shows what it was made of.** Asked how many fruits a
   basket holds, the brain added the apples and the mangoes and said thirteen,
   and nothing said which thirteen. A total now carries its parts, and
-  `compose.mjs` reads them back beside the steps that produced each one:
+  `compose.mjs` shows the call it made, the holes that call had to fill, the
+  rule each was filled by, and the order they were worked in:
 
       > how many fruits does the basket have?
-        wants   how many
-        of      fruit[73]
-        held by basket[54100]
-          apple[54101] × 2
-          mango[54102] × 7
-        = 9
-        working
-          s1  told   basket  apple × 5
-          s2  moved  basket  apple × 2  of s1
-          s3  told   basket  mango × 8
-          s4  moved  basket  mango × 7  of s3
 
-  Nothing in it is worked out for the showing — it is what the brain left
+           count(fruit, in: basket)
+        1.    apple  told(5) → selling(3)      → 2
+        2.    mango  told(8) → selling(1)      → 7
+        3.    sum                              → 9
+
+        = nine
+
+  Values appear only where a hole was filled by one — the point is the shape,
+  so that a wrong answer can be seen as a wrong composition rather than guessed
+  at. Nothing in it is worked out for the showing; it is what the brain left
   behind, read back.
 
 - **A fraction of what this conversation holds is a count.** Told a shop has a
