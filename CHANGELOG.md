@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **What was said of one thing is no answer about the kind.** Reading the
+  conversation's own facts made a claim about a particular thing answer a
+  question about its kind: a spoon somebody called nice made spoons nice, and
+  some crows being white made all of them white. The conversation's facts are
+  now read only where the signal says *which one* — the word that marks it
+  stands beside the thing rather than being it, so the signal is asked and not
+  the thing. Asked of the kind at large, the brain answers from what it knows
+  of kinds, as it did before.
+
 - **Asked of the past, what stood then answers.** `was the coffee hot?` after
   the coffee went cold answered `No` — the reading took the latest state and
   nothing earlier, which is right for `is` and answers a question nobody asked

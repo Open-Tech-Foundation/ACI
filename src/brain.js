@@ -3166,14 +3166,25 @@ function together(joined, world, mood, sent) {
       // and a reading that asks only the world it reasons over will miss
       // whatever the conversation put somewhere the world never heard of —
       // a thing it made of a kind, and everything since said about that one.
-      const inTalk = graph ? graph.told(holder, rel, object) : null;
+      // Asked of the one already met, rather than of the kind at large. `is
+      // the road wet` is about a road this conversation has met; `a spoon is
+      // nice` asks after spoons, and what somebody said of one spoon is no
+      // answer to it.
+      // Which one is said by the word that marks it — `the` — and that word
+      // stands beside the thing rather than being it, so the signal is asked
+      // and not the thing.
+      const theOne = said.some((n) => markOn(n) === 'known');
+      // Only such an ask reads them. What was said of one thing is no answer
+      // about the kind: a spoon somebody called nice leaves spoons as they
+      // were, and some crows being white is not all of them.
+      const inTalk = graph && theOne ? graph.told(holder, rel, object, theOne) : null;
       // Asked of the past, what is being asked after is what stood then, and
       // the earlier facts are still on the record. `was the coffee hot` is a
       // question about the coffee that was, and answering it from the coffee
       // that is answers something nobody asked.
       const before =
-        graph != null && a.past != null && whenIn(said, world) === a.past
-          ? graph.stood(holder, rel, object)
+        graph != null && theOne && a.past != null && whenIn(said, world) === a.past
+          ? graph.stood(holder, rel, object, theOne)
           : false;
       // Where the world holds no ordering between the two, the timeline may.
       // Told two doings and both their clocks, nobody declared an order and

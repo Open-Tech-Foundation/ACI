@@ -1458,10 +1458,11 @@ function bandOf(state, world) {
 // Exactly, and not nearly. A fact about one thing is not a fact about its kind
 // or about anything like it, and reaching for one would answer a question
 // nobody asked.
-function told(subject, relation, object) {
+function told(subject, relation, object, here) {
+  const of = here ? hereOf(subject) : null;
   let found = null;
   for (const one of held.facts) {
-    if (!same(one.parts[0], subject)) continue;
+    if (!same(one.parts[0], subject) && one.parts[0] !== of) continue;
     // State is the latest of it and nothing earlier. Where a thing is, and how
     // it stands on one of its quantities, are both of them state: a drum put in
     // a box and then on a shelf is on the shelf, and what it was said to be
@@ -1586,14 +1587,19 @@ function standingIn(object, relation) {
 
 // A node stands for a term of the world, so a claim about that term is a claim
 // about the node.
-const same = (part, term) => {
-  if (part === term || termOf(part) === term) return true;
-  // A thing this conversation made one of is that kind's one here. `a road
-  // became wet` makes a road, and a later signal asking of a road is asking
-  // of that one — while there is only one, and no guess where there are two.
+const same = (part, term) => part === term || termOf(part) === term;
+
+// The one thing this conversation made of a kind, where it made exactly one.
+// `a road became wet` makes a road, and `the road` in a later signal is that
+// road. Said of the kind at large it is no answer — one spoon being nice says
+// nothing about spoons — so only a reading that knows it was asked of the one
+// already met may use this.
+function hereOf(term) {
+  if (term == null) return null;
+  if (standing.has(term)) return standing.get(term);
   const mine = held.nodes.filter((one) => one.made === term);
-  return mine.length === 1 && mine[0].id === part;
-};
+  return mine.length === 1 ? mine[0].id : null;
+}
 
 const termOf = (part) => {
   if (typeof part !== 'string') return part;
@@ -1888,10 +1894,11 @@ function lateness() {
 // latest of it and nothing earlier — that is what makes `is the coffee hot`
 // answer from the last thing said — but asked of the past, the earlier ones are
 // exactly what is being asked after, and they are still on the record.
-function stood(subject, relation, object) {
+function stood(subject, relation, object, here) {
+  const of = here ? hereOf(subject) : null;
   for (const one of held.facts) {
     if (one.stands !== 'held') continue;
-    if (!same(one.parts[0], subject)) continue;
+    if (!same(one.parts[0], subject) && one.parts[0] !== of) continue;
     if (!says(one, relation) || !same(one.parts[1], object)) continue;
     return true;
   }
@@ -1902,6 +1909,7 @@ function stood(subject, relation, object) {
 // claim carries which row brought it about, and that row is the answer — a
 // doing where a doing did it, a claim where a claim did.
 function reasonOf(subject, relation, object) {
+  const of = hereOf(subject);
   // Asked why something happened rather than why something is so. The doing is
   // the row, and what it came of is on it.
   for (let i = held.actions.length - 1; i >= 0; i -= 1) {
@@ -1913,13 +1921,13 @@ function reasonOf(subject, relation, object) {
       ? row.roles[against.anchors.agent]
       : null;
     const who = doer ?? (Array.isArray(played) ? played[0] : played);
-    if (who != null && !same(who, subject)) continue;
+    if (who != null && !same(who, subject) && who !== of) continue;
     const came = held.actions.find((r) => r.id === row.reason) ?? held.facts.find((r) => r.id === row.reason);
     if (came) return came;
   }
   for (const one of held.facts) {
     if (one.stands !== 'held') continue;
-    if (!same(one.parts[0], subject)) continue;
+    if (!same(one.parts[0], subject) && one.parts[0] !== of) continue;
     if (!says(one, relation) || !same(one.parts[1], object)) continue;
     const came = one.reason ?? broughtAbout(one.parts[0], object);
     if (came == null) continue;
