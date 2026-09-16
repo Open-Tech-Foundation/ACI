@@ -256,8 +256,21 @@ Verified clean-input gaps, from the `scan-clean` probe (previously
     it no sides to read, neither the hole nor the doer is given one and the
     question asks after nothing. The flip that already exists for this — a hole
     before the doing reads the far part where a doer already stands before it —
-    never runs, because the parts were never assigned. Not fixed, and it is the
-    same for every doing: `what did sam give?`, `what did mira build?`.
+    never runs. Not fixed, and it is the same for every doing: `what did sam
+    give?`, `what did mira build?`.
+
+    Traced further: the parts *are* assigned, and to the wrong word. The reader
+    takes the first word that reaches a doing to be the doing, and in `what did
+    sam eat?` that word is `did` — so `sam` and `eat` both land after it and
+    the hole lands before it, which is how a question about what was eaten gets
+    read as a question about who did it. English has `did` two ways, an
+    auxiliary saying when and a verb pointing back at a doing already spoken
+    of, and the auxiliary reading is chosen only at the front of a signal or
+    before a denial. Standing after a hole it is neither, so the verb reading
+    wins and the auxiliary's whole purpose — to say when and step aside — is
+    lost. Widening that choice and skipping an auxiliary when looking for the
+    doing were both tried and neither was enough on its own; the selection
+    wants settling before the reader can be.
 
 21. **What has so much of a quantity.** _Fixed_ — `what is 2 metres long?`
     answered `1 metre`, a number where a thing was asked for: a quality's
