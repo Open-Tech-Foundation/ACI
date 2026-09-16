@@ -6,6 +6,27 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A word that stands for two things is settled by what it is said with.** The
+  brain carried both readings of such a word all along and nothing ever chose
+  between them for two nouns: it took whichever was declared first, so a
+  cricket was an insect and `is a cricket a sport?` was answered `No` — a
+  denial about something it holds. Two rungs now settle it, and neither
+  guesses:
+
+  - **What else the signal names.** A reading the world can join to the rest of
+    what was said is the reading meant, and one it cannot join to anything is
+    not. `is a cricket a sport?` affirms and `is a cricket an insect?` affirms,
+    each from the term the world puts under the other.
+  - **What the conversation has already met.** Where the signal itself tells
+    them apart in no way, what came before does: told `a cricket is a sport`,
+    the next `what is a cricket?` answers `sport`, and told it is an insect it
+    answers `insect`.
+
+  What came before never overrides what the signal needs — the conversation
+  having met `open` the state does not stop the next signal's `opened` being
+  the doing. That order is the one the brain already keeps when it chooses
+  between whole languages.
+
 - **A doing told plainly answers whether it happened.** `sam gives 2 books to
   jerry` was on the record from every side but one — who gave them, who has
   them, how many — and `did sam give books to jerry?` said `I don't know`. The

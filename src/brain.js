@@ -1972,27 +1972,88 @@ function settle(roots, world) {
   // Only a word that is already what it is can be what joins the signal. One
   // still to be settled is not yet anything, and cannot stand as the joint on
   // the strength of a reading the brain has not taken.
+  // What else the signal names, already settled. A word still to be settled
+  // says nothing here: it cannot narrow another while it is not yet anything
+  // itself.
+  const named = roots
+    .filter((n) => !ways(n))
+    .map((n) => {
+      const t = findBranch(n, 'thought');
+      return t && t.state.thought ? t.state.thought.concept : null;
+    })
+    .filter((c) => c != null);
+  // The world holds one reading to the rest of the signal and not the other.
+  // A cricket asked after a sport is the sport, because that is the one the
+  // world puts under it; asked after an insect it is the insect. Nothing is
+  // guessed — a reading the world cannot join to anything else said is not the
+  // one meant, and where it joins two of them there is no one reading and the
+  // brain says so rather than choosing.
+  const joins = (thought) =>
+    thought &&
+    thought.concept != null &&
+    named.some(
+      (other) =>
+        other !== thought.concept &&
+        (world.isA(thought.concept, other) || world.isA(other, thought.concept)),
+    );
+  const narrowed = roots.map((n) => {
+    const mine = ways(n);
+    if (!mine) return n;
+    const held = mine.filter(joins);
+    if (held.length !== 1) return n;
+    return withBranch(
+      n,
+      n.branch.map((b) =>
+        b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: held[0] }) : b,
+      ),
+    );
+  });
+  if (narrowed.some((n, i) => n !== roots[i])) return narrowed;
+
+
   const already = roots.some((n) => {
     if (ways(n)) return false;
     const t = findBranch(n, 'thought');
     return t && (doing(t.state.thought) || joining(t.state.thought));
   });
-  if (already) return roots;
 
   let taken = false;
-  return roots.map((n) => {
+  const asDoing = already
+    ? roots
+    : roots.map((n) => {
+        const mine = ways(n);
+        if (taken || !mine) return n;
+        const other = mine.find(doing);
+        if (!other) return n;
+        taken = true;
+        return withBranch(
+          n,
+          n.branch.map((b) =>
+            b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: other }) : b,
+          ),
+        );
+      });
+  if (asDoing.some((n, i) => n !== roots[i])) return asDoing;
+
+  // Nothing in this signal tells them apart, so what came before does. A word
+  // that stands for two things stands for the one this conversation has already
+  // met — and where it has met both, or neither, nothing here chooses.
+  const back = roots.map((n) => {
     const mine = ways(n);
-    if (taken || !mine) return n;
-    const other = mine.find(doing);
-    if (!other) return n;
-    taken = true;
+    if (!mine || graph == null) return n;
+    const met = graph.metBefore(mine.map((w) => w && w.concept).filter((c) => c != null));
+    if (met.length !== 1) return n;
+    const held = mine.find((w) => w && w.concept === met[0]);
+    if (!held) return n;
     return withBranch(
       n,
       n.branch.map((b) =>
-        b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: other }) : b,
+        b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: held }) : b,
       ),
     );
   });
+  if (back.some((n, i) => n !== roots[i])) return back;
+  return roots;
 }
 
 // Walk away from a position in one direction until something answers to

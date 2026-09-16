@@ -1605,6 +1605,28 @@ function measuring(unit, amount) {
   return found;
 }
 
+// Which of several readings this conversation has already met. A word that
+// stands for two things stands for the one already spoken of, where only one of
+// them has been — what came before is what settles it, and nothing is guessed
+// from what has not.
+function metBefore(concepts) {
+  const seen = new Set();
+  for (const one of held.nodes) {
+    for (const of of [one.term, one.made, one.of]) if (of != null) seen.add(of);
+  }
+  for (const one of held.facts) {
+    if (one.stands !== 'held') continue;
+    for (const part of one.parts) {
+      const term = termOf(part) ?? part;
+      if (typeof term === 'number') seen.add(term);
+    }
+    for (const value of Object.values(one.properties || {})) {
+      if (typeof value === 'number') seen.add(value);
+    }
+  }
+  return (concepts || []).filter((one) => seen.has(one));
+}
+
 // Who and what stood in something that happened. The happening keeps them as it
 // is told them — a person in an accident, a doing inside a robbery — so being
 // asked who was in it is reading back what it already holds.
@@ -2228,6 +2250,7 @@ function serialize(world = against) {
     chronoEnd,
     chronoBefore,
     reasonOf,
+    metBefore,
     measuring,
     membersOf,
     stood,
