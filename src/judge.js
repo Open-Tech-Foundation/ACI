@@ -365,7 +365,7 @@ function measuredIn(bearer, unit, world) {
 // How many of a kind a thing holds, counting everything it holds that is one
 // of that kind. Nothing says a thing holds `things`; it holds bats and balls,
 // and those are things.
-function heldUnder(bearer, kind, world, under = null) {
+function heldUnder(bearer, kind, world, under = null, parts = null) {
   const a = world.anchors || {};
   let total = null;
   // The word the question used, and any word the world declares says the same
@@ -378,7 +378,13 @@ function heldUnder(bearer, kind, world, under = null) {
     for (const of of world.linked(bearer, relation)) {
       if (of === kind || !world.isA(of, kind)) continue;
       const many = world.held(bearer, relation, of);
-      if (many != null) total = total == null ? many : addAmounts(total, many);
+      if (many != null) {
+        total = total == null ? many : addAmounts(total, many);
+        // What the total was made of, where somebody wants to see it. Five
+        // apples and eight mangoes are thirteen fruits, and which five and
+        // which eight is the whole of why.
+        if (parts) parts.push({ of, value: many });
+      }
     }
   }
   if (total != null || under == null || a.holding == null) return total;
@@ -1887,7 +1893,8 @@ function together(joined, world, mood, sent) {
       // Under the word the question used. What a basket holds is not what it
       // has: reading through the broad relation here answers one question with
       // the other.
-      const under = heldUnder(way.bearer, way.of, world, way.relation);
+      const parts = [];
+      const under = heldUnder(way.bearer, way.of, world, way.relation, parts);
       // Asked on the past side of now, the brain reads what was so then. What
       // a thing held is kept in order and never written over, so stepping back
       // one stamp is all it takes: it does not have to have remembered
@@ -1911,6 +1918,7 @@ function together(joined, world, mood, sent) {
             held: way.bearer,
             members: howMany,
             total,
+            ...(parts.length > 1 ? { made: parts } : {}),
             // The question said what it wanted counted, so the answer does not
             // say it again: asked how many hours make a day, twenty-four is
             // the whole of it.
