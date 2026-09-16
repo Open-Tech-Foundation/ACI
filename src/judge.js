@@ -56,7 +56,7 @@ import {
   walk,
   whole,
   worldNode,
-  graph, contextual,
+  graph, contextual, signalLanguage,
 } from './brain.js';
 
 
@@ -2103,7 +2103,31 @@ function together(joined, world, mood, sent) {
       world.isA(before, a.relation)
     );
   };
-  const terms = said.filter((n, i) => i !== at && claims(n) && !ofSyntax(n, i));
+  // A quality standing beside a thing says which one is meant, and is not a
+  // thing the question is about: `the small ball` names one ball, not a
+  // smallness and a ball. Which side of the thing it stands on is the
+  // language's — the same reading a signal gets when it says `a red box` — and
+  // what stands between them, an article or another quality, is stepped over.
+  const spokenIn = signalLanguage(said, langs);
+  const step = spokenIn && spokenIn.data.marking === 'before' ? -1 : 1;
+  const qualifies = new Map();
+  said.forEach((n, i) => {
+    const of = conceptOf(n);
+    if (i === at || of == null || markOn(n) === 'unknown') return;
+    if (!(a.property != null && world.isA(of, a.property))) return;
+    for (let k = i + step; k >= 0 && k < said.length; k += step) {
+      const beside = said[k];
+      const thing = conceptOf(beside);
+      if (thing == null) continue;
+      if (markOn(beside) === 'unknown') return;
+      if (a.property != null && world.isA(thing, a.property)) continue;
+      if (a.thing != null && world.isA(thing, a.thing)) qualifies.set(i, thing);
+      return;
+    }
+  });
+  const terms = said.filter(
+    (n, i) => i !== at && claims(n) && !ofSyntax(n, i) && !qualifies.has(i),
+  );
 
   // A choice between things joined as one or the other: `which is smaller, 8
   // or 0` asks for the one the comparison comes out for, not for each. Every

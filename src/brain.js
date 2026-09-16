@@ -1949,7 +1949,7 @@ export function markerFor(said, at, side, carries, over = null) {
 // Word order comes from the language that recognized this signal, never from
 // whichever language happened to be loaded first. A signal with no one
 // recognized language has no order to infer from.
-function signalLanguage(said, langs) {
+export function signalLanguage(said, langs) {
   const names = new Set((said || []).map(languageOf).filter((name) => name != null));
   if (names.size !== 1) return null;
   const [name] = names;
