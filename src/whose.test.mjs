@@ -47,3 +47,28 @@ test("whose a thing is may be said the long way round", async () => {
   assertEquals((await fresh("a leg of a cow is a body?")).expression.name, "unsure");
   await forget();
 });
+
+test("the brain does not say it knows nothing and then answer", async () => {
+  // `whose sister is sofia?` was read as two questions at once — what the
+  // sister is called, and what sofia is called — and both spoke: `I don't
+  // know. sofia`. The word does not name the name relation, and a reading that
+  // leaves the sister standing in the question does not answer from the bare
+  // `is` beside her. One reply, and it is that the brain cannot read it.
+  const r = await fresh("sofia is the sister of ilan", "whose sister is sofia?");
+  assertEquals(r.expression.state.says, "I don't know.");
+  await forget();
+});
+
+test("asking who somebody is still answers", async () => {
+  // Nothing else stands in the question, so there is no word left doing
+  // nothing and she is all there is to say.
+  const r = await fresh("sofia is the sister of ilan", "who is sofia?");
+  assertEquals(r.expression.state.says, "sofia");
+  await forget();
+});
+
+test("and the relation asked the way it is held still answers", async () => {
+  const r = await fresh("sofia is the sister of ilan", "who is the sister of ilan?");
+  assertEquals(r.expression.state.says, "sofia");
+  await forget();
+});

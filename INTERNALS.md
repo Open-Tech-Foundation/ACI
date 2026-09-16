@@ -160,13 +160,24 @@ relation itself, so the hole asks after a name and the thing named answers
 itself — `whose` is not the word `name`, and saying it is, is what puts the
 stray answer there.
 
-Declaring `whose` a possessor hole instead was tried and backed out: the head
-it determines loses its concept, so `father` stops being a relation at all and
-the brain answers `arun` alone — one reading, still the wrong one, and no
-longer visibly confused, which is worse. A possessive determiner does not do
-that to `cat` in `my cat`. Two things wanted before this goes in: what a
-possessor hole does to its head, and the completeness rule — the answer stands
-on `arun` while `whose` and `father` do nothing, which is *Open — 2* exactly.
+Both were taken out. `whose` asks after somebody, the way `who` does, and no
+longer names the name relation; and a reading that leaves a relation the signal
+named standing unused does not answer from the bare `is` beside it. The brain
+now says it cannot read the phrase, once.
+
+What is still owed is the phrase itself: `whose sister is sofia?` asks for the
+one whose sister she is, and reading it wants a possessor hole. Declaring
+`whose` one was tried and backed out — the head it determines loses its
+concept, so the sister stops being a relation at all. A possessive determiner
+does not do that to `cat` in `my cat`. What a possessor hole does to its head
+is the thing to settle first.
+
+The completeness rule behind all of this was measured rather than guessed:
+every question in the transcripts was checked for words its verdict did not
+account for, and almost all of them came back with leftovers — `is`, `many`,
+`long`, and the holder itself. The verdicts record the terms a reading arrived
+at, not the words it read, so completeness cannot be checked from outside. Each
+reading must say what it consumed, and that is what *Open — 2* is.
 
 **4. Closed-set elimination.**
 Three owners, three pets, one each; told who does not own what, name who owns

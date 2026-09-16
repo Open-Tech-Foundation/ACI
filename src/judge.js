@@ -2937,7 +2937,28 @@ const holderAsk = said.find(
       // who the father of arun is and finding nobody, arun is not the answer:
       // the question was about somebody else, and he is the one it was asked
       // from.
-      if (!decided && found.length === 0 && of != null && a.name != null && of === a.name && fits(subject)) {
+      // A relation the signal named and this reading did not walk is a word
+      // left doing nothing, and a reading that leaves one doing nothing is no
+      // answer. `whose father is arun?` is not `who is arun?`: the father is
+      // right there in the question, and answering from the bare `is` beside
+      // it answers something nobody asked.
+      const relationLeft = said.some(
+        (n) =>
+          n !== term &&
+          a.relation != null &&
+          conceptOf(n) != null &&
+          conceptOf(n) !== relation &&
+          world.isA(conceptOf(n), a.relation),
+      );
+      if (
+        !decided &&
+        !relationLeft &&
+        found.length === 0 &&
+        of != null &&
+        a.name != null &&
+        of === a.name &&
+        fits(subject)
+      ) {
         found = [subject];
       }
       // A place is where something stands to something else, so the way it

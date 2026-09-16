@@ -97,6 +97,26 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **The brain does not say it knows nothing and then answer.** `sofia is the
+  sister of ilan` / `whose sister is sofia?` replied `I don't know. sofia` —
+  two readings reaching the end and both speaking. Traced to two things, and
+  both had to go.
+
+  `whose` was declared in English as the name relation itself, so the question
+  was read as *what is the sister called* and *what is sofia called*, one
+  answer apiece. The word does not mean `name`; it asks after somebody, the way
+  `who` does, and now says so.
+
+  That left the second reading answering `sofia` from the bare `is` beside her,
+  with the sister still standing in the question doing nothing. A relation the
+  signal named and the reading never walked is a word left doing nothing, and a
+  reading that leaves one doing nothing is no answer: `whose sister is sofia?`
+  is not `who is sofia?`. Asked plainly who she is, with nothing else in the
+  question, she is still the answer.
+
+  The phrase itself is still not read — what it asks for is the one whose
+  sister she is — and the brain now says it cannot read it, once.
+
 - **A fact answers from either of its ends, never from the wrong one.** `the
   coin is in the jar` / `what is in the coin?` answered **jar**. `omar is
   taller than nila` / `who is taller than omar?` answered **nila**, the one he
