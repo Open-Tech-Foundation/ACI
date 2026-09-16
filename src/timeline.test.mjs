@@ -46,3 +46,30 @@ test("a declared ordering still reads its two ends", async () => {
   assertEquals(await says("who arrived first?"), "asha");
   assertEquals(await says("who arrived last?"), "deepak");
 });
+
+test("a doing still to come says so, and one that happened does not", async () => {
+  const soon = await fresh("the ferry will arrive");
+  assert(/a1  event\(n1, type: arrive\[\d+\]\)\s+to come/.test(soon), soon);
+  const done = await fresh("the ferry arrived");
+  assert(/a1  event\(n1, type: arrive\[\d+\]\)\s*$/m.test(done), `and a doing that happened is the plain case:\n${done}`);
+});
+
+test("a doing to come may be told its time", async () => {
+  // `will` stood as a verb of its own, so it took the doing's place and the
+  // clock was read as how long the thing measured.
+  const graph = await fresh("the ferry will arrive at nine hours");
+  assert(/a1  event\(n1, type: arrive\[\d+\]\)\s+at 9 hour\[\d+\]\s+to come/.test(graph), graph);
+});
+
+test("what is expected and what happened stand as two moments", async () => {
+  const graph = await fresh("the ferry will arrive at nine hours", "the ferry arrived at ten hours");
+  assert(/a1  event\(n1, type: arrive\[\d+\]\)\s+at 9 hour\[\d+\]\s+to come/.test(graph), `meant at nine:\n${graph}`);
+  assert(/a2  event\(n1, type: arrive\[\d+\]\)\s+at 10 hour\[\d+\]/.test(graph), `came at ten:\n${graph}`);
+  assert(/m1  members: \[a1\]  before: null/.test(graph), `the nine stands first:\n${graph}`);
+  assert(/m2  members: \[a2\]  before: m1/.test(graph), `and the ten after it:\n${graph}`);
+});
+
+test("a doing to come has not happened", async () => {
+  await fresh("the ferry will arrive");
+  assertEquals(await says("did the ferry arrive?"), "I don't know.");
+});

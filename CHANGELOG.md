@@ -6,6 +6,22 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A doing still to come is held, and says so.** The row carried whether a
+  doing had happened all along and the print never said it, so a thing the
+  brain expected and a thing it had seen read alike. A doing still to come now
+  says `to come`, and one that happened is the plain case. A brain that cannot
+  tell what it expects from what it has seen cannot be surprised by either.
+
+- **A doing to come may be told its time.** `the train will arrive at nine
+  hours` lost the arriving entirely: `will` stood as a verb of its own, so it
+  took the doing's place and the clock was read as how long the train measured
+  — the train came out nine hours long and no arrival was held. `will` is what
+  `did` is, a word that says when the doing it stands before was, so it is now
+  an auxiliary like `did` and the doing keeps its own place. Told what is
+  expected and then what happened, the brain holds both and the timeline
+  orders them: the nine stands first and the ten after it, which is the pair
+  everything about being early or late is read from.
+
 - **A doing told with a time stands on the timeline.** The clock reading sat on
   the doing's row and the chrono filled only where somebody declared an order,
   so the brain could be told two doings and both their clocks and still not

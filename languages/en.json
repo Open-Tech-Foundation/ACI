@@ -105,9 +105,8 @@
       "number": "plural"
     },
     "will": {
-      "pos": "verb",
-      "meaning": "to be (later)",
-      "concept": 294,
+      "pos": "auxiliary",
+      "meaning": "will",
       "when": "future"
     },
     "one": [

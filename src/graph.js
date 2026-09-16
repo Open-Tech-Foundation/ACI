@@ -1920,7 +1920,13 @@ function serialize(world = against) {
         ? `${one.of}(${said})`
         : `event(${inside}${inside ? ', ' : ''}type: ${spell(one.of)})`;
       const holds = one.holds ? `  holds ${one.holds.join(', ')}` : '';
-      return `${one.id}  ${one.stands === 'against' ? 'not ' : ''}${does}${when}${properties(one.properties)}${holds}${aside(one)}`;
+      // Whether it has happened. A doing that has is the ordinary case and
+      // says nothing; one still to come says so, because a brain that cannot
+      // tell what it expects from what it has seen cannot be surprised by
+      // either. The row held this all along and the print did not say it.
+      const a2 = (world && world.anchors) || {};
+      const stood = one.when != null && a2.future != null && one.when === a2.future ? '  to come' : '';
+      return `${one.id}  ${one.stands === 'against' ? 'not ' : ''}${does}${when}${stood}${properties(one.properties)}${holds}${aside(one)}`;
     }),
   );
   // A claim inside an instruction, said the way a fact is said.
