@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
+- **What somebody holds is the group, said once.** `holding(n1, book[18])
+  {count: 5}` named the kind and counted it beside a group that already said
+  both. It is `holding(n1, g1)` now, and the group carries how many. A group
+  answers for its kind, so whoever holds five books is found beside whoever
+  holds one. What a doing moved is drawn from what the doer had — `g2 book of
+  g1 × 2` — while what somebody is merely *said* to hold is theirs and drawn
+  from nobody: mira's one kettle is no one of dev's three, however alike. And a
+  thing no longer says `× 1`; being one is what a thing is.
+
 - **Several of a kind are a group, not a thing.** A node stood for one thing
   and for five books alike, so a count sat on a thing that was not one, and a
   doing said the same books a second way beside it — the kind and a number,

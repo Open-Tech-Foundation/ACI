@@ -51,3 +51,24 @@ test("a kind claim about a kind nothing was counted of is still a cycle", async 
   await forget();
   assertEquals((await brain("a fruit is an apple")).expression.state.says, "No. ❌");
 });
+
+test("what somebody holds is the group, said once", async () => {
+  const graph = await fresh("sam has 5 books");
+  assert(/f1  holding\(n1, g1\)$/m.test(graph), `the group is what he holds:\n${graph}`);
+  assert(!/count: 5/.test(graph), `and how many is said on it alone:\n${graph}`);
+});
+
+test("a group answers for its kind beside any one of it", async () => {
+  await fresh("dev has 3 kettles", "mira has 1 kettle");
+  assertEquals(await says("who has kettles?"), "dev, mira");
+});
+
+test("what somebody is said to hold is theirs, not drawn from another's", async () => {
+  const graph = await fresh("dev has 3 kettles", "mira has 1 kettle");
+  assert(/n3  kettle  type: kettle\[\d+\]$/m.test(graph), `mira's is no one of dev's:\n${graph}`);
+});
+
+test("what a doing moved is drawn from what the doer had", async () => {
+  const graph = await fresh("sam has 5 books", "sam gives 2 books to jerry");
+  assert(/g2  book  type: book\[\d+\]  of g1  × 2/.test(graph), graph);
+});

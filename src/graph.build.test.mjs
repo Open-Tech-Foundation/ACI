@@ -37,8 +37,11 @@ test("one thing this conversation brought in, and what it holds", async () => {
   assertEquals(held.facts.length, 1);
   const [holding] = held.facts;
   assertEquals(holding.parts[0], 'n1');
-  assertEquals(world.term(holding.parts[1]).name, 'apple');
-  assertEquals(holding.properties.count, 5);
+  // What he holds is the group the signal made of them. It says both the kind
+  // and how many, so neither is said again beside it.
+  assertEquals(holding.parts[1], 'g1');
+  assertEquals(holding.properties.count, undefined);
+  assertEquals(held.groups[0].count, 5);
   assertEquals(held.actions, []);
   assertEquals(held.rules, []);
 });
@@ -161,15 +164,16 @@ test("a thing an earlier signal brought in is the same thing later", async () =>
   assertEquals(held.facts[1].parts, ['n1', 'n2']);
 });
 
-test("the graph says what is in it, under four headings, always", async () => {
+test("the graph says what is in it, under its headings, always", async () => {
   await said('john has 5 apples');
   const shown = serialize(world);
+  assert(shown.includes('groups:'), shown);
   assert(shown.includes('nodes:'), shown);
   assert(shown.includes('facts:'), shown);
   assert(shown.includes('actions:'), shown);
   assert(shown.includes('rules:'), shown);
   assert(shown.includes('n1  john  type: thing[2]'), shown);
-  assert(shown.includes('{count: 5}'), shown);
+  assert(shown.includes('× 5'), shown);
 });
 
 // The primitives. Each is recognised by its shape or by what the world

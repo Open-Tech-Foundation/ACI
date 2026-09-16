@@ -341,12 +341,28 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
         // Where a thing was drawn from. One of two dogs is one of *those* two,
         // not a dog standing loose beside them, so the collection it came out
         // of is kept on it.
-        // Where it was drawn from. A thing of a kind this conversation holds
-        // several of is one of those — `another fruit` is one of the five —
-        // so it says which group it came out of and is not counted beside it.
+        // Where it was drawn from, where the signal drew it. Being of a kind
+        // something else was counted in is no reason: mira's one kettle is not
+        // one of dev's three, and saying so would put her kettle among his.
+        // Where it was drawn from. What somebody is said to hold is theirs and
+        // is drawn from nobody — mira's one kettle is not one of dev's three,
+        // however alike they are.
         ...(() => {
-          const of = call && call.state.made && call.state.of != null ? call.state.of : id;
-          const group = drawnFrom(of);
+          if (!call || !call.state.made || call.state.of == null) return {};
+          // Said outright that somebody holds them. A holding that follows
+          // from a doing is another matter: what was given came out of what
+          // the giver had, and that is exactly a drawing.
+          const a2 = (world && world.anchors) || {};
+          const fresh = events.length === 0 && links.some(
+            (link) =>
+              link.state.quantity != null &&
+              link.state.object === id &&
+              a2.holding != null &&
+              (link.state.relation === a2.holding ||
+                world.isA(link.state.relation, a2.holding) ||
+                world.subrelationOf(link.state.relation, a2.holding)),
+          );
+          const group = fresh ? null : drawnFrom(call.state.of);
           return group == null ? {} : { from: group };
         })(),
         // How it is, where the signal said so beside it. Counted, the thing
@@ -454,11 +470,16 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
     // apple — the world has it the other way round — and does mean that one of
     // those five is. So one is drawn out of the group and the claim is about
     // that one, which is what a thing is: a member singled out.
-    if (primitive === KIND && !denied && reach(subject) === subject) {
+    if (primitive === KIND && !denied && !world.isIndividual(subject)) {
       const group = drawnFrom(subject);
       if (group != null && world.isA(object, subject) && object !== subject) {
         const term = world.term(subject);
-        const drawn = put('nodes', {
+        // A thing this signal already made of that kind is the one drawn; only
+        // where it made none is another put in.
+        const standing_ = [...held.nodes].reverse().find(
+          (one) => (one.made === subject || one.term === subject) && one.from == null,
+        );
+        const drawn = standing_ ? ((standing_.from = group), standing_.id) : put('nodes', {
           said: term ? term.name : String(subject),
           term: subject,
           made: subject,
@@ -478,10 +499,18 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
     // What is held is a thing of a kind, not a party to the fact: it is said
     // by the kind the world holds it under, the same way a doing says what
     // moved. Whoever holds it is a party, and that is a node.
-    // A thing this signal picked out is still said by its kind here: what is
-    // held is a kind and how many, never the thing itself.
+    // What is held, where several of a kind are held, is the group the signal
+    // made of them — it says both the kind and how many, and saying the kind
+    // and a count beside it would be saying the same thing twice.
     const of = made.get(object);
-    const far = primitive === HOLDING ? (of ? of.state.of ?? object : object) : reach(object);
+    const kind = primitive === HOLDING ? (of ? of.state.of ?? object : object) : reach(object);
+    const group =
+      primitive === HOLDING && quantity != null
+        ? held.groups.find(
+            (one) => one.count === quantity && (one.term === object || one.made === kind),
+          )
+        : null;
+    const far = group ? group.id : kind;
     // A comparison stands one thing above another on a quantity, and which is
     // above is said by the order of the two, never by a flag naming one of
     // them. Said the other way round — shorter rather than taller — the same
@@ -588,7 +617,7 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
       properties: {
         // How many, where the fact counts. A measure says how much instead,
         // and says it as an amount of a quantity — one number, not two.
-        ...(quantity == null || primitive === MEASURE ? {} : { count: quantity }),
+        ...(quantity == null || primitive === MEASURE || group ? {} : { count: quantity }),
         // A comparison is made on something. Which scale is the world's to
         // say, and without it `taller` is only a word.
         ...(primitive === COMPARISON ? { on: scaleOf(relation, world) } : {}),
@@ -1632,9 +1661,16 @@ function standingIn(object, relation) {
   // question naming the happening has to be met at the row. Asked who was in
   // the accident, the accident is that row and what stands to it is the answer.
   const asRow = isHappening(object) ? happening(object) : null;
+  // Several of a kind answer for that kind. Held five books, sam holds books,
+  // and a question after who holds books must find him beside anybody holding
+  // one — the group stands for its kind and is met there.
+  const ofKind = (part) => {
+    const group = held.groups.find((row) => row.id === part);
+    return group != null && (group.made === object || known(group, against) === object);
+  };
   for (const one of held.facts) {
     if (!says(one, relation) || one.stands !== 'held') continue;
-    if (!same(one.parts[1], object) && one.parts[1] !== asRow) continue;
+    if (!same(one.parts[1], object) && one.parts[1] !== asRow && !ofKind(one.parts[1])) continue;
     const term = termOf(one.parts[0]);
     if (term != null && !found.includes(term)) found.push(term);
   }
@@ -2220,7 +2256,6 @@ function serialize(world = against) {
       (one) =>
         `${one.id}  ${one.said.split('#')[0]}  type: ${type(known(one, world))}` +
         (one.from ? `  of ${one.from}` : '') +
-        (one.count != null ? `  × ${one.count}` : '') +
         (Object.keys(howOf(one.id)).length
           ? `  {${Object.entries(howOf(one.id)).map(([name, value]) => `${name}: ${spell(value)}`).join(', ')}}`
           : '') +
