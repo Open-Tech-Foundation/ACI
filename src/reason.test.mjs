@@ -12,7 +12,7 @@ async function fresh(...said) {
 // One joining, whichever word says it. A reason and what came of it, with the
 // reason's row holding the effect's — the word only chooses which side of it
 // the reason was said on.
-const joined = (graph) => /a1  event\(n\d, type: fall\[\d+\]\)[^\n]*holds f1/.test(graph);
+const joined = (graph) => /f1  property\(n\d, wet\[\d+\]\)[^\n]*reason a1/.test(graph);
 
 test("a word that puts the reason after it joins the two", async () => {
   for (const word of ["because", "since", "as"]) {

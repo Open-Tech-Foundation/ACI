@@ -20,14 +20,14 @@ test("a doing keeps what was said of it", async () => {
   await forget();
 });
 
-test("the doing holds the fact said of it", async () => {
+test("what came of a doing says which doing it came of", async () => {
   await fresh("a plank fell on a floor");
   const graph = serialize();
-  const [, fact] = /(f\d)\s+placement/.exec(graph) || [];
-  assert(fact != null, `there is a placement:\n${graph}`);
+  const [, doing] = /(a\d)\s+event\(n\d, type: fall/.exec(graph) || [];
+  assert(doing != null, `there is a falling:\n${graph}`);
   assert(
-    new RegExp(`event\\(n\\d, type: [^)]*\\).*holds ${fact}`).test(graph),
-    `and the doing holds it:\n${graph}`,
+    new RegExp(`placement\\(n\\d, n\\d\\)[^\\n]*reason ${doing}`).test(graph),
+    `and the placement came of it:\n${graph}`,
   );
   await forget();
 });
@@ -92,7 +92,7 @@ test("where the doing stood is where each of them stood", async () => {
   const graph = serialize();
   assert(/placement\(n1, n3\)/.test(graph), `hema is on the road:\n${graph}`);
   assert(/placement\(n2, n3\)/.test(graph), `and so is arun:\n${graph}`);
-  assert(/holds f1, f2/.test(graph), `and the doing holds both:\n${graph}`);
+  assert(/f1  placement\(n1, n3\)[^\n]*reason a1/.test(graph) && /f2  placement\(n2, n3\)[^\n]*reason a1/.test(graph), `and both came of the doing:\n${graph}`);
   assertEquals((await brain("where is arun?")).expression.state.says, "on a road");
   await forget();
 });
@@ -103,7 +103,7 @@ test("a doing holds what came of it", async () => {
   // Wet is a state of the road, not a property of it, so what happened to it
   // is a state change.
   assert(/state-change\(n1\)/.test(graph), `the road changed:\n${graph}`);
-  assert(/event\(n2, type: fall\[\d+\]\)[^\n]*holds a1/.test(graph), `and the falling holds it:\n${graph}`);
+  assert(/state-change\(n1\)[^\n]*reason a2/.test(graph), `and the change came of the falling:\n${graph}`);
   await forget();
 });
 
@@ -147,7 +147,7 @@ test("an event said to be at a time was then, not placed inside one", async () =
 test("a doing inside something that happened is held by it", async () => {
   await fresh("an accident was on a road", "a plank fell in the accident");
   const graph = serialize();
-  assert(/a1  event\(\[n\d\], type: accident\[\d+\]\).*holds .*a2/.test(graph), `the accident holds the falling:\n${graph}`);
+  assert(/member\(a2, a1\)/.test(graph), `the falling is in the accident:\n${graph}`);
   assert(/a2  event\(n\d, type: fall\[\d+\]\)/.test(graph), `and the falling is its own row:\n${graph}`);
   await forget();
 });
@@ -165,7 +165,7 @@ test("one event, however many signals speak of it", async () => {
   );
   assert(/a1  event\(\[n2, n3\], type: robbery\[\d+\]\)  \{time: done, times: night\[\d+\]\}/.test(graph), `with both in it, at night:\n${graph}`);
   assert(/placement\(a1, n1\)/.test(graph), `at the shop:\n${graph}`);
-  assert(/holds f1, f2, f3, a2/.test(graph), `holding all of it:\n${graph}`);
+  assert(/placement\(a1, n1\)/.test(graph) && /member\(n2, a1\)/.test(graph) && /member\(n3, a1\)/.test(graph) && /member\(a2, a1\)/.test(graph), `everything in it names it:\n${graph}`);
   assert(/a2  event\(n3, target: money\[\d+\], type: steal/.test(graph), `and the stealing inside it:\n${graph}`);
   await forget();
 });

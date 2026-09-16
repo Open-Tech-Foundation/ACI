@@ -497,7 +497,6 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
       if (one) {
         const who = reach(subject);
         if (!(one.members || []).includes(who)) one.members = [...(one.members || []), who];
-        one.holds = [...(one.holds || []), fact];
       }
       return;
     }
@@ -549,10 +548,10 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
       stands: stands(denied),
     });
 
-    // Said of something that happened — where it was, when it was — the
-    // happening holds it. An event is what it holds and nothing besides.
-    const happened = held.actions.find((row) => row.id === parts[0]);
-    if (happened) happened.holds = [...(happened.holds || []), wrote];
+    // Said of something that happened — where it was, when it was — the fact
+    // already names the doing on its near side. Pointing back at it from the
+    // doing would be the same edge written twice, and a reader would have two
+    // places to look and no way to know they agree.
   };
 
   // Only what the signal claimed is a fact. Where a doing follows from it, the
@@ -739,7 +738,21 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
       if (inside != null) {
         const whole = held.actions.find((row) => row.id === inside);
         if (whole) {
-          if (!(whole.holds || []).includes(id)) whole.holds = [...(whole.holds || []), id];
+          // A doing inside a happening is in it the way anybody in it is, and
+          // it is said the same way — one shape for being part of something
+          // that happened, whether what is in it is a person or a doing.
+          const key = triple(id, a2.member, inside);
+          if (!said.has(key)) {
+            said.add(key);
+            put('facts', {
+              key,
+              of: MEMBER,
+              said: a2.member,
+              parts: [id, inside],
+              properties: {},
+              stands: stands(false),
+            });
+          }
           for (const doer of doers) {
             const who = reach(doer.of);
             if (!(whole.members || []).includes(who)) whole.members = [...(whole.members || []), who];
@@ -757,7 +770,10 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
             row.parts[0] === reach(doer.of) &&
             row.parts[1] === reach(joint.of),
         );
-        if (fact && !(one.holds || []).includes(fact.id)) one.holds = [...(one.holds || []), fact.id];
+        // What came of the doing carries which doing it came of. The question
+        // is always asked from this end — why is the road wet — so the answer
+        // is on the row the question starts at.
+        if (fact && fact.reason == null) fact.reason = id;
       }
     }
 
@@ -806,7 +822,9 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
         : effect.claim
           ? (held.facts.find((row) => row.key === triple(reach(effect.claim.subject), effect.claim.relation, reach(effect.claim.object))) || {}).id
           : null;
-    if (came && !(one.holds || []).includes(came)) one.holds = [...(one.holds || []), came];
+    const effectRow =
+      (held.actions.find((row) => row.id === came) || held.facts.find((row) => row.id === came)) ?? null;
+    if (effectRow && effectRow.reason == null) effectRow.reason = one.id;
   }
 
   // A doing told with a time stands on the timeline at that time. Until now the
@@ -1982,7 +2000,10 @@ function serialize(world = against) {
       const said = own
         ? `${one.of}(${ends})`
         : `relation(${ends}, type: ${spell(one.of)})`;
-      return `${one.id}  ${one.stands === 'against' ? 'not ' : ''}${said}${properties(one.properties)}${aside(one)}`;
+      // What it came of, where a doing brought it about. Read from this end,
+      // because this is the end the question is asked from.
+      const why = one.reason ? `  reason ${one.reason}` : '';
+      return `${one.id}  ${one.stands === 'against' ? 'not ' : ''}${said}${properties(one.properties)}${why}${aside(one)}`;
     }),
   );
   section(
@@ -2020,7 +2041,7 @@ function serialize(world = against) {
       const does = own
         ? `${one.of}(${said})`
         : `event(${inside}${inside ? ', ' : ''}type: ${spell(one.of)})`;
-      const holds = one.holds ? `  holds ${one.holds.join(', ')}` : '';
+      const holds = one.reason ? `  reason ${one.reason}` : '';
       return `${one.id}  ${one.stands === 'against' ? 'not ' : ''}${does}${properties(one.properties)}${holds}${aside(one)}`;
     }),
   );

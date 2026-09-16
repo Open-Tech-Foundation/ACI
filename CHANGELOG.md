@@ -6,6 +6,23 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **`holds` meant three things, and now means none.** A doing pointed at a list
+  of rows with one word covering *what is inside it*, *what was said of it* and
+  *what came of it* — three different relations on one field, so reading the
+  graph could not tell `the falling caused the road being wet` from `the
+  falling happened on the road`. Each is now said as what it is:
+
+  - **What is said of a doing** already names the doing on its near side, so
+    the doing no longer names it back. `placement(a1, n1)` was one edge written
+    twice, in two places a reader had to hope agreed.
+  - **What is inside a happening** is a member of it — `member(a2, a1)` — said
+    exactly as a person in it is said. One shape for being part of something
+    that happened, whether what is in it is somebody or a doing.
+  - **What came of a doing** carries which doing it came of: `f1 property(n1,
+    wet[2872]) reason a1`. The question is always asked from this end — why is
+    the road wet — so the answer sits on the row the question starts at,
+    instead of every doing having to be searched for one that claimed it.
+
 - **A signal the brain could not read leaves nothing behind.** `if it rains the
   road gets wet` answered `I don't understand` and wrote `property(road, wet)`
   into the memory all the same, so the graph held what nobody was told and
