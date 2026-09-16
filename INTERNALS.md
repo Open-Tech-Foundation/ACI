@@ -97,6 +97,12 @@ Reachable today, with a probe for each:
 - **Every scale alike.** The amount where a thing stands at one, the state
   where it does not. `what size is the ball?` is `small`.
 - **Kinds held.** Counted off the same walk that adds the things up.
+- **A comparison read on the right scale.** A state may stand on more than one
+  — a wall is long and so is a wait — and every scale something compares along
+  is one way of reading the word. Which one is meant is settled by the two
+  things asked about. `is the wall longer than the fence?` reads length, `is an
+  hour longer than a minute?` reads time, and a comparison the brain cannot
+  place answers nothing rather than falling through to a denial.
 
 ## Open, in the order I would take them
 
@@ -129,13 +135,23 @@ not answer. Two complete readings surviving is a conflict, and the brain says
 so — the same ladder it already uses to choose between languages and between
 word readings.
 
-**3. Closed-set elimination.**
+**3. A reading that dropped a word still answered.**
+Two holders named and one counted: `meera has 7 ropes` / `arun has 4 ropes` /
+`how many ropes do meera and arun have?` answers **four**. One of the two
+named holders does nothing in the reading and the answer comes back anyway.
+This is the completeness rule of *Open — 2* met as a wrong answer rather than
+a missing one, and it is the worst kind the brain has: nobody reading *four*
+can tell it dropped half the question. Nearby, and the same shape: `whose
+father is arun?` answers `I don't know. arun`, two readings both speaking at
+once.
+
+**4. Closed-set elimination.**
 Three owners, three pets, one each; told who does not own what, name who owns
 the third. The brain holds every denial and draws nothing from them. Needs: a
 set known to be closed, an assignment known to be one-to-one, and elimination.
 Sound and deterministic; the last of the five reasoning cases still open.
 
-**4. A fraction where a count stands.**
+**5. A fraction where a count stands.**
 `the shop sold one-fourth of the apples` is not read, though `what is one-fourth
 of the apples?` answers 30 and `the shop sold 30 of the apples` is taken in. A
 fraction standing where a count stands is a count. Giving the phrase a grammar
@@ -144,13 +160,13 @@ apples — so the fix is that the fraction must resolve to its value before
 anything is stored. **The graph holds values, never the words that produced
 them.**
 
-**5. The `of` compound.**
+**6. The `of` compound.**
 Recurring, and now met from three sides: `the capital of france`, `how many
 kinds of book`, `one-fourth of the apples`. English maps `of` to holding, so
 the phrase reads as one thing holding another. Worth one deliberate pass rather
 than three patches.
 
-**6. The fronted hole.**
+**7. The fronted hole.**
 `sam ate what?` answers `apple`; `what did sam eat?` does not. The parts *are*
 assigned, and to the wrong word: the reader takes the first word reaching a
 doing to be the doing, and in `what did sam eat?` that is `did`. English has
@@ -159,7 +175,7 @@ a denial, so after a hole the verb reading wins. Widening that choice and
 skipping auxiliaries were both tried and neither sufficed alone; the word-
 reading selection wants settling before the reader can be.
 
-**7. Smaller, each with a probe.**
+**8. Smaller, each with a probe.**
 
 - Derived amounts are unreachable by *how much* — a told measure is written
   into the session world and read from there; a worked one lives only in the
@@ -181,6 +197,19 @@ reading selection wants settling before the reader can be.
   `is sam a person?` answers unsure.
 - Containment: nothing says one doing happened inside another, so `nila spoke
   during the meeting` has nowhere to put the during.
+- A comparison told of two things that carry no measures is placed by the
+  word's own first scale — `tom is shorter than sam` is height because `short`
+  is height's and nothing else's. Give `short` to time as well, so a short
+  meeting can be said, and the telling has no way to choose: neither tom nor
+  sam stands on a scale, and the row goes down on the wrong one. What is
+  missing is a kind saying which scales it stands on — a person has a height,
+  a meeting has a length of time — which is also what `which is longer?` wants
+  when the pair is not named.
+- One doing ordered against another is not read: `the ferry left before the
+  storm`. Two doings each with a clock are ordered; said as one sentence, the
+  ordering has nowhere to go.
+- A told cause is not read: `the storm delayed the ferry` comes back
+  unknown, though `why` answers where a doing brought a state about.
 
 ## Deferred by decision
 
