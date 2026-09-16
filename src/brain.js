@@ -10,19 +10,17 @@
 import { Decimal } from '@opentf/std';
 import { fromWorldData, grownBy, addAmounts, multiplyAmounts } from './world.js';
 import { UNITS, unitsIn as stepsInTime } from './calendar.js';
+import {
+  $, node, taken, instead, numberOf, conceptOf, markOn, thoughtOf, functionsOf,
+  withBranch, findBranch, toString, quote, functionList, VERDICT,
+} from './node.js';
 
 // The conversation this signal belongs to, for the length of one turn. Set on
 // the way in from what the runtime knows and never read outside a turn — the
 // graph itself belongs to the brain that was opened with it.
 let graph = null;
 
-const $ = Symbol.for('aci.node');
 
-// A node is the single uniform unit of the whole system:
-//   { [$]: 'node', kind, name, branch (array of child nodes), state }
-function node(kind, name, branch = [], state = {}) {
-  return { [$]: 'node', kind, name, branch, state };
-}
 
 // ---------------------------------------------------------------------------
 // understand — perception: void -> thing -> quality -> form -> symbol
@@ -5015,10 +5013,6 @@ function encloses(n) {
   return hasFunction(n, 'encloses');
 }
 
-// What the brain came to, and not the walking it did to get there.
-function taken(n) {
-  return VERDICT.includes(n.kind) || n.kind === 'count' || n.kind === 'sum';
-}
 
 // A signal that says nothing but greetings, and the greetings in it. One is a
 // greeting; several are several, and neither is part of the other.
@@ -5104,11 +5098,6 @@ function joinIn(n) {
   return null;
 }
 
-// The same tree with one node standing in place of another.
-function instead(n, target, made) {
-  if (n === target) return made;
-  return withBranch(n, (n.branch || []).map((b) => instead(b, target, made)));
-}
 
 // Facts offered together are one offering. The brain laid every one of them
 // against the many it holds and that work stays underneath, but what it was
@@ -6297,20 +6286,7 @@ function namedRelation(said, world, claims, asking) {
   return fallback >= 0 ? fallback : worked;
 }
 
-// What number this thing is. The world names some of them; the rest the brain
-// read out of the figures it was sent, and both are numbers alike.
-function numberOf(n, world) {
-  const held = world.valueOf(conceptOf(n));
-  if (held != null) return held;
-  const thought = n ? findBranch(n, 'thought') : null;
-  const read = thought && thought.state.thought ? thought.state.thought.value : null;
-  return read == null ? null : read;
-}
 
-function conceptOf(n) {
-  const thought = n ? findBranch(n, 'thought') : null;
-  return thought && thought.state.thought ? thought.state.thought.concept : null;
-}
 
 function reaches(n, anchor, world) {
   const c = conceptOf(n);
@@ -6896,11 +6872,6 @@ function classificationOn(n) {
   return thought ? thought.classifies ?? null : null;
 }
 
-// What a word says about the thing beside it, or about itself.
-function markOn(n) {
-  const t = n ? findBranch(n, 'thought') : null;
-  return t && t.state.thought ? t.state.thought.marks : null;
-}
 
 // Whether this thing was marked as a new one or the one already meant.
 function markAt(n) {
@@ -7098,10 +7069,6 @@ function speak(intent, meaning, langName, langs, terms) {
   return node('express', intent, [], { says, meaning, language: langName || null });
 }
 
-function thoughtOf(n) {
-  const thought = findBranch(n, 'thought');
-  return thought ? thought.state.thought : null;
-}
 
 function meaningOf(n) {
   const ts = thoughtOf(n);
@@ -7146,7 +7113,6 @@ const TAKEN_IN = ['understood', 'learn'];
 
 // What a signal comes to. A signal may come to more than one of these at once,
 // and each of them is whole: the first does not stand for the rest.
-const VERDICT = ['standing', 'answer', 'learn', 'refuse'];
 
 // Refusals where the brain is not standing against what was said but cannot
 // place it. Saying no to those would be answering something it never
@@ -7916,14 +7882,7 @@ function posOf(n) {
 
 // Language-declared cognitive functions. POS values are opaque parser symbols;
 // none of them may decide reasoning behavior.
-function functionList(value) {
-  if (!value || value.functions == null) return [];
-  return Array.isArray(value.functions) ? value.functions : [value.functions];
-}
 
-function functionsOf(n) {
-  return functionList(thoughtOf(n));
-}
 
 // The part of a signal that completes what is being said of a thing. Which
 // part of its own grammar does that is the language's to declare; the brain
@@ -9546,12 +9505,6 @@ function walk(node, fn) {
   return fn(withBranch(node, kids));
 }
 
-function withBranch(node, branch, state) {
-  return Object.assign({}, node, {
-    branch: branch === undefined ? node.branch : branch,
-    state: state === undefined ? node.state : state,
-  });
-}
 
 // The first node of a kind anywhere under this one.
 function within(n, kind) {
@@ -9563,15 +9516,7 @@ function within(n, kind) {
   return null;
 }
 
-function findBranch(n, kind) {
-  return (n.branch || []).find((b) => b.kind === kind) || null;
-}
 
-function toString(v) {
-  if (typeof v === 'string') return v;
-  if (v === null || v === undefined) return '';
-  return String(v);
-}
 
 // Split a signal into words on whitespace, taking the marks off each end. A
 // mark is a character no word of the language is made of — nothing has to
@@ -9617,9 +9562,6 @@ function tokenize(signal, langs) {
     .filter(Boolean);
 }
 
-function quote(s) {
-  return /^[\p{L}\p{N}]+$/u.test(s) ? s : `"${s}"`;
-}
 
 // What a signal holds, where it holds more than one thing said.
 //

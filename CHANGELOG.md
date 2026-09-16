@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file.
 
 ### Changed
 
+- **The node is its own module.** Everything in the brain is made of one shape
+  — a kind, a name, its branches and its state — and every phase walks it. That
+  shape and its walks now live in `src/node.js`, apart from any phase: it knows
+  no language, no world and no phase, and is the first step in giving each
+  phase a module of its own.
+
 - **The world is generic, and what fills it is knowledge.** `data/world.json`
   held 3040 terms: the ladder the engine reads — thing, place, action, property,
   the relations, the anchors — and, beside it, 2699 particulars of one
