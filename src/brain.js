@@ -4185,6 +4185,40 @@ function awoken(roots, world, mood, sent) {
       // a drum makes tom's being cold that same thing. So the condition is not
       // matched word for word: what is looked for is anything that is one of
       // what it names and stands as it says.
+      // Told the consequence does not stand, the condition cannot either. A
+      // bell that is not red is a drum that is not cold: the rule read the
+      // other way round, which follows from it and is not a second rule. The
+      // other way round — a red bell making a drum cold — does not follow, and
+      // the brain never reads it that way.
+      const denies = (claim, one) =>
+        one.relation === claim.relation &&
+        one.object === claim.object &&
+        Boolean(one.not) !== Boolean(claim.not) &&
+        (one.subject === claim.subject || world.isA(one.subject, claim.subject));
+      for (const one of arrivals) {
+        if (!denies(then, one)) continue;
+        const subject = then.subject === on.subject ? one.subject : on.subject;
+        const against = key({ subject, relation: on.relation, object: on.object, not: !on.not });
+        if (told.has(against)) continue;
+        told.add(against);
+        follows.push(
+          node('learn', 'link', [], {
+            subject,
+            relation: on.relation,
+            object: on.object,
+            quantity: null,
+            made: null,
+            not: !on.not,
+            following: stoodBy(
+              { subject: one.subject, relation: then.relation, object: then.object, not: Boolean(one.not) },
+              { subject, relation: on.relation, object: on.object, not: !on.not },
+              { on: thenId, then: onId, met: one.subject === then.subject },
+              sent,
+            ),
+          }),
+        );
+        more = true;
+      }
       const meets = [];
       if (told.has(key({ ...on, not: on.not })) || world.isA(on.subject, on.object, on.relation)) {
         meets.push(on.subject);

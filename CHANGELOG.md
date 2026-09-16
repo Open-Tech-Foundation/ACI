@@ -273,6 +273,15 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Told the consequence does not stand, the condition cannot either.** A rule
+  ran only the way it was written: told `if a drum is cold then a bell is red`
+  and then that the bell is not red, the brain said it did not know whether the
+  drum was cold. A bell that is not red is a drum that is not cold — the rule
+  read the other way round, which follows from it and is not a second rule. It
+  now denies, and says what the denial followed from. The readings that do not
+  follow are untouched and still refuse: a red bell says nothing about the drum,
+  and a drum that is not cold says nothing about the bell.
+
 - **How many kinds a thing holds.** Asked how many kinds a shelf holds, the
   brain answered `I don't know` while answering how many books it holds without
   trouble — and the composition showed why: the counting pair came out inverted,
