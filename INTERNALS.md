@@ -97,6 +97,10 @@ Reachable today, with a probe for each:
 - **Every scale alike.** The amount where a thing stands at one, the state
   where it does not. `what size is the ball?` is `small`.
 - **Kinds held.** Counted off the same walk that adds the things up.
+- **A count over several holders.** `how many ropes do meera and arun have?`
+  reads every holder the question names and adds what each holds. A group told
+  as somebody's holding is drawn from nobody, so arun's four are not four of
+  meera's seven.
 - **A comparison read on the right scale.** A state may stand on more than one
   — a wall is long and so is a wait — and every scale something compares along
   is one way of reading the word. Which one is meant is settled by the two
@@ -135,15 +139,14 @@ not answer. Two complete readings surviving is a conflict, and the brain says
 so — the same ladder it already uses to choose between languages and between
 word readings.
 
-**3. A reading that dropped a word still answered.**
-Two holders named and one counted: `meera has 7 ropes` / `arun has 4 ropes` /
-`how many ropes do meera and arun have?` answers **four**. One of the two
-named holders does nothing in the reading and the answer comes back anyway.
-This is the completeness rule of *Open — 2* met as a wrong answer rather than
-a missing one, and it is the worst kind the brain has: nobody reading *four*
-can tell it dropped half the question. Nearby, and the same shape: `whose
-father is arun?` answers `I don't know. arun`, two readings both speaking at
-once.
+**3. A pointer standing for more than one.**
+`how many ropes do meera and arun have?` now answers eleven, but `how many
+ropes do they have?` still answers four: the pointer lands on one holder where
+the conversation has put two in front of it. A pointer that stands for several
+is one thing, and what it stands for is everyone it reaches — the count behind
+it already adds over as many holders as it is given. Nearby, and a different
+shape: `whose father is arun?` answers `I don't know. arun`, two readings both
+speaking at once.
 
 **4. Closed-set elimination.**
 Three owners, three pets, one each; told who does not own what, name who owns
