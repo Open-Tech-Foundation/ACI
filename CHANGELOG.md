@@ -263,6 +263,17 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **A fraction of what this conversation holds is a count.** Told a shop has a
+  hundred and twenty apples, `what is one-fourth of the apples?` answers 30 —
+  the fraction says which part, the conversation says what the whole is, and
+  neither is guessed. Only where it holds one such lot: several, and there is
+  no *the* to mean.
+
+- **A doing is not a sum to be worked out.** A signal with something happening
+  in it was handed to the arithmetic, so `the shop sold one-fourth of the
+  apples` came back `30` — answering a question nobody asked, and taking
+  nothing in. Where something happened, the signal says so and is taken in.
+
 - **A fraction is so many parts of so many, and the engine names none of them.**
   Halving was an operation of the core — a divide by two, written into the
   engine — so a quarter, a third or three-fifths each needed one of their own,

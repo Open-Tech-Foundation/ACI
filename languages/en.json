@@ -19183,6 +19183,69 @@
       "pos": "function",
       "meaning": "three-fourths of",
       "concept": 3110
+    },
+    "sell": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "sell",
+      "concept": 3112
+    },
+    "sells": {
+      "pos": "verb",
+      "meaning": "sells",
+      "concept": 3112,
+      "person": "third",
+      "number": "singular"
+    },
+    "sold": {
+      "pos": "verb",
+      "meaning": "sold",
+      "concept": 3112,
+      "when": "past"
+    },
+    "pack": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "pack",
+      "concept": 3113
+    },
+    "packs": {
+      "pos": "verb",
+      "meaning": "packs",
+      "concept": 3113,
+      "person": "third",
+      "number": "singular"
+    },
+    "packed": {
+      "pos": "verb",
+      "meaning": "packed",
+      "concept": 3113,
+      "when": "past"
+    },
+    "fill": {
+      "pos": [
+        "noun",
+        "verb"
+      ],
+      "meaning": "fill",
+      "concept": 3114
+    },
+    "fills": {
+      "pos": "verb",
+      "meaning": "fills",
+      "concept": 3114,
+      "person": "third",
+      "number": "singular"
+    },
+    "filled": {
+      "pos": "verb",
+      "meaning": "filled",
+      "concept": 3114,
+      "when": "past"
     }
   },
   "unknown": {

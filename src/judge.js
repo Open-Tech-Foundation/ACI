@@ -2064,7 +2064,12 @@ function together(joined, world, mood, sent) {
     // Nothing joins two things, but an operation may still stand before one —
     // a root takes a single number — and a group may hold one and come to it.
     const alone = said.some((n) => groupOn(n) || operates(conceptOf(n), world));
-    if (!alone) return roots;
+    // A doing in the signal is not a sum to be worked out. `the shop sold
+    // one-fourth of the apples` says something happened, and the fraction says
+    // how many it happened to — answering thirty would answer a question
+    // nobody asked and take nothing in.
+    const happening = said.some((n) => reaches(n, a.action, world));
+    if (!alone || happening) return roots;
     const held = working(said, world, true);
     // Asked to work something out and unable to, it says so rather than
     // falling silent — the same as any other sum it cannot reach.
@@ -3542,6 +3547,11 @@ function calculate(said, at, relation, world) {
     });
   }
 
+  // A doing in the signal is not a sum. `the shop sold one-fourth of the
+  // apples` says something happened and says how many it happened to; working
+  // the fraction out and saying thirty answers a question nobody asked, and
+  // takes nothing in.
+  if (said.some((n) => reaches(n, a.action, world))) return null;
   const run = working(said, world);
   // An operation the brain can perform and cannot complete — nothing divides
   // seven into two whole halves — is not a claim about the two numbers. It is
@@ -3565,6 +3575,17 @@ function calculate(said, at, relation, world) {
 // numbers is the brain's own, and would be the same in any world.
 function working(said, world, alone) {
   const steps = [];
+  // How many of a kind this conversation holds, where it holds exactly one
+  // lot of it. The graph is asked, never the world: a hundred and twenty
+  // apples are this conversation's, not every apple there is.
+  const countHeld = (kind) => {
+    if (graph == null) return null;
+    const groups = graph.graph().groups.filter(
+      (one) => one.term === kind || one.made === kind || one.of === kind,
+    );
+    if (groups.length !== 1) return null;
+    return groups[0].count ?? null;
+  };
   for (const n of said) {
     const c = conceptOf(n);
     const value = numberOf(n, world);
@@ -3572,6 +3593,15 @@ function working(said, world, alone) {
     if (value != null) steps.push({ value });
     else if (group) steps.push({ group });
     else if (c != null && operates(c, world) != null) steps.push({ op: c });
+    // A kind this conversation holds so many of stands for how many: told a
+    // shop has a hundred and twenty apples, `the apples` is a hundred and
+    // twenty. Only where it holds one such lot — several and there is no *the*
+    // to mean — and only where something was asked to be worked, so a kind
+    // named in a plain claim is still a kind.
+    else if (c != null) {
+      const many = countHeld(c);
+      if (many != null) steps.push({ value: many, of: c });
+    }
   }
   // Nothing is worked out where nothing was asked to be: a number on its own
   // is a number, not a sum.
@@ -4036,7 +4066,13 @@ function rolesIn(said, acting, claims, world, side, sides, joints) {
     if (functionsOf(n).includes('extreme') || greetsHere(n, world)) return;
     const named = roleOn(of(i));
     if (!named || a[named] == null) return;
-    parts.push({ role: a[named], of: conceptOf(n), amount: amountOf(n, world), mark: markAt(n), at: i });
+    parts.push({
+      role: a[named],
+      of: conceptOf(n),
+      amount: amountOf(n, world) ?? fractionAmount(said, i, world),
+      mark: markAt(n),
+      at: i,
+    });
     taken.add(i);
   });
 
@@ -4091,6 +4127,34 @@ function rolesIn(said, acting, claims, world, side, sides, joints) {
 // How many of this thing the signal counted, as a number.
 function amountOf(n, world) {
   return world.valueOf(quantityTerm(n));
+}
+
+// How many a part names, where a fraction says it: `one-fourth of the apples`
+// is a quarter of however many apples this conversation holds. The fraction
+// says which part of a whole, the conversation says what the whole is, and
+// neither is guessed.
+function fractionAmount(said, at, world) {
+  const a = world.anchors || {};
+  if (graph == null || a.fraction == null) return null;
+  const thing = conceptOf(said[at]);
+  if (thing == null) return null;
+  for (let i = at - 1; i >= 0; i -= 1) {
+    const of = conceptOf(said[i]);
+    if (of == null) continue;
+    const over = fractionOf(of, world);
+    if (over == null) {
+      // Only what stands between a fraction and its thing may be stepped over
+      // — the word that joins them, and nothing that names another thing.
+      if (a.relation != null && world.isA(of, a.relation)) continue;
+      return null;
+    }
+    const groups = graph.graph().groups.filter(
+      (one) => one.term === thing || one.made === thing || one.of === thing,
+    );
+    if (groups.length !== 1 || groups[0].count == null) return null;
+    return exactly((v) => v.multiply(over.parts).divide(over.whole))(groups[0].count, 0);
+  }
+  return null;
 }
 
 // An action the world says causes an operation, worked on what a thing holds.
