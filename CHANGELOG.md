@@ -115,6 +115,24 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A holding reaches the one the signal made, and one spoken of as new is one
+  of its own.** `Ravi has a red ball. Kumar has a blue ball. Who has the red
+  ball?` answered **Ravi, Kumar** — and so did `who has the blue ball?`. Two
+  faults, one on top of the other, and both in the record.
+
+  A holding reached the *kind*: `holding(ravi, ball)` with the red sitting on a
+  separate ball nobody held. So both men held `ball` and neither held theirs.
+  Counted, it already reached the group it made — `holding(meera, g1)` — and
+  this is the same rule where the count is one.
+
+  Under that, the conversation held one node for a kind, so Kumar's ball *was*
+  Ravi's ball: one node, held by two people, red and blue at once. A thing
+  spoken of as new is one of its own, whatever the conversation already holds of
+  that kind — which is what the graph already said in as many words about `a
+  road` being another road, and did for the known direction only.
+
+  The record now holds two balls, each with its colour, each held by one man.
+
 - **`the roof of the shed` is the shed's roof.** It was three facts and every
   one of them wrong: `holding(roof, shed)` — the roof holding the shed —
   `holding(roof, red)`, and then `property(shed, red)`, saying red of the shed

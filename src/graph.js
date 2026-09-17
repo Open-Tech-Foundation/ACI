@@ -246,7 +246,8 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
       if (side) supposed.add(`${side.subject}:${side.object}`);
     }
   }
-  const { determined: particular, known: spokenBefore, qualities } = determined(roots, marking, world, supposed);
+  const { determined: particular, known: spokenBefore, made: spokenNew, qualities } =
+    determined(roots, marking, world, supposed);
   // Where the signal made one of a kind, that one is the thing spoken of. The
   // kind is not a second thing beside it.
   for (const call of calls) particular.delete(call.state.of);
@@ -306,7 +307,10 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
   // leave the very same fact.
   const besides = [];
   for (const id of reached(roots)) {
-    if (standing.has(id)) continue;
+    // One spoken of as new is one of its own, even where this conversation
+    // already holds one of that kind. `a ball` said twice is two balls, and
+    // reusing the first left two people holding the same one.
+    if (standing.has(id) && !spokenNew.has(id)) continue;
     // Spoken of as the one already met, where this conversation made exactly
     // one thing of that kind: that is the thing meant. A doing makes a thing
     // of its own — `a road became wet` makes a road — and without this the
@@ -552,7 +556,14 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
     // made of them — it says both the kind and how many, and saying the kind
     // and a count beside it would be saying the same thing twice.
     const of = made.get(object);
-    const kind = primitive === HOLDING ? (of ? of.state.of ?? object : object) : reach(object);
+    // What a holding reaches is the one the signal made, where it made one, and
+    // the kind where it made none. A quality says which one — `a red ball` is
+    // one ball and that is the ball held — and the holding was reaching the
+    // kind instead, so two people each holding a ball of their own both held
+    // `ball`, and neither held theirs: `who has the red ball?` answered both of
+    // them, and so did `who has the blue ball?`. Counted, it already reached
+    // the group it made; this is the same rule where the count is one.
+    const kind = primitive === HOLDING ? (of ? of.state.of ?? object : reach(object)) : reach(object);
     const group =
       primitive === HOLDING && quantity != null
         ? held.groups.find(
@@ -1498,6 +1509,7 @@ function determined(roots, marking, world, supposed = new Set()) {
 
   const found = new Set();
   const already = new Set();
+  const fresh = new Set();
   const how = new Map();
   for (let i = 0; i < spoken.length; i++) {
     const one = spoken[i];
@@ -1507,6 +1519,9 @@ function determined(roots, marking, world, supposed = new Set()) {
       // Spoken of as the one already spoken of, rather than as one of a kind.
       // `the road` is a road this conversation has met; `a road` is another.
       if (one.marks === 'known' && thing != null) already.add(thing);
+      // And one spoken of as new is a new one, whatever this conversation
+      // already holds of that kind: a second `a ball` is a second ball.
+      if (one.marks === 'new' && thing != null) fresh.add(thing);
     }
     // `a red box` is a box that is red. The quality is said of the thing it
     // stands beside, and it is held on the thing rather than put between two
@@ -1526,7 +1541,7 @@ function determined(roots, marking, world, supposed = new Set()) {
       }
     }
   }
-  return { determined: found, known: already, qualities: how };
+  return { determined: found, known: already, made: fresh, qualities: how };
 }
 
 // Which sort of quality it is: a colour, a size, a shape. The world says so —

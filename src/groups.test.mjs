@@ -109,3 +109,24 @@ test("a third holder joins the same count", async () => {
   await fresh("priya has 6 lanterns", "kabir has 3 lanterns", "nila has 2 lanterns");
   assertEquals(await says("how many lanterns do priya, kabir and nila have?"), "eleven");
 });
+
+test("a holding reaches the one the signal made, not the kind", async () => {
+  // `ravi has a red ball` is one ball, and that is the ball held. It was
+  // reaching the kind instead, so the red sat on a ball nobody held and the
+  // ball ravi held had no colour.
+  const graph = await fresh("ravi has a red ball");
+  assert(/n\d  ball  type: ball\[\d+\]  \{colour: red\[\d+\]\}/.test(graph), graph);
+  assert(/f1  holding\(n1, n2\)/.test(graph), `held the one it made:\n${graph}`);
+  assert(!/holding\(n1, ball\[/.test(graph), `and not the kind:\n${graph}`);
+});
+
+test("one spoken of as new is one of its own", async () => {
+  // A second `a ball` is a second ball. The conversation held one node for a
+  // kind, so the two of them came out as one ball that two people held and
+  // that was somehow both red and blue.
+  const graph = await fresh("ravi has a red ball", "kumar has a blue ball");
+  assert(/f1  holding\(n1, n2\)/.test(graph), graph);
+  assert(/f3  holding\(n3, n4\)/.test(graph), `a ball of his own:\n${graph}`);
+  assert(/f2  property\(n2, red\[\d+\]\)/.test(graph), graph);
+  assert(/f4  property\(n4, blue\[\d+\]\)/.test(graph), `and it is blue:\n${graph}`);
+});
