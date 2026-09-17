@@ -272,3 +272,24 @@ test("how far along a conversation is, is counted and never clocked", async () =
   assertEquals(conversation.settled(), two, "picked up again, it stands where it was left");
   await forget();
 });
+
+test("a fact the world cannot be grown by was never taken in", async () => {
+  // What the conversation was told and the world it reasons over are two
+  // halves of one thing. The record used to be written first, so a fact the
+  // world choked on left the conversation holding what its own world did not
+  // — and the difference would be written down and picked up again.
+  await forget();
+  await brain("a shelf has 4 books");
+  const held = conversation.settled();
+  const before = conversation.worldOf();
+  let refused = false;
+  try {
+    conversation.took({ terms: [{ id: 999001, name: "broken", links: 7 }] }, before);
+  } catch {
+    refused = true;
+  }
+  assert(refused, "the world could not be grown by it");
+  assertEquals(conversation.settled(), held, "and the conversation stands where it was");
+  assert(conversation.worldOf().term(999001) == null, "with no half-taken term in it");
+  await forget();
+});

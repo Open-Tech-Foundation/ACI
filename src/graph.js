@@ -96,8 +96,14 @@ function clear() {
 // fact and no other, so what one session was told is nothing to the next.
 function took(fact, authored) {
   if (!fact || !(fact.terms || []).length) return;
-  taken = { terms: [...taken.terms, ...fact.terms] };
+  // The world grows first and the record of what was told second. A fact that
+  // cannot be stood in the world was never taken in at all: taking it in first
+  // would leave the conversation holding what its own world does not, and
+  // every reading over the two would answer out of the difference — including
+  // the one that writes the conversation down to be picked up again.
+  const next = { terms: [...taken.terms, ...fact.terms] };
   grown = grownBy(grown ?? authored, fact);
+  taken = next;
 }
 
 // The world this conversation reasons over: the authored world, and what it

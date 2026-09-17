@@ -123,6 +123,13 @@ All notable changes to this project are documented in this file.
   `is the gate open?` is `I don't know`, `was the gate open?` is yes, and told
   it is closed since, it is closed.
 
+- **A fact the world cannot be grown by was never taken in.** What the
+  conversation was told and the world it reasons over are two halves of one
+  thing, and the record was written first. A fact the world choked on left the
+  conversation holding what its own world did not — and every reading over the
+  two would answer out of the difference, including the one that writes the
+  conversation down to be picked up again. The world grows first now.
+
 - **Which of two settlements is the later is counted, not clocked.** A
   conversation was written to the store stamped with the machine's clock, and
   a settlement stamped earlier than the one already there is dropped. Two runs
