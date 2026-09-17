@@ -27,6 +27,7 @@ must devi swim? => affirm
 did devi swim? => unsure
 
 # What somebody said is not what the brain holds.
-omar said the ferry is late
+omar said that the ferry is late
 is the ferry late? => unsure
-did omar say the ferry is late? => affirm
+did omar say that the ferry is late? => affirm
+who said that the ferry is late? => person

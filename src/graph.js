@@ -755,7 +755,21 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
         link.state.relation === claim.relation &&
         same(link, link.state.object, claim.object),
     ) || null;
+  // A claim the signal only spoke of is not a claim it made. `omar said the
+  // ferry is late` says omar said it — it does not say the ferry is late, and
+  // writing it down as a fact of this conversation would leave the brain
+  // holding what nobody told it. The claim itself is held, joined to whoever
+  // holds it; what it says stands or does not on its own.
+  const spokenOf = gather(roots, 'about')
+    .map((one) => one.state.claim)
+    .filter((one) => one != null);
+  // Its two ends are what say which claim it is: what was said of the ferry is
+  // the same claim whether the signal wrote it as being late or as a lateness
+  // it stands in, and neither is a fact this conversation was told.
+  const spokenEnds = new Set(spokenOf.map((one) => `${one.subject}|${one.object}`));
+  const onlySpoken = (claim) => spokenEnds.has(`${claim.subject}|${claim.object}`);
   for (const claim of claims) {
+    if (onlySpoken(claim.state)) continue;
     const { subject, relation, object, negated } = claim.state;
     const from = alongside(claim.state);
     // A counted thing is a node, so a later word can point back at it — but
@@ -784,6 +798,7 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
     for (const [id, values] of besides) {
       for (const value of values) {
         if (reached.has(value)) continue;
+        if (onlySpoken({ subject: id, object: value })) continue;
         const already = held.facts.some(
           (one) =>
             one.of === PROPERTY &&

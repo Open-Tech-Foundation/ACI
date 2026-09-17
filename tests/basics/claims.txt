@@ -33,5 +33,8 @@ is the ferry late? => deny
 the drum is red or the drum is blue
 is the drum red? => unsure
 
-# What somebody knows, and what the brain knows.
-do you know the ferry is late? => deny
+# What somebody knows, and what the brain knows. What it holds, it can see it
+# holds — so not holding something is a no and never a not-knowing.
+do you know that the ferry is late? => deny
+do you know that a mango is a fruit? => affirm
+do you know that a mango is a hammer? => deny

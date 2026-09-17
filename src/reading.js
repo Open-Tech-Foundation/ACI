@@ -17,6 +17,15 @@ import {
   conceptOf, functionsOf, thoughtOf, withBranch, findBranch, negatesOn, reaches,
 } from './node.js';
 
+// A word the signal has not settled yet: it stands for more than one thing and
+// nothing has chosen between them. Until something does it is not yet anything,
+// so it can neither narrow another word nor stand as one.
+function unsettled(n) {
+  const t = findBranch(n, 'thought');
+  if (!t || !t.state.ways || t.state.ways.length < 2) return false;
+  return !t.state.contextual && !t.state.settled;
+}
+
 // A reading chosen by what stands beside it.
 export function contextual(roots, world) {
   return roots.map((n, i) => {
@@ -89,15 +98,26 @@ function contextBefore(wanted, roots, at, world) {
     }
     if (kind !== 'proposition' || !world) return false;
     const a = world.anchors || {};
-    const things = rest.filter((n) => {
+    // A word still to be settled is not yet anything, and says nothing about
+    // what another word is. Without this the second `say` of `say wool else
+    // say silk` — read for the moment as the joint it may turn out to be —
+    // made the first one look like a claim being held.
+    // A claim is two ends and something joining them, and it is *about*
+    // something: one end has to be a thing. The other may be a way of being or
+    // something done — `the ferry is late` is as much a claim as `a mango is a
+    // fruit`, and asking for two things left the first looking like no claim at
+    // all. Asking for none leaves `say big else say small` looking like one.
+    const isKind = (n, kindOf) => {
+      if (unsettled(n)) return false;
       const concept = conceptOf(n);
-      return concept != null && world.isA(concept, a.thing);
-    }).length;
-    const joins = rest.some((n) => {
-      const concept = conceptOf(n);
-      return concept != null && world.isA(concept, a.relation);
-    });
-    return things >= 2 && joins;
+      return concept != null && kindOf != null && world.isA(concept, kindOf);
+    };
+    const ends = rest.filter(
+      (n) => [a.thing, a.property, a.action].some((kindOf) => isKind(n, kindOf)),
+    ).length;
+    const about = rest.some((n) => isKind(n, a.thing));
+    const joins = rest.some((n) => isKind(n, a.relation));
+    return ends >= 2 && about && joins;
   });
 }
 

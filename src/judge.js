@@ -3236,6 +3236,21 @@ function askedAbout(root, spoken, verdict, world) {
   if (held == null) return [];
   const { joint, holder } = held;
   const { subject, object, relation, negated } = stood.state;
+  // Asked whether the brain itself holds a claim, nothing has to have been
+  // written down: it holds what it holds, and it can see that it does not hold
+  // this. So the claim's own standing answers, and not holding it is a no
+  // rather than a not-knowing — which is the one thing the brain is never
+  // unsure of.
+  if (a.self != null && conceptOf(holder) === a.self) {
+    return [
+      node('standing', stood.name === 'held' ? 'held' : 'against', [], {
+        subject: a.self,
+        relation: joint,
+        object: null,
+        negated: false,
+      }),
+    ];
+  }
   // The claim the signal spoke of, where the world already wrote one down.
   const written = world.standing(subject, a.subject).filter((claim) => {
     if (!world.linked(claim, a.object).includes(object)) return false;
@@ -3305,12 +3320,22 @@ function aboutClaim(root, spoken, verdict, world, mood, sent) {
   if (held == null) return [];
   const { joint, holder } = held;
   const of = conceptOf(holder);
-  const bearer = bearerOf(of, world, markAt(holder), sent.allocate);
+  // A thing this very signal made is already the one it is. The world does not
+  // hold it yet, so nothing but the making says so — and asking for a bearer
+  // of it makes a second thing standing for the first, which is then joined to
+  // the claim while the first keeps the name.
+  const call = findBranch(holder, 'call');
+  const bearer = call && call.state.id != null
+    ? { id: call.state.id, made: false, named: call.state.name }
+    : bearerOf(of, world, markAt(holder), sent.allocate);
   if (bearer == null) return [];
   return [
     node('about', 'claim', [], {
       holder: bearer.id,
       of: bearer.made ? of : null,
+      // What it is called, where this signal is the one calling it that: the
+      // record must not rename what it is only joining to a claim.
+      named: bearer.named ?? null,
       relation: joint,
       claimId: sent.allocate(),
       claim: {

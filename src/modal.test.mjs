@@ -102,3 +102,15 @@ test("holding a claim at arm's length is not the same as being able", async () =
   assertEquals((await fresh("a cat might swim")).learned, null);
   await forget();
 });
+
+test("what must be so is not what is so", async () => {
+  // `must` had no term at all, so `devi must swim` left the brain nothing to
+  // hold. Being required to do something is a relation between somebody and a
+  // doing, the same shape as being able to — and neither is having done it.
+  await forget();
+  await brain("devi must swim");
+  assertEquals((await brain("must devi swim?")).expression.name, "affirm");
+  assertEquals((await brain("did devi swim?")).expression.name, "unsure");
+  assertEquals((await brain("can devi swim?")).expression.name, "unsure");
+  await forget();
+});

@@ -4526,6 +4526,24 @@
       ]
     },
     {
+      "id": 3136,
+      "name": "obliged",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        },
+        {
+          "rel": 2867,
+          "to": 2
+        },
+        {
+          "rel": 2868,
+          "to": 5
+        }
+      ]
+    },
+    {
       "id": 3013,
       "name": "brings-about",
       "links": [

@@ -4388,7 +4388,7 @@ function awoken(roots, world, mood, sent) {
 // does not matter which relation reaches it.
 function heldAbout(held, world) {
   const a = world.anchors || {};
-  const { holder, of, relation, claimId, claim } = held.state;
+  const { holder, of, relation, claimId, claim, named } = held.state;
   return [
     {
       id: claimId,
@@ -4402,7 +4402,9 @@ function heldAbout(held, world) {
     },
     {
       id: holder,
-      name: world.term(holder) ? world.term(holder).name : `${world.term(of) ? world.term(of).name : 'thing'}#${holder}`,
+      name: world.term(holder)
+        ? world.term(holder).name
+        : named ?? `${world.term(of) ? world.term(of).name : 'thing'}#${holder}`,
       ...(of == null ? {} : { individual: true }),
       links: [
         ...(of == null ? [] : [{ rel: world.baseRelation, to: of }]),

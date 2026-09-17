@@ -15086,26 +15086,61 @@
       "meaning": "else",
       "functions": "otherwise"
     },
-    "say": {
-      "pos": "verb",
-      "meaning": "say",
-      "concept": 271,
-      "names": false
-    },
-    "says": {
-      "pos": "verb",
-      "meaning": "says",
-      "concept": 271,
-      "names": false,
-      "person": "third",
-      "number": "singular"
-    },
-    "said": {
-      "pos": "verb",
-      "meaning": "said",
-      "concept": 271,
-      "when": "past"
-    },
+    "say": [
+      {
+        "pos": "verb",
+        "meaning": "say",
+        "concept": 3137,
+        "select": {
+          "before": "proposition"
+        },
+        "names": false
+      },
+      {
+        "pos": "verb",
+        "meaning": "say",
+        "concept": 271,
+        "names": false
+      }
+    ],
+    "says": [
+      {
+        "pos": "verb",
+        "meaning": "says",
+        "concept": 3137,
+        "select": {
+          "before": "proposition"
+        },
+        "person": "third",
+        "number": "singular",
+        "names": false
+      },
+      {
+        "pos": "verb",
+        "meaning": "says",
+        "concept": 271,
+        "names": false,
+        "person": "third",
+        "number": "singular"
+      }
+    ],
+    "said": [
+      {
+        "pos": "verb",
+        "meaning": "said",
+        "concept": 3137,
+        "select": {
+          "before": "proposition"
+        },
+        "when": "past"
+      },
+      {
+        "pos": "verb",
+        "meaning": "said",
+        "concept": 271,
+        "when": "past"
+      }
+    ],
     "follow": {
       "pos": "verb",
       "meaning": "follow",
@@ -17944,11 +17979,21 @@
       "meaning": "should",
       "functions": "modal"
     },
-    "must": {
-      "pos": "modal",
-      "meaning": "must",
-      "functions": "modal"
-    },
+    "must": [
+      {
+        "pos": "verb",
+        "meaning": "must",
+        "concept": 3136,
+        "select": {
+          "before": "doing"
+        }
+      },
+      {
+        "pos": "modal",
+        "meaning": "must",
+        "functions": "modal"
+      }
+    ],
     "shall": {
       "pos": "modal",
       "meaning": "shall",

@@ -123,6 +123,34 @@ All notable changes to this project are documented in this file.
   `is the gate open?` is `I don't know`, `was the gate open?` is yes, and told
   it is closed since, it is closed.
 
+- **A claim somebody holds is a thing the brain holds, and not a claim it
+  makes.** `omar said that the ferry is late` was not read at all, and once it
+  was, the brain came away believing the ferry is late. Four things stood in
+  the way, and each is its own fault. A word for saying had no reading that
+  takes a whole claim, where knowing already had one. A claim about *how* a
+  thing is did not look like a claim — the test asked for two things, and `the
+  ferry is late` names one thing and a way of being, so only claims about what
+  something *is* were ever seen. A thing the signal had just made was made a
+  second time, because the world does not hold it yet and nothing but the
+  making says so — and the record that joined the second to the claim was then
+  refused, since it pointed at a term nothing was writing down. And the claim
+  spoken of was written as a fact of the conversation, which is the one thing
+  saying something is not.
+
+- **What must be so is not what is so.** `must` had no term at all, so `devi
+  must swim` left the brain nothing to hold and `must devi swim?` could not be
+  read. Being required to do something is a relation between somebody and a
+  doing, the same shape as being able to, and neither is having done it.
+
+- **What the brain holds, it can see it holds.** Asked whether it knows
+  something, it went looking for a claim somebody had written down and said it
+  did not know when it found none. It holds what it holds: not holding a claim
+  is a no, and never a not-knowing.
+
+- **A word still to be settled says nothing about what another word is.** The
+  second `say` of `say wool else say silk`, read for the moment as the joint it
+  might turn out to be, made the first one look like a claim being held.
+
 - **A word for one way of being is not the word for being some way at all.**
   Ten English words — rough, smooth, sharp, round, cheap, expensive,
   important, possible, impossible, fat — were written as the term that every
