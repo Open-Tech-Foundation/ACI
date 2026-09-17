@@ -27,7 +27,7 @@ test("a named thing is a thing like any other", async () => {
   await forget();
   await brain("luna is a cat");
   await brain("luna weighs 4 kilogram");
-  assertEquals(await says("luna weighs how many kilograms?"), "4");
+  assertEquals(await says("luna weighs how many kilograms?"), "four");
   await forget();
 });
 

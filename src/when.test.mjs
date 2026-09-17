@@ -141,12 +141,12 @@ test("how many minutes stood between two clocked doings answers the gap", async 
   const after = await brain("how many minutes after the server started did the crash happen?");
   assert(after.expression.name === "answer", `a span answers:\n${JSON.stringify(after.expression)}`);
   assert(
-    after.expression.state.says === "110 minutes",
+    after.expression.state.says === "one hundred ten minutes",
     `the minutes between the two doings answer:\n${JSON.stringify(after.expression)}`,
   );
   const before = await brain("how many minutes before the crash did the server start?");
   assert(
-    before.expression.state.says === "110 minutes",
+    before.expression.state.says === "one hundred ten minutes",
     `the same gap asked the other way round answers alike:\n${JSON.stringify(before.expression)}`,
   );
 });

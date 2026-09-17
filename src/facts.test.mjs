@@ -6,11 +6,15 @@ const { brain, forget } = openBrain("sqlite::memory:");
 const says = async (said) => (await brain(said)).expression.state.says;
 
 test("a country has a capital, and the world says which", async () => {
+  // The relation runs from the city to the country it is the capital of, the
+  // way the name says and the way `paris is the capital of france` records it.
+  // Either end asks it.
   await forget();
   assertEquals(await says("france capital what"), "paris");
   assertEquals(await says("japan capital what"), "tokyo");
-  assertEquals((await brain("france capital paris?")).expression.name, "affirm");
-  assertEquals((await brain("france capital tokyo?")).expression.name, "unsure");
+  assertEquals(await says("paris capital what"), "france");
+  assertEquals((await brain("paris capital france?")).expression.name, "affirm");
+  assertEquals((await brain("tokyo capital france?")).expression.name, "unsure");
   await forget();
 });
 

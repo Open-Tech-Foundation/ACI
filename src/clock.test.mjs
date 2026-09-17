@@ -23,7 +23,7 @@ test("time is counted in the parts the world already held", async () => {
 test("a clock read is a measure like any other", async () => {
   await forget();
   await brain("a clock reads 10 hour");
-  assertEquals(await says("the clock reads how many hours?"), "10");
+  assertEquals(await says("the clock reads how many hours?"), "ten");
   await forget();
 });
 

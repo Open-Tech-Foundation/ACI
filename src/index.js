@@ -189,11 +189,45 @@ export function openBrain(url) {
     letGo();
   }
 
+  // Everything said in one arrival, as the separate sayings it is. One saying,
+  // or none the brain can tell apart, comes back as nothing to do.
+  function saidApart(input, langs) {
+    const text = String(input);
+    const ends = (ch) => (langs || []).some((one) => one.endsWhat(ch));
+    const apart = [];
+    let from = 0;
+    for (let at = 0; at < text.length; at += 1) {
+      if (!ends(text[at])) continue;
+      // A mark with a word still running through it ends nothing.
+      const next = text[at + 1];
+      if (next !== undefined && next.trim() !== '') continue;
+      const one = text.slice(from, at + 1).trim();
+      if (one !== '') apart.push(one);
+      from = at + 1;
+    }
+    const rest = text.slice(from).trim();
+    if (rest !== '') apart.push(rest);
+    return apart.length > 1 ? apart : null;
+  }
+
   // The circumstance of the signal — where it came from, where it went, what
   // was last spoken of — is the runtime's to supply, and it is optional: told
   // nothing, the brain does not guess who it is talking to.
   async function turn(input, circumstance) {
     const thread = (circumstance && circumstance.conversation) ?? ALONE;
+    // What arrives may be more than one thing said. A mark that ends what is
+    // being said closes one and opens the next, and each is a signal of its own
+    // through the same conversation — told in the order they were said, and
+    // what the last one came to is what comes back. Which mark ends a saying is
+    // the language's; every language loaded is asked, and a mark standing
+    // inside a word ends nothing, which is what keeps the point in `2.5` a
+    // point.
+    const apart = saidApart(input, (await loaded()).languages);
+    if (apart) {
+      let last = null;
+      for (const one of apart) last = await turn(one, circumstance);
+      return last;
+    }
     // What is known before the conversation is picked up: the store is opened
     // on the way, and a conversation kept in it cannot be read back before
     // there is a store to read it from.

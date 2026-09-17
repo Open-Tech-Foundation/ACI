@@ -1876,7 +1876,10 @@ function settle(roots, world) {
     const mine = ways(n);
     if (!mine) return n;
     const held = mine.filter(runsBetween);
-    if (held.length !== 1) return n;
+    // Two readings of one word that name the same thing are one reading. A
+    // language may write a word two ways over the same concept — `capital` is
+    // said as a thing and used as a joint — and that is no ambiguity to refuse.
+    if (new Set(held.map((one) => one.concept)).size !== 1) return n;
     return withBranch(
       n,
       n.branch.map((b) =>

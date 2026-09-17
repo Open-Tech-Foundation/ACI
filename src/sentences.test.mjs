@@ -36,3 +36,19 @@ test("one thing said is still one thing said", async () => {
   assertEquals((await brain("nila is a crow.")).expression.name, "learn");
   await forget();
 });
+
+test("several sayings in one arrival are several", async () => {
+  // Three sentences typed together are three things said, and the brain was
+  // reading them as one: it took both facts in and answered nothing.
+  await forget();
+  const r = await brain("The cat is small. The dog is big. Which animal is small?");
+  assertEquals(r.expression.state.says, "cat");
+  await forget();
+});
+
+test("a mark inside a word ends nothing", async () => {
+  // The point in a decimal is not the end of a saying.
+  await forget();
+  assertEquals((await brain("what is one-fourth of 10?")).expression.state.says, "2.5");
+  await forget();
+});

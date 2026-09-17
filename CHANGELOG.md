@@ -107,6 +107,27 @@ All notable changes to this project are documented in this file.
   left is the kind with what it is of. `how many kinds of rope does the rack
   have?` is `one` where `how many kinds` is `two`.
 
+- **A saying is a turn, and several arrive together.** `The cat is small. The
+  dog is big. Which animal is small?` took both facts in and answered `I don't
+  know`. Three sentences typed at once were read as one signal, and a signal is
+  settled into the record once, at its end — so the question at the end of it
+  asked against a record that did not yet hold what the two sentences before it
+  had just said. Where the answer happened to be reachable without the record,
+  as for a comparison chain, it worked, which is why this had gone unseen.
+
+  A mark that ends what is being said now ends a turn: each saying goes through
+  in the order it was said, settles, and the next asks against what it left.
+  Which mark ends a saying is the language's, and every language loaded is
+  asked; a mark with a word still running through it ends nothing, which keeps
+  the point in `2.5` a point.
+
+- **One word, two ways of standing.** `capital` is a thing to be said — `the
+  capital of france` — and the joint of a claim — `paris capital france`.
+  Making it a noun to fix the first broke the second, and both readings at once
+  left nothing able to choose. It is one reading now with both parts of speech,
+  and two readings that name the same thing no longer count as an ambiguity to
+  refuse.
+
 - **A number no word names is built from the words there are.** The brain could
   say a number only where the world had a term for it — one to ninety-nine, and
   a hundred — so `what is two hundred plus three?` came back `203` in figures,

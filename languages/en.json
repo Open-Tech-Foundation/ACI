@@ -16594,7 +16594,10 @@
     },
     "capital": [
       {
-        "pos": "noun",
+        "pos": [
+          "noun",
+          "verb"
+        ],
         "meaning": "capital",
         "concept": 1397,
         "names": false

@@ -46,14 +46,14 @@ test("a count needs no term for its number", async () => {
   // No word names a thousand, and a pond of a thousand stones keeps its count
   // all the same.
   await brain("a pond has 1000 stones");
-  assertEquals(await says("the pond has how many stones?"), "1000");
+  assertEquals(await says("the pond has how many stones?"), "thousand");
   await forget();
 });
 
 test("asked how many with nothing said of whose, it is what was last spoken of", async () => {
   await forget();
   await brain("a pond has 1000 stones");
-  assertEquals(await says("how many stones?"), "1000");
+  assertEquals(await says("how many stones?"), "thousand");
   // And where it holds none of them, the brain does not go and count what it
   // holds of its own instead: whoever is talking to it knows nothing of that.
   assertEquals((await brain("how many amphibian?")).expression.name, "unsure");
@@ -63,7 +63,7 @@ test("asked how many with nothing said of whose, it is what was last spoken of",
 test("the count sits on whichever end holds it", async () => {
   await forget();
   await brain("a pond holds 1000 stones");
-  assertEquals(await says("how many stones in the pond?"), "1000",
+  assertEquals(await says("how many stones in the pond?"), "thousand",
     "being in a thing and its holding you are one fact");
   await forget();
 });

@@ -85,12 +85,18 @@ test("two units of one scale come to a number, however many steps apart", async 
   assertEquals((await brain("an hour has how many minutes?")).expression.state.says, "sixty");
   // Said the short way round, where `in` puts the counted thing first.
   assertEquals((await brain("how many days in a week?")).expression.state.says, "seven");
-  assertEquals((await brain("how many minutes in a day?")).expression.state.says, "1440");
+  assertEquals(
+    (await brain("how many minutes in a day?")).expression.state.says,
+    "one thousand four hundred forty",
+  );
   assertEquals(
     (await brain("a day has how many minutes?")).expression.state.says,
-    "1440",
+    "one thousand four hundred forty",
     "a day is twenty-four hours and an hour sixty minutes; nobody wrote the third down",
   );
-  assertEquals((await brain("a week has how many hours?")).expression.state.says, "168");
+  assertEquals(
+    (await brain("a week has how many hours?")).expression.state.says,
+    "one hundred sixty-eight",
+  );
   await forget();
 });
