@@ -287,6 +287,49 @@ fig?`.
 - A told cause is not read: `the storm delayed the ferry` comes back
   unknown, though `why` answers where a doing brought a state about.
 
+## Settled: the meaning is built generically, and grammar admits nothing
+
+The question was whether the brain reads a signal through English grammar or
+through what its words are in the world. It was measured rather than argued.
+
+**The record is already built generically.** The graph is assembled from what
+the readings made — `call`, `learn`, `event`, `standing`, `moment`, `cause`,
+`instruction` — and never from a grammar category. The readings work from what
+a word names, what the world says that is, whether it is a hole, and what
+function the language declares on it. A grammar-category node kind is read in
+exactly one place in the whole engine, and it is a narrow clock case. `a cat
+jumped from the wall` is held as `transfer(cat, from: wall) {time: done}`: a
+thing moved, out of a place, and it has happened. Nothing in that record is
+English.
+
+**Grammar does two other things, and neither belongs to it.**
+
+*It admits.* A signal whose shape is not among the hundred and eighty-two rules
+is refused before any reading sees it — five of thirteen well-formed sentences
+with every word known. The defence for this was that the gate keeps nonsense
+off the record. That defence is false: `the leg of a cow is a body` parses,
+and holds `holding(leg, cow)` — the leg holding a cow. The gate does not
+prevent a bad reading, it conceals one, and where it refuses it happens to be
+right for the wrong reason. **Grammar may not refuse.** `I don't understand`
+is for a word never met, not for a shape never listed.
+
+*It brackets, and the brackets reach the readings.* Reading `did` correctly as
+an auxiliary makes the parser nest the rest as a clause, the hole stays outside
+it, and four readings that walk the flat signal stop finding anything. The
+meaning did not change; the bracketing did. **A reading may take order and
+grouping as evidence and must not depend on the brackets.**
+
+What grammar keeps is what it is for: helping settle which reading of a word is
+meant, which has had its own phase since `src/reading.js`, and carrying the
+order a language declares — that a doer falls before and a target after is real
+and is the language's.
+
+**The order of work follows from this, and not from the gate.** The readings
+that are wrong are wrong now, in sentences the grammar already accepts, and
+nothing blocks fixing them. Each one fixed is one more signal the gate no
+longer has to refuse on its behalf. The gate comes off when the readings can
+say *not me* — and that is the completeness rule, which is *Open — 2*.
+
 ## Deferred by decision
 
 - **A domain's knowledge, pumped in from outside.** Answering a cricket
