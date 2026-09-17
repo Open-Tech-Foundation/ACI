@@ -74,3 +74,30 @@ test("a relation joining two things is what the signal is about", async () => {
   assertEquals((await brain("a saw is a tool?")).expression.name, "affirm");
   await forget();
 });
+
+test("a be before a doing said as a participle is the doing's auxiliary", async () => {
+  // `ravi is coming` is a coming, the way `ravi was coming` is: the copular
+  // reading would say ravi is a come, which is nothing at all.
+  await forget();
+  await said("ravi is coming");
+  assertEquals(await says("who is coming?"), "ravi");
+  assertEquals(await says("did ravi come?"), "Yes. ✅");
+  assertEquals(await says("is ravi coming?"), "Yes. ✅");
+  await forget();
+});
+
+test("one and several answer singular and plural questions alike", async () => {
+  // English asks after an unknown number in the singular: `who is coming?`
+  // is one or several, and so is `who are coming?`. Number is the language's
+  // to voice; how many did it is the brain's to know.
+  await forget();
+  await said("ravi is coming");
+  await said("kumar is coming");
+  assertEquals(await says("who is coming?"), "ravi, kumar");
+  assertEquals(await says("who are coming?"), "ravi, kumar");
+  await forget();
+  await said("ravi and kumar are coming");
+  assertEquals(await says("who is coming?"), "ravi, kumar");
+  assertEquals(await says("who are coming?"), "ravi, kumar");
+  await forget();
+});

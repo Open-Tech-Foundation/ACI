@@ -97,6 +97,16 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A `be` before a doing said as a participle is the doing's auxiliary.**
+  `ravi is coming` was read as ravi being a come — one thing said twice, and
+  nothing ever happened. The ending is the language's to derive, and a listed
+  word wins over one derived; that a doing said that way is what happens is
+  the brain's. So a coming is what happened however it was told — `comes`,
+  `was coming`, `is coming` — and `who is coming?` answers one or several in
+  the singular English asks an unknown number in, exactly as `who are coming?`
+  does. `running` said as a thing stays one, and what a tenseless `be` joins
+  otherwise is untouched.
+
 - **A hole asking after whoever stands at the far end of the relation it
   determines.** `whose sister is sofia?` said the brain could not read it —
   and then, for a while, said it did not know and answered anyway. The copula

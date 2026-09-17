@@ -370,6 +370,7 @@ function recognizeLanguage(roots, langs) {
         proximity: word.proximity ?? null,
         select: word.select ?? null,
         functions: lang.functionsFor(word),
+        derived: word.derived ?? null,
       }));
       matching.push({
         lang: lang.data.name,
@@ -481,6 +482,10 @@ function think(roots, langs, at, world) {
       // reads third-person pointers as not the speaker nor who was spoken to.
       person: word ? word.person ?? null : null,
       number: word ? word.number ?? null : null,
+      // How the word was formed, where the language derived it rather than
+      // listed it: what it was derived from, and by which ending. A listed
+      // word carries none, and always wins over one derived.
+      derived: word ? word.derived ?? null : null,
       // How near what the pointer points at stands. The language's to say.
       proximity: word ? word.proximity ?? null : null,
       select: word ? word.select ?? null : null,

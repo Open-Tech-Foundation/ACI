@@ -4956,15 +4956,27 @@ function namedRelation(said, world, claims, asking) {
 
     if (conceptOf(said[i]) !== world.baseRelation) return i;
     // A tensed `be` never joins where a doing stands after it: `i will go`
-    // is going, not being. Plain `be` still joins. Which words carry time
-    // is the language's (`when`); that time decides joints is the brain's.
+    // is going, not being. Which words carry time is the language's (`when`);
+    // that time decides joints is the brain's.
+    // A `be` before a doing said as a participle is the doing's auxiliary,
+    // tensed or not: `ravi is coming` is a coming, and `is ravi coming?` asks
+    // after it. The ending is the language's to derive; that a doing said
+    // that way is what happens is the brain's. A word the language lists wins
+    // over one derived, so `running` said as a thing stays one, and so does
+    // whatever follows a doing that is only ever a thing.
     const tensed = (() => {
       const t = findBranch(said[i], 'thought');
       return t && t.state.thought ? t.state.thought.when : null;
     })();
-    const doingAfter =
-      tensed != null && said.slice(i + 1).some((n) => claims(n) && reaches(n, a.action, world));
-    if (doingAfter) continue;
+    const participle = (n) => {
+      const t = findBranch(n, 'thought');
+      const formed = t && t.state.thought ? t.state.thought.derived : null;
+      return formed != null && formed.ending === 'ing' && reaches(n, a.action, world);
+    };
+    const after = said.slice(i + 1);
+    const doingAfter = after.some((n) => claims(n) && reaches(n, a.action, world));
+    const comingAfter = after.some((n) => claims(n) && participle(n));
+    if ((tensed != null && doingAfter) || comingAfter) continue;
     if (fallback < 0) fallback = i;
   }
   return fallback >= 0 ? fallback : worked;
