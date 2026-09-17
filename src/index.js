@@ -76,8 +76,13 @@ export function openBrain(url) {
   // this run's memory, a conversation has nowhere else to go, and none is let
   // go from there.
   const KEEP = 64;
+  // Which conversation was spoken to longest ago is counted, not clocked: the
+  // same signals in the same order let the same one go on any machine, however
+  // fast it runs.
+  let reached = 0;
   const touched = (thread) => {
-    if (talks.has(thread)) touches.set(thread, Date.now());
+    reached += 1;
+    if (talks.has(thread)) touches.set(thread, reached);
   };
   const letGo = () => {
     if (!durable || talks.size <= KEEP) return;
@@ -184,7 +189,11 @@ export function openBrain(url) {
   async function settle(thread, talk, record) {
     threads.set(thread, record);
     if (thread === ALONE || !store) return;
-    await keepTalk(store, thread, { graph: talk.dump(), thread: record }, Date.now());
+    // Which of two settlements is the later is the conversation's own count of
+    // what it holds, not the machine's clock: the same signals in the same
+    // order settle the same way on any machine, and a clock stepped backwards
+    // between two turns cannot drop the newer one.
+    await keepTalk(store, thread, { graph: talk.dump(), thread: record }, talk.settled());
     touched(thread);
     letGo();
   }

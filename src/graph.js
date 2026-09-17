@@ -115,6 +115,19 @@ function worldOf(authored) {
 //
 // This is what a conversation is. Keeping it is what lets one be picked up
 // again without every signal being said a second time.
+// How much this conversation holds, as a number that only ever grows. Two
+// settlements of one conversation are ordered by it — the one holding more is
+// the later — so which of them stands never turns on a clock. Ids are counted
+// rather than read off the machine, and the world's own now is counted too;
+// this is the same. A store shared by two runs settles the same way whatever
+// their clocks say, and a clock stepped backwards between two turns can no
+// longer drop the newer one.
+function settled() {
+  let held = taken.terms.length;
+  for (const kind of KINDS) held += counted[kind];
+  return held;
+}
+
 function dump() {
   return {
     held: Object.fromEntries(KINDS.map((kind) => [kind, held[kind].map((one) => ({ ...one }))])),
@@ -2636,6 +2649,7 @@ function serialize(world = against) {
     graph,
     fromUnderstood,
     serialize,
+    settled,
     inState,
     told,
     namedIn,

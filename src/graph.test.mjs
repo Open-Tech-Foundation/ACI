@@ -5,7 +5,7 @@ import { openBrain } from "./index.js";
 // Every assertion here is behavioural — what was said in, what came back out —
 // and nothing reads the stored shape. This file is red until the graph lands.
 
-const { brain, forget, serialize } = openBrain("sqlite::memory:");
+const { brain, forget, serialize, conversation } = openBrain("sqlite::memory:");
 
 async function said(...lines) {
   await forget();
@@ -252,4 +252,23 @@ test("a giving answers whether it happened", async () => {
   await brain("sam gives 2 books to jerry");
   assertEquals((await brain("did sam give books to jerry?")).expression.state.says, "Yes. ✅");
   assertEquals((await brain("did jerry give books to sam?")).expression.state.says, "I don't know.");
+});
+
+test("how far along a conversation is, is counted and never clocked", async () => {
+  // Which of two settlements stands is decided by this, so it may not come
+  // from the machine: two runs on two clocks would then disagree about which
+  // of them was later, and a clock stepped backwards between two turns would
+  // drop the newer one.
+  await forget();
+  const none = conversation.settled();
+  await brain("a shelf has 4 books");
+  const one = conversation.settled();
+  await brain("a shelf has 5 books");
+  const two = conversation.settled();
+  assert(one > none, `saying something moves it on: ${none} -> ${one}`);
+  assert(two > one, `and saying more moves it further: ${one} -> ${two}`);
+  const saved = conversation.dump();
+  conversation.restore(saved);
+  assertEquals(conversation.settled(), two, "picked up again, it stands where it was left");
+  await forget();
 });

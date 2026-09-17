@@ -123,6 +123,16 @@ All notable changes to this project are documented in this file.
   `is the gate open?` is `I don't know`, `was the gate open?` is yes, and told
   it is closed since, it is closed.
 
+- **Which of two settlements is the later is counted, not clocked.** A
+  conversation was written to the store stamped with the machine's clock, and
+  a settlement stamped earlier than the one already there is dropped. Two runs
+  on two machines do not agree on that clock, and one machine may step its own
+  backwards between two turns — and then the newer state is silently the one
+  thrown away, and the conversation answers out of a graph it has moved past.
+  It is now the conversation's own count of what it holds, which only ever
+  grows. Nothing else in the brain read a clock; this was the last of it, and
+  the one that chooses which conversation to let go of is counted too.
+
 - **The conversation is handed to the phases that read it.** It was a module
   binding set at the top of each turn and read from wherever — sixteen readings
   reached it without saying so, and nothing in a signature told you a reading
