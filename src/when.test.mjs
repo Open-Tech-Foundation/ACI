@@ -1,4 +1,4 @@
-import { test, assert } from "runtime:test";
+import { test, assertEquals, assert } from "runtime:test";
 import { openBrain } from "./index.js";
 
 const { brain, forget } = openBrain("sqlite::memory:");
@@ -324,4 +324,15 @@ test("two measures compare along their scale, converted where units differ", asy
     under.expression.name === "affirm",
     `less than reads the converted hour too:\n${JSON.stringify(under.expression)}`,
   );
+});
+test("a told time answers over the coarse side of now it falls on", async () => {
+  // `past` is true of everything that has happened and tells nobody anything.
+  // Where the walk came back with it and the doing was told at a time, the
+  // time answers: it stands in place of the coarse one, not beside it.
+  await fresh("nadia arrived at nine hours");
+  assertEquals((await brain("when nadia arrive?")).expression.state.says, "nine hours");
+  assertEquals((await brain("when did nadia arrive?")).expression.state.says, "nine hours");
+  // And where nothing was told, the coarse side of now is all there is.
+  await fresh("nadia arrived");
+  assertEquals((await brain("when nadia arrive?")).expression.state.says, "past");
 });

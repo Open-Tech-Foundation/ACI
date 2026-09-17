@@ -107,6 +107,16 @@ All notable changes to this project are documented in this file.
   left is the kind with what it is of. `how many kinds of rope does the rack
   have?` is `one` where `how many kinds` is `two`.
 
+### Fixed
+
+- **A told time answers over the coarse side of now it falls on.** `nadia
+  arrived at nine hours` / `when nadia arrive?` answered **past**. Past is true
+  of everything that has happened and tells nobody anything; the time the doing
+  was told at is the answer, and it was on the record the whole time. The walk
+  that comes back with the coarse side of now is what the clock falls back to,
+  not what stands in front of it. Where nothing was told, past is still all
+  there is.
+
 ### Added
 
 - **Which reading of a word a signal means is its own phase, and the language

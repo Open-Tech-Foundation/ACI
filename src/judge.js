@@ -5037,7 +5037,11 @@ if (far !== undefined) {
   // server was told does not answer. A clock reading — a measure of the day —
   // sits on the record whole and answers the same way a time does.
   let clock = null;
-  if (hole.role === a.when && found.length === 0) {
+  // Asked when, the time a doing was told at answers over the coarse side of
+  // now it falls on: `past` is true of everything that has happened and tells
+  // nobody anything. The walk out is not consulted first — it is what falls
+  // back to, where nothing was told.
+  if (hole.role === a.when) {
     const rows = graph ? graph.graph().actions : [];
     const nodes = graph ? graph.graph().nodes : null;
     // What a node answers to. A thing spoken of by its kind answers to the
@@ -5085,11 +5089,16 @@ if (far !== undefined) {
       }),
     );
     const times = [...new Set(mine.flatMap((r) => (r.properties || {}).times ?? []))];
+    // What was told stands in place of the coarse side of now, not beside it.
+    if (times.length > 0) found.length = 0;
     found.push(...times);
     // A time-word told outright answers first — the morning it was started in
     // says where on the day it stands, where a reading says only how far. The
-    // clock is read only where no time was ever told.
-    if (found.length === 0) {
+    // clock is read where no time was ever told, and over the coarse side of
+    // now the walk may have come back with: `past` is true of everything that
+    // has happened, and a doing told at nine o'clock has an answer.
+    const coarse = found.length > 0 && found.every((t) => [a.past, a.now, a.future].includes(t));
+    if (found.length === 0 || coarse) {
       clock =
         mine
           .map((r) => (r.properties || {}).at)
@@ -5103,6 +5112,8 @@ if (far !== undefined) {
               // reads — not a week, which is a length nothing tells the clock.
               UNITS.some((name) => a[name] === t.unit),
           ) ?? null;
+      // What the clock says stands in place of the coarse answer, not beside it.
+      if (clock != null && coarse) found.length = 0;
     }
     // A doing's end asked for before any end is on the record is its
     // beginning, put forward by the time it went on: `when did the backup
