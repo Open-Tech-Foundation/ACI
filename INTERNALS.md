@@ -271,12 +271,9 @@ to; and asked what it knows, the brain answers from what it holds rather than
 from a claim somebody wrote down — not holding a claim is a no, never a
 not-knowing.
 
-*What is left of it:* a rule's conclusion still outlives its condition. `a drum
-is cold` makes a bell red and `a drum is not cold` leaves it red. The record is
-right — the world holds `claim#B follows claim#A` — and the fault is that the
-conclusion was *written* at all. Withdrawing it afterwards is the wrong shape:
-the bell is not *not* red, it is that nothing says it is any more. That is
-Open-1 below, and the piece it was waiting on is now here.
+*And the piece it was waiting on:* a rule's conclusion is no longer written,
+so it cannot outlive its condition. That was Open-1, and it went in on the back
+of this — a claim nobody wrote down can now be named, which is what it needed.
 
 *And one that fell out with it:* a word still to be settled says nothing about
 what another word is. The second `say` of `say wool else say silk`, read for
@@ -308,8 +305,8 @@ the R of Y` shape. With *whose father is arun*, *who has the most ropes*, the
 fraction where a count stands, and the condition said back as `a river is
 property`, these are readings rather than primitives, and they come last.
 
-**The order: 1, 2, 5, 3, 4, 6.** All but six are done; four has a residue,
-which is Open-1. One and two are cheap and unblock the walking
+**The order: 1, 2, 5, 3, 4, 6.** All but six are done. Four's residue — a
+rule's conclusion outliving its condition — was Open-1, and is done too. One and two are cheap and unblock the walking
 everything else does; five is contained; three and four are the real primitives
 and three has to come before four, since a claim about what happened needs the
 happening to be a thing first.
@@ -349,24 +346,23 @@ signal.
 
 ## Open, in the order I would take them
 
-**1. Rules fire where they are told, and write what follows.** *Unblocked.*
-The one remaining breach of the memory rule, and the largest. A rule is
-recorded twice — `r1` in the graph, an instruction in the session world — and
-only the world's copy is read. Told its condition, it fires at once and writes
-its conclusion as a fact nobody said, which then goes stale if what it stood on
-is denied.
+**1. Rules fire where they are told, and write what follows.** *Done.*
 
-Reading rules off the graph and applying them where a question needs them was
-built and reverted. It works for the plain readings and for a rule met by one
-of a kind. Two things did not survive: a chain walked back for `why` needs each
-step to name what the one before it stood on, and a rule met by something else
-— tom, where the rule said a drum — must answer `tom is cold` rather than the
-rule's own words. Both want a claim about the thing that met the condition, and
-that claim is reified only when the rule fires. **The missing piece was a way
-to name a claim nobody wrote down, and it is now there** — a claim is a thing a
-relation can reach, and `stoodBy` already makes one for whatever met the
-condition. The change goes in: rules read off the graph, applied where a
-question needs them, and the conclusion written nowhere.
+Nothing is written. Asked, the rules are read — both ways round out of the one
+rule, chains walked, a chain that leads back on itself ending because nothing
+is asked for twice — and what comes back is the claim it stood on, so `why`
+says what a thing was worked from rather than asking to be taken on trust. A
+cold wren, where the rule said a bird, answers as the wren and not as the rule.
+The hundred and seventy-five lines of firing, stamping and bookkeeping are
+gone, and with them the one remaining breach of the memory rule.
+
+Two world walks were reconciled on the way, both about denial. A denied link
+joins nothing, so it was thrown away *before* the walk worked out which of two
+stamped links was the later — which left the older assertion standing with
+nothing to supersede it, and is why a rule's conclusion looked like it was
+going stale when the record was right all along. And a denial was read off
+everything ever said rather than off what stands now, so a drum told not cold
+and then told cold was still not cold. A denial is state like any other.
 
 **2. A question read as a shape, the rest of the way.**
 Judging is still a chain of guards in `src/judge.js` where the order of the
