@@ -2,7 +2,7 @@ import { test, assert, assertEquals } from "runtime:test";
 import { openBrain } from "./index.js";
 
 // A store of its own, that nothing else can reach.
-const { brain, forget } = openBrain("sqlite::memory:");
+const { brain, forget, serialize } = openBrain("sqlite::memory:");
 
 // Every test owns a container and a thing no other test touches, so none of
 // them can see what another learned, whatever order they run in.
@@ -186,4 +186,19 @@ test("a state of one kind leaves a state of another alone", async () => {
 test("opening is still something somebody does", async () => {
   await brain("ravi opened the crate");
   assertEquals(await says("did ravi open the crate?"), "Yes. ✅");
+});
+
+test("when a state was said to be so is part of what was told", async () => {
+  // `the gate was open` says it was open then. That is not a second way of
+  // saying it is open: the tense is the conversation saying which stretch of
+  // time it is speaking of, and the record kept nothing of it — `was` and `is`
+  // left the very same fact.
+  await forget();
+  await brain("the gate was open");
+  const held = serialize();
+  assert(/f1  property\(n1, opened\[\d+\]\)  past\[\d+\]/.test(held), held);
+  await forget();
+  await brain("the gate is open");
+  assert(/f1  property\(n1, opened\[\d+\]\)$/m.test(serialize()), "told of now, there is nothing to say");
+  await forget();
 });

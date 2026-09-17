@@ -247,8 +247,19 @@ symptoms, one primitive.
 
 **5. A state holds over a stretch of time, not at a flag.** *The gate was open*
 answers *is the gate open?* with yes; *the gate became open at ten hours* is
-unread; *when did the gate open?* has no answer. State is latest-wins with a
-coarse past/now/future, and what it wants is an interval.
+unread; *when did the gate open?* has no answer.
+
+*Half done.* The telling's own when now reaches the record — `was` and `is`
+left the identical fact before — and what the conversation holds respects it.
+The other half is the session world, which holds a state at a point and not
+over a stretch: a past-told property goes in beside a present one and answers
+for it, where a past-told *quantity* or *placement* is already stamped earlier
+so the later one wins. Until a state can hold over a stretch, `is the gate
+open?` after `the gate was open` still says yes.
+
+*And the shape to settle with it:* `the gate opened at ten hours` records
+`placement(gate, hour) {count: 10, as: at}` — the gate placed at ten o'clock.
+A clock on a doing is not a place.
 
 **6. The `of` compound, and the readings around it.** *Omar is not the father of
 devi* and *the wheel is not part of the cart* are not a denial fault — denial

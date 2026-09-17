@@ -452,7 +452,7 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
   // turns up.
   const waiting = [];
   const said = new Set();
-  const claimed = (subject, relation, object, quantity, denied) => {
+  const claimed = (subject, relation, object, quantity, denied, when) => {
     if (asking) return;
     // A claim naming neither what it is about nor what it stands to says
     // nothing. Joining two things leaves one of these over the pair, and it is
@@ -682,6 +682,13 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
       of: primitive ?? relation,
       said: relation,
       parts,
+      // When the conversation said it was so. Part of what was told, not
+      // something to be worked out: `the gate was open` says it was open then,
+      // and says nothing at all about now. Told of now, there is nothing to
+      // say — a fact with no when is a fact about how things are.
+      ...(when == null || when === (world && world.anchors ? world.anchors.now : null)
+        ? {}
+        : { when }),
       properties: {
         // How many, where the fact counts. A measure says how much instead,
         // and says it as an amount of a quantity — one number, not two.
@@ -736,7 +743,7 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
     // what a fact reaches is the kind and how many, not that node. So many of
     // a kind cannot be handed to one thing until there is a way to say a group,
     // and until then the count says everything the fact knows.
-    claimed(subject, relation, object, from ? from.state.quantity : null, negated);
+    claimed(subject, relation, object, from ? from.state.quantity : null, negated, from ? from.state.when : null);
   }
 
   // A quality said beside a thing is claimed of it, so that `a red box` and
@@ -1630,6 +1637,10 @@ function told(subject, relation, object, here) {
   let found = null;
   for (const one of held.facts) {
     if (!same(one.parts[0], subject) && one.parts[0] !== of) continue;
+    // Said of a time that is not now, it is not what is so now. `the gate was
+    // open` says it was open then, and whether it still is was never said —
+    // which is a thing the brain does not know rather than a thing it holds.
+    if (one.when != null) continue;
     // State is the latest of it and nothing earlier. Where a thing is, and how
     // it stands on one of its quantities, are both of them state: a drum put in
     // a box and then on a shelf is on the shelf, and what it was said to be
@@ -2538,7 +2549,9 @@ function serialize(world = against) {
       // What it came of, where a doing brought it about. Read from this end,
       // because this is the end the question is asked from.
       const why = one.reason ? `  reason ${one.reason}` : '';
-      return `${one.id}  ${one.stands === 'against' ? 'not ' : ''}${said}${properties(one.properties)}${why}${aside(one)}`;
+      // When it was said to be so, where that was not now.
+      const then = one.when ? `  ${spell(one.when)}` : '';
+      return `${one.id}  ${one.stands === 'against' ? 'not ' : ''}${said}${then}${properties(one.properties)}${why}${aside(one)}`;
     }),
   );
   section(

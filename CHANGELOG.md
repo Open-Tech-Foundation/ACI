@@ -115,6 +115,15 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **When a state was said to be so is part of what was told.** `the gate was
+  open` and `the gate is open` left the brain holding **the same fact**: the
+  tense was read, put on the claim, and dropped on the way to the record. A
+  tense is the conversation saying which stretch of time it is speaking of, and
+  that is something it was told, not something to be worked out later. The
+  record keeps it now — `property(gate, opened) past` beside `property(gate,
+  opened)` — and what the conversation holds no longer answers a question about
+  now with something said of then.
+
 - **A fact written either way round is the same fact.** A cart told it is made
   of a wheel was never known to *have* one: the walk that steps through a
   relation read facts written through a declared converse, and the walk that
