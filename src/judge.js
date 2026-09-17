@@ -2818,6 +2818,25 @@ function together(joined, world, mood, sent) {
         nodes.push(node('answer', 'link', [], { subject, relation, found: [subject] }));
         continue;
       }
+      // A word that says which one narrows what is asked after. `who has the
+      // red ball?` asks after the ball that is red, and the colour was left
+      // doing nothing — every holder of a ball answered, and `who has the blue
+      // ball?` answered the same two.
+      const narrowing = [...qualifies.entries()].find(([, thing]) => thing === subject);
+      if (narrowing && graph != null && relation != null) {
+        const wanted = conceptOf(said[narrowing[0]]);
+        const ones = graph
+          .graph()
+          .nodes.filter((row) => row.term === subject || row.of === subject)
+          .filter((row) => (graph.howOf(row.id) || []).includes(wanted))
+          .map((row) => row.id);
+        const holders = [...new Set(ones.flatMap((one) => graph.standingIn(one, relation)))];
+        // Narrowed, this is the whole question. Nobody holding a green ball is
+        // nobody — falling through to the wider walk answers whoever holds a
+        // ball of any colour, which is the question with the word left out.
+        nodes.push(node('answer', 'link', [], { subject, relation, found: holders }));
+        continue;
+      }
       const far = farEnd(term, world);
       if (far !== undefined) {
         nodes.push(node('answer', 'link', [], { subject, relation, found: far }));

@@ -130,3 +130,21 @@ test("one spoken of as new is one of its own", async () => {
   assert(/f2  property\(n2, red\[\d+\]\)/.test(graph), graph);
   assert(/f4  property\(n4, blue\[\d+\]\)/.test(graph), `and it is blue:\n${graph}`);
 });
+
+test("a word that says which one narrows what is asked after", async () => {
+  // `who has the red ball?` asks after the ball that is red. The colour was
+  // left doing nothing, so every holder of a ball answered — and `who has the
+  // blue ball?` answered the same two.
+  await fresh("ravi has a red ball", "kumar has a blue ball");
+  assertEquals(await says("who has the red ball?"), "ravi");
+  assertEquals(await says("who has the blue ball?"), "kumar");
+  // Not narrowed, both of them still answer.
+  assertEquals(await says("who has a ball?"), "ravi, kumar");
+});
+
+test("narrowed to nothing is nobody, not everybody", async () => {
+  // Nobody holds a green ball. Falling through to the wider walk answers
+  // whoever holds a ball of any colour — the question with the word left out.
+  await fresh("ravi has a red ball", "kumar has a blue ball");
+  assertEquals(await says("who has the green ball?"), "I don't know.");
+});

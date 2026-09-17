@@ -115,6 +115,17 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A word that says which one narrows what is asked after.** With the record
+  put right, `who has the red ball?` still answered `Ravi, Kumar`: the question
+  walked out from the kind `ball` and found everyone holding one, and the
+  colour sat in the question doing nothing at all. It narrows now — `red` is
+  `ravi`, `blue` is `kumar` — and where nothing narrows, both still answer `who
+  has a ball?`.
+
+  Narrowed, that is the whole question. Nobody holds a green ball, and the
+  answer is nobody: falling through to the wider walk answers whoever holds a
+  ball of any colour, which is the question with the word left out.
+
 - **A holding reaches the one the signal made, and one spoken of as new is one
   of its own.** `Ravi has a red ball. Kumar has a blue ball. Who has the red
   ball?` answered **Ravi, Kumar** — and so did `who has the blue ball?`. Two
