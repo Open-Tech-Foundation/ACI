@@ -107,6 +107,20 @@ All notable changes to this project are documented in this file.
   left is the kind with what it is of. `how many kinds of rope does the rack
   have?` is `one` where `how many kinds` is `two`.
 
+- **One thing, one term — however it is spelled.** `colour` and `color` were
+  two words over one term, which is right. `grey` and `gray`, `neighbour` and
+  `neighbor`, `aluminium` and `aluminum` were two *terms* each, so what the
+  brain was told of one was nothing at all to the other: told the stone is
+  gray, it did not know whether the stone is grey. They are one term apiece
+  now, and the world is two terms lighter.
+
+  The spellings that are not what the brain calls a thing have left the file
+  that holds the alphabet. `languages/en-us.json` names the same language, so
+  it merges into it, and every word in it is marked as another way of *writing*
+  a term rather than what the term is called — so either spelling is understood
+  and one of them is said back. A world that wants the other way round swaps
+  which file holds which, and the engine never knew either.
+
 - **A joint at the front still leaves a joined side together.** `the plum is
   ripe` / `the pear is ripe` / `are the plum and the pear ripe?` answered
   **No**. A question puts its joint at the front and both sides after it, and

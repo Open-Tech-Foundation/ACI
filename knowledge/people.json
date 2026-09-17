@@ -3572,16 +3572,6 @@
       ]
     },
     {
-      "id": 2795,
-      "name": "neighbor",
-      "links": [
-        {
-          "rel": 294,
-          "to": 29
-        }
-      ]
-    },
-    {
       "id": 2796,
       "name": "boss",
       "links": [

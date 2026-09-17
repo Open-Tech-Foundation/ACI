@@ -2586,11 +2586,6 @@
       "meaning": "guy",
       "concept": 2794
     },
-    "neighbor": {
-      "pos": "noun",
-      "meaning": "neighbor",
-      "concept": 2795
-    },
     "boss": {
       "pos": "noun",
       "meaning": "boss",
@@ -8155,11 +8150,6 @@
         "number": "singular"
       }
     ],
-    "aluminum": {
-      "pos": "noun",
-      "meaning": "aluminum",
-      "concept": 2641
-    },
     "titanium": {
       "pos": "noun",
       "meaning": "titanium",
@@ -18289,14 +18279,6 @@
       "meaning": "chicken",
       "concept": 2862
     },
-    "gray": {
-      "pos": [
-        "adjective",
-        "noun"
-      ],
-      "meaning": "gray",
-      "concept": 2863
-    },
     "today": {
       "pos": "noun",
       "meaning": "today",
@@ -18683,11 +18665,6 @@
       "pos": "noun",
       "meaning": "puppy",
       "concept": 2981
-    },
-    "color": {
-      "pos": "noun",
-      "meaning": "colour",
-      "concept": 185
     },
     "greet": {
       "pos": "verb",

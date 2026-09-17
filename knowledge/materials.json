@@ -1137,16 +1137,6 @@
       ]
     },
     {
-      "id": 2641,
-      "name": "aluminum",
-      "links": [
-        {
-          "rel": 294,
-          "to": 70
-        }
-      ]
-    },
-    {
       "id": 2642,
       "name": "titanium",
       "links": [

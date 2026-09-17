@@ -1,0 +1,32 @@
+{
+  "name": "english",
+  "words": {
+    "color": {
+      "pos": "noun",
+      "meaning": "colour",
+      "concept": 185,
+      "names": false
+    },
+    "gray": {
+      "pos": [
+        "adjective",
+        "noun"
+      ],
+      "meaning": "gray",
+      "concept": 515,
+      "names": false
+    },
+    "neighbor": {
+      "pos": "noun",
+      "meaning": "neighbor",
+      "concept": 513,
+      "names": false
+    },
+    "aluminum": {
+      "pos": "noun",
+      "meaning": "aluminum",
+      "concept": 1015,
+      "names": false
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import { test, assert, assertEquals } from "runtime:test";
 import { fromData } from "./languages.js";
+import { openBrain } from "./index.js";
 
 const data = {
   name: "test",
@@ -200,4 +201,20 @@ test("a language adapter invents no marking direction", () => {
   assertEquals(fromData(data).marking, null);
   assertEquals(fromData({ ...data, marking: "before" }).marking, "before");
   assertEquals(fromData({ ...data, marking: "after" }).marking, "after");
+});
+
+test("a word spelled another way is the same thing, said one way", async () => {
+  // `color` and `colour` are one thing written two ways. They were two words
+  // over one term; grey and gray, neighbour and neighbor, aluminium and
+  // aluminum were worse — two terms for one thing, so what was told of one was
+  // nothing to the other. The spellings that are not what the brain calls a
+  // thing live in a language file of their own and are marked as another way
+  // of writing it, so either is understood and one is said back.
+  const { brain, forget } = openBrain("sqlite::memory:");
+  await forget();
+  await brain("the stone is gray");
+  assertEquals((await brain("is the stone grey?")).expression.name, "affirm");
+  assertEquals((await brain("what colour is the stone?")).expression.state.says, "grey");
+  assertEquals((await brain("what color is the stone?")).expression.state.says, "grey");
+  await forget();
 });
