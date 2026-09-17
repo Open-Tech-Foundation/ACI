@@ -97,6 +97,16 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **The last particulars left the generic world.** `knowledge/README` says the
+  world under `data/` holds no particular thing, and seventeen of them were
+  still sitting in it: cricket the sport and the runs it is scored in, the gram
+  and the kilogram and the metre and the degree — units a world picks, as
+  `PRIMITIVES.md` says in as many words — the four seasons, maroon, navy, ochre
+  and mauve, the dog, the cheese and the vegetable. They now live in the packs
+  for their domains, with a new `knowledge/units.json` for measure, and the
+  links the ladder held to them — colour to its shades, season to its four —
+  moved with them. The world is 401 terms, and nothing in it is one world's.
+
 - **A doing stands at an end of the chain like anything else.** `a plank fell
   after a meeting` held both doings and ordered neither. The chain is written
   between what each end stands for in the conversation, and that was asked for

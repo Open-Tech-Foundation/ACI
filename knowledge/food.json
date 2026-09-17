@@ -1779,6 +1779,27 @@
           "to": 23
         }
       ]
+    },
+    {
+      "id": 402,
+      "name": "cheese",
+      "links": [
+        {
+          "rel": 294,
+          "to": 23
+        }
+      ]
+    },
+    {
+      "id": 399,
+      "name": "vegetable",
+      "links": [
+        {
+          "rel": 294,
+          "to": 23
+        }
+      ],
+      "disjoint": true
     }
   ]
 }
