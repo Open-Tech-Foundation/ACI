@@ -13,7 +13,7 @@ import { contextual } from './reading.js';
 import { UNITS, unitsIn as stepsInTime } from './calendar.js';
 import {
   $, node, taken, instead, numberOf, conceptOf, markOn, thoughtOf, functionsOf,
-  withBranch, findBranch, toString, quote, functionList, VERDICT,
+  withBranch, findBranch, toString, quote, functionList, VERDICT, reaches,
 } from './node.js';
 import {
   judge, measured, orderingOf, orderingsOf, senseSound, senseVisual, toward,
@@ -2227,23 +2227,11 @@ export function priorEvent(action, world) {
 
 
 
-export function reaches(n, anchor, world) {
-  const c = conceptOf(n);
-  return c != null && world.isA(c, anchor);
-}
-
 // The part a word says the thing beside it plays in what happened. Which word
 // assigns which part is the language's; that things play parts is the brain's.
 export function roleOn(n) {
   const t = n ? findBranch(n, 'thought') : null;
   return t && t.state.thought ? t.state.thought.role : null;
-}
-
-// Whether this word denies what the signal says. That a claim can be denied is
-// the brain's; which word does it is the language's.
-export function negatesOn(n) {
-  const t = n ? findBranch(n, 'thought') : null;
-  return Boolean(t && t.state.thought && t.state.thought.negates);
 }
 
 

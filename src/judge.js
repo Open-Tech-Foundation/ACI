@@ -16,6 +16,7 @@ import { contextual } from './reading.js';
 import {
   $, node, taken, instead, numberOf, conceptOf, markOn, thoughtOf, functionsOf,
   withBranch, findBranch, toString, quote, functionList, VERDICT,
+  negatesOn, reaches,
 } from './node.js';
 import { TOLD, NONE, MOVED } from './working.js';
 import {
@@ -40,7 +41,6 @@ import {
   measuring,
   named,
   nearestOver,
-  negatesOn,
   numberSaid,
   numericCompare,
   onlyGreetings,
@@ -49,7 +49,6 @@ import {
   quality,
   quantityOn,
   reached,
-  reaches,
   roleOn,
   spoken,
   stands,

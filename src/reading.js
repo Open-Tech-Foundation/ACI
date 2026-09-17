@@ -13,8 +13,9 @@
 // say something neither can: what a pointer is, and what a proposition looks
 // like. Nothing else belongs here; a language that needs a new distinction
 // declares it, and this reads it.
-import { conceptOf, functionsOf, thoughtOf, withBranch, findBranch } from './node.js';
-import { negatesOn, reaches } from './brain.js';
+import {
+  conceptOf, functionsOf, thoughtOf, withBranch, findBranch, negatesOn, reaches,
+} from './node.js';
 
 // A reading chosen by what stands beside it.
 export function contextual(roots, world) {

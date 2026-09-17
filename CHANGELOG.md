@@ -123,6 +123,13 @@ All notable changes to this project are documented in this file.
   `is the gate open?` is `I don't know`, `was the gate open?` is yes, and told
   it is closed since, it is closed.
 
+- **Reading a word no longer reaches back into the brain.** The phase that
+  picks which of a word's readings a signal means imported two of its tests
+  from the phase that uses it, so the two modules imported each other. Both
+  are about a node and nothing else — whether a word denies, and whether it
+  reaches a kind the world names — and they belong with the node, where
+  everything that reads one can reach them.
+
 - **What was done to a thing was done by somebody, and that is why.** `why was
   the ferry delayed?` did not know, where `the storm delayed the ferry` had
   said who did it. The reading looked only for a reason somebody had declared,

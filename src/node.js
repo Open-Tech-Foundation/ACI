@@ -86,3 +86,20 @@ export function toString(v) {
 export function quote(s) {
   return /^[\p{L}\p{N}]+$/u.test(s) ? s : `"${s}"`;
 }
+
+// Whether a word reaches a kind the world names. A word stands for a term, the
+// world says what that term is one of, and this asks it. The world arrives as
+// an argument because the node knows nothing of any world until it is handed
+// one — which is also what keeps this here, where everything that reads a node
+// can reach it, rather than in a phase that would have to be imported back.
+export function reaches(n, anchor, world) {
+  const c = conceptOf(n);
+  return c != null && world.isA(c, anchor);
+}
+
+// Whether this word denies what the signal says. That a claim can be denied is
+// the brain's; which word does it is the language's.
+export function negatesOn(n) {
+  const t = n ? findBranch(n, 'thought') : null;
+  return Boolean(t && t.state.thought && t.state.thought.negates);
+}
