@@ -182,3 +182,28 @@ test("a hole is what it asks after, not how it is spelled", async () => {
   assertEquals((await brain("Who is yellow?")).expression.state.says, "banana");
   await forget();
 });
+
+test("a description says which thing, and that thing is the answer", async () => {
+  // `the capital of france` is a way of saying paris. The question asks which
+  // thing it is, not what that thing is besides — it was answering `city`.
+  await forget();
+  assertEquals((await brain("what is the capital of france?")).expression.state.says, "paris");
+  assertEquals((await brain("what is the capital of india?")).expression.state.says, "delhi");
+  // Nothing is a capital of a city, so there is no thing to name.
+  assertEquals((await brain("what is the capital of paris?")).expression.state.says, "I don't know.");
+  await forget();
+});
+
+test("asking what a thing is still answers what it is", async () => {
+  await forget();
+  assertEquals((await brain("what is paris?")).expression.state.says, "city");
+  assertEquals((await brain("what is a wren?")).expression.state.says, "bird");
+  await forget();
+});
+
+test("the capital runs from the city to the country it is of", async () => {
+  await forget();
+  assertEquals((await brain("is paris the capital of france?")).expression.name, "affirm");
+  assertEquals((await brain("is france the capital of paris?")).expression.name, "unsure");
+  await forget();
+});

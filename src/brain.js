@@ -1493,20 +1493,25 @@ function standsIn(roots, world) {
     if (standing.length !== 1) return n;
     spent.add(i + 1);
     spent.add(i + 2);
-    return standingFor(n, standing[0]);
+    // The word is spent saying which thing, so it stands for that thing and
+    // says nothing else. Asked which, the thing is the answer.
+    return standingFor(n, standing[0], true);
   });
 }
 
 // The same word, thought to stand for something else. What it was heard and
 // recognised as is kept; only what it names changes.
-function standingFor(n, concept) {
+function standingFor(n, concept, stands = false) {
   const thought = thoughtOf(n);
   if (!thought) return n;
   return withBranch(
     n,
     n.branch.map((b) =>
       b.kind === 'thought'
-        ? withBranch(b, b.branch, { ...b.state, thought: { ...thought, concept } })
+        ? withBranch(b, b.branch, {
+            ...b.state,
+            thought: stands ? { ...thought, concept, stands: true } : { ...thought, concept },
+          })
         : b,
     ),
   );
@@ -1820,6 +1825,34 @@ function settle(roots, world) {
     );
   });
   if (narrowed.some((n, i) => n !== roots[i])) return narrowed;
+
+  // A reading that joins what else the signal names is the one meant, and a
+  // relation joins by running between things rather than by standing under
+  // them. `the capital of france` is the relation a city stands in to a
+  // country, not the kind of city a capital is — and the world says which ends
+  // a relation runs between. Where two readings both run between what was
+  // said, neither is chosen.
+  const runsBetween = (thought) => {
+    if (!joining(thought)) return false;
+    const ends = [
+      ...(a.domain == null ? [] : world.linked(thought.concept, a.domain)),
+      ...(a.range == null ? [] : world.linked(thought.concept, a.range)),
+    ];
+    return ends.length > 0 && named.some((other) => ends.some((end) => world.isA(other, end)));
+  };
+  const between = roots.map((n) => {
+    const mine = ways(n);
+    if (!mine) return n;
+    const held = mine.filter(runsBetween);
+    if (held.length !== 1) return n;
+    return withBranch(
+      n,
+      n.branch.map((b) =>
+        b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: held[0], settled: true }) : b,
+      ),
+    );
+  });
+  if (between.some((n, i) => n !== roots[i])) return between;
 
 
   const already = roots.some((n) => {

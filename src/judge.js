@@ -2754,6 +2754,13 @@ function together(joined, world, mood, sent) {
       // everything the comparison on that quality joins, the one nothing
       // stands beyond. The world holds the comparison and holds it as an
       // ordering; the brain walks it and ranks nothing itself.
+      // A word spent saying which thing — `the capital of france`, `the father
+      // of sam` — stands for the thing it picked out, and that thing is what
+      // was asked for. What it is besides is another question.
+      if ((thoughtOf(term) || {}).stands) {
+        nodes.push(node('answer', 'link', [], { subject, relation, found: [subject] }));
+        continue;
+      }
       const far = farEnd(term, world);
       if (far !== undefined) {
         nodes.push(node('answer', 'link', [], { subject, relation, found: far }));

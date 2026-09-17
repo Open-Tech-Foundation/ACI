@@ -97,6 +97,44 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **`the capital of france` says paris.** The whole phrase came back
+  unread. Four things were wrong at once, and all four had to go.
+
+  English gave `capital` a verb reading first, so `the capital of france` put a
+  verb where the article wanted a thing and the signal did not parse at all. It
+  is a noun, the way `father` is — a word that names a relation and is still a
+  thing to be said.
+
+  Which of its two readings is meant — the relation a city stands in to a
+  country, or the kind of city a capital is — nothing could choose. A reading
+  that joins what else the signal names was already how the brain settles a
+  word of two meanings, but a relation joins by *running between* things rather
+  than by standing under them, and nothing looked at that. The world now says
+  what the capital relation runs between, and the reading follows.
+
+  The relation ran the wrong way. Thirty-three countries held `capital-of`
+  pointing at their cities, where the name says a city is the capital of a
+  country and where `paris is the capital of france` records exactly that. The
+  links are turned, and telling the brain what it already holds now answers
+  `I know` instead of taking in the reverse.
+
+  And the phrase, once read, was answering the wrong question. `the capital of
+  france` resolves to paris, and the brain then said what paris *is* — `city`.
+  A word spent saying which thing stands for that thing, and that thing is what
+  was asked for. `what is a wren?` is still `bird`, and `what is paris?` is
+  still `city`.
+
+- **The country and the bird are two things.** `turkey` was one term, declared a
+  bird, carrying the capital of a country and the language it speaks. The
+  country has a term of its own now and the English word has two readings, the
+  way `cricket` has. The shape check caught it the moment the capital relation
+  was told what it runs between — a bird cannot be a country.
+
+- **The geography left the anchors too.** `capital-of` and `speaks` were terms
+  of the generic world and `capital` was one of its anchors, though no part of
+  the engine has ever read it. Both are one world's relations and live in the
+  geography pack now.
+
 - **A doing with nobody doing it is said back as itself.** With the meeting at
   the head of the chain, `what happened first?` still answered `I don't know`:
   the walk reached the moment, found a happening rather than somebody who did

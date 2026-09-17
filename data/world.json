@@ -70,7 +70,6 @@
     "instruction": 1128,
     "all": 245,
     "some": 1129,
-    "capital": 1397,
     "neither": 1569,
     "double": 2818,
     "halve": 2819,
@@ -3245,26 +3244,6 @@
         {
           "rel": 294,
           "to": 7
-        }
-      ]
-    },
-    {
-      "id": 1397,
-      "name": "capital-of",
-      "links": [
-        {
-          "rel": 294,
-          "to": 4
-        }
-      ]
-    },
-    {
-      "id": 1398,
-      "name": "speaks",
-      "links": [
-        {
-          "rel": 294,
-          "to": 4
         }
       ]
     },

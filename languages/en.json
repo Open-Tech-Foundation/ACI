@@ -11678,11 +11678,18 @@
       "meaning": "goose",
       "concept": 704
     },
-    "turkey": {
-      "pos": "noun",
-      "meaning": "turkey",
-      "concept": 705
-    },
+    "turkey": [
+      {
+        "pos": "noun",
+        "meaning": "turkey",
+        "concept": 705
+      },
+      {
+        "pos": "noun",
+        "meaning": "turkey",
+        "concept": 3118
+      }
+    ],
     "quail": {
       "pos": "noun",
       "meaning": "quail",
@@ -16577,7 +16584,7 @@
     },
     "capital": [
       {
-        "pos": "verb",
+        "pos": "noun",
         "meaning": "capital",
         "concept": 1397,
         "names": false
