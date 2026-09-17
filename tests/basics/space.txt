@@ -36,3 +36,20 @@ the coin is in the jar
 devi put the coin on the shelf
 where is the coin? => on a shelf
 was the coin in the jar? => affirm
+
+# Place carries, and the ways it carries are the world's to declare.
+the book is on the tray
+the tray is on the table
+is the book on the table? => affirm
+
+the book is on the tray
+the tray is in the box
+is the book in the box? => affirm
+
+the coin is in the box
+the box is under the bench
+is the coin under the bench? => affirm
+
+# And nothing is carried where nothing was told.
+the coin is in the jar
+is the coin on the shelf? => unsure

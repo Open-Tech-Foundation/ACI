@@ -115,6 +115,19 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Place carries.** A coin in a jar on a shelf was not on the shelf, and a
+  book on a tray on a table was not on the table. The world has held the way to
+  say how relations compose all along — a father's father is a grandfather,
+  north then east is still north, ten of them declared — and **place had none**,
+  with `on` and `under` not even carrying the way `in` already did.
+
+  Five ways place composes are declared now, and standing on and standing under
+  carry: in a jar on a shelf is on the shelf, on a tray in a box is in the box,
+  in a box under a bench is under the bench. Nothing was added to the engine;
+  the mechanism was live and had never been pointed at place. And where nothing
+  was told, nothing is carried — a coin in a jar is not on a shelf nobody
+  mentioned.
+
 - **The doing that brought a state about is why the thing is in it.** `the door
   is closed` / `ravi opened the door` / `why is the door open?` said it did not
   know — while answering `is the door open?` with yes, off that very doing. The

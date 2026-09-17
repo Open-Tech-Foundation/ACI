@@ -213,16 +213,16 @@ The twenty-three the transcripts fail are symptoms. Grouped by what is missing
 under them, they are six pieces of foundation work, and two of the groups were
 not what they looked like — both checked rather than assumed.
 
-**1. Relation composition is declared nowhere.** The world holds `composition`,
-`leading` and `trailing` anchors, the engine reads them, and **not one term in
-any pack uses them**. So nothing composes: a coin in a jar on a shelf is not on
-the shelf. Declared as a probe — a thing in something that is on a third is on
-that third — the question answers immediately and `what is on the shelf?`
-becomes `jar, coin`. The mechanism is live and the world is silent.
+**1. Nothing about place composes.** The world holds `composition`, `leading`
+and `trailing` anchors and the engine reads them — and ten declarations use
+them, all kinship and compass: a father's father is a grandfather, north then
+east is still north. **Place has none.** So a coin in a jar on a shelf is not
+on the shelf, and `on` and `under` are not even transitive where `in` is.
+Declared as a probe — a thing in something that is on a third is on that third
+— the question answers at once and `what is on the shelf?` becomes `jar, coin`.
 
 *This is world work, not engine work*, and it is the cheapest foundation on the
-list: the pairs that compose — containment through support, part through part,
-kinship through kinship — are a world's to declare.
+list. The mechanism is live, used, and has simply never been pointed at place.
 
 **2. A relation read through a broader one loses its direction.** Traced twice:
 `linked` reads only what was written in the direction asked, where the walk that
