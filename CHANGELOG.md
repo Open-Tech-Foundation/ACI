@@ -123,6 +123,15 @@ All notable changes to this project are documented in this file.
   `is the gate open?` is `I don't know`, `was the gate open?` is yes, and told
   it is closed since, it is closed.
 
+- **The conversation is handed to the phases that read it.** It was a module
+  binding set at the top of each turn and read from wherever — sixteen readings
+  reached it without saying so, and nothing in a signature told you a reading
+  depended on what had been said. It is now an argument like the world is: a
+  reading that needs the conversation says so in what it takes, and one that
+  does not cannot reach it by accident. Nothing behaves differently; what
+  changes is that the next reading to be lifted out of the verdict phase
+  carries its dependencies with it instead of inheriting them silently.
+
 - **Seven readings were shut inside the verdict phase without meaning to be.**
   They are written at the left margin like every other one, but they fall
   between the opening and closing of `judge`, so they were scoped to it and

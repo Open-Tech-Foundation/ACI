@@ -57,7 +57,7 @@ import {
   walk,
   whole,
   worldNode,
-  graph, signalLanguage,
+  signalLanguage,
 } from './brain.js';
 
 
@@ -151,7 +151,7 @@ function placedAgainst(holder, object, rel, world) {
 // runs. Among everything that comparison joins, the far end is the one nothing
 // stands beyond — and where several are unbeaten there is no one far end, so
 // the brain names none rather than choosing.
-function farEnd(term, world) {
+function farEnd(term, world, graph) {
   const a = world.anchors || {};
   if (a.compares == null || !functionsOf(term).includes('extreme')) return undefined;
   const state = conceptOf(term);
@@ -180,7 +180,7 @@ function farEnd(term, world) {
   // outright, or following from where things stand on it. Asked which of them
   // is furthest along, that is the whole of the question.
   const on = ordering && ordering.scale != null ? ordering.scale : null;
-  const ends = endOfScale(on, fromBelow);
+  const ends = endOfScale(on, fromBelow, graph);
   if (ends !== undefined && ends.length > 0) return ends;
   const spoken = graph ? [comparison, ...bothWays(comparison, world)].flatMap((rel) => graph.joinedBy(rel)) : [];
   // Where the ordering asked after is the timeline, the timeline answers. It
@@ -222,7 +222,7 @@ function farEnd(term, world) {
 // whole of the question; unlike one it never needs the word to be an extreme.
 // A comparison is only ever made in this conversation, so where the ordering
 // holds nobody nobody answers.
-function bareEnd(term, world) {
+function bareEnd(term, world, graph) {
   const a = world.anchors || {};
   const thought = thoughtOf(term);
   if (thought == null || thought.compares == null) return undefined;
@@ -232,7 +232,7 @@ function bareEnd(term, world) {
     ? thought.on
     : (orderingOf(thought.compares, world) || {}).scale ?? null;
   if (scale == null) return undefined;
-  return endOfScale(scale, direction === a.less);
+  return endOfScale(scale, direction === a.less, graph);
 }
 
 // Which of them stands at one end of a scale the conversation holds an
@@ -240,7 +240,7 @@ function bareEnd(term, world) {
 // from where things stand on it — and the graph works it out in one place, so
 // `who is taller`, `who is taller than kumar` and `who is tallest` are one
 // question put three ways and cannot answer differently.
-function endOfScale(scale, fromBelow) {
+function endOfScale(scale, fromBelow, graph) {
   if (scale == null || !graph) return undefined;
   const edges = graph.orderedOn(scale);
   if (edges.length === 0) return undefined;
@@ -460,7 +460,7 @@ function measureOf(of, kind, world, under) {
 // the things it perceived, never off a grammar symbol: phrase names come from
 // data and mean nothing to the brain.
 // ---------------------------------------------------------------------------
-export function judge(roots, world, mood, langs, sent) {
+export function judge(roots, world, mood, langs, sent, graph) {
   if (!world || roots.length !== 1) return roots;
   const root = roots[0];
   // Somebody is greeting me, and these are the words they said.
@@ -525,7 +525,7 @@ export function judge(roots, world, mood, langs, sent) {
   const rule = conditionIn(root);
   if (rule) {
     const [when, so, otherwise] = rule;
-    const [asked] = judge([when], world, 'ask', langs, sent);
+    const [asked] = judge([when], world, 'ask', langs, sent, graph);
     const stood = (asked.branch || []).find((n) => n.kind === 'standing');
     // Where the condition stands, what follows stands; where something stands
     // against it, what the signal put on the other side stands instead. A
@@ -554,7 +554,7 @@ export function judge(roots, world, mood, langs, sent) {
       // nothing is kept for it.
       const kept =
         mood === 'tell' && stood && stood.name === 'absent'
-          ? instructionFrom(when, so, world, langs, sent)
+          ? instructionFrom(when, so, world, langs, sent, graph)
           : [];
       return [
         withBranch(root, [...root.branch, ...kept, ...(found.length ? found : [nothing])]),
@@ -571,7 +571,7 @@ export function judge(roots, world, mood, langs, sent) {
         ]),
       ];
     }
-    const [followed] = judge([next], world, mood, langs, sent);
+    const [followed] = judge([next], world, mood, langs, sent, graph);
     return [withBranch(root, [...root.branch, ...(followed.branch || []).filter(taken)])];
   }
 
@@ -581,13 +581,13 @@ export function judge(roots, world, mood, langs, sent) {
   // might from does-not-know — it has no notion of what could be, only of what
   // it holds — so what it says is what it found.
   if (mood === 'tell' && hasFunctionAnywhere(root, 'modal')) {
-    const [asked] = judge([root], world, 'ask', langs, sent);
+    const [asked] = judge([root], world, 'ask', langs, sent, graph);
     return [asked];
   }
 
   const spoken = claimWithin(root);
   if (spoken) {
-    const [checked] = judge([spoken], world, 'ask', langs, sent);
+    const [checked] = judge([spoken], world, 'ask', langs, sent, graph);
     const verdict = (checked.branch || []).filter(taken);
     // Asked, the question is about whoever holds the claim and not about what
     // the claim says. Where the signal names nobody holding it, the claim
@@ -612,7 +612,7 @@ export function judge(roots, world, mood, langs, sent) {
     const judged = withBranch(
       join,
       join.branch.map((b) =>
-        joinedWhole(b, join) ? judge([b], world, offered ? 'ask' : mood, langs, sent)[0] : b,
+        joinedWhole(b, join) ? judge([b], world, offered ? 'ask' : mood, langs, sent, graph)[0] : b,
       ),
     );
     // One claim standing as why another is so joins the two of them. Both are
@@ -630,7 +630,7 @@ export function judge(roots, world, mood, langs, sent) {
   const greeted = greeting(root, world);
   if (greeted) {
     const [, rest] = greeted;
-    return [instead(root, rest, judge([rest], world, mood, langs, sent)[0])];
+    return [instead(root, rest, judge([rest], world, mood, langs, sent, graph)[0])];
   }
 
   const said = [];
@@ -1490,6 +1490,7 @@ export function judge(roots, world, mood, langs, sent) {
         markingSide(said, langs),
         partsSide(said, langs),
         sent.allocate,
+        graph,
       );
       if (done) {
         const event = done.find((n) => n.kind === 'event');
@@ -1536,7 +1537,7 @@ export function judge(roots, world, mood, langs, sent) {
   }
 
   const asked = holes.length > 0
-    ? partAsked(said, world, claims, markingSide(said, langs), partsSide(said, langs))
+    ? partAsked(said, world, claims, markingSide(said, langs), partsSide(said, langs), graph)
     : null;
   if (asked) return [withBranch(root, [...root.branch, asked])];
 
@@ -1605,7 +1606,7 @@ export function judge(roots, world, mood, langs, sent) {
     // told happened. It does not put another one on the record: being asked is
     // not being told, and answering is not doing.
     if (mood === 'ask') {
-      const ever = happened(said, world, claims, markingSide(said, langs), partsSide(said, langs));
+      const ever = happened(said, world, claims, markingSide(said, langs), partsSide(said, langs), graph);
       if (ever) return [withBranch(root, [...root.branch, ever])];
     }
 
@@ -1619,6 +1620,7 @@ export function judge(roots, world, mood, langs, sent) {
       markingSide(said, langs),
       partsSide(said, langs),
       sent.allocate,
+      graph,
     );
     if (done) return [withBranch(root, [...root.branch, ...done])];
   }
@@ -1939,7 +1941,7 @@ export function judge(roots, world, mood, langs, sent) {
     // nobody asked and take nothing in.
     const happening = said.some((n) => reaches(n, a.action, world));
     if (!alone || happening) return roots;
-    const held = working(said, world, true);
+    const held = working(said, world, true, graph);
     // Asked to work something out and unable to, it says so rather than
     // falling silent — the same as any other sum it cannot reach.
     if (held == null) {
@@ -1965,7 +1967,7 @@ export function judge(roots, world, mood, langs, sent) {
 
   const relation = conceptOf(said[at]);
 
-  const worked = calculate(said, at, relation, world);
+  const worked = calculate(said, at, relation, world, graph);
   if (worked) return [withBranch(root, [...root.branch, worked])];
   // `of` straight after a word that names a relation is that relation's
   // syntax, not a side of it: `the father of sam` is one relation with two
@@ -2019,7 +2021,7 @@ export function judge(roots, world, mood, langs, sent) {
   if (holes.length > 0 && terms.length >= 2 && said.some(choiceOn) && !said.some(negatesOn)) {
   if (isComparing(relation, world)) {
       const op = said[at];
-      const stood = (x, y) => calculate([x, op, y], 1, relation, world);
+      const stood = (x, y) => calculate([x, op, y], 1, relation, world, graph);
       const beats = (x, y) => {
         const s = stood(x, y);
         return s != null && s.name === 'held';
@@ -2110,8 +2112,8 @@ export function judge(roots, world, mood, langs, sent) {
   // no one to compare against, and the end the word reads from is the answer.
   if (holes.length > 0 && terms.length === 0) {
     for (const n of said) {
-      const far = farEnd(n, world);
-      const bare = far === undefined ? bareEnd(n, world) : undefined;
+      const far = farEnd(n, world, graph);
+      const bare = far === undefined ? bareEnd(n, world, graph) : undefined;
       const found = far !== undefined ? far : bare !== undefined ? bare : undefined;
       if (found === undefined || found.length === 0) continue;
       return [
@@ -2459,7 +2461,7 @@ export function judge(roots, world, mood, langs, sent) {
     // in question, not another question to be answered beside it: asked what
     // happened first with nothing said to have happened, the answer is none —
     // never what a happening is.
-    const extreme = said.find((n) => farEnd(n, world) !== undefined);
+    const extreme = said.find((n) => farEnd(n, world, graph) !== undefined);
     if (extreme) {
       return [
         withBranch(root, [
@@ -2467,7 +2469,7 @@ export function judge(roots, world, mood, langs, sent) {
           node('answer', 'link', [], {
             subject: null,
             relation: conceptOf(extreme),
-            found: farEnd(extreme, world),
+            found: farEnd(extreme, world, graph),
           }),
         ]),
       ];
@@ -2591,7 +2593,7 @@ export function judge(roots, world, mood, langs, sent) {
         nodes.push(node('answer', 'link', [], { subject, relation, found: holders }));
         continue;
       }
-      const far = farEnd(term, world);
+      const far = farEnd(term, world, graph);
       if (far !== undefined) {
         nodes.push(node('answer', 'link', [], { subject, relation, found: far }));
         continue;
@@ -3177,13 +3179,13 @@ export function judge(roots, world, mood, langs, sent) {
 // What a signal put as a condition, and what it put on the other side, held as
 // one thing the brain can come back to. Both sides are checked the way a
 // question is — neither is made — and what is kept is the pair, not the facts.
-function instructionFrom(when, so, world, langs, sent) {
+function instructionFrom(when, so, world, langs, sent, graph) {
   const a = world.anchors || {};
   if (a.instructing == null || a.condition == null || a.consequence == null) return [];
   if (a.subject == null || a.object == null || sent == null || sent.allocate == null) return [];
   const sideOf = (part) => {
     if (!part) return null;
-    const [seen] = judge([part], world, 'ask', langs, sent);
+    const [seen] = judge([part], world, 'ask', langs, sent, graph);
     const stood = (seen.branch || []).find((n) => n.kind === 'standing');
     if (!stood) return null;
     const { subject, relation, object, negated, many } = stood.state;
@@ -3631,7 +3633,7 @@ function furtherAlong(l, r, world) {
 // and which is further along is what their amounts say — not what either of
 // them has been called. An apple of ten grams is heavier than a stone of five,
 // whatever anyone called either of them.
-function alongScale(left, right, relation, world, on, said) {
+function alongScale(left, right, relation, world, on, said, graph) {
   const a = world.anchors || {};
   if (a.measure == null || left == null || right == null) return null;
   // A word may say which scale it compares on — heavier is more, on weight —
@@ -3863,15 +3865,15 @@ export function upward(id, world) {
 // Arithmetic is innate. The world says only which term names which number; what
 // follows from two numbers is the brain's own, and would be the same in any
 // language and any world. So this computes — it does not look anything up.
-function calculate(said, at, relation, world) {
+function calculate(said, at, relation, world, graph) {
   const a = world.anchors || {};
 
   // Two sides asked to be the same: each is worked out on its own, and what
   // the brain compares is what each came to.
   const between = said.findIndex((n) => conceptOf(n) === a.same);
   if (between >= 0) {
-    const left = working(said.slice(0, between), world, true);
-    const right = working(said.slice(between + 1), world, true);
+    const left = working(said.slice(0, between), world, true, graph);
+    const right = working(said.slice(between + 1), world, true, graph);
     if (!left || !right) return null;
     return node('standing', numericEqual(left.value, right.value) ? 'held' : 'against', [], {
       subject: world.termFor(left.value),
@@ -3898,8 +3900,8 @@ function calculate(said, at, relation, world) {
     // Each side is worked out on its own, the way two sides asked to be the
     // same are: what is compared is what each side comes to, not the nearest
     // number standing in it.
-    const before = working(said.slice(0, at), world, true);
-    const after = working(said.slice(at + 1), world, true);
+    const before = working(said.slice(0, at), world, true, graph);
+    const after = working(said.slice(at + 1), world, true, graph);
     const left = before ? before.value : valueBeside(said, at, -1, world);
     const right = after ? after.value : valueBeside(said, at, 1, world);
     if (left == null || right == null) {
@@ -3916,7 +3918,7 @@ function calculate(said, at, relation, world) {
       const among = (thoughtOf(said[at]) || {}).among;
       if (among && among.length > 1) {
         const placed = among
-          .map((one) => alongScale(leftThing, rightThing, one.relation, world, one.on, said[at]))
+          .map((one) => alongScale(leftThing, rightThing, one.relation, world, one.on, said[at], graph))
           .filter((one) => one != null);
         // Two scales that both answer, and answer alike, are one answer; two
         // that disagree are no answer, the same way one scale's own readings
@@ -3932,6 +3934,7 @@ function calculate(said, at, relation, world) {
         world,
         onOf(said[at]),
         said[at],
+        graph,
       );
     }
     // Two measures on one scale compare along it: `two hours is more than one
@@ -3946,7 +3949,7 @@ function calculate(said, at, relation, world) {
       }
       if (unit == null || a.measure == null) return null;
       if (!world.linked(unit, a.measure).length) return null;
-      const value = working(slice, world, true);
+      const value = working(slice, world, true, graph);
       if (value == null) return null;
       return { amount: value.value, unit };
     };
@@ -3983,7 +3986,7 @@ function calculate(said, at, relation, world) {
   // the fraction out and saying thirty answers a question nobody asked, and
   // takes nothing in.
   if (said.some((n) => reaches(n, a.action, world))) return null;
-  const run = working(said, world);
+  const run = working(said, world, undefined, graph);
   // An operation the brain can perform and cannot complete — nothing divides
   // seven into two whole halves — is not a claim about the two numbers. It is
   // a sum it cannot reach.
@@ -4004,7 +4007,7 @@ function calculate(said, at, relation, world) {
 // comes before another, by the same `order` it puts numbers in, and where it
 // says nothing they are worked from the left. What each operation does to two
 // numbers is the brain's own, and would be the same in any world.
-function working(said, world, alone) {
+function working(said, world, alone, graph) {
   const steps = [];
   // How many of a kind this conversation holds, where it holds exactly one
   // lot of it. The graph is asked, never the world: a hundred and twenty
@@ -4274,7 +4277,7 @@ function missingFrom(event, stood, world) {
 
 // Carrying out an action on what a thing holds. The world links an action to
 // the operation it causes; the brain works the operation and keeps the result.
-function act(said, claims, world, side, sides, allocate) {
+function act(said, claims, world, side, sides, allocate, graph) {
   const a = world.anchors || {};
   const acting = doingIn(said, world);
   // A signal may name what was done, or name the operation itself: `give one
@@ -4284,7 +4287,7 @@ function act(said, claims, world, side, sides, allocate) {
   if (named < 0) return null;
 
   const joints = [];
-  const stood = rolesIn(said, named, claims, world, side, sides, joints);
+  const stood = rolesIn(said, named, claims, world, side, sides, joints, graph);
   // Agreement with a denial (`neither did theo`): the `neither` term is never
   // a doer — it drops out, and a lone target left without an agent is the new
   // agent by inversion. Elsewhere the term claims like any other.
@@ -4353,7 +4356,7 @@ function act(said, claims, world, side, sides, allocate) {
   }
 
   const at = world.now();
-  const worked = work(action, parts, at, world, allocate);
+  const worked = work(action, parts, at, world, allocate, graph);
   const left = brought(action, parts, world);
   // Nobody did an operation a signal named outright. Nothing happened to
   // anyone — only what a thing holds coming to something else — so there is
@@ -4487,7 +4490,7 @@ function operated(term, world) {
 // and that is the language's to decide. What it does not say, the brain reads
 // off the order things were perceived in: before the action is who did it,
 // after it is what was done.
-function rolesIn(said, acting, claims, world, side, sides, joints) {
+function rolesIn(said, acting, claims, world, side, sides, joints, graph) {
   const a = world.anchors || {};
   // How many of them there are stands between the word saying which part this
   // is and the thing itself — `into three pieces` — and a count is not another
@@ -4514,7 +4517,7 @@ function rolesIn(said, acting, claims, world, side, sides, joints) {
     parts.push({
       role: a[named],
       of: conceptOf(n),
-      amount: amountOf(n, world) ?? fractionAmount(said, i, world),
+      amount: amountOf(n, world) ?? fractionAmount(said, i, world, graph),
       mark: markAt(n),
       at: i,
     });
@@ -4578,7 +4581,7 @@ function amountOf(n, world) {
 // is a quarter of however many apples this conversation holds. The fraction
 // says which part of a whole, the conversation says what the whole is, and
 // neither is guessed.
-function fractionAmount(said, at, world) {
+function fractionAmount(said, at, world, graph) {
   const a = world.anchors || {};
   if (graph == null || a.fraction == null) return null;
   const thing = conceptOf(said[at]);
@@ -4605,7 +4608,7 @@ function fractionAmount(said, at, world) {
 // An action the world says causes an operation, worked on what a thing holds.
 // Which thing that is comes from the parts: taking draws from its source,
 // giving adds to its destination, and the amount is what the target counted.
-export function work(action, parts, at, world, allocate) {
+export function work(action, parts, at, world, allocate, graph) {
   const a = world.anchors || {};
   // The world says which action causes which operation; where the signal named
   // the operation itself there is nothing to look up.
@@ -5002,11 +5005,11 @@ export function isDeterminer(said, i, world) {
 // played by the same one occurrence — one played by a thing of a kind answers
 // to the kind, the same way a hole's does. A signal naming no part at all asks
 // nothing the brain can look for.
-function happened(said, world, claims, side, sides) {
+function happened(said, world, claims, side, sides, graph) {
   const a = world.anchors || {};
   const acting = doingIn(said, world);
   if (acting < 0) return null;
-  const parts = rolesIn(said, acting, claims, world, side, sides).filter((p) => p.of != null);
+  const parts = rolesIn(said, acting, claims, world, side, sides, null, graph).filter((p) => p.of != null);
   const action = conceptOf(said[acting]);
   // A happening the signal speaks of is asked after by name, and names no part
   // of itself: `did the meeting happen?` is about the meeting and nobody in
@@ -5086,7 +5089,7 @@ function tookPartIn(did, world) {
     .flatMap((role) => world.linked(did, role));
 }
 
-function partAsked(said, world, claims, side, sides) {
+function partAsked(said, world, claims, side, sides, graph) {
   const a = world.anchors || {};
   const acting = doingIn(said, world);
   if (acting < 0) return null;
@@ -5134,7 +5137,7 @@ function partAsked(said, world, claims, side, sides) {
   // A question marking an extreme names one doing and asks which of them it
   // was: `who arrived first` says only that somebody arrived, and nothing else
   // in it has to name a part for the question to stand.
-  const marksExtreme = said.some((n) => farEnd(n, world) !== undefined);
+  const marksExtreme = said.some((n) => farEnd(n, world, graph) !== undefined);
   if (!hole) return null;
   // A who-word alone before an intransitive doing asks after its doer
   // (`who arrived?`): nothing else in it names a part, yet the doing itself
@@ -5176,7 +5179,7 @@ function partAsked(said, world, claims, side, sides) {
   // nothing up there — several unbeaten, or the ones who did it never spoken
   // of in it — every one of them stands, as it did before the ordering read.
   for (const n of said) {
-    const far = farEnd(n, world);
+    const far = farEnd(n, world, graph);
     if (far == null || far.length === 0) continue;
     const farIn = found.filter((id) => far.includes(id));
     if (farIn.length > 0) {
@@ -5191,7 +5194,7 @@ function partAsked(said, world, claims, side, sides) {
   // So where the doing left nothing behind, the far end answers.
   if (found.length === 0) {
     for (const n of said) {
-      const far = farEnd(n, world);
+      const far = farEnd(n, world, graph);
       // Even where the ordering holds nobody. Asked what happened first with
       // nothing said to have happened, the answer is none — the question is
       // not then asked again some other way, which is how a happening itself

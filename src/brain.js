@@ -37,10 +37,6 @@ import {
   work,
 } from './judge.js';
 
-// The conversation this signal belongs to, for the length of one turn. Set on
-// the way in from what the runtime knows and never read outside a turn — the
-// graph itself belongs to the brain that was opened with it.
-export let graph = null;
 
 
 
@@ -1026,18 +1022,18 @@ function givenValue(word, at) {
 // the categories, the world owns the membership. A word that names no term
 // gets no category — the brain does not guess from the part of speech.
 // ---------------------------------------------------------------------------
-function solve(roots, world, langs, mood, allocate) {
+function solve(roots, world, langs, mood, allocate, graph) {
   // Whose a thing is settles what it names, and a word nothing knows is named
   // only where it stands in a claim — so whose comes first, or a claim resting
   // on a pointer that landed on nothing would still name something.
-  const positioned = calledHere(contextual(roots, world), world, langs);
+  const positioned = calledHere(contextual(roots, world), world, langs, graph);
   const settled = pointingAgain(
     drawn(
     described(
       calling(
         naming(
           stoodFor(
-            sortsOf(standsIn(whose(settle(positioned, world), world, langs, mood, allocate), world), world),
+            sortsOf(standsIn(whose(settle(positioned, world, graph), world, langs, mood, allocate), world), world),
             world,
             langs,
           ),
@@ -1256,7 +1252,7 @@ function described(roots, world, langs, mood, allocate) {
 // however this conversation has used it. `i ate an apple while watching the
 // apple product launch` says both in one breath, and that is what tells them
 // apart.
-function calledHere(roots, world, langs) {
+function calledHere(roots, world, langs, graph) {
   if (!world) return roots;
   const side = markingSide(roots, langs);
   return roots.map((n, i) => {
@@ -1728,7 +1724,7 @@ function namesInWorld(word, world) {
 // read as the seeing it also is. Where something already joins them, every
 // word stands as it was first thought: `i cut an apple with a saw` has its
 // doing, so the saw is the tool.
-function settle(roots, world) {
+function settle(roots, world, graph) {
   if (!world) return roots;
   const a = world.anchors || {};
   const ways = (n) => {
@@ -3116,7 +3112,11 @@ export function brainFrom(input, knowledge, circumstance) {
   // turn through to the end never gives way to another, so the brain knows
   // which conversation it is reasoning in for as long as it takes, and nothing
   // it holds outlives the call.
-  graph = (knowledge && knowledge.graph) || null;
+  // The conversation this signal belongs to. It is handed to every phase that
+  // reads it, rather than left where any of them might: a phase that needs the
+  // conversation says so in what it takes, and one that does not cannot reach
+  // it by accident.
+  const graph = (knowledge && knowledge.graph) || null;
 
   // Where the signal came from is the runtime's to say — a person, a device, a
   // service, or nothing said at all. Where it went is this brain, unless the
@@ -3158,9 +3158,9 @@ export function brainFrom(input, knowledge, circumstance) {
   const roots = understand(input, langs, reading);
   const thoughtRoots = think(roots, langs, at, world);
   const mood = moodOf(input, thoughtRoots, langs);
-  const solvedRoots = solve(thoughtRoots, world, langs, mood, at.allocate);
+  const solvedRoots = solve(thoughtRoots, world, langs, mood, at.allocate, graph);
   const structuredRoots = spread(structurePhrase(solvedRoots, langs), world);
-  let judgedRoots = judge(structuredRoots, world, mood, langs, at);
+  let judgedRoots = judge(structuredRoots, world, mood, langs, at, graph);
   judgedRoots = awoken(judgedRoots, world, mood, at);
   judgedRoots = saidByPointing(judgedRoots, world, mood);
   let learned = learnedFrom(judgedRoots, world);
