@@ -5126,6 +5126,14 @@ if (far !== undefined) {
         if (r.did != null && p.of != null && hits(p.of, r.did)) return true;
         if (!kindRow && r.of != null && hits(r.of, p.of)) return true;
         if (!kindRow && r.of != null && p.of != null && hits(p.of, r.of)) return true;
+        // A change is a happening like any other, and what changed names it.
+        // `the coffee got cold at ten hours` leaves the clock on the change,
+        // and asked when, nothing reached it: the walk knew a doing by who did
+        // it and a change has no doer, only the thing it happened to.
+        for (const c of nodeConcepts(r.parts ? r.parts.thing : null)) {
+          if (c === p.of) return true;
+          if (p.of != null && (hits(c, p.of) || hits(p.of, c))) return true;
+        }
         // The parts a doing was done among name it too: the row says who its
         // parts were in its own words, and the question's named thing is one
         // of them. Only the parts are asked for — the act every row shares

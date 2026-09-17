@@ -4573,6 +4573,12 @@ function tookIn(learn, world, naming) {
   // are placements.
   if (quantity == null && link.at == null && quantityOn(object, world) != null) {
     link.at = stamp();
+    // A state said of a time that is not now is not how the thing stands. The
+    // world holds what stands; that it was so then is what the conversation
+    // holds, and the two are different things that one stamp was being asked
+    // to say at once — when it was told, and when it was so. Told in the past
+    // tense, the world is told nothing and the conversation keeps it.
+    if (past) return [];
   }
   if (made) {
     const kind = world.term(made.of);

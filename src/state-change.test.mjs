@@ -134,3 +134,14 @@ test("which change is the latest is the timeline's to say", async () => {
   await fresh("the tram arrived at ten hours", "the bus arrived at nine hours");
   assertEquals(await says("who arrived first?"), "bus");
 });
+
+test("a change is a happening, and what changed names it", async () => {
+  // `the coffee got cold at ten hours` leaves the clock on the change, and
+  // asked when, nothing reached it: the walk knew a doing by who did it, and a
+  // change has no doer — only the thing it happened to.
+  await forget();
+  await brain("the coffee got cold at ten hours");
+  assertEquals((await brain("is the coffee cold?")).expression.name, "affirm");
+  assertEquals((await brain("when did the coffee get cold?")).expression.state.says, "ten hours");
+  await forget();
+});

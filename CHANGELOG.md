@@ -115,6 +115,19 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A state said of the past is not how the thing stands.** `the gate was open`
+  answered `is the gate open?` with yes. The world holds what stands and the
+  conversation holds what was told, and one stamp on a fact was being asked to
+  say two different things at once — *when it was told* and *when it was so*.
+  A state told in the past tense goes to the conversation and not to the world:
+  `is the gate open?` is `I don't know`, `was the gate open?` is yes, and told
+  it is closed since, it is closed.
+
+- **A change is a happening, and what changed names it.** `the coffee got cold
+  at ten hours` left the clock on the change, and `when did the coffee get
+  cold?` could not reach it. The walk that finds a happening knew it by whoever
+  did it — and a change has no doer, only the thing it happened to.
+
 - **When a state was said to be so is part of what was told.** `the gate was
   open` and `the gate is open` left the brain holding **the same fact**: the
   tense was read, put on the claim, and dropped on the way to the record. A

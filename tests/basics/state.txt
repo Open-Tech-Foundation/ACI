@@ -28,7 +28,12 @@ is the coffee hot? => deny
 is the coffee cold? => affirm
 was the coffee hot? => affirm
 
-# A state told with a clock.
+# A change told with a clock, and the clock asked back.
+the coffee got cold at ten hours
+is the coffee cold? => affirm
+when did the coffee get cold? => ten hours
+
+# Said with `became`, the same thing is not read at all.
 the gate became open at ten hours
 is the gate open? => affirm
 when did the gate open? => ten hours
