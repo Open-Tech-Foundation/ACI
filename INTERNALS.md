@@ -351,12 +351,24 @@ and each answers what the other cannot.
 One relation in the world, told two ways, and neither way answers the other's
 questions. A thing that has a part has it; a roof of a shed is a part of it.
 
-**The one-line fix does not work, and why is the useful part.** Declaring
-`part` a subrelation of `holding` was tried: `does the cart have a wheel?`
-still says nothing, and `what is part of the cart?` starts answering `train,
-wheel` — the train is not part of the cart. `holding` is read from either end,
-by the same walk that lets `who has kettles?` and `what does dev have?` answer
-off one fact. Anything placed under it inherits that, and `part` runs one way.
+**Two one-line fixes were tried, from opposite directions, and both come back
+wrong the same way.**
+
+    part ⊂ holding      what is part of the cart?    train, wheel
+    made-of ⊂ has       does the cart have a wheel?  Yes   ← right
+                        what does the cart have?     train ← wrong
+
+The second is the better link — what a thing is made of, it has — and it buys
+the answer that was missing. It also makes the cart *have* the train it is part
+of. Both failures are one fault: **a one-way relation loses its direction when
+it is read through a broader one.** `holding` is read from either end, by the
+same walk that lets `who has kettles?` and `what does dev have?` answer off one
+fact, and a relation's converse and the relations under it compose somewhere
+without either being checked against the other.
+
+That is an engine fault and no link will settle it. It is the next thing to
+take, and the two probes above are its test: the link goes back in the moment
+`what does the cart have?` answers `wheel`.
 
 **So the work is a real one: what a thing holds and what it is made of are two
 walks, and the link between them has a direction.** It wants settling before
