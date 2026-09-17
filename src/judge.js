@@ -2389,6 +2389,54 @@ function together(joined, world, mood, sent) {
     }
   }
 
+  // Two things standing at one place on a scale. Asked whether the apple and
+  // the mango are the same colour, the brain is not being asked what colour
+  // either of them is: it reads where each one stands on the scale the question
+  // named, and lays the two against each other. Nothing is stored — the answer
+  // is the two states compared — and where one of them stands nowhere the brain
+  // knows of, there is nothing to compare and it says so.
+  //
+  // That two things may be level on a scale is the brain's; which scale they
+  // are level on is the world's, and which word says sameness the language's.
+  if (a.same != null && a.measure != null && graph != null && terms.length >= 3) {
+    const scaleHere = (of) =>
+      of != null &&
+      a.property != null &&
+      world.isA(of, a.property) &&
+      world.linked(of, a.measure).length > 0
+        ? of
+        : null;
+    const scales = [...new Set(terms.map((t) => scaleHere(conceptOf(t))).filter((one) => one != null))];
+    if (scales.length === 1 && said.some((n) => conceptOf(n) === a.same)) {
+      const [scale] = scales;
+      const sides = [...new Set(
+        terms.map((t) => conceptOf(t)).filter((of) => of != null && of !== scale && of !== a.same),
+      )];
+      const stood = sides.map((one) => {
+        const how = graph.howOf(one) || [];
+        return [...new Set(how)].filter((state) => (quantityOn(state, world) ?? null) === scale);
+      });
+      if (sides.length >= 2 && stood.every((one) => one.length === 1)) {
+        const first = stood[0][0];
+        const alike = stood.every((one) => one[0] === first);
+        return [
+          withBranch(root, [
+            ...root.branch,
+            node('standing', alike ? 'held' : 'against', [], {
+              subject: sides[0],
+              relation: a.same,
+              object: sides[1],
+              worked: true,
+              // Level on this scale, and nothing more: an apple is not a
+              // mango, and what the two are alike in has to be said with them.
+              on: scale,
+            }),
+          ]),
+        ];
+      }
+    }
+  }
+
   // Asked how a thing stands on a scale, what answers is what it was measured
   // at. A property says which scale it is of — long is of length — and so does
   // a unit, so two metres answers a question asked with long. Both links are

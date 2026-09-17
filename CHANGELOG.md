@@ -107,6 +107,28 @@ All notable changes to this project are documented in this file.
   left is the kind with what it is of. `how many kinds of rope does the rack
   have?` is `one` where `how many kinds` is `two`.
 
+### Added
+
+- **Two things stand at one place on a scale, or they do not.** `Do the apple
+  and the mango have the same colour?` was not read at all, in any phrasing.
+  The brain could say what colour each of them is, and answer whether each is
+  green, but *are these two level on this scale* was a question it did not
+  have. It has it now: it reads where each thing stands on the scale the
+  question named and lays the two against each other, storing nothing. Two
+  standing in one state is yes, two states is no, and one of them standing
+  nowhere the brain knows of is nothing to compare.
+
+  It says what they are alike *in*, which is the whole of the claim — `a sofa
+  is the same colour as a shelf`, never `a sofa equals a shelf`, because a sofa
+  is not a shelf. The scale is kept on the claim the way a comparison keeps
+  the one it was made along.
+
+  Two words let it through. `same` now stands before a thing as well as after
+  it — `the same colour` is a colour, and the phrase would not parse at all
+  before — and the language has a frame for saying two things level.
+
+### Changed
+
 - **One thing, one term — however it is spelled.** `colour` and `color` were
   two words over one term, which is right. `grey` and `gray`, `neighbour` and
   `neighbor`, `aluminium` and `aluminum` were two *terms* each, so what the

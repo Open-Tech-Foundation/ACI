@@ -5556,7 +5556,10 @@
       }
     ],
     "same": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "adjective"
+      ],
       "meaning": "same",
       "concept": 250
     },
@@ -19474,6 +19477,7 @@
     "understood": "{self} {relation}.",
     "claim": " {subject} {relation} {object}.",
     "compare": " {subject} is {relation} than {object}.",
+    "level": " {subject} is the same {relation} as {object}.",
     "did": " {subject} {relation}.",
     "didTo": " {subject} {relation} {object}.",
     "affirm": "Yes. ✅{meaning}",

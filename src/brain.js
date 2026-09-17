@@ -2760,6 +2760,16 @@ export function claimSaid(stood, langName, langs, world) {
   if (comparing != null) {
     return lang.express('compare', { subject: one, relation: comparing, object: other }) ?? '';
   }
+  // Two things level on a scale are the same *in that*, and saying it without
+  // the scale says something else entirely — an apple is not a mango. What
+  // they are alike in is said with them.
+  if (a.same != null && relation === a.same && on != null) {
+    const scale = termWord(on, langName, langs, world);
+    if (scale != null) {
+      const said_ = lang.express('level', { subject: one, relation: scale, object: other });
+      if (said_ != null) return said_;
+    }
+  }
   const words = termWord(relation, langName, langs, world);
   if (words == null) return '';
   return lang.express('claim', { subject: one, relation: words, object: other }) ?? '';
