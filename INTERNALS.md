@@ -231,13 +231,29 @@ six readings. Closes *does the cart have a wheel*, *what does the cart have*,
 and unblocks component/material/member, which `PRIMITIVES.md` has had open
 throughout.
 
-**3. An occurrence is not a thing that can be asked after.** A doing is a row
-reachable through whoever did it, and so *did the meeting happen*, *who was in
-the meeting*, *why was the ferry delayed* and the fronted hole all fail
-together. What is missing is the same in each: a happening standing as an
-individual, which can be named, contained in another, and caused. This is the
-event primitive that `PRIMITIVES.md` records as part built, and it is the
-largest of the six.
+**3. An occurrence is not a thing that can be asked after.** *Done.*
+
+One reading now says which word says what happened, and a doing the signal
+brings in the way it brings in anything it speaks of is one that took place:
+one occurrence, in the world, that everything said of it hangs off. So `the
+backup started` is a starting of the backup rather than a backup whose target
+was a starting, and every operation word records the same shape. A word that
+says only that something took place — `happen` — hands the doing to what took
+place and plays no part in it, which is what lets `did the meeting happen?` be
+asked at all. `during` is the containment the brain already read in `was in the
+accident`, so whoever did the inner happening was in the outer one. A question
+that fronts its hole asks the same thing as one that does not. And what was
+done to a thing was done by somebody, which is why it was done.
+
+Two conflations came out with it and are gone: a greeting is a greeting, not
+every word of communication — speaking, writing and reading are doings, and
+`nila spoke` used to name no doer and take nothing into the world; and a
+reading with nothing to say no longer stands in the way of the next one.
+
+*What is left of it:* a happening the graph makes for an ordering — `a plank
+fell after a meeting` — still stands among the nodes rather than among what
+happened, where the graph's own comment says it belongs. The world holds it
+right; the serialization reads it as a thing.
 
 **4. A claim is not a thing the brain can hold.** *Did omar say the ferry is
 late*, *do you know…*, *must devi swim* and — the one that matters — a rule's
@@ -269,7 +285,7 @@ the R of Y` shape. With *whose father is arun*, *who has the most ropes*, the
 fraction where a count stands, and the condition said back as `a river is
 property`, these are readings rather than primitives, and they come last.
 
-**The order: 1, 2, 5, 3, 4, 6.** One, two and five are done. One and two are cheap and unblock the walking
+**The order: 1, 2, 5, 3, 4, 6.** One, two, three and five are done. One and two are cheap and unblock the walking
 everything else does; five is contained; three and four are the real primitives
 and three has to come before four, since a claim about what happened needs the
 happening to be a thing first.
