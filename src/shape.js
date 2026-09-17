@@ -1262,7 +1262,7 @@ function checkContextKinds(value, allowed, where) {
   // or described in the language's own terms — a function a word carries — or
   // the world's — the kind of thing it names, or the one term it is. Exactly
   // one way of describing it, so there is nothing to reconcile.
-  const DESCRIBES = ['functions', 'names', 'is'];
+  const DESCRIBES = ['functions', 'names', 'is', 'measures'];
   const described = (kind) => {
     if (typeof kind === 'string') return allowed.includes(kind);
     if (!kind || typeof kind !== 'object' || Array.isArray(kind)) return false;
@@ -1273,8 +1273,10 @@ function checkContextKinds(value, allowed, where) {
       const functions = Array.isArray(held) ? held : [held];
       return functions.length > 0 && functions.every((one) => COGNITIVE_FUNCTIONS.includes(one));
     }
-    // `names: true` asks only that the neighbour names something.
+    // `names: true` asks only that the neighbour names something, and
+    // `measures: true` that it is a scale others are measured on.
     if (keys[0] === 'names' && held === true) return true;
+    if (keys[0] === 'measures') return held === true;
     return Number.isSafeInteger(held) && held > 0;
   };
   const said = kinds.map((kind) => JSON.stringify(kind));

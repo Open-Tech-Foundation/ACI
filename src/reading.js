@@ -133,6 +133,14 @@ function describes(n, wanted, world) {
     return world != null && of != null && world.isA(of, wanted.names);
   }
   if (wanted.is != null) return conceptOf(n) === wanted.is;
+  // A scale: something other states are measured on. `colour` is one and
+  // `cold` is not, though the world calls both of them properties, and a
+  // reading may turn on which of the two stands beside it.
+  if (wanted.measures === true) {
+    const a = (world && world.anchors) || {};
+    const of = conceptOf(n);
+    return world != null && of != null && a.measure != null && world.linked(of, a.measure).length > 0;
+  }
   return false;
 }
 

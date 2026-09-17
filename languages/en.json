@@ -19024,9 +19024,8 @@
         "functions": "join",
         "select": {
           "after": {
-            "is": 250
-          },
-          "across": "modifier"
+            "measures": true
+          }
         }
       },
       {

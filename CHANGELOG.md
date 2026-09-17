@@ -115,6 +115,20 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **`the same as` says one thing is another; `the same colour as` does not.**
+  Giving `as` a reading that joins the far side of a sameness broke plain
+  identity: `arun is the same as the potter` stopped being read at all, and
+  with it everything that stands on one thing being another — `how many ropes
+  does the potter have?` went from `three` to nothing. Found by sweeping the
+  foundations rather than by anything reporting it.
+
+  Which `as` is meant turns on what stands before it, and a scale is what says
+  the sameness is on that scale: `colour` is one, `cold` is not, though the
+  world calls both of them properties. A reading may now ask that its
+  neighbour be a scale — something other states are measured on — which is the
+  fourth way it can describe a neighbour and the first that is about what a
+  term *does* rather than what it is.
+
 - **A bare pointer stands for what is held, where the holder is somebody.**
   `nila has a kite. it is red.` put the red on **nila**. The rule that a bare
   pointer means the thing held and not whoever holds it was already there, and
