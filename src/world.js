@@ -684,6 +684,17 @@ export function fromWorldData(source) {
       }
     } else {
       for (const next of related(id, rel)) found.add(next);
+      // A narrower relation that runs on runs on here too. `has` does not run
+      // on and `made-of` does, so a train made of a cart made of a wheel is
+      // made of that wheel — and a train made of a wheel has one. Reading the
+      // broader relation has to walk the narrower one the way the narrower one
+      // walks, or every step it composes is lost at the first joint.
+      for (const narrower of relationVariants(rel)) {
+        if (narrower === rel) continue;
+        const term = terms.get(narrower);
+        if (!term || !carries(term, 'transitive')) continue;
+        for (const next of relatedBy(id, narrower)) found.add(next);
+      }
     }
     // A composition may give back the relation it starts with — a father's
     // sibling's father is a father — so what one round adds is what the next

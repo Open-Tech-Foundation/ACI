@@ -123,6 +123,19 @@ All notable changes to this project are documented in this file.
   `is the gate open?` is `I don't know`, `was the gate open?` is yes, and told
   it is closed since, it is closed.
 
+- **Which end a question asks from is where the signal put the thing.** `what
+  does the cart have?` and `what is in the cart?` were read alike — as a hole
+  and then a joint — and the cart was answered with what it is *part of* as
+  well as with what it has. The signal says which: before the joint the thing
+  is the near end and the question is the walk out; after it, the far end and
+  the walk back.
+
+- **A narrower relation that runs on runs on through the broader one.** A train
+  made of a cart made of a wheel is made of that wheel, and what a thing is
+  made of, it has — but `has` does not run on and `made-of` does, so reading
+  the broader relation took one step and stopped. Every step the narrower one
+  composed was lost at the first joint, and the train had a cart and no wheel.
+
 - **A denial said the long way round is read like the claim it denies.**
   `omar is the father of devi` read and `omar is not the father of devi` did
   not; nor did `the wheel is not part of the cart`, nor `why is the drum not

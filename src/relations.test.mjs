@@ -1,6 +1,7 @@
 import { test, assert, assertEquals } from "runtime:test";
 import { brainFrom } from "./brain.js";
 import { fromSources } from "./knowledge.js";
+import { openBrain } from "./index.js";
 
 // A world with two relations over the same terms: one chain of `is`, one of
 // `part`. Nothing about them is special to `is` — both are terms, both are
@@ -218,4 +219,33 @@ test("new kind classification is stored as a subtype", () => {
 test("a term reached by one relation is not reached by another", () => {
   assert(world.isA(11, 10, PART), "wing is part of bird");
   assertEquals(world.isA(11, 10), false, "but a wing is not a kind of bird");
+});
+
+// And the same, said to a brain with the whole world under it.
+const { brain, forget } = openBrain("sqlite::memory:");
+
+test("which end the question asks from is where the signal put the thing", async () => {
+  // `what does the cart have?` and `what is in the cart?` were read alike —
+  // as a hole and then a joint — so the cart was answered with what it is part
+  // of as well as with what it has. Before the joint it is the near end;
+  // after it, the far one.
+  await forget();
+  await brain("the wheel is part of the cart");
+  await brain("the cart is part of the train");
+  assertEquals((await brain("what does the cart have?")).expression.state.says, "wheel");
+  assertEquals((await brain("what does the train have?")).expression.state.says, "cart");
+  assertEquals((await brain("what is in the cart?")).expression.name, "unsure", "and the far end still reads back");
+  await forget();
+});
+
+test("a narrower relation that runs on runs on through the broader one", async () => {
+  // A train made of a cart made of a wheel is made of that wheel, and what a
+  // thing is made of it has. `has` does not run on and `made-of` does, so the
+  // step the broader relation composed was lost at the first joint.
+  await forget();
+  await brain("the wheel is part of the cart");
+  await brain("the cart is part of the train");
+  assertEquals((await brain("does the train have a wheel?")).expression.name, "affirm");
+  assertEquals((await brain("is the wheel part of the train?")).expression.name, "affirm");
+  await forget();
 });

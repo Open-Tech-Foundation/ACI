@@ -2701,8 +2701,18 @@ export function judge(roots, world, mood, langs, sent, graph) {
       // and not yet in the world, so a question about them reaches nothing
       // there. Walked only where the walk out leaves the question open, or
       // where the joint says the near end is what was asked for.
+      // Which end the thing named stands at, the signal says by where it put
+      // it. Before the joint it is the near end and the question is the walk
+      // out — `what does the cart have?` is what the cart has. After it, it is
+      // the far end and the question is the walk back — `what is in the cart?`
+      // is what stands in the cart. Read only as `a hole, then a joint`, the
+      // two came out the same, and the cart was answered with what it is part
+      // of as well as with what it has.
+      const nearSide =
+        holeBefore && at >= 0 && said.indexOf(term) >= 0 && said.indexOf(term) < at;
       const backward =
-        !barestRoot && !(seeksOn && pointed) && twoEnded && (outward.length === 0 || jointSide || holeBefore)
+        !barestRoot && !(seeksOn && pointed) && twoEnded && !nearSide
+        && (outward.length === 0 || jointSide || holeBefore)
           ? [...new Set([
               ...(graph ? graph.standingIn(subject, relation) : []),
               ...world.standing(subject, relation),
