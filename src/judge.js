@@ -1929,11 +1929,16 @@ function together(joined, world, mood, sent) {
       // question named, and where it named nothing else, whatever is held.
       if (a.kind != null && (subject === a.kind || object === a.kind)) {
         const bearer = one(subject === a.kind ? object : subject);
+        // Which kinds are asked after, where the signal narrowed them: `how
+        // many kinds of book` counts the kinds of book and not every kind
+        // there is.
+        const among_ = onOf(said.find((n) => conceptOf(n) === a.kind));
         const sorts = [];
         for (const relation of [named, ...bothWays(named, world)]) {
           if (relation == null) continue;
           for (const held of world.linked(bearer, relation)) {
             const of = world.kinds(held)[0] ?? held;
+            if (among_ != null && !world.isA(of, among_)) continue;
             if (!sorts.includes(of)) sorts.push(of);
           }
         }

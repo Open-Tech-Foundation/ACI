@@ -97,6 +97,24 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **`kinds of thing` is the kinds, narrowed.** `how many kinds of thing does
+  the shelf have?` came back unknown, where the same question without those two
+  words answered `two`. English says the joint with the word it says holding
+  with, so the phrase read as a kind holding a thing, and the count went looking
+  for how many `has` a `kind` has. The far side of that joint says *which*
+  kinds are asked after: it narrows the word rather than standing at the other
+  end of a relation. The joint and the thing are spent saying it, and what is
+  left is the kind with what it is of. `how many kinds of rope does the rack
+  have?` is `one` where `how many kinds` is `two`.
+
+- **A word spent saying something else is no longer in the signal.** Whether an
+  answer is written in figures or in words is read off the signal, and a word
+  that is another way of writing something counts as figures. The `of` read
+  into `kinds of thing` is such a word, and it was still being counted after it
+  had been spent — so that question answered `2` where the same question
+  without the `of` answered `two`. A word that names nothing any more is not
+  looked at.
+
 - **The readings of one word are alternatives, not a list.** `what is the
   capital of turkey?` answered **`ankara I don't know`** — the country reading
   found the city, the bird reading found nothing, and both spoke over one

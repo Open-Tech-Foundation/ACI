@@ -39,3 +39,17 @@ test("and what it holds apart from nothing it does not", async () => {
   assertEquals(await told("is a cup a vehicle?"), "unsure");
   await forget();
 });
+
+test("kinds of a thing are the kinds, narrowed to it", async () => {
+  // `kinds of thing` is not a kind holding a thing: the far side of the joint
+  // says which kinds are asked after. The phrase was read as a holding and
+  // came back unknown, where the same question without it answered.
+  await forget();
+  await brain("a rack has 3 kites and 6 ropes");
+  assertEquals((await brain("how many kinds does the rack have?")).expression.state.says, "two");
+  assertEquals((await brain("how many kinds of thing does the rack have?")).expression.state.says, "two");
+  assertEquals((await brain("how many kinds of rope does the rack have?")).expression.state.says, "one");
+  // And what it holds is still counted whole.
+  assertEquals((await brain("how many things does the rack have?")).expression.state.says, "nine");
+  await forget();
+});

@@ -1028,7 +1028,7 @@ function solve(roots, world, langs, mood, allocate) {
       calling(
         naming(
           stoodFor(
-            standsIn(whose(settle(positioned, world), world, langs, mood, allocate), world),
+            sortsOf(standsIn(whose(settle(positioned, world), world, langs, mood, allocate), world), world),
             world,
             langs,
           ),
@@ -1496,6 +1496,38 @@ function standsIn(roots, world) {
     // The word is spent saying which thing, so it stands for that thing and
     // says nothing else. Asked which, the thing is the answer.
     return standingFor(n, standing[0], true);
+  });
+}
+
+// `how many kinds of thing` is not a kind holding a thing. A word naming the
+// brain's own `kind`, followed by the joint English says holding with and then
+// a thing, says which kinds are being asked after — the far side narrows the
+// word rather than standing at the other end of a relation. The joint and the
+// thing are spent saying it, and what is left is the kind, narrowed.
+//
+// That a word may be narrowed this way is the brain's; which word joins the two
+// is the language's, and it is the same joint that says holding elsewhere.
+function sortsOf(roots, world) {
+  if (!world) return roots;
+  const a = world.anchors || {};
+  if (a.has == null || a.kind == null) return roots;
+  const spent = new Set();
+  return roots.map((n, i) => {
+    if (spent.has(i)) return unnamed(n);
+    if (conceptOf(n) !== a.kind) return n;
+    const marker = roots[i + 1];
+    if (!marker || conceptOf(marker) !== a.has) return n;
+    const of = roots[i + 2] ? conceptOf(roots[i + 2]) : null;
+    if (of == null || a.thing == null || !world.isA(of, a.thing)) return n;
+    spent.add(i + 1);
+    spent.add(i + 2);
+    const thought = thoughtOf(n);
+    return withBranch(
+      n,
+      n.branch.map((b) =>
+        b.kind === 'thought' ? withBranch(b, b.branch, { ...b.state, thought: { ...thought, on: of } }) : b,
+      ),
+    );
   });
 }
 
@@ -2585,7 +2617,13 @@ function wroteOther(roots) {
   const seen = [];
   const collect = (n) => {
     const thought = findBranch(n, 'thought');
-    if (thought && thought.state.thought) seen.push(thought.state.thought.names);
+    // A word spent saying something else is not a word the signal still holds:
+    // the `of` in `how many kinds of thing` is read into the kind and names
+    // nothing afterwards, and counting it here answered that question with `2`
+    // where the same question without the `of` answered `two`.
+    if (thought && thought.state.thought && thought.state.thought.concept != null) {
+      seen.push(thought.state.thought.names);
+    }
     (n.branch || []).forEach(collect);
   };
   roots.forEach(collect);

@@ -183,11 +183,22 @@ apples — so the fix is that the fraction must resolve to its value before
 anything is stored. **The graph holds values, never the words that produced
 them.**
 
-**6. The `of` compound.**
-Recurring, and now met from three sides: `the capital of france`, `how many
-kinds of book`, `one-fourth of the apples`. English maps `of` to holding, so
-the phrase reads as one thing holding another. Worth one deliberate pass rather
-than three patches.
+**6. The `of` compound — one face left.**
+`X of Y` has three arms, settled by what X is. Where X names a relation, it is
+that relation walked from Y: `the capital of france` is paris, `the father of
+sam` is tom. Where X is the brain's own `kind`, Y narrows it: `how many kinds
+of rope` counts the kinds of rope. Both are in.
+
+What is left is where X is a fraction standing where a count stands — `the shop
+sold one-fourth of the apples` — which is *Open — 5* and is about storing
+rather than reading: the fraction must resolve to its value before anything is
+written down.
+
+Still owed from the pass: whether an answer comes back in figures or in words
+turns on whether any word of the signal is a way of *writing* something rather
+than naming it, which is how `weigh` makes `how many grams does the crate
+weigh?` answer `5000` while `how long is the plank?` answers `one metre`. That
+is an accident of which words carry the mark, not a rule.
 
 **7. The fronted hole.**
 `sam ate what?` answers `apple`; `what did sam eat?` does not. The parts *are*
