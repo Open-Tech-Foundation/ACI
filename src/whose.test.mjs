@@ -75,13 +75,17 @@ test("a joint the language names keeps the one that owns before it", async () =>
   await forget();
 });
 
-test("the brain does not say it knows nothing and then answer", async () => {
-  // `whose sister is sofia?` was read as two questions at once — what the
-  // sister is called, and what sofia is called — and both spoke: `I don't
-  // know. sofia`. The word does not name the name relation, and a reading that
-  // leaves the sister standing in the question does not answer from the bare
-  // `is` beside her. One reply, and it is that the brain cannot read it.
+test("a hole asking after whoever stands at the far end of the relation it determines", async () => {
+  // `whose sister is sofia?` asks who sofia is sister of: the copula is the
+  // joint, but the sisterhood is what joins, and sofia stands at its near
+  // end. One reply, and it is the one at the far end.
   const r = await fresh("sofia is the sister of ilan", "whose sister is sofia?");
+  assertEquals(r.expression.state.says, "ilan");
+  await forget();
+});
+
+test("a possessor hole with nothing standing there knows of none", async () => {
+  const r = await fresh("sofia is the sister of ilan", "whose sister is amal?");
   assertEquals(r.expression.state.says, "I don't know.");
   await forget();
 });

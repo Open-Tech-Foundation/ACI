@@ -97,6 +97,16 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A hole asking after whoever stands at the far end of the relation it
+  determines.** `whose sister is sofia?` said the brain could not read it —
+  and then, for a while, said it did not know and answered anyway. The copula
+  is the joint, but the sisterhood is what joins, and sofia stands at its near
+  end: the walk out from her answers ilan, where the joint alone would ask the
+  near end and come back with nothing. Read whole or not at all — one hole,
+  one relation, one other thing — and finding nothing is knowing of none. The
+  other way round is untouched: `who is the father of arun?` still does not
+  know, and `who is the sister of ilan?` still answers sofia.
+
 - **A happening met inside another can be asked after by name.** `nila spoke
   during the meeting` held the meeting on the record — its own row, with her
   in it — and `did the meeting happen?` still said it did not know. Asking

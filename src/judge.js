@@ -2560,7 +2560,41 @@ export function judge(roots, world, mood, langs, sent, graph) {
       ];
     })();
     if (countedEnd != null) return countedEnd;
-    const nodes = [];
+  const nodes = [];
+  // A hole asking after whoever stands at the far end of the relation it
+  // determines: `whose sister is luna` asks who luna is sister of, and `whose
+  // father is arun` who arun's father is. The copula is the joint, but the
+  // relation is what joins, and the thing named stands at its near end — so
+  // the walk out from it answers, where the joint alone would ask the near
+  // end and come back with nothing. Read whole or not at all: one hole, one
+  // relation, one other thing, else the general walk takes it.
+  if (holes.length > 0 && terms.length >= 1 && a.name != null && a.relation != null) {
+    const possessors = holes.filter((hole) => {
+      if (onOf(hole) !== a.name) return false;
+      const head = said[said.indexOf(hole) + 1];
+      const of = head == null ? null : conceptOf(head);
+      return of != null && of !== world.baseRelation && world.isA(of, a.relation);
+    });
+    const headed = terms.filter((term) =>
+      possessors.some((hole) => said[said.indexOf(hole) + 1] === term),
+    );
+    const others = terms.filter((term) => !headed.includes(term) && conceptOf(term) != null);
+    if (possessors.length === 1 && headed.length === 1 && others.length === 1) {
+      const joined = conceptOf(headed[0]);
+      const subject = conceptOf(others[0]);
+      const found = reached(subject, joined, world);
+      return [
+        withBranch(root, [
+          ...root.branch,
+          found.length > 0
+            ? node('answer', 'link', [], { subject: null, relation: null, found })
+            : node('standing', 'absent', [], {
+                subject: null, relation: null, object: null, negated: false,
+              }),
+        ]),
+      ];
+    }
+  }
     // A word the signal left standing for two things is asked after both. What
     // a cricket is, is what each cricket is — an insect and a sport — and
     // answering from one of them would leave out something the brain holds.
