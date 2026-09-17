@@ -20,3 +20,24 @@ what colour is your cat? => I don't know.
 
 a car is red
 what size is the car? => I don't know.
+
+# A state changes, and what was so before is still on the record.
+the coffee is hot
+the coffee got cold
+is the coffee hot? => deny
+is the coffee cold? => affirm
+was the coffee hot? => affirm
+
+# A state told with a clock.
+the gate became open at ten hours
+is the gate open? => affirm
+when did the gate open? => ten hours
+
+# What was so, asked of now.
+the gate was open
+is the gate open? => unsure
+
+# A thing stands in one state of a scale at a time.
+the ball is small
+what size is the ball? => small
+is the ball big? => deny

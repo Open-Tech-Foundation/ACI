@@ -123,6 +123,41 @@ Reachable today, with a probe for each:
   hour longer than a minute?` reads time, and a comparison the brain cannot
   place answers nothing rather than falling through to a denial.
 
+## The checklist the transcripts hold
+
+The sweep below is written into `tests/basics` as assertions of what the brain
+*should* answer, not of what it does. `tsr basics` is the fixing path: every
+line it reports is one thing owed, in the words it will be owed in, and the
+count going up is the only measure of progress that cannot be argued with.
+
+At the time of writing: **250 of 273**, and the twenty-three are these.
+
+    the river is rough              said back as `a river is property`
+    do you know the ferry is late   not read
+    who has the most ropes          not read — a superlative over holders
+    the shop sold one-fourth        a fraction where a count stands
+    what did devi carry             the fronted hole
+    did the meeting happen          a doing named as a thing, asked after
+    who was in the meeting          membership in a happening
+    why was the ferry delayed       a told cause
+    the lamp is the same as ...     identity between two kinds
+    must devi swim                  must, and what follows from it
+    did omar say ...                what somebody said
+    omar is not the father of devi  a denied relation
+    the wheel is not part of ...    a denied relation
+    why is the drum not cold        why, with a denial
+    whose father is arun            the possessor hole
+    does the cart have a wheel      what a thing is made of, it has
+    what does the cart have         and the same asked as a hole
+    a bell is red, after a denial   a rule's conclusion left standing
+    is the coin on the shelf        containment does not carry
+    the gate became open at ten     a state change told with a clock
+    when did the gate open          and asked back
+    the gate was open / is it open  the past taken for the present
+
+Each is a line in a transcript, so fixing one is visible immediately and cannot
+be claimed without being shown.
+
 ## The foundation, swept end to end
 
 Every foundation probed with clean inputs and fresh entities, reading the record

@@ -20,3 +20,33 @@ is ice a liquid? => deny
 is ice a medicine? => unsure
 
 is a wren an existence? => affirm
+
+# A kind said three ways, and what follows from each.
+a heron is a kind of bird
+is a heron a bird? => affirm
+is a heron an animal? => affirm
+
+every heron is a bird
+is a heron a bird? => affirm
+
+all herons are birds
+is a heron a bird? => affirm
+
+# A kind the world keeps apart from another.
+is a heron a fish? => deny
+
+# Told of the kind, asked of one of it.
+every ferry is heavy
+is a ferry heavy? => affirm
+
+# Some is not all.
+some herons are grey
+are all herons grey? => unsure
+is a heron grey? => unsure
+
+# A name is not a kind until somebody says so.
+nila has a kite
+what is nila? => unsure
+
+nila is a person
+what is nila? => person

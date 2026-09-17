@@ -6,3 +6,21 @@ mira is a heron => I understand.
 if a drum is cold then a bell is red => I understand.
 hello => Hello!
 asdf => I don't know "asdf".
+
+# A number is said back the way the question was asked.
+what is one-fourth of 120? => 30
+what is 5 + 7? => 12
+what is five plus seven? => twelve
+what is two hundred plus three? => two hundred three
+what is one thousand plus one? => one thousand one
+
+# A thing spelled another way is the same thing, said one way.
+the stone is gray
+is the stone grey? => affirm
+what colour is the stone? => grey
+what color is the stone? => grey
+
+# A word the brain has never met is taken as a name for something, and what is
+# said of it is held.
+the flibbertigibbet is red
+what colour is the flibbertigibbet? => red

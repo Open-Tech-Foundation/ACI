@@ -13,3 +13,20 @@ can a bird fly? => unsure
 
 a cat might be a fish => deny
 a cat might swim => unsure
+
+# What a thing is able to do.
+devi can swim
+can devi swim? => affirm
+
+devi cannot swim
+can devi swim? => deny
+
+# What must be so is not what is so.
+devi must swim
+must devi swim? => affirm
+did devi swim? => unsure
+
+# What somebody said is not what the brain holds.
+omar said the ferry is late
+is the ferry late? => unsure
+did omar say the ferry is late? => affirm

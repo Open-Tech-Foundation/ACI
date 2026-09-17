@@ -18,3 +18,20 @@ why did nila sing? => kiran arrived
 
 why is the lamp broken? => unsure
 why is a cat => unsure
+
+# A condition and what follows it, said back in words that mean something.
+if a ferry is late then the river is rough
+the ferry is late
+is the river rough? => Yes. ✅ a river is rough.
+
+# Told the consequence does not stand, the condition cannot either.
+if a ferry is late then the river is rough
+the river is not rough
+is the ferry late? => deny
+
+# A choice is not a claim.
+the drum is red or the drum is blue
+is the drum red? => unsure
+
+# What somebody knows, and what the brain knows.
+do you know the ferry is late? => deny

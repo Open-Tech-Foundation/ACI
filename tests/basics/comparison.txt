@@ -18,3 +18,46 @@ is a shed warmer than a barn? => affirm
 a lake is deeper than a pond
 is a lake deeper than a pond? => Yes. ✅ a lake is deeper than a pond.
 is a pond shallower than a lake? => Yes. ✅ a pond is shallower than a lake.
+
+# Two things standing in states of one scale compare, with nothing measured.
+ravi is tall
+kumar is short
+is ravi taller than kumar? => affirm
+is kumar taller than ravi? => deny
+who is taller? => ravi
+who is shorter? => kumar
+who is tallest? => ravi
+
+# Two at one end of a scale are not one further along than the other.
+ravi is tall
+kumar is tall
+is ravi taller than kumar? => unsure
+
+# Level on a scale, which is not the same as being one thing.
+the apple is green
+the mango is green
+do the apple and the mango have the same colour? => affirm
+is the apple the same colour as the mango? => affirm
+is the apple the same as the mango? => unsure
+
+the apple is green
+the mango is red
+do the apple and the mango have the same colour? => deny
+
+# Measured, and asked on the scale the measure is of.
+the fence is 8 metres long
+the wall is 12 metres long
+is the wall longer than the fence? => affirm
+is the fence shorter than the wall? => affirm
+which is longer, the fence or the wall? => wall
+
+# Units of one scale compare without anything being told.
+is an hour longer than a minute? => affirm
+is a week longer than a day? => affirm
+
+# More than two, and the far end of them.
+devi has 7 ropes
+omar has 4 ropes
+nila has 9 ropes
+who has more ropes? => nila
+who has the most ropes? => nila

@@ -32,3 +32,17 @@ how long was the lecture? => three hours
 
 the rope is 2 metres long
 how long is the rope? => two metres
+
+# A measure told, asked back, and converted.
+the rope is 3 metres long
+how long is the rope? => three metres
+the ladder is 5 metres long
+is the ladder longer than the rope? => affirm
+
+# A scale with no units answers with the state.
+the ball is small
+what size is the ball? => small
+
+# Asked how much of something nothing was measured in.
+the ball is small
+how long is the ball? => unsure

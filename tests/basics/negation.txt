@@ -7,3 +7,30 @@ a bell is not red
 is a bell red? => deny
 
 is a bell blue? => unsure
+
+# A denial is a denial whatever it is said of. A relation denied is as much a
+# telling as a property denied, and the brain holds both the same way.
+omar is the father of devi
+is omar the father of devi? => affirm
+
+omar is not the father of devi
+is omar the father of devi? => deny
+
+the coin is not in the jar
+is the coin in the jar? => deny
+
+# Denied, and then asked the other way round: what does not stand does not
+# stand from either end.
+the wheel is not part of the cart
+is the wheel part of the cart? => deny
+
+# A denial says nothing about anything else.
+a wren is not a fish
+is a wren a bird? => affirm
+
+# And a kind the world keeps apart from another is denied without being told.
+is a heron a fish? => deny
+
+# Asked why something is not so, where it was told that it is not.
+the drum is not cold
+why is the drum not cold? => unsure

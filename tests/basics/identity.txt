@@ -7,3 +7,28 @@ mira is a heron
 what is mira? => heron
 who is a heron? => mira
 who is mira? => heron
+
+# One thing under two names is one thing, and what is told of either is told
+# of both.
+arun is the same as the potter
+is the potter the same as arun? => affirm
+
+arun has 3 ropes
+arun is the same as the potter
+how many ropes does the potter have? => three
+
+# Sameness carries along.
+arun is the same as the potter
+the potter is the same as the teacher
+is arun the same as the teacher? => affirm
+
+# Two kinds said to be one thing.
+the lantern is the same as the lamp
+is the lamp the same as the lantern? => affirm
+
+# Two things said to be different.
+the ferry is different from the ladder
+is the ladder different from the ferry? => affirm
+
+# A thing is itself.
+is a wren the same as a wren? => affirm

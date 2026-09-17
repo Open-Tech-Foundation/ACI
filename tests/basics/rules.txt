@@ -40,3 +40,20 @@ is the sponge cold? => affirm
 the sky is blue, the grass is green
 is the sky blue? => affirm
 is the grass green? => affirm
+
+# A rule met by something else answers about that something.
+if a drum is cold then a bell is red
+a drum is cold
+is a bell red? => affirm
+why is a bell red? => a drum is cold
+
+# A rule whose condition was never met says nothing.
+if a drum is cold then a bell is red
+is a bell red? => unsure
+
+# What a rule concluded goes when what it stood on is denied.
+if a drum is cold then a bell is red
+a drum is cold
+is a bell red? => affirm
+a drum is not cold
+is a bell red? => unsure

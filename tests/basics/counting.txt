@@ -15,3 +15,38 @@ is 2 less than 3? => affirm
 a basket holds 10 apples
 rahul takes 3 apples from the basket
 how many apples does the basket hold? => seven
+
+# Several holders, named or pointed at.
+devi has 7 ropes
+omar has 4 ropes
+how many ropes does devi have? => seven
+how many ropes do devi and omar have? => eleven
+how many ropes do they have? => eleven
+
+# A word that says which one narrows what is counted or asked after.
+ravi has a red ball
+kumar has a blue ball
+who has the red ball? => ravi
+who has the blue ball? => kumar
+who has a ball? => ravi, kumar
+who has the green ball? => unsure
+
+# Kinds held, and kinds narrowed.
+a rack has 3 kites and 6 ropes
+how many things does the rack have? => nine
+how many kinds does the rack have? => two
+how many kinds of rope does the rack have? => one
+
+# Taking away.
+a shop has 120 apples
+the shop sold 30 apples
+how many apples does the shop have? => ninety
+
+# A fraction standing where a count stands.
+a shop has 120 apples
+what is one-fourth of the apples? => thirty
+the shop sold one-fourth of the apples
+how many apples does the shop have? => ninety
+
+# How many, with nothing said.
+how many ropes does devi have? => unsure

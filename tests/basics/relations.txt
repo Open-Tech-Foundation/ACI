@@ -35,3 +35,29 @@ tom is the father of sam
 sam is the father of alex
 maya is the sister of alex
 who is the grandfather of maya? => tom
+
+# A relation runs one way, and asking from the end it runs to is not the same
+# question as asking from the end it runs from.
+arun is the father of devi
+who is the father of devi? => arun
+who is the father of arun? => unsure
+whose father is arun? => devi
+
+# What a thing is made of, it has; and what it has need not be part of it.
+the wheel is part of the cart
+is the wheel part of the cart? => affirm
+does the cart have a wheel? => affirm
+what does the cart have? => wheel
+
+devi has 3 ropes
+is a rope part of devi? => unsure
+
+# The long way round says whose it is.
+the roof of the shed is red
+what colour is the roof? => red
+is the shed red? => unsure
+what does the shed have? => roof
+
+# A relation the world declares a converse for answers from either end.
+mira is the mother of kiran
+is kiran the child of mira? => affirm

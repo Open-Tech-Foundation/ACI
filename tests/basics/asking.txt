@@ -18,3 +18,18 @@ the car is what => vehicle, red
 who has the telescope? => unsure
 when is dinner => unsure
 what is 2 plus 3? => answer
+
+# A hole is what it asks after, however it is written.
+the apple is red
+the banana is yellow
+Which fruit is yellow? => banana
+which fruit is yellow? => banana
+What is yellow? => banana
+who is yellow? => banana
+
+# Several sayings in one arrival are several.
+The cat is small. The dog is big. Which animal is small? => cat
+
+# A question the brain has no answer for says so, and does not answer another.
+the apple is red
+what colour is the mango? => unsure

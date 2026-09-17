@@ -29,3 +29,37 @@ where is the key? => in a box
 
 nila was at the fair
 where is nila? => at fair
+
+# A doing said with a hole, asked from either side of it.
+devi carried the ladder
+who carried the ladder? => devi
+devi carried what? => ladder
+what did devi carry? => ladder
+
+# A doing and what it brought about.
+the door is closed
+ravi opened the door
+is the door open? => affirm
+was the door closed? => affirm
+why is the door open? => ravi opened a door
+
+# A doing named as a thing happened.
+a plank fell after a meeting
+did the meeting happen? => affirm
+what happened first? => meeting
+what happened last? => plank
+
+# One doing inside another.
+nila spoke during the meeting
+who was in the meeting? => nila
+
+# A told cause is a cause.
+the storm delayed the ferry
+why was the ferry delayed? => a storm
+
+# Each side of an ordering keeps its own doing.
+the dog ran after the child sang
+did the dog run? => affirm
+did the child sing? => affirm
+did the child run? => unsure
+what happened first? => child

@@ -18,3 +18,21 @@ is a lamp left of a lamp? => deny
 x is left of y
 y is left of z
 x is left of z? => affirm
+
+# Where a thing is, and what is there.
+the coin is in the jar
+where is the coin? => in a jar
+what is in the jar? => coin
+what is in the coin? => unsure
+
+# Containment carries.
+the coin is in the jar
+the jar is on the shelf
+where is the coin? => in a jar
+is the coin on the shelf? => affirm
+
+# A doing moves a thing, and where it was is behind it.
+the coin is in the jar
+devi put the coin on the shelf
+where is the coin? => on a shelf
+was the coin in the jar? => affirm
