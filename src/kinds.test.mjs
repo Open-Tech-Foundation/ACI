@@ -53,3 +53,27 @@ test("kinds of a thing are the kinds, narrowed to it", async () => {
   assertEquals((await brain("how many things does the rack have?")).expression.state.says, "nine");
   await forget();
 });
+
+test("being one way is not being no other way", async () => {
+  // Every quality was declared to hold every other apart, so a cake that was
+  // sweet was not good and a stone that was rough was not hard. What holds
+  // apart is a pair of opposites, and the world says which pairs those are.
+  await forget();
+  await brain("a cake is sweet");
+  assertEquals((await brain("is a cake good?")).expression.name, "unsure");
+  await forget();
+  await brain("a stone is rough");
+  assertEquals((await brain("is a stone hard?")).expression.name, "unsure");
+  assertEquals((await brain("is a stone smooth?")).expression.name, "deny");
+  await forget();
+});
+
+test("a word for one way of being is not the word for being some way at all", async () => {
+  // `rough` was written as the term every quality is one of, so the brain
+  // answered `a river is property` — true of everything and an answer to
+  // nothing.
+  await forget();
+  await brain("the river is rough");
+  assertEquals((await brain("is the river rough?")).expression.state.says, "Yes. ✅ a river is rough.");
+  await forget();
+});

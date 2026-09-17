@@ -123,6 +123,20 @@ All notable changes to this project are documented in this file.
   `is the gate open?` is `I don't know`, `was the gate open?` is yes, and told
   it is closed since, it is closed.
 
+- **A word for one way of being is not the word for being some way at all.**
+  Ten English words — rough, smooth, sharp, round, cheap, expensive,
+  important, possible, impossible, fat — were written as the term that every
+  quality is one of. So the brain answered `a river is property`: true of
+  everything and an answer to nothing. Each has a term of its own now.
+
+- **Being one way is not being no other way.** Every quality was declared to
+  hold every other apart, so a cake that was sweet was not good, a rope that
+  was safe was not simple, and a stone that was rough was not hard. What holds
+  a thing apart is a pair of opposites, not a shared parent, and the world says
+  which pairs those are: easy and difficult, rich and poor, hard and soft,
+  beautiful and ugly, safe and dangerous, cheap and expensive, rough and
+  smooth.
+
 - **A fact the world cannot be grown by was never taken in.** What the
   conversation was told and the world it reasons over are two halves of one
   thing, and the record was written first. A fact the world choked on left the
