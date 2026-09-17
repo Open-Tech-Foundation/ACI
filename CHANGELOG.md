@@ -115,6 +115,19 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **Two things compare by the states they stand in, with nothing measured.**
+  `Ravi is tall. Kumar is short. Is Ravi taller than Kumar?` answered `I don't
+  know`. Nobody measured either of them, and nobody needs to: the world says
+  which end of height each state lies at, so one of them is taller and the
+  brain can say which. Comparison read amounts only — five kilograms against
+  two — and a thing standing on a scale in a state rather than at an amount
+  compared with nothing.
+
+  Two at opposite ends of a scale are one further along than the other. Two at
+  the same end say nothing: two tall people are not one taller than the other.
+  It holds for any scale the world puts states on — `is the plum bigger than
+  the fig?` after big and small.
+
 - **`both` said of those already named.** `Are Ravi and Kumar both tall?` came
   back unread, while the same question without the word answered. English says
   `both` three ways — before what it counts (`both cats`), standing for them

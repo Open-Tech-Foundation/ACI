@@ -361,3 +361,23 @@ test("one word on two scales is placed by what it is said of", async () => {
   assertEquals((await fresh("is a week longer than a day?")).expression.name, "affirm");
   await forget();
 });
+
+test("two things compare by the states they stand in, with nothing measured", async () => {
+  // Ravi is tall and Kumar is short. Nobody measured either of them, and the
+  // world says which end of height each state lies at — so one of them is
+  // taller and the brain can say which. It was answering that it did not know.
+  assertEquals((await fresh("ravi is tall", "kumar is short", "is ravi taller than kumar?")).expression.name, "affirm");
+  assertEquals((await fresh("ravi is tall", "kumar is short", "is kumar taller than ravi?")).expression.name, "deny");
+  assertEquals((await fresh("ravi is tall", "kumar is short", "is kumar shorter than ravi?")).expression.name, "affirm");
+  await forget();
+});
+
+test("two at the same end of a scale are not one further along", async () => {
+  assertEquals((await fresh("ravi is tall", "kumar is tall", "is ravi taller than kumar?")).expression.name, "unsure");
+  await forget();
+});
+
+test("and a state compares on whatever scale it lies on", async () => {
+  assertEquals((await fresh("the plum is big", "the fig is small", "is the plum bigger than the fig?")).expression.name, "affirm");
+  await forget();
+});

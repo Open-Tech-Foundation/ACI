@@ -3608,6 +3608,24 @@ function alongScale(left, right, relation, world, on, said) {
       found.push(side > 0);
     }
   }
+  // Nothing measured, and still comparable. A thing may stand on a scale in a
+  // state rather than at an amount — ravi is tall, kumar is short — and the
+  // world says which end of the scale each state lies at. Two at opposite ends
+  // are one further along than the other, and nobody had to measure either.
+  // Two at the same end say nothing: two tall people are not one taller.
+  if (found.length === 0 && graph != null && on != null && a.toward != null) {
+    const endOf = (of) => {
+      const one = world.oneOf(of) ?? of;
+      const states = [...new Set([...(graph.howOf(of) || []), ...(graph.howOf(one) || [])])]
+        .filter((state) => (quantityOn(state, world) ?? null) === on);
+      const ends = [...new Set(states.map((state) => world.linked(state, a.toward)[0] ?? null))];
+      return ends.length === 1 ? ends[0] : null;
+    };
+    const near = endOf(conceptOf(left));
+    const far = endOf(conceptOf(right));
+    if (near != null && far != null && near !== far) found.push(near === a.more);
+  }
+
   // Nothing measured in common, or two scales that disagree — a thing may be
   // heavier and cooler at once, and neither of those is the comparison.
   if (found.length === 0 || found.some((x) => x !== found[0])) return null;
