@@ -255,11 +255,34 @@ fell after a meeting` — still stands among the nodes rather than among what
 happened, where the graph's own comment says it belongs. The world holds it
 right; the serialization reads it as a thing.
 
-**4. A claim is not a thing the brain can hold.** *Did omar say the ferry is
-late*, *do you know…*, *must devi swim* and — the one that matters — a rule's
-conclusion outliving its condition. All four want a claim reified without being
-written down as a fact, which is exactly what *Open — 1* says is missing. Four
-symptoms, one primitive.
+**4. A claim is not a thing the brain can hold.** *Done, but for the rule.*
+
+A claim is now a thing a relation can reach, and four faults stood between the
+brain and that. A word for saying had no reading that takes a whole claim,
+where knowing already had one. A claim about *how* a thing is did not look like
+a claim at all — the test asked for two things, so only claims about what
+something *is* were ever seen. A thing the signal had just made was made a
+second time, since the world does not hold it yet and nothing but the making
+says so, and the record joining the second to the claim was then refused for
+pointing at a term nothing was writing down. And the claim spoken of was
+written as a fact of the conversation, which is the one thing saying something
+is not. With them: `must` has a term of its own, the same shape as being able
+to; and asked what it knows, the brain answers from what it holds rather than
+from a claim somebody wrote down — not holding a claim is a no, never a
+not-knowing.
+
+*What is left of it:* a rule's conclusion still outlives its condition. `a drum
+is cold` makes a bell red and `a drum is not cold` leaves it red. The record is
+right — the world holds `claim#B follows claim#A` — and the fault is that the
+conclusion was *written* at all. Withdrawing it afterwards is the wrong shape:
+the bell is not *not* red, it is that nothing says it is any more. That is
+Open-1 below, and the piece it was waiting on is now here.
+
+*And one that fell out with it:* a word still to be settled says nothing about
+what another word is. The second `say` of `say wool else say silk`, read for
+the moment as the joint it might turn out to be, made the first one look like
+a claim being held. `settle` already says this of itself; the reading phase now
+says it too.
 
 **5. A state holds over a stretch of time, not at a flag.** *Done.*
 
@@ -285,7 +308,8 @@ the R of Y` shape. With *whose father is arun*, *who has the most ropes*, the
 fraction where a count stands, and the condition said back as `a river is
 property`, these are readings rather than primitives, and they come last.
 
-**The order: 1, 2, 5, 3, 4, 6.** One, two, three and five are done. One and two are cheap and unblock the walking
+**The order: 1, 2, 5, 3, 4, 6.** All but six are done; four has a residue,
+which is Open-1. One and two are cheap and unblock the walking
 everything else does; five is contained; three and four are the real primitives
 and three has to come before four, since a claim about what happened needs the
 happening to be a thing first.
@@ -325,7 +349,7 @@ signal.
 
 ## Open, in the order I would take them
 
-**1. Rules fire where they are told, and write what follows.**
+**1. Rules fire where they are told, and write what follows.** *Unblocked.*
 The one remaining breach of the memory rule, and the largest. A rule is
 recorded twice — `r1` in the graph, an instruction in the session world — and
 only the world's copy is read. Told its condition, it fires at once and writes
@@ -338,8 +362,11 @@ of a kind. Two things did not survive: a chain walked back for `why` needs each
 step to name what the one before it stood on, and a rule met by something else
 — tom, where the rule said a drum — must answer `tom is cold` rather than the
 rule's own words. Both want a claim about the thing that met the condition, and
-that claim is reified only when the rule fires. **The missing piece is a way to
-name a claim nobody wrote down.** Settle that and the change goes in.
+that claim is reified only when the rule fires. **The missing piece was a way
+to name a claim nobody wrote down, and it is now there** — a claim is a thing a
+relation can reach, and `stoodBy` already makes one for whatever met the
+condition. The change goes in: rules read off the graph, applied where a
+question needs them, and the conclusion written nowhere.
 
 **2. A question read as a shape, the rest of the way.**
 Judging is still a chain of guards in `src/judge.js` where the order of the
