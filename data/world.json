@@ -106,7 +106,9 @@
     "toward": 2992,
     "follows": 3009,
     "able": 3012,
-    "brings": 3013
+    "brings": 3013,
+    "direction": 3150,
+    "takes": 3151
   },
   "relations": {
     "is": 294,
@@ -5800,6 +5802,26 @@
         }
       ],
       "value": 99
+    },
+    {
+      "id": 3150,
+      "name": "direction",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        }
+      ]
+    },
+    {
+      "id": 3151,
+      "name": "takes",
+      "links": [
+        {
+          "rel": 294,
+          "to": 4
+        }
+      ]
     }
   ]
 }

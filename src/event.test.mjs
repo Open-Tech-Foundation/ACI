@@ -253,3 +253,54 @@ test("one happening inside another puts whoever was in it in it", async () => {
   assertEquals((await brain("who was in the meeting?")).expression.state.says, "nila");
   await forget();
 });
+
+test("what a motion takes is what the action says, not word order", async () => {
+  // Coming takes what it moves toward, and leaving what it moves away from:
+  // word order alone would make home what was come. Which actions take which
+  // parts is the world's to say.
+  await fresh("ravi came home");
+  let graph = serialize();
+  assert(/to: home\[\d+\]/.test(graph), `home is where he came to:\n${graph}`);
+  assertEquals((await brain("did ravi come?")).expression.name, "affirm");
+  assertEquals((await brain("where did ravi come?")).expression.state.says, "home");
+  await forget();
+  await fresh("ravi left home");
+  graph = serialize();
+  assert(/from: home\[\d+\]/.test(graph), `home is where he left from:\n${graph}`);
+  assertEquals((await brain("did ravi leave?")).expression.name, "affirm");
+  assertEquals((await brain("where did ravi leave?")).expression.state.says, "home");
+  await forget();
+});
+
+test("moving toward somewhere is moving with a direction", async () => {
+  // Toward orients without ending there: coming toward home is not coming to
+  // it, and the direction stands on the doing beside the destination.
+  await fresh("ravi is coming toward home");
+  const graph = serialize();
+  assert(/direction: home\[\d+\]/.test(graph), `home is the direction:\n${graph}`);
+  assertEquals((await brain("did ravi come?")).expression.name, "affirm");
+  await forget();
+  await fresh("ravi is coming towards the office");
+  assertEquals((await brain("did ravi come?")).expression.name, "affirm");
+  await forget();
+});
+
+test("moving with no direction said moves all the same", async () => {
+  // `to` already marked destination; staying is not motion, so home after it
+  // is no destination of anything.
+  await fresh("ravi is coming to the office");
+  assertEquals((await brain("did ravi come?")).expression.name, "affirm");
+  await forget();
+  await fresh("nila stayed home");
+  assertEquals((await brain("did nila stay?")).expression.name, "affirm");
+  await forget();
+});
+
+test("entering and exiting move like coming and leaving", async () => {
+  await fresh("ravi entered the office");
+  assertEquals((await brain("did ravi enter?")).expression.name, "affirm");
+  await forget();
+  await fresh("ravi exited the office");
+  assertEquals((await brain("did ravi exit?")).expression.name, "affirm");
+  await forget();
+});

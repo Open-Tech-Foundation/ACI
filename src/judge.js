@@ -4596,6 +4596,16 @@ function operated(term, world) {
   return term != null && (term === a.plus || term === a.minus) ? term : null;
 }
 
+// What part an unmarked thing plays after the doing an action names. Word
+// order is the language's to say in general (`parts.before`, `parts.after`);
+// where the action says what it takes, that stands instead. Which actions
+// take which parts is the world's to say, never the brain's.
+function takesAfter(action, world) {
+  const a = world ? world.anchors || {} : {};
+  if (action == null || a.takes == null || world == null) return null;
+  return world.linked(action, a.takes)[0] ?? null;
+}
+
 // Which thing played which part. A word may say so — `from` makes a source —
 // and that is the language's to decide. What it does not say, the brain reads
 // off the order things were perceived in: before the action is who did it,
@@ -4683,6 +4693,12 @@ function rolesIn(said, acting, claims, world, side, sides, joints, graph) {
   // What no word says, the brain reads off the order things were perceived in —
   // but which side of the action is the doer is word order, and word order is
   // the language's. Told nothing, the brain assigns no part by order at all.
+  // What part an unmarked thing plays after the doing is the language's to
+  // say in general, and the action's where it says so: coming takes what it
+  // moves toward, and leaving what it moves away from, so `came home` is home
+  // as destination and `left home` as source. Which actions take which parts
+  // is the world's to say; word order is only what is left unsaid.
+  const takes = acting >= 0 ? takesAfter(conceptOf(said[acting]), world) : null;
   said.forEach((n, i) => {
     if (jointed.has(i)) return;
     if (i === acting || taken.has(i) || !claims(n) || isDeterminer(said, i, world) || !sides) return;
@@ -4703,7 +4719,7 @@ function rolesIn(said, acting, claims, world, side, sides, joints, graph) {
       const nc = next == null ? null : conceptOf(next);
       if (nc === a.has || nc === a.hold) return;
     }
-    const role = a[i < acting ? sides.before : sides.after];
+    const role = i < acting ? a[sides.before] : (takes ?? a[sides.after]);
     if (role != null) parts.push({ role, of: conceptOf(n), amount: amountOf(n, world) ?? fractionAmount(said, i, world, graph) ?? numberAmount(said, i, world), mark: markAt(n), at: i });
   });
 
@@ -5307,7 +5323,9 @@ function partAsked(said, world, claims, side, sides, graph) {
   if (hole != null && hole.own == null && hole.named == null) {
     const before = sides ? a[sides.before] : null;
     if (before != null && hole.role === before && hole.at < acting && known.some((p) => p.role === before)) {
-      const after = sides && a[sides.after] != null ? a[sides.after] : null;
+      // The far side is the action's where it says so, the way an unmarked
+      // thing after it is: a fronted hole after `came home` asks destination.
+      const after = takesAfter(conceptOf(said[acting]), world) ?? (sides && a[sides.after] != null ? a[sides.after] : null);
       if (after != null) hole.role = after;
     }
   }

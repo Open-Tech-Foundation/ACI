@@ -97,6 +97,18 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **What a motion takes is what the action says, not word order.** `ravi came
+  home` left home standing as what was come, and `toward` was no word at all.
+  Coming takes what it moves toward and leaving what it moves away from, so
+  home is destination after one and source after the other — which actions
+  take which parts is the world's to say (`takes`), and word order is only
+  what is left unsaid. The fronted hole reads the same far side, so `where
+  did ravi come?` still answers home. `come`, `go`, `arrive` and `leave` are
+  now subtypes of motion rather than bare-`is` kinds of it, `enter` and `exit`
+  exist beside them, and moving toward somewhere stands on the doing as a
+  direction: coming toward home is not coming to it. Staying is not motion,
+  so `stayed home` is untouched, and so is everything told with `to`.
+
 - **A `be` before a doing said as a participle is the doing's auxiliary.**
   `ravi is coming` was read as ravi being a come — one thing said twice, and
   nothing ever happened. The ending is the language's to derive, and a listed

@@ -2233,6 +2233,16 @@
       "meaning": "to",
       "role": "destination"
     },
+    "toward": {
+      "pos": "preposition",
+      "meaning": "toward",
+      "role": "direction"
+    },
+    "towards": {
+      "pos": "preposition",
+      "meaning": "towards",
+      "role": "direction"
+    },
     "name": [
       {
         "pos": "noun",
@@ -5946,6 +5956,15 @@
         "concept": 3010,
         "select": {
           "before": "having"
+        }
+      },
+      {
+        "pos": "verb",
+        "meaning": "left",
+        "concept": 3053,
+        "when": "past",
+        "select": {
+          "before": "thing"
         }
       }
     ],
@@ -9883,6 +9902,30 @@
       ],
       "meaning": "expect",
       "concept": 2697
+    },
+    "enter": {
+      "pos": "verb",
+      "meaning": "enter",
+      "concept": 3152
+    },
+    "enters": {
+      "pos": "verb",
+      "meaning": "enters",
+      "concept": 3152,
+      "person": "third",
+      "number": "singular"
+    },
+    "exit": {
+      "pos": "verb",
+      "meaning": "exit",
+      "concept": 3153
+    },
+    "exits": {
+      "pos": "verb",
+      "meaning": "exits",
+      "concept": 3153,
+      "person": "third",
+      "number": "singular"
     },
     "expects": {
       "pos": "verb",
