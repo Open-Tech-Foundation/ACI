@@ -245,21 +245,22 @@ conclusion outliving its condition. All four want a claim reified without being
 written down as a fact, which is exactly what *Open — 1* says is missing. Four
 symptoms, one primitive.
 
-**5. A state holds over a stretch of time, not at a flag.** *The gate was open*
-answers *is the gate open?* with yes; *the gate became open at ten hours* is
-unread; *when did the gate open?* has no answer.
+**5. A state holds over a stretch of time, not at a flag.** *Done.*
 
-*Half done.* The telling's own when now reaches the record — `was` and `is`
-left the identical fact before — and what the conversation holds respects it.
-The other half is the session world, which holds a state at a point and not
-over a stretch: a past-told property goes in beside a present one and answers
-for it, where a past-told *quantity* or *placement* is already stamped earlier
-so the later one wins. Until a state can hold over a stretch, `is the gate
-open?` after `the gate was open` still says yes.
+The telling's own when reaches the record — `was` and `is` left the identical
+fact before — and a state told in the past tense goes to the conversation and
+not to the world, so `the gate was open` no longer answers `is the gate open?`
+with yes. A change is a happening and what changed names it, so the clock on a
+change can be asked for. The bracketing of a state reached went with it: `got
+cold at ten hours` only ever read because `cold` is a thing as well as a way to
+be, and `open` is not.
 
-*And the shape to settle with it:* `the gate opened at ten hours` records
-`placement(gate, hour) {count: 10, as: at}` — the gate placed at ten o'clock.
-A clock on a doing is not a place.
+And the shape settled: `the gate opened at ten hours` records the opening with
+the clock on it, not the gate placed at ten o'clock. Two readings stood in the
+way — a doing that brings a *way to stand* about ends nowhere, where one that
+brings a *relation* about ends somewhere; and a joint whose far end is a
+measure says when, so it is not what the signal is about and the doing reading
+is still to be taken.
 
 **6. The `of` compound, and the readings around it.** *Omar is not the father of
 devi* and *the wheel is not part of the cart* are not a denial fault — denial
@@ -268,7 +269,7 @@ the R of Y` shape. With *whose father is arun*, *who has the most ropes*, the
 fraction where a count stands, and the condition said back as `a river is
 property`, these are readings rather than primitives, and they come last.
 
-**The order: 1, 2, 5, 3, 4, 6.** One and two are cheap and unblock the walking
+**The order: 1, 2, 5, 3, 4, 6.** One, two and five are done. One and two are cheap and unblock the walking
 everything else does; five is contained; three and four are the real primitives
 and three has to come before four, since a claim about what happened needs the
 happening to be a thing first.
