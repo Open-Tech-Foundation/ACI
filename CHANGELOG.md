@@ -123,6 +123,17 @@ All notable changes to this project are documented in this file.
   `is the gate open?` is `I don't know`, `was the gate open?` is yes, and told
   it is closed since, it is closed.
 
+- **A clock on a doing is not a place, and a doing that leaves a way to stand
+  ends nowhere.** Two readings that stood between the brain and what it was
+  told. `the gate opened at the dock` dropped the opening and wrote the gate
+  placed at the dock, because the walk asked only whether the world says the
+  doing brings *something* about — and opening brings a way to stand, not a
+  relation, so nothing about it ends anywhere. And `the shop closed at ten
+  hours` was not read at all: `closed` is a way a shop stands as well as a
+  thing a shop does, and `at ten hours` was taken for the joint of the whole
+  signal, so the doing reading was never reached. A joint that ends in a
+  measure says when, and leaves the signal still wanting what it is about.
+
 - **A state reached brackets the clock after it.** `the coffee got cold at ten
   hours` read, and `the gate became open at ten hours` was not read at all. The
   first only ever read because `cold` is a thing as well as a way to be, so the

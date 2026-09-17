@@ -1814,10 +1814,28 @@ function settle(roots, world) {
   if (between.some((n, i) => n !== roots[i])) return between;
 
 
-  const already = roots.some((n) => {
+  // A joint that ends in a measure is not joining two things the signal names:
+  // `at ten hours` says when, and leaves the signal still wanting whatever it
+  // is about. So a word that could be the doing still becomes one — `the gate
+  // closed at ten hours` is a closing, where the joint alone would have left
+  // `closed` as the way the gate stands and nothing said at all.
+  const measuring = (thought) =>
+    thought != null &&
+    thought.concept != null &&
+    a.measure != null &&
+    world.linked(thought.concept, a.measure).length > 0;
+  const measuredAfter = (i) =>
+    roots.slice(i + 1).some((other) => {
+      const t = findBranch(other, 'thought');
+      return measuring(t ? t.state.thought : null);
+    });
+
+  const already = roots.some((n, i) => {
     if (ways(n)) return false;
     const t = findBranch(n, 'thought');
-    return t && (doing(t.state.thought) || joining(t.state.thought));
+    const thought = t ? t.state.thought : null;
+    if (doing(thought)) return true;
+    return joining(thought) && !measuredAfter(i);
   });
 
   let taken = false;
@@ -4199,6 +4217,16 @@ function stoodBy(condition, consequence, ids, sent) {
   };
 }
 
+// What a doing brings about may be a relation — putting leaves the thing put
+// standing in a place — or a way the thing stands afterwards, as opening
+// leaves it open. The two are read differently and only the world can tell
+// them apart, so this asks it which relation, if any, a doing brings.
+export function bringsRelation(doing, world) {
+  const a = world.anchors || {};
+  if (a.brings == null || a.relation == null || doing == null) return null;
+  return world.linked(doing, a.brings).find((brought) => world.isA(brought, a.relation)) ?? null;
+}
+
 // What a doing leaves behind. Some doings change nothing but the record that
 // they happened; others leave the world standing differently afterwards, and
 // which of them do is the world's to say. Putting a key into a drawer leaves
@@ -4210,8 +4238,8 @@ function stoodBy(condition, consequence, ids, sent) {
 // nothing for it to have brought about.
 export function brought(action, parts, world) {
   const a = world.anchors || {};
-  if (a.brings == null || a.target == null || a.destination == null) return [];
-  const relation = world.linked(action, a.brings)[0];
+  if (a.target == null || a.destination == null) return [];
+  const relation = bringsRelation(action, world);
   if (relation == null) return [];
   const target = parts.find((p) => p.role === a.target);
   const where = parts.find((p) => p.role === a.destination);

@@ -155,3 +155,23 @@ test("the state reached carries the clock, whether or not it is also a thing", a
   assertEquals(await says("when did the gate open?"), "ten hours");
   await forget();
 });
+
+test("a joint that ends in a measure is not what the signal is about", async () => {
+  // `closed` is a way a shop stands and a thing a shop does, and `at ten
+  // hours` was taken for the joint of the whole signal — placing the shop at
+  // ten o'clock — so the doing reading was never reached and nothing read at
+  // all. A clock is not a place, and the signal still wants its doing.
+  await fresh("the shop closed at ten hours");
+  assertEquals(await says("when did the shop close?"), "ten hours");
+  await forget();
+});
+
+test("a doing that ends somewhere still ends there", async () => {
+  // The same walk decides whether what follows a doing is the doing's own far
+  // end. Putting brings a placement about, so the shelf is where the coin came
+  // to rest; opening brings a way to stand about, so the dock is only where
+  // the opening happened.
+  await fresh("the coin is in the jar", "devi put the coin on the shelf");
+  assertEquals(await says("where is the coin?"), "on a shelf");
+  await forget();
+});

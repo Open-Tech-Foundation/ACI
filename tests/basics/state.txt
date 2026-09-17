@@ -38,6 +38,10 @@ the gate became open at ten hours
 is the gate open? => affirm
 when did the gate open? => ten hours
 
+# The doing itself, with a clock after it, where the word is also a way to be.
+the shop closed at ten hours
+when did the shop close? => ten hours
+
 # What was so, asked of now.
 the gate was open
 is the gate open? => unsure

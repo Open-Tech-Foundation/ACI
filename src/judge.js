@@ -21,6 +21,7 @@ import { TOLD, NONE, MOVED } from './working.js';
 import {
   among,
   below,
+  bringsRelation,
   brought,
   claimSaid,
   compared,
@@ -1842,9 +1843,10 @@ function together(joined, world, mood, sent) {
   // that happened on the road, not a tree that is on one: what follows the
   // doing qualifies the doing. The relation still joins two things — it is
   // the doing that is the near end of it, and the doing has to exist first.
-  // Except where the doing is one the world says brings that very relation
-  // about: `put it on the shelf` is the shelf it ends on, and the placement is
-  // the whole of what was said.
+  // Except where the doing is one the world says brings a relation about:
+  // `put it on the shelf` is the shelf it ends on, and the placement is the
+  // whole of what was said. A doing that brings a way to stand about — opening
+  // leaves the gate open — ends nowhere, and what follows qualifies it.
   // Where and when, and nothing else: those are what any doing may carry. A
   // relation that joins two occurrences — one arrival before another — is the
   // signal itself, not a word about one of them.
@@ -1858,7 +1860,7 @@ function together(joined, world, mood, sent) {
       .some(
         (n) =>
           reaches(n, a.action, world) &&
-          !(a.brings != null && world.linked(conceptOf(n), a.brings).length > 0),
+          bringsRelation(conceptOf(n), world) == null,
       );
 
   if (!(joint >= 0 && joined >= 2) || qualified) {
@@ -4480,13 +4482,12 @@ function rolesIn(said, acting, claims, world, side, sides, joints) {
   // far end, not the doing's. The doing carries the phrase; the phrase does
   // not stand in place of the doing. A word already spoken for names a part
   // and is left alone.
-  // A doing the world says brings something about ends somewhere: `put it on
+  // A doing the world says brings a relation about ends somewhere: `put it on
   // the table` says where the thing came to rest, not where the putting was.
-  // There the phrase is the doing's own far end and not a word about it.
-  const brings =
-    a.brings != null &&
-    acting >= 0 &&
-    world.linked(conceptOf(said[acting]), a.brings).length > 0;
+  // There the phrase is the doing's own far end and not a word about it. A
+  // doing that brings a way to stand about — opening brings being opened —
+  // ends nowhere, and the phrase qualifies it like any other.
+  const brings = acting >= 0 && bringsRelation(conceptOf(said[acting]), world) != null;
 
   const jointed = new Set();
   if (joints && a.relation != null && !brings) {
