@@ -18,6 +18,7 @@
 // The graph holds no words. A concept is an id in the world, and how it is
 // spelled is the world's business, not this module's.
 
+import { unique } from '@opentf/std';
 import { grownBy } from './world.js';
 import { unitsIn } from './calendar.js';
 import { working } from './working.js';
@@ -1796,6 +1797,32 @@ function orderedOn(scale) {
     const below = termOf(one.parts[1]);
     if (above == null || below == null) continue;
     found.push([above, below]);
+  }
+  // And the ordering that follows from where things already stand on it.
+  // Nobody said ravi is taller than kumar: ravi is tall, kumar is short, and
+  // the world says which end of height each of those states lies at. One above
+  // the other is worked out when it is asked for and written nowhere.
+  const world = against;
+  const a = (world && world.anchors) || {};
+  if (world && a.toward != null && a.measure != null && a.more != null) {
+    const ends = new Map();
+    for (const row of held.nodes) {
+      const states = Object.values(howOf(row.id) || {}).filter(
+        (state) => (world.members(state, a.measure)[0] ?? null) === scale,
+      );
+      const at = unique(states.map((state) => world.linked(state, a.toward)[0] ?? null));
+      const term = termOf(row.id) ?? row.term;
+      if (at.length !== 1 || at[0] == null || term == null) continue;
+      ends.set(term, at[0]);
+    }
+    for (const [above, end] of ends) {
+      if (end !== a.more) continue;
+      for (const [below, other] of ends) {
+        if (other === a.more || above === below) continue;
+        if (found.some(([x, y]) => x === above && y === below)) continue;
+        found.push([above, below]);
+      }
+    }
   }
   return found;
 }

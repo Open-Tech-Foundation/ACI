@@ -381,3 +381,15 @@ test("and a state compares on whatever scale it lies on", async () => {
   assertEquals((await fresh("the plum is big", "the fig is small", "is the plum bigger than the fig?")).expression.name, "affirm");
   await forget();
 });
+
+test("the ordering follows from where things stand, with nobody comparing them", async () => {
+  // Nobody said ravi is taller than kumar. Ravi is tall, kumar is short, and
+  // the world says which end of height each lies at — so the conversation
+  // already holds an ordering, and asking which is taller reads it. It is
+  // worked out when asked and written nowhere: the record holds two states and
+  // no comparison.
+  await fresh("ravi is tall", "kumar is short");
+  assertEquals((await brain("who is taller?")).expression.state.says, "ravi");
+  assertEquals((await brain("who is shorter?")).expression.state.says, "kumar");
+  await forget();
+});

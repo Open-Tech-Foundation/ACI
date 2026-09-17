@@ -115,6 +115,15 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **The ordering follows from where things already stand.** `Ravi is tall.
+  Kumar is short. Who is taller?` came back unread. The comparison the question
+  asks after reads the orderings the conversation holds, and it held only the
+  ones somebody *said* — nobody said ravi is taller than kumar. But the
+  conversation does hold the ordering: ravi stands at one end of height and
+  kumar at the other, and the world says which end each state lies at. It is
+  worked out when it is asked for and written nowhere — the record still holds
+  two states and no comparison at all.
+
 - **Two things compare by the states they stand in, with nothing measured.**
   `Ravi is tall. Kumar is short. Is Ravi taller than Kumar?` answered `I don't
   know`. Nobody measured either of them, and nobody needs to: the world says

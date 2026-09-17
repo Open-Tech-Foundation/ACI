@@ -9,7 +9,7 @@
 // solving, structuring — hand it what they made; the phase after it says what
 // it found in words.
 
-import { Decimal } from '@opentf/std';
+import { Decimal, unique } from '@opentf/std';
 import { grownBy, addAmounts, multiplyAmounts } from './world.js';
 import { UNITS, unitsIn as stepsInTime } from './calendar.js';
 import { contextual } from './reading.js';
@@ -3616,9 +3616,9 @@ function alongScale(left, right, relation, world, on, said) {
   if (found.length === 0 && graph != null && on != null && a.toward != null) {
     const endOf = (of) => {
       const one = world.oneOf(of) ?? of;
-      const states = [...new Set([...(graph.howOf(of) || []), ...(graph.howOf(one) || [])])]
+      const states = unique([...(graph.howOf(of) || []), ...(graph.howOf(one) || [])])
         .filter((state) => (quantityOn(state, world) ?? null) === on);
-      const ends = [...new Set(states.map((state) => world.linked(state, a.toward)[0] ?? null))];
+      const ends = unique(states.map((state) => world.linked(state, a.toward)[0] ?? null));
       return ends.length === 1 ? ends[0] : null;
     };
     const near = endOf(conceptOf(left));
