@@ -207,14 +207,26 @@ than naming it, which is how `weigh` makes `how many grams does the crate
 weigh?` answer `5000` while `how long is the plank?` answers `one metre`. That
 is an accident of which words carry the mark, not a rule.
 
-**7. The fronted hole.**
-`sam ate what?` answers `apple`; `what did sam eat?` does not. The parts *are*
-assigned, and to the wrong word: the reader takes the first word reaching a
-doing to be the doing, and in `what did sam eat?` that is `did`. English has
-`did` two ways and picks the auxiliary only at the front of a signal or before
-a denial, so after a hole the verb reading wins. Widening that choice and
-skipping auxiliaries were both tried and neither sufficed alone; the word-
-reading selection wants settling before the reader can be.
+**7. A hole outside a clause does not reach into it.**
+`sam ate what?` answers `apple`; `what did sam eat?` does not, because `did` is
+read as the doing rather than as the auxiliary.
+
+The reading selection is no longer what stands in the way — that was the old
+diagnosis and it is wrong. English can say it now: the auxiliary reading
+applies after a hole, one line of language data, and `what did sam eat?`
+answers `apple`, `what did ravi give?` answers `kite`, `who did eat the fig?`
+answers `nila`. It was tried and backed out, because taking the auxiliary
+reading is what *reveals* the real fault.
+
+An auxiliary opens a clause, and the hole stays outside it: `when did nadia
+arrive?` parses as `when` beside a whole sentence, `nadia arrive`. Every
+reading that answers a hole works from what the signal names beside it, and
+beside `when` there is nothing — the arriving and nadia are both inside the
+clause. So `when did nadia arrive?` falls back to the coarse `past` where it
+used to answer `nine hours`, and four other readings go the same way.
+
+**What is missing is a hole reaching into the clause beside it.** Settle that
+and the language data goes back in as it was written.
 
 **8. Smaller, each with a probe.**
 
