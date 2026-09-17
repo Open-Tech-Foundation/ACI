@@ -107,6 +107,12 @@ All notable changes to this project are documented in this file.
   left is the kind with what it is of. `how many kinds of rope does the rack
   have?` is `one` where `how many kinds` is `two`.
 
+### Removed
+
+- **Two loaders nothing calls.** `loadWorldFile` and `loadLanguageDirectory`
+  were left behind when the world and the languages moved to being assembled
+  through one door. Nothing in the engine, the demo or the tests reached either.
+
 ### Fixed
 
 - **`the roof of the shed` is the shed's roof.** It was three facts and every

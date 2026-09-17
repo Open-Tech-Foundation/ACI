@@ -330,6 +330,40 @@ nothing blocks fixing them. Each one fixed is one more signal the gate no
 longer has to refuse on its behalf. The gate comes off when the readings can
 say *not me* — and that is the completeness rule, which is *Open — 2*.
 
+## Holding is two things, and they are half-blind to each other
+
+Audited rather than assumed, after the `of` fix, and the result is not what it
+looked like. `holding` has not swallowed `part`. The two are *disconnected*,
+and each answers what the other cannot.
+
+    the wheel is part of the cart
+    the cart is part of the train
+      is the wheel part of the train?   Yes          transitive, through part
+      what is part of the cart?         wheel
+      does the cart have a wheel?       I don't know  ← it has one
+
+    the roof of the shed is red
+    the shed is part of the farm
+      what does the shed have?          roof          a plain holding
+      is the roof part of the shed?     I don't know  ← it is a part
+      is the roof part of the farm?     I don't know  ← and so through the farm
+
+One relation in the world, told two ways, and neither way answers the other's
+questions. A thing that has a part has it; a roof of a shed is a part of it.
+
+**The one-line fix does not work, and why is the useful part.** Declaring
+`part` a subrelation of `holding` was tried: `does the cart have a wheel?`
+still says nothing, and `what is part of the cart?` starts answering `train,
+wheel` — the train is not part of the cart. `holding` is read from either end,
+by the same walk that lets `who has kettles?` and `what does dev have?` answer
+off one fact. Anything placed under it inherits that, and `part` runs one way.
+
+**So the work is a real one: what a thing holds and what it is made of are two
+walks, and the link between them has a direction.** It wants settling before
+either of `part` or `holding` grows further, and `component, material, member
+and portion are conflated` in `PRIMITIVES.md` is the same item seen from the
+other side.
+
 ## Deferred by decision
 
 - **A domain's knowledge, pumped in from outside.** Answering a cricket
@@ -356,3 +390,12 @@ say *not me* — and that is the completeness rule, which is *Open — 2*.
   basics 144/144.
 - **Verify what you write.** Edits that match on anchor text abort silently
   when the anchor moves. Several findings reported as recorded were not.
+- **A passing suite is not a correct brain.** The tests say nothing broke that
+  was being watched; they do not say a record is right. Every one of this
+  session's worst faults — a plank arriving where it fell, a quarter holding
+  apples, the ordering written on kinds — passed every test it had. Read the
+  record, ask it back, and vary the example.
+- **Clear what is left behind.** The architecture has moved a long way, and
+  dead code, doubled records and readings nothing reaches are still sitting in
+  it. Where one is found while doing something else, it goes then — not onto a
+  list.

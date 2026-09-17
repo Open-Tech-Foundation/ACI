@@ -1105,11 +1105,6 @@ export function fromWorldData(source) {
   };
 }
 
-export async function loadWorldFile(path) {
-  const { file } = await import('runtime:fs');
-  return fromWorldData(await file(path).json());
-}
-
 // The whole world as the runtime assembles it: the generic world every brain
 // shares, and the knowledge one has been given, merged. The generic world is
 // the shape a world must have for the primitives to bite — the ladder, the

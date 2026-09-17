@@ -420,21 +420,6 @@ export function fromData(data) {
   return buildLanguage(data);
 }
 
-// Files are read in name order so the brain sees the same languages in the
-// same order on every machine.
-export async function loadLanguageDirectory(dir) {
-  const { readDir, file } = await import('runtime:fs');
-  const entries = (await readDir(dir))
-    .filter((e) => e.isFile && e.name.endsWith('.json'))
-    .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
-
-  const langs = [];
-  for (const entry of entries) {
-    langs.push(fromData(await file(`${dir}/${entry.name}`).json()));
-  }
-  return langs;
-}
-
 // A word the language never listed, made the way it reads one: the ending that
 // says a comparison, put back on the word it would have been taken off.
 function builtFrom(word, derivations) {
