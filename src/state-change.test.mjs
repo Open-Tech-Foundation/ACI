@@ -145,3 +145,13 @@ test("a change is a happening, and what changed names it", async () => {
   assertEquals((await brain("when did the coffee get cold?")).expression.state.says, "ten hours");
   await forget();
 });
+
+test("the state reached carries the clock, whether or not it is also a thing", async () => {
+  // `got cold at ten hours` only ever read because `cold` is a thing as well
+  // as a way to be, so the clock hung off it as if it were a second thing.
+  // `open` is only a way to be, and the same sentence was not read at all.
+  await fresh("the gate became open at ten hours");
+  assertEquals(await says("is the gate open?"), "Yes. ✅ a gate is open.");
+  assertEquals(await says("when did the gate open?"), "ten hours");
+  await forget();
+});

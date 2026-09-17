@@ -123,6 +123,13 @@ All notable changes to this project are documented in this file.
   `is the gate open?` is `I don't know`, `was the gate open?` is yes, and told
   it is closed since, it is closed.
 
+- **A state reached brackets the clock after it.** `the coffee got cold at ten
+  hours` read, and `the gate became open at ten hours` was not read at all. The
+  first only ever read because `cold` is a thing as well as a way to be, so the
+  clock hung off it as though it were a second thing said. `open` is only a way
+  to be. The language now brackets a way-to-be with what follows it, so the
+  reading is the same one either way.
+
 - **A change is a happening, and what changed names it.** `the coffee got cold
   at ten hours` left the clock on the change, and `when did the coffee get
   cold?` could not reach it. The walk that finds a happening knew it by whoever

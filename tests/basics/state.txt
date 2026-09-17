@@ -33,7 +33,7 @@ the coffee got cold at ten hours
 is the coffee cold? => affirm
 when did the coffee get cold? => ten hours
 
-# Said with `became`, the same thing is not read at all.
+# A state reached, with a clock after it, whichever word says reached.
 the gate became open at ten hours
 is the gate open? => affirm
 when did the gate open? => ten hours
