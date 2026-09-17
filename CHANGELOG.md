@@ -107,13 +107,22 @@ All notable changes to this project are documented in this file.
   left is the kind with what it is of. `how many kinds of rope does the rack
   have?` is `one` where `how many kinds` is `two`.
 
-- **A word spent saying something else is no longer in the signal.** Whether an
-  answer is written in figures or in words is read off the signal, and a word
-  that is another way of writing something counts as figures. The `of` read
-  into `kinds of thing` is such a word, and it was still being counted after it
-  had been spent — so that question answered `2` where the same question
-  without the `of` answered `two`. A word that names nothing any more is not
-  looked at.
+- **A number is said back the way the question was asked.** Whether an answer
+  came in figures or in words turned on whether *any* word of the signal was a
+  way of writing something rather than naming it — and `of` is such a word, and
+  so is `weigh`. So `how many of them?` answered `3` and `how many kinds does
+  the shelf have?` answered `two`; `how many grams does the crate weigh?`
+  answered `5000` and `how long is the plank?` answered `one metre`. Which it
+  was depended on which words the language happened to have marked, and nothing
+  about the question.
+
+  A signal that wrote a number in figures is answered in figures, and one that
+  did not is answered in words. `what is one-fourth of 120?` is `30` and `what
+  is one-fourth of the apples?` is `thirty`; `5 + 7` is `12` and `five plus
+  seven` is `twelve`. Where the language has no word for the number, the
+  figures stand — `how many grams does the crate weigh?` is `5000` still,
+  because five thousand has no word here. Six expectations across the tests and
+  one transcript line held the old accident and now say what the rule says.
 
 - **The readings of one word are alternatives, not a list.** `what is the
   capital of turkey?` answered **`ankara I don't know`** — the country reading

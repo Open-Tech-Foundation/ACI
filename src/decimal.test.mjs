@@ -65,6 +65,6 @@ test("a chained value beyond the count is refused, not raised", async () => {
   assert(refusal.expression.state.says.includes("don't know"), refusal.expression.state.says);
   await brain("z is 7");
   const again = await brain("z + z");
-  assertEquals(again.expression.state.says, "14", "the brain goes on after the refusal");
+  assertEquals(again.expression.state.says, "fourteen", "the brain goes on after the refusal");
   await forget();
 });

@@ -29,8 +29,10 @@ test("a fraction of a number the whole does not divide is exact", async () => {
 test("a fraction of what this conversation holds is a count", async () => {
   await forget();
   await brain("a shop has 120 apples");
-  assertEquals(await says("what is one-fourth of the apples?"), "30");
-  assertEquals(await says("what is half of the apples?"), "60");
+  // In words: the question was asked in words, where `one-fourth of 120` was
+  // asked with a figure and comes back as one.
+  assertEquals(await says("what is one-fourth of the apples?"), "thirty");
+  assertEquals(await says("what is half of the apples?"), "sixty");
 });
 
 test("a doing is not a sum to be worked out", async () => {

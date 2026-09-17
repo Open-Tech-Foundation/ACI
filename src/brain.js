@@ -2614,20 +2614,20 @@ function sayable(value, langName, langs) {
 // Whether the signal wrote its terms in words the language says do not name
 // them — figures against the words for the numbers they are.
 function wroteOther(roots) {
-  const seen = [];
+  let written = false;
   const collect = (n) => {
     const thought = findBranch(n, 'thought');
-    // A word spent saying something else is not a word the signal still holds:
-    // the `of` in `how many kinds of thing` is read into the kind and names
-    // nothing afterwards, and counting it here answered that question with `2`
-    // where the same question without the `of` answered `two`.
-    if (thought && thought.state.thought && thought.state.thought.concept != null) {
-      seen.push(thought.state.thought.names);
-    }
+    // Whether a number in this signal was read off its figures. Not whether
+    // some word of it is a way of writing something rather than naming it: the
+    // `of` in `how many of them` is written that way and is no figure, and so
+    // is the `weigh` in `how many grams does the crate weigh` — reading either
+    // for a figure answered one question in digits and the next in words, by
+    // which words the language happened to have marked.
+    if (thought && thought.state.thought && thought.state.thought.figures) written = true;
     (n.branch || []).forEach(collect);
   };
   roots.forEach(collect);
-  return seen.some((names) => names === false);
+  return written;
 }
 
 // The first thing in the signal that a language recognized the letters of but
