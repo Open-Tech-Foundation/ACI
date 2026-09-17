@@ -1,11 +1,12 @@
 {
   "targets": {
     "web": {
-      "entry": "index.html",
-      "outdir": "dist"
+      "entry": "demo/index.html",
+      "outdir": "demo/dist"
     },
     "server": {
-      "entry": "server.js"
+      "entry": "demo/server.js",
+      "outdir": "demo/dist"
     }
   },
   "start": {
@@ -14,10 +15,7 @@
   "permissions": {
     "allow": {
       "read": [
-        ".",
-        "../languages",
-        "../data",
-        "../knowledge"
+        "."
       ],
       "listen": [
         "4199"

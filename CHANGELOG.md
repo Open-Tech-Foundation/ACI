@@ -107,6 +107,13 @@ All notable changes to this project are documented in this file.
   left is the kind with what it is of. `how many kinds of rope does the rack
   have?` is `one` where `how many kinds` is `two`.
 
+- **The dev loop watches the brain.** `tsr dev` read its config from `demo/`,
+  and esdev watches the directory its config sits in — so it watched `demo/`
+  alone, and a change to the engine in `src/` never rebuilt anything. The page
+  kept answering out of whatever bundle was last built, which is a very quiet
+  way to be wrong. One config at the root now, and the dev loop watches the
+  whole project: engine, world, knowledge packs and demo together.
+
 - **A number is said back the way the question was asked.** Whether an answer
   came in figures or in words turned on whether *any* word of the signal was a
   way of writing something rather than naming it — and `of` is such a word, and

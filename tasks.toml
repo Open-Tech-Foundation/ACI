@@ -15,8 +15,12 @@ run = "esdev test"
 [tasks.basics]
 run = "esdev tests/run.mjs"
 
+# The dev loop runs from here, not from demo/: esdev watches the directory its
+# config sits in, and the brain is in src/. Rooted in demo/ it watched demo/
+# alone, so an engine change never rebuilt and the page kept answering out of
+# the last bundle.
 [tasks.dev]
-run = "esdev start --config=demo/esdev.json"
+run = "esdev start"
 
 [tasks.server]
 deps = ["dev"]
@@ -25,7 +29,7 @@ deps = ["dev"]
 run = "esdev build --lib src --out=dist"
 
 [tasks.site]
-run = "esdev build --config=demo/esdev.json --minify"
+run = "esdev build --minify"
 
 [tasks.ci]
 deps = ["basics", "test", "build"]
