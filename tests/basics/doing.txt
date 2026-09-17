@@ -56,7 +56,7 @@ who was in the meeting? => nila
 
 # A told cause is a cause.
 the storm delayed the ferry
-why was the ferry delayed? => a storm
+why was the ferry delayed? => storm
 
 # Each side of an ordering keeps its own doing.
 the dog ran after the child sang

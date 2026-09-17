@@ -2302,6 +2302,27 @@ function stood(subject, relation, object, here) {
 // What a claim this conversation holds came of. The row that stands for the
 // claim carries which row brought it about, and that row is the answer — a
 // doing where a doing did it, a claim where a claim did.
+// Who did something to a thing. Asked why the ferry was delayed, the doing is
+// on the record with both of them in it — a storm delayed it — and nothing
+// beyond that had to be said for the storm to be the answer: what was done to
+// a thing was done by somebody, and that is what it came of.
+function didTo(kind, thing) {
+  const anchors = (against && against.anchors) || {};
+  if (anchors.agent == null || anchors.target == null) return null;
+  for (let i = held.actions.length - 1; i >= 0; i -= 1) {
+    const row = held.actions[i];
+    if (row.stands !== 'held' || !row.roles) continue;
+    if (row.of !== kind && row.said !== kind) continue;
+    const to = only(row.roles[anchors.target]);
+    if (to == null || !same(to, thing)) continue;
+    const by = only(row.roles[anchors.agent]);
+    if (by == null) continue;
+    const term = termOf(by) ?? by;
+    if (term != null) return term;
+  }
+  return null;
+}
+
 function reasonOf(subject, relation, object) {
   const of = hereOf(subject);
   // Asked why something happened rather than why something is so. The doing is
@@ -2631,6 +2652,7 @@ function serialize(world = against) {
     chronoEnd,
     chronoBefore,
     reasonOf,
+    didTo,
     worked,
     // How a thing is now, by dimension: what it was told, with what has
     // happened to it since laid over.

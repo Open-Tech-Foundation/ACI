@@ -18805,9 +18805,25 @@
       "concept": 3021
     },
     "delay": {
-      "pos": "noun",
+      "pos": [
+        "noun",
+        "verb"
+      ],
       "meaning": "delay",
       "concept": 3022
+    },
+    "delayed": {
+      "pos": "verb",
+      "meaning": "delayed",
+      "concept": 3022,
+      "when": "past"
+    },
+    "delays": {
+      "pos": "verb",
+      "meaning": "delays",
+      "concept": 3022,
+      "person": "third",
+      "number": "singular"
     },
     "passenger": {
       "pos": "noun",

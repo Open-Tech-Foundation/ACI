@@ -1187,6 +1187,14 @@ function together(joined, world, mood, sent) {
       const of = row == null ? null : row.did ?? null;
       if (of != null) behind = [of];
     }
+    // And what was done to a thing was done by somebody: asked why the ferry
+    // was delayed, the storm that delayed it is what it came of. Nothing had
+    // to be said to be a reason for that — the doing is on the record with
+    // both of them in it.
+    if (behind.length === 0 && graph != null && parts.length >= 2) {
+      const doer = graph.didTo(parts[parts.length - 1], parts[0]);
+      if (doer != null) behind = [doer];
+    }
     return [
       withBranch(root, [
         ...root.branch,

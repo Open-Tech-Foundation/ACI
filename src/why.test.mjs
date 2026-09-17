@@ -89,3 +89,13 @@ test("and a state nothing brought about is still unanswered", async () => {
   assertEquals((await brain("why is the coffee cold?")).expression.name, "unsure");
   await forget();
 });
+
+test("what was done to a thing was done by somebody, and that is why", async () => {
+  // `the storm delayed the ferry` says who delayed it, and nothing beyond that
+  // has to be said for the storm to be the reason. The reading looked only for
+  // a reason somebody had declared.
+  await forget();
+  await brain("the storm delayed the ferry");
+  assertEquals((await brain("why was the ferry delayed?")).expression.state.says, "storm");
+  await forget();
+});

@@ -123,6 +123,11 @@ All notable changes to this project are documented in this file.
   `is the gate open?` is `I don't know`, `was the gate open?` is yes, and told
   it is closed since, it is closed.
 
+- **What was done to a thing was done by somebody, and that is why.** `why was
+  the ferry delayed?` did not know, where `the storm delayed the ferry` had
+  said who did it. The reading looked only for a reason somebody had declared,
+  and a doing on the record with both of them in it is already one.
+
 - **A greeting is a greeting; speaking is a doing.** Every word whose term
   stood under communication was read as a greeting — speaking, writing,
   reading, asking, answering, phoning. So `nila spoke` named no doer, took
