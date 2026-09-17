@@ -2,7 +2,7 @@ import { test, assert, assertEquals } from "runtime:test";
 import { openBrain } from "./index.js";
 
 // A store of its own, that nothing else can reach.
-const { brain, forget } = openBrain("sqlite::memory:");
+const { brain, forget, serialize } = openBrain("sqlite::memory:");
 
 async function fresh(...said) {
   await forget();
@@ -392,4 +392,27 @@ test("the ordering follows from where things stand, with nobody comparing them",
   assertEquals((await brain("who is taller?")).expression.state.says, "ravi");
   assertEquals((await brain("who is shorter?")).expression.state.says, "kumar");
   await forget();
+});
+
+test("one ordering, however the question is put", async () => {
+  // Nobody said ravi is taller than kumar. The conversation holds the ordering
+  // all the same, and every way of asking after it reads the one place it is
+  // worked out — so three questions cannot come back three different ways.
+  await fresh("ravi is tall", "kumar is short");
+  assertEquals((await brain("who is taller?")).expression.state.says, "ravi");
+  assertEquals((await brain("who is taller than kumar?")).expression.state.says, "ravi");
+  assertEquals((await brain("who is tallest?")).expression.state.says, "ravi");
+  assertEquals((await brain("who is shortest?")).expression.state.says, "kumar");
+  await forget();
+});
+
+test("and the record still holds no comparison", async () => {
+  // It is worked out when it is asked for and written nowhere.
+  await forget();
+  await brain("ravi is tall");
+  await brain("kumar is short");
+  await brain("who is tallest?");
+  const held = serialize();
+  assert(/f1  property\(n1, tall\[\d+\]\)/.test(held), held);
+  assert(!/COMPARISON|taller/.test(held), `nothing was written down:\n${held}`);
 });

@@ -177,6 +177,12 @@ function farEnd(term, world) {
   // that ordering — asked who arrived first, nobody is asking after the days
   // of the week, however plainly Monday comes before Tuesday. Where the
   // conversation has put nobody there, the world's own are all there is.
+  // The conversation's own ordering on the scale, where it holds one: told
+  // outright, or following from where things stand on it. Asked which of them
+  // is furthest along, that is the whole of the question.
+  const on = ordering && ordering.scale != null ? ordering.scale : null;
+  const ends = endOfScale(on, fromBelow);
+  if (ends !== undefined && ends.length > 0) return ends;
   const spoken = graph ? [comparison, ...bothWays(comparison, world)].flatMap((rel) => graph.joinedBy(rel)) : [];
   // Where the ordering asked after is the timeline, the timeline answers. It
   // holds the order itself, so there is nothing to work out a second time from
@@ -226,6 +232,16 @@ function bareEnd(term, world) {
   const scale = thought.on != null
     ? thought.on
     : (orderingOf(thought.compares, world) || {}).scale ?? null;
+  if (scale == null) return undefined;
+  return endOfScale(scale, direction === a.less);
+}
+
+// Which of them stands at one end of a scale the conversation holds an
+// ordering on. The ordering is the conversation's — told outright, or following
+// from where things stand on it — and the graph works it out in one place, so
+// `who is taller`, `who is taller than kumar` and `who is tallest` are one
+// question put three ways and cannot answer differently.
+function endOfScale(scale, fromBelow) {
   if (scale == null || !graph) return undefined;
   const edges = graph.orderedOn(scale);
   if (edges.length === 0) return undefined;
@@ -233,9 +249,8 @@ function bareEnd(term, world) {
   // the word chooses which end of that ordering is the answer.
   const up = new Set(edges.map(([t]) => t));
   const down = new Set(edges.map(([, b]) => b));
-  const fromBelow = direction === a.less;
   const faces = edges.map((e) => (fromBelow ? e[1] : e[0]));
-  return [...new Set(faces)].filter((id) => !(fromBelow ? up.has(id) : down.has(id)));
+  return unique(faces).filter((id) => !(fromBelow ? up.has(id) : down.has(id)));
 }
 
 // Whether a relation compares at all, and which way it runs. A comparison made

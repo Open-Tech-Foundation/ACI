@@ -115,14 +115,21 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
-- **The ordering follows from where things already stand.** `Ravi is tall.
-  Kumar is short. Who is taller?` came back unread. The comparison the question
-  asks after reads the orderings the conversation holds, and it held only the
-  ones somebody *said* — nobody said ravi is taller than kumar. But the
-  conversation does hold the ordering: ravi stands at one end of height and
-  kumar at the other, and the world says which end each state lies at. It is
-  worked out when it is asked for and written nowhere — the record still holds
-  two states and no comparison at all.
+- **The ordering follows from where things already stand, and every way of
+  asking after it reads one place.** `Ravi is tall. Kumar is short.` and then
+  `who is taller?` came back unread, `who is tallest?` and `who is taller than
+  kumar?` came back unknown. The readings asked after the orderings the
+  conversation holds, and it held only the ones somebody *said* — nobody said
+  ravi is taller than kumar. But the conversation does hold that ordering: ravi
+  stands at one end of height and kumar at the other, and the world says which
+  end each state lies at.
+
+  It is worked out in one place and written nowhere. Three readings asked in
+  three different ways — the ends of a scale, the ordering a relation joins,
+  and who stands above one thing — and all three now ask there, so they cannot
+  come back three different answers. `who is taller?`, `who is taller than
+  kumar?` and `who is tallest?` are one question of the conversation put three
+  ways. The record still holds two states and no comparison at all.
 
 - **Two things compare by the states they stand in, with nothing measured.**
   `Ravi is tall. Kumar is short. Is Ravi taller than Kumar?` answered `I don't

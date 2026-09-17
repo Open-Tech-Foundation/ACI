@@ -1767,6 +1767,11 @@ function joinedBy(relation) {
       if (term != null && !found.includes(term)) found.push(term);
     }
   }
+  // Whoever stands on the scale it compares along is in that ordering, whether
+  // or not anybody compared them out loud.
+  for (const pair of standsAbove(comparesOn(relation))) {
+    for (const term of pair) if (!found.includes(term)) found.push(term);
+  }
   return found;
 }
 
@@ -1798,33 +1803,54 @@ function orderedOn(scale) {
     if (above == null || below == null) continue;
     found.push([above, below]);
   }
-  // And the ordering that follows from where things already stand on it.
-  // Nobody said ravi is taller than kumar: ravi is tall, kumar is short, and
-  // the world says which end of height each of those states lies at. One above
-  // the other is worked out when it is asked for and written nowhere.
-  const world = against;
-  const a = (world && world.anchors) || {};
-  if (world && a.toward != null && a.measure != null && a.more != null) {
-    const ends = new Map();
-    for (const row of held.nodes) {
-      const states = Object.values(howOf(row.id) || {}).filter(
-        (state) => (world.members(state, a.measure)[0] ?? null) === scale,
-      );
-      const at = unique(states.map((state) => world.linked(state, a.toward)[0] ?? null));
-      const term = termOf(row.id) ?? row.term;
-      if (at.length !== 1 || at[0] == null || term == null) continue;
-      ends.set(term, at[0]);
-    }
-    for (const [above, end] of ends) {
-      if (end !== a.more) continue;
-      for (const [below, other] of ends) {
-        if (other === a.more || above === below) continue;
-        if (found.some(([x, y]) => x === above && y === below)) continue;
-        found.push([above, below]);
-      }
-    }
+  for (const [above, below] of standsAbove(scale)) {
+    if (!found.some(([x, y]) => x === above && y === below)) found.push([above, below]);
   }
   return found;
+}
+
+// The ordering that follows from where things already stand on a scale.
+//
+// Nobody said ravi is taller than kumar: ravi is tall, kumar is short, and the
+// world says which end of height each of those states lies at. One standing
+// above the other follows from the two facts and is worked out when it is asked
+// for — nothing here is written down, and the record holds two states and no
+// comparison at all.
+//
+// This is the one place it is worked out. Every reading that asks after an
+// ordering asks here, so which of them was used to ask makes no difference to
+// the answer: which is taller, who is taller than kumar, and who is tallest are
+// one question of the conversation, put three ways.
+function standsAbove(scale) {
+  const world = against;
+  const a = (world && world.anchors) || {};
+  if (!world || scale == null || a.toward == null || a.measure == null || a.more == null) return [];
+  const ends = new Map();
+  for (const row of held.nodes) {
+    const states = Object.values(howOf(row.id) || {}).filter(
+      (state) => (world.members(state, a.measure)[0] ?? null) === scale,
+    );
+    const at = unique(states.map((state) => world.linked(state, a.toward)[0] ?? null));
+    const term = termOf(row.id) ?? row.term;
+    if (at.length !== 1 || at[0] == null || term == null) continue;
+    ends.set(term, at[0]);
+  }
+  const out = [];
+  for (const [above, end] of ends) {
+    if (end !== a.more) continue;
+    for (const [below, other] of ends) {
+      if (other === a.more || above === below) continue;
+      out.push([above, below]);
+    }
+  }
+  return out;
+}
+
+// Which scale a relation compares along, where it compares one at all.
+function comparesOn(relation) {
+  const a = against && against.anchors ? against.anchors : {};
+  if (relation == null || a.compares == null) return null;
+  return against.linked(relation, a.compares)[0] ?? null;
 }
 
 // Everything this conversation put on the near side of a relation to a thing:
@@ -1847,6 +1873,13 @@ function standingIn(object, relation) {
     if (!same(one.parts[1], object) && one.parts[1] !== asRow && !ofKind(one.parts[1])) continue;
     const term = termOf(one.parts[0]);
     if (term != null && !found.includes(term)) found.push(term);
+  }
+  // And whoever stands above it on the scale this relation compares along,
+  // whether or not anybody compared them out loud. The same ordering the ends
+  // of a scale are read from, asked of one thing rather than of all of them.
+  for (const [above, below] of standsAbove(comparesOn(relation))) {
+    if (below !== object && !same(below, object)) continue;
+    if (!found.includes(above)) found.push(above);
   }
   return found;
 }
