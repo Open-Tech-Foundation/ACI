@@ -123,6 +123,13 @@ All notable changes to this project are documented in this file.
   `is the gate open?` is `I don't know`, `was the gate open?` is yes, and told
   it is closed since, it is closed.
 
+- **A denial said the long way round is read like the claim it denies.**
+  `omar is the father of devi` read and `omar is not the father of devi` did
+  not; nor did `the wheel is not part of the cart`, nor `why is the drum not
+  cold?`. Nothing was wrong with the reading — the brain holds a denied
+  relation as readily as a denied property — the English simply had no bracket
+  for a denial in the shape, so the signal never reached it.
+
 - **What follows from a rule is worked out when it is asked for, and written
   nowhere.** A rule fired the moment its condition came to stand and wrote its
   conclusion down as a fact nobody said — so a bell told red because a drum was

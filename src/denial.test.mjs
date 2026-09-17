@@ -85,3 +85,18 @@ test("a denial asked with not is read the same way it was told", async () => {
   assertEquals(await verdict("the door is not open", "is the door not open?"), "affirm");
   assertEquals(await verdict("the sky is not blue", "is the sky not blue?"), "affirm");
 });
+test("a denial said the long way round is read like the claim it denies", async () => {
+  // The brain holds a denied relation as readily as a denied property. The
+  // English had no bracket for a denial in the shape, so `omar is not the
+  // father of devi` never reached the reading that would have taken it.
+  await forget();
+  await brain("omar is not the father of devi");
+  assertEquals((await brain("is omar the father of devi?")).expression.name, "deny");
+  await forget();
+  await brain("the wheel is not part of the cart");
+  assertEquals((await brain("is the wheel part of the cart?")).expression.name, "deny");
+  await forget();
+  await brain("the drum is not cold");
+  assertEquals((await brain("why is the drum not cold?")).expression.name, "unsure");
+  await forget();
+});

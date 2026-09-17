@@ -19623,10 +19623,12 @@
           "verb subject preposition subject",
           "subject verb subject preposition subject",
           "subject verb subject",
+          "subject verb negation subject",
           "verb subject subject",
           "interrogative quantifier subject verb sentence",
           "modal subject verb",
           "interrogative verb article noun verbComplement",
+          "interrogative verb article noun negation verbComplement",
           "function preposition subject",
           "subject auxiliary verb subject",
           "there predicate"
