@@ -207,6 +207,61 @@ containment does not compose — a coin in a jar on a shelf is only in the jar;
 and `some` draws nothing — `some herons are grey` leaves `are all herons grey?`
 unanswered rather than refused.
 
+## The plan: six foundations, not twenty-three cases
+
+The twenty-three the transcripts fail are symptoms. Grouped by what is missing
+under them, they are six pieces of foundation work, and two of the groups were
+not what they looked like — both checked rather than assumed.
+
+**1. Relation composition is declared nowhere.** The world holds `composition`,
+`leading` and `trailing` anchors, the engine reads them, and **not one term in
+any pack uses them**. So nothing composes: a coin in a jar on a shelf is not on
+the shelf. Declared as a probe — a thing in something that is on a third is on
+that third — the question answers immediately and `what is on the shelf?`
+becomes `jar, coin`. The mechanism is live and the world is silent.
+
+*This is world work, not engine work*, and it is the cheapest foundation on the
+list: the pairs that compose — containment through support, part through part,
+kinship through kinship — are a world's to declare.
+
+**2. A relation read through a broader one loses its direction.** Traced twice:
+`linked` reads only what was written in the direction asked, where the walk that
+steps through a relation reads both, and widening it surfaces ladder facts in
+six readings. Closes *does the cart have a wheel*, *what does the cart have*,
+and unblocks component/material/member, which `PRIMITIVES.md` has had open
+throughout.
+
+**3. An occurrence is not a thing that can be asked after.** A doing is a row
+reachable through whoever did it, and so *did the meeting happen*, *who was in
+the meeting*, *why was the ferry delayed* and the fronted hole all fail
+together. What is missing is the same in each: a happening standing as an
+individual, which can be named, contained in another, and caused. This is the
+event primitive that `PRIMITIVES.md` records as part built, and it is the
+largest of the six.
+
+**4. A claim is not a thing the brain can hold.** *Did omar say the ferry is
+late*, *do you know…*, *must devi swim* and — the one that matters — a rule's
+conclusion outliving its condition. All four want a claim reified without being
+written down as a fact, which is exactly what *Open — 1* says is missing. Four
+symptoms, one primitive.
+
+**5. A state holds over a stretch of time, not at a flag.** *The gate was open*
+answers *is the gate open?* with yes; *the gate became open at ten hours* is
+unread; *when did the gate open?* has no answer. State is latest-wins with a
+coarse past/now/future, and what it wants is an interval.
+
+**6. The `of` compound, and the readings around it.** *Omar is not the father of
+devi* and *the wheel is not part of the cart* are not a denial fault — denial
+works on a property, a placement and a holding, and fails only in the `X is not
+the R of Y` shape. With *whose father is arun*, *who has the most ropes*, the
+fraction where a count stands, and the condition said back as `a river is
+property`, these are readings rather than primitives, and they come last.
+
+**The order: 1, 2, 5, 3, 4, 6.** One and two are cheap and unblock the walking
+everything else does; five is contained; three and four are the real primitives
+and three has to come before four, since a claim about what happened needs the
+happening to be a thing first.
+
 ## Open, in the order I would take them
 
 **1. Rules fire where they are told, and write what follows.**
