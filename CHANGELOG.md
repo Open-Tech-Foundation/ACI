@@ -123,6 +123,25 @@ All notable changes to this project are documented in this file.
   `is the gate open?` is `I don't know`, `was the gate open?` is yes, and told
   it is closed since, it is closed.
 
+- **A greeting is a greeting; speaking is a doing.** Every word whose term
+  stood under communication was read as a greeting — speaking, writing,
+  reading, asking, answering, phoning. So `nila spoke` named no doer, took
+  nothing into the world, and `who spoke?` came back unread. The world has
+  always held a term for greeting; it is that one, and nothing broader, that
+  greets.
+
+- **One happening inside another puts whoever was in it in it.** `nila spoke
+  during the meeting` was recorded as a speaking whose target was the meeting —
+  as though the meeting were spoken to. `during` says the speaking was within
+  the meeting, which is the containment the brain already reads in `hema was in
+  the accident`; and whoever did the inner one was in the outer, so `who was in
+  the meeting?` answers.
+
+- **A reading with nothing to say does not stand in the way of the next one.**
+  Any saying with a hole in it was taken for a question about what was said,
+  and where nothing was in mind to repeat, the signal came back unread rather
+  than being left to the readings after it.
+
 - **A question that fronts its hole still asks the same thing.** `what did devi
   carry?` said it did not know, where `devi carried what?` and `who carried the
   ladder?` both answered. The word carrying the tense was read as a doing of

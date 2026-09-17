@@ -2079,16 +2079,18 @@ export function named(part) {
 // A signal that says nothing but greetings, and the greetings in it. One is a
 // greeting; several are several, and neither is part of the other.
 export function onlyGreetings(root, world) {
-  const communication = world && world.anchors ? world.anchors.communication : null;
-  if (communication == null) return null;
-  return greetsOnly(root, world, communication);
+  const greets = world && world.anchors ? world.anchors.greeting : null;
+  if (greets == null) return null;
+  return greetsOnly(root, world, greets);
 }
 
-// Whether this word greets. An act of communication is not a thing of the
-// world, so nothing can be done to it and it can do nothing.
+// Whether this word greets. A greeting is not a thing of the world, so nothing
+// can be done to it and it can do nothing. Speaking, writing and reading are
+// not greetings, however much they are communication: `nila spoke` is
+// something nila did, and it used to name no doer at all.
 export function greetsHere(n, world) {
-  const communication = world && world.anchors ? world.anchors.communication : null;
-  return communication != null && n.kind === 'thing' && world.isA(conceptOf(n), communication);
+  const greets = world && world.anchors ? world.anchors.greeting : null;
+  return greets != null && n.kind === 'thing' && world.isA(conceptOf(n), greets);
 }
 
 // A greeting standing before a whole signal is said alongside it, not in it:
@@ -2097,7 +2099,7 @@ export function greetsHere(n, world) {
 // act is the brain's.
 export function greeting(root, world) {
   const branch = root.branch || [];
-  const communication = world && world.anchors ? world.anchors.communication : null;
+  const communication = world && world.anchors ? world.anchors.greeting : null;
   if (communication == null) return null;
   const greets = [];
   const said = [];
@@ -3937,7 +3939,7 @@ function spokenOf(roots, at, world) {
     // Being greeted is not what a conversation is now about: a greeting names
     // nothing to speak of next, and what was in mind stays there.
     const a = world && world.anchors ? world.anchors : {};
-    const greeting = n.kind === 'event' && world && world.isA(n.state.action, a.communication);
+    const greeting = n.kind === 'event' && world && world.isA(n.state.action, a.greeting);
     if (n.kind === 'event' && target != null && !greeting) {
       for (const part of n.state.parts || []) if (part.role === target) keep(took, part.of);
     }
@@ -4114,7 +4116,7 @@ function learnedFrom(roots, world) {
     // A doing that says nothing about the world takes nothing into it — not
     // the doing, and not the one who did it. They are this conversation's.
     const saying =
-      n.kind === 'event' && world.isA(n.state.action, (world.anchors || {}).communication);
+      n.kind === 'event' && world.isA(n.state.action, (world.anchors || {}).greeting);
     if (!saying && (n.kind === 'learn' || n.kind === 'event' || n.kind === 'instruction')) {
       reference(n.state);
     }
@@ -4183,7 +4185,7 @@ function learnedFrom(roots, world) {
     // somebody is something that happened between the two of them, and this
     // conversation is where it is held.
     ...events
-      .filter((e) => !world.isA(e.state.action, (world.anchors || {}).communication))
+      .filter((e) => !world.isA(e.state.action, (world.anchors || {}).greeting))
       .flatMap((e) => tookPlace(e, world)),
     ...learns.flatMap((l) => tookIn(l, world, naming)),
   ]);

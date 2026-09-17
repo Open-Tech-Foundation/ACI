@@ -4,14 +4,14 @@ import { fromSources } from "./knowledge.js";
 
 const IS = 9;
 const world = {
-  anchors: { thing: 1, relation: 4, communication: 5, number: 2 },
+  anchors: { thing: 1, relation: 4, communication: 5, greeting: 5, number: 2 },
   relations: { is: IS },
   terms: [
     { id: 1, name: "thing", links: [] },
     { id: 2, name: "number", links: [{ rel: IS, to: 1 }] },
     { id: 3, name: "two", links: [{ rel: IS, to: 2 }] },
     { id: 4, name: "relation", links: [] },
-    { id: 5, name: "communication", links: [] },
+    { id: 5, name: "greeting", links: [] },
     { id: 6, name: "hail", links: [{ rel: IS, to: 5 }] },
     { id: IS, name: "is", links: [{ rel: IS, to: 4 }] },
   ],
@@ -37,7 +37,7 @@ const spoken = lang("spoken", { count: "dos: {meaning}", greet: "buenas" });
 const saidOf = (r) => (r.roots[0].branch || []).find((b) => b.kind === "express");
 
 test("the intent comes from the world, not the part of speech", () => {
-  // "oi" is filed as a noun, but its term is a communication — the brain greets.
+  // "oi" is filed as a noun, but its term is a greeting — the brain greets.
   const r = brainFrom("oi", withWorld(spoken));
   assertEquals(saidOf(r).name, "greet");
   assertEquals(saidOf(r).state.says, "buenas");

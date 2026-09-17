@@ -224,3 +224,22 @@ test("asked something else of the same happening, it is not answered whether it 
   assertEquals((await brain("how long is the backup?")).expression.state.says, "thirty-five minutes");
   await forget();
 });
+
+test("saying something is a doing; greeting is not", async () => {
+  // Every word of communication was read as a greeting — so `nila spoke` named
+  // no doer, took nothing into the world, and `who spoke?` came back unread.
+  // A greeting is something that passed between two people and belongs to the
+  // conversation; a speaking happened.
+  await fresh("nila spoke");
+  assertEquals((await brain("who spoke?")).expression.state.says, "nila");
+  await forget();
+});
+
+test("one happening inside another puts whoever was in it in it", async () => {
+  // `during` said when, and was recorded as what the speaking was spoken to.
+  // One happening within another is containment, and whoever did the inner one
+  // was in the outer.
+  await fresh("nila spoke during the meeting");
+  assertEquals((await brain("who was in the meeting?")).expression.state.says, "nila");
+  await forget();
+});

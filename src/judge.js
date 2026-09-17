@@ -1797,13 +1797,22 @@ function together(joined, world, mood, sent) {
   // hole asks it, asked or told; with nothing in mind there is nothing to
   // repeat. Runs before holes are answered one apiece, which would otherwise
   // report on the words instead of repeating the topic.
-  if (holes.length > 0 && said.some((n) => reaches(n, a.communication, world))) {
-    const focus = sent && Array.isArray(sent.focus) ? sent.focus : [];
-    const thing = world ? (world.anchors || {}).thing : null;
-    const topic = focus.find(
-      (id) => typeof id === 'number' && (thing == null || world.isA(id, thing)),
-    );
-    if (topic == null) return roots;
+  //
+  // With nothing in mind this reading has nothing to say, and a reading with
+  // nothing to say does not stand in the way of the ones after it: `who
+  // spoke?` is a speaking with a hole in it and is asking who, and used to
+  // come back unread because this one had taken the signal and let it go.
+  const repaired = holes.length > 0 && said.some((n) => reaches(n, a.communication, world))
+    ? (() => {
+      const focus = sent && Array.isArray(sent.focus) ? sent.focus : [];
+      const thing = world ? (world.anchors || {}).thing : null;
+      return focus.find(
+        (id) => typeof id === 'number' && (thing == null || world.isA(id, thing)),
+      ) ?? null;
+    })()
+    : null;
+  if (repaired != null) {
+    const topic = repaired;
     return [
       withBranch(root, [
         ...root.branch,
@@ -5599,7 +5608,7 @@ export function intentOf(n, world) {
   const concept = ts.concept;
   const a = world && world.anchors ? world.anchors : {};
   if (concept != null && world) {
-    if (world.isA(concept, a.communication)) return 'greet';
+    if (world.isA(concept, a.greeting)) return 'greet';
     if (world.isA(concept, a.number)) return 'count';
     // Said by itself, only a thing leaves the brain anything. It becomes what
     // is being spoken of, and the next signal can ask after it — `tank`, then

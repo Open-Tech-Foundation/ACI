@@ -17060,7 +17060,8 @@
     },
     "during": {
       "pos": "preposition",
-      "meaning": "during"
+      "meaning": "during",
+      "concept": 586
     },
     "above": {
       "pos": "preposition",

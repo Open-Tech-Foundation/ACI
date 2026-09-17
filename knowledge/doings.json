@@ -215,16 +215,6 @@
       ]
     },
     {
-      "id": 277,
-      "name": "greeting",
-      "links": [
-        {
-          "rel": 294,
-          "to": 256
-        }
-      ]
-    },
-    {
       "id": 278,
       "name": "eat",
       "links": [

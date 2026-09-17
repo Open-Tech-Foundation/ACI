@@ -23,7 +23,10 @@ test("ungrammatical repair still repairs", async () => {
 });
 
 test("repair with nothing said says nothing", async () => {
+  // The question is read; there is simply nothing to repeat. It used to come
+  // back unread, because the reading that repeats took the signal and let it
+  // go rather than leaving it to the readings after it.
   await forget();
-  assertEquals((await brain("what did you say?")).expression.name, "unknown");
+  assertEquals((await brain("what did you say?")).expression.name, "unsure");
   await forget();
 });
