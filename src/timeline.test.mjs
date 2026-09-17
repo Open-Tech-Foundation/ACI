@@ -187,4 +187,7 @@ test("a doing stands at an end of the chain like anything else", async () => {
   assert(/m1  members: \[a1\]  before: null/.test(graph), `the meeting came first:\n${graph}`);
   assert(/m2  members: \[n1\]  before: m1/.test(graph), graph);
   assertEquals(await says("what happened last?"), "plank");
+  // And it is said back as the doing it is. A doing with nobody doing it
+  // stands at the head as itself; the row it is kept in is no word.
+  assertEquals(await says("what happened first?"), "meeting");
 });

@@ -97,6 +97,12 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A doing with nobody doing it is said back as itself.** With the meeting at
+  the head of the chain, `what happened first?` still answered `I don't know`:
+  the walk reached the moment, found a happening rather than somebody who did
+  something, and handed back the row it is kept in, which is no word. A doing
+  nobody did stands there as itself, and the answer is `meeting`.
+
 - **The last particulars left the generic world.** `knowledge/README` says the
   world under `data/` holds no particular thing, and seventeen of them were
   still sitting in it: cricket the sport and the runs it is scored in, the gram

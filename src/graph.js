@@ -2132,7 +2132,12 @@ function chronoTerms() {
     const agent = against && against.anchors ? against.anchors.agent : null;
     const played = agent != null && row.roles ? row.roles[agent] : null;
     const one = Array.isArray(played) ? played[0] : played;
-    return one == null ? null : termOf(one) ?? one;
+    if (one != null) return termOf(one) ?? one;
+    // A doing with nobody doing it stands there as itself. `a plank fell after
+    // a meeting` puts the meeting at the head of the chain, and asked what
+    // happened first the answer is the meeting — not the row it is kept in,
+    // which is no word and says nothing.
+    return row.of ?? null;
   };
   for (const m of chronoChain()) {
     for (const t of m.members) {
