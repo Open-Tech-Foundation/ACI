@@ -15158,7 +15158,16 @@
         "meaning": "both",
         "marks": "spoken",
         "person": "third",
-        "number": "plural"
+        "number": "plural",
+        "select": {
+          "after": "predicate"
+        }
+      },
+      {
+        "pos": "degree",
+        "meaning": "both",
+        "concept": 245,
+        "names": false
       }
     ],
     "either": {

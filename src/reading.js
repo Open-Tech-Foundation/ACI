@@ -126,6 +126,10 @@ function describes(n, wanted, world) {
   }
   if (wanted.names != null) {
     const of = conceptOf(n);
+    // `true` asks only that it names something. A name this conversation
+    // brought in is one of nothing until somebody says what it is, and a
+    // reading that wants a thing standing beside it wants that name too.
+    if (wanted.names === true) return of != null;
     return world != null && of != null && world.isA(of, wanted.names);
   }
   if (wanted.is != null) return conceptOf(n) === wanted.is;

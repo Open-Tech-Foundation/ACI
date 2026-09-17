@@ -115,6 +115,19 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **`both` said of those already named.** `Are Ravi and Kumar both tall?` came
+  back unread, while the same question without the word answered. English says
+  `both` three ways — before what it counts (`both cats`), standing for them
+  itself (`are both tall?`), and said of those already named — and only the
+  first two were declared. The third is what is left when neither of the others
+  fits, and it says of each of them what follows: two tall is yes, one tall and
+  one short is no.
+
+  The reading that stands for them itself now says where it belongs — straight
+  after the joint — rather than being the fallback, and a reading may now ask
+  that its neighbour name *something* without saying what kind, which is what a
+  name this conversation brought in does until somebody says what it is.
+
 - **A word that says which one narrows what is asked after.** With the record
   put right, `who has the red ball?` still answered `Ravi, Kumar`: the question
   walked out from the kind `ball` and found everyone holding one, and the

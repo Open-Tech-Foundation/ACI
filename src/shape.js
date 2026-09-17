@@ -1273,6 +1273,8 @@ function checkContextKinds(value, allowed, where) {
       const functions = Array.isArray(held) ? held : [held];
       return functions.length > 0 && functions.every((one) => COGNITIVE_FUNCTIONS.includes(one));
     }
+    // `names: true` asks only that the neighbour names something.
+    if (keys[0] === 'names' && held === true) return true;
     return Number.isSafeInteger(held) && held > 0;
   };
   const said = kinds.map((kind) => JSON.stringify(kind));

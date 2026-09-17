@@ -200,3 +200,30 @@ test("and the far side of it still joins as it did", async () => {
   assertEquals((await brain("is a sparrow an animal and a bird?")).expression.name, "affirm");
   await forget();
 });
+
+test("both said of those already named says it of each of them", async () => {
+  // `are ravi and kumar both tall?` came back unread. English says `both`
+  // three ways — before what it counts, standing for them itself, and said of
+  // those already named — and only the first two were declared.
+  await forget();
+  await brain("the plum is ripe");
+  await brain("the pear is ripe");
+  assertEquals((await brain("are the plum and the pear both ripe?")).expression.name, "affirm");
+  await forget();
+  await brain("the plum is ripe");
+  await brain("the pear is small");
+  assertEquals((await brain("are the plum and the pear both ripe?")).expression.name, "unsure");
+  await forget();
+});
+
+test("and the two placements it already had still stand", async () => {
+  await forget();
+  assertEquals((await brain("are both cats animals?")).expression.name, "affirm");
+  // A conversation of its own: standing for them itself, `both` reaches what
+  // this one has spoken of, and the cats above are two more of those.
+  await forget();
+  await brain("ravi is tall");
+  await brain("kumar is tall");
+  assertEquals((await brain("are both tall?")).expression.name, "affirm");
+  await forget();
+});
