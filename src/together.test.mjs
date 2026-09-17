@@ -177,3 +177,26 @@ test("a denial reaches every fact the offering holds", async () => {
 test("a joining word leaves a working out alone", async () => {
   assertEquals((await brain("add 1 and 2")).expression.state.says, "3");
 });
+
+test("a joint at the front still leaves a joined side together", async () => {
+  // `are the plum and the pear ripe?` puts the joint first and both sides
+  // after it. Taking only the first left the pear standing where what it is
+  // said to be goes, so the brain asked whether a plum is a pear, found it is
+  // not, and denied the whole question.
+  await forget();
+  await brain("the plum is ripe");
+  await brain("the pear is ripe");
+  assertEquals((await brain("are the plum and the pear ripe?")).expression.name, "affirm");
+  await forget();
+  await brain("the plum is ripe");
+  await brain("the pear is small");
+  // One of them held and nothing said of the other is not a denial.
+  assertEquals((await brain("are the plum and the pear ripe?")).expression.name, "unsure");
+  await forget();
+});
+
+test("and the far side of it still joins as it did", async () => {
+  await forget();
+  assertEquals((await brain("is a sparrow an animal and a bird?")).expression.name, "affirm");
+  await forget();
+});

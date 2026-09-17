@@ -107,6 +107,20 @@ All notable changes to this project are documented in this file.
   left is the kind with what it is of. `how many kinds of rope does the rack
   have?` is `one` where `how many kinds` is `two`.
 
+- **A joint at the front still leaves a joined side together.** `the plum is
+  ripe` / `the pear is ripe` / `are the plum and the pear ripe?` answered
+  **No**. A question puts its joint at the front and both sides after it, and
+  the brain took the first thing there as the one the rest is said of — so the
+  pear stood where what the plum is said to *be* goes, and the brain answered a
+  question nobody asked: whether a plum is a pear. It is not, so the whole
+  thing was denied.
+
+  A word that joins says the things it joins are one side, and which word joins
+  is the language's. Both are the subject now, and the question is asked of
+  each: two held is yes, and one held with nothing said of the other is not a
+  denial but a not-knowing. The far side of a joint still joins as it did — `is
+  a sparrow an animal and a bird?` is unchanged.
+
 - **A saying is a turn, and several arrive together.** `The cat is small. The
   dog is big. Which animal is small?` took both facts in and answered `I don't
   know`. Three sentences typed at once were read as one signal, and a signal is

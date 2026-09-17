@@ -3058,8 +3058,24 @@ function together(joined, world, mood, sent) {
     // A signal that turns its joint to the front says both sides after it, and
     // the first of them is the one the rest is said of.
     if (lefts.length === 0 && rights.length >= 2 && operates(relation, world) == null) {
-      lefts = rights.slice(0, 1);
-      rights = rights.slice(1);
+      // The first of them is the one the rest is said of — unless more than
+      // one is joined there. `are the plum and the pear ripe?` asks the
+      // ripeness of two, and taking only the plum leaves the pear standing
+      // where what it is said to be goes: the brain asked whether a plum is a
+      // pear, found it is not, and denied the whole question. A word that
+      // joins says they are one side; which word joins is the language's.
+      let side = 1;
+      while (side < rights.length) {
+        const from = said.indexOf(rights[side - 1]);
+        const to = said.indexOf(rights[side]);
+        if (from < 0 || to < 0) break;
+        if (!said.slice(from + 1, to).some((n) => functionsOf(n).includes('join'))) break;
+        side += 1;
+      }
+      // All of them joined leaves nothing for the rest to be said of.
+      if (side >= rights.length) side = 1;
+      lefts = rights.slice(0, side);
+      rights = rights.slice(side);
     }
     // Where a side has more than one word, a doing among them is how the fact
     // was said, not one of the things it holds between: `sara arrived before
