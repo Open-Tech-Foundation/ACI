@@ -97,6 +97,22 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A hole is what it asks after, not how it is spelled.** `Which fruit is
+  yellow?` answered `food, banana, colour, property`; the same question typed
+  `which fruit is yellow?` answered `banana`. The reading that knows a hole is
+  asking after a thing was picking it out by matching the word against `who`,
+  `what` and `which` — the three English words themselves, spelled in
+  lowercase. A capital first letter is how English opens a sentence, not a
+  different word, so the capital turned the signal into a question the brain
+  had no reading for, and every word in it answered.
+
+  Three English words were in the core, which is the fault the capital exposed.
+  A hole asking after a thing is one that says nothing about what kind of
+  answer it wants, or that asks after whoever bears a name — where a hole
+  asking on a place, a time, a cause or a state is asking something else. That
+  is said now in the brain's own terms, and it holds for any language and any
+  spelling.
+
 - **The ordering is about the two the doings are about.** `a man arrived
   before a boy` answered `who arrived first?` with **man, boy** — and `who
   arrived last?` with the same two. The signal makes a man and a boy and the

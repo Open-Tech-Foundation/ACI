@@ -166,3 +166,19 @@ test("a who-word still asks the part it stands before when a target exists", asy
   assertEquals((await fresh("sara washed the car", "what did sara wash")).expression.state.says, "I don't know.");
   await forget();
 });
+
+test("a hole is what it asks after, not how it is spelled", async () => {
+  // `Which fruit is yellow?` is the same question as `which fruit is yellow?`
+  // — a capital first letter is how English opens a sentence, not a different
+  // word. The reading that answers it was matched against the three English
+  // words themselves, so the capital turned it into another question and every
+  // word in it answered: `food, banana, colour, property`.
+  await forget();
+  await brain("the apple is red");
+  await brain("the banana is yellow");
+  assertEquals((await brain("Which fruit is yellow?")).expression.state.says, "banana");
+  assertEquals((await brain("which fruit is yellow?")).expression.state.says, "banana");
+  assertEquals((await brain("What is yellow?")).expression.state.says, "banana");
+  assertEquals((await brain("Who is yellow?")).expression.state.says, "banana");
+  await forget();
+});

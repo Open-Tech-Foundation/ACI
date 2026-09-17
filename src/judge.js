@@ -2475,11 +2475,19 @@ function together(joined, world, mood, sent) {
     // `sara is tall`, `who is tall?` answers sara. The measure reading is for
     // how far along a scale a thing stands; handed a holder question there is
     // nothing to read it on, and the walk answers instead.
-const holderAsk = said.find(
-      (n) =>
-        markOn(n) === 'unknown' &&
-        (n.name === 'who' || n.name === 'what' || n.name === 'which'),
-    );
+    // A hole asking after a thing, said in whatever language and however it is
+    // spelled. It says nothing about what kind of answer it wants, or it asks
+    // after whoever bears a name; a hole that asks on something else — a
+    // place, a time, a cause, a state — is asking another question. Matching
+    // the three English words themselves put one language into the brain, and
+    // put one spelling of it there too: a capital first letter is how English
+    // opens a sentence, not a different word, and `Which fruit is yellow?`
+    // stopped being this question at all.
+    const holderAsk = said.find((n) => {
+      if (markOn(n) !== 'unknown') return false;
+      const asks = conceptOf(n) ?? onOf(n);
+      return asks == null || (a.name != null && asks === a.name);
+    });
     const one = terms.length === 1 ? conceptOf(terms[0]) : null;
     // Asked who or what stood in something that happened. A happening is a row
     // of the graph and no term of the world, so the walk that finds what stands
