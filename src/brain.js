@@ -832,7 +832,15 @@ function intraSignal(roots, world, langs, at) {
       }
       // Role-marked first: `from it` is its source wherever it stands.
       if (langs && markerFor(roots, i, markingSide(roots, langs), roleOn)) return n;
-      const held = speakerSide(t.concept) ? heldKinds(t.concept) : [];
+      // A bare pointer stands for what is held, not for whoever holds it —
+      // where the brain knows the holder is somebody. `i have three chocolates`
+      // says so of the speaker; `nila is a person` says so of nila. Where it
+      // knows nothing of the holder, both of them are things it was told
+      // about and there is nothing to tell them apart, so the pointer stays
+      // where it landed.
+      const somebody = (id) =>
+        speakerSide(id) || (a.person != null && id != null && world.isA(id, a.person));
+      const held = t.stands == null && somebody(t.concept) ? heldKinds(t.concept) : [];
       if (held.length === 1) return rewrite(n, held[0]);
       return n;
     }

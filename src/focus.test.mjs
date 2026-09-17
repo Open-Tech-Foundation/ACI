@@ -146,3 +146,35 @@ test("them on speaker-side focus stands for what is held", async () => {
   assertEquals(r.spoken !== told.spoken, true);
   await forget();
 });
+
+test("a bare pointer stands for what is held, where the holder is somebody", async () => {
+  // `nila has a kite. it is red.` is about the kite — but only once the brain
+  // knows nila is somebody. The rule was there and turned on the speaker
+  // alone, so it read `i have three chocolates` and not this.
+  await forget();
+  await brain("nila is a person");
+  await brain("nila has a kite");
+  await brain("it is red");
+  assertEquals((await brain("what colour is the kite?")).expression.state.says, "red");
+  assertEquals((await brain("is nila red?")).expression.state.says, "I don't know.");
+  await forget();
+});
+
+test("and stays where it landed where it knows nothing of the holder", async () => {
+  // Told nothing of nila, she and the kite are both things it was told about
+  // and there is nothing to tell them apart.
+  await forget();
+  await brain("nila has a kite");
+  await brain("it is red");
+  assertEquals((await brain("is nila red?")).expression.name, "affirm");
+  await forget();
+});
+
+test("a pointer that says what it stands for is not read past", async () => {
+  await forget();
+  await brain("nila is a person");
+  await brain("nila has a kite");
+  await brain("she is tall");
+  assertEquals((await brain("is nila tall?")).expression.name, "affirm");
+  await forget();
+});

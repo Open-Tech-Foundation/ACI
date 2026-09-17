@@ -5370,11 +5370,16 @@ function focusFor(term, world, sent) {
   if (markOn(term) !== 'spoken' || personOf(term) !== 'third') return undefined;
   if (sent.from == null && sent.to == null) return undefined;
   const a = world.anchors || {};
-  const speakerSide = (id) =>
+  // A bare pointer stands for what is held, not for whoever holds it — where
+  // the brain knows the holder is somebody. Where it knows nothing of them,
+  // holder and held are both things it was told about and there is nothing to
+  // tell them apart, so the pointer stays where it landed.
+  const somebody = (id) =>
     id != null &&
     ((sent.from != null && (id === sent.from || world.isA(id, sent.from))) ||
-      (sent.to != null && (id === sent.to || world.isA(id, sent.to))));
-  if (!speakerSide(subject)) return undefined;
+      (sent.to != null && (id === sent.to || world.isA(id, sent.to))) ||
+      (a.person != null && world.isA(id, a.person)));
+  if ((thoughtOf(term) || {}).stands != null || !somebody(subject)) return undefined;
   const held = [];
   for (const of of world.linked(subject, a.holding)) if (!held.includes(of)) held.push(of);
   if (held.length === 1) return held[0];

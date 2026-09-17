@@ -115,6 +115,18 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A bare pointer stands for what is held, where the holder is somebody.**
+  `nila has a kite. it is red.` put the red on **nila**. The rule that a bare
+  pointer means the thing held and not whoever holds it was already there, and
+  it turned on the speaker alone — so it read `i have three chocolates. what is
+  it?` and nothing else. Whoever the brain knows to be somebody serves as well:
+  told `nila is a person`, `it` is the kite.
+
+  Told nothing of nila, it stays where it landed, and that is right — she and
+  the kite are both things it was told about and there is nothing to tell them
+  apart. And a pointer that says what it stands for is not read past: `she`
+  stands for somebody, so `nila has a kite. she is tall.` is about nila.
+
 - **The ordering follows from where things already stand, and every way of
   asking after it reads one place.** `Ravi is tall. Kumar is short.` and then
   `who is taller?` came back unread, `who is tallest?` and `who is taller than
