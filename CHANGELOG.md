@@ -97,6 +97,15 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A doing stands at an end of the chain like anything else.** `a plank fell
+  after a meeting` held both doings and ordered neither. The chain is written
+  between what each end stands for in the conversation, and that was asked for
+  as the term of a node — a doing is no node, so the meeting was turned away
+  and the whole ordering with it. An end now stands as a thing the conversation
+  holds *or* a doing that happened in it, which is the same shape the chain
+  already takes when a doing is told with a clock. `what happened last?`
+  answers `plank`.
+
 - **A hole is what it asks after, not how it is spelled.** `Which fruit is
   yellow?` answered `food, banana, colour, property`; the same question typed
   `which fruit is yellow?` answered `banana`. The reading that knows a hole is

@@ -177,3 +177,14 @@ test("a thing spoken of as known keeps the chain on what the conversation holds"
   await fresh("the server started before the backup");
   assertEquals((await brain("the backup was before the server")).expression.name, "conflict");
 });
+
+test("a doing stands at an end of the chain like anything else", async () => {
+  // `a plank fell after a meeting` holds both doings and used to order
+  // neither: the chain is written between what each end stands for, and a
+  // doing is no node, so asking it for a term turned it away.
+  const graph = await fresh("a plank fell after a meeting");
+  assert(/a1  event\(type: meeting\[\d+\]\)/.test(graph), graph);
+  assert(/m1  members: \[a1\]  before: null/.test(graph), `the meeting came first:\n${graph}`);
+  assert(/m2  members: \[n1\]  before: m1/.test(graph), graph);
+  assertEquals(await says("what happened last?"), "plank");
+});

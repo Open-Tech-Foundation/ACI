@@ -236,12 +236,11 @@ reading selection wants settling before the reader can be.
   missing is a kind saying which scales it stands on — a person has a height,
   a meeting has a length of time — which is also what `which is longer?` wants
   when the pair is not named.
-- A doing named as a thing is ordered against nothing: `a plank fell after a
-  meeting` records both doings correctly now and leaves the chrono empty. The
-  chain is written from an ordering claim between two *things*, and a doing is
-  no thing. Where a doing is told with a clock the moment already holds the
-  doing itself, so the chrono takes either — what is missing is the ordering
-  claim reaching it.
+- A doing at an end of the chain is not said back. `a plank fell after a
+  meeting` now chains the meeting before the plank, and `what happened last?`
+  answers `plank` while `what happened first?` says it does not know: the
+  reader reaches the head, finds a happening rather than a thing, and has no
+  way to say it. `did the meeting happen?` is the same gap asked as a verdict.
 - A told cause is not read: `the storm delayed the ferry` comes back
   unknown, though `why` answers where a doing brought a state about.
 

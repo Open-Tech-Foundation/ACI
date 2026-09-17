@@ -593,7 +593,14 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
       if (!refused) {
         const left = reach(subject);
         const right = reach(object);
-        if (termOf(left) != null && termOf(right) != null && termOf(left) !== termOf(right)) {
+        // What each end stands for here: a thing this conversation holds, or a
+        // doing that happened in it. A doing is no node, so asking it for a
+        // term turned it away and `a plank fell after a meeting` ordered
+        // nothing at all — both doings on the record and no chain between
+        // them.
+        const placed = (part) =>
+          termOf(part) ?? (held.actions.some((row) => row.id === part) ? part : null);
+        if (placed(left) != null && placed(right) != null && placed(left) !== placed(right)) {
           // The relation runs forward or backward; whichever way, the earlier
           // term is the one placed before the later on the chain.
           const a2 = world.anchors || {};
