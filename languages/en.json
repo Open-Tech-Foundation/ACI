@@ -1542,6 +1542,11 @@
         "number": "singular"
       }
     ],
+    "quill": {
+      "pos": "noun",
+      "meaning": "quill",
+      "concept": 3143
+    },
     "phone": [
       {
         "pos": "noun",
@@ -2350,11 +2355,18 @@
       "meaning": "planet",
       "concept": 36
     },
-    "land": {
-      "pos": "noun",
-      "meaning": "land",
-      "concept": 37
-    },
+    "land": [
+      {
+        "pos": "noun",
+        "meaning": "land",
+        "concept": 37
+      },
+      {
+        "pos": "verb",
+        "meaning": "land",
+        "concept": 3149
+      }
+    ],
     "room": {
       "pos": "noun",
       "meaning": "room",
@@ -4177,6 +4189,16 @@
       "meaning": "song",
       "concept": 1551
     },
+    "recital": {
+      "pos": "noun",
+      "meaning": "recital",
+      "concept": 3146
+    },
+    "concert": {
+      "pos": "noun",
+      "meaning": "concert",
+      "concept": 3147
+    },
     "tune": {
       "pos": "noun",
       "meaning": "tune",
@@ -5050,6 +5072,14 @@
       ],
       "meaning": "navy",
       "concept": 2607
+    },
+    "crimson": {
+      "pos": [
+        "noun",
+        "adjective"
+      ],
+      "meaning": "crimson",
+      "concept": 3138
     },
     "ochre": {
       "pos": [
@@ -7626,6 +7656,11 @@
       "meaning": "bean",
       "concept": 412
     },
+    "bead": {
+      "pos": "noun",
+      "meaning": "bead",
+      "concept": 3144
+    },
     "garlic": {
       "pos": "noun",
       "meaning": "garlic",
@@ -7965,6 +8000,11 @@
       "pos": "noun",
       "meaning": "lock",
       "concept": 450
+    },
+    "locker": {
+      "pos": "noun",
+      "meaning": "locker",
+      "concept": 3141
     },
     "clock": {
       "pos": "noun",
@@ -8353,6 +8393,11 @@
       "meaning": "storm",
       "concept": 494
     },
+    "gale": {
+      "pos": "noun",
+      "meaning": "gale",
+      "concept": 3145
+    },
     "fog": {
       "pos": "noun",
       "meaning": "fog",
@@ -8575,6 +8620,11 @@
       ],
       "meaning": "slide",
       "concept": 530
+    },
+    "juggle": {
+      "pos": "verb",
+      "meaning": "juggle",
+      "concept": 3148
     },
     "spin": {
       "pos": [
@@ -12690,6 +12740,11 @@
       "meaning": "string",
       "concept": 879
     },
+    "cord": {
+      "pos": "noun",
+      "meaning": "cord",
+      "concept": 3140
+    },
     "wire": {
       "pos": "noun",
       "meaning": "wire",
@@ -13216,6 +13271,11 @@
       "pos": "noun",
       "meaning": "peak",
       "concept": 983
+    },
+    "pebble": {
+      "pos": "noun",
+      "meaning": "pebble",
+      "concept": 3139
     },
     "slope": {
       "pos": "noun",
@@ -16281,6 +16341,11 @@
       "pos": "noun",
       "meaning": "tray",
       "concept": 1219
+    },
+    "trapdoor": {
+      "pos": "noun",
+      "meaning": "trapdoor",
+      "concept": 3142
     },
     "pouch": {
       "pos": "noun",

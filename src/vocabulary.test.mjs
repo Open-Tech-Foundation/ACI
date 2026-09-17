@@ -50,3 +50,46 @@ test("a word that is also a thing still stands as one", async () => {
   assertEquals((await brain("catch is work")).expression.name, "understood");
   await forget();
 });
+
+test("new kinds take their place on the ladder", async () => {
+  // Terms added to the knowledge packs with the words naming them: each one
+  // classifies under its kind, and the world answers for it.
+  await forget();
+  for (const [said, asked] of [
+    ["a pebble is a rock", "is a pebble a rock?"],
+    ["a cord is a string", "is a cord a string?"],
+    ["the locker is a container", "is the locker a container?"],
+    ["a trapdoor is a door", "is a trapdoor a door?"],
+    ["a quill is a feather", "is a quill a feather?"],
+    ["a bead is a toy", "is a bead a toy?"],
+  ]) {
+    await brain(said);
+    assertEquals((await brain(asked)).expression.name, "affirm", asked);
+    await forget();
+  }
+  await forget();
+});
+
+test("a new shade answers what colour a thing is", async () => {
+  await forget();
+  await brain("the bead is crimson");
+  assertEquals((await brain("is the bead crimson?")).expression.name, "affirm");
+  assertEquals((await brain("what colour is the bead?")).expression.state.says, "crimson");
+  await forget();
+});
+
+test("new doings happen, and new happenings hold people", async () => {
+  await forget();
+  assertEquals((await brain("pip can juggle")).expression.name, "learn");
+  assertEquals((await brain("can pip juggle?")).expression.name, "affirm");
+  await brain("liam landed at eight hours");
+  await brain("noah landed at nine hours");
+  assertEquals((await brain("who landed first?")).expression.state.says, "liam");
+  await forget();
+  await brain("priya sang during the recital");
+  assertEquals((await brain("who was in the recital?")).expression.state.says, "priya");
+  await forget();
+  await brain("the gale delayed the bus");
+  assertEquals((await brain("why was the bus delayed?")).expression.state.says, "gale");
+  await forget();
+});

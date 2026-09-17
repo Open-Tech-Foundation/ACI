@@ -525,6 +525,18 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Twelve words the brain never met, with the terms behind them.** Probing
+  with fresh examples turned up words no language file lists and terms no
+  knowledge pack holds: each came back unheard, though every one of them names
+  something ordinary. They are in now, each under the kind it is — `crimson`
+  is a shade of colour, `pebble` a rock, `cord` a string, `locker` a
+  container, `trapdoor` a door, `quill` a feather, `bead` a toy, `gale` a
+  weather, `recital` and `concert` events, `juggle` a work and `land` a motion
+  beside the terrain it already named. Nothing particular went into the
+  generic world: the terms live in the `things` and `doings` packs and the
+  words in English, the way the packs are for. `land` is two readings now, the
+  way `cricket` is, so `landed` derives its past and the terrain still stands.
+
 - **Which reading of a word a signal means is its own phase, and the language
   decides it.** The choosing lived in the middle of `src/brain.js`, and what a
   reading could ask to stand beside it was a closed list of seven names the
