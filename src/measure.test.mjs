@@ -106,7 +106,7 @@ test("measured in one unit, asked for in another", async () => {
   await forget();
   await brain("the crate weighs 5 kilograms");
   // The world says a kilogram is a thousand grams; nothing else is written.
-  assertEquals((await brain("how many grams does the crate weigh?")).expression.state.says, "5000");
+  assertEquals((await brain("how many grams does the crate weigh?")).expression.state.says, "five thousand");
   // In words, the question having been asked in words. Five thousand has no
   // word in this language, so that one is written in figures and this is not.
   assertEquals((await brain("how many kilograms does the crate weigh?")).expression.state.says, "five");

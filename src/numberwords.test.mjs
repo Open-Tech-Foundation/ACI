@@ -18,7 +18,7 @@ test("two number words side by side are one number", async () => {
   // think() reads the words together and takes them as one, so nothing after
   // it sees two numbers where there was one.
   assertEquals((await fresh("add twenty five and five")).expression.state.says, "thirty");
-  assertEquals((await fresh("add one hundred twenty five and five")).expression.state.says, "130");
+  assertEquals((await fresh("add one hundred twenty five and five")).expression.state.says, "one hundred thirty");
   await forget();
 });
 
@@ -30,7 +30,7 @@ test("a round one and a smaller one after it are added", async () => {
 
 test("a smaller one before a round one multiplies it", async () => {
   assertEquals((await fresh("is two hundred more than ninety nine?")).expression.name, "affirm");
-  assertEquals((await fresh("add two hundred and one")).expression.state.says, "201");
+  assertEquals((await fresh("add two hundred and one")).expression.state.says, "two hundred one");
   await forget();
 });
 
@@ -69,4 +69,18 @@ test("the complete brain follows another language's composition rules", async ()
   const result = brainFrom("add quinz quad and one", fromSources({ world, languages: [language] }));
   assertEquals(result.expression.name, "answer");
   assertEquals(result.expression.state.says, "twenty");
+});
+
+test("a number no word names is built from the words there are", async () => {
+  // The language says how its number words go together — it already reads them
+  // that way — and the same rules walked backwards say a number it has no one
+  // word for. Nothing is listed here and no term is made for the number.
+  assertEquals((await fresh("what is two hundred plus three?")).expression.state.says, "two hundred three");
+  assertEquals((await fresh("what is one thousand plus one?")).expression.state.says, "one thousand one");
+  assertEquals((await fresh("what is two thousand plus three hundred?")).expression.state.says, "two thousand three hundred");
+  assertEquals((await fresh("what is one million plus one?")).expression.state.says, "one million one");
+});
+
+test("a number asked in figures is still answered in figures", async () => {
+  assertEquals((await fresh("what is 200 + 3?")).expression.state.says, "203");
 });

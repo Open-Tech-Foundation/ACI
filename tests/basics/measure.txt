@@ -7,7 +7,7 @@ the plank is 1 metre long
 how long is the plank? => one metre
 
 the crate weighs 5 kilograms
-how many grams does the crate weigh? => 5000
+how many grams does the crate weigh? => five thousand
 how many kilograms does the crate weigh? => five
 
 a shelf holds 4 stamps

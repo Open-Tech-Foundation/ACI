@@ -729,7 +729,7 @@ test("a world-sized count is not answered, whatever it comes to", async () => {
 test("what a thing holds is counted; a kind is not", async () => {
   forget();
   await brain("a pond has 1000 stones");
-  assertEquals((await brain("how many stones?")).expression.state.says, "1000");
+  assertEquals((await brain("how many stones?")).expression.state.says, "thousand");
   await forget();
   assertEquals((await brain("how many season?")).expression.name, "unsure");
 });
@@ -750,14 +750,16 @@ test("the sum is computed, not looked up", async () => {
   assertEquals(sum.state.term, 118, "and then the term that names it");
 });
 
-test("a result the world has no term for is written, never named", async () => {
-  // One hundred and ten is a number the brain can reach and English cannot say
-  // in one word; below zero the world has no term at all. Neither is invented —
-  // the sum stands beyond what the world names, and the language writes it out.
+test("a result the world has no term for is built from the words there are", async () => {
+  // One hundred ten is a number the brain can reach and no word names outright.
+  // The sum still stands beyond what the world names — nothing is invented and
+  // no term is made — and the language puts it together out of the words it
+  // has, the same way it reads one. Below zero it has nothing to build from,
+  // and writes it out.
   const sum = await brain("ninety plus twenty?");
   assertEquals(kind(sum.roots[0], "sum").name, "beyond");
   assertEquals(kind(sum.roots[0], "sum").state.value, 110);
-  assertEquals(sum.expression.state.says, "110");
+  assertEquals(sum.expression.state.says, "one hundred ten");
   assertEquals((await brain("seven minus nine?")).expression.state.says, "-2");
 });
 

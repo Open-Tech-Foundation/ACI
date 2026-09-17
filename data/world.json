@@ -2604,6 +2604,28 @@
       "value": 100
     },
     {
+      "id": 3119,
+      "name": "thousand",
+      "links": [
+        {
+          "rel": 294,
+          "to": 100
+        }
+      ],
+      "value": 1000
+    },
+    {
+      "id": 3120,
+      "name": "million",
+      "links": [
+        {
+          "rel": 294,
+          "to": 100
+        }
+      ],
+      "value": 1000000
+    },
+    {
       "id": 560,
       "name": "machine",
       "links": [

@@ -247,6 +247,10 @@ reading selection wants settling before the reader can be.
   missing is a kind saying which scales it stands on — a person has a height,
   a meeting has a length of time — which is also what `which is longer?` wants
   when the pair is not named.
+- A number that is exactly a scale is said as the scale alone: a hundred comes
+  back `hundred` and a thousand `thousand`, where English says `one hundred`.
+  The language's own data says the bare word reads as the number, so by its own
+  account this is right; it reads oddly all the same.
 - `did the meeting happen?` is not read, though `a plank fell after a meeting`
   holds the meeting and orders it. Asking whether a doing named as a thing
   happened has no reading.

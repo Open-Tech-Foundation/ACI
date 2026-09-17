@@ -2793,12 +2793,67 @@ export function numberSaid(term, value, langName, langs, world, written) {
   const named = inFigures ?? termWord(term, langName, langs, world, written);
   if (named != null) return named;
   if (!lang) return null;
+  // A number no word names outright is still sayable where the language says
+  // how its number words go together. It already reads them that way — two
+  // hundred three is two hundred and then three — and this is the same rules
+  // walked the other way. No language needs a word for every number, and none
+  // has to be told the ones it can build.
+  if (!written) {
+    const built = numberInWords(value, langName, langs, world);
+    if (built != null) return built;
+  }
   if (numericCompare(value, 0) >= 0) return lang.figuresFor(value);
   // Below nothing is still a number. The brain takes the sign from the term
   // for taking away, since that is what this language writes it with.
   const figures = lang.figuresFor(numericNegate(value));
   const sign = termWord(world ? (world.anchors || {}).minus : null, langName, langs, world, true);
   return figures == null || sign == null ? null : `${sign}${figures}`;
+}
+
+// Every number this language has a word for, largest first. Built from what the
+// world values and what the language calls it — neither of them a list of
+// numbers kept here.
+function wordedNumbers(langName, langs, world) {
+  const lang = (langs || []).find((l) => l.data.name === langName);
+  if (!lang || !world || !world.data) return [];
+  const out = [];
+  for (const term of world.data.terms) {
+    const value = world.valueOf(term.id);
+    if (!Number.isSafeInteger(value) || value < 1) continue;
+    const word = lang.wordFor(term.id);
+    if (word == null) continue;
+    out.push({ value, word });
+  }
+  return out.sort((a, b) => b.value - a.value);
+}
+
+// A number said in words, built the way this language builds them. The language
+// says which pairs go together and what they come to — `joinNumbers` — and this
+// asks it the question backwards: which pair comes to the number wanted. Every
+// rule is the language's; what is here is the walk.
+function numberInWords(value, langName, langs, world, depth = 0) {
+  const lang = (langs || []).find((l) => l.data.name === langName);
+  if (!lang || !Number.isSafeInteger(value) || value < 1 || depth > 8) return null;
+  const words = wordedNumbers(langName, langs, world);
+  const own = words.find((one) => one.value === value);
+  if (own) return own.word;
+  for (const scale of words) {
+    if (scale.value < 2 || scale.value > value) continue;
+    const times = Math.floor(value / scale.value);
+    const left = value - times * scale.value;
+    // The pair the language multiplies: as many of the scale as there are.
+    if (lang.joinNumbers(times, scale.value) !== times * scale.value) continue;
+    const many = numberInWords(times, langName, langs, world, depth + 1);
+    if (many == null) continue;
+    const said = `${many} ${scale.word}`;
+    if (left === 0) return said;
+    // And the pair it adds: what is over, after the scale.
+    if (lang.joinNumbers(times * scale.value, left) !== value) continue;
+    const rest = numberInWords(left, langName, langs, world, depth + 1);
+    if (rest == null) continue;
+    return `${said} ${rest}`;
+  }
+  return null;
 }
 
 // A term, said in the language being spoken — or, where that language has no

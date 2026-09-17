@@ -107,6 +107,22 @@ All notable changes to this project are documented in this file.
   left is the kind with what it is of. `how many kinds of rope does the rack
   have?` is `one` where `how many kinds` is `two`.
 
+- **A number no word names is built from the words there are.** The brain could
+  say a number only where the world had a term for it — one to ninety-nine, and
+  a hundred — so `what is two hundred plus three?` came back `203` in figures,
+  and `how many grams does the crate weigh?` came back `5000`. It reads those
+  numbers perfectly well: the language declares how its number words go
+  together, and `two hundred three` is read as two hundred and then three. The
+  same rules are now walked backwards to say one. Nothing about English is in
+  the brain — it asks the language which pair comes to the number it wants, and
+  the language answers out of its own composition rules.
+
+  `two hundred three`, `one thousand one`, `two thousand three hundred`, `one
+  million one`, `five thousand grams`. Asked in figures it still answers in
+  figures. Below zero there is nothing to build from and the figures stand.
+  `thousand` and `million` are words the language now has, and terms the world
+  values; the brain was never told a list of numbers and still is not.
+
 - **The dev loop watches the brain.** `tsr dev` read its config from `demo/`,
   and esdev watches the directory its config sits in — so it watched `demo/`
   alone, and a change to the engine in `src/` never rebuilt anything. The page

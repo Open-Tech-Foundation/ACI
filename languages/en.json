@@ -635,6 +635,16 @@
       "meaning": "100",
       "concept": 558
     },
+    "thousand": {
+      "pos": "numeral",
+      "meaning": "1000",
+      "concept": 3119
+    },
+    "million": {
+      "pos": "numeral",
+      "meaning": "1000000",
+      "concept": 3120
+    },
     "cat": {
       "pos": "noun",
       "meaning": "feline animal",
