@@ -97,6 +97,23 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **The ordering is about the two the doings are about.** `a man arrived
+  before a boy` answered `who arrived first?` with **man, boy** — and `who
+  arrived last?` with the same two. The signal makes a man and a boy and the
+  happenings are theirs, but the chain was written on the kinds, `man` before
+  `boy`. One sentence stood about two different subjects, and a question
+  reaching for an end of the ordering found neither of them beaten, so everyone
+  answered at both ends. Said with names it was always right, the name and the
+  one being the same thing, which is why it went unseen. The chain is now
+  written on the ones the doings already name.
+
+  A thing spoken of as *known* keeps the chain where it was. `the server` said
+  again is the same server, and the one this signal makes of it is not yet
+  joined to the one the last signal made — so the ordering stays on the kind,
+  where a later signal saying it again can still meet it and be told it
+  conflicts. Joining those two is the definite mention's own problem and is not
+  this.
+
 - **Each side of an ordering keeps its own doing.** `nila arrived after the
   plank fell` put nila arriving on the record, and the plank *arriving* beside
   it — the far side of the ordering was given the near side's doing, and the

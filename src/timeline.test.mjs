@@ -156,3 +156,24 @@ test("a doing named as a thing is the happening, and did nothing to itself", asy
   assert(/a2  event\(n1, type: fall\[\d+\]\)/.test(graph), graph);
   assert(!/type: fall\[\d+\]\)[\s\S]*type: fall\[\d+\]\)/.test(graph), `the meeting did not fall:\n${graph}`);
 });
+
+test("the ordering is about the two the doings are about", async () => {
+  // `a hawk sang before a crow` makes a hawk and a crow, and the happenings
+  // are theirs. The chain was written on the kinds instead — `hawk` before
+  // `crow` — so one sentence stood about two different subjects, and a
+  // question reaching for both ends at once found neither beaten: `who sang
+  // first?` and `who sang last?` both answered `hawk, crow`.
+  const graph = await fresh("a hawk sang before a crow");
+  assert(/a1  event\(n1, type: singing\[\d+\]\)/.test(graph), graph);
+  assert(/m1  members: \[n1\]  before: null/.test(graph), `the one that sang, not the kind:\n${graph}`);
+  assert(/m2  members: \[n2\]  before: m1/.test(graph), graph);
+  assertEquals(await says("who sang first?"), "hawk");
+  assertEquals(await says("who sang last?"), "crow");
+});
+
+test("a thing spoken of as known keeps the chain on what the conversation holds", async () => {
+  // Said again, `the server` is the same server, and the ordering has to be
+  // where a later signal can still meet it.
+  await fresh("the server started before the backup");
+  assertEquals((await brain("the backup was before the server")).expression.name, "conflict");
+});

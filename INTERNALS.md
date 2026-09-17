@@ -220,8 +220,12 @@ reading selection wants settling before the reader can be.
   sweeps it in: after `how many baskets does omar have?`, `do they have
   baskets?` is one apiece over the holders *and* the baskets, and comes back
   unsure.
-- `a man arrived before a boy` answers `who arrived first?` with `man, boy` —
-  both of them, where the signal put one before the other.
+- A thing spoken of as known is made afresh each signal and never joined to
+  the one the last signal made, so an ordering told of it stays on the kind
+  rather than on the one that did the doing. `the server started before the
+  backup` chains `server` and `backup`; `a hawk sang before a crow` chains the
+  hawk and the crow the signal made. Both read, and they are two shapes for one
+  thing.
 - Containment: nothing says one doing happened inside another, so `nila spoke
   during the meeting` has nowhere to put the during.
 - A comparison told of two things that carry no measures is placed by the

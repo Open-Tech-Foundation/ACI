@@ -3215,6 +3215,38 @@ const holderAsk = said.find(
               )
             : []),
         );
+        // The ordering is about the two the doings are about. `a man arrived
+        // before a boy` makes a man and a boy and the happenings are theirs,
+        // so putting the chain on `man` and `boy` records one sentence about
+        // two different subjects, and a question reaching for both ends at
+        // once finds neither beaten and answers with everybody.
+        const asOne = (n, id) =>
+          id == null || conceptOf(n) === id
+            ? n
+            : withBranch(
+                n,
+                (n.branch || []).map((b) =>
+                  b.kind === 'thought'
+                    ? withBranch(b, b.branch, {
+                        ...b.state,
+                        thought: { ...b.state.thought, concept: id },
+                      })
+                    : b,
+                ),
+              );
+        // Only where the signal spoke of it as new. A thing spoken of as
+        // known is one the conversation already holds, and the one this
+        // signal made of it is not yet joined to it — so the ordering stays
+        // on the kind, where a later signal saying the same thing again can
+        // still meet it.
+        const spokenNew = (n) => {
+          const i = said.indexOf(n);
+          return (
+            i >= 0 && markOn(markerFor(said, i, markingSide(said, langs), markOn)) === 'new'
+          );
+        };
+        lefts = [spokenNew(lefts[0]) ? asOne(lefts[0], lWho) : lefts[0], ...lefts.slice(1)];
+        rights = [spokenNew(rights[0]) ? asOne(rights[0], rWho) : rights[0], ...rights.slice(1)];
       }
     }
     // A plural pointer stands for every topic in focus, one apiece.
