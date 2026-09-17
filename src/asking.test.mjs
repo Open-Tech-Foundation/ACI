@@ -161,9 +161,12 @@ test("who nothing was told to have done answers nothing", async () => {
   await forget();
 });
 
-test("a who-word still asks the part it stands before when a target exists", async () => {
+test("a hole asks the part it stands in, from either side of the doing", async () => {
+  // `what did sara wash` used to say it did not know: the word carrying the
+  // tense was read as a doing of its own — doing again what was done before —
+  // and the question had two doings in it where it named one.
   assertEquals((await fresh("sara washed the car", "who washed the car")).expression.state.says, "sara");
-  assertEquals((await fresh("sara washed the car", "what did sara wash")).expression.state.says, "I don't know.");
+  assertEquals((await fresh("sara washed the car", "what did sara wash")).expression.state.says, "car");
   await forget();
 });
 
@@ -205,5 +208,16 @@ test("the capital runs from the city to the country it is of", async () => {
   await forget();
   assertEquals((await brain("is paris the capital of france?")).expression.name, "affirm");
   assertEquals((await brain("is france the capital of paris?")).expression.name, "unsure");
+  await forget();
+});
+
+test("when a happening is asked after, the happening's own row answers", async () => {
+  // `when did the crash happen?` names the crash and no part of it, and the
+  // reading that answers a when was looking only at rows some *other* word in
+  // the question stood in. With nothing else standing there it found none.
+  await forget();
+  await brain("the server started at nine hours and fifteen minutes");
+  await brain("the crash happened two hours after the server started");
+  assertEquals((await brain("when did the crash happen?")).expression.state.says, "eleven fifteen");
   await forget();
 });

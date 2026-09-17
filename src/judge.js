@@ -5126,7 +5126,11 @@ function partAsked(said, world, claims, side, sides) {
   // (hole.own) and are answered by their own readers; so is any other word.
   const alone = known.length === 0 && !marksExtreme;
   const asksDoer = hole.own == null && said[hole.at].name === 'who';
-  if (alone && !asksDoer) return null;
+  // A hole that names the part it asks after is not alone in the signal: the
+  // doing is named, and the part asked for is named beside it. `when did the
+  // crash happen?` says which happening and says it asks after when, and
+  // nothing else needs to stand there.
+  if (alone && !asksDoer && hole.own == null) return null;
 
   const action = conceptOf(said[acting]);
   // Somebody merely in something that happened played no part in it: hema was
@@ -5222,7 +5226,12 @@ if (far !== undefined) {
       return [];
     };
     const nodeConcept = (v) => nodeConcepts(v)[0] ?? null;
+    // The doing the question names may be the row's own and no part of it:
+    // `when did the crash happen?` names the crash, and the row that says the
+    // crash happened is the one to read.
+    const named = (r) => action != null && r.did === action;
     const mine = rows.filter((r) =>
+      named(r) ||
       known.some((p) => {
         // The doing is the row's: its own entity names it as well as the thing
         // it was done to. A row whose `of` is the act itself — a doing kept as

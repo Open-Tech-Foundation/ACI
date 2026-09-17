@@ -123,6 +123,16 @@ All notable changes to this project are documented in this file.
   `is the gate open?` is `I don't know`, `was the gate open?` is yes, and told
   it is closed since, it is closed.
 
+- **A question that fronts its hole still asks the same thing.** `what did devi
+  carry?` said it did not know, where `devi carried what?` and `who carried the
+  ladder?` both answered. The word carrying the tense was read as a doing of
+  its own — doing again what was done before — so the question had two doings
+  in it where it named one. It is the auxiliary wherever a doing stands after
+  it, not only at the front of the signal. And with that, a question that names
+  a happening and asks after when — `when did the crash happen?` — reads the
+  happening's own row, where the reading had been looking only at rows some
+  other word in the question stood in.
+
 - **A doing spoken of as a thing is what happened to it, not what happened.**
   `the backup started` was recorded as a backup whose target was a starting —
   a doing standing in a part of itself — and `the update crashed` as an update
