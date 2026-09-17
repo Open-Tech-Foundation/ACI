@@ -97,6 +97,17 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A count said through `of` counts what the doing moved.** `the shop sold
+  one-fourth of the apples` left the count at a hundred and twenty and a
+  quarter holding apples on the record; `the shop sold 30 of the apples` did
+  the same. The `of` joint kept the doing reading from running, and the count
+  stood as a thing the doing was done to. A count standing where a count
+  stands is a count now — a fraction resolves to its value and a number stands
+  as itself — so the selling moves thirty and the shop holds ninety. The joint
+  is the count's syntax: it neither opens a phrase of its own nor stands as a
+  part. `the shop sold 30 apples` and `what is one-fourth of the apples?`
+  answer as they did.
+
 - **`kinds of thing` is the kinds, narrowed.** `how many kinds of thing does
   the shelf have?` came back unknown, where the same question without those two
   words answered `two`. English says the joint with the word it says holding

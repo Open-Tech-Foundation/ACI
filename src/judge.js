@@ -1623,7 +1623,26 @@ export function judge(roots, world, mood, langs, sent, graph) {
           bringsRelation(conceptOf(n), world) == null,
       );
 
-  if (!(joint >= 0 && joined >= 2) || qualified) {
+  // A count standing where a count stands counts what the doing moved: `the
+  // shop sold one-fourth of the apples` is a selling of thirty apples, and
+  // `sold 30 of the apples` is a selling of thirty. The joint phrase is the
+  // count's syntax, so the doing reading runs and the amount is resolved
+  // before anything is stored.
+  const beforeJoint = said.slice(0, joint);
+  const doingAt = beforeJoint.findIndex((n) => a.action != null && reaches(n, a.action, world));
+  const standsCount = (n) => {
+    const of = conceptOf(n);
+    if (of != null && a.fraction != null && (of === a.fraction || world.isA(of, a.fraction))) return true;
+    return numberOf(n, world) != null;
+  };
+  const countsAt = beforeJoint.findIndex((n, i) => i > doingAt && standsCount(n));
+  const countStands =
+    joint >= 0 &&
+    doingAt >= 0 &&
+    countsAt > doingAt &&
+    (conceptOf(said[joint]) === a.has || conceptOf(said[joint]) === a.hold);
+
+  if (!(joint >= 0 && joined >= 2) || qualified || countStands) {
     // Asked whether something happened, the brain looks through what it was
     // told happened. It does not put another one on the record: being asked is
     // not being told, and answering is not doing.
@@ -4559,6 +4578,18 @@ function rolesIn(said, acting, claims, world, side, sides, joints, graph) {
   const of = (i) => markerFor(said, i, side, roleOn, between);
   const parts = [];
   const taken = new Set();
+  // `of` after a count is the count's syntax, not a phrase of its own:
+  // `one-fourth of the boxes` — and `30 of the apples` — counts the boxes.
+  // It neither opens a joint nor stands as a part — the boxes stay a part of
+  // the doing, counted by it.
+  const countSyntax = (i) => {
+    if (conceptOf(said[i]) !== a.has && conceptOf(said[i]) !== a.hold) return false;
+    const back = nearest(said, i, -1, (n) => claims(n) || numberOf(n, world) != null);
+    if (back == null) return false;
+    const bc = conceptOf(back);
+    if (bc != null && a.fraction != null && (bc === a.fraction || world.isA(bc, a.fraction))) return true;
+    return numberOf(back, world) != null;
+  };
 
   said.forEach((n, i) => {
     if (i === acting || !claims(n) || isDeterminer(said, i, world)) return;
@@ -4597,6 +4628,7 @@ function rolesIn(said, acting, claims, world, side, sides, joints, graph) {
   if (joints && a.relation != null && !brings) {
     said.forEach((n, i) => {
       if (i <= acting || taken.has(i) || !reaches(n, a.relation, world)) return;
+      if (countSyntax(i)) return;
       // The nearest thing after it, and no further: the phrase ends where the
       // next one begins, so two phrases in a row do not both reach the last
       // thing said.
@@ -4622,8 +4654,23 @@ function rolesIn(said, acting, claims, world, side, sides, joints, graph) {
     if (i === acting || taken.has(i) || !claims(n) || isDeterminer(said, i, world) || !sides) return;
     if (functionsOf(n).includes('extreme') || greetsHere(n, world)) return;
     if (i !== acting && bareHappening(n, world)) return;
+    if (countSyntax(i)) return;
+    // A fraction standing where a count stands is a count, not a part: it is
+    // resolved to its value on the thing beside it, never stood as something
+    // the doing was done to.
+    const kind = conceptOf(n);
+    if (kind != null && a.fraction != null && (kind === a.fraction || world.isA(kind, a.fraction))) return;
+    // A number counting through the joint after it is spent saying how many,
+    // the way the joint itself is: `30 of the apples` counts the apples and
+    // stands as no part of its own. A number standing anywhere else — a clock
+    // reading, a measure — still stands.
+    if (numberOf(n, world) != null) {
+      const next = nearest(said, i, 1, (m) => conceptOf(m) != null);
+      const nc = next == null ? null : conceptOf(next);
+      if (nc === a.has || nc === a.hold) return;
+    }
     const role = a[i < acting ? sides.before : sides.after];
-    if (role != null) parts.push({ role, of: conceptOf(n), amount: amountOf(n, world), mark: markAt(n), at: i });
+    if (role != null) parts.push({ role, of: conceptOf(n), amount: amountOf(n, world) ?? fractionAmount(said, i, world, graph) ?? numberAmount(said, i, world), mark: markAt(n), at: i });
   });
 
   return parts.sort((x, y) => x.at - y.at).map(({ role, of, amount, mark }) => ({ role, of, amount, mark }));
@@ -4632,6 +4679,24 @@ function rolesIn(said, acting, claims, world, side, sides, joints, graph) {
 // How many of this thing the signal counted, as a number.
 function amountOf(n, world) {
   return world.valueOf(quantityTerm(n));
+}
+
+// How many a part names, where a number says it across the joint: `30 of the
+// apples` counts the apples the way `30 apples` does. The number says how
+// many, the conversation says of what, and neither is guessed.
+function numberAmount(said, at, world) {
+  const a = world.anchors || {};
+  for (let i = at - 1; i >= 0; i -= 1) {
+    const value = numberOf(said[i], world);
+    if (value != null) return value;
+    const of = conceptOf(said[i]);
+    if (of == null) continue;
+    // Only what stands between a number and its thing may be stepped over —
+    // the word that joins them, and nothing that names another thing.
+    if (a.relation != null && world.isA(of, a.relation)) continue;
+    return null;
+  }
+  return null;
 }
 
 // How many a part names, where a fraction says it: `one-fourth of the apples`

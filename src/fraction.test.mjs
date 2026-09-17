@@ -43,3 +43,34 @@ test("a doing is not a sum to be worked out", async () => {
   assertEquals((await brain("the shop sold 30 apples")).expression.name, "learn");
   assertEquals(await says("how many apples does the shop have?"), "ninety");
 });
+
+test("a fraction standing where a count stands is resolved before storing", async () => {
+  // `the shop sold one-fourth of the apples` is a selling of thirty apples,
+  // not a quarter holding them: the count moves and no quarter stands on the
+  // record beside it.
+  await forget();
+  await brain("a shop has 120 apples");
+  assertEquals((await brain("the shop sold one-fourth of the apples")).expression.name, "learn");
+  assertEquals(await says("how many apples does the shop have?"), "ninety");
+  await forget();
+});
+
+test("a count said through of counts all the same", async () => {
+  // `sold 30 of the apples` is a selling of thirty, the way `sold 30 apples`
+  // is: the joint is the count's syntax, not a second claim.
+  await forget();
+  await brain("a shop has 120 apples");
+  assertEquals((await brain("the shop sold 30 of the apples")).expression.name, "learn");
+  assertEquals(await says("how many apples does the shop have?"), "ninety");
+  await forget();
+});
+
+test("a fraction told of fresh holdings, in fresh words", async () => {
+  // Proved on a second example, so the fix is not tuned to the sentence it
+  // was found through.
+  await forget();
+  await brain("a warehouse has 120 boxes");
+  await brain("the warehouse sold one-fourth of the boxes");
+  assertEquals(await says("how many boxes does the warehouse have?"), "ninety");
+  await forget();
+});

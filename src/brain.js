@@ -1438,6 +1438,10 @@ function whose(roots, world, langs, mood, allocate) {
     // Which word joins them is the language's; that the far side is the one
     // that owns is what the joint says.
     const farSide = () => {
+      // A number standing where a count stands is a count, not a thing owned:
+      // `30 of the apples` counts the apples the way `30 apples` does, and no
+      // one of them is made to be owned.
+      if (numberOf(n, world) != null) return null;
       const joint = roots[i + 1];
       if (!joint || conceptOf(joint) !== a.has) return null;
       // Only where the language *writes* the holding as a joint between two
