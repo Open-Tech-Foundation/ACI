@@ -12,6 +12,7 @@
 import { Decimal } from '@opentf/std';
 import { grownBy, addAmounts, multiplyAmounts } from './world.js';
 import { UNITS, unitsIn as stepsInTime } from './calendar.js';
+import { contextual } from './reading.js';
 import {
   $, node, taken, instead, numberOf, conceptOf, markOn, thoughtOf, functionsOf,
   withBranch, findBranch, toString, quote, functionList, VERDICT,
@@ -57,7 +58,7 @@ import {
   walk,
   whole,
   worldNode,
-  graph, contextual, signalLanguage,
+  graph, signalLanguage,
 } from './brain.js';
 
 
@@ -2398,7 +2399,7 @@ function together(joined, world, mood, sent) {
   //
   // That two things may be level on a scale is the brain's; which scale they
   // are level on is the world's, and which word says sameness the language's.
-  if (a.same != null && a.measure != null && graph != null && terms.length >= 3) {
+  if (a.same != null && a.measure != null && graph != null && terms.length >= 2) {
     const scaleHere = (of) =>
       of != null &&
       a.property != null &&
@@ -2406,7 +2407,10 @@ function together(joined, world, mood, sent) {
       world.linked(of, a.measure).length > 0
         ? of
         : null;
-    const scales = [...new Set(terms.map((t) => scaleHere(conceptOf(t))).filter((one) => one != null))];
+    // The scale may not be one of the things the claim is between — said as
+    // `the same colour as`, it qualifies the sameness rather than standing at
+    // an end of it — so it is looked for among everything said.
+    const scales = [...new Set(said.map((n) => scaleHere(conceptOf(n))).filter((one) => one != null))];
     if (scales.length === 1 && said.some((n) => conceptOf(n) === a.same)) {
       const [scale] = scales;
       const sides = [...new Set(

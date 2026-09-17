@@ -109,6 +109,25 @@ All notable changes to this project are documented in this file.
 
 ### Added
 
+- **Which reading of a word a signal means is its own phase, and the language
+  decides it.** The choosing lived in the middle of `src/brain.js`, and what a
+  reading could ask to stand beside it was a closed list of seven names the
+  core held — `denial`, `unit`, `pointer`, `thing`, `having`, `doing`,
+  `proposition` — each one a distinction some language needed, written into the
+  brain. A language wanting an eighth had to have it added to the engine.
+
+  It is `src/reading.js` now, and a reading may describe its neighbour in the
+  language's own terms — a function the word carries — or the world's — the
+  kind of thing it names, or the one term it is. Three ways of saying it, and
+  none of them a word. The named kinds stay for the two that say something
+  neither can: what a pointer is, and what a proposition looks like.
+
+  The first thing it bought: `as` is how English says *because*, and also how
+  it says the far side of a sameness. English now says which is which — the
+  joining reading wants the word for sameness standing behind it — and `is the
+  apple the same colour as the mango?` answers, while `the drum is cold as the
+  room is cold` still says why.
+
 - **Two things stand at one place on a scale, or they do not.** `Do the apple
   and the mango have the same colour?` was not read at all, in any phrasing.
   The brain could say what colour each of them is, and answer whether each is

@@ -1258,12 +1258,30 @@ function checkSelection(value, where, nested = false) {
 function checkContextKinds(value, allowed, where) {
   if (value === undefined) return;
   const kinds = Array.isArray(value) ? value : [value];
-  if (
-    kinds.length === 0 ||
-    kinds.some((kind) => !allowed.includes(kind)) ||
-    new Set(kinds).size !== kinds.length
-  ) {
-    fail(where, `must contain distinct context kinds: ${allowed.join(', ')}`);
+  // A neighbour is named as one of the kinds the brain knows how to look for,
+  // or described in the language's own terms — a function a word carries — or
+  // the world's — the kind of thing it names, or the one term it is. Exactly
+  // one way of describing it, so there is nothing to reconcile.
+  const DESCRIBES = ['functions', 'names', 'is'];
+  const described = (kind) => {
+    if (typeof kind === 'string') return allowed.includes(kind);
+    if (!kind || typeof kind !== 'object' || Array.isArray(kind)) return false;
+    const keys = Object.keys(kind);
+    if (keys.length !== 1 || !DESCRIBES.includes(keys[0])) return false;
+    const held = kind[keys[0]];
+    if (keys[0] === 'functions') {
+      const functions = Array.isArray(held) ? held : [held];
+      return functions.length > 0 && functions.every((one) => COGNITIVE_FUNCTIONS.includes(one));
+    }
+    return Number.isSafeInteger(held) && held > 0;
+  };
+  const said = kinds.map((kind) => JSON.stringify(kind));
+  if (kinds.length === 0 || kinds.some((kind) => !described(kind)) || new Set(said).size !== said.length) {
+    fail(
+      where,
+      `must contain distinct context kinds (${allowed.join(', ')}) `
+        + `or neighbours said as {${DESCRIBES.join('}, {')}}`,
+    );
   }
 }
 

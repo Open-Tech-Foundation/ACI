@@ -19008,15 +19008,28 @@
         "result"
       ]
     },
-    "as": {
-      "pos": "conjunction",
-      "meaning": "as",
-      "concept": 247,
-      "functions": [
-        "join",
-        "reason"
-      ]
-    },
+    "as": [
+      {
+        "pos": "preposition",
+        "meaning": "as",
+        "functions": "join",
+        "select": {
+          "after": {
+            "is": 250
+          },
+          "across": "modifier"
+        }
+      },
+      {
+        "pos": "conjunction",
+        "meaning": "as",
+        "concept": 247,
+        "functions": [
+          "join",
+          "reason"
+        ]
+      }
+    ],
     "miss": {
       "pos": [
         "noun",
@@ -19612,7 +19625,8 @@
           "article adjective pronoun",
           "article noun pronoun",
           "preposition pronoun",
-          "article adjective noun"
+          "article adjective noun",
+          "article adjective noun preposition subject"
         ]
       },
       "item": {
@@ -19684,7 +19698,8 @@
           "verb preposition numeral noun preposition subject verb",
           "complement conjunction verbComplement",
           "complementizer sentence",
-          "degree"
+          "degree",
+          "article adjective noun preposition subject"
         ],
         "completes": true
       },

@@ -101,6 +101,10 @@ Reachable today, with a probe for each:
   taller than omar?` and `who is the father of arun?` come back unknown instead
   of answering the question turned round. Where the signal says which end the
   hole asks after, that stands, and nothing found is nothing said.
+- **A reading chosen by what stands beside it.** `src/reading.js` is the phase,
+  and what a reading asks for is said in the language's terms or the world's —
+  a function carried, a kind named, a term named — rather than from a list the
+  core holds.
 - **Two things level on a scale.** `do the apple and the mango have the same
   colour?` reads where each stands on the scale named and compares the two,
   and says what they are alike in.
@@ -254,12 +258,6 @@ reading selection wants settling before the reader can be.
   back `hundred` and a thousand `thousand`, where English says `one hundred`.
   The language's own data says the bare word reads as the number, so by its own
   account this is right; it reads oddly all the same.
-- `is the apple the same colour as the mango?` is not read, though `do the
-  apple and the mango have the same colour?` answers. English says the second
-  half of it with `as`, which this language holds as `because`, and a word's
-  reading cannot yet be chosen by another word standing near it — the selection
-  a language may declare knows pointers, predicates and determiners, and not
-  `after the word same`.
 - `did the meeting happen?` is not read, though `a plank fell after a meeting`
   holds the meeting and orders it. Asking whether a doing named as a thing
   happened has no reading.

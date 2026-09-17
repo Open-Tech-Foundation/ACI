@@ -9,6 +9,7 @@
 
 import { Decimal } from '@opentf/std';
 import { fromWorldData, grownBy, addAmounts, multiplyAmounts } from './world.js';
+import { contextual } from './reading.js';
 import { UNITS, unitsIn as stepsInTime } from './calendar.js';
 import {
   $, node, taken, instead, numberOf, conceptOf, markOn, thoughtOf, functionsOf,
@@ -1674,126 +1675,6 @@ function namesInWorld(word, world) {
   if (!world || typeof word !== 'string') return false;
   const wanted = word.toLowerCase();
   return world.data.terms.some((t) => typeof t.name === 'string' && t.name.toLowerCase() === wanted);
-}
-
-// A language may distinguish readings through context without teaching the
-// brain any of its words. Each constrained reading says what may stand before
-// or after it; the first matching reading wins, otherwise the first reading
-// without a constraint is the deterministic fallback. These are relations
-// among understood things — pointer, predicate, determiner, modifier, denial
-// and proposition — rather than parts of speech or English spellings.
-export function contextual(roots, world) {
-  return roots.map((n, i) => {
-    const t = findBranch(n, 'thought');
-    const ways = t && t.state.ways ? t.state.ways : null;
-    if (!ways || ways.length < 2) return n;
-    if (!ways.some((word) => word && word.select != null)) return n;
-    const thought = ways.find((word) => selectionMatches(word && word.select, roots, i, world))
-      ?? ways.find((word) => word && word.select == null);
-    if (!thought) return n;
-    return withBranch(
-      n,
-      n.branch.map((b) => (
-        b.kind === 'thought' ? withBranch(b, b.branch, { thought, contextual: true }) : b
-      )),
-    );
-  });
-}
-
-function selectionMatches(selection, roots, at, world) {
-  if (!selection) return false;
-  if (selection.any) {
-    return selection.any.some((condition) => selectionMatches(condition, roots, at, world));
-  }
-  if (selection.position === 'first' && at !== 0) return false;
-  if (selection.before && !contextBefore(selection.before, roots, at, world)) return false;
-  if (selection.after && !contextAfter(selection.after, selection.across, roots, at, world)) return false;
-  return true;
-}
-
-function contextBefore(wanted, roots, at, world) {
-  const kinds = Array.isArray(wanted) ? wanted : [wanted];
-  return kinds.some((kind) => {
-    const rest = roots.slice(at + 1);
-    if (kind === 'denial') return rest.some(negatesOn);
-    // A unit standing after it. Which reading of a word is meant may turn on
-    // one: a clock that reads ten hours is measuring, where somebody who reads
-    // is doing something.
-    if (kind === 'unit') return rest.some((n) => contextKind(n, 'unit', world));
-    // A word pointing at somebody standing after it. `who am i` asks after a
-    // name; `who is taller than sam` asks after whoever stands there.
-    if (kind === 'pointer') return rest.some((n) => contextKind(n, 'pointer', world));
-    // Something done, standing after it. Which reading of a word is meant may
-    // turn on one: `can` holds a claim at arm's length, and before a doing it
-    // says a thing is able to do it.
-    if (kind === 'doing') {
-      const a = world ? world.anchors || {} : {};
-      return a.action != null && rest.some((n) => reaches(n, a.action, world));
-    }
-    // A word saying one thing is of another, standing straight after. Which
-    // reading of a word is meant may turn on it: `left` is a side of something,
-    // and `left of` is one thing standing to another.
-    if (kind === 'having') {
-      const a = world ? world.anchors || {} : {};
-      const next = rest[0];
-      return next != null && (conceptOf(next) === a.has || conceptOf(next) === a.hold);
-    }
-    // A word standing for a thing after it. A word may say how many of
-    // something there are, or stand for that many of what was already brought
-    // in, and which it is turns on whether it says how many *of* anything.
-    if (kind === 'thing') {
-      const a = world ? world.anchors || {} : {};
-      return (
-        world != null &&
-        a.thing != null &&
-        rest.some((n) => conceptOf(n) != null && world.isA(conceptOf(n), a.thing))
-      );
-    }
-    if (kind !== 'proposition' || !world) return false;
-    const a = world.anchors || {};
-    const things = rest.filter((n) => {
-      const concept = conceptOf(n);
-      return concept != null && world.isA(concept, a.thing);
-    }).length;
-    const joins = rest.some((n) => {
-      const concept = conceptOf(n);
-      return concept != null && world.isA(concept, a.relation);
-    });
-    return things >= 2 && joins;
-  });
-}
-
-function contextAfter(wanted, across, roots, at, world) {
-  const kinds = Array.isArray(wanted) ? wanted : [wanted];
-  for (let i = at - 1; i >= 0; i -= 1) {
-    if (kinds.some((kind) => contextKind(roots[i], kind, world))) return true;
-    if (across !== 'modifier' || !functionsOf(roots[i]).includes('modifier')) return false;
-  }
-  return false;
-}
-
-function contextKind(n, kind, world) {
-  const thought = thoughtOf(n);
-  // A word that stands for something, in place of naming it. Marking alone is
-  // not enough: an article marks which one is meant and never stands for it,
-  // so `a heron` is a heron and not somebody pointed at.
-  if (kind === 'pointer') {
-    return Boolean(thought && thought.marks != null) && !functionsOf(n).includes('determiner');
-  }
-  if (kind === 'determiner') return functionsOf(n).includes('determiner');
-  // A word standing for a unit. Which reading of a word is meant may turn on
-  // one standing beside it: a clock that reads ten hours is measuring, where
-  // somebody who reads is doing something.
-  if (kind === 'unit') {
-    const a = world ? world.anchors || {} : {};
-    return world != null && a.unit != null && conceptOf(n) != null && world.isA(conceptOf(n), a.unit);
-  }
-  if (kind !== 'predicate' || !world) return false;
-  const concept = conceptOf(n);
-  const a = world.anchors || {};
-  return concept != null && (
-    world.isA(concept, a.relation) || world.isA(concept, a.action)
-  );
 }
 
 // A word that may be meant more than one way is settled here, where the brain
