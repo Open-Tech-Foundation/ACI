@@ -416,3 +416,15 @@ test("and the record still holds no comparison", async () => {
   assert(/f1  property\(n1, tall\[\d+\]\)/.test(held), held);
   assert(!/COMPARISON|taller/.test(held), `nothing was written down:\n${held}`);
 });
+
+test("a word for the far end takes an article like any other", async () => {
+  // `who has most ropes?` read and `who has the most ropes?` did not — the
+  // English had no bracket for an article before a word saying which end.
+  await forget();
+  await brain("devi has 7 ropes");
+  await brain("omar has 4 ropes");
+  await brain("nila has 9 ropes");
+  assertEquals((await brain("who has the most ropes?")).expression.state.says, "nila");
+  assertEquals((await brain("who has most ropes?")).expression.state.says, "nila");
+  await forget();
+});

@@ -19681,6 +19681,7 @@
         "rules": [
           "interrogative noun",
           "degree noun",
+          "article degree noun",
           "quantifier noun",
           "noun",
           "article noun",
@@ -19693,6 +19694,7 @@
           "open sentence close",
           "open subject close",
           "function subject",
+          "function preposition subject",
           "item conjunction subject",
           "noun preposition subject",
           "article noun preposition subject",
@@ -19709,6 +19711,7 @@
         "rules": [
           "interrogative noun",
           "degree noun",
+          "article degree noun",
           "quantifier noun",
           "noun",
           "article noun",
@@ -19721,6 +19724,7 @@
           "open sentence close",
           "open subject close",
           "function subject",
+          "function preposition subject",
           "noun preposition subject",
           "article noun preposition subject",
           "article pronoun",

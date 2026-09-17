@@ -123,6 +123,18 @@ All notable changes to this project are documented in this file.
   `is the gate open?` is `I don't know`, `was the gate open?` is yes, and told
   it is closed since, it is closed.
 
+- **Two kinds the world holds apart are not made one by saying so.** `the
+  lantern is the same as the lamp` is refused, and rightly: the world says its
+  kinds of tool are different kinds, that is a denial, and a denial outranks a
+  telling — the same reason a crow is not made an eel by being called one. What
+  changed is the basics, which had asked for the wrong answer.
+
+- **A word for the far end takes an article like any other**, and a fraction
+  stands where a thing stands. `who has most ropes?` read and `who has the most
+  ropes?` did not; `what is one-fourth of the apples?` read and `the shop sold
+  one-fourth of the apples` did not. Both are brackets English had not been
+  given.
+
 - **Which end a question asks from is where the signal put the thing.** `what
   does the cart have?` and `what is in the cart?` were read alike — as a hole
   and then a joint — and the cart was answered with what it is *part of* as

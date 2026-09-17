@@ -26,3 +26,13 @@ test("the same as says one thing is another, and the same colour as does not", a
   assertEquals((await brain("why is the drum cold?")).expression.state.says, "a room is cold");
   await forget();
 });
+
+test("two kinds the world holds apart are not made one by saying so", async () => {
+  // A lantern and a lamp are two kinds of tool, and the world says its kinds
+  // of tool are different kinds. That is a denial, and a denial outranks a
+  // telling — the same reason a crow is not made an eel by being called one.
+  await forget();
+  assertEquals((await brain("the lantern is the same as the lamp")).expression.name, "deny");
+  assertEquals((await brain("is the lamp the same as the lantern?")).expression.name, "unsure");
+  await forget();
+});

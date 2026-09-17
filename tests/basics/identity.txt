@@ -22,9 +22,11 @@ arun is the same as the potter
 the potter is the same as the teacher
 is arun the same as the teacher? => affirm
 
-# Two kinds said to be one thing.
-the lantern is the same as the lamp
-is the lamp the same as the lantern? => affirm
+# Two kinds the world holds apart are not made one by saying so. A lantern and
+# a lamp are two kinds of tool, and the world says its kinds of tool are
+# different kinds — which is a denial, and a denial outranks a telling.
+the lantern is the same as the lamp => deny
+is the lamp the same as the lantern? => unsure
 
 # Two things said to be different.
 the ferry is different from the ladder
