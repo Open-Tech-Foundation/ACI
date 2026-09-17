@@ -4,6 +4,7 @@ import { openBrain } from "./index.js";
 // A store of its own, that nothing else can reach.
 const { brain, forget } = openBrain("sqlite::memory:");
 const PERSON = 29;
+const says = async (q) => (await brain(q, { from: PERSON })).expression.state.says;
 
 async function fresh(...said) {
   await forget();
@@ -43,8 +44,34 @@ test("a thing with nobody's name on it is the kind, as before", async () => {
 });
 
 test("whose a thing is may be said the long way round", async () => {
-  // `of` says whose: the leg of a cow is the leg a cow has.
-  assertEquals((await fresh("a leg of a cow is a body?")).expression.name, "unsure");
+  // `of` says whose: the leg of a cow is the leg a cow has. Asked whether that
+  // leg is a body, the answer is the one the brain gives of any leg — `is a leg
+  // a body?` is no — and it used to come back unsure, out of a reading in which
+  // the leg held the cow and held a body besides.
+  assertEquals((await fresh("a leg of a cow is a body?")).expression.name, "deny");
+  await forget();
+});
+
+test("what is said of the long way round is said of the near one", async () => {
+  // `the roof of the shed is red` is the shed's roof being red. It was holding
+  // the roof against the shed, the roof against red, and then saying red of the
+  // shed — three facts and every one of them wrong.
+  await forget();
+  await brain("the roof of the shed is red");
+  assertEquals(await says("what colour is the roof?"), "red");
+  assertEquals(await says("what colour is the roof of the shed?"), "red");
+  assertEquals(await says("is the shed red?"), "I don't know.");
+  assertEquals(await says("what is the shed?"), "building");
+  await forget();
+});
+
+test("a joint the language names keeps the one that owns before it", async () => {
+  // `a shelf has books` names the holding, and what owns stands first; only a
+  // joint the language writes rather than names turns it round.
+  await forget();
+  await brain("a shelf has 5 books and 8 files");
+  assertEquals(await says("how many books does the shelf have?"), "five");
+  assertEquals(await says("how many kinds of book does the shelf have?"), "one");
   await forget();
 });
 

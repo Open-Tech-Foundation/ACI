@@ -1400,7 +1400,12 @@ function whose(roots, world, langs, mood, allocate) {
     const t = n ? thoughtOf(n) : null;
     return t && functionsOf(n).includes('possessor') && t.concept != null ? t.concept : null;
   };
+  // What the long way round spends: the joint, and the thing on its far side.
+  // Both are saying whose it is and say nothing else, so nothing reads them
+  // again — read again, they offered the roof holding the shed.
+  const spent = new Set();
   return roots.map((n, i) => {
+    if (spent.has(i)) return unnamed(n);
     const kind = conceptOf(n);
     if (kind == null) return n;
     // A possessive is a pointer like any other: told nothing for it to land
@@ -1420,7 +1425,37 @@ function whose(roots, world, langs, mood, allocate) {
     // word is a relation, the one it belongs to is the other end of it, and
     // nothing is made to be owned.
     if (a.relation != null && world.isA(kind, a.relation)) return n;
-    const owner = owning(markerFor(roots, i, side, owning));
+    // Whose it is may be said the long way round. `the roof of the shed` is the
+    // shed's roof: the joint English says holding with stands between them, and
+    // what owns is on its far side. Read as two things joined instead, it made
+    // the roof hold the shed, and then said what followed of the shed rather
+    // than of the roof — three facts, and all of them wrong.
+    //
+    // Which word joins them is the language's; that the far side is the one
+    // that owns is what the joint says.
+    const farSide = () => {
+      const joint = roots[i + 1];
+      if (!joint || conceptOf(joint) !== a.has) return null;
+      // Only where the language *writes* the holding as a joint between two
+      // things rather than naming it. `a shelf has books` names it, and the one
+      // that owns stands before; `the roof of the shed` writes it, and the one
+      // that owns stands after. The language says which of its words name a
+      // thing and which are another way to write it.
+      const said_ = thoughtOf(joint);
+      if (!said_ || said_.names !== false) return null;
+      const at = roots.findIndex((one, j) => j > i + 1 && conceptOf(one) != null);
+      const of = at < 0 ? null : roots[at];
+      const held = of == null ? null : conceptOf(of);
+      if (held == null || !world.isA(held, a.thing)) return null;
+      // A kind, a fraction and a relation are each read another way, and each
+      // has a reading of its own.
+      if (a.kind != null && kind === a.kind) return null;
+      if (a.fraction != null && (world.isA(kind, a.fraction) || kind === a.fraction)) return null;
+      spent.add(i + 1);
+      spent.add(at);
+      return held;
+    };
+    const owner = owning(markerFor(roots, i, side, owning)) ?? farSide();
     if (owner == null) return n;
     const held = world
       .individualsOf(kind)

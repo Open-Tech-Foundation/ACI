@@ -109,6 +109,26 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **`the roof of the shed` is the shed's roof.** It was three facts and every
+  one of them wrong: `holding(roof, shed)` — the roof holding the shed —
+  `holding(roof, red)`, and then `property(shed, red)`, saying red of the shed
+  rather than of the roof. The same reading made `the leg of a cow` a leg
+  holding a cow, and `one-fourth of the apples` a quarter holding apples.
+
+  English writes a holding as a joint standing between two things, and the one
+  that owns is on the joint's far side. Where the language *names* the holding
+  instead — `a shelf has books` — the one that owns stands first, and that is
+  untouched: which of its words name a thing and which are another way of
+  writing one is something the language already declares, and it is the whole
+  of the difference. The joint and the far thing are spent saying whose it is,
+  so nothing reads them again.
+
+  `what colour is the roof?` and `what colour is the roof of the shed?` are
+  both `red`; `is the shed red?` is `I don't know`; `what is the shed?` is still
+  `building`. This was found by asking why a quarter was holding apples — the
+  gate was never what put it there, and it does the same in sentences the
+  grammar accepts without complaint.
+
 - **A told time answers over the coarse side of now it falls on.** `nadia
   arrived at nine hours` / `when nadia arrive?` answered **past**. Past is true
   of everything that has happened and tells nobody anything; the time the doing
