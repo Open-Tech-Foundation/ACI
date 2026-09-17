@@ -97,6 +97,15 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A happening met inside another can be asked after by name.** `nila spoke
+  during the meeting` held the meeting on the record — its own row, with her
+  in it — and `did the meeting happen?` still said it did not know. Asking
+  whether something happened looked only for individuals of its kind in the
+  world, and a happening spoken of inside another is never one: it stands
+  among what happened, and the world holds no one of it. The record is read
+  now, so what was told inside a recital, a concert or a meeting happened,
+  and one never spoken of is still unknown rather than denied.
+
 - **A count said through `of` counts what the doing moved.** `the shop sold
   one-fourth of the apples` left the count at a hundred and twenty and a
   quarter holding apples on the record; `the shop sold 30 of the apples` did

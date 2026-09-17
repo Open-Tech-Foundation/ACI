@@ -217,6 +217,16 @@ test("a happening can be asked after by name", async () => {
   await forget();
 });
 
+test("a happening met inside another can be asked after by name", async () => {
+  // The outer happening stands on the record even where the world holds no
+  // individual of its kind: asking whether it happened is answered from
+  // there, and one never spoken of is still unknown rather than denied.
+  await fresh("priya sang during the recital");
+  assertEquals((await brain("did the recital happen?")).expression.name, "affirm");
+  assertEquals((await brain("did the concert happen?")).expression.name, "unsure");
+  await forget();
+});
+
 test("asked something else of the same happening, it is not answered whether it happened", async () => {
   // `how long is the backup?` names the backup and asks after its length; that
   // it happened answers past the question.

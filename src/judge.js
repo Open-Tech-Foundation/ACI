@@ -5147,10 +5147,19 @@ function happened(said, world, claims, side, sides, graph) {
     const ones = world.isIndividual(action)
       ? [action]
       : world.members(action, world.baseRelation).filter((one) => world.isIndividual(one));
-    const ever = ones.some((one) =>
-      world
-        .linked(one, world.baseRelation)
-        .every((kind) => !world.denies(one, kind, world.baseRelation)));
+    // An occurrence the conversation holds stands even where the world holds
+    // no individual of its kind: a happening spoken of inside another — the
+    // meeting nila spoke during — is on the record, and asking whether it
+    // happened is answered from there rather than from individuals alone.
+    const held =
+      graph == null
+        ? []
+        : graph.graph().actions.filter((row) => row.stands === 'held' && (row.of === action || row.said === action));
+    const ever =
+      ones.some((one) =>
+        world
+          .linked(one, world.baseRelation)
+          .every((kind) => !world.denies(one, kind, world.baseRelation))) || held.length > 0;
     return node('standing', ever ? 'held' : 'absent', [], {
       subject: null,
       relation: null,
