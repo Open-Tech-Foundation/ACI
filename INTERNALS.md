@@ -366,9 +366,31 @@ same walk that lets `who has kettles?` and `what does dev have?` answer off one
 fact, and a relation's converse and the relations under it compose somewhere
 without either being checked against the other.
 
-That is an engine fault and no link will settle it. It is the next thing to
-take, and the two probes above are its test: the link goes back in the moment
-`what does the cart have?` answers `wheel`.
+That is an engine fault and no link will settle it. The two probes above are
+its test: the link goes back in the moment `what does the cart have?` answers
+`wheel`.
+
+**Traced, and the fault is narrower than that.** Asked of the world directly,
+with `made-of` under `has`:
+
+    linked(cart, part)      train     the cart is part of the train
+    standing(cart, part)    wheel     the wheel stands to it as part
+    linked(cart, made-of)   —         ← should be the wheel
+    standing(cart, made-of) train     the train is made of the cart
+
+**`linked` reads only what was written in the direction asked; the walk that
+steps through a relation reads both.** One calls `directedLinks`, which adds
+facts written through a declared converse; the other calls `variantLinks`,
+which does not. So the cart is never known to be made of the wheel going
+forward, the walk out comes back empty, the reading falls back to walking
+in — and answers whoever *has the cart*, which is the question turned round.
+
+Making `linked` read both was tried. It answers the question and surfaces
+ladder facts everywhere: `what is on the crate?` becomes `lamp, on a
+container`, `what does a cart have?` becomes `element`, and six readings go
+with it, basics from 144 to 139. So the converse walk pulls in kind-level facts
+the direct walk does not, and **that** is what wants settling — not the missing
+link, which is only where it shows.
 
 **So the work is a real one: what a thing holds and what it is made of are two
 walks, and the link between them has a direction.** It wants settling before
