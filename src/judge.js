@@ -26,6 +26,7 @@ import {
   brought,
   claimSaid,
   compared,
+  concluded,
   describing,
   express,
   following,
@@ -901,10 +902,22 @@ export function judge(roots, world, mood, langs, sent, graph) {
       const doer = graph.didTo(parts[parts.length - 1], parts[0]);
       if (doer != null) behind = [doer];
     }
+    // And what a rule concluded stands on the claim that met its condition.
+    // Nothing was written down for it — what follows from a rule is worked out
+    // when it is asked for — so the rules are asked again here, and what they
+    // answer with is what the claim was worked from.
+    const worked = behind.length > 0 || parts.length < 2
+      ? null
+      : concluded(
+        { subject: parts[0], relation: world.baseRelation, object: parts[parts.length - 1], not: false },
+        world,
+      );
     return [
       withBranch(root, [
         ...root.branch,
-        behind.length > 0
+        worked != null
+          ? node('answer', 'link', [], { subject: parts[0], relation: a.cause, claim: worked })
+          : behind.length > 0
           ? node('answer', 'link', [], { subject: parts[0], relation: a.cause, found: behind })
           : node('standing', 'absent', [], {
               subject: parts[0] ?? null,
@@ -1208,6 +1221,15 @@ export function judge(roots, world, mood, langs, sent, graph) {
           ![a.all, a.some, a.none, a.neither, a.zero].includes(of)
         );
       });
+      // Nothing said, and a rule that says it. What follows from a rule is
+      // worked out here and written nowhere, so a condition that stops
+      // standing takes what stood on it with it.
+      const byRule = () =>
+        concluded({ subject, relation: rel, object, not: false }, world) != null
+          ? 'held'
+          : concluded({ subject, relation: rel, object, not: true }, world) != null
+            ? 'against'
+            : 'absent';
       const found = unread
         ? 'absent'
         : howMany === a.some
@@ -1218,7 +1240,7 @@ export function judge(roots, world, mood, langs, sent, graph) {
             ? 'held'
             : opposed
               ? 'against'
-              : 'absent';
+              : byRule();
       // None of a kind denies the claim of every one of it: `no crow is a fish`
       // says of crows what `a crow is not a fish` says.
       const isDenied = denied || howMany === a.none;

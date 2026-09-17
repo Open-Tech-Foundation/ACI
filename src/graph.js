@@ -810,16 +810,6 @@ function fromUnderstood(roots, world, focus, marking, from, mood) {
     }
   }
 
-  // What the brain worked out is as much a part of the conversation as what it
-  // was told. A fact a standing instruction reached arrives as something
-  // learned and never stood in the signal, so nothing else here would see it —
-  // and the bell would stay the colour it was before the rule fired.
-  for (const link of links) {
-    if (!link.state.following) continue;
-    const { subject, relation, object, quantity, not } = link.state;
-    claimed(subject, relation, object, quantity ?? null, Boolean(not));
-  }
-
   for (const event of events) {
     const { action, parts, not, when } = event.state;
     const roles = {};

@@ -123,6 +123,29 @@ All notable changes to this project are documented in this file.
   `is the gate open?` is `I don't know`, `was the gate open?` is yes, and told
   it is closed since, it is closed.
 
+- **What follows from a rule is worked out when it is asked for, and written
+  nowhere.** A rule fired the moment its condition came to stand and wrote its
+  conclusion down as a fact nobody said — so a bell told red because a drum was
+  cold stayed red after the drum was not. There was nothing wrong with the
+  record: the world held that the bell's redness followed the drum's coldness.
+  The fault was writing it at all, and withdrawing it afterwards is the wrong
+  shape — the bell is not *not* red, it is that nothing says it is any more.
+  Nothing is written now. Asked, the rules are read, both ways round out of the
+  one rule: a cold drum makes a bell red, and a bell that is not red makes a
+  drum not cold. Chains are walked, a chain that leads back on itself ends, and
+  what comes back is the claim it stood on — a cold *wren*, where the rule said
+  a bird — so `why` says what it was worked from rather than asking to be taken
+  on trust. A hundred and seventy-five lines of firing, stamping and
+  bookkeeping went with it.
+
+- **A denial supersedes what it denies, and is superseded in its turn.** A
+  denied link joins nothing, so it was thrown away before the walk worked out
+  which of two stamped links was the later — leaving the older assertion
+  standing with nothing to supersede it. And the other way round, a denial was
+  read off everything ever said rather than off what stands now, so a drum told
+  not cold and then told cold was still not cold. A denial is state like any
+  other.
+
 - **A claim somebody holds is a thing the brain holds, and not a claim it
   makes.** `omar said that the ferry is late` was not read at all, and once it
   was, the brain came away believing the ferry is late. Four things stood in

@@ -51,9 +51,18 @@ why is a bell red? => a drum is cold
 if a drum is cold then a bell is red
 is a bell red? => unsure
 
-# What a rule concluded goes when what it stood on is denied.
+# What a rule concluded goes when what it stood on is denied. Nothing was
+# written down for it to go: what follows from a rule is worked out when it is
+# asked for, so a condition that stops standing takes it with it.
 if a drum is cold then a bell is red
 a drum is cold
 is a bell red? => affirm
 a drum is not cold
 is a bell red? => unsure
+why is a bell red? => unsure
+
+# And the denial is state like anything else: told the other way round after,
+# the later telling stands.
+a drum is not cold
+a drum is cold
+is a drum cold? => affirm

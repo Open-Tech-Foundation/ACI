@@ -386,7 +386,11 @@ test("a rule supposes; it does not say", async () => {
   await forget();
 });
 
-test("what a rule reaches is how the thing is", async () => {
+test("what a rule reaches is worked out, and written nowhere", async () => {
+  // The conversation was told the rule and told the drum is cold. It was not
+  // told the bell is red — that follows, and what follows is worked out when
+  // it is asked for. Written down it went stale: a bell told red because a
+  // drum was cold stayed red after the drum was not.
   await forget();
   await brain("if a drum is cold then a bell is red");
   await brain("the drum is cold");
@@ -395,7 +399,18 @@ test("what a rule reaches is how the thing is", async () => {
   const bell = nodes.find((one) => one.said === "bell");
   const how = (one) => facts.some((f) => f.of === PROPERTY && f.parts[0] === one.id);
   assert(how(drum), "told, so the drum is cold");
-  assert(how(bell), "worked out, and the bell is red all the same");
+  assert(!how(bell), "not told, so nothing says the bell is red");
+  assertEquals((await brain("is the bell red?")).expression.name, "affirm", "and asked, it is");
+  await forget();
+});
+
+test("what a rule reached goes when what it stood on goes", async () => {
+  await forget();
+  await brain("if a drum is cold then a bell is red");
+  await brain("a drum is cold");
+  assertEquals((await brain("is a bell red?")).expression.name, "affirm");
+  await brain("a drum is not cold");
+  assertEquals((await brain("is a bell red?")).expression.name, "unsure", "nothing says it is any more");
   await forget();
 });
 

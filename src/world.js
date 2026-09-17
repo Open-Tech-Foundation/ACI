@@ -463,6 +463,10 @@ export function fromWorldData(source) {
 
   // Edges stated in this direction, including facts using a narrower
   // relation, before any declared converse is normalized.
+  // A denied link is kept here and dropped by whoever walks across one. It has
+  // to be: a denial supersedes the assertion it denies, and dropping it first
+  // left the older assertion standing with nothing to supersede it — a drum
+  // told cold and then told not cold was still reached as cold.
   function variantLinks(id, rel) {
     const links = [];
     const variants = new Set(relationVariants(rel));
@@ -473,13 +477,12 @@ export function fromWorldData(source) {
     }
     for (const variant of variants) {
       for (const link of terms.get(id)?.links || []) {
-        if (!link.not && link.rel === variant) links.push({ ...link });
+        if (link.rel === variant) links.push({ ...link });
       }
     }
     if (rel === subtypeRel || rel === instanceRel || rel === predicationRel) {
       for (const link of terms.get(id)?.links || []) {
         if (
-          !link.not &&
           link.rel === isRel &&
           semanticClassificationRelation(id, link.to) === rel
         ) links.push({ ...link, rel });
@@ -536,7 +539,12 @@ export function fromWorldData(source) {
     // and the latest of each supersedes the ones before it, which stay on the
     // record as history.
     const direct = currentState(directedLinks(id, rel), rel);
-    const out = new Set(direct.map((link) => link.to));
+    // A denied link joins nothing. It records that the relation does not hold,
+    // and nothing can be reached across it — the same as the walk over kinds
+    // says of itself. Kept, a drum told cold and then told not cold was still
+    // reached as cold, because the denial that superseded it carried the very
+    // thing it denied.
+    const out = new Set(direct.filter((link) => !link.not).map((link) => link.to));
     if (reflexiveAt(id, rel)) out.add(id);
     if (terms.get(rel)?.symmetric) {
       for (const subject of pointingAt(rel).get(id) || []) out.add(subject);
@@ -845,6 +853,11 @@ export function fromWorldData(source) {
     // Not finding a path is ignorance; this is a denial, and it is knowledge.
     denies: (id, object, rel) => {
       if (!terms.has(id) || !terms.has(object) || rel == null) return false;
+      // A denial is state like anything else a signal stamps: told a drum is
+      // not cold and then told it is, the denial is history and the drum is
+      // cold. So only what stands now is asked, never everything ever said.
+      const now = (t, stated) =>
+        currentState((t.links || []).filter((l) => l.rel === stated), stated);
       const statedRelations = new Set(relationAncestors(rel));
       if (rel === isRel) {
         if (subtypeRel != null) statedRelations.add(subtypeRel);
@@ -855,15 +868,15 @@ export function fromWorldData(source) {
         const t = terms.get(subject);
         for (const candidate of equivalents(object)) {
           for (const stated of statedRelations) {
-            if ((t.links || []).some((l) => l.not && l.rel === stated && l.to === candidate)) return true;
+            if (now(t, stated).some((l) => l.not && l.to === candidate)) return true;
             const other = terms.get(candidate);
             if (
               terms.get(stated)?.symmetric &&
               other &&
-              (other.links || []).some((l) => l.not && l.rel === stated && l.to === subject)
+              now(other, stated).some((l) => l.not && l.to === subject)
             ) return true;
             for (const back of converseBy.get(stated) || []) {
-              if (other && (other.links || []).some((l) => l.not && l.rel === back && l.to === subject)) {
+              if (other && now(other, back).some((l) => l.not && l.to === subject)) {
                 return true;
               }
             }

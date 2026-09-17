@@ -173,3 +173,27 @@ test("a condition about every one of a kind is one it cannot check", async () =>
   assertEquals((await brain("is a lantern bright?")).expression.name, "affirm");
   await forget();
 });
+
+test("what a rule reaches goes when what it stood on goes", async () => {
+  // The conclusion used to be written the moment the condition came to stand,
+  // and then it was a fact nobody said: a bell told red because a drum was
+  // cold stayed red after the drum was not. Nothing is written now — what
+  // follows is worked out when it is asked for — so there is nothing to go
+  // stale and nothing to withdraw.
+  await fresh("if a drum is cold then a bell is red", "a drum is cold");
+  assertEquals((await brain("is a bell red?")).expression.name, "affirm");
+  await brain("a drum is not cold");
+  assertEquals((await brain("is a bell red?")).expression.name, "unsure");
+  await forget();
+});
+
+test("a denial supersedes what it denies", async () => {
+  // A denied link joins nothing, and so it was dropped before the walk worked
+  // out which of two stamped links was the later — which left the older
+  // assertion standing with nothing to supersede it.
+  await fresh("a drum is cold", "a drum is not cold");
+  assertEquals((await brain("is a drum cold?")).expression.name, "deny");
+  await fresh("a drum is not cold", "a drum is cold");
+  assertEquals((await brain("is a drum cold?")).expression.name, "affirm");
+  await forget();
+});

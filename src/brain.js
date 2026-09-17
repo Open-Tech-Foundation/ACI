@@ -2598,6 +2598,19 @@ function wholeMeaning(intent, parts) {
 // has three, and saying the first of them would be picking one. The words are
 // the language's, and so is what goes between them.
 export function spoken(answer, langName, langs, world, written) {
+  // A claim the brain worked out rather than found written down. What follows
+  // from a rule is written nowhere, so nothing named it and there is no term
+  // to look up: it is said from the claim itself.
+  if (answer.state.claim != null) {
+    const { subject, relation, object, not } = answer.state.claim;
+    const worked = claimSaid(
+      node('standing', 'held', [], { subject, relation, object, negated: Boolean(not) }),
+      langName,
+      langs,
+      world,
+    );
+    return worked ? worked.trim().replace(/\.$/, '') : null;
+  }
   if (answer.state.classification != null) {
     const lang = (langs || []).find((candidate) => candidate.data.name === langName);
     return lang ? lang.classificationFor(answer.state.classification) : null;
@@ -3161,7 +3174,6 @@ export function brainFrom(input, knowledge, circumstance) {
   const solvedRoots = solve(thoughtRoots, world, langs, mood, at.allocate, graph);
   const structuredRoots = spread(structurePhrase(solvedRoots, langs), world);
   let judgedRoots = judge(structuredRoots, world, mood, langs, at, graph);
-  judgedRoots = awoken(judgedRoots, world, mood, at);
   judgedRoots = saidByPointing(judgedRoots, world, mood);
   let learned = learnedFrom(judgedRoots, world);
   let inconsistent = learningConflict(world, learned);
@@ -4045,16 +4057,9 @@ function learnedFrom(roots, world) {
     (n.branch || []).forEach(seek);
   };
   roots.forEach(seek);
-  const followed = [];
-  const walk = (n) => {
-    if (n.kind === 'learn' && n.state.following) followed.push(n.state.following);
-    (n.branch || []).forEach(walk);
-  };
-  roots.forEach(walk);
   const behind = [
     ...reasons.flatMap((c) => stoodBehind(c, world)),
     ...about.flatMap((n) => heldAbout(n, world)),
-    ...stoodOn(followed, world),
   ];
 
   const together = roots.length > 1 ? roots : apart(roots, world);
@@ -4200,19 +4205,6 @@ function learnedFrom(roots, world) {
   return terms.length ? { terms } : null;
 }
 
-// Which claims a fired rule stands between. Fired as written, they are the
-// rule's own two claims, already things the world holds. Fired for something
-// else, the facts are that thing's and are written down as claims of their
-// own — a rule is not what happened.
-function stoodBy(condition, consequence, ids, sent) {
-  if (ids.met) return { claim: ids.then, from: ids.on };
-  return {
-    claim: sent.allocate(),
-    from: sent.allocate(),
-    wrote: { condition, consequence },
-  };
-}
-
 // What a doing brings about may be a relation — putting leaves the thing put
 // standing in a place — or a way the thing stands afterwards, as opening
 // leaves it open. The two are read differently and only the world can tell
@@ -4252,134 +4244,81 @@ export function brought(action, parts, world) {
   ];
 }
 
-// Something that happened, in the one shape all knowledge takes. How much of
-// each part goes on the record with it: amounts are state of the occurrence,
-// so a later count reads them rather than guessing.
-// A standing instruction never occurred and is never done with. Every time the
-// brain takes a fact in, what it holds is laid against every instruction it
-// keeps: where a condition has come to stand, what stands on it follows. The
-// instruction stays where it is — it governs whatever turns up next as well.
-function awoken(roots, world, mood, sent) {
-  if (mood !== 'tell' || !world || roots.length !== 1) return roots;
-  if (sent == null || sent.allocate == null) return roots;
+// What a standing instruction concludes, asked for rather than written down.
+//
+// A rule is not a fact, and neither is what follows from one. Writing the
+// conclusion the moment a condition comes to stand leaves the brain holding
+// something nobody said, which then goes stale: a bell told red because a drum
+// was cold stays red after the drum is not. So nothing is written — what
+// follows is worked out when it is asked for, and a condition that stops
+// standing takes what stood on it with it, with nothing to withdraw.
+//
+// Both ways round, out of the one rule. A cold drum makes a bell red; and a
+// bell that is not red makes a drum not cold, which follows from the same rule
+// and is not a second one. Chains are walked — what one rule concludes may be
+// what another was waiting for — and a chain that leads back on itself ends,
+// because nothing is asked for twice.
+//
+// What comes back is the claim it stood on, so a brain that worked something
+// out can say what it worked it from rather than asking to be taken on trust.
+export function concluded(want, world, seen = new Set()) {
   const a = world.anchors || {};
-  if (a.instructing == null || a.condition == null || a.consequence == null) return roots;
-  const root = roots[0];
-  const offered = (root.branch || []).filter((n) => n.kind === 'learn');
-  if (offered.length === 0) return roots;
-  const key = (fact) =>
-    `${fact.subject}:${fact.relation}:${fact.object}:${Boolean(fact.not)}`;
-  const arrivals = offered.map((n) => n.state);
-  const told = new Set(arrivals.map(key));
-  const follows = [];
-  // What one instruction leads to may be what another was waiting for. A cold
-  // drum makes a bell red, and a red bell makes a cup blue: the bell turning
-  // red is as much something that has come about as anything the signal said,
-  // so the instructions are gone through again with it among them, and again,
-  // until a whole round adds nothing. What has already followed is never added
-  // twice, so a chain that leads back on itself ends.
-  for (let more = true; more; ) {
-    more = false;
-    for (const one of world.individualsOf(a.instructing)) {
-      const [onId] = world.linked(one, a.condition);
-      const [thenId] = world.linked(one, a.consequence);
-      if (onId == null || thenId == null) continue;
-      const on = world.claimOf(onId);
-      const then = world.claimOf(thenId);
-      if (!on || !then) continue;
-      // The condition stands where the world already had it or where this very
-      // signal brings it. Nothing is looked up twice: what was just offered is
-      // as good as what was already held.
-      // Whatever meets the condition. A rule naming a kind is about every one
-      // of that kind — a drum being cold is what a cold drum is, and tom being
-      // a drum makes tom's being cold that same thing. So the condition is not
-      // matched word for word: what is looked for is anything that is one of
-      // what it names and stands as it says.
-      // Told the consequence does not stand, the condition cannot either. A
-      // bell that is not red is a drum that is not cold: the rule read the
-      // other way round, which follows from it and is not a second rule. The
-      // other way round — a red bell making a drum cold — does not follow, and
-      // the brain never reads it that way.
-      const denies = (claim, one) =>
-        one.relation === claim.relation &&
-        one.object === claim.object &&
-        Boolean(one.not) !== Boolean(claim.not) &&
-        (one.subject === claim.subject || world.isA(one.subject, claim.subject));
-      for (const one of arrivals) {
-        if (!denies(then, one)) continue;
-        const subject = then.subject === on.subject ? one.subject : on.subject;
-        const against = key({ subject, relation: on.relation, object: on.object, not: !on.not });
-        if (told.has(against)) continue;
-        told.add(against);
-        follows.push(
-          node('learn', 'link', [], {
-            subject,
-            relation: on.relation,
-            object: on.object,
-            quantity: null,
-            made: null,
-            not: !on.not,
-            following: stoodBy(
-              { subject: one.subject, relation: then.relation, object: then.object, not: Boolean(one.not) },
-              { subject, relation: on.relation, object: on.object, not: !on.not },
-              { on: thenId, then: onId, met: one.subject === then.subject },
-              sent,
-            ),
-          }),
-        );
-        more = true;
-      }
-      const meets = [];
-      if (told.has(key({ ...on, not: on.not })) || world.isA(on.subject, on.object, on.relation)) {
-        meets.push(on.subject);
-      }
-      for (const one of arrivals) {
-        if (one.relation !== on.relation || one.object !== on.object) continue;
-        if (Boolean(one.not) !== on.not || one.subject === on.subject) continue;
-        if (!world.isA(one.subject, on.subject)) continue;
-        if (!meets.includes(one.subject)) meets.push(one.subject);
-      }
-      for (const met of meets) {
-        // What the condition was about, the consequence is about: `if a thing
-        // is cold then it is red` says the same thing is red, and which thing
-        // is whichever one met the condition. Where the consequence names
-        // something else, that is what it names.
-        const subject = then.subject === on.subject ? met : then.subject;
-        if (world.isA(subject, then.object, then.relation)) continue;
-        const reached = key({ ...then, subject });
-        if (told.has(reached)) continue;
-        told.add(reached);
-        follows.push(
-          node('learn', 'link', [], {
-            subject,
-            relation: then.relation,
-            object: then.object,
-            quantity: null,
-            made: null,
-            not: then.not,
-            // What it followed from, kept with it. A fact the brain worked out
-            // rather than was told has something it stands on, and a brain that
-            // cannot say what that was is asking to be taken on trust.
-            //
-            // Where the rule fired as it was written, the two claims it is
-            // built out of are the two facts, and they are already things. Met
-            // by something else — tom, where the rule said a drum — the facts
-            // are tom's, not the rule's, so they are written down as their own
-            // claims. Saying `a drum is cold` when it was tom who was cold
-            // would be answering with the rule instead of with what happened.
-            following: stoodBy(
-              { subject: met, relation: on.relation, object: on.object, not: on.not },
-              { subject, relation: then.relation, object: then.object, not: then.not },
-              { on: onId, then: thenId, met: met === on.subject },
-              sent,
-            ),
-          }),
-        );
-        more = true;
-      }
+  if (!world || a.instructing == null || a.condition == null || a.consequence == null) return null;
+  if (want == null || want.subject == null || want.relation == null || want.object == null) return null;
+  const at = `${want.subject}:${want.relation}:${want.object}:${Boolean(want.not)}`;
+  if (seen.has(at)) return null;
+  seen.add(at);
+  // Whether the world holds one claim outright.
+  const outright = (claim) =>
+    claim.not
+      ? world.denies(claim.subject, claim.object, claim.relation)
+      : world.isA(claim.subject, claim.object, claim.relation);
+  // What stands, and which claim it is. A condition naming a kind is met by
+  // any one of that kind standing as it says — a rule about a cold bird is met
+  // by a cold wren — and what comes back is the wren's claim and not the
+  // rule's, since a brain that worked something out from a cold wren should
+  // say so rather than say a bird was cold. Where the world says nothing,
+  // another rule may conclude it in its turn.
+  const stands = (claim) => {
+    if (outright(claim)) return claim;
+    for (const one of world.members(claim.subject, world.baseRelation)) {
+      if (one === claim.subject) continue;
+      const theirs = { ...claim, subject: one };
+      if (outright(theirs)) return theirs;
+    }
+    return concluded(claim, world, seen) == null ? null : claim;
+  };
+  // Whether one claim is the other said of something the rule covers: a rule
+  // about a drum answers about tom, where tom is a drum.
+  const covers = (side, asked) =>
+    side.relation === asked.relation &&
+    side.object === asked.object &&
+    (side.subject === asked.subject || world.isA(asked.subject, side.subject));
+  for (const one of world.individualsOf(a.instructing)) {
+    const [onId] = world.linked(one, a.condition);
+    const [thenId] = world.linked(one, a.consequence);
+    if (onId == null || thenId == null) continue;
+    const on = world.claimOf(onId);
+    const then = world.claimOf(thenId);
+    if (!on || !then) continue;
+    // A rule whose two sides are about the same one — `if a thing is cold then
+    // it is red` — is about whoever met it, so the condition is asked of the
+    // very thing the question names.
+    const sameOne = then.subject === on.subject;
+    if (Boolean(then.not) === Boolean(want.not) && covers(then, want)) {
+      const needed = { ...on, subject: sameOne ? want.subject : on.subject };
+      const met = stands(needed);
+      if (met) return met;
+    }
+    // Told what a rule concludes does not stand, what it stood on does not
+    // either.
+    if (Boolean(on.not) !== Boolean(want.not) && covers(on, want)) {
+      const needed = { ...then, not: !then.not, subject: sameOne ? want.subject : then.subject };
+      const met = stands(needed);
+      if (met) return met;
     }
   }
-  return follows.length === 0 ? roots : [withBranch(root, [...root.branch, ...follows])];
+  return null;
 }
 
 // A claim somebody holds, written down: the claim as a thing of its own, and
@@ -4412,35 +4351,6 @@ function heldAbout(held, world) {
       ],
     },
   ];
-}
-
-// What a worked-out fact stands on. Where a standing instruction has fired,
-// the claim it reached is joined to the claim that met its condition — both
-// are already things the world holds, and the joining is what lets the brain
-// say afterwards what a fact followed from rather than only that it holds.
-function stoodOn(followed, world) {
-  const a = world.anchors || {};
-  if (a.follows == null) return [];
-  const claimed = (id, side) => ({
-    id,
-    name: `claim#${id}`,
-    individual: true,
-    links: [
-      { rel: world.baseRelation, to: side.relation, ...(side.not ? { not: true } : {}) },
-      { rel: a.subject, to: side.subject },
-      { rel: a.object, to: side.object },
-    ],
-  });
-  return followed.flatMap(({ claim, from, wrote }) => [
-    ...(wrote == null
-      ? []
-      : [claimed(claim, wrote.consequence), claimed(from, wrote.condition)]),
-    {
-      id: claim,
-      name: world.term(claim) ? world.term(claim).name : `claim#${claim}`,
-      links: [{ rel: a.follows, to: from }],
-    },
-  ]);
 }
 
 // One claim being so as the reason another is: both written down as things,
