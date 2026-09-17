@@ -54,7 +54,6 @@ import {
   stands,
   termWord,
   thing,
-  together,
   walk,
   whole,
   worldNode,
@@ -576,299 +575,7 @@ export function judge(roots, world, mood, langs, sent) {
     return [withBranch(root, [...root.branch, ...(followed.branch || []).filter(taken)])];
   }
 
-  // What a signal put as a condition, and what it put on the other side, held as
-// one thing the brain can come back to. Both sides are checked the way a
-// question is — neither is made — and what is kept is the pair, not the facts.
-function instructionFrom(when, so, world, langs, sent) {
-  const a = world.anchors || {};
-  if (a.instructing == null || a.condition == null || a.consequence == null) return [];
-  if (a.subject == null || a.object == null || sent == null || sent.allocate == null) return [];
-  const sideOf = (part) => {
-    if (!part) return null;
-    const [seen] = judge([part], world, 'ask', langs, sent);
-    const stood = (seen.branch || []).find((n) => n.kind === 'standing');
-    if (!stood) return null;
-    const { subject, relation, object, negated, many } = stood.state;
-    return subject == null || relation == null || object == null
-      ? null
-      : { subject, relation, object, negated: Boolean(negated), many: many ?? null };
-  };
-  const on = sideOf(when);
-  const then = sideOf(so);
-  if (!on || !then) return [];
-  // A condition about every one of a kind is one the brain cannot tell has
-  // been met. It would have to know there is no other, and it never does: not
-  // being told of one is not being told there is none. `if something is busy`
-  // is met by anything busy; `if everyone is busy` is met by nothing it can
-  // check, so the rule is not one it can keep.
-  if (a.all != null && on.many === a.all) return [];
-  return [
-    node('instruction', 'kept', [], {
-      id: sent.allocate(),
-      onId: sent.allocate(),
-      thenId: sent.allocate(),
-      on,
-      then,
-    }),
-  ];
-}
-
-// What one claim being so is why another is.
-//
-// The two claims are written down as things — the same way the two sides of a
-// standing instruction are — and the reason is joined to what it is the reason
-// for. Nothing here is the fact either claim speaks of: a claim is a thing that
-// says something, not the saying of it.
-// A claim asked about. `do i know that a mango is a fruit` is not asking
-// whether a mango is a fruit — it is asking whether somebody knows it, which
-// is a fact about them and the claim. So the claim is looked for among the
-// claims the world holds, and whoever the signal names is looked for standing
-// to it. A claim nobody has written down is one nobody holds.
-//
-// The hole may stand where the holder does: `who knows that a mango is a
-// fruit` asks after whoever stands there, and the same fact is walked back.
-function askedAbout(root, spoken, verdict, world) {
-  const a = world.anchors || {};
-  if (a.subject == null || a.object == null) return [];
-  const stood = verdict.find((n) => n.kind === 'standing');
-  if (!stood || stood.state.subject == null || stood.state.relation == null) return [];
-  const held = holdingOf(root, spoken, world);
-  if (held == null) return [];
-  const { joint, holder } = held;
-  const { subject, object, relation, negated } = stood.state;
-  // The claim the signal spoke of, where the world already wrote one down.
-  const written = world.standing(subject, a.subject).filter((claim) => {
-    if (!world.linked(claim, a.object).includes(object)) return false;
-    const of = world.claimOf(claim);
-    return of != null && of.relation === relation && of.not === Boolean(negated);
-  });
-  if (markOn(holder) === 'unknown') {
-    const found = written.flatMap((claim) => world.standing(claim, joint));
-    return [node('answer', 'link', [], { subject: null, relation: joint, found: [...new Set(found)] })];
-  }
-  const of = conceptOf(holder);
-  const ones = of == null ? [] : [of, ...world.individualsOf(of)];
-  const stands = written.some((claim) => ones.some((one) => world.linked(one, joint).includes(claim)));
-  return [
-    node('standing', stands ? 'held' : 'absent', [], {
-      subject: ones[0] ?? null,
-      relation: joint,
-      object: written[0] ?? null,
-      negated: false,
-    }),
-  ];
-}
-
-// Who a signal joins to a claim, and what joins them. Everything outside the
-// claim is the outer clause: the joint is the relation it names, and whoever
-// stands before it is the one holding the claim.
-function holdingOf(root, spoken, world) {
-  const a = world.anchors || {};
-  const outside = [];
-  const gather = (n) => {
-    if (n === spoken) return;
-    if (n.kind === 'thing') outside.push(n);
-    (n.branch || []).forEach(gather);
-  };
-  gather(root);
-  const at = outside.findIndex(
-    (n) => reaches(n, a.relation, world) && conceptOf(n) !== world.baseRelation,
-  );
-  if (at < 0) return null;
-  const holder = nearest(outside, at, -1, (n) => conceptOf(n) != null || markOn(n) === 'unknown');
-  if (holder == null) return null;
-  return { joint: conceptOf(outside[at]), holder };
-}
-
-// A claim somebody holds. `i know that ice is a solid` says two things: that
-// ice is a solid, which the brain checks and does not take in — saying you
-// know something is not telling the brain it is so — and that the sender
-// knows it, which is a fact about the sender and the claim, and is the
-// brain's to keep.
-//
-// The claim is written down as a thing, the way one standing behind another
-// already is, and whoever holds it is joined to it by whatever the signal
-// joined them with. Which words join somebody to a claim is the language's;
-// that a claim is something a relation can reach is the brain's.
-function aboutClaim(root, spoken, verdict, world, mood, sent) {
-  if (mood !== 'tell' || !world || sent == null || sent.allocate == null) return [];
-  const a = world.anchors || {};
-  if (a.subject == null || a.object == null) return [];
-  const stood = verdict.find((n) => n.kind === 'standing');
-  if (!stood || stood.state.subject == null || stood.state.relation == null) return [];
-  // Knowing something is knowing something that is so. Where the brain stands
-  // against the claim it says so, and there is nothing about the sender to
-  // keep: they did not know it. Where it merely has not been told, what the
-  // sender said is a fact about the sender all the same.
-  if (stood.name === 'against') return [];
-  const held = holdingOf(root, spoken, world);
-  if (held == null) return [];
-  const { joint, holder } = held;
-  const of = conceptOf(holder);
-  const bearer = bearerOf(of, world, markAt(holder), sent.allocate);
-  if (bearer == null) return [];
-  return [
-    node('about', 'claim', [], {
-      holder: bearer.id,
-      of: bearer.made ? of : null,
-      relation: joint,
-      claimId: sent.allocate(),
-      claim: {
-        subject: stood.state.subject,
-        relation: stood.state.relation,
-        object: stood.state.object,
-        negated: Boolean(stood.state.negated),
-      },
-    }),
-  ];
-}
-
-// The clock a doing stood at, read off the record the conversation keeps —
-// never off the world, which links no part of a day to a thing. The beginning
-// answers as it was told; where the signal asks after its end, the time it
-// went on is put forward from there. `null` where no row says the doing.
-function clockAt(term, said, a, world, graph) {
-  const rows = graph ? graph.graph().actions : [];
-  const nodes = graph ? graph.graph().nodes : null;
-  const nodeConcept = (v) => {
-    if (typeof v === 'number') return v;
-    if (typeof v === 'string' && nodes) {
-      const found = nodes.find((n) => n.id === v);
-      return found ? (found.of ?? found.term) ?? null : null;
-    }
-    return null;
-  };
-  const actKind = (t) => t != null && a.action != null && world.isA(t, a.action) && !world.isIndividual(t);
-  const hits = (x, y) => (actKind(x) || actKind(y) ? x === y : world.isA(x, y));
-  let clock = null;
-  let holder = null;
-  for (const r of rows) {
-    const did = r.did;
-    if (did == null) continue;
-    const kindRow = r.of != null && actKind(r.of);
-    const does = (v) => {
-      const c = nodeConcept(v);
-      if (c == null) return false;
-      // The kind of doing a row is names no row over another — every starting
-      // is a starting. One the conversation brought in and is speaking of does
-      // name one: the backup that started is this backup.
-      const brought = typeof v === 'string' && nodes && nodes.some((n) => n.id === v);
-      if (!brought && actKind(c)) return false;
-      // A happening the question names in particular is the one on the record,
-      // whatever kind of doing it was: `after the backup` is that backup, and
-      // the row's own part is it. Asked by the bare kind it is no row over
-      // another, which is what the equality above holds to.
-      if (term != null && world.isIndividual(term) && world.isA(term, c)) return true;
-      return hits(c, term) || (term != null && hits(term, c));
-    };
-    const matches =
-      does(did) ||
-      (!kindRow && r.of != null && does(r.of)) ||
-      Object.values(r.roles ?? {}).some((v) => does(v));
-    if (!matches) continue;
-    const at = (r.properties || {}).at;
-    if (at == null || at.amount == null || !UNITS.some((name) => a[name] === at.unit)) continue;
-    clock = { amount: Number(at.amount), unit: at.unit };
-    // How long it went on is held on the doing, or on what the doing was of:
-    // the update that started is one happening, and it is the update that ran
-    // for thirty-five minutes, not the starting. Who took what part is the
-    // world's to say, and it says which one of them it was.
-    holder = [did, ...tookPartIn(did, world)];
-    break;
-  }
-  if (clock == null) return null;
-  const wantedEnd = a.finish != null && said.some((n) => n != null && conceptOf(n) === a.finish);
-  if (wantedEnd) {
-    let length = 0;
-    for (const unit of world.standing(a.time, a.measure)) {
-      const held = holder.map((one) => world.held(one, a.for, unit)).find((v) => v != null);
-      if (held == null) continue;
-      length += held * unitsIn(unit, clock.unit, world);
-    }
-    if (length > 0) clock = { amount: clock.amount + length, unit: clock.unit };
-  }
-  return clock;
-}
-
-function because(joined, world, mood, sent) {
-  if (mood !== 'tell' || !world || sent == null || sent.allocate == null) return [];
-  const a = world.anchors || {};
-  if (a.cause == null || a.subject == null || a.object == null) return [];
-  // Which side the reason is on is the word's, and the language says so. Some
-  // words put the reason after them — `because a plank fell` — and some put
-  // what came of it — `so a road is wet`. One joining either way is the same
-  // joining: a reason and what came of it, told in the order the word chose.
-  const branch = joined.branch || [];
-  const at = branch.findIndex((n) => {
-    const fns = functionsOf(n);
-    return fns.includes('reason') || fns.includes('result');
-  });
-  if (at < 0) return [];
-  const reasonFollows = functionsOf(branch[at]).includes('reason');
-  // Either side may be something being so or something happening. A claim is
-  // written down as a thing when the cause is; a doing already is one, so what
-  // is wanted from it is which one it was.
-  const sideOf = (n) => {
-    const stood = n && (n.branch || []).find((b) => b.kind === 'standing');
-    if (stood) {
-      const { subject, relation, object, negated } = stood.state;
-      return subject == null || relation == null || object == null
-        ? null
-        : { claim: { subject, relation, object, negated: Boolean(negated) } };
-    }
-    const done = n && (n.branch || []).find((b) => b.kind === 'event');
-    return done && done.state.id != null ? { done: done.state.id } : null;
-  };
-  const wholes = (joined.branch || []).filter((b) => joinedWhole(b, joined));
-  const before = wholes.filter((b) => (joined.branch || []).indexOf(b) < at);
-  const after = wholes.filter((b) => (joined.branch || []).indexOf(b) > at);
-  const near = sideOf(before[before.length - 1]);
-  const far = sideOf(after[0]);
-  const effect = reasonFollows ? near : far;
-  const reason = reasonFollows ? far : near;
-  if (!effect || !reason) return [];
-  return [
-    node('cause', 'because', [], {
-      reason,
-      effect,
-      reasonId: sent.allocate(),
-      effectId: sent.allocate(),
-    }),
-  ];
-}
-
-// Two things said to have stood at one time. `the coffee was hot when it
-// arrived` says both — it was hot, and it arrived — and on top of that says
-// they were so together. That togetherness is a fact about the two of them and
-// about neither one alone, so it is kept where the order of things is kept,
-// as one moment holding both.
-function together(joined, world, mood, sent) {
-  if (mood !== 'tell' || !world || sent == null || sent.allocate == null) return [];
-  const at = (joined.branch || []).findIndex((n) => functionsOf(n).includes('moment'));
-  if (at < 0) return [];
-  // Either side may be something being so or something happening, and which
-  // it is decides what there is to point at afterwards.
-  const sideOf = (n) => {
-    const stood = n && (n.branch || []).find((b) => b.kind === 'standing');
-    if (stood) {
-      const { subject, relation, object, negated } = stood.state;
-      return subject == null || relation == null || object == null
-        ? null
-        : { claim: { subject, relation, object, negated: Boolean(negated) } };
-    }
-    const done = n && (n.branch || []).find((b) => b.kind === 'event');
-    return done && done.state.id != null ? { done: done.state.id } : null;
-  };
-  const wholes = (joined.branch || []).filter((b) => joinedWhole(b, joined));
-  const before = wholes.filter((b) => (joined.branch || []).indexOf(b) < at);
-  const after = wholes.filter((b) => (joined.branch || []).indexOf(b) > at);
-  const one = sideOf(before[before.length - 1]);
-  const other = sideOf(after[0]);
-  if (!one || !other) return [];
-  return [node('moment', 'when', [], { sides: [one, other] })];
-}
-
-// A word may hold a claim at arm's length rather than make it: `a cat might
+  // A word may hold a claim at arm's length rather than make it: `a cat might
   // be an animal` says nothing is so, it says what might be. The brain checks
   // it, which is what being asked does, and takes nothing in. It cannot tell
   // might from does-not-know — it has no notion of what could be, only of what
@@ -916,7 +623,7 @@ function together(joined, world, mood, sent) {
     return [instead(root, join, withBranch(judged, [
       ...judged.branch,
       ...because(judged, world, mood, sent),
-      ...together(judged, world, mood, sent),
+      ...atOneMoment(judged, world, mood, sent),
     ]))];
   }
 
@@ -3466,6 +3173,299 @@ function together(joined, world, mood, sent) {
 
   return roots;
 }
+
+// What a signal put as a condition, and what it put on the other side, held as
+// one thing the brain can come back to. Both sides are checked the way a
+// question is — neither is made — and what is kept is the pair, not the facts.
+function instructionFrom(when, so, world, langs, sent) {
+  const a = world.anchors || {};
+  if (a.instructing == null || a.condition == null || a.consequence == null) return [];
+  if (a.subject == null || a.object == null || sent == null || sent.allocate == null) return [];
+  const sideOf = (part) => {
+    if (!part) return null;
+    const [seen] = judge([part], world, 'ask', langs, sent);
+    const stood = (seen.branch || []).find((n) => n.kind === 'standing');
+    if (!stood) return null;
+    const { subject, relation, object, negated, many } = stood.state;
+    return subject == null || relation == null || object == null
+      ? null
+      : { subject, relation, object, negated: Boolean(negated), many: many ?? null };
+  };
+  const on = sideOf(when);
+  const then = sideOf(so);
+  if (!on || !then) return [];
+  // A condition about every one of a kind is one the brain cannot tell has
+  // been met. It would have to know there is no other, and it never does: not
+  // being told of one is not being told there is none. `if something is busy`
+  // is met by anything busy; `if everyone is busy` is met by nothing it can
+  // check, so the rule is not one it can keep.
+  if (a.all != null && on.many === a.all) return [];
+  return [
+    node('instruction', 'kept', [], {
+      id: sent.allocate(),
+      onId: sent.allocate(),
+      thenId: sent.allocate(),
+      on,
+      then,
+    }),
+  ];
+}
+
+// What one claim being so is why another is.
+//
+// The two claims are written down as things — the same way the two sides of a
+// standing instruction are — and the reason is joined to what it is the reason
+// for. Nothing here is the fact either claim speaks of: a claim is a thing that
+// says something, not the saying of it.
+// A claim asked about. `do i know that a mango is a fruit` is not asking
+// whether a mango is a fruit — it is asking whether somebody knows it, which
+// is a fact about them and the claim. So the claim is looked for among the
+// claims the world holds, and whoever the signal names is looked for standing
+// to it. A claim nobody has written down is one nobody holds.
+//
+// The hole may stand where the holder does: `who knows that a mango is a
+// fruit` asks after whoever stands there, and the same fact is walked back.
+function askedAbout(root, spoken, verdict, world) {
+  const a = world.anchors || {};
+  if (a.subject == null || a.object == null) return [];
+  const stood = verdict.find((n) => n.kind === 'standing');
+  if (!stood || stood.state.subject == null || stood.state.relation == null) return [];
+  const held = holdingOf(root, spoken, world);
+  if (held == null) return [];
+  const { joint, holder } = held;
+  const { subject, object, relation, negated } = stood.state;
+  // The claim the signal spoke of, where the world already wrote one down.
+  const written = world.standing(subject, a.subject).filter((claim) => {
+    if (!world.linked(claim, a.object).includes(object)) return false;
+    const of = world.claimOf(claim);
+    return of != null && of.relation === relation && of.not === Boolean(negated);
+  });
+  if (markOn(holder) === 'unknown') {
+    const found = written.flatMap((claim) => world.standing(claim, joint));
+    return [node('answer', 'link', [], { subject: null, relation: joint, found: [...new Set(found)] })];
+  }
+  const of = conceptOf(holder);
+  const ones = of == null ? [] : [of, ...world.individualsOf(of)];
+  const stands = written.some((claim) => ones.some((one) => world.linked(one, joint).includes(claim)));
+  return [
+    node('standing', stands ? 'held' : 'absent', [], {
+      subject: ones[0] ?? null,
+      relation: joint,
+      object: written[0] ?? null,
+      negated: false,
+    }),
+  ];
+}
+
+// Who a signal joins to a claim, and what joins them. Everything outside the
+// claim is the outer clause: the joint is the relation it names, and whoever
+// stands before it is the one holding the claim.
+function holdingOf(root, spoken, world) {
+  const a = world.anchors || {};
+  const outside = [];
+  const gather = (n) => {
+    if (n === spoken) return;
+    if (n.kind === 'thing') outside.push(n);
+    (n.branch || []).forEach(gather);
+  };
+  gather(root);
+  const at = outside.findIndex(
+    (n) => reaches(n, a.relation, world) && conceptOf(n) !== world.baseRelation,
+  );
+  if (at < 0) return null;
+  const holder = nearest(outside, at, -1, (n) => conceptOf(n) != null || markOn(n) === 'unknown');
+  if (holder == null) return null;
+  return { joint: conceptOf(outside[at]), holder };
+}
+
+// A claim somebody holds. `i know that ice is a solid` says two things: that
+// ice is a solid, which the brain checks and does not take in — saying you
+// know something is not telling the brain it is so — and that the sender
+// knows it, which is a fact about the sender and the claim, and is the
+// brain's to keep.
+//
+// The claim is written down as a thing, the way one standing behind another
+// already is, and whoever holds it is joined to it by whatever the signal
+// joined them with. Which words join somebody to a claim is the language's;
+// that a claim is something a relation can reach is the brain's.
+function aboutClaim(root, spoken, verdict, world, mood, sent) {
+  if (mood !== 'tell' || !world || sent == null || sent.allocate == null) return [];
+  const a = world.anchors || {};
+  if (a.subject == null || a.object == null) return [];
+  const stood = verdict.find((n) => n.kind === 'standing');
+  if (!stood || stood.state.subject == null || stood.state.relation == null) return [];
+  // Knowing something is knowing something that is so. Where the brain stands
+  // against the claim it says so, and there is nothing about the sender to
+  // keep: they did not know it. Where it merely has not been told, what the
+  // sender said is a fact about the sender all the same.
+  if (stood.name === 'against') return [];
+  const held = holdingOf(root, spoken, world);
+  if (held == null) return [];
+  const { joint, holder } = held;
+  const of = conceptOf(holder);
+  const bearer = bearerOf(of, world, markAt(holder), sent.allocate);
+  if (bearer == null) return [];
+  return [
+    node('about', 'claim', [], {
+      holder: bearer.id,
+      of: bearer.made ? of : null,
+      relation: joint,
+      claimId: sent.allocate(),
+      claim: {
+        subject: stood.state.subject,
+        relation: stood.state.relation,
+        object: stood.state.object,
+        negated: Boolean(stood.state.negated),
+      },
+    }),
+  ];
+}
+
+// The clock a doing stood at, read off the record the conversation keeps —
+// never off the world, which links no part of a day to a thing. The beginning
+// answers as it was told; where the signal asks after its end, the time it
+// went on is put forward from there. `null` where no row says the doing.
+function clockAt(term, said, a, world, graph) {
+  const rows = graph ? graph.graph().actions : [];
+  const nodes = graph ? graph.graph().nodes : null;
+  const nodeConcept = (v) => {
+    if (typeof v === 'number') return v;
+    if (typeof v === 'string' && nodes) {
+      const found = nodes.find((n) => n.id === v);
+      return found ? (found.of ?? found.term) ?? null : null;
+    }
+    return null;
+  };
+  const actKind = (t) => t != null && a.action != null && world.isA(t, a.action) && !world.isIndividual(t);
+  const hits = (x, y) => (actKind(x) || actKind(y) ? x === y : world.isA(x, y));
+  let clock = null;
+  let holder = null;
+  for (const r of rows) {
+    const did = r.did;
+    if (did == null) continue;
+    const kindRow = r.of != null && actKind(r.of);
+    const does = (v) => {
+      const c = nodeConcept(v);
+      if (c == null) return false;
+      // The kind of doing a row is names no row over another — every starting
+      // is a starting. One the conversation brought in and is speaking of does
+      // name one: the backup that started is this backup.
+      const brought = typeof v === 'string' && nodes && nodes.some((n) => n.id === v);
+      if (!brought && actKind(c)) return false;
+      // A happening the question names in particular is the one on the record,
+      // whatever kind of doing it was: `after the backup` is that backup, and
+      // the row's own part is it. Asked by the bare kind it is no row over
+      // another, which is what the equality above holds to.
+      if (term != null && world.isIndividual(term) && world.isA(term, c)) return true;
+      return hits(c, term) || (term != null && hits(term, c));
+    };
+    const matches =
+      does(did) ||
+      (!kindRow && r.of != null && does(r.of)) ||
+      Object.values(r.roles ?? {}).some((v) => does(v));
+    if (!matches) continue;
+    const at = (r.properties || {}).at;
+    if (at == null || at.amount == null || !UNITS.some((name) => a[name] === at.unit)) continue;
+    clock = { amount: Number(at.amount), unit: at.unit };
+    // How long it went on is held on the doing, or on what the doing was of:
+    // the update that started is one happening, and it is the update that ran
+    // for thirty-five minutes, not the starting. Who took what part is the
+    // world's to say, and it says which one of them it was.
+    holder = [did, ...tookPartIn(did, world)];
+    break;
+  }
+  if (clock == null) return null;
+  const wantedEnd = a.finish != null && said.some((n) => n != null && conceptOf(n) === a.finish);
+  if (wantedEnd) {
+    let length = 0;
+    for (const unit of world.standing(a.time, a.measure)) {
+      const held = holder.map((one) => world.held(one, a.for, unit)).find((v) => v != null);
+      if (held == null) continue;
+      length += held * unitsIn(unit, clock.unit, world);
+    }
+    if (length > 0) clock = { amount: clock.amount + length, unit: clock.unit };
+  }
+  return clock;
+}
+
+function because(joined, world, mood, sent) {
+  if (mood !== 'tell' || !world || sent == null || sent.allocate == null) return [];
+  const a = world.anchors || {};
+  if (a.cause == null || a.subject == null || a.object == null) return [];
+  // Which side the reason is on is the word's, and the language says so. Some
+  // words put the reason after them — `because a plank fell` — and some put
+  // what came of it — `so a road is wet`. One joining either way is the same
+  // joining: a reason and what came of it, told in the order the word chose.
+  const branch = joined.branch || [];
+  const at = branch.findIndex((n) => {
+    const fns = functionsOf(n);
+    return fns.includes('reason') || fns.includes('result');
+  });
+  if (at < 0) return [];
+  const reasonFollows = functionsOf(branch[at]).includes('reason');
+  // Either side may be something being so or something happening. A claim is
+  // written down as a thing when the cause is; a doing already is one, so what
+  // is wanted from it is which one it was.
+  const sideOf = (n) => {
+    const stood = n && (n.branch || []).find((b) => b.kind === 'standing');
+    if (stood) {
+      const { subject, relation, object, negated } = stood.state;
+      return subject == null || relation == null || object == null
+        ? null
+        : { claim: { subject, relation, object, negated: Boolean(negated) } };
+    }
+    const done = n && (n.branch || []).find((b) => b.kind === 'event');
+    return done && done.state.id != null ? { done: done.state.id } : null;
+  };
+  const wholes = (joined.branch || []).filter((b) => joinedWhole(b, joined));
+  const before = wholes.filter((b) => (joined.branch || []).indexOf(b) < at);
+  const after = wholes.filter((b) => (joined.branch || []).indexOf(b) > at);
+  const near = sideOf(before[before.length - 1]);
+  const far = sideOf(after[0]);
+  const effect = reasonFollows ? near : far;
+  const reason = reasonFollows ? far : near;
+  if (!effect || !reason) return [];
+  return [
+    node('cause', 'because', [], {
+      reason,
+      effect,
+      reasonId: sent.allocate(),
+      effectId: sent.allocate(),
+    }),
+  ];
+}
+
+// Two things said to have stood at one time. `the coffee was hot when it
+// arrived` says both — it was hot, and it arrived — and on top of that says
+// they were so together. That togetherness is a fact about the two of them and
+// about neither one alone, so it is kept where the order of things is kept,
+// as one moment holding both.
+function atOneMoment(joined, world, mood, sent) {
+  if (mood !== 'tell' || !world || sent == null || sent.allocate == null) return [];
+  const at = (joined.branch || []).findIndex((n) => functionsOf(n).includes('moment'));
+  if (at < 0) return [];
+  // Either side may be something being so or something happening, and which
+  // it is decides what there is to point at afterwards.
+  const sideOf = (n) => {
+    const stood = n && (n.branch || []).find((b) => b.kind === 'standing');
+    if (stood) {
+      const { subject, relation, object, negated } = stood.state;
+      return subject == null || relation == null || object == null
+        ? null
+        : { claim: { subject, relation, object, negated: Boolean(negated) } };
+    }
+    const done = n && (n.branch || []).find((b) => b.kind === 'event');
+    return done && done.state.id != null ? { done: done.state.id } : null;
+  };
+  const wholes = (joined.branch || []).filter((b) => joinedWhole(b, joined));
+  const before = wholes.filter((b) => (joined.branch || []).indexOf(b) < at);
+  const after = wholes.filter((b) => (joined.branch || []).indexOf(b) > at);
+  const one = sideOf(before[before.length - 1]);
+  const other = sideOf(after[0]);
+  if (!one || !other) return [];
+  return [node('moment', 'when', [], { sides: [one, other] })];
+}
+
 
 // Whether this part of a signal asks for something to be done rather than says
 // something is so. A doing named in it does; and so does a thing standing on

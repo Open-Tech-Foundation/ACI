@@ -123,6 +123,16 @@ All notable changes to this project are documented in this file.
   `is the gate open?` is `I don't know`, `was the gate open?` is yes, and told
   it is closed since, it is closed.
 
+- **Seven readings were shut inside the verdict phase without meaning to be.**
+  They are written at the left margin like every other one, but they fall
+  between the opening and closing of `judge`, so they were scoped to it and
+  nothing outside could call them. It is not a style point: a reading added
+  beside them is invisible to the rest of the file, which is how one added this
+  week came back as a name that did not exist. Two of them were the same name
+  as something else — one joins two number words, the other holds two things
+  said to have stood at one time — and the shut-in one had been hiding the
+  other, which was imported and never reachable.
+
 - **Reading a word no longer reaches back into the brain.** The phase that
   picks which of a word's readings a signal means imported two of its tests
   from the phase that uses it, so the two modules imported each other. Both
