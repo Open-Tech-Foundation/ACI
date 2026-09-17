@@ -11,14 +11,19 @@ async function fresh(...said) {
 }
 
 test("each of the operations words records its doing", async () => {
+  // All three are the same shape, and were not: an update that crashed used to
+  // be recorded as an update whose target was a crash, and a backup that
+  // finished as a backup whose target was a finish. What happened is the
+  // crashing and the finishing; the update and the backup are what it happened
+  // to.
   await forget();
   await brain("the update crashed");
   await brain("the server restarted");
   await brain("the backup finished");
   const graph = serialize();
-  assert(/event\(target: crash\[3041\], type: update\[3044\]\)/.test(graph), `a crash happened:\n${graph}`);
+  assert(/event\(n\d, type: crash\[3041\]\)/.test(graph), `a crash happened:\n${graph}`);
   assert(/event\(n\d, type: restart\[3042\]\)/.test(graph), `a restart happened:\n${graph}`);
-  assert(/event\(target: finish\[3040\], type: backup\[3043\]\)/.test(graph), `a finishing happened:\n${graph}`);
+  assert(/event\(n\d, type: finish\[3040\]\)/.test(graph), `a finishing happened:\n${graph}`);
   await forget();
 });
 

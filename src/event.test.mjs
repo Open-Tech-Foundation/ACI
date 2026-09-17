@@ -182,3 +182,45 @@ test("a time is no way for a thing to be", async () => {
   assert(/times: night/.test(graph), `the exam was at night:\n${graph}`);
   await forget();
 });
+
+test("a doing spoken of as a thing is what happened to it, not what happened", async () => {
+  // `the backup started` is a starting, and the backup is what started. It
+  // used to be a backup whose target was a starting — a doing standing in a
+  // part of itself — because the first word that could be a doing was taken
+  // for the doing, whether or not the signal was speaking of it.
+  await fresh("the backup started in the morning");
+  const graph = serialize();
+  assert(/event\(n\d, type: starting\[2670\]\)/.test(graph), `a starting happened:\n${graph}`);
+  assert(!/event\([^\n]*type: backup/.test(graph), `and the backup is not what happened:\n${graph}`);
+  assert(/n\d\s+backup\s+type: backup\[3043\]/.test(graph), `the backup is what started:\n${graph}`);
+  assertEquals((await brain("when did the backup start?")).expression.state.says, "morning");
+  await forget();
+});
+
+test("a word that says only that something took place names nothing", async () => {
+  // `the crash happened at eleven hours` is one crash with a clock on it. The
+  // happening was standing as a part of the crash — a doing done to a word
+  // that says no more than that it was done.
+  await fresh("the crash happened at eleven hours and five minutes");
+  const graph = serialize();
+  assert(/event\(type: crash\[3041\]\)\s+\{at: 665/.test(graph), `the crash is what happened:\n${graph}`);
+  assert(!/happening/.test(graph), `and the happening plays no part in it:\n${graph}`);
+  await forget();
+});
+
+test("a happening can be asked after by name", async () => {
+  // Whether something took place is a question about the happening and names
+  // no part of it. Nothing on the record is not a no.
+  await fresh("a plank fell after a meeting");
+  assertEquals((await brain("did the meeting happen?")).expression.name, "affirm");
+  assertEquals((await brain("did a party happen?")).expression.name, "unsure");
+  await forget();
+});
+
+test("asked something else of the same happening, it is not answered whether it happened", async () => {
+  // `how long is the backup?` names the backup and asks after its length; that
+  // it happened answers past the question.
+  await fresh("the backup ran for 35 minutes");
+  assertEquals((await brain("how long is the backup?")).expression.state.says, "thirty-five minutes");
+  await forget();
+});

@@ -123,6 +123,25 @@ All notable changes to this project are documented in this file.
   `is the gate open?` is `I don't know`, `was the gate open?` is yes, and told
   it is closed since, it is closed.
 
+- **A doing spoken of as a thing is what happened to it, not what happened.**
+  `the backup started` was recorded as a backup whose target was a starting —
+  a doing standing in a part of itself — and `the update crashed` as an update
+  whose target was a crash. The first word that could be a doing was taken for
+  the doing, whether or not the signal was speaking of it. One reading now says
+  which word says what happened, and a doing the signal brings in the way it
+  brings in anything it speaks of is one that took place: one occurrence, in
+  the world, that everything said of it hangs off. So `when did the backup
+  start?` answers the morning it was told of, and every one of these is the
+  same shape.
+
+- **A word that says only that something took place names nothing.** `the crash
+  happened at eleven hours` wrote down a crash whose target was a happening,
+  and the clock hung off that. Saying a thing happened adds nothing to what
+  happened — it hands the doing to what took place, and plays no part in it.
+  With that, whether a happening took place can be asked: `did the meeting
+  happen?` is yes where the conversation holds one, and where it is asked
+  anything else of the same happening it answers that instead.
+
 - **A clock on a doing is not a place, and a doing that leaves a way to stand
   ends nowhere.** Two readings that stood between the brain and what it was
   told. `the gate opened at the dock` dropped the opening and wrote the gate

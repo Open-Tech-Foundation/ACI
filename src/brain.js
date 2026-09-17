@@ -1958,7 +1958,13 @@ function numberBeside(roots, at, world) {
 // Read off the order, like a count: a marker beside a thing marks that thing.
 function markOf(roots, at, world, langs) {
   const mine = conceptOf(roots[at]);
-  if (!world || mine == null || !world.isA(mine, (world.anchors || {}).thing)) return null;
+  const a = (world && world.anchors) || {};
+  // A doing may be pointed at the same way a thing is. `the backup` is one
+  // backup that happened, and which one is meant is exactly what a marker
+  // says, so the mark belongs on it as much as on any thing.
+  if (!world || mine == null || !(world.isA(mine, a.thing) || world.isA(mine, a.action))) {
+    return null;
+  }
   const marker = markerFor(roots, at, markingSide(roots, langs), markOn);
   const marks = markOn(marker);
   return marks === 'new' || marks === 'known' ? marks : null;

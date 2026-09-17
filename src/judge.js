@@ -749,7 +749,17 @@ function clockAt(term, said, a, world, graph) {
     const kindRow = r.of != null && actKind(r.of);
     const does = (v) => {
       const c = nodeConcept(v);
-      if (c == null || actKind(c)) return false;
+      if (c == null) return false;
+      // The kind of doing a row is names no row over another — every starting
+      // is a starting. One the conversation brought in and is speaking of does
+      // name one: the backup that started is this backup.
+      const brought = typeof v === 'string' && nodes && nodes.some((n) => n.id === v);
+      if (!brought && actKind(c)) return false;
+      // A happening the question names in particular is the one on the record,
+      // whatever kind of doing it was: `after the backup` is that backup, and
+      // the row's own part is it. Asked by the bare kind it is no row over
+      // another, which is what the equality above holds to.
+      if (term != null && world.isIndividual(term) && world.isA(term, c)) return true;
       return hits(c, term) || (term != null && hits(term, c));
     };
     const matches =
@@ -760,7 +770,11 @@ function clockAt(term, said, a, world, graph) {
     const at = (r.properties || {}).at;
     if (at == null || at.amount == null || !UNITS.some((name) => a[name] === at.unit)) continue;
     clock = { amount: Number(at.amount), unit: at.unit };
-    holder = did;
+    // How long it went on is held on the doing, or on what the doing was of:
+    // the update that started is one happening, and it is the update that ran
+    // for thirty-five minutes, not the starting. Who took what part is the
+    // world's to say, and it says which one of them it was.
+    holder = [did, ...tookPartIn(did, world)];
     break;
   }
   if (clock == null) return null;
@@ -768,7 +782,7 @@ function clockAt(term, said, a, world, graph) {
   if (wantedEnd) {
     let length = 0;
     for (const unit of world.standing(a.time, a.measure)) {
-      const held = world.held(holder, a.for, unit);
+      const held = holder.map((one) => world.held(one, a.for, unit)).find((v) => v != null);
       if (held == null) continue;
       length += held * unitsIn(unit, clock.unit, world);
     }
@@ -1676,7 +1690,7 @@ function together(joined, world, mood, sent) {
   // doing is the agent. No agent, no kind, or no occurrence: nothing to
   // count, and the normal paths below say so.
   if (holes.length > 0 && said.some((n) => reaches(n, a.quantity, world))) {
-    const acting = said.findIndex((n) => reaches(n, a.action, world));
+    const acting = doingIn(said, world);
     if (acting >= 0) {
       const action = conceptOf(said[acting]);
       const parts = rolesIn(
@@ -4246,7 +4260,7 @@ function missingFrom(event, stood, world) {
 // the operation it causes; the brain works the operation and keeps the result.
 function act(said, claims, world, side, sides, allocate) {
   const a = world.anchors || {};
-  const acting = said.findIndex((n) => reaches(n, a.action, world));
+  const acting = doingIn(said, world);
   // A signal may name what was done, or name the operation itself: `give one
   // spoon to it` and `add one spoon into it` come to the same change in what a
   // thing holds, and only one of them has anyone doing it.
@@ -4279,8 +4293,21 @@ function act(said, claims, world, side, sides, allocate) {
   const parts = (acting < 0
     ? stoodWith
     : stoodWith.map((p) => {
-        if (p.mark !== 'new' || p.of == null) return p;
-        if (!world.isA(p.of, a.thing) || world.isIndividual(p.of)) return p;
+        if (p.of == null || world.isIndividual(p.of)) return p;
+        // A doing brought in as a thing is one that happened, and one that
+        // happened is one occurrence. `the backup started` is that backup and
+        // not backups, so it is made the same way a thing spoken of as one of
+        // its kind is — and what was said of it before is said of the same
+        // one, so a backup this conversation has already met is reached rather
+        // than made twice.
+        const happening =
+          (p.mark === 'new' || p.mark === 'known') &&
+          a.action != null &&
+          world.isA(p.of, a.action) &&
+          p.of !== conceptOf(said[named]);
+        if (!happening && (p.mark !== 'new' || !world.isA(p.of, a.thing))) return p;
+        const met = happening && p.mark === 'known' ? world.oneOf(p.of) : null;
+        if (met != null) return { ...p, of: met, kind: p.of };
         const id = allocate();
         const name = `${world.term(p.of).name}#${id}`;
         called.push(node('call', name, [], { name, id, of: p.of, made: true }));
@@ -4465,6 +4492,7 @@ function rolesIn(said, acting, claims, world, side, sides, joints) {
     // be done to — `hi hi` is two greetings, not one greeting greeting the
     // other.
     if (functionsOf(n).includes('extreme') || greetsHere(n, world)) return;
+    if (i !== acting && bareHappening(n, world)) return;
     const named = roleOn(of(i));
     if (!named || a[named] == null) return;
     parts.push({
@@ -4517,6 +4545,7 @@ function rolesIn(said, acting, claims, world, side, sides, joints) {
     if (jointed.has(i)) return;
     if (i === acting || taken.has(i) || !claims(n) || isDeterminer(said, i, world) || !sides) return;
     if (functionsOf(n).includes('extreme') || greetsHere(n, world)) return;
+    if (i !== acting && bareHappening(n, world)) return;
     const role = a[i < acting ? sides.before : sides.after];
     if (role != null) parts.push({ role, of: conceptOf(n), amount: amountOf(n, world), mark: markAt(n), at: i });
   });
@@ -4889,6 +4918,54 @@ function occurrenceAmount(world, action, parts, kind) {
 // never offers, answers, or plays alongside — its head speaks for it.
 // Standing as the phrase's own head (`its`, `the film's` before the joint)
 // it stays: something must say whose the telling is about.
+// A doing-word may say what is happening, or name a happening. `happen` says
+// something took place; `the meeting` is one that did, spoken of as a thing.
+// What tells them apart is whether the signal points at it: a word a
+// determiner brings in is one this conversation is speaking of, and what is
+// said *of* it is the doing.
+// A word that says only that something took place. It names no part of what
+// happened and plays none: `the crash happened` is one crash and nobody else
+// in it.
+function bareHappening(n, world) {
+  const a = world.anchors || {};
+  return a.happen != null && conceptOf(n) === a.happen;
+}
+
+function broughtInAsThing(said, i) {
+  const before = said[i - 1];
+  return before != null && functionsOf(before).includes('determiner');
+}
+
+// Which word says what happened. Every reading that looks for a doing asks
+// here, so a happening spoken of is never mistaken for the doing in one
+// reading and not another. Where the signal names nothing but happenings
+// spoken of, the first of them stands as it always did.
+export function doingIn(said, world) {
+  const a = world.anchors || {};
+  let spoken = -1;
+  let bare = -1;
+  for (let i = 0; i < said.length; i += 1) {
+    if (!reaches(said[i], a.action, world)) continue;
+    // A word that says only that something took place leaves what took place
+    // still to be named. `the crash happened` is the crash; `what happened
+    // first` has nothing else it could be, and then it stands as the doing.
+    if (a.happen != null && conceptOf(said[i]) === a.happen) {
+      // And it hands the doing to what took place, whatever the signal goes on
+      // to name: `the crash happened two hours after the server started` is
+      // the crash, and the starting is what the phrase after it counts from.
+      if (spoken >= 0) return spoken;
+      if (bare < 0) bare = i;
+      continue;
+    }
+    if (broughtInAsThing(said, i)) {
+      if (spoken < 0) spoken = i;
+      continue;
+    }
+    return i;
+  }
+  return spoken >= 0 ? spoken : bare;
+}
+
 export function isDeterminer(said, i, world) {
   if (!said || i < 0 || !said[i]) return false;
   if (!functionsOf(said[i]).includes('possessor')) return false;
@@ -4911,13 +4988,36 @@ export function isDeterminer(said, i, world) {
 // nothing the brain can look for.
 function happened(said, world, claims, side, sides) {
   const a = world.anchors || {};
-  const acting = said.findIndex((n) => reaches(n, a.action, world));
+  const acting = doingIn(said, world);
   if (acting < 0) return null;
   const parts = rolesIn(said, acting, claims, world, side, sides).filter((p) => p.of != null);
-  if (parts.length === 0) return null;
-
-
   const action = conceptOf(said[acting]);
+  // A happening the signal speaks of is asked after by name, and names no part
+  // of itself: `did the meeting happen?` is about the meeting and nobody in
+  // it. One on the record and not denied is the whole of the answer.
+  if (parts.length === 0) {
+    if (!broughtInAsThing(said, acting)) return null;
+    // Only where the signal asks nothing else. `how long is the backup?` names
+    // the same backup and asks after its length, and answering that it
+    // happened answers past the question.
+    if (said.some((n) => markOn(n) === 'unknown')) return null;
+    // Said by its kind it is any one of that kind; said as the one already
+    // met, it is that one.
+    const ones = world.isIndividual(action)
+      ? [action]
+      : world.members(action, world.baseRelation).filter((one) => world.isIndividual(one));
+    const ever = ones.some((one) =>
+      world
+        .linked(one, world.baseRelation)
+        .every((kind) => !world.denies(one, kind, world.baseRelation)));
+    return node('standing', ever ? 'held' : 'absent', [], {
+      subject: null,
+      relation: null,
+      object: null,
+      negated: false,
+    });
+  }
+
   const expectedWhen = whenIn(said, world);
   const plays = (one, p) =>
     world.linked(one, p.role).some((t) => t === p.of || world.isA(t, p.of));
@@ -4960,9 +5060,19 @@ const ROLES = ['agent', 'target', 'source', 'destination', 'when', 'instrument']
 // part in what happened, the hole included; the brain looks through what it
 // was told happened for one where the named parts match, and answers with what
 // played the hole's part.
+// Who took what part in one occurrence. What is true of a doing may be true of
+// whoever or whatever was in it instead — the update that started is what ran
+// for thirty-five minutes, and the starting is not.
+function tookPartIn(did, world) {
+  const a = world.anchors || {};
+  return [a.agent, a.target, a.source, a.destination, a.instrument]
+    .filter((role) => role != null)
+    .flatMap((role) => world.linked(did, role));
+}
+
 function partAsked(said, world, claims, side, sides) {
   const a = world.anchors || {};
-  const acting = said.findIndex((n) => reaches(n, a.action, world));
+  const acting = doingIn(said, world);
   if (acting < 0) return null;
 
   // A hole plays a part the same way anything else does, and is known by its
@@ -4977,6 +5087,7 @@ function partAsked(said, world, claims, side, sides) {
     // and taking it for a participant makes a doing nobody described.
     if (i === acting || !asking(n) || functionsOf(n).includes('extreme')) return;
     if (greetsHere(n, world)) return;
+    if (i !== acting && bareHappening(n, world)) return;
     // A hole may name the part it asks after rather than stand where that part
     // stands: `when did nila arrive` asks after when, and says so.
     const asked = markOn(n) === 'unknown' ? conceptOf(n) : null;
@@ -5138,10 +5249,18 @@ if (far !== undefined) {
         // The parts a doing was done among name it too: the row says who its
         // parts were in its own words, and the question's named thing is one
         // of them. Only the parts are asked for — the act every row shares
-        // names no row over another.
+        // names no row over another. Except where the part is itself a
+        // happening this conversation holds: the backup the starting started
+        // is one particular backup, and it names the row as much as a thing
+        // standing there would.
         for (const v of Object.values(r.roles ?? {})) {
-          for (const c of nodeConcepts(v)) {
-            if (actKind(c)) continue;
+          const part = typeof v === 'string' ? rows.find((one) => one.id === v) : null;
+          const brought = typeof v === 'string' && nodes && nodes.some((one) => one.id === v);
+          const concepts = part
+            ? [...new Set([part.of, part.said].filter((one) => one != null))]
+            : nodeConcepts(v);
+          for (const c of concepts) {
+            if (!part && !brought && actKind(c)) continue;
             if (c === p.of) return true;
             if (hits(c, p.of) || (p.of != null && hits(p.of, c))) return true;
           }
@@ -5185,10 +5304,15 @@ if (far !== undefined) {
     if (a.finish != null && said.some((n) => conceptOf(n) === a.finish) && clock != null) {
       for (const r of mine) {
         const at = (r.properties || {}).at;
-        if (r.did == null || at == null || at.amount == null) continue;
+        if (at == null || at.amount == null) continue;
+        // How long it went on is held on the doing, or on what the doing was
+        // of: the backup that started is one happening, and it is the backup
+        // that ran for thirty-five minutes, not the starting.
+        const ran = r.did == null ? [] : [r.did, ...tookPartIn(r.did, world)];
+        if (ran.length === 0) continue;
         let length = 0;
         for (const unit of world.standing(a.time, a.measure)) {
-          const held = world.held(r.did, a.for, unit);
+          const held = ran.map((one) => world.held(one, a.for, unit)).find((v) => v != null);
           if (held == null) continue;
           length += held * unitsIn(unit, at.unit, world);
         }

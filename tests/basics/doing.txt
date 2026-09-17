@@ -46,6 +46,7 @@ why is the door open? => ravi opened a door
 # A doing named as a thing happened.
 a plank fell after a meeting
 did the meeting happen? => affirm
+did a party happen? => unsure
 what happened first? => meeting
 what happened last? => plank
 

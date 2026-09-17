@@ -1207,16 +1207,6 @@
       ]
     },
     {
-      "id": 2676,
-      "name": "happening",
-      "links": [
-        {
-          "rel": 294,
-          "to": 257
-        }
-      ]
-    },
-    {
       "id": 2677,
       "name": "providing",
       "links": [
