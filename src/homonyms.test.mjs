@@ -138,3 +138,20 @@ test("what the doing reading names is a doing", async () => {
   assertEquals((await brain("singing is a work?")).expression.name, "affirm");
   await forget();
 });
+
+test("the readings of one word are alternatives, not a list", async () => {
+  // `turkey` is a bird and a country. Asked for the capital of one, the
+  // country reading answers and the bird reading has nothing to add — it was
+  // saying `ankara I don't know`, both readings speaking over one question.
+  await forget();
+  assertEquals((await brain("what is the capital of turkey?")).expression.state.says, "ankara");
+  await forget();
+});
+
+test("asked flat, a word of two readings still answers both ways", async () => {
+  // Nothing in the signal tells them apart, so neither is chosen and both are
+  // true: a turkey is a bird, and turkey is a country.
+  await forget();
+  assertEquals((await brain("what is a turkey?")).expression.state.says, "country, bird");
+  await forget();
+});

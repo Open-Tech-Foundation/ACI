@@ -3004,7 +3004,16 @@ function together(joined, world, mood, sent) {
       if (harmed != null) mine.push(node('refuse', 'harm', [], { said: harmed }));
       nodes.push(...among(mine, i, asked.length > 1));
     }
-    return [withBranch(root, [...root.branch, ...nodes])];
+    // The readings of one word are alternatives, not a list. Where the signal
+    // settles which one is meant, the one it settled answers and the other has
+    // nothing to add — saying both put `ankara` and `I don't know` side by side
+    // over one question. Where none of them found anything, that is the answer
+    // and it is said once.
+    const found = nodes.some((n) => n.kind === 'answer' && (n.state.found || []).length > 0);
+    const spoke = found
+      ? nodes.filter((n) => n.kind !== 'answer' || (n.state.found || []).length > 0)
+      : nodes;
+    return [withBranch(root, [...root.branch, ...spoke])];
   }
 
   // A question that names nothing the brain knows is still a question, and it

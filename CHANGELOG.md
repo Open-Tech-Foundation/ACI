@@ -97,6 +97,15 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **The readings of one word are alternatives, not a list.** `what is the
+  capital of turkey?` answered **`ankara I don't know`** — the country reading
+  found the city, the bird reading found nothing, and both spoke over one
+  question. Where the signal settles which reading is meant, that one answers
+  and the other has nothing to add. Where none of them finds anything, that is
+  the answer and it is said once. Asked flat, with nothing to tell them apart,
+  both still answer: `what is a turkey?` is `country, bird`, and `what is a
+  cricket?` is `sport, insect`.
+
 - **`the capital of france` says paris.** The whole phrase came back
   unread. Four things were wrong at once, and all four had to go.
 
