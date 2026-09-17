@@ -290,6 +290,39 @@ everything else does; five is contained; three and four are the real primitives
 and three has to come before four, since a claim about what happened needs the
 happening to be a thing first.
 
+## The review, checked
+
+A read of the engine came back with six findings. What follows is what held up
+against the code, so the ones that did not are not chased again.
+
+**Held up, and fixed.** The verdict phase had seven readings written at the
+left margin but falling inside its own braces, so they were scoped to it and
+nothing outside could call them — one added this week came back as a name that
+did not exist. The conversation was a module binding read from wherever;
+sixteen readings depended on what had been said without saying so. The reading
+phase and the brain imported each other. A settlement was ordered by the
+machine's clock, so a clock stepped backwards silently threw away the newer
+state. What the conversation was told was written before the world was grown
+by it.
+
+**Held up, not fixed.** The verdict phase is still one 2,700-line function
+whose guard order is its priority and is declared nowhere, and no reading
+declares what it consumed — that is Open-2 below, and it is the next thing.
+The brain still splits a signal on whitespace and folds case itself, which no
+language declares; that is a real leak, and fixing it means letting a language
+say what separates its words and which of its symbols pair by case. Nothing
+yet needs either, so it is written down rather than built. What a conversation
+worked out is dropped when it is written down and picked up again — nothing
+reads that chain back today, and `why` will.
+
+**Did not hold up.** Denial was said to check direct edges only. It does, but
+every reading that needs the ladder climbs it around the call: a heron that is
+not a fish denies a grey heron, an individual of a denied kind, a denial on the
+broader kind, and a denied holding through a kind. The case that looked like a
+counterexample — being told a trolley is a cart, and refused — is the world
+saying its vehicles are exclusive, which is a stated denial and outranks a
+signal.
+
 ## Open, in the order I would take them
 
 **1. Rules fire where they are told, and write what follows.**
