@@ -123,6 +123,55 @@ Reachable today, with a probe for each:
   hour longer than a minute?` reads time, and a comparison the brain cannot
   place answers nothing rather than falling through to a denial.
 
+## The foundation, swept end to end
+
+Every foundation probed with clean inputs and fresh entities, reading the record
+as well as the reply. What follows is what the sweep found, not what the
+capability matrix claims.
+
+**Sound.** Existence. Classification — a kind of, every, all, no, and the
+inherited walk. Composition — part is transitive and answers from either end.
+Space — on, in, under, where, and a placement moved by a doing. Time — a clock,
+an order, two doings in one signal, the past side of now. State and change — a
+told state, a change over it, a doing that brings one about, and what was so
+before. Events — who did it and what it was done to. Quantity — counting,
+adding over holders, taking away, comparing. Measure — an amount, a unit
+converted, a scale with no units. Modality — can and cannot.
+
+**Two claims in this file were wrong and are corrected.** `why` answering from
+a doing did not work — every `why` the transcripts cover is a told `because` —
+and is now built. Plain identity had been broken three changes earlier by the
+`as` reading, with every test still passing; both are fixed and tested.
+
+**What the sweep found broken, in the order I would take it:**
+
+1. **A denied relation is not read.** `omar is not the father of devi` comes
+   back unknown, where `the ferry is not red` is taken in. Denial works on a
+   property and not on a relation.
+2. **`why` has no shape for a denial.** `why is the drum not cold?` is unread.
+3. **A doing named as a thing is not asked after.** `did the meeting happen?`,
+   and `who was in the meeting?` after `nila spoke during the meeting` — the
+   membership primitive is unbuilt.
+4. **The fronted hole**, still: `what did devi carry?` where `devi carried
+   what?` answers. Blocked on the doing of a clause, above.
+5. **A superlative over holders.** `who has the most ropes?` is unread where
+   `who has more ropes?` answers.
+6. **`many` has no relative sense.** `does devi have many ropes?` cannot be
+   answered, as `PRIMITIVES.md` already says.
+7. **A told cause.** `the storm delayed the ferry` is unread.
+8. **A state change told with a clock.** `the gate became open at ten hours`.
+9. **`must`, and knowing.** `must devi swim?` and `do you know the ferry is
+   late?` are unread; `omar said the ferry is late` takes nothing in.
+10. **Saying a condition back.** `if a ferry is late then the river is rough`
+    answers `a river is property`.
+11. **Identity between two kinds.** `the lantern is the same as the lamp` is
+    unread, where identity between names works.
+
+**And what is sound but shallow**, worth knowing before building on it:
+containment does not compose — a coin in a jar on a shelf is only in the jar;
+and `some` draws nothing — `some herons are grey` leaves `are all herons grey?`
+unanswered rather than refused.
+
 ## Open, in the order I would take them
 
 **1. Rules fire where they are told, and write what follows.**
