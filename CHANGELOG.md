@@ -115,6 +115,22 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A fact written either way round is the same fact.** A cart told it is made
+  of a wheel was never known to *have* one: the walk that steps through a
+  relation read facts written through a declared converse, and the walk that
+  asks one outright read only what was written in the direction asked. Two
+  walks over the same world, disagreeing. They agree now.
+
+  What a thing *inherits* from its kinds is still read only the way that kind's
+  fact was written, and that is the whole of why widening this used to put
+  things in places they had never been. `a container holds things` says what
+  containers do; turned round it says every thing is inside one, and a lamp on
+  a crate came back `on a crate, on a container`. A fact about a kind is about
+  that kind.
+
+  With the two walks agreed, `made-of` is declared under `has` — what a thing is
+  made of, it has — and `does the cart have a wheel?` answers.
+
 - **Place carries.** A coin in a jar on a shelf was not on the shelf, and a
   book on a tray on a table was not on the table. The world has held the way to
   say how relations compose all along — a father's father is a grandfather,

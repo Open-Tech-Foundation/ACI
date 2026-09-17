@@ -1060,10 +1060,22 @@ export function fromWorldData(source) {
     },
     // What a term links to directly by one relation — its answer, where isA is
     // its question.
+    // What a term says in the direction it was written, and nothing read back
+    // through a converse. A fact about a kind is about that kind: `a container
+    // holds things` says what containers do, and read the other way round it
+    // would say every thing is in one — which is true of no thing in
+    // particular and is not what was said.
+    stated: (id, rel) => {
+      if (!terms.has(id) || rel == null) return [];
+      const said = [...equivalents(id)].flatMap((subject) => variantLinks(subject, rel));
+      const out = [];
+      for (const link of said) if (!out.includes(link.to)) out.push(link.to);
+      return out;
+    },
     linked: (id, rel) => {
       if (!terms.has(id) || rel == null) return [];
       if (rel === sameRel) return [...equivalents(id)];
-      let links = [...equivalents(id)].flatMap((subject) => variantLinks(subject, rel));
+      let links = [...equivalents(id)].flatMap((subject) => directedLinks(subject, rel));
       // Quantity links retain history per object; only the latest value is a
       // current link. Placement relations have one current target, while old
       // targets remain available in the authored record.

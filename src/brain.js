@@ -2139,7 +2139,12 @@ export function reached(subject, relation, world) {
   }
   const out = [];
   for (const rung of upward(subject, world)) {
-    for (const t of world.linked(rung, relation)) if (!out.includes(t)) out.push(t);
+    // What a thing itself stands in is read both ways round — a fact written
+    // either way is the same fact. What it inherits from its kinds is read only
+    // the way that kind's fact was written: `a container holds things` says
+    // what containers do, and turned round it would put every thing inside one.
+    const found = rung === subject ? world.linked(rung, relation) : world.stated(rung, relation);
+    for (const t of found) if (!out.includes(t)) out.push(t);
   }
   return out;
 }

@@ -741,7 +741,16 @@ test("reading a relation from many terms gives what reading each alone gives", (
   const w = build();
   assertEquals(w.linked(7, PAIRED), [8, 6], "symmetry reaches the neighbour on either side");
   assertEquals(w.members(7, PAIRED), [6, 8], "and arrives from either side");
-  assertEquals(w.linked(9, HOLDS), [6], "a stated fact is read in the direction it was written");
+  // A fact written either way round is the same fact: `d holds a` was written
+  // that way and `c is held by d` the other, and asking what d holds finds
+  // both. Read in the written direction alone, the walk that steps through a
+  // relation and the walk that asks it outright disagreed — and a cart told it
+  // is made of a wheel was never known to have one.
+  assertEquals(w.linked(9, HOLDS), [6, 8], "a fact written either way round is the same fact");
+  // What a term says in the direction it was written, and nothing turned round:
+  // a fact about a kind is about that kind, and read back it would be about
+  // every thing at the far end of it.
+  assertEquals(w.stated(9, HOLDS), [6], "and what was written is still separable");
 });
 
 test("the order terms were written in cannot reach an answer", () => {

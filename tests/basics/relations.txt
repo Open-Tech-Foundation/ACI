@@ -52,6 +52,12 @@ what does the cart have? => wheel
 devi has 3 ropes
 is a rope part of devi? => unsure
 
+# What a thing is part of is not something it has.
+the wheel is part of the cart
+the cart is part of the train
+what does the cart have? => wheel
+does the train have a wheel? => affirm
+
 # The long way round says whose it is.
 the roof of the shed is red
 what colour is the roof? => red
