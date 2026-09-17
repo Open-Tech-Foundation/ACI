@@ -1159,7 +1159,10 @@ const only = (value) => (Array.isArray(value) ? value[0] : value);
 function doing(roles, world, action) {
   const anchors = (world && world.anchors) || {};
   const played = (role) => role != null && Object.hasOwn(roles, role);
-  if (played(anchors.source) || played(anchors.destination)) return TRANSFER;
+  // A transfer moves something between ends: a handover needs what was handed
+  // over, not only where it went. Motion has ends and nothing moved — coming
+  // home is no transfer — so a thing played as target is what makes it one.
+  if ((played(anchors.source) || played(anchors.destination)) && played(anchors.target)) return TRANSFER;
   // A value in the far part does not make the doing a changing. `arun woke
   // late` says when he woke, not what he became, and reading it as a change
   // threw the waking away — the row took the change's name and the verb was

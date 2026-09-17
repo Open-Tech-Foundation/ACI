@@ -97,6 +97,13 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **A transfer moves something.** Motion with somewhere to go was recorded as
+  a transfer of nothing, from nowhere — coming home is no handover. A thing
+  played as target is what makes a transfer one now, so a coming stands as an
+  event with somewhere it went to, and the doing is printed on the row instead
+  of hiding behind the primitive's name. Handovers always carry things, so
+  they are untouched.
+
 - **What a motion takes is what the action says, not word order.** `ravi came
   home` left home standing as what was come, and `toward` was no word at all.
   Coming takes what it moves toward and leaving what it moves away from, so

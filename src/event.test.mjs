@@ -260,13 +260,13 @@ test("what a motion takes is what the action says, not word order", async () => 
   // parts is the world's to say.
   await fresh("ravi came home");
   let graph = serialize();
-  assert(/to: home\[\d+\]/.test(graph), `home is where he came to:\n${graph}`);
+  assert(/event\(n1, destination: home\[\d+\], type: come\[\d+\]\)/.test(graph), `home is where he came to:\n${graph}`);
   assertEquals((await brain("did ravi come?")).expression.name, "affirm");
   assertEquals((await brain("where did ravi come?")).expression.state.says, "home");
   await forget();
   await fresh("ravi left home");
   graph = serialize();
-  assert(/from: home\[\d+\]/.test(graph), `home is where he left from:\n${graph}`);
+  assert(/event\(n1, source: home\[\d+\], type: leave\[\d+\]\)/.test(graph), `home is where he left from:\n${graph}`);
   assertEquals((await brain("did ravi leave?")).expression.name, "affirm");
   assertEquals((await brain("where did ravi leave?")).expression.state.says, "home");
   await forget();
