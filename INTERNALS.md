@@ -85,7 +85,8 @@ Reachable today, with a probe for each:
   that happened (`{at: 9 hour, time: scheduled}` beside `{time: done}`), and
   late, early and on-time are read off the two — nothing stored.
 - **Why.** A thing is so because a doing brought it about, and the doing
-  answers.
+  answers: `ravi opened the door` / `why is the door open?`. A told `because`
+  answers the same way.
 - **The contrapositive.** Told the consequence does not stand, the condition
   cannot either. The converse and the inverse still refuse, correctly.
 - **A word of two readings.** `cricket` is settled by what else the signal

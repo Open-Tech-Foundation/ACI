@@ -2342,6 +2342,22 @@ function broughtAbout(thing, value) {
     if (!Object.values(row.properties || {}).includes(value)) continue;
     return row.reason;
   }
+  // And a doing the world says brings this state about is itself what brought
+  // it about — there is nothing behind it to look for. Nobody wrote down that
+  // the door is open; ravi opened it, and that is why it is.
+  const a = against && against.anchors ? against.anchors : {};
+  if (a.brings == null) return null;
+  for (let i = ordered.length - 1; i >= 0; i -= 1) {
+    const row = ordered[i];
+    if (row.stands !== 'held' || row.of == null) continue;
+    const to = [
+      row.parts ? row.parts.thing : null,
+      a.target != null && row.roles ? row.roles[a.target] : null,
+    ].flat();
+    if (!to.some((one) => one != null && same(one, thing))) continue;
+    if (!against.linked(row.of, a.brings).includes(value)) continue;
+    return row.id;
+  }
   return null;
 }
 

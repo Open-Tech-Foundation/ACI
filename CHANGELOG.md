@@ -115,6 +115,16 @@ All notable changes to this project are documented in this file.
 
 ### Fixed
 
+- **The doing that brought a state about is why the thing is in it.** `the door
+  is closed` / `ravi opened the door` / `why is the door open?` said it did not
+  know — while answering `is the door open?` with yes, off that very doing. The
+  walk back wanted a reason recorded *behind* the change, and a doing is the
+  reason: there is nothing behind it to look for. `why is the door open?` is
+  `ravi opened a door`, and a state nothing brought about is still unanswered.
+
+  `INTERNALS.md` claimed this worked. It never did — every `why` the
+  transcripts cover is a told `because` — and the claim is corrected.
+
 - **`the same as` says one thing is another; `the same colour as` does not.**
   Giving `as` a reading that joins the far side of a sameness broke plain
   identity: `arun is the same as the potter` stopped being read at all, and

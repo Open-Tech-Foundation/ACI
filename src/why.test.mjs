@@ -68,3 +68,24 @@ test("a doing is said back as what happened, not as a kind of happening", async 
   assertEquals(said, "kiran fell", "and `fallen` cannot be said on its own");
   await forget();
 });
+
+test("the doing that brought a state about is why the thing is in it", async () => {
+  // Nobody wrote down that the door is open — ravi opened it, and the brain
+  // already reads the state off the doing. Asked why, it said it did not know:
+  // the walk back wanted a reason recorded *behind* the change, where the doing
+  // is the reason and there is nothing behind it to look for.
+  await forget();
+  await brain("the door is closed");
+  await brain("ravi opened the door");
+  assertEquals((await brain("is the door open?")).expression.name, "affirm");
+  assertEquals((await brain("why is the door open?")).expression.state.says, "ravi opened a door");
+  await forget();
+});
+
+test("and a state nothing brought about is still unanswered", async () => {
+  await forget();
+  await brain("the coffee is hot");
+  await brain("the coffee got cold");
+  assertEquals((await brain("why is the coffee cold?")).expression.name, "unsure");
+  await forget();
+});
