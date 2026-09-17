@@ -218,15 +218,26 @@ answers `apple`, `what did ravi give?` answers `kite`, `who did eat the fig?`
 answers `nila`. It was tried and backed out, because taking the auxiliary
 reading is what *reveals* the real fault.
 
-An auxiliary opens a clause, and the hole stays outside it: `when did nadia
-arrive?` parses as `when` beside a whole sentence, `nadia arrive`. Every
-reading that answers a hole works from what the signal names beside it, and
-beside `when` there is nothing — the arriving and nadia are both inside the
-clause. So `when did nadia arrive?` falls back to the coarse `past` where it
-used to answer `nine hours`, and four other readings go the same way.
+Taking the auxiliary reading is what reveals the faults under it, and they are
+being struck off one at a time.
 
-**What is missing is a hole reaching into the clause beside it.** Settle that
-and the language data goes back in as it was written.
+*Struck off.* A told time was answering as the coarse side of now it falls on —
+`past` where `nine hours` was on the record — because the clock was read only
+where the walk out came back empty, and the walk came back with `past`. Fixed
+on its own; it was never about the auxiliary.
+
+*What is left.* **The doing of a clause is taken to be the first word in it
+that can be a doing, and a subject may hold one.** `when did the backup start?`
+takes `backup` for the doing, because a backup is a doing, and leaves `start`
+standing as the thing it was done to — so the question's parts are the mirror
+image of the record's, and nothing matches. `when did nadia arrive?` and `when
+did the ferry arrive?` answer, neither of them holding a doing in the subject.
+
+The grammar already knows which word is the clause's doing; the reading that
+assigns parts does not ask it, and walks the flattened signal in order instead.
+Settle that and the language data goes back in as it was written — one line —
+and with it `what did sam eat?`, `what did ravi give?` and `who did eat the
+fig?`.
 
 **8. Smaller, each with a probe.**
 
